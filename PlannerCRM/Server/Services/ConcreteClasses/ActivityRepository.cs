@@ -12,13 +12,13 @@ public class ActivityRepository : IRepository<Activity>
     public ActivityRepository(AppDbContext db) {
         _db = db;
     }
-    public async Task Add(Activity entity) {
+    public async Task AddAsync(Activity entity) {
         _db.Activities.Add(entity);
         
         await _db.SaveChangesAsync();
     }
 
-    public async Task Delete(int id) {
+    public async Task DeleteAsync(int id) {
         var entity = await _db.Activities.SingleOrDefaultAsync(a => a.Id == id);
 
         if (entity == null) {
@@ -29,7 +29,7 @@ public class ActivityRepository : IRepository<Activity>
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> Edit(int id, Activity entity) {
+    public async Task<bool> EditAsync(int id, Activity entity) {
         var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == id);
         if (model == null) {
             return false;
@@ -46,11 +46,11 @@ public class ActivityRepository : IRepository<Activity>
         return true;
     }
 
-    public async Task<Activity> Get(int id) {
+    public async Task<Activity> GetAsync(int id) {
         return await _db.Activities.SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    public async Task<List<Activity>> GetAll() {
+    public async Task<List<Activity>> GetAllAsync() {
         return await _db.Activities.ToListAsync();
     }
 }

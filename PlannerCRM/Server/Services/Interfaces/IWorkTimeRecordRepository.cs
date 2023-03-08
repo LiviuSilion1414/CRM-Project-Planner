@@ -5,5 +5,5 @@ namespace PlannerCRM.Server.Services.Interfaces;
 
 public interface IWorkTimeRecordRepository: IRepository<WorkTimeRecord>
 {
-    Task<List<WorkTimeRecord>> GetAll(int workOrderId);
+    Task<List<WorkTimeRecord>> GetAllAsync(int workOrderId);
 } 

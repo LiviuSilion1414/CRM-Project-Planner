@@ -13,20 +13,20 @@ public class EmployeeRepository : IRepository<Employee>
         _db = db;
     }
 
-    public async Task Add(Employee entity) {
+    public async Task AddAsync(Employee entity) {
         _db.Employees.Add(entity);
 
         await _db.SaveChangesAsync();
     }
 
-    public async Task Delete(int id) {
+    public async Task DeleteAsync(int id) {
         var entity = await _db.Employees.SingleOrDefaultAsync(e => e.Id == id);
         _db.Employees.Remove(entity);
 
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> Edit(int id, Employee entity) {
+    public async Task<bool> EditAsync(int id, Employee entity) {
         var model = await _db.Employees.SingleOrDefaultAsync(e => e.Id == id);
         
         if (model == null) {
@@ -47,13 +47,13 @@ public class EmployeeRepository : IRepository<Employee>
         return true;
     }
 
-    public async Task<Employee> Get(int id) {
+    public async Task<Employee> GetAsync(int id) {
         return await _db.Employees
             .Include(e => e.Salaries)
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
-    public async Task<List<Employee>> GetAll() {
+    public async Task<List<Employee>> GetAllAsync() {
         return await _db.Employees
             .Include(e => e.Salaries)
             .ToListAsync();

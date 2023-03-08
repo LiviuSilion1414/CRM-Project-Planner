@@ -2,7 +2,7 @@ namespace PlannerCRM.Server.Services.Interfaces;
 
 public interface ICalculateService
 {
-   Task<decimal> CalculateOrderCostMonthly(int workOrderId, DateTime date);
-   Task<decimal> CalculateOrderCostYearly(int workOrderId, DateTime date);
-   Task<decimal> CalculateOrderCost(int workOrderId);
+   Task<decimal> CalculateOrderCostMonthlyAsync(int workOrderId, DateTime date);
+   Task<decimal> CalculateOrderCostYearlyAsync(int workOrderId, DateTime date);
+   Task<decimal> CalculateOrderCostAsync(int workOrderId);
 }

@@ -13,12 +13,12 @@ public class WorkTimeRecordRepository : IWorkTimeRecordRepository
         _db = db;
     }
 
-    public async Task Add(WorkTimeRecord entity) {
+    public async Task AddAsync(WorkTimeRecord entity) {
         _db.WorkTimeRecords.Add(entity);
         await _db.SaveChangesAsync();
     }
 
-    public async Task Delete(int id) {
+    public async Task DeleteAsync(int id) {
         var entity = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == id);
         
         if (entity == null) {
@@ -28,7 +28,7 @@ public class WorkTimeRecordRepository : IWorkTimeRecordRepository
         
         await _db.SaveChangesAsync();
     }
-    public async Task<bool> Edit(int id, WorkTimeRecord entity) {
+    public async Task<bool> EditAsync(int id, WorkTimeRecord entity) {
         var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == id);
         
         if (model == null) {
@@ -45,19 +45,19 @@ public class WorkTimeRecordRepository : IWorkTimeRecordRepository
         return true;
     }
 
-    public async Task<WorkTimeRecord> Get(int id) {
+    public async Task<WorkTimeRecord> GetAsync(int id) {
         return await _db.WorkTimeRecords
             .SingleOrDefaultAsync(w => w.Id == id);
     }
 
-    public async Task<List<WorkTimeRecord>> GetAll() {
+    public async Task<List<WorkTimeRecord>> GetAllAsync() {
         return await _db.WorkTimeRecords
             .Include(wtr => wtr.Employee)
             .ThenInclude(e => e.Salaries)
             .ToListAsync();
     }
 
-    public async Task<List<WorkTimeRecord>> GetAll(int workOrderId) {
+    public async Task<List<WorkTimeRecord>> GetAllAsync(int workOrderId) {
         return await _db.WorkTimeRecords
             .Where(wtr => wtr.WorkOrderId == workOrderId)
             .Include(wtr => wtr.Employee)

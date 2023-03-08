@@ -10,16 +10,16 @@ public class CalculateService : ICalculateService
         _records = records;
     }
 
-    public async Task<decimal> CalculateOrderCost(int workOrderId) {
-        var records = await _records.GetAll(workOrderId);
+    public async Task<decimal> CalculateOrderCostAsync(int workOrderId) {
+        var records = await _records.GetAllAsync(workOrderId);
 
         return records
             .Sum(wtr => wtr.Hours * wtr.Employee.Salaries
                 .SingleOrDefault(s => s.StartDate <= wtr.Date && wtr.Date <= s.FinishDate).Salary);
     }
 
-    public async Task<decimal> CalculateOrderCostMonthly(int workOrderId, DateTime date) {
-        var recordmonthly = await _records.GetAll(workOrderId);
+    public async Task<decimal> CalculateOrderCostMonthlyAsync(int workOrderId, DateTime date) {
+        var recordmonthly = await _records.GetAllAsync(workOrderId);
         
         return recordmonthly
             .Where(wtr => wtr.Date.Month == date.Month)
@@ -28,8 +28,8 @@ public class CalculateService : ICalculateService
 
     }
     
-    public async Task<decimal> CalculateOrderCostYearly(int workOrderId, DateTime date) {
-        var recordmonthly = await _records.GetAll(workOrderId);
+    public async Task<decimal> CalculateOrderCostYearlyAsync(int workOrderId, DateTime date) {
+        var recordmonthly = await _records.GetAllAsync(workOrderId);
 
         return recordmonthly
             .Where(wtr => wtr.Date.Year == date.Year)
