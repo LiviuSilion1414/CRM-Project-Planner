@@ -51,6 +51,27 @@ builder.Services.AddScoped<IRepository<Activity>, ActivityRepository>();
 
 var app = builder.Build();
 
+var accountManagerEmail = "account.manager@gmail.com";
+var accountManagerPassword = "Qwerty123";
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    
+    if (!await db.Users.AnyAsync()) 
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        
+        var accountManager = new IdentityUser {
+            Email = accountManagerEmail,
+            EmailConfirmed = true,
+            UserName = accountManagerEmail
+        };
+
+        var accountManagerResult = await userManager.CreateAsync(accountManager, accountManagerPassword);
+    }
+}
+
 if (app.Environment.IsDevelopment()) {
     app.UseWebAssemblyDebugging();
 } else {
