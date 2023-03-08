@@ -5,6 +5,7 @@ using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Server.Services.Interfaces;
 using PlannerCRM.Server.Services.ConcreteClasses;
 using Microsoft.AspNetCore.Identity;
+using PlannerCRM.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,7 @@ using (var scope = app.Services.CreateScope())
     if (!await db.Users.AnyAsync()) 
     {
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         
         var accountManager = new IdentityUser {
             Email = accountManagerEmail,
@@ -69,6 +71,14 @@ using (var scope = app.Services.CreateScope())
         };
 
         var accountManagerResult = await userManager.CreateAsync(accountManager, accountManagerPassword);
+
+        var roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.ACCOUNT_MANAGER) });
+        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.PROJECT_MANAGER) });
+        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.OPERATION_MANAGER) });
+        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.SENIOR_DEVELOPER) });
+        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.JUNIOR_DEVELOPER) });
+
+        await userManager.AddToRoleAsync(accountManager, nameof(Roles.ACCOUNT_MANAGER));
     }
 }
 
