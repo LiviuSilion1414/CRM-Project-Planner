@@ -19,6 +19,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                 ?? throw new InvalidOperationException("ConnString not found!"))
 );
 
+builder.Services.AddHttpClient();
+
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
