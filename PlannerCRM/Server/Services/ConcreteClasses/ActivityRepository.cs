@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PlannerCRM.Server.Services.ConcreteClasses;
 
-class ActivityRepository : IRepository<Activity>
+public class ActivityRepository : IRepository<Activity>
 {
     private readonly AppDbContext _db;
 

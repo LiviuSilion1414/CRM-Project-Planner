@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PlannerCRM.Server.Services.ConcreteClasses;
 
-class WorkTimeRecordRepository : IWorkTimeRecordRepository
+public class WorkTimeRecordRepository : IWorkTimeRecordRepository
 {
     private readonly AppDbContext _db;
 

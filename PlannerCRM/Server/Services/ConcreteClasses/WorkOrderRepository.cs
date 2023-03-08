@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PlannerCRM.Server.Services.ConcreteClasses;
 
-class WorkOrderRepository : IRepository<WorkOrder>
+public class WorkOrderRepository : IRepository<WorkOrder>
 {
     private readonly AppDbContext _db;
 

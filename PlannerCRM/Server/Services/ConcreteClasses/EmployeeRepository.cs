@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PlannerCRM.Server.Services.ConcreteClasses;
 
-class EmployeeRepository : IRepository<Employee>
+public class EmployeeRepository : IRepository<Employee>
 {
     private readonly AppDbContext _db;
 
