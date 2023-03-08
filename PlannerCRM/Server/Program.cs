@@ -1,10 +1,21 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using PlannerCRM.Server.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration
+            .GetConnectionString("ConnString")
+                ?? throw new InvalidOperationException("ConnString not found!"))
+);
+
+
+builder.Services.AddScoped<IdentityDbContext, AppDbContext>();
 
 var app = builder.Build();
 
