@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PlannerCRM.Server.Models;
 using PlannerCRM.Server.DataAccess;
+using PlannerCRM.Server.Services.Interfaces;
+using PlannerCRM.Server.Services.ConcreteClasses;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +17,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                 ?? throw new InvalidOperationException("ConnString not found!"))
 );
 
-
 builder.Services.AddScoped<IdentityDbContext, AppDbContext>();
+
+builder.Services.AddScoped<IRepository<WorkOrder>, WorkOrderRepository>();
+builder.Services.AddScoped<IRepository<WorkTimeRecord>, WorkTimeRecordRepository>();
+builder.Services.AddScoped<IWorkTimeRecordRepository, WorkTimeRecordRepository>();
+builder.Services.AddScoped<IRepository<Employee>, EmployeeRepository>();
+builder.Services.AddScoped<ICalculateService, CalculateService>();
+builder.Services.AddScoped<IRepository<Activity>, ActivityRepository>();
 
 var app = builder.Build();
 
