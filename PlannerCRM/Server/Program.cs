@@ -4,6 +4,7 @@ using PlannerCRM.Server.Models;
 using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Server.Services.Interfaces;
 using PlannerCRM.Server.Services.ConcreteClasses;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,29 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                 ?? throw new InvalidOperationException("ConnString not found!"))
 );
 
-builder.Services.AddScoped<IdentityDbContext, AppDbContext>();
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddUserManager<UserManager<IdentityUser>>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
+builder.Services
+    .Configure<IdentityOptions>(o =>
+    {
+        o.SignIn.RequireConfirmedEmail = false;
+        o.Password.RequireNonAlphanumeric = false;
+        o.Password.RequireDigit = false;
+        o.Password.RequiredLength = 8;
+        o.Lockout.AllowedForNewUsers = true;
+        o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        o.Lockout.MaxFailedAccessAttempts = 5;
+    });
 
 builder.Services.AddScoped<IRepository<WorkOrder>, WorkOrderRepository>();
 builder.Services.AddScoped<IRepository<WorkTimeRecord>, WorkTimeRecordRepository>();
