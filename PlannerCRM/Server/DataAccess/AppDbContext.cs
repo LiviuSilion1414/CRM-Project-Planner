@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Server.Models;
 
-namespace Gestionale.Server.DataAccess;
+namespace PlannerCRM.Server.DataAccess;
 
 public class AppDbContext: IdentityDbContext
 {
