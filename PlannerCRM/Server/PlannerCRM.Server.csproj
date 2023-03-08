@@ -17,7 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Client\PlannerCRM.Client.csproj" />
     <ProjectReference Include="..\Shared\PlannerCRM.Shared.csproj" />
+    <PackageReference Include="Npgsql" Version="7.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
   </ItemGroup>
-
 
 </Project>
