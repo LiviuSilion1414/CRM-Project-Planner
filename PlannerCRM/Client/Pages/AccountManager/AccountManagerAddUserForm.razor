@@ -1,0 +1,96 @@
+@page "/account-manager/add/user"
+
+@using PlannerCRM.Shared.DTOs
+@using PlannerCRM.Shared.Models
+@using System.Text.Json
+
+@inject NavigationManager navManager
+@inject HttpClient httpClient
+
+<div class="container-fluid">
+    <EditForm Model="@model" OnValidSubmit="OnClickConfirm" class="form">
+        <DataAnnotationsValidator/>
+        <div class="form-group">
+            <label>*First Name:</label>
+            <InputText class="form-control" type="text" @bind-Value="model.FirstName" />
+            <ValidationMessage For="@(() => model.FirstName)"/>
+        </div>
+        <div class="form-group">
+            <label>*Last Name:</label>
+            <InputText class="form-control" type="text" @bind-Value="model.LastName" />
+            <ValidationMessage For="@(() => model.LastName)"/>
+        </div>
+        <div class="form-group">
+            <label>*Email:</label>
+            <InputText class="form-control" type="email" @bind-Value="model.Email" />
+            <ValidationMessage For="@(() => model.Email)" />
+        </div>
+        <div class="form-group">
+            <label>*Data di nascita:</label>
+            <InputText class="form-control" type="date" @bind-Value="model.BirthDay" />
+            <ValidationMessage For="@(() => model.BirthDay)" />
+        </div>
+        <div class="form-group">
+            <label>*Data inizio:</label>
+            <InputText class="form-control" type="date" @bind-Value="model.StartDate" />
+            <ValidationMessage For="@(() => model.StartDate)" />
+        </div>
+        <div class="form-group">
+            <label>*Codice fiscale:</label>
+            <InputText aria-required="true" class="form-control" type="text" @bind-Value="model.NumericCode" />
+            <ValidationMessage For="@(() => model.NumericCode)" />
+        </div>
+        <div class="form-group">
+            <label>*Ruolo
+                <div class="form-control">
+                    <InputSelect class="dropdown-item" @bind-Value="model.Role">
+                        <option selected="true" disabled="true">---nessuna posizione scelta---</option>
+                        @foreach (var role in Enum.GetValues(typeof(Roles))) {
+                            if (!role.Equals(Roles.ACCOUNT_MANAGER)) {
+                                <option value="@role">@role</option>
+                            }
+                        }
+                        <ValidationMessage For="@(() => model.Role)" />
+                    </InputSelect>
+                </div>
+            </label>
+        </div>
+        <div>
+            <label>*Tariffa oraria</label>
+            <InputNumber class="form-control" @bind-Value="model.HourPay" />
+            <ValidationMessage For="@(() => model.HourPay)" />
+        </div>
+        <div class="form-group">
+            <label for="Name">*Password</label>
+            <InputText class="form-control" type="password" @bind-Value="model.Password" />
+            <ValidationMessage For="@(() => model.Password)" />
+        </div>
+        <div class="wrapper-btn">
+            <div class="btn-cancel">
+                <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+            </div>
+            <div class="btn-confirm">
+                <button type="submit" class="btn btn-primary">Conferma</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private EmployeeEditDTO model = new EmployeeEditDTO();
+    private string errorMessage = "";
+    private bool isError = false;
+
+    private void OnClickCancel() {
+        navManager.NavigateTo("/account-manager");
+    }
+
+    private async void OnClickConfirm() {
+        var json = JsonSerializer.Serialize(model);
+        var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var addIdentityResponse = await httpClient.PostAsync("http://localhost:5270/api/account/register", httpContent);
+
+        navManager.NavigateTo("/account-manager");
+    }
+}
