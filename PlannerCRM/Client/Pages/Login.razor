@@ -41,10 +41,7 @@
         var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
         
         var response = await httpClient.PostAsync("http://localhost:5032/account/login", httpContent);
-        var rolesResponse = await httpClient.PostAsync("http://localhost:5032/account/employee/role", httpContent);
-
-        var responseBody = await rolesResponse.Content.ReadAsStringAsync();
-        var rolesList = await Task.Factory.StartNew(() => JsonSerializer.Deserialize<List<string>>(responseBody));
+        var rolesList = await httpClient.GetFromJsonAsync<IEnumerable<string>>("http://localhost:5032/account/user/role");
 
         foreach (var role in rolesList) {
             if (role == nameof(Roles.ACCOUNT_MANAGER)) {
