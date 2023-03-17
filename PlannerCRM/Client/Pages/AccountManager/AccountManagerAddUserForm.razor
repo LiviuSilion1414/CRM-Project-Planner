@@ -89,7 +89,7 @@
         var json = JsonSerializer.Serialize(model);
         var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-        var addIdentityResponse = await httpClient.PostAsync("http://localhost:5270/api/account/register", httpContent);
+        var addIdentityResponse = await httpClient.PostAsync("http://localhost:5032/account/add/user", httpContent);
 
         navManager.NavigateTo("/account-manager");
     }

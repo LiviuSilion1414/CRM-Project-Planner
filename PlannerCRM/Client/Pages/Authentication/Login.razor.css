@@ -1,0 +1,19 @@
+h3 {
+    text-align: center;
+}
+
+
+span {
+    color: red;
+}
+
+.container {
+    margin: 70px auto;
+    max-width: 300px;
+    padding: 20px 20px;
+    border: 1px groove ;
+}
+
+.form-group {
+    padding: 10px 10px;
+}
