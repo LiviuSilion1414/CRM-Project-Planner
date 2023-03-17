@@ -1,0 +1,30 @@
+@page "/account-manager/delete/user/{Id}"
+
+@using PlannerCRM.Shared.DTOs
+
+@inject NavigationManager navManager
+@inject HttpClient httpClient
+
+<div>
+    <span>Are you sure you want to delete @model.Email [@model.Role] ?</span>
+    <button type="button" class="btn btn-primary" @onclick="OnClickDeleteUser">Conferma</button>
+    <button type="button" class="btn btn-danger" @onclick="OnClickCancel">Annulla</button>
+</div>
+
+@code {
+    private EmployeeDeleteDTO model = new EmployeeDeleteDTO();
+    [Parameter]
+    public int Id { get; set; }
+    protected override async Task OnInitializedAsync() {
+        model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/account/get/employee/{Id}");
+    }
+
+    public void OnClickCancel() {
+        navManager.NavigateTo("/account-manager");
+    }
+
+    public async Task OnClickDeleteUser() {
+        await httpClient.DeleteAsync($"http://localhost:5032/account/delete/employee/{Id}");
+    }
+}
+
