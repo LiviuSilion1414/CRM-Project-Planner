@@ -1,0 +1,63 @@
+@page "/account-manager"
+@using PlannerCRM.Shared.DTOs
+
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+
+<PageTitle>Account Manager</PageTitle>
+
+<button class="btn btn-primary" @onclick="OnClickAddUser">
+    <span class="oi oi-plus"></span>
+    Aggiungi utente
+</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Codice Numerico</th>
+            <th>Nome</th>
+            <th>Data di nascita</th>
+            <th>Ruolo</th>
+            <th>Tariffa oraria</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in _users)
+        {
+            <tr>
+                @Id = user.Id
+                <td>@user.NumericCode</td>
+                <td>@user.FullName</td>
+                <td>@user.Birthday</td>
+                <td>@user.Role</td>
+                <td>@user.HourlyPay</td>
+                <td>
+                    <button type="button" class="btn btn-primary" @onclick="@OnClickEdit">Edit</button>
+                    <button type="button" class="btn btn-danger" @onclick="@OnClickDelete">Delete</button>
+                </td> 
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private int Id { get; set; }
+    private IEnumerable<EmployeeViewDTO> _users = new List<EmployeeViewDTO>();
+
+    protected override async Task OnInitializedAsync() {
+        _users = await httpClient.GetFromJsonAsync<IEnumerable<EmployeeViewDTO>>("http://localhost:5032/account/employees/all");
+    }
+
+    public void OnClickAddUser() {
+        navManager.NavigateTo("/account-manager/add/user");
+    }
+
+    public void OnClickEdit() {
+        navManager.NavigateTo($"/account-manager/edit/user/{Id}");
+    }
+
+    public void OnClickDelete() {
+        navManager.NavigateTo($"/account-manager/delete/user/{Id}");
+    }
+
+}

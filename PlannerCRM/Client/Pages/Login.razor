@@ -1,0 +1,64 @@
+﻿@page "/"
+@page "/login"
+
+@using PlannerCRM.Shared.Models
+@using PlannerCRM.Shared.DTOs
+@using System.Text.Json
+
+@inject NavigationManager navManager
+@inject HttpClient httpClient
+
+<PageTitle>Login</PageTitle>
+
+
+<h3>Entra nel tuo account gestionale.</h3>
+
+<div class="container">
+    <h4>Login</h4>
+    <EditForm Model="@model" OnValidSubmit="LoginOnValidInput">
+        <DataAnnotationsValidator/>
+        
+        <div class="form-group">
+            <label class="form-label" for="Email">Email:</label>
+            <InputText type="email" id="emailInput" class="form-control" @bind-Value="model.Email"/>
+            <ValidationMessage For="@(() => model.Email)"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="Email">Password:</label>
+            <InputText type="password" id="passwordInput" class="form-control" @bind-Value="model.Password" />
+            <ValidationMessage For="@(() => model.Password)"/>
+        </div>
+        <div class="wrapper">
+            <button type="submit" class="btn btn-primary">Accedi</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private EmployeeLoginDTO model = new EmployeeLoginDTO();   
+    private async Task LoginOnValidInput() {
+        var json = JsonSerializer.Serialize(model);
+        var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        
+        var response = await httpClient.PostAsync("http://localhost:5032/account/login", httpContent);
+        var rolesResponse = await httpClient.PostAsync("http://localhost:5032/account/employee/role", httpContent);
+
+        var responseBody = await rolesResponse.Content.ReadAsStringAsync();
+        var rolesList = await Task.Factory.StartNew(() => JsonSerializer.Deserialize<List<string>>(responseBody));
+
+        foreach (var role in rolesList) {
+            if (role == nameof(Roles.ACCOUNT_MANAGER)) {
+                navManager.NavigateTo("/account-manager", true);
+            } else if (role == nameof(Roles.OPERATION_MANAGER)) {
+                navManager.NavigateTo("/operation-manager", true);
+            } else if (role == nameof(Roles.PROJECT_MANAGER)) {
+                navManager.NavigateTo("/project-manager", true);
+            } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
+                navManager.NavigateTo("/senior-developer", true);
+            } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
+                navManager.NavigateTo("/junior-developer", true);
+            }
+        }
+    }
+}
+

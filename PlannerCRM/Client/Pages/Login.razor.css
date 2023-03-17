@@ -1,0 +1,23 @@
+h3, h4, h5 {
+    text-align: center;
+}
+
+
+h5 {
+    color: red;
+}
+
+.container {
+    margin: 70px auto;
+    max-width: 300px;
+    padding: 20px 20px;
+    border: 1px groove ;
+}
+
+.form-group {
+    padding: 10px 10px;
+}
+
+.wrapper {
+    text-align: center;
+}
