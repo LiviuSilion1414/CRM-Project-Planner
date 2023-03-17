@@ -2,7 +2,6 @@ h3 {
     text-align: center;
 }
 
-
 span {
     color: red;
 }
@@ -16,4 +15,8 @@ span {
 
 .form-group {
     padding: 10px 10px;
+}
+
+.wrapper {
+    text-align: center;
 }
