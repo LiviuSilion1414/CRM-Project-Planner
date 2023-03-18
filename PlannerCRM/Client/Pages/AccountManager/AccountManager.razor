@@ -22,7 +22,7 @@
         </tr>
     </thead>
     <tbody>
-        @*@foreach (var user in _users)
+        @foreach (var user in _users)
         {
             <tr>
                 @Id = user.Id
@@ -36,7 +36,7 @@
                     <button type="button" class="btn btn-danger" @onclick="@OnClickDelete">Delete</button>
                 </td> 
             </tr>
-        }*@
+        }
     </tbody>
 </table>
 
@@ -44,9 +44,9 @@
     private int Id { get; set; }
     private IEnumerable<EmployeeViewDTO> _users = new List<EmployeeViewDTO>();
 
-    /*protected override async Task OnInitializedAsync() {
-        _users = await httpClient.GetFromJsonAsync<IEnumerable<EmployeeViewDTO>>("http://localhost:5032/account/employees/all");
-    }*/
+    protected override async Task OnInitializedAsync() {
+        _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDTO>>("http://localhost:5032/employee/get/all");
+    }
 
     public void OnClickAddUser() {
         navManager.NavigateTo("/account-manager/add/user");

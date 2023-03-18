@@ -19,6 +19,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                 ?? throw new InvalidOperationException("ConnString not found!"))
 );
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 builder.Services.AddHttpClient();
 
 builder.Services
