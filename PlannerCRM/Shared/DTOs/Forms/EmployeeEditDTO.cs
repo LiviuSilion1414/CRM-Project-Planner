@@ -1,5 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using PlannerCRM.Shared.Models;
+using PlannerCRM.Shared.DTOs.Abstract;
 
 namespace PlannerCRM.Shared.DTOs;
 
