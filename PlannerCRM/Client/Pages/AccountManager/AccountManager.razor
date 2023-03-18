@@ -1,5 +1,6 @@
 @page "/account-manager"
 @using PlannerCRM.Shared.DTOs
+@using Newtonsoft.Json
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
@@ -45,7 +46,10 @@
     private IEnumerable<EmployeeViewDTO> _users = new List<EmployeeViewDTO>();
 
     protected override async Task OnInitializedAsync() {
-        _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDTO>>("http://localhost:5032/employee/get/all");
+        var responseMessage = await httpClient.GetAsync("http://localhost:5032/employee/get/all");
+        var responseJsonList = await responseMessage.Content.ReadAsStringAsync();
+        
+        _users = JsonConvert.DeserializeObject<List<EmployeeViewDTO>>(responseJsonList);
     }
 
     public void OnClickAddUser() {

@@ -36,7 +36,7 @@ public class EmployeeController: ControllerBase
     public async Task<Employee> GetById(int id) {
        return await _repo.GetAsync(id);
     }
-
+    
     [HttpGet("get/all")]
     public async Task<List<Employee>> GetAll() {
         return await _repo.GetAllAsync();
