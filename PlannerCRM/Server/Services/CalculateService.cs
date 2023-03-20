@@ -1,10 +1,8 @@
-using PlannerCRM.Server.Services.Interfaces;
+namespace PlannerCRM.Server.Services;
 
-namespace PlannerCRM.Server.Services.ConcreteClasses;
-
-public class CalculateService : ICalculateService
+public class CalculateService
 {
-    public readonly IWorkTimeRecordRepository _records;
+   /* public readonly IWorkTimeRecordRepository _records;
 
     public CalculateService(IWorkTimeRecordRepository records) {
         _records = records;
@@ -36,5 +34,5 @@ public class CalculateService : ICalculateService
             .Sum(wtr => wtr.Hours * wtr.Employee.Salaries
                 .SingleOrDefault(s => s.StartDate <= wtr.Date && wtr.Date <= s.FinishDate).Salary);
 
-    }
+    } */
 }

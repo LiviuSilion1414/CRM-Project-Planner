@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Server.Models;
 using PlannerCRM.Server.DataAccess;
-using PlannerCRM.Server.Services.Interfaces;
 using PlannerCRM.Server.Services.ConcreteClasses;
 using Microsoft.AspNetCore.Identity;
 using PlannerCRM.Shared.Models;
+using PlannerCRM.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,12 +47,11 @@ builder.Services
         o.Lockout.MaxFailedAccessAttempts = 5;
     });
 
-builder.Services.AddScoped<IRepository<WorkOrder>, WorkOrderRepository>();
-builder.Services.AddScoped<IRepository<WorkTimeRecord>, WorkTimeRecordRepository>();
-builder.Services.AddScoped<IWorkTimeRecordRepository, WorkTimeRecordRepository>();
-builder.Services.AddScoped<IRepository<Employee>, EmployeeRepository>();
-builder.Services.AddScoped<ICalculateService, CalculateService>();
-builder.Services.AddScoped<IRepository<Activity>, ActivityRepository>();
+builder.Services.AddScoped<EmployeeRepository>();
+builder.Services.AddScoped<WorkOrderRepository>();
+builder.Services.AddScoped<ActivityRepository>();
+builder.Services.AddScoped<WorkTimeRecordRepository>();
+builder.Services.AddScoped<CalculateService>();
 
 var app = builder.Build();
 

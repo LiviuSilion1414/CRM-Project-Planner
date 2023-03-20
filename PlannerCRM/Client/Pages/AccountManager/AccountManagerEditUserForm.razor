@@ -76,14 +76,14 @@
 </div>
 
 @code {
-    private EmployeeEditDTO model = new EmployeeEditDTO();
     [Parameter]
     public int Id { get; set; }
+    private EmployeeEditDTO model = new EmployeeEditDTO();
     private string errorMessage = "";
     private bool isError = false;
 
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<EmployeeEditDTO>($"http://localhost:5032/account/edit/employee/{model.Id}");
+        model = await httpClient.GetFromJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/get/{Id}");
     }
 
     private void OnClickCancel() {
@@ -91,10 +91,7 @@
     }
 
     private async void OnClickConfirm() {
-        var json = JsonSerializer.Serialize(model);
-        var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-        var addIdentityResponse = await httpClient.PutAsync($"http://localhost:5270/api/account/edit/employee/{Id}", httpContent);
+        var addIdentityResponse = await httpClient.PutAsJsonAsync<EmployeeEditDTO>("http://localhost:5032/employee/edit/", model);
 
         navManager.NavigateTo("/account-manager");
     }

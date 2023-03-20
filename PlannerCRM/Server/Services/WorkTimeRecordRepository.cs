@@ -1,11 +1,10 @@
-using PlannerCRM.Server.Services.Interfaces;
 using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace PlannerCRM.Server.Services.ConcreteClasses;
 
-public class WorkTimeRecordRepository : IWorkTimeRecordRepository
+public class WorkTimeRecordRepository
 {
     private readonly AppDbContext _db;
 
@@ -28,8 +27,8 @@ public class WorkTimeRecordRepository : IWorkTimeRecordRepository
         
         await _db.SaveChangesAsync();
     }
-    public async Task<bool> EditAsync(int id, WorkTimeRecord entity) {
-        var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == id);
+    public async Task<bool> EditAsync(WorkTimeRecord entity) {
+        var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == entity.Id);
         
         if (model == null) {
             return false;

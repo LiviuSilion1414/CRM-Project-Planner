@@ -1,11 +1,10 @@
-using PlannerCRM.Server.Services.Interfaces;
 using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace PlannerCRM.Server.Services.ConcreteClasses;
+namespace PlannerCRM.Server.Services;
 
-public class ActivityRepository : IRepository<Activity>
+public class ActivityRepository
 {
     private readonly AppDbContext _db;
 
@@ -29,8 +28,8 @@ public class ActivityRepository : IRepository<Activity>
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> EditAsync(int id, Activity entity) {
-        var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == id);
+    public async Task<bool> EditAsync(Activity entity) {
+        var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == entity.Id);
         if (model == null) {
             return false;
         }

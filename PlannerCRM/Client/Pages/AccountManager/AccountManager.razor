@@ -12,37 +12,37 @@
     Aggiungi utente
 </button>
 
-<table class="table table-striped">
+<table class="table">
     <thead>
         <tr>
-            <th>Codice Numerico</th>
-            <th>Nome</th>
-            <th>Data di nascita</th>
-            <th>Ruolo</th>
-            <th>Tariffa oraria</th>
+            <th scope="col">Codice Numerico</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Data di nascita</th>
+            <th scope="col">Ruolo</th>
+            <th scope="col">Tariffa oraria</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var user in _users)
         {
             <tr>
-                @Id = user.Id
                 <td>@user.NumericCode</td>
                 <td>@user.FullName</td>
                 <td>@user.Birthday</td>
                 <td>@user.Role</td>
                 <td>@user.HourlyPay</td>
                 <td>
-                    <button type="button" class="btn btn-primary" @onclick="@OnClickEdit">Edit</button>
-                    <button type="button" class="btn btn-danger" @onclick="@OnClickDelete">Delete</button>
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(user.Id))">Edit</button>                
                 </td> 
+                <td> 
+                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(user.Id))">Delete</button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
 @code {
-    private int Id { get; set; }
     private IEnumerable<EmployeeViewDTO> _users = new List<EmployeeViewDTO>();
 
     protected override async Task OnInitializedAsync() {
@@ -56,12 +56,12 @@
         navManager.NavigateTo("/account-manager/add/user");
     }
 
-    public void OnClickEdit() {
-        navManager.NavigateTo($"/account-manager/edit/user/{Id}");
+    public void OnClickEdit(int id) {
+        navManager.NavigateTo($"/account-manager/edit/user/{id}");
     }
 
-    public void OnClickDelete() {
-        navManager.NavigateTo($"/account-manager/delete/user/{Id}");
+    public void OnClickDelete(int id) {
+        navManager.NavigateTo($"/account-manager/delete/user/{id}");
     }
 
 }

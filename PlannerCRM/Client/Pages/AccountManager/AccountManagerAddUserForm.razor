@@ -55,7 +55,7 @@
                 </div>
             </label>
         </div>
-        <div>
+        <div class="form-group">
             <label>*Tariffa oraria</label>
             <InputNumber class="form-control" @bind-Value="model.HourPay" />
             <ValidationMessage For="@(() => model.HourPay)" />
@@ -77,7 +77,7 @@
 </div>
 
 @code {
-    private EmployeeEditDTO model = new EmployeeEditDTO();
+    private EmployeeAddDTO model = new EmployeeAddDTO();
     private string errorMessage = "";
     private bool isError = false;
 
@@ -86,11 +86,8 @@
     }
 
     private async void OnClickConfirm() {
-        var json = JsonSerializer.Serialize(model);
-        var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-        var addIdentityAccountLogin = await httpClient.PostAsync("http://localhost:5032/account/add/user", httpContent);
-        var addIdentityEmployee = await httpClient.PostAsync("http://localhost:5032/employee/add", httpContent);
+        var addIdentityAccountLogin = await httpClient.PostAsJsonAsync<EmployeeAddDTO>("http://localhost:5032/account/add/user", model);
+        var addIdentityEmployee = await httpClient.PostAsJsonAsync<EmployeeAddDTO>("http://localhost:5032/employee/add", model);
 
         navManager.NavigateTo("/account-manager");
     }
