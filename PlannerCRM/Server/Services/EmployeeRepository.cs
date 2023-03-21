@@ -1,7 +1,8 @@
 using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.DTOs;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
 namespace PlannerCRM.Server.Services;
 
@@ -76,7 +77,6 @@ public class EmployeeRepository
         return await _db.Employees
             .Select(e => new EmployeeViewDTO {
                 Id = e.Id,
-                Username = e.Email,
                 FullName = $"{e.FirstName} {e.LastName}",
                 Birthday = e.Birthday.ToShortDateString(),
                 Email = e.Email,
@@ -88,7 +88,6 @@ public class EmployeeRepository
         return await _db.Employees
             .Select(e => new EmployeeEditDTO {
                 Id = e.Id,
-                Username = e.Email,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
                 Email = e.Email,
@@ -99,7 +98,7 @@ public class EmployeeRepository
                 Password = e.Password})
             .SingleOrDefaultAsync(e => e.Id == id);
     }
-// vengono eliminati anche da aspnetusers??!
+
     public async Task<EmployeeDeleteDTO> GetForDeleteAsync(int id) {
         return await _db.Employees
             .Select(e => new EmployeeDeleteDTO {
@@ -117,7 +116,6 @@ public class EmployeeRepository
         return await _db.Employees
             .Select(e => new EmployeeViewDTO {
                 Id = e.Id,
-                Username = e.Email,
                 FullName = $"{e.FirstName} {e.LastName}",
                 Birthday = e.Birthday.ToShortDateString(),
                 Email = e.Email,

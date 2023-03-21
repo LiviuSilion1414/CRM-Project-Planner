@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PlannerCRM.Server.Models;
-using PlannerCRM.Server.Services.ConcreteClasses;
-using PlannerCRM.Shared.DTOs;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
 namespace PlannerCRM.Server.Controllers;
 

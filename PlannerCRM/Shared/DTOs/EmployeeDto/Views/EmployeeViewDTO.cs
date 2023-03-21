@@ -1,11 +1,12 @@
-using PlannerCRM.Shared.DTOs.Abstract;
+namespace PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
-namespace PlannerCRM.Shared.DTOs;
-
-public class EmployeeViewDTO : EmployeeDTO
+public class EmployeeViewDTO
 { 
+    public int Id { get; set; }
+
     public string Email { get; set; }
     public string FullName { get; set; }
+    public string Role { get; set; }
     public string Birthday { get; set; }
     public decimal HourlyPay { get; set; }
 }

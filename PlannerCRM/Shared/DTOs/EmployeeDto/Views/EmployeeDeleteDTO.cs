@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.DTOs;
+namespace PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
 public class EmployeeDeleteDTO
 {

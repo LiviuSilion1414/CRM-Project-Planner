@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using PlannerCRM.Shared.Models;
 
-namespace PlannerCRM.Shared.DTOs.Abstract;
+namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
-public abstract class EmployeeForm : EmployeeDTO
+public partial class EmployeeForm
 {
+    public int Id { get; set; }
+
     [Required]
     public string FirstName { get; set; }
 
@@ -27,7 +29,7 @@ public abstract class EmployeeForm : EmployeeDTO
     public string NumericCode { get; set; }
 
     [EnumDataType(typeof(Roles))]
-    public new Roles Role { get; set; }
+    public Roles Role { get; set; }
 
     [Required]
     public decimal HourPay { get; set; }
