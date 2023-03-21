@@ -31,9 +31,14 @@ public class EmployeeController: ControllerBase
         await _repo.DeleteAsync(id);
     }
 
-    [HttpGet("get/{id}")]
-    public async Task<EmployeeViewDTO> GetById(int id) {
-       return await _repo.GetAsync(id);
+    [HttpGet("get/for/view/{id}")]
+    public async Task<EmployeeViewDTO> GetForViewById(int id) {
+       return await _repo.GetForViewAsync(id);
+    }
+
+    [HttpGet("get/for/edit/{id}")]
+    public async Task<EmployeeEditDTO> GetForEditById(int id) {
+       return await _repo.GetForEditAsync(id);
     }
     
     [HttpGet("get/all")]

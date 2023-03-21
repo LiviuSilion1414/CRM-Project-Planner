@@ -1,4 +1,4 @@
-@page "/account-manager/edit/user/{Id}"
+@page "/account-manager/edit/user/{paramId}"
 
 @using PlannerCRM.Shared.DTOs
 @using PlannerCRM.Shared.Models
@@ -76,14 +76,13 @@
 </div>
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public string paramId { get; set; }
     private EmployeeEditDTO model = new EmployeeEditDTO();
     private string errorMessage = "";
     private bool isError = false;
 
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/get/{Id}");
+        model = await httpClient.GetFromJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/get/for/edit/{paramId}");
     }
 
     private void OnClickCancel() {
@@ -91,7 +90,7 @@
     }
 
     private async void OnClickConfirm() {
-        var addIdentityResponse = await httpClient.PutAsJsonAsync<EmployeeEditDTO>("http://localhost:5032/employee/edit/", model);
+        await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/edit", model);
 
         navManager.NavigateTo("/account-manager");
     }

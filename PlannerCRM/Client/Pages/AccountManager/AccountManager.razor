@@ -1,6 +1,5 @@
 @page "/account-manager"
 @using PlannerCRM.Shared.DTOs
-@using Newtonsoft.Json
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
@@ -15,7 +14,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">Codice Numerico</th>
+            <th scope="col">Email</th>
             <th scope="col">Nome</th>
             <th scope="col">Data di nascita</th>
             <th scope="col">Ruolo</th>
@@ -26,7 +25,7 @@
         @foreach (var user in _users)
         {
             <tr>
-                <td>@user.NumericCode</td>
+                <td>@user.Email</td>
                 <td>@user.FullName</td>
                 <td>@user.Birthday</td>
                 <td>@user.Role</td>
@@ -46,12 +45,9 @@
     private IEnumerable<EmployeeViewDTO> _users = new List<EmployeeViewDTO>();
 
     protected override async Task OnInitializedAsync() {
-        var responseMessage = await httpClient.GetAsync("http://localhost:5032/employee/get/all");
-        var responseJsonList = await responseMessage.Content.ReadAsStringAsync();
-        
-        _users = JsonConvert.DeserializeObject<List<EmployeeViewDTO>>(responseJsonList);
+        _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDTO>>("http://localhost:5032/employee/get/all");
     }
-
+    
     public void OnClickAddUser() {
         navManager.NavigateTo("/account-manager/add/user");
     }

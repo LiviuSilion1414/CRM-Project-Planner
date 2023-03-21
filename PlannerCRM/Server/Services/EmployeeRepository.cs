@@ -72,19 +72,31 @@ public class EmployeeRepository
         return true;
     }
 
-    public async Task<EmployeeViewDTO> GetAsync(int id) {
+    public async Task<EmployeeViewDTO> GetForViewAsync(int id) {
         return await _db.Employees
             .Select(e => new EmployeeViewDTO {
                 Id = e.Id,
                 Username = e.Email,
                 FullName = $"{e.FirstName} {e.LastName}",
                 Birthday = e.Birthday.ToShortDateString(),
-                HourlyPay = e.Salaries
-                                .Select(s => s.Salary)
-                                .OrderBy(es => es.Scale)
-                                .LastOrDefault(),
-                NumericCode = e.NumericCode,
+                Email = e.Email,
                 Role = e.Role.ToString().Replace('_', ' ')})
+            .SingleOrDefaultAsync(e => e.Id == id);
+    }
+
+    public async Task<EmployeeEditDTO> GetForEditAsync(int id) {
+        return await _db.Employees
+            .Select(e => new EmployeeEditDTO {
+                Id = e.Id,
+                Username = e.Email,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                Email = e.Email,
+                BirthDay = e.Birthday.ToString(),
+                StartDate = e.StartDate.ToString(),
+                Role = e.Role,
+                NumericCode = e.NumericCode,
+                Password = e.Password})
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
@@ -95,11 +107,7 @@ public class EmployeeRepository
                 Username = e.Email,
                 FullName = $"{e.FirstName} {e.LastName}",
                 Birthday = e.Birthday.ToShortDateString(),
-                HourlyPay = e.Salaries
-                                .Select(s => s.Salary)
-                                .OrderBy(es => es)
-                                .LastOrDefault(),
-                NumericCode = e.NumericCode,
+                Email = e.Email,
                 Role = e.Role.ToString().Replace('_', ' ')})
             .ToListAsync();
     }

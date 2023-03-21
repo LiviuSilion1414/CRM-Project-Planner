@@ -12,11 +12,10 @@
 </div>
 
 @code {
-    private EmployeeDeleteDTO model = new EmployeeDeleteDTO();
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public string Id { get; set; }
+    public EmployeeDeleteDTO model = new EmployeeDeleteDTO();
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/account/get/employee/{Id}");
+        model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/employee/get/for/view{Id}");
     }
 
     public void OnClickCancel() {
@@ -24,7 +23,7 @@
     }
 
     public async Task OnClickDeleteUser() {
-        await httpClient.DeleteAsync($"http://localhost:5032/account/delete/employee/{Id}");
+        await httpClient.DeleteAsync($"http://localhost:5032/employee/delete/{Id}");
     }
 }
 
