@@ -62,6 +62,13 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
+    [HttpDelete("delete/user/{email}")]
+    public async Task DeleteUser(string email) {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        await _userManager.DeleteAsync(user);
+    }
+
     [HttpGet]
     [Route("user/role")]
     public async Task<IList<string>> GetUserRole()

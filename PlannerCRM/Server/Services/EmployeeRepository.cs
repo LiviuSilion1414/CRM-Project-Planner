@@ -99,6 +99,19 @@ public class EmployeeRepository
                 Password = e.Password})
             .SingleOrDefaultAsync(e => e.Id == id);
     }
+// vengono eliminati anche da aspnetusers??!
+    public async Task<EmployeeDeleteDTO> GetForDeleteAsync(int id) {
+        return await _db.Employees
+            .Select(e => new EmployeeDeleteDTO {
+                Id = e.Id,
+                FullName = $"{e.FirstName} {e.LastName}",
+                Email = e.Email,
+                Role = e.Role
+                    .ToString()
+                    .Replace('_', ' ')
+            })
+            .SingleOrDefaultAsync(e => e.Id == id);
+    }
 
     public async Task<List<EmployeeViewDTO>> GetAllAsync() {
         return await _db.Employees

@@ -6,16 +6,22 @@
 @inject HttpClient httpClient
 
 <div>
-    <span>Are you sure you want to delete @model.Email [@model.Role] ?</span>
-    <button type="button" class="btn btn-primary" @onclick="OnClickDeleteUser">Conferma</button>
-    <button type="button" class="btn btn-danger" @onclick="OnClickCancel">Annulla</button>
+    <span>Vuoi eliminare:
+        <br>  
+        <strong>Nome:</strong> @model.FullName 
+        <br>
+        <strong>Ruolo:</strong> @model.Role ?
+        <br>
+    </span>
+    <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>
+    <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
 </div>
 
 @code {
     [Parameter] public string Id { get; set; }
     public EmployeeDeleteDTO model = new EmployeeDeleteDTO();
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/employee/get/for/view{Id}");
+        model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/employee/get/for/delete/{Id}");
     }
 
     public void OnClickCancel() {
@@ -24,6 +30,9 @@
 
     public async Task OnClickDeleteUser() {
         await httpClient.DeleteAsync($"http://localhost:5032/employee/delete/{Id}");
+        await httpClient.DeleteAsync($"http://localhost:5032/account/delete/user/{model.Email}");
+        
+        navManager.NavigateTo("/account-manager");
     }
 }
 
