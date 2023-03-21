@@ -61,8 +61,8 @@ namespace PlannerCRM.Server.Migrations
                     LastName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
                     Password = table.Column<string>(type: "text", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Birthday = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Birthday = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     NumericCode = table.Column<string>(type: "text", nullable: true),
                     Role = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -78,7 +78,7 @@ namespace PlannerCRM.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -199,8 +199,8 @@ namespace PlannerCRM.Server.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
                     Salary = table.Column<decimal>(type: "numeric", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FinishDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -220,8 +220,8 @@ namespace PlannerCRM.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FinishDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     WorkOrderId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -241,7 +241,7 @@ namespace PlannerCRM.Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Hours = table.Column<int>(type: "integer", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     ActivityId = table.Column<int>(type: "integer", nullable: false),
