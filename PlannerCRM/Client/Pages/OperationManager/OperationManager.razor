@@ -1,0 +1,59 @@
+@page "/operation-manager"
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+
+<PageTitle>Operation Manager</PageTitle>
+
+<button class="btn btn-primary" @onclick="OnClickAddUser">
+    <span class="oi oi-plus"></span>
+    Aggiungi commessa
+</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Data inizio</th>
+            <th scope="col">Data fine</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var wo in _workorders)
+        {
+            <tr>
+                <td>@wo.Name</td>
+                <td>@wo.StartDate</td>
+                <td>@wo.FinishDate</td>
+                <td>
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(wo.Id))">Edit</button>                
+                </td> 
+                <td> 
+                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(wo.Id))">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<WorkorderViewDTO> _workorders = new List<WorkorderViewDTO>();
+
+    protected override async Task OnInitializedAsync() {
+        _workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");
+    }
+    
+    public void OnClickAddUser() {
+        navManager.NavigateTo("/operation-manager/add/workorder");
+    }
+
+    public void OnClickEdit(int id) {
+        navManager.NavigateTo($"/operation-manager/edit/workorder/{id}");
+    }
+
+    public void OnClickDelete(int id) {
+        navManager.NavigateTo($"/operation-manager/delete/workorder/{id}");
+    }
+
+}
