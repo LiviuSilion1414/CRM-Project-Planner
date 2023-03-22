@@ -1,0 +1,50 @@
+@page "/operation-manager/add/workorder"
+@using PlannerCRM.Shared.DTOs.Workorder.Forms
+
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+
+<PageTitle>Operation Manager - Add Workorder</PageTitle>
+
+<div class="container-fluid">
+    <EditForm Model="@model" OnValidSubmit="OnClickConfirm">
+        <DataAnnotationsValidator/>
+        <div class="form-group">
+            <label>*Nome:</label>
+            <InputText type="text" class="form-control" @bind-Value="model.Name" />
+            <ValidationMessage For="@(() => model.Name)"/>
+        </div>
+        <div class="form-group">
+            <label>*Data inzio:</label>
+            <InputText type="date" class="form-control" @bind-Value="model.StartDate" />
+            <ValidationMessage For="@(() => model.StartDate)"/>
+        </div>
+        <div class="form-group">
+            <label>*Data fine:</label>
+            <InputText type="date" class="form-control" @bind-Value="model.FinishDate" />
+            <ValidationMessage For="@(() => model.FinishDate)"/>
+        </div>
+        <div class="wrapper-btn">
+            <div class="btn-cancel">
+                <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+            </div>
+            <div class="btn-confirm">
+                <button type="submit" class="btn btn-primary">Conferma</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public WorkorderAddFormDTO model = new WorkorderAddFormDTO();
+
+    public async Task OnClickConfirm() {
+        await httpClient.PostAsJsonAsync<WorkorderAddFormDTO>("http://localhost:5032/workorder/add", model);
+            
+        navManager.NavigateTo("/operation-manager");
+    }
+
+    public void OnClickCancel() {
+        navManager.NavigateTo("/operation-manager");
+    }
+}
