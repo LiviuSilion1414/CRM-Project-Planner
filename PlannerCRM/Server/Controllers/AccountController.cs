@@ -47,10 +47,11 @@ public class AccountController : ControllerBase
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
 
         if (person == null) {
+            var username = $"{employeeAdd.FirstName}.{employeeAdd.LastName}".ToLower();
             var user = new IdentityUser {
                 Email = employeeAdd.Email,
                 EmailConfirmed = true,
-                UserName = employeeAdd.Email
+                UserName = username
             };
 
             var result = await _userManager.CreateAsync(user, employeeAdd.Password);
@@ -58,6 +59,16 @@ public class AccountController : ControllerBase
             await _userManager.AddToRoleAsync(user, employeeAdd.Role.ToString());
         }
         return Ok();
+    }
+
+    [HttpPut("edit/user")]
+    public async Task EditUser(EmployeeEditDTO employeeEdit) {
+        var username = $"{employeeEdit.FirstName}.{employeeEdit.LastName}".ToLower();
+        var user = await _userManager.FindByNameAsync(username);
+
+        await _userManager.SetEmailAsync(user, employeeEdit.Email);
+        await _userManager.SetUserNameAsync(user, employeeEdit.Email);
+        
     }
 
     [HttpDelete("delete/user/{email}")]

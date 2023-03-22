@@ -2,7 +2,6 @@
 
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.Models
-@using System.Text.Json
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
@@ -91,6 +90,7 @@
 
     private async void OnClickConfirm() {
         await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/edit", model);
+        await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/account/edit/user/", model);
 
         navManager.NavigateTo("/account-manager");
     }
