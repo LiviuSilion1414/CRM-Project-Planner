@@ -20,16 +20,16 @@ public class EmployeeRepository
                 Email = entity.Email,
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
-                Birthday = DateTime.Parse(entity.BirthDay),
-                StartDate = DateTime.Parse(entity.StartDate),
+                Birthday = entity.BirthDay,
+                StartDate = entity.StartDate,
                 Password = entity.Password,
                 NumericCode = entity.NumericCode,
                 Role = entity.Role,
                 Salaries = new List<EmployeeSalaries> {
                     new EmployeeSalaries {
                         EmployeeId = entity.Id,
-                        StartDate = DateTime.Parse(entity.StartDate),
-                        FinishDate = DateTime.Parse(entity.StartDate),
+                        StartDate = entity.StartDate,
+                        FinishDate = entity.StartDate,
                         Salary = entity.HourPay
                     }
                 }
@@ -54,16 +54,16 @@ public class EmployeeRepository
             model.Id = entity.Id;
             model.FirstName = entity.FirstName;
             model.LastName = entity.LastName;
-            model.Birthday = DateTime.Parse(entity.BirthDay);
-            model.StartDate = DateTime.Parse(entity.StartDate);
+            model.Birthday = entity.BirthDay;
+            model.StartDate = entity.StartDate;
             model.Email = entity.Email;
             model.Role = entity.Role;
             model.NumericCode = entity.NumericCode;
             model.Salaries = new List<EmployeeSalaries> {
                 new EmployeeSalaries {
                     EmployeeId = entity.Id,
-                    StartDate = DateTime.Parse(entity.StartDate),
-                    FinishDate = DateTime.Parse(entity.StartDate),
+                    StartDate = entity.StartDate,
+                    FinishDate = entity.StartDate,
                     Salary = entity.HourPay
                 }
             };
@@ -91,8 +91,8 @@ public class EmployeeRepository
                 FirstName = e.FirstName,
                 LastName = e.LastName,
                 Email = e.Email,
-                BirthDay = e.Birthday.ToString(),
-                StartDate = e.StartDate.ToString(),
+                BirthDay = e.Birthday,
+                StartDate = e.StartDate,
                 Role = e.Role,
                 NumericCode = e.NumericCode,
                 Password = e.Password})

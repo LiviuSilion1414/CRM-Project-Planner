@@ -20,10 +20,10 @@ public partial class EmployeeForm
     public string Email { get; set; }
 
     [Required]
-    public string StartDate { get; set; }
+    public DateTime StartDate { get; set; }
 
     [Required]
-    public string BirthDay { get; set; }
+    public DateTime BirthDay { get; set; }
 
     [Required]
     public string NumericCode { get; set; }

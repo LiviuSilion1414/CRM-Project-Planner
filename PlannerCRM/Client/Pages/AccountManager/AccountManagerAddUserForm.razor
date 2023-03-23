@@ -30,12 +30,12 @@
         </div>
         <div class="form-group">
             <label>*Data di nascita:</label>
-            <InputText class="form-control" type="date" @bind-Value="model.BirthDay" />
+            <input class="form-control" type="date" @bind="@model.BirthDay" />
             <ValidationMessage For="@(() => model.BirthDay)" />
         </div>
         <div class="form-group">
             <label>*Data inizio:</label>
-            <InputText class="form-control" type="date" @bind-Value="model.StartDate" />
+            <input class="form-control" type="date" @bind="@model.StartDate" />
             <ValidationMessage For="@(() => model.StartDate)" />
         </div>
         <div class="form-group">
