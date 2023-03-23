@@ -1,0 +1,41 @@
+@page "/operation-manager/delete/workorder/{Id}"
+
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+
+@inject NavigationManager navManager
+@inject HttpClient httpClient
+
+<PageTitle>Account Manager - Elimina utente</PageTitle>
+
+<div>
+    <span>Vuoi eliminare:
+        <br>  
+        <strong>Nome:</strong> @model.Name 
+        <br>
+        <strong>Data inizio:</strong> @model.StartDate
+        <br>
+        <strong>Data fine:</strong> @model.FinishDate ?
+        <br>
+    </span>
+    <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>
+    <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; }
+    public WorkorderDeleteDTO model = new WorkorderDeleteDTO();
+    protected override async Task OnInitializedAsync() {
+        model = await httpClient.GetFromJsonAsync<WorkorderDeleteDTO>($"http://localhost:5032/workorder/get/for/delete/{Id}");
+    }
+
+    public void OnClickCancel() {
+        navManager.NavigateTo("/operation-manager");
+    }
+
+    public async Task OnClickDeleteUser() {
+        await httpClient.DeleteAsync($"http://localhost:5032/workorder/delete/{Id}");
+        
+        navManager.NavigateTo("/operation-manager");
+    }
+}
+

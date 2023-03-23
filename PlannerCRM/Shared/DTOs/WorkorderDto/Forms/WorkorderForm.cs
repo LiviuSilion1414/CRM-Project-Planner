@@ -11,8 +11,8 @@ public partial class WorkorderForm
     public string Name { get; set; }
     
     [Required]
-    public string StartDate { get; set; }
+    public DateTime StartDate { get; set; }
     
     [Required]
-    public string FinishDate { get; set; }
+    public DateTime FinishDate { get; set; }
 }

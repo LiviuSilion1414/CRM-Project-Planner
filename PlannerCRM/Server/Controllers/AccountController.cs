@@ -12,25 +12,33 @@ public class AccountController : ControllerBase
     private readonly SignInManager<IdentityUser> _signInManager;
 
     public AccountController(
-        UserManager<IdentityUser> userManager, 
+        UserManager<IdentityUser> userManager,
         SignInManager<IdentityUser> signInManager
-    ) {
+    )
+    {
         _userManager = userManager;
         _signInManager = signInManager;
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDTO employee) {
+    public async Task<ActionResult> Login(EmployeeLoginDTO employee)
+    {
         var user = await _userManager.FindByEmailAsync(employee.Email);
 
-        if (user == null) {
+        if (user == null)
+        {
             return BadRequest("Utente non trovato!");
-        } else {
+        }
+        else
+        {
             var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, employee.Password);
-            
-            if (!userPasswordIsCorrect) {
+
+            if (!userPasswordIsCorrect)
+            {
                 return BadRequest("Password sbagliata!");
-            } else {
+            }
+            else
+            {
                 await _signInManager.SignInAsync(user, true);
                 return Ok();
             }
@@ -40,45 +48,52 @@ public class AccountController : ControllerBase
     [HttpPost("add/user")]
     public async Task<ActionResult> AddUser(EmployeeAddDTO employeeAdd)
     {
-        if (!ModelState.IsValid) {
+        if (!ModelState.IsValid)
+        {
             return BadRequest();
         }
 
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
 
-        if (person == null) {
-            var user = new IdentityUser {
+        if (person == null)
+        {
+            var user = new IdentityUser
+            {
                 Email = employeeAdd.Email,
                 EmailConfirmed = true,
                 UserName = employeeAdd.Email
             };
 
             var result = await _userManager.CreateAsync(user, employeeAdd.Password);
- 
+
             await _userManager.AddToRoleAsync(user, employeeAdd.Role.ToString());
         }
         return Ok();
     }
 
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task EditUser(EmployeeEditDTO employeeEdit, string oldEmail) {
+    public async Task EditUser(EmployeeEditDTO employeeEdit, string oldEmail)
+    {
         var person = await _userManager.FindByEmailAsync(oldEmail);
 
-        if (person != null) {
-            person = new IdentityUser {
+        if (person != null)
+        {
+            person = new IdentityUser
+            {
                 Email = employeeEdit.Email,
                 EmailConfirmed = true,
                 UserName = employeeEdit.Email
             };
 
             var result = await _userManager.CreateAsync(person, employeeEdit.Password);
- 
+
             await _userManager.AddToRoleAsync(person, employeeEdit.Role.ToString());
         }
     }
 
     [HttpDelete("delete/user/{email}")]
-    public async Task DeleteUser(string email) {
+    public async Task DeleteUser(string email)
+    {
         var user = await _userManager.FindByEmailAsync(email);
 
         await _userManager.DeleteAsync(user);
@@ -94,7 +109,8 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task Logout() {
+    public async Task Logout()
+    {
         await _signInManager.SignOutAsync();
     }
 }

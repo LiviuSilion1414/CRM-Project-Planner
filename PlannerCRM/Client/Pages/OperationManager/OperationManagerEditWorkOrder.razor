@@ -1,13 +1,13 @@
-@page "/operation-manager/add/workorder"
+@page "/operation-manager/edit/workorder/{Id}"
 @using PlannerCRM.Shared.DTOs.Workorder.Forms
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
 
-<PageTitle>Operation Manager - Add Workorder</PageTitle>
+<PageTitle>Operation Manager - Edit Workorder</PageTitle>
 
 <div class="container-fluid">
-    <h1>Aggiungi commessa</h1>
+    <h1>Modifica commessa</h1>
     <EditForm Model="@model" OnValidSubmit="OnClickConfirm">
         <DataAnnotationsValidator/>
         <div class="form-group">
@@ -17,7 +17,7 @@
         </div>
         <div class="form-group">
             <label>*Data inzio:</label>
-            <input type="date" class="form-control" @bind="@model.StartDate"/> 
+            <input type="date" class="form-control" @bind="@model.StartDate" />
             <ValidationMessage For="@(() => model.StartDate)"/>
         </div>
         <div class="form-group">
@@ -37,10 +37,16 @@
 </div>
 
 @code {
-    public WorkorderAddFormDTO model = new WorkorderAddFormDTO();
+    [Parameter]
+    public string Id { get; set; }
+    public WorkorderEditFormDTO model = new WorkorderEditFormDTO();
+
+    protected override async Task OnInitializedAsync() {
+        model = await httpClient.GetFromJsonAsync<WorkorderEditFormDTO>($"http://localhost:5032/workorder/get/for/edit/{Id}");
+    }
 
     public async Task OnClickConfirm() {
-        await httpClient.PostAsJsonAsync<WorkorderAddFormDTO>("http://localhost:5032/workorder/add", model);
+        await httpClient.PutAsJsonAsync<WorkorderEditFormDTO>("http://localhost:5032/workorder/edit", model);
             
         navManager.NavigateTo("/operation-manager");
     }
@@ -49,3 +55,4 @@
         navManager.NavigateTo("/operation-manager");
     }
 }
+
