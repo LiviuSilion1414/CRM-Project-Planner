@@ -6,7 +6,10 @@
 @inject NavigationManager navManager
 @inject HttpClient httpClient
 
+<PageTitle>Account Manager - Modifica utente</PageTitle>
+
 <div class="container-fluid">
+    <h1>Modifica utente</h1>
     <EditForm Model="@model" OnValidSubmit="OnClickConfirm" class="form">
         <div class="form-group">
             <label>*First Name:</label>
@@ -77,11 +80,13 @@
 @code {
     [Parameter] public string paramId { get; set; }
     private EmployeeEditDTO model = new EmployeeEditDTO();
+    private string CurrentEmail { get; set; }
     private string errorMessage = "";
     private bool isError = false;
 
     protected override async Task OnInitializedAsync() {
         model = await httpClient.GetFromJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/get/for/edit/{paramId}");
+        CurrentEmail = model.Email;
     }
 
     private void OnClickCancel() {
@@ -90,7 +95,7 @@
 
     private async void OnClickConfirm() {
         await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/edit", model);
-        await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/account/edit/user/", model);
+        await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/account/edit/user/{CurrentEmail}", model);
 
         navManager.NavigateTo("/account-manager");
     }

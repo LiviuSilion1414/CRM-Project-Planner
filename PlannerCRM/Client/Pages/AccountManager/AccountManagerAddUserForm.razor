@@ -7,7 +7,10 @@
 @inject NavigationManager navManager
 @inject HttpClient httpClient
 
+<PageTitle>Account Manager - Aggiungi utente</PageTitle>
+
 <div class="container-fluid">
+    <h1>Aggiungi utente</h1>
     <EditForm Model="@model" OnValidSubmit="OnClickConfirm" class="form">
         <DataAnnotationsValidator/>
         <div class="form-group">

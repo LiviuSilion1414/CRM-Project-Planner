@@ -38,7 +38,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("add/user")]
-    public async Task<IActionResult> AddUser(EmployeeAddDTO employeeAdd)
+    public async Task<ActionResult> AddUser(EmployeeAddDTO employeeAdd)
     {
         if (!ModelState.IsValid) {
             return BadRequest();
@@ -47,11 +47,10 @@ public class AccountController : ControllerBase
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
 
         if (person == null) {
-            var username = $"{employeeAdd.FirstName}.{employeeAdd.LastName}".ToLower();
             var user = new IdentityUser {
                 Email = employeeAdd.Email,
                 EmailConfirmed = true,
-                UserName = username
+                UserName = employeeAdd.Email
             };
 
             var result = await _userManager.CreateAsync(user, employeeAdd.Password);
@@ -61,14 +60,21 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("edit/user")]
-    public async Task EditUser(EmployeeEditDTO employeeEdit) {
-        var username = $"{employeeEdit.FirstName}.{employeeEdit.LastName}".ToLower();
-        var user = await _userManager.FindByNameAsync(username);
+    [HttpPut("edit/user/{oldEmail}")]
+    public async Task EditUser(EmployeeEditDTO employeeEdit, string oldEmail) {
+        var person = await _userManager.FindByEmailAsync(oldEmail);
 
-        await _userManager.SetEmailAsync(user, employeeEdit.Email);
-        await _userManager.SetUserNameAsync(user, employeeEdit.Email);
-        
+        if (person != null) {
+            person = new IdentityUser {
+                Email = employeeEdit.Email,
+                EmailConfirmed = true,
+                UserName = employeeEdit.Email
+            };
+
+            var result = await _userManager.CreateAsync(person, employeeEdit.Password);
+ 
+            await _userManager.AddToRoleAsync(person, employeeEdit.Role.ToString());
+        }
     }
 
     [HttpDelete("delete/user/{email}")]
