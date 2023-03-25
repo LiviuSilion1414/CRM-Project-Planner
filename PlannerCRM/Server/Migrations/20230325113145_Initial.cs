@@ -193,7 +193,7 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeSalaries",
+                name: "EmployeeSalary",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -205,9 +205,9 @@ namespace PlannerCRM.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeSalaries", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeSalary", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeeSalaries_Employees_EmployeeId",
+                        name: "FK_EmployeeSalary_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
@@ -345,8 +345,8 @@ namespace PlannerCRM.Server.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeSalaries_EmployeeId",
-                table: "EmployeeSalaries",
+                name: "IX_EmployeeSalary_EmployeeId",
+                table: "EmployeeSalary",
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
@@ -382,7 +382,7 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeActivity");
 
             migrationBuilder.DropTable(
-                name: "EmployeeSalaries");
+                name: "EmployeeSalary");
 
             migrationBuilder.DropTable(
                 name: "WorkTimeRecords");

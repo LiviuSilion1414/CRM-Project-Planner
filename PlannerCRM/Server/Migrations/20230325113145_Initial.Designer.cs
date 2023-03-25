@@ -12,7 +12,7 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230322091350_Initial")]
+    [Migration("20230325113145_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -308,7 +308,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("EmployeeActivity");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalaries", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -332,7 +332,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeSalaries");
+                    b.ToTable("EmployeeSalary");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrder", b =>
@@ -471,7 +471,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalaries", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Employee", null)
                         .WithMany("Salaries")

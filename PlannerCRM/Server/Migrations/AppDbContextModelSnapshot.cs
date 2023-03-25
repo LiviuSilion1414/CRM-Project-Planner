@@ -305,7 +305,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("EmployeeActivity");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalaries", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -329,7 +329,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeSalaries");
+                    b.ToTable("EmployeeSalary");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrder", b =>
@@ -468,7 +468,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalaries", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Employee", null)
                         .WithMany("Salaries")
