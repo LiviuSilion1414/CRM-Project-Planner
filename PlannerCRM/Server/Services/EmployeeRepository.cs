@@ -25,8 +25,8 @@ public class EmployeeRepository
                 Password = entity.Password,
                 NumericCode = entity.NumericCode,
                 Role = entity.Role,
-                Salaries = new List<EmployeeSalaries> {
-                    new EmployeeSalaries {
+                Salaries = new List<EmployeeSalary> {
+                    new EmployeeSalary {
                         EmployeeId = entity.Id,
                         StartDate = entity.StartDate,
                         FinishDate = entity.StartDate,
@@ -59,8 +59,8 @@ public class EmployeeRepository
             model.Email = entity.Email;
             model.Role = entity.Role;
             model.NumericCode = entity.NumericCode;
-            model.Salaries = new List<EmployeeSalaries> {
-                new EmployeeSalaries {
+            model.Salaries = new List<EmployeeSalary> {
+                new EmployeeSalary {
                     EmployeeId = entity.Id,
                     StartDate = entity.StartDate,
                     FinishDate = entity.StartDate,

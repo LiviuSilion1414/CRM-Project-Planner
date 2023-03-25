@@ -13,6 +13,6 @@ public class Employee
     public DateTime Birthday { get; set; }
     public string NumericCode { get; set; }
     public Roles Role { get; set; }
-    public List<EmployeeSalaries> Salaries { get; set; }
+    public List<EmployeeSalary> Salaries { get; set; }
     public List<EmployeeActivity> EmployeeActivity { get; set; }
 }

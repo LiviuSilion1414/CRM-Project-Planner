@@ -1,6 +1,6 @@
 namespace PlannerCRM.Server.Models;
 
-public class EmployeeSalaries
+public class EmployeeSalary
 {
     public int Id { get; set; }
     public int EmployeeId { get; set; }
