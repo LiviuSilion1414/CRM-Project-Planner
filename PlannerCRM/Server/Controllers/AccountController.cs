@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -21,44 +23,34 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDTO employee)
-    {
+    public async Task<ActionResult> Login(EmployeeLoginDTO employee) {
         var user = await _userManager.FindByEmailAsync(employee.Email);
 
-        if (user == null)
-        {
+        if (user == null) {
             return BadRequest("Utente non trovato!");
-        }
-        else
-        {
+        } else {
             var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, employee.Password);
 
-            if (!userPasswordIsCorrect)
-            {
+            if (!userPasswordIsCorrect) {
                 return BadRequest("Password sbagliata!");
-            }
-            else
-            {
+            } else {
                 await _signInManager.SignInAsync(user, true);
                 return Ok();
             }
         }
     }
 
+    [Authorize]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeAddDTO employeeAdd)
-    {
-        if (!ModelState.IsValid)
-        {
+    public async Task<ActionResult> AddUser(EmployeeAddDTO employeeAdd) {
+        if (!ModelState.IsValid) {
             return BadRequest();
         }
 
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
 
-        if (person == null)
-        {
-            var user = new IdentityUser
-            {
+        if (person == null) {
+            var user = new IdentityUser {
                 Email = employeeAdd.Email,
                 EmailConfirmed = true,
                 UserName = employeeAdd.Email
@@ -71,29 +63,27 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
+    [Authorize]
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task EditUser(EmployeeEditDTO employeeEdit, string oldEmail)
-    {
+    public async Task EditUser(EmployeeEditDTO employeeEdit, string oldEmail) {
         var person = await _userManager.FindByEmailAsync(oldEmail);
 
-        if (person != null)
-        {
-            person = new IdentityUser
-            {
+        if (person != null) {
+            person = new IdentityUser {
                 Email = employeeEdit.Email,
                 EmailConfirmed = true,
                 UserName = employeeEdit.Email
             };
 
-            var result = await _userManager.CreateAsync(person, employeeEdit.Password);
+            await _userManager.CreateAsync(person, employeeEdit.Password);
 
             await _userManager.AddToRoleAsync(person, employeeEdit.Role.ToString());
         }
     }
-
+    
+    [Authorize]
     [HttpDelete("delete/user/{email}")]
-    public async Task DeleteUser(string email)
-    {
+    public async Task DeleteUser(string email) {
         var user = await _userManager.FindByEmailAsync(email);
 
         await _userManager.DeleteAsync(user);
@@ -101,16 +91,26 @@ public class AccountController : ControllerBase
 
     [HttpGet]
     [Route("user/role")]
-    public async Task<IList<string>> GetUserRole()
-    {
+    public async Task<IList<string>> GetUserRole() {
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
         var roles = await _userManager.GetRolesAsync(user);
+        
         return roles;
     }
 
-    [HttpPost("logout")]
-    public async Task Logout()
-    {
+    [Authorize]
+    [HttpPost]
+    public async Task Logout() {
         await _signInManager.SignOutAsync();
+    }
+
+    [HttpGet]
+    public CurrentUser CurrentUserInfo() {
+        return new CurrentUser {
+            IsAuthenticated = User.Identity.IsAuthenticated,
+            UserName = User.Identity.Name,
+            Claims = User.Claims
+                .ToDictionary(c => c.Type, c => c.Value)
+        };
     }
 }
