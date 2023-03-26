@@ -66,8 +66,8 @@ public class WorkOrderRepository
 			.Select(e => new WorkorderViewDTO {
 				Id = e.Id,
 				Name = e.Name,
-				StartDate = e.StartDate.ToShortDateString(),
-				FinishDate = e.FinishDate.ToShortDateString()
+				StartDate = e.StartDate,
+				FinishDate = e.FinishDate
 			})
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
@@ -88,8 +88,8 @@ public class WorkOrderRepository
 			.Select(e => new WorkorderViewDTO {
 				Id = e.Id,
 				Name = e.Name,
-				StartDate = e.StartDate.ToShortDateString(),
-				FinishDate = e.FinishDate.ToShortDateString()
+				StartDate = e.StartDate,
+				FinishDate = e.FinishDate
 			})
 			.ToListAsync();
 	}
