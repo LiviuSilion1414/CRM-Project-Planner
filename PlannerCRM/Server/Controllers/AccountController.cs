@@ -99,12 +99,12 @@ public class AccountController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpGet("logout")]
     public async Task Logout() {
         await _signInManager.SignOutAsync();
     }
 
-    [HttpGet]
+    [HttpGet("current/user/info")]
     public CurrentUser CurrentUserInfo() {
         return new CurrentUser {
             IsAuthenticated = User.Identity.IsAuthenticated,

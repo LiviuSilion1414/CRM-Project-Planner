@@ -13,7 +13,7 @@ public class AuthService
     }
 
     public async Task<CurrentUser> CurrentUserInfo() {
-        var result = await _httpClient.GetFromJsonAsync<CurrentUser>("http://localhost:5032/account/currentuserinfo");
+        var result = await _httpClient.GetFromJsonAsync<CurrentUser>("http://localhost:5032/account/current/user/info");
         return result;
     }
 
