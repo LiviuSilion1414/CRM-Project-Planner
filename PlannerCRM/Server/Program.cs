@@ -98,9 +98,9 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseRouting();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
