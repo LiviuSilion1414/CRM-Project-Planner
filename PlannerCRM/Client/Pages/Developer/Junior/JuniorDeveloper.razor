@@ -1,0 +1,54 @@
+@page "/junior-developer"
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+
+<PageTitle>Junior Developer - Homepage</PageTitle>
+
+<h4>Commesse</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Nome </th>
+            <th scope="col">Data inizio</th>
+            <th scope="col">Data fine</th>
+            <th scope="col">Attività</th>
+            <th scope="col">Tariffa oraria</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var wo in _workorders)
+        {
+            <tr>
+                <td>@wo.Name</td>
+                <td>@wo.StartDate</td>
+                <td>@wo.FinishDate</td>
+              @*  <td>@wo.Activities</td>
+                <td>
+                    <select class="dropdown-item">
+                        @foreach (var activity in wo.Activities) {
+                            <option value="@activity">@activity</option>
+                        }
+                    </select>
+                </td> *@
+                <td>
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickAddWorkedHours(wo.Id))">Aggiungi orario di lavroro</button>                
+                </td> 
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<WorkorderViewDTO> _workorders = new();
+
+    protected override async Task OnInitializedAsync() {
+        _workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");
+    }
+    
+    public void OnClickAddWorkedHours(int id) {
+        navManager.NavigateTo($"/junior-developer/add/worked-hours/{id}");
+    }
+
+}

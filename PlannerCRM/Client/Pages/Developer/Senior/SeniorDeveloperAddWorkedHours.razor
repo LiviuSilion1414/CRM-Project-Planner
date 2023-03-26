@@ -1,0 +1,58 @@
+@page "/senior-developer/add/worked-hours/{Id}"
+
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+
+<div class="container-fluid">
+    <h3>Aggiungi orario di lavoro</h3>
+    <EditForm Model="@model" OnValidSubmit="OnClickAddWorkedHours">
+        <DataAnnotationsValidator/>
+        <div class="form-group">
+            <label>Nome commessa: </label>
+            <InputText type="text" class="form-control" @bind-Value="model.Name" />
+        </div>
+        <div class="form-group">
+            <label>Data inizio: </label>
+            <input type="date" class="form-control" @bind="@model.StartDate" />
+        </div>
+        <div class="form-group">
+            <label>Data fine: </label>
+            <input type="date" class="form-control" @bind="@model.FinishDate" />
+        </div>
+       @* <div class="form-group">
+            <label>Attività: </label>
+            <InputText type="text" class="form-control" @bind-Value="model.Activities" />
+        </div>*@
+        <div class="wrapper-btn">
+            <div class="btn-cancel">
+                <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+            </div>
+            <div class="btn-confirm">
+                <button type="submit" class="btn btn-primary">Conferma</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private WorkorderViewDTO model = new();
+
+    protected override async Task OnInitializedAsync() {
+        model = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{Id}");
+    }
+    
+    public void OnClickCancel() {
+        navManager.NavigateTo("/senior-developer");
+    }
+
+    public async Task OnClickAddWorkedHours() {
+        await httpClient.PostAsJsonAsync<WorkorderViewDTO>($"http://localhost:5032/wokorder/add/{Id}", model);
+        
+        navManager.NavigateTo("/senior-developer");
+    }
+
+}

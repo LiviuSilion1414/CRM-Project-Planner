@@ -1,0 +1,29 @@
+h3 {
+    text-align: center;
+    font-size: medium;
+    border-bottom: 1px groove;
+    font-weight: 600;
+}
+
+.container-fluid {
+    padding: 50px;
+    border-radius: 10px;
+    border-bottom: 1px;
+    border-style: groove;
+}
+
+.form-group {
+    padding: 10px 0;
+}
+
+.btn-cancel, .btn-confirm {
+    padding-bottom: 15px;
+}
+
+.btn-cancel {
+    float: left;
+}
+
+.btn-confirm {
+    float: right;
+}
