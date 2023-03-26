@@ -99,7 +99,7 @@ public class AccountController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost]
+    [HttpGet]
     public async Task Logout() {
         await _signInManager.SignOutAsync();
     }
