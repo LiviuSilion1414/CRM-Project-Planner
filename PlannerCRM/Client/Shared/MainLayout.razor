@@ -1,15 +1,60 @@
 ﻿@inherits LayoutComponentBase
 
+@using PlannerCRM.Shared.Models
+
+@inject NavigationManager navManager
+@inject CustomAuthState authStateProvider
+
 <div class="page">
     <main>
         <div class="navbar">
-            <NavLink class="nav-link" href="/">
+            <NavLink class="nav-link" href="/" @onclick="NavigateBasedOnRole">
                 <span aria-hidden="true">PlannerCRM</span>
             </NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="top-row4">
+                        <span>Ciao, @context.User.Identity.Name!</span>
+                        <button type="button" class="btn btn-danger" @onclick="LogoutClick">Logout</button>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div class="top-row4">
+                        <span>Accedi al tuo account!</span>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
-
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@code {
+    
+    async Task NavigateBasedOnRole() {
+        var rolesList = await authStateProvider.GetRoles();
+
+        foreach (var role in rolesList) {
+            if (role == nameof(Roles.ACCOUNT_MANAGER)) {
+                navManager.NavigateTo("/account-manager");
+            } else if (role == nameof(Roles.OPERATION_MANAGER)) {
+                navManager.NavigateTo("/operation-manager");
+            } else if (role == nameof(Roles.PROJECT_MANAGER)) {
+                navManager.NavigateTo("/project-manager");
+            } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
+                navManager.NavigateTo("/senior-developer");
+            } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
+                navManager.NavigateTo("/junior-developer");
+            } else {
+                navManager.NavigateTo("/");
+            }
+        }
+    }
+
+    async Task LogoutClick() {
+        await authStateProvider.Logout();
+        navManager.NavigateTo("/login");
+    }
+}
