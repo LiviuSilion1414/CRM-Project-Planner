@@ -1,6 +1,5 @@
 ﻿@page "/"
 @page "/login"
-@layout AuthLayout
 
 @using PlannerCRM.Shared.Models
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
@@ -8,6 +7,7 @@
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
+@inject CustomAuthState authStateProvider
 
 <PageTitle>Login</PageTitle>
 
@@ -41,11 +41,10 @@
     private EmployeeLoginDTO model = new EmployeeLoginDTO();   
     private string Message { get; set; }
     private bool IsError { get; set; }
+
     private async Task LoginOnValidInput() {
-        var json = JsonSerializer.Serialize(model);
-        var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
         
-        var response = await httpClient.PostAsync("http://localhost:5032/account/login", httpContent);
         if (response.IsSuccessStatusCode) {
             var rolesList = await httpClient.GetFromJsonAsync<IEnumerable<string>>("http://localhost:5032/account/user/role");
 
