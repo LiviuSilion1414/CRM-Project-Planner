@@ -5,6 +5,7 @@
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
+@attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
 <PageTitle>Account Manager - Modifica utente</PageTitle>
 

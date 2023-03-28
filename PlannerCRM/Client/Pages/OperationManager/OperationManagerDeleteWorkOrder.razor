@@ -1,9 +1,11 @@
 @page "/operation-manager/delete/workorder/{Id}"
 
 @using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.Models
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
+@attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
 <PageTitle>Account Manager - Elimina utente</PageTitle>
 

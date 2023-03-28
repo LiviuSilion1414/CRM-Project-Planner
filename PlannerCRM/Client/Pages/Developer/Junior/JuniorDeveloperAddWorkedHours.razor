@@ -1,9 +1,11 @@
 @page "/junior-developer/add/worked-hours/{Id}"
 
 @using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.Models
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+@attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 
 <div class="container-fluid">
     <h3>Aggiungi orario di lavoro</h3>

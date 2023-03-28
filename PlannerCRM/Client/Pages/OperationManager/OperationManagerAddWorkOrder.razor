@@ -1,9 +1,11 @@
 @page "/operation-manager/add/workorder"
 
 @using PlannerCRM.Shared.DTOs.Workorder.Forms
+@using PlannerCRM.Shared.Models
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+@attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
 <PageTitle>Operation Manager - Add Workorder</PageTitle>
 

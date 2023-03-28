@@ -1,8 +1,10 @@
 @page "/operation-manager"
 @using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.Models
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+@attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
 <PageTitle>Operation Manager - Commesse</PageTitle>
 
