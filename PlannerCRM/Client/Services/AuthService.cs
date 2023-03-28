@@ -13,8 +13,11 @@ public class AuthService
     }
 
     public async Task<CurrentUser> CurrentUserInfo() {
-        var result = await _httpClient.GetFromJsonAsync<CurrentUser>("http://localhost:5032/account/current/user/info");
-        return result;
+        return await _httpClient.GetFromJsonAsync<CurrentUser>("http://localhost:5032/account/current/user/info");
+    }
+
+    public async Task<IEnumerable<string>> GetRoles() {
+        return await _httpClient.GetFromJsonAsync<IEnumerable<string>>("http://localhost:5032/account/user/role");
     }
 
     public async Task Login(EmployeeLoginDTO loginRequest) {
