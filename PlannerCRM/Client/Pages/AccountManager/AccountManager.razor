@@ -6,7 +6,7 @@
 @inject NavigationManager navManager
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
-<PageTitle>Account Manager - Homepage</PageTitle>
+<PageTitle>Account Manager</PageTitle>
 
 <button class="btn btn-primary" @onclick="OnClickAddUser">
     <span class="oi oi-plus"></span>
@@ -33,10 +33,10 @@
                 <td>@user.Role</td>
                 <td>@user.HourlyPay</td>
                 <td>
-                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(user.Id))">Edit</button>                
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(user.Id))">Modifica</button>                
                 </td> 
                 <td> 
-                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(user.Id))">Delete</button>
+                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(user.Id))">Elimina</button>
                 </td>
             </tr>
         }

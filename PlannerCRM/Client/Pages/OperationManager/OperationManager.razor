@@ -6,7 +6,7 @@
 @inject NavigationManager navManager
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
-<PageTitle>Operation Manager - Commesse</PageTitle>
+<PageTitle>Operation Manager</PageTitle>
 
 <button class="btn btn-primary" @onclick="OnClickAddUser">
     <span class="oi oi-plus"></span>
@@ -17,7 +17,7 @@
     <thead>
         <tr>
             <th scope="col">Nome</th>
-            <th scope="col">Data inizio</th>
+            <th scope="col">Data d'inizio</th>
             <th scope="col">Data fine</th>
         </tr>
     </thead>
@@ -29,10 +29,10 @@
                 <td>@wo.StartDate</td>
                 <td>@wo.FinishDate</td>
                 <td>
-                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(wo.Id))">Edit</button>                
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(wo.Id))">Modifica</button>                
                 </td> 
                 <td> 
-                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(wo.Id))">Delete</button>
+                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(wo.Id))">Elimina</button>
                 </td>
             </tr>
         }

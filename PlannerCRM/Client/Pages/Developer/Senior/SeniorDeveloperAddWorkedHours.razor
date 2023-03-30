@@ -7,6 +7,8 @@
 @inject NavigationManager navManager
 @attribute [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
 
+<PageTitle>Junior Developer</PageTitle>
+
 <div class="container-fluid">
     <h3>Aggiungi orario di lavoro</h3>
     <EditForm Model="@model" OnValidSubmit="OnClickAddWorkedHours">
@@ -16,7 +18,7 @@
             <InputText type="text" class="form-control" @bind-Value="model.Name" />
         </div>
         <div class="form-group">
-            <label>Data inizio: </label>
+            <label>Data d'inizio: </label>
             <input type="date" class="form-control" @bind="@model.StartDate" />
         </div>
         <div class="form-group">

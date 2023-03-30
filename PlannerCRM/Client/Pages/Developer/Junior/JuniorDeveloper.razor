@@ -7,7 +7,7 @@
 @inject NavigationManager navManager
 @attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 
-<PageTitle>Junior Developer - Homepage</PageTitle>
+<PageTitle>Junior Developer</PageTitle>
 
 <h4>Commesse</h4>
 <table class="table">
@@ -36,7 +36,7 @@
                     </select>
                 </td> *@
                 <td>
-                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickAddWorkedHours(wo.Id))">Aggiungi orario di lavroro</button>                
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickAddWorkedHours(wo.Id))">Aggiungi orario di lavoro</button>                
                 </td> 
             </tr>
         }

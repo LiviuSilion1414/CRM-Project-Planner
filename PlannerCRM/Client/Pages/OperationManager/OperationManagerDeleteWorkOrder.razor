@@ -7,14 +7,14 @@
 @inject HttpClient httpClient
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
-<PageTitle>Account Manager - Elimina utente</PageTitle>
+<PageTitle>Account Manager</PageTitle>
 
 <div>
     <span>Vuoi eliminare:
         <br>  
         <strong>Nome:</strong> @model.Name 
         <br>
-        <strong>Data inizio:</strong> @model.StartDate
+        <strong>Data d'inizio:</strong> @model.StartDate
         <br>
         <strong>Data fine:</strong> @model.FinishDate ?
         <br>
