@@ -13,13 +13,18 @@
             </NavLink>
             <AuthorizeView>
                 <Authorized>
-                    <div class="top-row4">
-                        <span>Ciao, @context.User.Identity.Name!</span>
-                        <button type="button" class="btn btn-danger" @onclick="LogoutClick">Logout</button>
+                    <div class="parent">
+                        <div class="child">
+                            <span class="user-info">Ciao, @context.User.Identity.Name!</span> <br>
+                            <span class="user-info">Ruolo: @UserRole</span>
+                        </div>
+                        <div class="child">
+                            <button type="button" class="btn btn-danger" @onclick="LogoutClick">Logout</button>
+                        </div>
                     </div>
                 </Authorized>
                 <NotAuthorized>
-                    <div class="top-row4">
+                    <div class="wrapper">
                         <span>Accedi al tuo account!</span>
                     </div>
                 </NotAuthorized>
@@ -32,7 +37,20 @@
 </div>
 
 @code {
-    
+    private bool IsAuthenticated { get; set; }
+    private string UserRole { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        IsAuthenticated = authState.User.Identity.IsAuthenticated;
+        if (IsAuthenticated) {
+            UserRole = (await authStateProvider.GetRoles())
+                .ToList()[0]
+                .ToLower()
+                .Replace('_', ' ');
+        }
+    }
+
     async Task NavigateBasedOnRole() {
         var rolesList = await authStateProvider.GetRoles();
 
@@ -58,3 +76,4 @@
         navManager.NavigateTo("/login");
     }
 }
+
