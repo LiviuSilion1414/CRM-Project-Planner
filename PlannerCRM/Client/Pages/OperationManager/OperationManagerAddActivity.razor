@@ -1,0 +1,87 @@
+@page "/operation-manager/add/activity"
+
+@using PlannerCRM.Shared.DTOs.ActivityDto.Forms
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.DTOs.EmployeeDto.Views
+
+@using PlannerCRM.Shared.Models
+
+@inject NavigationManager navManager
+@inject HttpClient httpClient
+@attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+
+<PageTitle>Operation Manager</PageTitle>
+
+<div class="container-fluid">
+    <h1>Aggiungi attività</h1>
+    <EditForm Model="model" OnValidSubmit="OnClickAddActivity" >
+        <DataAnnotationsValidator/>
+        <div class="form-group">
+            <label>Commessa: </label>
+            <div class="form-control">
+                <InputSelect class="dropdown-item" @bind-Value="model.WorkorderId" >
+                    @foreach (var wo in workorders) {
+                        <option value="@wo.Id">@wo.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => model.WorkorderId)"/>   
+            </div>
+        </div>
+        <div class="form-group">
+            <label>*Nome:</label>
+            <InputText class="form-control" type="text" @bind-Value="model.Name" />
+            <ValidationMessage For="@(() => model.Name)"/>
+        </div>
+        <div class="form-group">
+            <label>*Data d'inizio:</label>
+            <input class="form-control" type="date" @bind="@model.StartDate" />
+            <ValidationMessage For="@(() => model.StartDate)" />
+        </div>
+        <div class="form-group">
+            <label>*Data di fine:</label>
+            <input class="form-control" type="date" @bind="@model.FinishDate" />
+            <ValidationMessage For="@(() => model.FinishDate)" />
+        </div>
+        <div class="form-group">
+            <label>*Assegna a dipendenti: </label>
+            <div class="form-control">
+                <InputSelect class="dropdown-item" @bind-Value="model.UsersId" >
+                    @foreach (var us in users) {
+                        <option value="@us.Id">@us.Email</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => model.UsersId)"/>   
+            </div>
+        </div>
+        <div class="wrapper-btn">
+        <div class="btn-cancel">
+            <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+        </div>
+        <div class="btn-confirm">
+            <button type="submit" class="btn btn-primary">Conferma</button>
+        </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public ActivityAddDTO model = new();
+    public List<WorkorderViewDTO> workorders = new();
+    public List<EmployeeViewDTO> users = new();
+
+    protected override async Task OnInitializedAsync() {
+        workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");
+        users = await httpClient.GetFromJsonAsync<List<EmployeeViewDTO>>("http://localhost:5032/employee/get/all");
+    }
+
+    public async Task OnClickAddActivity() {
+        await httpClient.PostAsJsonAsync<ActivityAddDTO>("http://localhost:5032/activity/add", model);
+        
+        navManager.NavigateTo("/operation-manager");
+    }
+
+    public void OnClickCancel() {
+        navManager.NavigateTo("/operation-manager");
+    }
+}
+
