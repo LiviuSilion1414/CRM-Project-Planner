@@ -8,10 +8,24 @@
 
 <PageTitle>Operation Manager</PageTitle>
 
-<button class="btn btn-primary" @onclick="OnClickAddUser">
-    <span class="oi oi-plus"></span>
-    Aggiungi commessa
-</button>
+<div class="parent">
+    <div class="child">
+        <button class="btn btn-primary" @onclick="OnClickAddWorkorder">
+            <span class="oi oi-plus"></span>
+            Aggiungi commessa
+        </button>
+    </div>
+    
+    @if (_workorders.Count != 0) {
+        <div class="child">
+            <button class="btn btn-primary" @onclick="OnClickAddActivity">
+                <span class="oi oi-plus"></span>
+                Aggiungi attività
+            </button>
+        </div>
+    }
+</div>
+
 
 <table class="table">
     <thead>
@@ -46,8 +60,12 @@
         _workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");
     }
     
-    public void OnClickAddUser() {
+    public void OnClickAddWorkorder() {
         navManager.NavigateTo("/operation-manager/add/workorder");
+    }
+
+    public void OnClickAddActivity() {
+        navManager.NavigateTo("/operation-manager/add/activity");
     }
 
     public void OnClickEdit(int id) {
