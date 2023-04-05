@@ -45,12 +45,12 @@
         <div class="form-group">
             <label>*Assegna a dipendenti: </label>
             <div class="form-control">
-                <InputSelect class="dropdown-item" @bind-Value="model.UsersId" >
+                <InputSelect class="dropdown-item" @bind-Value="model.EmployeeActivityDtos" >
                     @foreach (var us in users) {
                         <option value="@us.Id">@us.Email</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => model.UsersId)"/>   
+                <ValidationMessage For="@(() => model.EmployeeActivityDtos)"/>   
             </div>
         </div>
         <div class="wrapper-btn">
@@ -65,7 +65,7 @@
 </div>
 
 @code {
-    public ActivityAddDTO model = new();
+    public ActivityForm model = new();
     public List<WorkorderViewDTO> workorders = new();
     public List<EmployeeViewDTO> users = new();
 
@@ -75,7 +75,7 @@
     }
 
     public async Task OnClickAddActivity() {
-        await httpClient.PostAsJsonAsync<ActivityAddDTO>("http://localhost:5032/activity/add", model);
+        await httpClient.PostAsJsonAsync<ActivityForm>("http://localhost:5032/activity/add", model);
         
         navManager.NavigateTo("/operation-manager");
     }
