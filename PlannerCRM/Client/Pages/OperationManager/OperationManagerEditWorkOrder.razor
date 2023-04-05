@@ -42,14 +42,14 @@
 @code {
     [Parameter]
     public string Id { get; set; }
-    public WorkorderEditFormDTO model = new WorkorderEditFormDTO();
+    public WorkorderForm model = new WorkorderForm();
 
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<WorkorderEditFormDTO>($"http://localhost:5032/workorder/get/for/edit/{Id}");
+        model = await httpClient.GetFromJsonAsync<WorkorderForm>($"http://localhost:5032/workorder/get/for/edit/{Id}");
     }
 
     public async Task OnClickConfirm() {
-        await httpClient.PutAsJsonAsync<WorkorderEditFormDTO>("http://localhost:5032/workorder/edit", model);
+        await httpClient.PutAsJsonAsync<WorkorderForm>("http://localhost:5032/workorder/edit", model);
             
         navManager.NavigateTo("/operation-manager");
     }

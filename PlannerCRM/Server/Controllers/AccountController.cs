@@ -42,7 +42,7 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeAddDTO employeeAdd) {
+    public async Task<ActionResult> AddUser(EmployeeForm employeeAdd) {
         if (!ModelState.IsValid) {
             return BadRequest();
         }
@@ -65,7 +65,7 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task EditUser(EmployeeEditDTO employeeEdit, string oldEmail) {
+    public async Task EditUser(EmployeeForm employeeEdit, string oldEmail) {
         var person = await _userManager.FindByEmailAsync(oldEmail);
 
         if (person != null) {

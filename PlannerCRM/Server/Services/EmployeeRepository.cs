@@ -14,7 +14,7 @@ public class EmployeeRepository
         _db = db;
     }
 
-    public async Task AddAsync(EmployeeAddDTO entity) {
+    public async Task AddAsync(EmployeeForm entity) {
         _db.Employees.Add(
             new Employee {
                 Email = entity.Email,
@@ -45,7 +45,7 @@ public class EmployeeRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> EditAsync(EmployeeEditDTO entity) {
+    public async Task<bool> EditAsync(EmployeeForm entity) {
         var model = await _db.Employees.SingleOrDefaultAsync(e => e.Id == entity.Id);
         
         if (model == null) {
@@ -84,9 +84,9 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
-    public async Task<EmployeeEditDTO> GetForEditAsync(int id) {
+    public async Task<EmployeeForm> GetForEditAsync(int id) {
         return await _db.Employees
-            .Select(e => new EmployeeEditDTO {
+            .Select(e => new EmployeeForm {
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,

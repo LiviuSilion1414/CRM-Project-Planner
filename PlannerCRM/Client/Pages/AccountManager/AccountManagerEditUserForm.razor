@@ -80,13 +80,13 @@
 
 @code {
     [Parameter] public string paramId { get; set; }
-    private EmployeeEditDTO model = new EmployeeEditDTO();
+    private EmployeeForm model = new EmployeeForm();
     private string CurrentEmail { get; set; }
     private string errorMessage = "";
     private bool isError = false;
 
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/get/for/edit/{paramId}");
+        model = await httpClient.GetFromJsonAsync<EmployeeForm>($"http://localhost:5032/employee/get/for/edit/{paramId}");
         CurrentEmail = model.Email;
     }
 
@@ -95,8 +95,8 @@
     }
 
     private async void OnClickConfirm() {
-        await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/employee/edit", model);
-        await httpClient.PutAsJsonAsync<EmployeeEditDTO>($"http://localhost:5032/account/edit/user/{CurrentEmail}", model);
+        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/employee/edit", model);
+        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/account/edit/user/{CurrentEmail}", model);
 
         navManager.NavigateTo("/account-manager");
     }

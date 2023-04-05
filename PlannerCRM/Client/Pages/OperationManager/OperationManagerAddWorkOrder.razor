@@ -40,10 +40,10 @@
 </div>
 
 @code {
-    public WorkorderAddFormDTO model = new WorkorderAddFormDTO();
+    public WorkorderForm model = new WorkorderForm();
 
     public async Task OnClickConfirm() {
-        await httpClient.PostAsJsonAsync<WorkorderAddFormDTO>("http://localhost:5032/workorder/add", model);
+        await httpClient.PostAsJsonAsync<WorkorderForm>("http://localhost:5032/workorder/add", model);
             
         navManager.NavigateTo("/operation-manager");
     }

@@ -80,7 +80,7 @@
 </div>
 
 @code {
-    private EmployeeAddDTO model = new EmployeeAddDTO();
+    private EmployeeForm model = new EmployeeForm();
     private string errorMessage = "";
     private bool isError = false;
 
@@ -89,8 +89,8 @@
     }
 
     private async void OnClickConfirm() {
-        var addIdentityAccountLogin = await httpClient.PostAsJsonAsync<EmployeeAddDTO>("http://localhost:5032/account/add/user", model);
-        var addIdentityEmployee = await httpClient.PostAsJsonAsync<EmployeeAddDTO>("http://localhost:5032/employee/add", model);
+        var addIdentityAccountLogin = await httpClient.PostAsJsonAsync<EmployeeForm>("http://localhost:5032/account/add/user", model);
+        var addIdentityEmployee = await httpClient.PostAsJsonAsync<EmployeeForm>("http://localhost:5032/employee/add", model);
 
         navManager.NavigateTo("/account-manager");
     }
