@@ -6,6 +6,7 @@ public partial class ActivityForm
     public string Name { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime FinishDate { get; set; }
+
     public int WorkorderId { get; set; }
-    public int UsersId { get; set; }
+    public List<EmployeeActivityDto> EmployeeActivityDtos { get; set; }
 }

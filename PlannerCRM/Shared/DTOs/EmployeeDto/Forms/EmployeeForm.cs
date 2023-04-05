@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
@@ -33,4 +34,6 @@ public partial class EmployeeForm
 
     [Required]
     public decimal HourPay { get; set; }
+
+    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }
