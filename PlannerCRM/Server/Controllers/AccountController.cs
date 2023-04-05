@@ -42,7 +42,7 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeForm employeeAdd) {
+    public async Task<ActionResult> AddUser(EmployeeAddDTO employeeAdd) {
         if (!ModelState.IsValid) {
             return BadRequest();
         }
@@ -65,7 +65,7 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task EditUser(EmployeeForm employeeEdit, string oldEmail) {
+    public async Task EditUser(EmployeeEditDTO employeeEdit, string oldEmail) {
         var person = await _userManager.FindByEmailAsync(oldEmail);
 
         if (person != null) {
@@ -83,30 +83,19 @@ public class AccountController : ControllerBase
     
     [Authorize]
     [HttpDelete("delete/user/{email}")]
-    public async Task<ActionResult> DeleteUser(string email) {
+    public async Task DeleteUser(string email) {
         var user = await _userManager.FindByEmailAsync(email);
-        
-        if (user != null) {
-            return BadRequest("Utente non trovato!");
-        } else {
-            await _userManager.DeleteAsync(user);
-            return Ok();
-        }
+
+        await _userManager.DeleteAsync(user);
     }
 
     [HttpGet]
     [Route("user/role")]
-    public async Task<List<string>> GetUserRole() {
-        try {
-            var username = User.Identity.Name;
-            var user = await _userManager.FindByNameAsync(username);
-            var roles = await _userManager.GetRolesAsync(user);
-            
-            return roles.ToList();
-        } catch (Exception ex) {
-            Console.WriteLine($"The error caused is: {ex.StackTrace}");
-        } 
-        return new List<string>();
+    public async Task<IList<string>> GetUserRole() {
+        var user = await _userManager.FindByNameAsync(User.Identity.Name);
+        var roles = await _userManager.GetRolesAsync(user);
+        
+        return roles;
     }
 
     [Authorize]

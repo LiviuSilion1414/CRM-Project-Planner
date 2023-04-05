@@ -19,13 +19,13 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task AddUser(EmployeeForm employeeAdd) {
+    public async Task AddUser(EmployeeAddDTO employeeAdd) {
         await _repo.AddAsync(employeeAdd);
     }
 
     [Authorize]
     [HttpPut("edit")]
-    public async Task EditUser(EmployeeForm employeeEdit) {
+    public async Task EditUser(EmployeeEditDTO employeeEdit) {
         await _repo.EditAsync(employeeEdit);
     }
 
@@ -43,7 +43,7 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpGet("get/for/edit/{id}")]
-    public async Task<EmployeeForm> GetForEditById(int id) {
+    public async Task<EmployeeEditDTO> GetForEditById(int id) {
        return await _repo.GetForEditAsync(id);
     }
 

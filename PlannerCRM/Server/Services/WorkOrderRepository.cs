@@ -13,7 +13,7 @@ public class WorkOrderRepository
 	public WorkOrderRepository(AppDbContext db) {
 		_db = db;
 	}
-	public async Task AddAsync(WorkorderForm entity) {
+	public async Task AddAsync(WorkorderAddFormDTO entity) {
 		_db.WorkOrders.Add(new WorkOrder {
 			Name = entity.Name,
 			StartDate = entity.StartDate,
@@ -34,7 +34,7 @@ public class WorkOrderRepository
 		await _db.SaveChangesAsync();
 	}
 
-	public async Task<bool> EditAsync(WorkorderForm entity) {
+	public async Task<bool> EditAsync(WorkorderEditFormDTO entity) {
 		var model = await _db.WorkOrders.SingleOrDefaultAsync(w => w.Id == entity.Id);
 		
 		if (model == null) {
@@ -72,9 +72,9 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
 	
-	public async Task<WorkorderForm> GetForEditAsync(int id) {
+	public async Task<WorkorderEditFormDTO> GetForEditAsync(int id) {
 		return await _db.WorkOrders
-			.Select(e => new WorkorderForm {
+			.Select(e => new WorkorderEditFormDTO {
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
