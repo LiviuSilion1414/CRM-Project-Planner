@@ -18,13 +18,13 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPost("add")]
-	public async Task AddWorkorder(WorkorderAddFormDTO model) {
+	public async Task AddWorkorder(WorkorderForm model) {
 		await _repo.AddAsync(model);
 	}
 
     [Authorize]
 	[HttpPut("edit")]
-	public async Task EditWorkorder(WorkorderEditFormDTO model) {
+	public async Task EditWorkorder(WorkorderForm model) {
 		await _repo.EditAsync(model);
 	}
 
@@ -36,7 +36,7 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpGet("get/for/edit/{id}")]
-	public async Task<WorkorderEditFormDTO> GetForEdit(int id) {
+	public async Task<WorkorderForm> GetForEdit(int id) {
 		return await _repo.GetForEditAsync(id);
 	}
 	
