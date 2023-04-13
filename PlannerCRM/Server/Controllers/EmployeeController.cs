@@ -54,8 +54,26 @@ public class EmployeeController: ControllerBase
     }
 
     [Authorize]
+	[HttpGet("search/{email}")]
+	public async Task<List<EmployeeSelectDTO>> SearchEmployee(string email) {
+		return await _repo.SearchEmployeeAsync(email);
+	}
+
+    [Authorize]
+	[HttpGet("search/complete/{email}")]
+	public async Task<EmployeeForm> SearchEmployeeComplete(string email) {
+		return await _repo.SearchEmployeeCompleteAsync(email);
+	}
+
+
+    [Authorize]
     [HttpGet("get/all")]
     public async Task<List<EmployeeViewDTO>> GetAll() {
         return await _repo.GetAllAsync();
+    }
+
+    [HttpGet("get/id/{email}")]
+    public async Task<CurrentEmployee> GetUserId(string email) {
+        return await _repo.GetUserIdAsync(email);
     }
 }

@@ -3,6 +3,7 @@ using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
+using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 
 namespace PlannerCRM.Server.Services;
 
@@ -111,6 +112,71 @@ public class EmployeeRepository
             })
             .SingleOrDefaultAsync(e => e.Id == id);
     }
+    
+    public async Task<List<EmployeeSelectDTO>> SearchEmployeeAsync(string email) {
+        var employees = await GetAllAsync();
+
+        if (!string.IsNullOrEmpty(email)) {
+            var foundByUsername = employees.Where(e => e.FullName.Contains(email, StringComparison.InvariantCultureIgnoreCase));
+            var foundByEmail = employees.Where(e => e.Email.Contains(email, StringComparison.InvariantCultureIgnoreCase));
+            
+            if (foundByUsername.Count() != 0 || foundByEmail.Count() != 0) {
+                return foundByUsername
+                    .Select(e => new EmployeeSelectDTO {
+                        Id = e.Id,
+                        Email = e.Email,
+                        FullName = e.FullName
+                    }).ToList();
+            } else {
+                return new List<EmployeeSelectDTO>();
+            }
+        } else {
+            return new List<EmployeeSelectDTO>();
+        }
+    }
+
+    public async Task<EmployeeForm> SearchEmployeeCompleteAsync(string email) {
+        var employee = await _db.Employees
+            .Select(e => new EmployeeForm {
+                Id = e.Id,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                Email = e.Email,
+                BirthDay = e.Birthday,
+                StartDate = e.StartDate,
+                Role = e.Role,
+                NumericCode = e.NumericCode,
+                Password = e.Password,
+                EmployeeActivities = e.EmployeeActivity
+                    .Select(ea => new EmployeeActivityDto {
+                        Id = ea.Activity.Id,
+                        Activity = new ActivityForm {
+                            Id = ea.Activity.Id,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkorderId = ea.Activity.WorkOrderId
+                        },
+                        ActivityId = ea.Activity.Id,
+                        Employee = new EmployeeForm {
+                            Id = e.Id,
+                            FirstName = e.FirstName,
+                            LastName = e.LastName,
+                            Email = e.Email,
+                            BirthDay = e.Birthday,
+                            StartDate = e.StartDate,
+                            Role = e.Role,
+                            NumericCode = e.NumericCode,
+                            Password = e.Password
+                        },
+                        EmployeeId = e.Id
+                    }).ToList()
+            })
+            .Where(e => EF.Functions.Like(email, $"%{email}%"))
+            .FirstAsync();
+        return employee;
+    }
+
 
     public async Task<List<EmployeeViewDTO>> GetAllAsync() {
         return await _db.Employees
@@ -121,5 +187,14 @@ public class EmployeeRepository
                 Email = e.Email,
                 Role = e.Role.ToString().Replace('_', ' ')})
             .ToListAsync();
+    }
+
+    public async Task<CurrentEmployee> GetUserIdAsync(string email) {
+        return await _db.Employees
+            .Select(e => new CurrentEmployee {
+                Id = e.Id,
+                Email = e.Email
+            })
+            .SingleOrDefaultAsync(e => e.Email == email);
     }
 }
