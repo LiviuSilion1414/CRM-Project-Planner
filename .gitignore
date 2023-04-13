@@ -357,3 +357,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 Gestionale/Server/appsettings.Development.json
+PlannerCRM/activity-post.json
+PlannerCRM/Server/Services/error.md
