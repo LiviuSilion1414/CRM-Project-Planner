@@ -7,7 +7,7 @@ using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class ActivityController : ControllerBase
@@ -17,26 +17,31 @@ public class ActivityController : ControllerBase
         _repo = repo;
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
     public async Task AddActivity(ActivityForm entity) {
         await _repo.AddAsync(entity);
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
     public async Task EditActivity(ActivityForm entity) {
         await _repo.EditAsync(entity);
     }    
 
+    [Authorize]
     [HttpGet("get/{id}")]
     public async Task<ActivityViewDTO> GetById(int id) {
         return await _repo.GetAsync(id);
     }
 
+    [Authorize]
     [HttpGet("get/all")]
     public async Task<List<ActivityViewDTO>> GetAll() {
         return await _repo.GetAllAsync();
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{id}")]
     public async Task DeleteActivity(int id) {
         await _repo.DeleteAsync(id);

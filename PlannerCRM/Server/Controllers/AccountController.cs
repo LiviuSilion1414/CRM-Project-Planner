@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Controllers;
@@ -91,12 +92,13 @@ public class AccountController : ControllerBase
 
     [HttpGet]
     [Route("user/role")]
-    public async Task<IList<string>> GetUserRole() {
+    public async Task<List<string>> GetUserRole() {
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
         var roles = await _userManager.GetRolesAsync(user);
         
-        return roles;
+        return roles.ToList();
     }
+
 
     [Authorize]
     [HttpGet("logout")]
