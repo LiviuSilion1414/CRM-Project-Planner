@@ -34,6 +34,12 @@ public class WorkOrderController : ControllerBase
 		await _repo.DeleteAsync(id);
 	}
 
+	[Authorize]
+	[HttpGet("search/{workorder}")]
+	public async Task<List<WorkorderSelectDTO>> SearchWorkorder(string workorder) {
+		return await _repo.SearchWorkorderAsync(workorder);
+	}
+
     [Authorize]
 	[HttpGet("get/for/edit/{id}")]
 	public async Task<WorkorderForm> GetForEdit(int id) {
@@ -45,7 +51,6 @@ public class WorkOrderController : ControllerBase
 	public async Task<WorkorderViewDTO> GetForViewId(int id) {
 		return await _repo.GetForViewAsync(id);
 	}
-	
 	
     [Authorize]
 	[HttpGet("get/for/delete/{id}")]

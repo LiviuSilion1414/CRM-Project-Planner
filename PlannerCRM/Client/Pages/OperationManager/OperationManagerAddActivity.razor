@@ -2,6 +2,7 @@
 
 @using PlannerCRM.Shared.DTOs.ActivityDto.Forms
 @using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Views
 
 @using PlannerCRM.Shared.Models
@@ -14,23 +15,30 @@
 
 <div class="container-fluid">
     <h1>Aggiungi attività</h1>
-    <EditForm Model="model" OnValidSubmit="OnClickAddActivity" >
-        <DataAnnotationsValidator/>
+    <EditForm Model="model" OnValidSubmit="OnClickAddActivity">
+        <DataAnnotationsValidator />
         <div class="form-group">
             <label>Commessa: </label>
-            <div class="form-control">
-                <InputSelect class="dropdown-item" @bind-Value="model.WorkorderId" >
-                    @foreach (var wo in workorders) {
-                        <option value="@wo.Id">@wo.Name</option>
+            <div class="child">
+                <div class="child">
+                    <input type="search" id="myInput" @bind="@model.SelectedWorkorder" class="dropdown-item" />
+                    @if (workorders.Count != 0) {
+                        <select class="dropdown-item" @bind="@model.SelectedWorkorder">
+                            @foreach (var wo in workorders) {
+                                <option value="@wo.Name"> @wo.Name </option>
+                            }
+                        </select>
                     }
-                </InputSelect>
-                <ValidationMessage For="@(() => model.WorkorderId)"/>   
+                </div>
+                <button type="button" class="btn btn-link"
+                    @onclick="@(() => OnClickSearchWorkorder(model.SelectedWorkorder))">Cerca</button>
+                <ValidationMessage For="@(() => model.WorkorderId)" />
             </div>
         </div>
         <div class="form-group">
             <label>*Nome:</label>
             <InputText class="form-control" type="text" @bind-Value="model.Name" />
-            <ValidationMessage For="@(() => model.Name)"/>
+            <ValidationMessage For="@(() => model.Name)" />
         </div>
         <div class="form-group">
             <label>*Data d'inizio:</label>
@@ -45,39 +53,106 @@
         <div class="form-group">
             <label>*Assegna a dipendenti: </label>
             <div class="form-control">
-                <InputSelect class="dropdown-item" @bind-Value="model.EmployeeActivityDtos" >
-                    @foreach (var us in users) {
-                        <option value="@us.Id">@us.Email</option>
-                    }
-                </InputSelect>
-                <ValidationMessage For="@(() => model.EmployeeActivityDtos)"/>   
+                <div class="container-fluid">
+                    <div class="container-search-list">
+                        <div class="child-searchbox">
+                            <input type="search" class="dropdown-item" @bind="model.SelectedEmployee" />
+                        </div>
+                        <div class="child-searchbox">
+                            <button type="button" class="btn btn-link"
+                                @onclick="@(() => OnClickSearchEmployee(model.SelectedEmployee))">Cerca</button>
+                        </div>
+
+                        <div>
+                            @foreach (var em in employees) {
+                                <ul  class="mylist">
+                                    <li value="@em.Email" @onclick="@(() => OnClickAddAsSelected(em))"> @em.Email </li>
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                    <div class="container-selected-employees">
+                        <span>Dipendenti selezionati per questa attività: @SelectedEmployees.Count</span> <br>
+                        <table class="table table-striped">
+                            <thead>
+                                <th>Nome</th>
+                                <th>Email</th>
+                            </thead>
+                            <tbody>
+                                @foreach (var em in SelectedEmployees)
+                                {
+                                    <tr>
+                                        <td> <span> @em.FullName </span> </td>
+                                        <td> <span> @em.Email </span> </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger"
+                                            @onclick="(() => OnClickRemoveAsSelected(em))">Elimina</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <br>
+                    </div>
+                </div>
+                <ValidationMessage For="@(() => model.SelectedEmployee)" />
             </div>
         </div>
         <div class="wrapper-btn">
-        <div class="btn-cancel">
-            <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
-        </div>
-        <div class="btn-confirm">
-            <button type="submit" class="btn btn-primary">Conferma</button>
-        </div>
+            <div class="btn-cancel">
+                <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+            </div>
+            <div class="btn-confirm">
+                <button type="submit" class="btn btn-primary">Conferma</button>
+            </div>
         </div>
     </EditForm>
 </div>
 
 @code {
     public ActivityForm model = new();
-    public List<WorkorderViewDTO> workorders = new();
+    public List<WorkorderSelectDTO> workorders = new();
+    public List<EmployeeSelectDTO> employees = new();
+    public List<EmployeeSelectDTO> SelectedEmployees = new();
     public List<EmployeeViewDTO> users = new();
 
-    protected override async Task OnInitializedAsync() {
-        workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");
-        users = await httpClient.GetFromJsonAsync<List<EmployeeViewDTO>>("http://localhost:5032/employee/get/all");
+    public async Task OnClickSearchWorkorder(string workorder) {
+        workorders = await
+        httpClient.GetFromJsonAsync<List<WorkorderSelectDTO>>($"http://localhost:5032/workorder/search/{workorder}");
+    }
+
+    public async Task OnClickSearchEmployee(string employee) {
+        employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDTO>>($"http://localhost:5032/employee/search/{model.SelectedEmployee}");
+    }
+
+    public void OnClickAddAsSelected(EmployeeSelectDTO employee) {
+        if (!SelectedEmployees.Contains(employee)) {
+            model.SelectedEmployee = employee.Email;
+            SelectedEmployees.Add(employee);
+            model.EmployeeActivityDtos
+                .Add(new EmployeeActivityDto {
+                    Id = model.Id,
+                    Activity = model,
+                    ActivityId = model.Id,
+                    Employee = model.SelectedEmployeeDto, 
+                    EmployeeId = model.SelectedEmployeeDto.Id
+                });
+        }
+    }
+
+    public void OnClickRemoveAsSelected(EmployeeSelectDTO em) {
+        if (SelectedEmployees.Contains(em)) {
+            SelectedEmployees.Remove(em);
+            var employee = model.EmployeeActivityDtos.Where(e =>e.Employee.Email == em.Email).SingleOrDefault();
+            model.EmployeeActivityDtos.Remove(employee);
+        }
     }
 
     public async Task OnClickAddActivity() {
+        model.SelectedEmployee = SelectedEmployees[0].Email;
+        model.SelectedEmployeeDto = await httpClient.GetFromJsonAsync<EmployeeForm>($"http://localhost:5032/employee/search/complete/{model.SelectedEmployee}");
+
         await httpClient.PostAsJsonAsync<ActivityForm>("http://localhost:5032/activity/add", model);
-        
-        navManager.NavigateTo("/operation-manager");
     }
 
     public void OnClickCancel() {

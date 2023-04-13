@@ -93,4 +93,16 @@ public class WorkOrderRepository
 			})
 			.ToListAsync();
 	}
+
+    public async Task<List<WorkorderSelectDTO>> SearchWorkorderAsync(string workorder) {
+        return await _db.WorkOrders
+			.Select(wo => new WorkorderSelectDTO{
+				Id = wo.Id,
+				Name = wo.Name
+			})
+			.Where(e => EF.Functions.Like(e.Name , $"%{workorder}%"))
+			.ToListAsync();
+    }
+
 }
+

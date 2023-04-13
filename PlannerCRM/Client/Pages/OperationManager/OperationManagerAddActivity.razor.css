@@ -7,7 +7,6 @@ h1 {
 
 h3 {
     text-align: center;
-    color: red;
 }
 
 .container-fluid {
@@ -15,6 +14,10 @@ h3 {
     border-radius: 10px;
     border-bottom: 1px;
     border-style: groove;
+}
+
+.container {
+    display: inline-block;
 }
 
 .form-group {
@@ -31,4 +34,43 @@ h3 {
 
 .btn-confirm {
     float: right;
+}
+
+.dropdown-item {
+    border-radius: 10px;
+    border: 1px;
+    border-style: groove;
+}
+
+.container-search-list, .container-selected-employees, .child-searchbox {
+    display: inline-block;
+}
+
+.container-search-list, .container-selected-employees {
+    margin: 0 10px;
+}
+
+.container-search-list .child-searchbox {
+    position: relative;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: solid;
+    border-radius: 10px;
+}
+
+ul li span {
+    margin-left: 5px;
+}
+
+ul li  {
+    width: 100%;
+    padding: 5px 10px;
+    color: black;
+    display: block;
+    text-align: center;
+    text-decoration: none;
 }
