@@ -36,6 +36,12 @@ public class ActivityController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("get/activity/per/workorder/{workorderId}")]
+    public async Task<List<ActivityForm>> GetActivitiesPerWorkorderAsync(int workorderId) {
+        return await _repo.GetActivitiesPerWorkOrderAsync(workorderId);
+    }
+
+    [Authorize]
     [HttpGet("get/all")]
     public async Task<List<ActivityViewDTO>> GetAll() {
         return await _repo.GetAllAsync();

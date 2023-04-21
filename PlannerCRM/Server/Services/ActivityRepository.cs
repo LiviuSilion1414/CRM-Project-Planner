@@ -3,6 +3,7 @@ using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
 namespace PlannerCRM.Server.Services;
 
@@ -66,6 +67,25 @@ public class ActivityRepository
                 WorkOrderId = e.WorkOrderId
             })
             .SingleOrDefaultAsync(a => a.Id == id);
+    }
+
+    public async Task<List<ActivityForm>> GetActivitiesPerWorkOrderAsync(int workorderId) {
+        return await _db.Activities
+            .Select(ac => new ActivityForm {
+                Id = ac.Id,
+                Name = ac.Name,
+                StartDate = ac.StartDate,
+                FinishDate = ac.FinishDate,
+                WorkorderId = ac.WorkOrderId,
+                EmployeesActivities = ac.EmployeeActivity
+                    .Select(ea => new EmployeeSelectDTO {
+                        Id = ea.EmployeeId,
+                        Email = ea.Employee.Email
+                    })
+                    .ToList()   
+            })
+            .Where(ac => ac.WorkorderId == workorderId)
+            .ToListAsync();
     }
 
     public async Task<List<ActivityViewDTO>> GetAllAsync() {
