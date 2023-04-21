@@ -1,6 +1,7 @@
 @page "/operation-manager/add/activity"
 
 @using PlannerCRM.Shared.DTOs.ActivityDto.Forms
+@using PlannerCRM.Shared.DTOs.ActivityDto.Views
 @using PlannerCRM.Shared.DTOs.Workorder.Views
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Views
@@ -18,20 +19,20 @@
     <EditForm Model="model" OnValidSubmit="OnClickAddActivity">
         <DataAnnotationsValidator />
         <div class="form-group">
-            <label>Commessa: </label>
             <div class="child">
                 <div class="child">
-                    <input type="search" id="myInput" @bind="@model.SelectedWorkorder" class="dropdown-item" />
-                    @if (workorders.Count != 0) {
-                        <select class="dropdown-item" @bind="@model.SelectedWorkorder">
-                            @foreach (var wo in workorders) {
-                                <option value="@wo.Name"> @wo.Name </option>
-                            }
-                        </select>
-                    }
+                <label>Commessa: </label>
+                    <input type="search" @bind="selectModel.SelectedWorkorder" class="form-control" />
+                    <ul>
+                        @foreach (var wo in workorders) {
+                            <li class="dropdown-item" value="@wo" @onclick="(() => OnClickSetWorkorder(wo))"> @wo.Name </li>
+                        }
+                    </ul>
                 </div>
-                <button type="button" class="btn btn-link"
-                    @onclick="@(() => OnClickSearchWorkorder(model.SelectedWorkorder))">Cerca</button>
+                <div class="child">
+                    <button type="button" class="btn btn-link"
+                        @onclick="@(() => OnClickSearchWorkorder(selectModel.SelectedWorkorder))">Cerca</button>
+                </div>
                 <ValidationMessage For="@(() => model.WorkorderId)" />
             </div>
         </div>
@@ -50,52 +51,46 @@
             <input class="form-control" type="date" @bind="@model.FinishDate" />
             <ValidationMessage For="@(() => model.FinishDate)" />
         </div>
-        <div class="form-group">
-            <label>*Assegna a dipendenti: </label>
-            <div class="form-control">
-                <div class="container-fluid">
-                    <div class="container-search-list">
-                        <div class="child-searchbox">
-                            <input type="search" class="dropdown-item" @bind="model.SelectedEmployee" />
-                        </div>
-                        <div class="child-searchbox">
-                            <button type="button" class="btn btn-link"
-                                @onclick="@(() => OnClickSearchEmployee(model.SelectedEmployee))">Cerca</button>
-                        </div>
-
-                        <div>
-                            @foreach (var em in employees) {
-                                <ul  class="mylist">
-                                    <li value="@em.Email" @onclick="@(() => OnClickAddAsSelected(em))"> @em.Email </li>
-                                </ul>
+        <div class="container-fluid">
+            <div class="child">
+                <label>*Assegna a dipendenti: </label>
+                <input type="search" class="form-control" @bind="selectModel.SelectedEmployee" />
+                @if (employees.Count != 0) {
+                    <ul>
+                        @foreach (var em in employees) {
+                            <li class="dropdown-item" value="@em" @onclick="@(() => OnClickAddAsSelected(em))"> 
+                                 @em.Email
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+            <div class="child">
+                <button type="button" class="btn btn-link"
+                    @onclick="@(() => OnClickSearchEmployee(selectModel.SelectedEmployee))">Cerca</button>
+            </div>
+            <div class="container-selected-employees">
+                <span>Dipendenti selezionati per questa attività: @model.EmployeesActivities.Count</span> <br>
+                <table class="table table-striped">
+                    <thead>
+                        <th>Nome</th>
+                        <th>Email</th>
+                    </thead>
+                    <tbody>
+                        @if (model.EmployeesActivities.Count != 0) {
+                            @foreach (var em in model.EmployeesActivities) {
+                                <tr>
+                                    <td> <span> @em.Email </span> </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" value="@em"
+                                        @onclick="(() => OnClickRemoveAsSelected(em))">Elimina</button>
+                                    </td>
+                                </tr>
                             }
-                        </div>
-                    </div>
-                    <div class="container-selected-employees">
-                        <span>Dipendenti selezionati per questa attività: @SelectedEmployees.Count</span> <br>
-                        <table class="table table-striped">
-                            <thead>
-                                <th>Nome</th>
-                                <th>Email</th>
-                            </thead>
-                            <tbody>
-                                @foreach (var em in SelectedEmployees)
-                                {
-                                    <tr>
-                                        <td> <span> @em.FullName </span> </td>
-                                        <td> <span> @em.Email </span> </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger"
-                                            @onclick="(() => OnClickRemoveAsSelected(em))">Elimina</button>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        <br>
-                    </div>
-                </div>
-                <ValidationMessage For="@(() => model.SelectedEmployee)" />
+                        }
+                    </tbody>
+                </table>
+                <br>
             </div>
         </div>
         <div class="wrapper-btn">
@@ -111,52 +106,45 @@
 
 @code {
     public ActivityForm model = new();
+    public ActivitySelectDTO selectModel = new();
     public List<WorkorderSelectDTO> workorders = new();
     public List<EmployeeSelectDTO> employees = new();
-    public List<EmployeeSelectDTO> SelectedEmployees = new();
     public List<EmployeeViewDTO> users = new();
 
+    
+    protected override async Task OnInitializedAsync() {
+        model.EmployeesActivities = new();
+    } 
+
     public async Task OnClickSearchWorkorder(string workorder) {
-        workorders = await
-        httpClient.GetFromJsonAsync<List<WorkorderSelectDTO>>($"http://localhost:5032/workorder/search/{workorder}");
+        workorders = await httpClient.GetFromJsonAsync<List<WorkorderSelectDTO>>($"http://localhost:5032/workorder/search/{workorder}");
+    }
+    public void OnClickSetWorkorder(WorkorderSelectDTO workorderSelect) {
+        model.WorkorderId = workorderSelect.Id;
+        selectModel.SelectedWorkorder = workorderSelect.Name;
     }
 
     public async Task OnClickSearchEmployee(string employee) {
-        employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDTO>>($"http://localhost:5032/employee/search/{model.SelectedEmployee}");
+        employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDTO>>($"http://localhost:5032/employee/search/{employee}");
     }
 
     public void OnClickAddAsSelected(EmployeeSelectDTO employee) {
-        if (!SelectedEmployees.Contains(employee)) {
-            model.SelectedEmployee = employee.Email;
-            SelectedEmployees.Add(employee);
-            model.EmployeeActivityDtos
-                .Add(new EmployeeActivityDto {
-                    Id = model.Id,
-                    Activity = model,
-                    ActivityId = model.Id,
-                    Employee = model.SelectedEmployeeDto, 
-                    EmployeeId = model.SelectedEmployeeDto.Id
-                });
-        }
+        model.EmployeesActivities.Add(employee);
     }
 
-    public void OnClickRemoveAsSelected(EmployeeSelectDTO em) {
-        if (SelectedEmployees.Contains(em)) {
-            SelectedEmployees.Remove(em);
-            var employee = model.EmployeeActivityDtos.Where(e =>e.Employee.Email == em.Email).SingleOrDefault();
-            model.EmployeeActivityDtos.Remove(employee);
+    public void OnClickRemoveAsSelected(EmployeeSelectDTO employee) {
+        if (model.EmployeesActivities.Contains(employee)) {
+            model.EmployeesActivities.Remove(employee);
         }
     }
-
+    
     public async Task OnClickAddActivity() {
-        model.SelectedEmployee = SelectedEmployees[0].Email;
-        model.SelectedEmployeeDto = await httpClient.GetFromJsonAsync<EmployeeForm>($"http://localhost:5032/employee/search/complete/{model.SelectedEmployee}");
-
         await httpClient.PostAsJsonAsync<ActivityForm>("http://localhost:5032/activity/add", model);
+
+        navManager.NavigateTo("/operation-manager");
     }
 
     public void OnClickCancel() {
         navManager.NavigateTo("/operation-manager");
     }
 }
-
