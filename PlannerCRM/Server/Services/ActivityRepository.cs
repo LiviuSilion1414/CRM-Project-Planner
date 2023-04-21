@@ -20,29 +20,10 @@ public class ActivityRepository
             StartDate = entity.StartDate,
             FinishDate = entity.FinishDate,
             WorkOrderId = entity.WorkorderId,
-            EmployeeActivity = entity.EmployeeActivityDtos
+            EmployeeActivity = entity.EmployeesActivities
                 .Select(e => new EmployeeActivity {
-                    Id = entity.Id,
-                    Activity = new Activity {
-                        Id = entity.Id,
-                        Name = entity.Name,
-                        StartDate = entity.StartDate,
-                        FinishDate = entity.FinishDate,
-                        WorkOrderId = entity.WorkorderId
-                    },
+                    EmployeeId = e.Id,
                     ActivityId = entity.Id,
-                    Employee = new Employee {
-                        Id = entity.SelectedEmployeeDto.Id,
-                        FirstName = entity.SelectedEmployeeDto.FirstName,
-                        LastName = entity.SelectedEmployeeDto.LastName,
-                        Email = entity.SelectedEmployeeDto.Email,
-                        Birthday = entity.SelectedEmployeeDto.BirthDay,
-                        StartDate = entity.SelectedEmployeeDto.StartDate,
-                        NumericCode = entity.SelectedEmployeeDto.NumericCode,
-                        Password = entity.SelectedEmployeeDto.Password,
-                        Role = entity.SelectedEmployeeDto.Role
-                    },
-                    EmployeeId = entity.SelectedEmployeeDto.Id
                 }).ToList()
         });
         await _db.SaveChangesAsync();
