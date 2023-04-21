@@ -1,0 +1,63 @@
+@page "/{Id}"
+
+@inject HttpClient httpClient
+
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.DTOs.ActivityDto.Forms
+
+@if (activities.Count == 0) {
+    <p><em>Nessun'attività assegnata</em></p>
+} else {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome:</th>
+                <th>Data d'inizio:</th>
+                <th>Data di fine:</th>
+                <th>Dipendenti assegnati:</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ac in activities) {
+                <tr>
+                    <td>@ac.Name
+                        <i class="bi bi-arrow-down-circle-fill"></i>
+                    </td>
+                    <td>@ac.StartDate.ToShortDateString()</td>
+                    <td>@ac.FinishDate.ToShortDateString()</td>
+                    <td>
+                        @foreach (var em in ac.EmployeesActivities) {
+                            <tr>
+                                <td>
+                                    @em.Email
+                                </td>
+                            </tr>
+                        }
+                    </td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    public WorkorderViewDTO workorder = new(); 
+    public List<ActivityForm> activities = new();
+    public bool tdIsClicked = false;
+
+    protected override async Task OnInitializedAsync() {
+        workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{Id}");
+        activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/workorder/{workorder.Id}"); 
+    }
+
+    public void OnClickSeeAllEmployees() {
+        if (tdIsClicked) {
+            tdIsClicked = false;
+        } else {
+            tdIsClicked = true;
+        }
+    }
+}
+

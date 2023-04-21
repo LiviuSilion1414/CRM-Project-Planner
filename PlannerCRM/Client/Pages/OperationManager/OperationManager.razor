@@ -4,6 +4,7 @@
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
 <PageTitle>Operation Manager</PageTitle>
@@ -30,18 +31,32 @@
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">Nome</th>
-            <th scope="col">Data d'inizio</th>
-            <th scope="col">Data fine</th>
+            @if (trIsClicked) {
+                <th scope="col">Attività</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Data d'inizio</th>
+                <th scope="col">Data fine</th>
+            } else {
+                <th scope="col">Nome</th>
+                <th scope="col">Data d'inizio</th>
+                <th scope="col">Data fine</th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var wo in _workorders)
         {
-            <tr>
+            <tr @onclick="(() => OnClickTableRow())">
+                @if (trIsClicked) {
+                    <tr>
+                        <div class="col-8">
+                            <OperationManagerMasterDetails Id="wo.Id"/>
+                        </div>
+                    </tr>
+                }
                 <td>@wo.Name</td>
-                <td>@wo.StartDate</td>
-                <td>@wo.FinishDate</td>
+                <td>@wo.StartDate.ToShortDateString()</td>
+                <td>@wo.FinishDate.ToShortDateString()</td>
                 <td>
                     <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(wo.Id))">Modifica</button>                
                 </td> 
@@ -54,12 +69,21 @@
 </table>
 
 @code {
-    private List<WorkorderViewDTO> _workorders = new List<WorkorderViewDTO>();
+    public List<WorkorderViewDTO> _workorders = new List<WorkorderViewDTO>();
+    public bool trIsClicked = false;
 
     protected override async Task OnInitializedAsync() {
         _workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");
     }
     
+    public void OnClickTableRow() {
+        if (trIsClicked) {
+            trIsClicked = false;
+        } else {
+            trIsClicked = true;
+        }
+    }
+
     public void OnClickAddWorkorder() {
         navManager.NavigateTo("/operation-manager/add/workorder");
     }
