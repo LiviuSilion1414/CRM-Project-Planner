@@ -36,11 +36,15 @@ h3 {
     float: right;
 }
 
-.dropdown-item {
-    border-radius: 10px;
-    border: 1px;
-    border-style: groove;
+.child {
+    display: inline-block;
 }
+
+.dropdown-item {
+    border: thin;
+    border-style: outset;
+}
+
 
 .container-search-list, .container-selected-employees, .child-searchbox {
     display: inline-block;
@@ -58,12 +62,8 @@ ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    border: solid;
+    border: thin outset;
     border-radius: 10px;
-}
-
-ul li span {
-    margin-left: 5px;
 }
 
 ul li  {
@@ -73,4 +73,8 @@ ul li  {
     display: block;
     text-align: center;
     text-decoration: none;
+}
+
+ul li :hover {
+    cursor: pointer;
 }
