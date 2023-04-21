@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
+using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 
 namespace PlannerCRM.Server.Services;
 
@@ -120,12 +121,17 @@ public class EmployeeRepository
             var foundByUsername = employees.Where(e => e.FullName.Contains(email, StringComparison.InvariantCultureIgnoreCase));
             var foundByEmail = employees.Where(e => e.Email.Contains(email, StringComparison.InvariantCultureIgnoreCase));
             
-            if (foundByUsername.Count() != 0 || foundByEmail.Count() != 0) {
+            if (foundByUsername.Count() != 0) {
                 return foundByUsername
                     .Select(e => new EmployeeSelectDTO {
                         Id = e.Id,
-                        Email = e.Email,
-                        FullName = e.FullName
+                        Email = e.Email
+                    }).ToList();
+            } else if (foundByEmail.Count() != 0) {
+                return foundByEmail
+                    .Select(e => new EmployeeSelectDTO {
+                        Id = e.Id,
+                        Email = e.Email
                     }).ToList();
             } else {
                 return new List<EmployeeSelectDTO>();
@@ -162,12 +168,7 @@ public class EmployeeRepository
                             Id = e.Id,
                             FirstName = e.FirstName,
                             LastName = e.LastName,
-                            Email = e.Email,
-                            BirthDay = e.Birthday,
-                            StartDate = e.StartDate,
-                            Role = e.Role,
-                            NumericCode = e.NumericCode,
-                            Password = e.Password
+                            Email = e.Email
                         },
                         EmployeeId = e.Id
                     }).ToList()
