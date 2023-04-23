@@ -1,9 +1,9 @@
-@page "/{Id}"
-
 @inject HttpClient httpClient
 
 @using PlannerCRM.Shared.DTOs.Workorder.Views
 @using PlannerCRM.Shared.DTOs.ActivityDto.Forms
+
+@inject NavigationManager navManager
 
 @if (activities.Count == 0) {
     <p><em>Nessun'attività assegnata</em></p>
@@ -20,9 +20,7 @@
         <tbody>
             @foreach (var ac in activities) {
                 <tr>
-                    <td>@ac.Name
-                        <i class="bi bi-arrow-down-circle-fill"></i>
-                    </td>
+                    <td>@ac.Name</td>
                     <td>@ac.StartDate.ToShortDateString()</td>
                     <td>@ac.FinishDate.ToShortDateString()</td>
                     <td>
@@ -34,7 +32,13 @@
                             </tr>
                         }
                     </td>
-                    
+                    <td>
+                        <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(ac.Id))">Modifica</button>                
+                    </td> 
+                    <td> 
+                        <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(ac.Id))">Elimina</button>
+                    </td>
+
                 </tr>
             }
         </tbody>
@@ -45,19 +49,18 @@
     [Parameter] public int Id { get; set; }
     public WorkorderViewDTO workorder = new(); 
     public List<ActivityForm> activities = new();
-    public bool tdIsClicked = false;
 
     protected override async Task OnInitializedAsync() {
         workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{Id}");
         activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/workorder/{workorder.Id}"); 
     }
 
-    public void OnClickSeeAllEmployees() {
-        if (tdIsClicked) {
-            tdIsClicked = false;
-        } else {
-            tdIsClicked = true;
-        }
+    public void OnClickEdit(int activityId) {
+        navManager.NavigateTo($"/operation-manager/edit/activity/{workorder.Id}/{activityId}");
+    }
+
+    public void OnClickDelete(int activityId) {
+        navManager.NavigateTo($"/operation-manager/delete/activity/{workorder.Id}/{activityId}");
     }
 }
 
