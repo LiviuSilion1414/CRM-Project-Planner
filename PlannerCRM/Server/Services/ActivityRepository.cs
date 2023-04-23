@@ -41,23 +41,29 @@ public class ActivityRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> EditAsync(ActivityForm entity) {
+    public async Task EditAsync(ActivityForm entity) {
         var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == entity.Id);
-        if (model == null) {
-            return false;
-        }
 
         model.Id = entity.Id;
         model.Name = entity.Name;
         model.StartDate = entity.StartDate;
         model.FinishDate = entity.FinishDate;
         model.WorkOrderId = entity.WorkorderId;
-
+        model.EmployeeActivity = entity.EmployeesActivities
+            .Where(es => 
+                model.EmployeeActivity
+                    .Any(ea => ea.EmployeeId != es.Id))
+            .ToList()
+            .Select(es => new EmployeeActivity {
+                EmployeeId = es.Id,
+                ActivityId = entity.Id
+            })
+            .ToList();
+        
         await _db.SaveChangesAsync();
-        return true;
     }
 
-    public async Task<ActivityViewDTO> GetAsync(int id) {
+    public async Task<ActivityViewDTO> GetForViewAsync(int id) {
         return await _db.Activities
             .Select(e => new ActivityViewDTO {
                 Id = e.Id,
@@ -65,6 +71,36 @@ public class ActivityRepository
                 StartDate = e.StartDate,
                 FinishDate = e.FinishDate,
                 WorkOrderId = e.WorkOrderId
+            })
+            .SingleOrDefaultAsync(a => a.Id == id);
+    }
+
+
+    public async Task<ActivityForm> GetForEditAsync(int id) {
+        return await _db.Activities
+            .Select(e => new ActivityForm {
+                Id = e.Id,
+                Name = e.Name,
+                StartDate = e.StartDate,
+                FinishDate = e.FinishDate,
+                WorkorderId = e.WorkOrderId,
+                EmployeesActivities = e.EmployeeActivity
+                    .Select(ea => new EmployeeSelectDTO {
+                        Id = ea.EmployeeId,
+                        Email = ea.Employee.Email
+                    })
+                    .ToList()   
+            })
+            .SingleOrDefaultAsync(a => a.Id == id);
+    }
+
+    public async Task<ActivityDeleteDTO> GetForDeleteAsync(int id) {
+        return await _db.Activities
+            .Select(e => new ActivityDeleteDTO {
+                Id = e.Id,
+                Name = e.Name,
+                StartDate = e.StartDate,
+                FinishDate = e.FinishDate
             })
             .SingleOrDefaultAsync(a => a.Id == id);
     }

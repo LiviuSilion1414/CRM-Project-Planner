@@ -31,8 +31,20 @@ public class ActivityController : ControllerBase
 
     [Authorize]
     [HttpGet("get/{id}")]
-    public async Task<ActivityViewDTO> GetById(int id) {
-        return await _repo.GetAsync(id);
+    public async Task<ActivityViewDTO> GetForView(int id) {
+        return await _repo.GetForViewAsync(id);
+    }
+
+    [Authorize]
+    [HttpGet("get/for/edit/{id}")]
+    public async Task<ActivityForm> GetForEdit(int id) {
+        return await _repo.GetForEditAsync(id);
+    }
+
+    [Authorize]
+    [HttpGet("get/for/delete/{id}")]
+    public async Task<ActivityDeleteDTO> GetForDelete(int id) {
+        return await _repo.GetForDeleteAsync(id);
     }
 
     [Authorize]
