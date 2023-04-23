@@ -1,0 +1,49 @@
+@page "/operation-manager/delete/activity/{workorderId:int}/{activityId:int}"
+
+@using PlannerCRM.Shared.DTOs.ActivityDto.Views
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.Models
+
+@inject NavigationManager navManager
+@inject HttpClient httpClient
+@attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+
+<PageTitle>Operation Manager</PageTitle>
+
+<div>
+    <h3> Commessa: @currentWorkorder.Name </h3>
+    <br>
+    <span>Vuoi eliminare l'attività:
+        <br>  
+        <strong>Nome:</strong> @currentActivity.Name 
+        <br>
+        <strong>Data d'inizio:</strong> @currentActivity.StartDate.ToShortDateString()
+        <br>
+        <strong>Data fine:</strong> @currentActivity.FinishDate.ToShortDateString() ?
+        <br>
+    </span>
+    <button type="button" class="btn btn-danger" @onclick="OnClickDeleteActivity">Conferma</button>
+    <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+</div>
+
+@code {
+    [Parameter] public int workorderId { get; set; }
+    [Parameter] public int activityId { get; set; }
+    public WorkorderViewDTO currentWorkorder = new();
+    public ActivityDeleteDTO currentActivity = new();
+    protected override async Task OnInitializedAsync() {
+        currentWorkorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{workorderId}");
+        currentActivity = await httpClient.GetFromJsonAsync<ActivityDeleteDTO>($"http://localhost:5032/activity/get/for/delete/{activityId}");
+    }
+
+    public void OnClickCancel() {
+        navManager.NavigateTo("/operation-manager");
+    }
+
+    public async Task OnClickDeleteActivity() {
+        await httpClient.DeleteAsync($"http://localhost:5032/activity/delete/{activityId}");
+        
+        navManager.NavigateTo("/operation-manager");
+    }
+}
+
