@@ -1,0 +1,70 @@
+@inject HttpClient httpClient
+
+@using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.DTOs.ActivityDto.Forms
+@using PlannerCRM.Shared.DTOs.ActivityDto.Views
+
+@inject NavigationManager navManager
+
+@if (activities == null) {
+    <p><em>Non ti è stata ancora assegnata alcuna attività.</em></p>
+} else {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Commessa</th>
+                <th>Nome</th>
+                <th>Data d'inizio</th>
+                <th>Data di fine</th>
+                <th>Ore segnate sull'attività</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ac in activities) {
+                <tr>
+                    <td>@workorders.Find(wo => wo.Id == ac.WorkorderId).Name</td>
+                    <td>@ac.Name</td>
+                    <td>@ac.StartDate.ToShortDateString()</td>
+                    <td>@ac.FinishDate.ToShortDateString()</td>
+                   @* <td>
+                        <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(ac.Id))">Modifica</button>                
+                    </td> 
+                    <td> 
+                        <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(ac.Id))">Elimina</button>
+                    </td>
+*@
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+@code {
+    [Parameter] public int Id { get; set; } //EmployeeId
+    public List<WorkorderViewDTO> workordersId = new(); 
+    public List<WorkorderViewDTO> workorders = new();
+    public List<ActivityForm> activities = new();
+    protected override async Task OnInitializedAsync() {
+        activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/employee/{Id}"); 
+               
+        foreach(var ac in activities) {
+            var workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{ac.WorkorderId}");
+            workorders.Add(workorder);
+        }
+    }
+
+/*    public void OnClickEdit(int activityId) {
+        navManager.NavigateTo($"/operation-manager/edit/activity/{workorder.Id}/{activityId}");
+    }
+
+    public void OnClickDelete(int activityId) {
+        navManager.NavigateTo($"/operation-manager/delete/activity/{workorder.Id}/{activityId}");
+    }
+
+    public void OnClickAddWorkedHours(int id) {
+        navManager.NavigateTo($"/junior-developer/add/worked-hours/{id}");
+    }
+*/
+}
+}
+

@@ -1,51 +1,19 @@
+@page "/junior-developer/{EmployeeId:int}"
 @page "/junior-developer"
-@page "/junior-developer/{Id}"
 
-@using PlannerCRM.Shared.DTOs.ActivityDto.Views
 @using PlannerCRM.Shared.Models
-
 @inject HttpClient httpClient
 @inject NavigationManager navManager
 @attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 
 <PageTitle>Junior Developer</PageTitle>
 
-<h4>Commessa: </h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Nome attività</th>
-            <th scope="col">Data inizio</th>
-            <th scope="col">Data fine</th>
-            <th scope="col">Tariffa oraria</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var act in _activities)
-        {
-            <tr>
-                <td>@act.Name</td>
-                <td>@act.StartDate</td>
-                <td>@act.FinishDate</td>
-                <td>
-                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickAddWorkedHours(act.Id))">Aggiungi orario di lavoro</button>                
-                </td> 
-            </tr>
-        }
-    </tbody>
-</table>
+<DeveloperWorkOrderActivityMasterDetail Id="EmployeeId"/> 
 
 @code {
-    [Parameter]
-    public string Id { get; set; }
-    private List<ActivityViewDTO> _activities = new();
-
-    protected override async Task OnInitializedAsync() {
-        _activities = await httpClient.GetFromJsonAsync<List<ActivityViewDTO>>($"http://localhost:5032/activity/get/{Id}");
-    }
-    
-    public void OnClickAddWorkedHours(int id) {
-        navManager.NavigateTo($"/junior-developer/add/worked-hours/{id}");
-    }
-
+    [Parameter] public int EmployeeId { get; set; }
 }
+
+
+
+
