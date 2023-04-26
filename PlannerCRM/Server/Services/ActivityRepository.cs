@@ -105,14 +105,6 @@ public class ActivityRepository
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    /*
-    select  wo."Name", ac."Name", em."Email"
-    from "EmployeeActivity" as ea
-    left join "Employees" as em on em."Id" = ea."EmployeeId"
-    right join "Activities" as ac on ac."Id" = ea."ActivityId"
-    join "WorkOrders" as wo on ac."WorkOrderId" = wo."Id";
-    */
-
     public async Task<List<ActivityForm>> GetActivityByJuniorEmployeeId(int employeeId) {
          return await _db.Activities
             .Select(ac => new ActivityForm {
