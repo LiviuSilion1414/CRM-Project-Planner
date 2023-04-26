@@ -54,6 +54,12 @@ public class ActivityController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("get/activity/per/employee/{employeeId}")]
+    public async Task<List<ActivityForm>> GetActivitiesPerEmployee(int employeeId) {
+        return await _repo.GetActivityByJuniorEmployeeId(employeeId);
+    }
+
+    [Authorize]
     [HttpGet("get/all")]
     public async Task<List<ActivityViewDTO>> GetAll() {
         return await _repo.GetAllAsync();
