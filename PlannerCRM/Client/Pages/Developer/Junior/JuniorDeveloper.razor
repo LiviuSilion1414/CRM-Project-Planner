@@ -2,8 +2,6 @@
 @page "/junior-developer"
 
 @using PlannerCRM.Shared.Models
-@inject HttpClient httpClient
-@inject NavigationManager navManager
 @attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 
 <PageTitle>Junior Developer</PageTitle>
