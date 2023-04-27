@@ -1,8 +1,11 @@
 using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
+using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
-namespace PlannerCRM.Server.Services.ConcreteClasses;
+namespace PlannerCRM.Server.Services;
 
 public class WorkTimeRecordRepository
 {
@@ -12,8 +15,20 @@ public class WorkTimeRecordRepository
         _db = db;
     }
 
-    public async Task AddAsync(WorkTimeRecord entity) {
-        _db.WorkTimeRecords.Add(entity);
+    public async Task AddAsync(WorkTimeRecordFormDTO entity) {
+        _db.WorkTimeRecords.Add(new WorkTimeRecord {
+            Id = entity.Id,
+            Date = entity.Date,
+            Hours = entity.Hours,
+            TotalPrice = entity.TotalPrice,
+            ActivityId = entity.ActivityId,
+            EmployeeId = entity.EmployeeId,
+            Employee = await _db.Employees
+                .Where(e => e.Id == entity.EmployeeId)
+                .SingleOrDefaultAsync(),
+            WorkOrderId = entity.WorkOrderId
+        });
+
         await _db.SaveChangesAsync();
     }
 
@@ -27,40 +42,60 @@ public class WorkTimeRecordRepository
         
         await _db.SaveChangesAsync();
     }
-    public async Task<bool> EditAsync(WorkTimeRecord entity) {
+    public async Task EditAsync(WorkTimeRecordFormDTO entity) {
         var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == entity.Id);
-        
-        if (model == null) {
-            return false;
-        }
 
         model.Id = entity.Id;
         model.Date = entity.Date;
         model.Hours = entity.Hours;
+        model.TotalPrice = entity.TotalPrice;
         model.ActivityId = entity.ActivityId;
         model.WorkOrderId = entity.WorkOrderId;
         model.EmployeeId = entity.EmployeeId;
+        model.Employee = await _db.Employees
+                .Where(e => e.Id == entity.EmployeeId)
+                .SingleOrDefaultAsync();
+
         await _db.SaveChangesAsync();
-        return true;
     }
 
-    public async Task<WorkTimeRecord> GetAsync(int id) {
+    public async Task<WorkTimeRecordViewDTO> GetAsync(int id) {
         return await _db.WorkTimeRecords
+            .Select(wo => new WorkTimeRecordViewDTO {
+                Id = wo.Id,
+                Date = wo.Date,
+                Hours = wo.Hours,
+                TotalPrice = wo.TotalPrice,
+                ActivityId = wo.ActivityId,
+                EmployeeId = wo.EmployeeId
+            })
             .SingleOrDefaultAsync(w => w.Id == id);
     }
 
-    public async Task<List<WorkTimeRecord>> GetAllAsync() {
+    public async Task<List<WorkTimeRecordViewDTO>> GetAllAsync() {
         return await _db.WorkTimeRecords
-            .Include(wtr => wtr.Employee)
-            .ThenInclude(e => e.Salaries)
+            .Select(wo => new WorkTimeRecordViewDTO {
+                Id = wo.Id,
+                Date = wo.Date,
+                Hours = wo.Hours,
+                TotalPrice = wo.TotalPrice,
+                ActivityId = wo.ActivityId,
+                EmployeeId = wo.EmployeeId
+            })
             .ToListAsync();
     }
 
-    public async Task<List<WorkTimeRecord>> GetAllAsync(int workOrderId) {
+    public async Task<List<WorkTimeRecordViewDTO>> GetAllAsync(int workOrderId) {
         return await _db.WorkTimeRecords
-            .Where(wtr => wtr.WorkOrderId == workOrderId)
-            .Include(wtr => wtr.Employee)
-            .ThenInclude(e => e.Salaries)
+            .Where(wo => wo.WorkOrderId == workOrderId)
+            .Select(wo => new WorkTimeRecordViewDTO {
+                Id = wo.Id,
+                Date = wo.Date,
+                Hours = wo.Hours,
+                TotalPrice = wo.TotalPrice,
+                ActivityId = wo.ActivityId,
+                EmployeeId = wo.EmployeeId
+            })
             .ToListAsync();
     }
 }
