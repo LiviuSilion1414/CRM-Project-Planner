@@ -1,34 +1,39 @@
-@*@page "/developer/add/worked-hours/{EmployeeId:int}/{Role:string}"*@
+@page "/developer/add/worked-hours/{EmployeeId:int}/{ActivityId:int}"
 
+@using PlannerCRM.Shared.DTOs.ActivityDto.Views
 @using PlannerCRM.Shared.DTOs.Workorder.Views
+@using PlannerCRM.Shared.DTOs.WorkTimeDto.Form
 @using PlannerCRM.Shared.Models
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
-@attribute [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
 
-<PageTitle>Junior Developer</PageTitle>
+<PageTitle>Developer - Add worked hours</PageTitle>
 
 <div class="container-fluid">
     <h3>Aggiungi orario di lavoro</h3>
     <EditForm Model="@model" OnValidSubmit="OnClickAddWorkedHours">
         <DataAnnotationsValidator/>
         <div class="form-group">
-            <label>Nome commessa: </label>
-            <InputText type="text" class="form-control" @bind-Value="model.Name" />
+            <label>Nome commessa: </label> <span>(@workorder.StartDate.ToShortDateString() - @workorder.FinishDate.ToShortDateString())</span>
+            <input type="text" class="form-control" @bind="workorder.Name" readonly/>
+        </div>
+        <div class="form-group">
+            <label>Nome attività: </label>
+            <input type="text" class="form-control" @bind="model.Name" readonly/>
         </div>
         <div class="form-group">
             <label>Data d'inizio: </label>
-            <input type="date" class="form-control" @bind="@model.StartDate" />
+            <input type="date" class="form-control" @bind="@model.StartDate" readonly/>
         </div>
         <div class="form-group">
             <label>Data fine: </label>
-            <input type="date" class="form-control" @bind="@model.FinishDate" />
+            <input type="date" class="form-control" @bind="@model.FinishDate" readonly/>
         </div>
-       @* <div class="form-group">
-            <label>Attività: </label>
-            <InputText type="text" class="form-control" @bind-Value="model.Activities" />
-        </div>*@
+        <div class="form-group">
+           <label>Inserisci il tuo orario di lavoro:</label>
+           <input type="number" class="form-control" @bind="@WorkedHours">
+        </div>
         <div class="wrapper-btn">
             <div class="btn-cancel">
                 <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
@@ -41,22 +46,54 @@
 </div>
 
 @code {
-    [Parameter]
-    public string Id { get; set; }
-    private WorkorderViewDTO model = new();
+    [Parameter] public int EmployeeId { get; set; }
+    [Parameter] public int ActivityId { get; set; }
+    [Parameter] public int WorkorderId { get; set; }
+    public string Role { get; set; }  
+    public int WorkedHours { get; set; }
+    public WorkTimeRecordFormDTO workTimeRecord = new();
+    public ActivityViewDTO model = new();
+    public WorkorderViewDTO workorder = new();
+    public List<string> rolesList = new();
 
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{Id}");
+        rolesList = await httpClient.GetFromJsonAsync<List<string>>("http://localhost:5032/account/user/role");
+        foreach (var role in rolesList) {
+            if (role == nameof(Roles.SENIOR_DEVELOPER) || role == nameof(Roles.JUNIOR_DEVELOPER)) {
+                Role = role;
+            }
+        }
+            
+        model = await httpClient.GetFromJsonAsync<ActivityViewDTO>($"http://localhost:5032/activity/get/{ActivityId}");
+        workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{model.WorkOrderId}");
+    }
+
+    public void RedirectToPage() {
+        foreach (var role in rolesList) {
+            if (role == Role && role == nameof(Roles.JUNIOR_DEVELOPER)) {
+                navManager.NavigateTo($"/junior-developer/{EmployeeId}");
+            }
+            if (role == Role && role == nameof(Roles.SENIOR_DEVELOPER)) {
+                navManager.NavigateTo($"/senior-developer/{EmployeeId}");
+            }
+        }
     }
     
     public void OnClickCancel() {
-        navManager.NavigateTo("/senior-developer");
+        RedirectToPage();
     }
 
     public async Task OnClickAddWorkedHours() {
-        await httpClient.PostAsJsonAsync<WorkorderViewDTO>($"http://localhost:5032/wokorder/add/{Id}", model);
+        await Task.Run(() => {
+            workTimeRecord.Date = DateTime.Now;
+            workTimeRecord.Hours = WorkedHours;
+            workTimeRecord.ActivityId = model.Id;
+            workTimeRecord.EmployeeId = EmployeeId;
+            workTimeRecord.WorkOrderId = model.WorkOrderId;
+        });
+        await httpClient.PostAsJsonAsync<WorkTimeRecordFormDTO>($"http://localhost:5032/worktimerecord/add/", workTimeRecord);
         
-        navManager.NavigateTo("/senior-developer");
+        RedirectToPage();
     }
 
 }

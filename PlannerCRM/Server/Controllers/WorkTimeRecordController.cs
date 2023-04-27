@@ -26,9 +26,9 @@ public class WorkTimeRecordController : ControllerBase
     }
 
 
-    [HttpGet("get/{id}")]
-    public async Task<WorkTimeRecordViewDTO> GetWorkTimeRecord(int id) {
-        return await _repo.GetAsync(id);
+    [HttpGet("get/{activityId}")]
+    public async Task<WorkTimeRecordViewDTO> GetWorkTimeRecord(int activityId) {
+        return await _repo.GetAsync(activityId);
     }
 
     [HttpGet("get/all")]
@@ -36,8 +36,13 @@ public class WorkTimeRecordController : ControllerBase
         return await _repo.GetAllAsync();
     }
 
-    [HttpGet("get/all/by/workorder/{workorderId}")]
-    public async Task<List<WorkTimeRecordViewDTO>> GetAllWorkTimeRecordsByWorkOrder (int workorderId) {
-        return await _repo.GetAllAsync(workorderId);
+    [HttpGet("get/all/by/employee/{employeeId}")]
+    public async Task<List<WorkTimeRecordViewDTO>> GetAllWorkTimeRecordsByWorkOrder(int employeeId) {
+        return await _repo.GetAllAsync(employeeId);
+    }
+
+    [HttpGet("get/size/by/employee/{employeeId}")]
+    public async Task<int> GetWorkTimeRecordsSize(int employeeId) {
+        return await _repo.GetWorkTimeRecordsSizeByEmployeeId(employeeId);
     }
 }

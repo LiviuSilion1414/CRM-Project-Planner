@@ -2,8 +2,11 @@
 
 @using PlannerCRM.Shared.DTOs.Workorder.Views
 @using PlannerCRM.Shared.DTOs.ActivityDto.Forms
-@using PlannerCRM.Shared.DTOs.ActivityDto.Views
+@using PlannerCRM.Shared.DTOs.WorkTimeDto.Views
+@using PlannerCRM.Shared.Models
 
+@attribute [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
+@attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 @inject NavigationManager navManager
 
 @if (activities == null) {
@@ -16,7 +19,8 @@
                 <th>Nome</th>
                 <th>Data d'inizio</th>
                 <th>Data di fine</th>
-                <th>Ore segnate sull'attività</th>
+                <th>Ore segnate</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -26,45 +30,44 @@
                     <td>@ac.Name</td>
                     <td>@ac.StartDate.ToShortDateString()</td>
                     <td>@ac.FinishDate.ToShortDateString()</td>
-                   @* <td>
-                        <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(ac.Id))">Modifica</button>                
+                    @if (workTimeRecords == null || workTimeRecords.Count == 0) {
+                        <td><em>Nessun orario</em></td>
+                    } else {
+                        <td>@workTimeRecords.Find(wtr => wtr.ActivityId == ac.Id).Hours</td>
+                    }
+                    <td>
+                        <button type="button" class="btn btn-primary" 
+                            @onclick="@(() => OnClickAddWorkedHours(activityId: ac.Id))">Aggiungi orario</button>                
                     </td> 
-                    <td> 
-                        <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(ac.Id))">Elimina</button>
-                    </td>
-*@
+                    
                 </tr>
             }
         </tbody>
     </table>
-
+}
 
 @code {
     [Parameter] public int Id { get; set; } //EmployeeId
     public List<WorkorderViewDTO> workordersId = new(); 
     public List<WorkorderViewDTO> workorders = new();
     public List<ActivityForm> activities = new();
+    public List<WorkTimeRecordViewDTO> workTimeRecords = new();
+
     protected override async Task OnInitializedAsync() {
         activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/employee/{Id}"); 
-               
+        var listSizeByEmployeeId = await httpClient.GetFromJsonAsync<int>($"http://localhost:5032/worktimerecord/get/size/by/employee/{Id}");
+    
+        if (listSizeByEmployeeId != 0) {
+            workTimeRecords = await httpClient.GetFromJsonAsync<List<WorkTimeRecordViewDTO>>($"http://localhost:5032/worktimerecord/get/all/by/employee/{Id}");
+        }
+
         foreach(var ac in activities) {
             var workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{ac.WorkorderId}");
             workorders.Add(workorder);
         }
     }
 
-/*    public void OnClickEdit(int activityId) {
-        navManager.NavigateTo($"/operation-manager/edit/activity/{workorder.Id}/{activityId}");
+    public void OnClickAddWorkedHours(int activityId) {
+        navManager.NavigateTo($"/developer/add/worked-hours/{Id}/{activityId}");
     }
-
-    public void OnClickDelete(int activityId) {
-        navManager.NavigateTo($"/operation-manager/delete/activity/{workorder.Id}/{activityId}");
-    }
-
-    public void OnClickAddWorkedHours(int id) {
-        navManager.NavigateTo($"/junior-developer/add/worked-hours/{id}");
-    }
-*/
 }
-}
-

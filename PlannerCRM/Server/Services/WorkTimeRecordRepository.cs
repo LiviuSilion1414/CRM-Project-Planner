@@ -59,7 +59,7 @@ public class WorkTimeRecordRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<WorkTimeRecordViewDTO> GetAsync(int id) {
+    public async Task<WorkTimeRecordViewDTO> GetAsync(int activityId) {
         return await _db.WorkTimeRecords
             .Select(wo => new WorkTimeRecordViewDTO {
                 Id = wo.Id,
@@ -67,9 +67,11 @@ public class WorkTimeRecordRepository
                 Hours = wo.Hours,
                 TotalPrice = wo.TotalPrice,
                 ActivityId = wo.ActivityId,
-                EmployeeId = wo.EmployeeId
+                EmployeeId = wo.EmployeeId,
+                WorkOrderId = wo.WorkOrderId
             })
-            .SingleOrDefaultAsync(w => w.Id == id);
+            .Where(wtr => wtr.ActivityId == activityId)
+            .SingleOrDefaultAsync();
     }
 
     public async Task<List<WorkTimeRecordViewDTO>> GetAllAsync() {
@@ -85,9 +87,9 @@ public class WorkTimeRecordRepository
             .ToListAsync();
     }
 
-    public async Task<List<WorkTimeRecordViewDTO>> GetAllAsync(int workOrderId) {
+    public async Task<List<WorkTimeRecordViewDTO>> GetAllAsync(int employeeId) {
         return await _db.WorkTimeRecords
-            .Where(wo => wo.WorkOrderId == workOrderId)
+            .Where(wo => wo.EmployeeId == employeeId)
             .Select(wo => new WorkTimeRecordViewDTO {
                 Id = wo.Id,
                 Date = wo.Date,
@@ -97,5 +99,11 @@ public class WorkTimeRecordRepository
                 EmployeeId = wo.EmployeeId
             })
             .ToListAsync();
+    }
+
+    public async Task<int> GetWorkTimeRecordsSizeByEmployeeId(int employeeId) {
+        return await _db.WorkTimeRecords
+            .Where(wtr => wtr.EmployeeId == employeeId)
+            .CountAsync();
     }
 }
