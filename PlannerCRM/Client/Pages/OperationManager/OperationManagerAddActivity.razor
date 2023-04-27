@@ -111,9 +111,8 @@
     public List<EmployeeSelectDTO> employees = new();
     public List<EmployeeViewDTO> users = new();
 
-    
     protected override async Task OnInitializedAsync() {
-        model.EmployeesActivities = new();
+       await Task.Run(() => model.EmployeesActivities = new());
     } 
 
     public async Task OnClickSearchWorkorder(string workorder) {
