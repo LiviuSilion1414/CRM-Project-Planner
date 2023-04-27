@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PlannerCRM.Server.Services.ConcreteClasses;
+using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
 

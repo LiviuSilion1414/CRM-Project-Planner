@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
 
-namespace PlannerCRM.Server.Services.ConcreteClasses;
+namespace PlannerCRM.Server.Services;
 
 public class WorkOrderRepository
 {

@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Server.Models;
 using PlannerCRM.Server.DataAccess;
-using PlannerCRM.Server.Services.ConcreteClasses;
+using PlannerCRM.Server.Services;
 using Microsoft.AspNetCore.Identity;
 using PlannerCRM.Shared.Models;
-using PlannerCRM.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
