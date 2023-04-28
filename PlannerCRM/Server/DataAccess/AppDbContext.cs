@@ -14,14 +14,14 @@ public class AppDbContext: IdentityDbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<EmployeeActivity>()
-        .HasOne(e => e.Employee)
-        .WithMany(ea => ea.EmployeeActivity)
-        .HasForeignKey(ei => ei.EmployeeId);
+            .HasOne(e => e.Employee)
+            .WithMany(ea => ea.EmployeeActivity)
+            .HasForeignKey(ei => ei.EmployeeId);
 
         modelBuilder.Entity<EmployeeActivity>()
-        .HasOne(a => a.Activity)
-        .WithMany(ea => ea.EmployeeActivity)
-        .HasForeignKey(ai => ai.ActivityId);
+            .HasOne(a => a.Activity)
+            .WithMany(ea => ea.EmployeeActivity)
+            .HasForeignKey(ai => ai.ActivityId);
     }
     
     public DbSet<WorkOrder> WorkOrders { get; set; }

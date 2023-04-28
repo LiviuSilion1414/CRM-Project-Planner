@@ -17,24 +17,23 @@ public class EmployeeRepository
     }
 
     public async Task AddAsync(EmployeeForm entity) {
-        _db.Employees.Add(
-            new Employee {
-                Email = entity.Email,
-                FirstName = entity.FirstName,
-                LastName = entity.LastName,
-                Birthday = entity.BirthDay,
-                StartDate = entity.StartDate,
-                Password = entity.Password,
-                NumericCode = entity.NumericCode,
-                Role = entity.Role,
-                Salaries = new List<EmployeeSalary> {
-                    new EmployeeSalary {
-                        EmployeeId = entity.Id,
-                        StartDate = entity.StartDate,
-                        FinishDate = entity.StartDate,
-                        Salary = entity.HourPay
-                    }
+        _db.Employees.Add(new Employee {
+            Email = entity.Email,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            BirthDay = entity.BirthDay,
+            StartDate = entity.StartDate,
+            Password = entity.Password,
+            NumericCode = entity.NumericCode,
+            Role = entity.Role,
+            Salaries = new List<EmployeeSalary> {
+                new EmployeeSalary {
+                    EmployeeId = entity.Id,
+                    StartDate = entity.StartDate,
+                    FinishDate = entity.StartDate,
+                    Salary = entity.HourPay
                 }
+            }
         });
 
         await _db.SaveChangesAsync();
@@ -56,7 +55,7 @@ public class EmployeeRepository
             model.Id = entity.Id;
             model.FirstName = entity.FirstName;
             model.LastName = entity.LastName;
-            model.Birthday = entity.BirthDay;
+            model.BirthDay = entity.BirthDay;
             model.StartDate = entity.StartDate;
             model.Email = entity.Email;
             model.Role = entity.Role;
@@ -80,7 +79,7 @@ public class EmployeeRepository
             .Select(e => new EmployeeViewDTO {
                 Id = e.Id,
                 FullName = $"{e.FirstName} {e.LastName}",
-                Birthday = e.Birthday.ToShortDateString(),
+                BirthDay = e.BirthDay,
                 Email = e.Email,
                 Role = e.Role.ToString().Replace('_', ' ')})
             .SingleOrDefaultAsync(e => e.Id == id);
@@ -93,7 +92,7 @@ public class EmployeeRepository
                 FirstName = e.FirstName,
                 LastName = e.LastName,
                 Email = e.Email,
-                BirthDay = e.Birthday,
+                BirthDay = e.BirthDay,
                 StartDate = e.StartDate,
                 Role = e.Role,
                 NumericCode = e.NumericCode,
@@ -148,7 +147,7 @@ public class EmployeeRepository
                 FirstName = e.FirstName,
                 LastName = e.LastName,
                 Email = e.Email,
-                BirthDay = e.Birthday,
+                BirthDay = e.BirthDay,
                 StartDate = e.StartDate,
                 Role = e.Role,
                 NumericCode = e.NumericCode,
@@ -156,18 +155,16 @@ public class EmployeeRepository
                 EmployeeActivities = e.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Activity.Id,
-                        Activity = new ActivityForm {
+                        Activity = new ActivitySelectDTO {
                             Id = ea.Activity.Id,
                             Name = ea.Activity.Name,
                             StartDate = ea.Activity.StartDate,
                             FinishDate = ea.Activity.FinishDate,
-                            WorkorderId = ea.Activity.WorkOrderId
+                            WorkOrderId = ea.Activity.WorkOrderId
                         },
                         ActivityId = ea.Activity.Id,
-                        Employee = new EmployeeForm {
+                        Employee = new EmployeeSelectDTO {
                             Id = e.Id,
-                            FirstName = e.FirstName,
-                            LastName = e.LastName,
                             Email = e.Email
                         },
                         EmployeeId = e.Id
@@ -178,15 +175,14 @@ public class EmployeeRepository
         return employee;
     }
 
-
     public async Task<List<EmployeeViewDTO>> GetAllAsync() {
         return await _db.Employees
             .Select(e => new EmployeeViewDTO {
                 Id = e.Id,
                 FullName = $"{e.FirstName} {e.LastName}",
-                Birthday = e.Birthday.ToShortDateString(),
+                BirthDay = e.BirthDay,
                 Email = e.Email,
-                Role = e.Role.ToString().Replace('_', ' ')})
+                Role = e.Role.ToString().ToUpper().Replace('_', ' ')})
             .ToListAsync();
     }
 
@@ -194,8 +190,7 @@ public class EmployeeRepository
         return await _db.Employees
             .Select(e => new CurrentEmployee {
                 Id = e.Id,
-                Email = e.Email
-            })
+                Email = e.Email})
             .SingleOrDefaultAsync(e => e.Email == email);
     }
 }

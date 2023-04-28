@@ -5,6 +5,7 @@
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
 <PageTitle>Operation Manager</PageTitle>
@@ -14,18 +15,18 @@
     <EditForm Model="@model" OnValidSubmit="OnClickConfirm">
         <DataAnnotationsValidator/>
         <div class="form-group">
-            <label>*Nome:</label>
-            <InputText type="text" class="form-control" @bind-Value="model.Name" />
+            <label for="Nome commessa">Nome</label>
+            <input type="text" class="form-control" @bind="model.Name" required/>
             <ValidationMessage For="@(() => model.Name)"/>
         </div>
         <div class="form-group">
-            <label>*Data d'inzio:</label>
-            <input type="date" class="form-control" @bind="@model.StartDate"/> 
+            <label>Data d'inzio</label>
+            <input type="date" class="form-control" @bind="@model.StartDate" required/> 
             <ValidationMessage For="@(() => model.StartDate)"/>
         </div>
         <div class="form-group">
-            <label>*Data fine:</label>
-            <input type="date" class="form-control" @bind="@model.FinishDate" />
+            <label>Data fine</label>
+            <input type="date" class="form-control" @bind="@model.FinishDate" required/>
             <ValidationMessage For="@(() => model.FinishDate)"/>
         </div>
         <div class="wrapper-btn">
@@ -40,15 +41,19 @@
 </div>
 
 @code {
-    public WorkorderForm model = new WorkorderForm();
+    private WorkorderForm model = new();
+
+    private void RedirectToPage() {
+        navManager.NavigateTo("/operation-manager");
+    }
 
     public async Task OnClickConfirm() {
         await httpClient.PostAsJsonAsync<WorkorderForm>("http://localhost:5032/workorder/add", model);
             
-        navManager.NavigateTo("/operation-manager");
+        RedirectToPage();
     }
 
     public void OnClickCancel() {
-        navManager.NavigateTo("/operation-manager");
+        RedirectToPage();
     }
 }

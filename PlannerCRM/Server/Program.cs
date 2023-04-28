@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Server.Models;
 using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Server.Services;
 using Microsoft.AspNetCore.Identity;
@@ -28,7 +26,7 @@ builder.Services
     .AddUserManager<UserManager<IdentityUser>>()
     .AddDefaultTokenProviders();
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
+builder.Services.Configure<CookiePolicyOptions>(options => 
 {
     options.CheckConsentNeeded = context => true;
     options.MinimumSameSitePolicy = SameSiteMode.None;
@@ -61,8 +59,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     
-    if (!await db.Users.AnyAsync()) 
-    {
+    if (!await db.Users.AnyAsync()) {
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         
@@ -74,11 +71,11 @@ using (var scope = app.Services.CreateScope())
 
         var accountManagerResult = await userManager.CreateAsync(accountManager, accountManagerPassword);
 
-        var roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.ACCOUNT_MANAGER) });
-        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.PROJECT_MANAGER) });
-        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.OPERATION_MANAGER) });
-        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.SENIOR_DEVELOPER) });
-        roleCreationResult = await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.JUNIOR_DEVELOPER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.ACCOUNT_MANAGER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.PROJECT_MANAGER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.OPERATION_MANAGER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.SENIOR_DEVELOPER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.JUNIOR_DEVELOPER) });
 
         await userManager.AddToRoleAsync(accountManager, nameof(Roles.ACCOUNT_MANAGER));
     }

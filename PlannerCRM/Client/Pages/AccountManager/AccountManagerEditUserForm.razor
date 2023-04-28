@@ -1,71 +1,71 @@
-@page "/account-manager/edit/user/{paramId}"
+@page "/account-manager/edit/user/{Id:int}"
 
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.Models
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
+
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
 <PageTitle>Account Manager</PageTitle>
 
 <div class="container-fluid">
     <h1>Modifica utente</h1>
-    <EditForm Model="@model" OnValidSubmit="OnClickConfirm" class="form">
+    <EditForm Model="@_model" OnValidSubmit="OnClickConfirm" class="form">
         <div class="form-group">
-            <label>*Nome:</label>
-            <InputText class="form-control" type="text" @bind-Value="model.FirstName" />
-            <ValidationMessage For="@(() => model.FirstName)"/>
+            <label for="Nome">Nome</label>
+            <input type="text" class="form-control" @bind="_model.FirstName" required/>
+            <ValidationMessage For="@(() => _model.FirstName)"/>
         </div>
         <div class="form-group">
-            <label>*Cognome:</label>
-            <InputText class="form-control" type="text" @bind-Value="model.LastName" />
-            <ValidationMessage For="@(() => model.LastName)"/>
+            <label for="Cognome">Cognome</label>
+            <input type="text" class="form-control" @bind="_model.LastName" required/>
+            <ValidationMessage For="@(() => _model.LastName)"/>
         </div>
         <div class="form-group">
-            <label>*Email:</label>
-            <InputText class="form-control" type="email" @bind-Value="model.Email" />
-            <ValidationMessage For="@(() => model.Email)" />
+            <label for="Email">Email</label>
+            <input type="email" class="form-control" @bind="_model.Email" required/>
+            <ValidationMessage For="@(() => _model.Email)" />
         </div>
         <div class="form-group">
-            <label>*Data di nascita:</label>
-            <input class="form-control" type="date" @bind="@model.BirthDay" />
-            <ValidationMessage For="@(() => model.BirthDay)" />
+            <label for="Data di nascita">Data di nascita</label>
+            <input type="text" class="form-control" @bind="@_model.BirthDay" required/>
+            <ValidationMessage For="@(() => _model.BirthDay)" />
         </div>
         <div class="form-group">
-            <label>*Data d'inizio:</label>
-            <input class="form-control" type="date" @bind="@model.StartDate" />
-            <ValidationMessage For="@(() => model.StartDate)" />
+            <label for="Data d'inizio">Data d'inizio</label>
+            <input type="text" class="form-control" @bind="@_model.StartDate" required/>
+            <ValidationMessage For="@(() => _model.StartDate)" />
         </div>
         <div class="form-group">
-            <label>*Codice fiscale:</label>
-            <InputText aria-required="true" class="form-control" type="text" @bind-Value="model.NumericCode" />
-            <ValidationMessage For="@(() => model.NumericCode)" />
+            <label for="Codice fiscale">Codice fiscale</label>
+            <input type="text" class="form-control" @bind="_model.NumericCode" required/>
+            <ValidationMessage For="@(() => _model.NumericCode)" />
         </div>
         <div class="form-group">
-            <label>*Ruolo
+            <label for="Ruolo">Ruolo
                 <div class="form-control">
-                    <InputSelect class="dropdown-item" @bind-Value="model.Role">
-                        <option selected="true" disabled="true">---nessuna posizione scelta---</option>
+                    <select class="dropdown-item" @bind="_model.Role" required>
                         @foreach (var role in Enum.GetValues(typeof(Roles))) {
                             if (!role.Equals(Roles.ACCOUNT_MANAGER)) {
                                 <option value="@role">@role</option>
                             }
                         }
-                        <ValidationMessage For="@(() => model.Role)" />
-                    </InputSelect>
+                    </select>
+                    <ValidationMessage For="@(() => _model.Role)" />
                 </div>
             </label>
         </div>
         <div>
-            <label>*Tariffa oraria</label>
-            <InputNumber class="form-control" @bind-Value="model.HourPay" />
-            <ValidationMessage For="@(() => model.HourPay)" />
+            <label for="Tariffa oraria">Tariffa oraria</label>
+            <input type="number" class="form-control" @bind="_model.HourPay" required/>
+            <ValidationMessage For="@(() => _model.HourPay)" />
         </div>
         <div class="form-group">
-            <label for="Name">*Password</label>
-            <InputText class="form-control" type="password" @bind-Value="model.Password" />
-            <ValidationMessage For="@(() => model.Password)" />
+            <label for="Password">Password</label>
+            <input type="password" class="form-control" @bind="_model.Password" required/>
+            <ValidationMessage For="@(() => _model.Password)" />
         </div>
         <div class="wrapper-btn">
             <div class="btn-cancel">
@@ -79,25 +79,27 @@
 </div>
 
 @code {
-    [Parameter] public string paramId { get; set; }
-    private EmployeeForm model = new EmployeeForm();
-    private string CurrentEmail { get; set; }
-    private string errorMessage = "";
-    private bool isError = false;
+    [Parameter] public int Id { get; set; }
+    private string _CurrentEmail { get; set; }
+    private EmployeeForm _model = new();
 
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<EmployeeForm>($"http://localhost:5032/employee/get/for/edit/{paramId}");
-        CurrentEmail = model.Email;
+        _model = await httpClient.GetFromJsonAsync<EmployeeForm>($"http://localhost:5032/employee/get/for/edit/{Id}");
+        _CurrentEmail = _model.Email;
+    }
+
+    public void RedirectToPage() {
+        navManager.NavigateTo("/account-manager");
     }
 
     private void OnClickCancel() {
-        navManager.NavigateTo("/account-manager");
+        RedirectToPage();
     }
 
     private async void OnClickConfirm() {
-        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/employee/edit", model);
-        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/account/edit/user/{CurrentEmail}", model);
+        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/employee/edit", _model);
+        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/account/edit/user/{_CurrentEmail}", _model);
 
-        navManager.NavigateTo("/account-manager");
+        RedirectToPage();
     }
 }

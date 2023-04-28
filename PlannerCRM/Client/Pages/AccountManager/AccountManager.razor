@@ -1,14 +1,16 @@
 @page "/account-manager"
+
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Views
 @using PlannerCRM.Shared.Models
 
 @inject HttpClient httpClient
 @inject NavigationManager navManager
+
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
 <PageTitle>Account Manager</PageTitle>
 
-<button class="btn btn-primary" @onclick="OnClickAddUser">
+<button type="button" class="btn btn-primary" @onclick="OnClickAddUser">
     <span class="oi oi-plus"></span>
     Aggiungi utente
 </button>
@@ -21,17 +23,18 @@
             <th scope="col">Data di nascita</th>
             <th scope="col">Ruolo</th>
             <th scope="col">Tariffa oraria</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in _users)
-        {
+        @foreach (var user in _users) {
             <tr>
                 <td>@user.Email</td>
                 <td>@user.FullName</td>
-                <td>@user.Birthday</td>
+                <td>@user.BirthDay.ToShortDateString()</td>
                 <td>@user.Role</td>
-                <td>@user.HourlyPay</td>
+                <td>@user.HourPay</td>
                 <td>
                     <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(user.Id))">Modifica</button>                
                 </td> 
@@ -44,7 +47,7 @@
 </table>
 
 @code {
-    private IEnumerable<EmployeeViewDTO> _users = new List<EmployeeViewDTO>();
+    private List<EmployeeViewDTO> _users = new();
 
     protected override async Task OnInitializedAsync() {
         _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDTO>>("http://localhost:5032/employee/get/all");
@@ -61,5 +64,4 @@
     public void OnClickDelete(int id) {
         navManager.NavigateTo($"/account-manager/delete/user/{id}");
     }
-
 }

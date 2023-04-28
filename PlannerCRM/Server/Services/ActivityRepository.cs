@@ -14,13 +14,14 @@ public class ActivityRepository
     public ActivityRepository(AppDbContext db) {
         _db = db;
     }
+
     public async Task AddAsync(ActivityForm entity) {
         _db.Activities.Add(new Activity {
             Id = entity.Id,
             Name = entity.Name,
             StartDate = entity.StartDate,
             FinishDate = entity.FinishDate,
-            WorkOrderId = entity.WorkorderId,
+            WorkOrderId = entity.WorkOrderId,
             EmployeeActivity = entity.EmployeesActivities
                 .Select(e => new EmployeeActivity {
                     EmployeeId = e.Id,
@@ -48,7 +49,7 @@ public class ActivityRepository
         model.Name = entity.Name;
         model.StartDate = entity.StartDate;
         model.FinishDate = entity.FinishDate;
-        model.WorkOrderId = entity.WorkorderId;
+        model.WorkOrderId = entity.WorkOrderId;
         model.EmployeeActivity = entity.EmployeesActivities
             .Where(es => 
                 model.EmployeeActivity
@@ -75,7 +76,6 @@ public class ActivityRepository
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 
-
     public async Task<ActivityForm> GetForEditAsync(int id) {
         return await _db.Activities
             .Select(e => new ActivityForm {
@@ -83,7 +83,7 @@ public class ActivityRepository
                 Name = e.Name,
                 StartDate = e.StartDate,
                 FinishDate = e.FinishDate,
-                WorkorderId = e.WorkOrderId,
+                WorkOrderId = e.WorkOrderId,
                 EmployeesActivities = e.EmployeeActivity
                     .Select(ea => new EmployeeSelectDTO {
                         Id = ea.EmployeeId,
@@ -112,7 +112,7 @@ public class ActivityRepository
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
-                WorkorderId = ac.WorkOrderId,
+                WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
                     .Select(ea => new EmployeeSelectDTO {
                         Id = ea.EmployeeId,
@@ -132,7 +132,7 @@ public class ActivityRepository
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
-                WorkorderId = ac.WorkOrderId,
+                WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
                     .Select(ea => new EmployeeSelectDTO {
                         Id = ea.EmployeeId,
@@ -140,7 +140,7 @@ public class ActivityRepository
                     })
                     .ToList()   
             })
-            .Where(ac => ac.WorkorderId == workorderId)
+            .Where(ac => ac.WorkOrderId == workorderId)
             .ToListAsync();
     }
 

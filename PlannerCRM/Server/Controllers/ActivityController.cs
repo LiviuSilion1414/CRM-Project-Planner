@@ -13,6 +13,7 @@ namespace PlannerCRM.Server.Controllers;
 public class ActivityController : ControllerBase
 {
     private readonly ActivityRepository _repo;
+    
     public ActivityController(ActivityRepository repo) {
         _repo = repo;
     }

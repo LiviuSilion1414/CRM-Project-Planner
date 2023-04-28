@@ -7,10 +7,11 @@ namespace PlannerCRM.Client.Services;
 
 public class CustomAuthState : AuthenticationStateProvider
 {
-    private readonly AuthService api;
+    private readonly AuthService _api;
     private CurrentUser _currentUser;
+
     public CustomAuthState(AuthService api) {
-        this.api = api;
+        this._api = api;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
@@ -34,11 +35,10 @@ public class CustomAuthState : AuthenticationStateProvider
         }
         
         return new AuthenticationState(new ClaimsPrincipal(identity));
-
     }
 
     private async Task<CurrentUser> GetCurrentUser() {
-        _currentUser = await api.CurrentUserInfo();
+        _currentUser = await _api.CurrentUserInfo();
 
         if (_currentUser != null && _currentUser.IsAuthenticated) {
             return _currentUser;
@@ -46,18 +46,20 @@ public class CustomAuthState : AuthenticationStateProvider
             return _currentUser;
         }
     }
-    public async Task<IEnumerable<string>> GetRoles() {
-        return await api.GetRoles();
+    public async Task<List<string>> GetRoles() {
+        return await _api.GetRoles();
     }
 
     public async Task Logout() {
-        await api.Logout();
+        await _api.Logout();
         _currentUser = null;
+
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
     
     public async Task Login(EmployeeLoginDTO loginParameters) {
-        await api.Login(loginParameters);
+        await _api.Login(loginParameters);
+        
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 }

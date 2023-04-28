@@ -10,7 +10,7 @@ public class Employee
     public string Email { get; set; }
     public string Password { get; set; }
     public DateTime StartDate { get; set; }
-    public DateTime Birthday { get; set; }
+    public DateTime BirthDay { get; set; }
     public string NumericCode { get; set; }
     public Roles Role { get; set; }
     public List<EmployeeSalary> Salaries { get; set; }

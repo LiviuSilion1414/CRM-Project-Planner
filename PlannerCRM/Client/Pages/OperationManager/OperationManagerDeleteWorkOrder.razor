@@ -5,6 +5,7 @@
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
+
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
 <PageTitle>Account Manager</PageTitle>
@@ -12,11 +13,11 @@
 <div>
     <span>Vuoi eliminare:
         <br>  
-        <strong>Nome:</strong> @model.Name 
+        <strong>Nome:</strong> @_model.Name 
         <br>
-        <strong>Data d'inizio:</strong> @model.StartDate
+        <strong>Data d'inizio:</strong> @_model.StartDate
         <br>
-        <strong>Data fine:</strong> @model.FinishDate ?
+        <strong>Data fine:</strong> @_model.FinishDate ?
         <br>
     </span>
     <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>
@@ -25,19 +26,24 @@
 
 @code {
     [Parameter] public string Id { get; set; }
-    public WorkorderDeleteDTO model = new WorkorderDeleteDTO();
+    private WorkorderDeleteDTO _model = new();
+
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<WorkorderDeleteDTO>($"http://localhost:5032/workorder/get/for/delete/{Id}");
+        _model = await httpClient.GetFromJsonAsync<WorkorderDeleteDTO>($"http://localhost:5032/workorder/get/for/delete/{Id}");
     }
 
-    public void OnClickCancel() {
+    private void RedirectToPage() {
         navManager.NavigateTo("/operation-manager");
     }
 
-    public async Task OnClickDeleteUser() {
+    private void OnClickCancel() {
+        RedirectToPage();
+    }
+
+    private async Task OnClickDeleteUser() {
         await httpClient.DeleteAsync($"http://localhost:5032/workorder/delete/{Id}");
         
-        navManager.NavigateTo("/operation-manager");
+        RedirectToPage();
     }
 }
 

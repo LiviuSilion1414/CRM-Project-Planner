@@ -4,22 +4,23 @@
 @using PlannerCRM.Shared.DTOs.Workorder.Views
 @using PlannerCRM.Shared.Models
 
-@inject NavigationManager navManager
 @inject HttpClient httpClient
+@inject NavigationManager navManager
+
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
 <PageTitle>Operation Manager</PageTitle>
 
 <div>
-    <h3> Commessa: @currentWorkorder.Name </h3>
+    <h3> Commessa: @_currentWorkorder.Name </h3>
     <br>
     <span>Vuoi eliminare l'attività:
         <br>  
-        <strong>Nome:</strong> @currentActivity.Name 
+        <strong>Nome:</strong> @_currentActivity.Name 
         <br>
-        <strong>Data d'inizio:</strong> @currentActivity.StartDate.ToShortDateString()
+        <strong>Data d'inizio:</strong> @_currentActivity.StartDate.ToShortDateString()
         <br>
-        <strong>Data fine:</strong> @currentActivity.FinishDate.ToShortDateString() ?
+        <strong>Data fine:</strong> @_currentActivity.FinishDate.ToShortDateString() ?
         <br>
     </span>
     <button type="button" class="btn btn-danger" @onclick="OnClickDeleteActivity">Conferma</button>
@@ -29,21 +30,27 @@
 @code {
     [Parameter] public int workorderId { get; set; }
     [Parameter] public int activityId { get; set; }
-    public WorkorderViewDTO currentWorkorder = new();
-    public ActivityDeleteDTO currentActivity = new();
+    private WorkorderViewDTO _currentWorkorder = new();
+    private ActivityDeleteDTO _currentActivity = new();
+
     protected override async Task OnInitializedAsync() {
-        currentWorkorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{workorderId}");
-        currentActivity = await httpClient.GetFromJsonAsync<ActivityDeleteDTO>($"http://localhost:5032/activity/get/for/delete/{activityId}");
+        _currentWorkorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{workorderId}");
+        _currentActivity = await httpClient.GetFromJsonAsync<ActivityDeleteDTO>($"http://localhost:5032/activity/get/for/delete/{activityId}");
     }
 
-    public void OnClickCancel() {
+    private void RedirectToPage() {
         navManager.NavigateTo("/operation-manager");
     }
 
-    public async Task OnClickDeleteActivity() {
+
+    private void OnClickCancel() {
+        RedirectToPage();
+    }
+
+    private async Task OnClickDeleteActivity() {
         await httpClient.DeleteAsync($"http://localhost:5032/activity/delete/{activityId}");
         
-        navManager.NavigateTo("/operation-manager");
+        RedirectToPage();
     }
 }
 

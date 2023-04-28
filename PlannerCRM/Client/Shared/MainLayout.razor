@@ -43,10 +43,11 @@
     protected override async Task OnInitializedAsync() {
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         IsAuthenticated = authState.User.Identity.IsAuthenticated;
+        
         if (IsAuthenticated) {
             UserRole = (await authStateProvider.GetRoles())
                 .ToList()[0]
-                .ToLower()
+                .ToUpper()
                 .Replace('_', ' ');
         }
     }

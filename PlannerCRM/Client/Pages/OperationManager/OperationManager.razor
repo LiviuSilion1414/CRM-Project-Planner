@@ -27,50 +27,47 @@
     }
 </div>
 
-
 <table class="table">
     <thead>
         <tr>
-            @if (trIsClicked) {
-                <th scope="col">Attività</th>
+            @if (!trIsClicked) {
                 <th scope="col">Nome</th>
                 <th scope="col">Data d'inizio</th>
                 <th scope="col">Data fine</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
             } else {
                 <th scope="col">Nome</th>
                 <th scope="col">Data d'inizio</th>
                 <th scope="col">Data fine</th>
+                <th scope="col">Attività</th>
             }
         </tr>
     </thead>
     <tbody>
-        @foreach (var wo in _workorders)
-        {
+        @foreach (var wo in _workorders) {
             <tr @onclick="(() => OnClickTableRow())">
-                @if (trIsClicked) {
-                    <tr>
-                        <div class="col-8">
-                            <OperationManagerMasterDetails Id="wo.Id"/>
-                        </div>
-                    </tr>
-                }
                 <td>@wo.Name</td>
                 <td>@wo.StartDate.ToShortDateString()</td>
                 <td>@wo.FinishDate.ToShortDateString()</td>
-                <td>
-                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(wo.Id))">Modifica</button>                
-                </td> 
-                <td> 
-                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(wo.Id))">Elimina</button>
-                </td>
+                @if (trIsClicked) {
+                    <tr> <OperationManagerMasterDetails Id="wo.Id"/> </tr>
+                } else {
+                    <td>
+                        <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(wo.Id))">Modifica</button>                
+                    </td> 
+                    <td> 
+                        <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(wo.Id))">Elimina</button>
+                    </td>
+                }
             </tr>
         }
     </tbody>
 </table>
 
 @code {
-    public List<WorkorderViewDTO> _workorders = new List<WorkorderViewDTO>();
-    public bool trIsClicked = false;
+    private List<WorkorderViewDTO> _workorders = new();
+    private bool trIsClicked = false;
 
     protected override async Task OnInitializedAsync() {
         _workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");

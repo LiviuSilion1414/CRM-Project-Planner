@@ -8,5 +8,5 @@ public class WorkorderViewDTO
     public string Name { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime FinishDate { get; set; }
-   // public List<ActivityViewDTO> Activities { get; set; }
+   // public List<ActivityViewDTO> Activities { get; set; } //set all activities to this list object
 }

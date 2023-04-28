@@ -22,13 +22,13 @@
         <DataAnnotationsValidator/>
         
         <div class="form-group">
-            <label class="form-label" for="Email">Email:</label>
-            <InputText type="email" id="emailInput" class="form-control" @bind-Value="model.Email"/>
+            <label for="Email">Email:</label>
+            <input type="email" class="form-control" @bind="model.Email" required/>
             <ValidationMessage For="@(() => model.Email)"/>
         </div>
         <div class="form-group">
-            <label class="form-label" for="Email">Password:</label>
-            <InputText type="password" id="passwordInput" class="form-control" @bind-Value="model.Password" />
+            <label for="Password">Password:</label>
+            <input type="password" class="form-control" @bind="model.Password" required/>
             <ValidationMessage For="@(() => model.Password)"/>
         </div>
         <div class="wrapper">
@@ -38,18 +38,24 @@
 </div>
 
 @code {
-    private EmployeeLoginDTO model = new EmployeeLoginDTO();   
+    private EmployeeLoginDTO model = new();   
     private string Message { get; set; }
     private bool IsError { get; set; }
+    private CurrentEmployee currentEmployee { get; set; }
+    private const string SPECIAL_EMAIL = "account.manager@gmail.com";
 
-    private async Task LoginOnValidInput() {
+    public async Task LoginOnValidInput() {
         var response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
-
-        var currentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
-        if (currentEmployee == null) { IsError = true; Message="ERR: ID non trovato"; }
+        
+        if (model.Email != SPECIAL_EMAIL) {
+            currentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
+            if (currentEmployee == null) { 
+                IsError = true; Message="ERR: ID non trovato"; 
+            }
+        }
         
         if (response.IsSuccessStatusCode) {
-            var rolesList = await httpClient.GetFromJsonAsync<IEnumerable<string>>("http://localhost:5032/account/user/role");
+            var rolesList = await httpClient.GetFromJsonAsync<List<string>>("http://localhost:5032/account/user/role");
 
             foreach (var role in rolesList) {
                 if (role == nameof(Roles.ACCOUNT_MANAGER)) {
@@ -62,7 +68,6 @@
                     navManager.NavigateTo($"/senior-developer/{currentEmployee.Id}", true);
                 } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
                     navManager.NavigateTo($"/junior-developer/{currentEmployee.Id}", true);
-                    //navManager.NavigateTo("/junior-developer", true);
                 }
             }
         } else {

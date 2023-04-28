@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PlannerCRM.Server.Models;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class EmployeeController: ControllerBase

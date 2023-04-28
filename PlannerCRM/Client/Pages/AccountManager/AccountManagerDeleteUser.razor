@@ -1,10 +1,11 @@
-@page "/account-manager/delete/user/{Id}"
+@page "/account-manager/delete/user/{Id:int}"
 
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Views
 @using PlannerCRM.Shared.Models
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
+
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
 <PageTitle>Account Manager</PageTitle>
@@ -12,9 +13,9 @@
 <div>
     <span>Vuoi eliminare:
         <br>  
-        <strong>Nome:</strong> @model.FullName 
+        <strong>Nome:</strong> @_model.FullName 
         <br>
-        <strong>Ruolo:</strong> @model.Role ?
+        <strong>Ruolo:</strong> @_model.Role ?
         <br>
     </span>
     <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>
@@ -22,21 +23,26 @@
 </div>
 
 @code {
-    [Parameter] public string Id { get; set; }
-    public EmployeeDeleteDTO model = new EmployeeDeleteDTO();
+    [Parameter] public int Id { get; set; }
+    public EmployeeDeleteDTO _model = new();
+
     protected override async Task OnInitializedAsync() {
-        model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/employee/get/for/delete/{Id}");
+        _model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/employee/get/for/delete/{Id}");
+    }
+
+    public void RedirectToPage() {
+        navManager.NavigateTo("/account-manager");
     }
 
     public void OnClickCancel() {
-        navManager.NavigateTo("/account-manager");
+        RedirectToPage();
     }
 
     public async Task OnClickDeleteUser() {
         await httpClient.DeleteAsync($"http://localhost:5032/employee/delete/{Id}");
-        await httpClient.DeleteAsync($"http://localhost:5032/account/delete/user/{model.Email}");
+        await httpClient.DeleteAsync($"http://localhost:5032/account/delete/user/{_model.Email}");
         
-        navManager.NavigateTo("/account-manager");
+        RedirectToPage();
     }
 }
 

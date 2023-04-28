@@ -5,9 +5,10 @@ namespace PlannerCRM.Shared.DTOs.ActivityDto.Views;
 
 public class ActivitySelectDTO
 {
-    public string SelectedWorkorder { get; set; }
-    public string SelectedEmployee { get; set; }
-
-    public WorkorderSelectDTO WorkorderDto { get; set; }
-    public EmployeeSelectDTO EmployeeDto { get; set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime FinishDate { get; set; }
+    
+    public int WorkOrderId { get; set; }
 }

@@ -1,15 +1,15 @@
-@inject HttpClient httpClient
-
 @using PlannerCRM.Shared.DTOs.Workorder.Views
 @using PlannerCRM.Shared.DTOs.ActivityDto.Forms
 @using PlannerCRM.Shared.DTOs.WorkTimeDto.Views
 @using PlannerCRM.Shared.Models
 
-@attribute [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
-@attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
+@inject HttpClient httpClient
 @inject NavigationManager navManager
 
-@if (activities == null) {
+@attribute [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
+@attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
+
+@if (_activities == null) {
     <p><em>Non ti è stata ancora assegnata alcuna attività.</em></p>
 } else {
     <table class="table">
@@ -24,16 +24,16 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var ac in activities) {
+            @foreach (var ac in _activities) {
                 <tr>
-                    <td>@workorders.Find(wo => wo.Id == ac.WorkorderId).Name</td>
+                    <td>@_workorders.Find(wo => wo.Id == ac.WorkOrderId).Name</td>
                     <td>@ac.Name</td>
                     <td>@ac.StartDate.ToShortDateString()</td>
                     <td>@ac.FinishDate.ToShortDateString()</td>
-                    @if (workTimeRecords == null || workTimeRecords.Count == 0) {
+                    @if (_workTimeRecords == null || _workTimeRecords.Count == 0) {
                         <td><em>Nessun orario</em></td>
                     } else {
-                        <td>@workTimeRecords.Find(wtr => wtr.ActivityId == ac.Id).Hours</td>
+                        <td>@_workTimeRecords.Find(wtr => wtr.ActivityId == ac.Id).Hours</td>
                     }
                     <td>
                         <button type="button" class="btn btn-primary" 
@@ -48,22 +48,21 @@
 
 @code {
     [Parameter] public int Id { get; set; } //EmployeeId
-    public List<WorkorderViewDTO> workordersId = new(); 
-    public List<WorkorderViewDTO> workorders = new();
-    public List<ActivityForm> activities = new();
-    public List<WorkTimeRecordViewDTO> workTimeRecords = new();
+    private List<WorkorderViewDTO> _workorders = new();
+    private List<ActivityForm> _activities = new();
+    private List<WorkTimeRecordViewDTO> _workTimeRecords = new();
 
     protected override async Task OnInitializedAsync() {
-        activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/employee/{Id}"); 
+        _activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/employee/{Id}"); 
         var listSizeByEmployeeId = await httpClient.GetFromJsonAsync<int>($"http://localhost:5032/worktimerecord/get/size/by/employee/{Id}");
     
         if (listSizeByEmployeeId != 0) {
-            workTimeRecords = await httpClient.GetFromJsonAsync<List<WorkTimeRecordViewDTO>>($"http://localhost:5032/worktimerecord/get/all/by/employee/{Id}");
+            _workTimeRecords = await httpClient.GetFromJsonAsync<List<WorkTimeRecordViewDTO>>($"http://localhost:5032/worktimerecord/get/all/by/employee/{Id}");
         }
 
-        foreach(var ac in activities) {
-            var workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{ac.WorkorderId}");
-            workorders.Add(workorder);
+        foreach(var ac in _activities) {
+            var workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{ac.WorkOrderId}");
+            _workorders.Add(workorder);
         }
     }
 

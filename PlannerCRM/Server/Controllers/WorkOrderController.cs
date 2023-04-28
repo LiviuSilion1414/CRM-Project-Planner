@@ -6,6 +6,7 @@ using PlannerCRM.Shared.DTOs.Workorder.Views;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class WorkOrderController : ControllerBase

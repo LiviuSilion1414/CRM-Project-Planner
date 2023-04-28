@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Controllers;
@@ -16,8 +15,7 @@ public class AccountController : ControllerBase
 
     public AccountController(
         UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager
-    )
+        SignInManager<IdentityUser> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -82,7 +80,7 @@ public class AccountController : ControllerBase
         }
     }
     
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/user/{email}")]
     public async Task DeleteUser(string email) {
         var user = await _userManager.FindByEmailAsync(email);
@@ -98,7 +96,6 @@ public class AccountController : ControllerBase
         
         return roles.ToList();
     }
-
 
     [Authorize]
     [HttpGet("logout")]

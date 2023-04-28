@@ -10,6 +10,6 @@ public partial class ActivityForm
     public DateTime StartDate { get; set; }
     public DateTime FinishDate { get; set; }
 
-    public int WorkorderId { get; set; }
-    public List<EmployeeSelectDTO> EmployeesActivities { get; set; }
+    public int WorkOrderId { get; set; }
+    public List<EmployeeSelectDTO> EmployeesActivities { get; set; } //change to EmployeeActivity dto and change all mapping made to this object
 }

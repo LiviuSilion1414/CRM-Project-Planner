@@ -3,7 +3,6 @@ using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
 namespace PlannerCRM.Server.Services;
 
@@ -53,8 +52,8 @@ public class WorkTimeRecordRepository
         model.WorkOrderId = entity.WorkOrderId;
         model.EmployeeId = entity.EmployeeId;
         model.Employee = await _db.Employees
-                .Where(e => e.Id == entity.EmployeeId)
-                .SingleOrDefaultAsync();
+            .Where(e => e.Id == entity.EmployeeId)
+            .SingleOrDefaultAsync();
 
         await _db.SaveChangesAsync();
     }
@@ -68,8 +67,7 @@ public class WorkTimeRecordRepository
                 TotalPrice = wo.TotalPrice,
                 ActivityId = wo.ActivityId,
                 EmployeeId = wo.EmployeeId,
-                WorkOrderId = wo.WorkOrderId
-            })
+                WorkOrderId = wo.WorkOrderId})
             .Where(wtr => wtr.ActivityId == activityId)
             .SingleOrDefaultAsync();
     }
@@ -82,8 +80,7 @@ public class WorkTimeRecordRepository
                 Hours = wo.Hours,
                 TotalPrice = wo.TotalPrice,
                 ActivityId = wo.ActivityId,
-                EmployeeId = wo.EmployeeId
-            })
+                EmployeeId = wo.EmployeeId})
             .ToListAsync();
     }
 
@@ -96,8 +93,7 @@ public class WorkTimeRecordRepository
                 Hours = wo.Hours,
                 TotalPrice = wo.TotalPrice,
                 ActivityId = wo.ActivityId,
-                EmployeeId = wo.EmployeeId
-            })
+                EmployeeId = wo.EmployeeId})
             .ToListAsync();
     }
 

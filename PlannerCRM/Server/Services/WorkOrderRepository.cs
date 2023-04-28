@@ -13,6 +13,7 @@ public class WorkOrderRepository
 	public WorkOrderRepository(AppDbContext db) {
 		_db = db;
 	}
+
 	public async Task AddAsync(WorkorderForm entity) {
 		_db.WorkOrders.Add(new WorkOrder {
 			Name = entity.Name,
@@ -55,9 +56,8 @@ public class WorkOrderRepository
 			.Select(e => new WorkorderDeleteDTO {
 				Id = e.Id,
 				Name = e.Name,
-				StartDate = e.StartDate.ToShortDateString(),
-				FinishDate = e.FinishDate.ToShortDateString()
-			})
+				StartDate = e.StartDate,
+				FinishDate = e.FinishDate})
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
 
@@ -67,8 +67,7 @@ public class WorkOrderRepository
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
-				FinishDate = e.FinishDate
-			})
+				FinishDate = e.FinishDate})
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
 	
@@ -78,8 +77,7 @@ public class WorkOrderRepository
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
-				FinishDate = e.FinishDate
-			})
+				FinishDate = e.FinishDate})
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
 	
@@ -89,8 +87,7 @@ public class WorkOrderRepository
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
-				FinishDate = e.FinishDate
-			})
+				FinishDate = e.FinishDate})
 			.ToListAsync();
 	}
 
@@ -98,11 +95,9 @@ public class WorkOrderRepository
         return await _db.WorkOrders
 			.Select(wo => new WorkorderSelectDTO{
 				Id = wo.Id,
-				Name = wo.Name
-			})
+				Name = wo.Name})
 			.Where(e => EF.Functions.Like(e.Name , $"%{workorder}%"))
 			.ToListAsync();
     }
-
 }
 
