@@ -6,10 +6,10 @@ public class EmployeeLoginDTO
 {
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = """Campo "Email" richiesto""")]
     public string Email { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = """Campo "Password" richiesto""")]
     public string Password { get; set; }
 
     public string Role { get; set; }

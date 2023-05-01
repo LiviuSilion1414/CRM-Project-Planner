@@ -1,16 +1,16 @@
-h3 {
+h4 {
     text-align: center;
 }
 
-.container {
-    margin: 70px auto;
-    max-width: 300px;
-    padding: 20px 20px;
-    border: 1px groove ;
+#error {
+    text-align: center;
+    color:red;
 }
 
 .form-group {
     padding: 10px 10px;
+    width: 500px;
+    margin: 0 auto;
 }
 
 .wrapper {

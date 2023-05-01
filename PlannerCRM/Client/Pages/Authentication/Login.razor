@@ -1,6 +1,7 @@
 ﻿@page "/"
 @page "/login"
 
+@using System.Net
 @using PlannerCRM.Shared.Models
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Views
@@ -13,50 +14,49 @@
 
 <h3>Entra nel tuo account gestionale.</h3>
 
-<div class="container">
-    @if (IsError) {
-        <span>@Message</span>
-    } 
-    <h4>Login</h4>
-    <EditForm Model="@model" OnValidSubmit="LoginOnValidInput">
-        <DataAnnotationsValidator/>
-        <div class="form-group">
-            <label for="Email">Email:</label>
-            <input type="email" class="form-control" @bind="model.Email" required/>
-            <ValidationMessage For="@(() => model.Email)"/>
-        </div>
-        <div class="form-group">
-            <label for="Password">Password:</label>
-            <input type="password" class="form-control" @bind="model.Password" required/>
-            <ValidationMessage For="@(() => model.Password)"/>
-        </div>
-        <div class="wrapper">
-            <button type="submit" class="btn btn-primary">
-                <span>Accedi</span>
-            </button>
-        </div>
-    </EditForm>
-</div>
+@if (IsError) {
+    <div class="alert alert-danger" 
+        style="margin: 0 auto; width: 300px; padding: 5px; text-align: center;">
+        <span> @Message </span>
+        <span id="x" style="float:right;" class="oi oi-circle-x" onclick="this.parentElement.style.display='none';"></span>
+    </div>
+}
+<h4>Login</h4>
+<EditForm Model="@model" OnValidSubmit="LoginOnValidInput">
+    <DataAnnotationsValidator/>
+    <div class="form-group">
+        <label for="Email">Email:</label>
+        <input type="email" class="form-control" @bind="model.Email"/>
+        <ValidationMessage For="@(() => model.Email)"/>
+    </div>
+    <div class="form-group">
+        <label for="Password">Password:</label>
+        <input type="password" class="form-control" @bind="model.Password"/>
+        <ValidationMessage For="@(() => model.Password)"/>
+    </div>
+    <div class="wrapper">
+        <button type="submit" class="btn btn-primary">
+            <span>Accedi</span>
+        </button>
+    </div>
+</EditForm>
 
 @code {
     private EmployeeLoginDTO model = new();   
+    private HttpResponseMessage response = new();
     private string Message { get; set; }
     private bool IsError { get; set; }
-    private bool IsClicked { get; set; }
     private CurrentEmployee CurrentEmployeeId { get; set; }
     private const string SPECIAL_EMAIL = "account.manager@gmail.com";
 
     public async Task LoginOnValidInput() {
-        var response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
+        response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
         
-        if (model.Email != SPECIAL_EMAIL) {
+        if (response.StatusCode == HttpStatusCode.OK && model.Email != SPECIAL_EMAIL) {
             CurrentEmployeeId = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
-            if (CurrentEmployeeId == null) { 
-                IsError = true; Message="ERR: ID non trovato"; 
-            }
         }
         
-        if (response.IsSuccessStatusCode) {
+        if (response.StatusCode == HttpStatusCode.OK) {
             var rolesList = await httpClient.GetFromJsonAsync<List<string>>("http://localhost:5032/account/user/role");
 
             foreach (var role in rolesList) {
@@ -70,11 +70,13 @@
                     navManager.NavigateTo($"/senior-developer/{CurrentEmployeeId.Id}", true);
                 } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
                     navManager.NavigateTo($"/junior-developer/{CurrentEmployeeId.Id}", true);
+                } else {
+                    navManager.NavigateTo("/", true);
                 }
             }
         } else {
             IsError = true;
-            Message = "Email o password non corrette. Riprovare.";
+            Message = await response.Content.ReadAsStringAsync();
         }
     }
 }
