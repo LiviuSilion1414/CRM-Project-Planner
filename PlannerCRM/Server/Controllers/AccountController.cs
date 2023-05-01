@@ -22,7 +22,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDTO employee) {
+    public async Task<IActionResult> Login(EmployeeLoginDTO employee) {
         var user = await _userManager.FindByEmailAsync(employee.Email);
 
         if (user == null) {
@@ -34,7 +34,7 @@ public class AccountController : ControllerBase
                 return BadRequest("Password sbagliata!");
             } else {
                 await _signInManager.SignInAsync(user, true);
-                return Ok();
+                return Ok("Connesso!");
             }
         }
     }

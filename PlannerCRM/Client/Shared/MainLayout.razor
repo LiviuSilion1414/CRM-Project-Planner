@@ -61,27 +61,29 @@
     }
 
     async Task NavigateBasedOnRole() {
-        var rolesList = await authStateProvider.GetRoles();
-        CurrentUser = await authStateProvider.GetCurrentUserInfoAsync();
+        if (IsAuthenticated) {
+            var rolesList = await authStateProvider.GetRoles();
+            CurrentUser = await authStateProvider.GetCurrentUserInfoAsync();
 
-        if (CurrentUser.UserName != SPECIAL_EMAIL || !string.IsNullOrEmpty(CurrentUser.UserName)) {
-            CurrentEmployee = await authStateProvider.GetCurrentEmployeeId(CurrentUser.UserName);
-        }
-
-        foreach (var role in rolesList) {
-            if (role == nameof(Roles.ACCOUNT_MANAGER)) {
-                navManager.NavigateTo("/account-manager");
-            } else if (role == nameof(Roles.OPERATION_MANAGER)) {
-                navManager.NavigateTo("/operation-manager");
-            } else if (role == nameof(Roles.PROJECT_MANAGER)) {
-                navManager.NavigateTo("/project-manager");
-            } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
-                navManager.NavigateTo($"/senior-developer/{CurrentEmployee.Id}");
-            } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
-                navManager.NavigateTo($"/junior-developer/{CurrentEmployee.Id}");
-            } else {
-                navManager.NavigateTo("/");
+            if (CurrentUser.UserName != SPECIAL_EMAIL) {
+                CurrentEmployee = await authStateProvider.GetCurrentEmployeeId(CurrentUser.UserName);
             }
+
+            foreach (var role in rolesList) {
+                if (role == nameof(Roles.ACCOUNT_MANAGER)) {
+                    navManager.NavigateTo("/account-manager", true);
+                } else if (role == nameof(Roles.OPERATION_MANAGER)) {
+                    navManager.NavigateTo("/operation-manager", true);
+                } else if (role == nameof(Roles.PROJECT_MANAGER)) {
+                    navManager.NavigateTo("/project-manager", true);
+                } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
+                    navManager.NavigateTo($"/senior-developer/{CurrentEmployee.Id}", true);
+                } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
+                    navManager.NavigateTo($"/junior-developer/{CurrentEmployee.Id}", true);
+                }
+            }
+        } else {
+            navManager.NavigateTo("/", true);
         }
     }
 
