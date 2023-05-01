@@ -31,10 +31,7 @@
             <ValidationMessage For="@(() => model.Password)"/>
         </div>
         <div class="wrapper">
-            <button type="submit" class="btn btn-primary" @onclick="OnClickLogin">
-                @if (IsClicked) {
-                    <span class="spinner-border spinner-border-sm"></span>
-                }
+            <button type="submit" class="btn btn-primary">
                 <span>Accedi</span>
             </button>
         </div>
@@ -48,11 +45,6 @@
     private bool IsClicked { get; set; }
     private CurrentEmployee CurrentEmployeeId { get; set; }
     private const string SPECIAL_EMAIL = "account.manager@gmail.com";
-
-    public async Task OnClickLogin() {
-        IsClicked = true;
-        await Task.Delay(1000);
-    }
 
     public async Task LoginOnValidInput() {
         var response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
