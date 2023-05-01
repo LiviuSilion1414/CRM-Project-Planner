@@ -15,9 +15,9 @@
         <br>  
         <strong>Nome:</strong> @_model.Name 
         <br>
-        <strong>Data d'inizio:</strong> @_model.StartDate
+        <strong>Data d'inizio:</strong> @_model.StartDate.ToShortDateString()
         <br>
-        <strong>Data fine:</strong> @_model.FinishDate ?
+        <strong>Data fine:</strong> @_model.FinishDate.ToShortDateString() ?
         <br>
     </span>
     <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>

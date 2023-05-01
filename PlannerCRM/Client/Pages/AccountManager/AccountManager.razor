@@ -10,10 +10,12 @@
 
 <PageTitle>Account Manager</PageTitle>
 
-<button type="button" class="btn btn-primary" @onclick="OnClickAddUser">
-    <span class="oi oi-plus"></span>
-    Aggiungi utente
-</button>
+<div class="parent">
+    <button type="button" class="btn btn-primary" @onclick="OnClickAddUser">
+        <span class="oi oi-plus"></span>
+        Aggiungi utente
+    </button>
+</div>
 
 <table class="table">
     <thead>
@@ -30,16 +32,23 @@
     <tbody>
         @foreach (var user in _users) {
             <tr>
-                <td>@user.Email</td>
+                <td>
+                    <span class="oi oi-person"></span>
+                    @user.Email
+                </td>
                 <td>@user.FullName</td>
                 <td>@user.BirthDay.ToShortDateString()</td>
                 <td>@user.Role</td>
                 <td>@user.HourPay</td>
                 <td>
-                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(user.Id))">Modifica</button>                
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(user.Id))">
+                        <span class="oi oi-pencil"></span>
+                    </button>                
                 </td> 
                 <td> 
-                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(user.Id))">Elimina</button>
+                    <button type="button" class="btn btn-danger" @onclick="@(() => OnClickDelete(user.Id))">
+                        <span class="oi oi-trash"></span>
+                    </button>
                 </td>
             </tr>
         }

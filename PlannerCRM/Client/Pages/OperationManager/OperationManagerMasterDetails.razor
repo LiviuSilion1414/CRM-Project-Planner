@@ -4,47 +4,57 @@
 @inject HttpClient httpClient
 @inject NavigationManager navManager
 
-@if (_activities.Count == 0) {
-    <p><em>Nessun'attività assegnata.</em></p>
+@if (_activities.Count() == 0) {
+    <td><p><em>Nessun'attività assegnata.</em></p></td>
 } else {
-    <div class="container-fluid">
-        <h3>Attività</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Data d'inizio</th>
-                    <th>Data di fine</th>
-                    <th>Dipendenti assegnati</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ac in _activities) {
+    <div class="master-detail">
+        <div class="container-fluid">
+            <h3>Attività</h3>
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>@ac.Name</td>
-                        <td>@ac.StartDate.ToShortDateString()</td>
-                        <td>@ac.FinishDate.ToShortDateString()</td>
-                        <td>
-                            @foreach (var em in ac.EmployeesActivities) {
-                                <tr>
-                                    <td>
-                                        @em.Email
-                                    </td>
-                                </tr>
-                            }
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary" 
-                                @onclick="@(() => OnClickEdit(ac.Id))">Modifica</button>                
-                        </td> 
-                        <td> 
-                            <button type="button" class="btn btn-danger" 
-                                @onclick="@(() => OnClickDelete(ac.Id))">Elimina</button>
-                        </td>
+                        <th>#</th>
+                        <th>Nome</th>
+                        <th>Data d'inizio</th>
+                        <th>Data di fine</th>
+                        <th>Dipendenti assegnati</th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var ac in _activities) {
+                        <tr>
+                            <td><span class="oi oi-puzzle-piece"></span></td>
+                            <td>@ac.Name</td>
+                            <td>@ac.StartDate.ToShortDateString()</td>
+                            <td>@ac.FinishDate.ToShortDateString()</td>
+                            <td>
+                                @foreach (var em in ac.EmployeesActivities) {
+                                    <tr>
+                                        <td>
+                                            @em.Email
+                                        </td>
+                                    </tr>
+                                }
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" 
+                                    @onclick="@(() => OnClickEdit(ac.Id))">
+                                     <span class="oi oi-pencil"></span>
+                                </button>                
+                            </td> 
+                            <td> 
+                                <button type="button" class="btn btn-danger" 
+                                    @onclick="@(() => OnClickDelete(ac.Id))">
+                                    <span class="oi oi-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }
 
@@ -66,4 +76,3 @@
         navManager.NavigateTo($"/operation-manager/delete/activity/{_workorder.Id}/{activityId}");
     }
 }
-

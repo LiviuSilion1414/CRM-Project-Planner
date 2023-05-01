@@ -19,30 +19,33 @@
     <EditForm Model="_model" OnValidSubmit="OnClickEditActivity">
         <DataAnnotationsValidator />
         <div class="form-group">
-            <div class="child">
-                <div class="child">
-                <label for="Nome commessa">Commessa</label>
-                    <input type="text" class="form-control" @bind="_currentWorkorder.Name" readonly/>
-                </div>
+            <span class="oi oi-briefcase"></span>
+            <label for="Nome commessa">Commessa</label>
+            <div class="form-control">
+                <input type="text" class="form-control" @bind="_currentWorkorder.Name" readonly/>
             </div>
         </div>
         <div class="form-group">
+            <span class="oi oi-text"></span>
             <label for="Nome attività">Nome</label>
             <input type="text" class="form-control" @bind="_model.Name" required/>
             <ValidationMessage For="@(() => _model.Name)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio</label>
             <input type="date" class="form-control" @bind="@_model.StartDate" required/>
             <ValidationMessage For="@(() => _model.StartDate)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data di fine">Data di fine</label>
             <input type="date" class="form-control" @bind="@_model.FinishDate" required/>
             <ValidationMessage For="@(() => _model.FinishDate)" />
         </div>
         <div class="container-fluid">
             <div class="child">
+                <span class="oi oi-people"></span>
                 <label for="Assegna dipendenti">Assegna a dipendenti </label>
                 <input type="search" class="form-control" @bind="_selectModel.SelectedEmployee" required/>
                 @if (_employees.Count != 0) {
@@ -59,28 +62,33 @@
                 <button type="button" class="btn btn-link"
                     @onclick="@(() => OnClickSearchEmployee(_selectModel.SelectedEmployee))">Cerca</button>
             </div>
-            <div class="container-selected-_employees">
-                <span>Dipendenti selezionati per questa attività @_model.EmployeesActivities.Count</span> <br>
-                <table class="table table-striped">
-                    <thead>
-                        <th>Nome</th>
-                        <th>Email</th>
-                    </thead>
-                    <tbody>
-                        @if (_model.EmployeesActivities.Count != 0) {
-                            @foreach (var em in _model.EmployeesActivities) {
-                                <tr>
-                                    <td> <span> @em.Email </span> </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger" value="@em"
-                                            @onclick="(() => OnClickRemoveAsSelected(em))">Elimina</button>
-                                    </td>
-                                </tr>
+            <div class="child">
+                <div style="width: 400px; height:150px; left: 0; overflow-y: scroll;">
+                    <span>Dipendenti selezionati per questa attività: @_model.EmployeesActivities.Count</span> <br>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>Email</th>
+                        <th></th>
+                        </thead>
+                        <tbody>
+                            @if (_model.EmployeesActivities.Count != 0) {
+                                @foreach (var em in _model.EmployeesActivities) {
+                                    <tr>
+                                        <td> 
+                                            <span class="oi oi-envelope-closed"></span>
+                                            <span> @em.Email </span> 
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" value="@em"
+                                                @onclick="(() => OnClickRemoveAsSelected(em))">Elimina</button>
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        }
-                    </tbody>
-                </table>
-                <br>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
             </div>
         </div>
         <div class="wrapper-btn">

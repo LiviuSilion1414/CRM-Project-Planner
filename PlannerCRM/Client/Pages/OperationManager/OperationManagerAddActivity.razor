@@ -21,6 +21,7 @@
         <div class="form-group">
             <div class="child">
                 <div class="child">
+                <span class="oi oi-briefcase"></span>
                 <label for="Nome commessa">Commessa</label>
                     <input type="search" @bind="_selectModel.SelectedWorkorder" class="form-control" required/>
                     <ul>
@@ -32,28 +33,35 @@
                 </div>
                 <div class="child">
                     <button type="button" class="btn btn-link"
-                        @onclick="@(() => OnClickSearchWorkorder(_selectModel.SelectedWorkorder))">Cerca</button>
+                        @onclick="@(() => OnClickSearchWorkorder(_selectModel.SelectedWorkorder))">
+                            <span class="oi oi-magnifying-glass"></span>
+                            Cerca
+                    </button>
                 </div>
                 <ValidationMessage For="@(() => _model.WorkOrderId)" />
             </div>
         </div>
         <div class="form-group">
+            <span class="oi oi-text"></span>
             <label for="Nome attività">Nome</label>
             <input type="text" class="form-control" @bind="_model.Name" required/>
             <ValidationMessage For="@(() => _model.Name)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio</label>
             <input type="date" class="form-control" @bind="@_model.StartDate" required/>
             <ValidationMessage For="@(() => _model.StartDate)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data di fine">Data di fine</label>
             <input type="date" class="form-control" @bind="@_model.FinishDate" required/>
             <ValidationMessage For="@(() => _model.FinishDate)" />
         </div>
         <div class="container-fluid">
             <div class="child">
+                <span class="oi oi-people"></span>
                 <label for="Assegna dipendenti">Assegna a dipendenti</label>
                 <input type="search" class="form-control" @bind="_selectModel.SelectedEmployee" required/>
                 @if (_employees.Count != 0) {
@@ -69,30 +77,40 @@
             </div>
             <div class="child">
                 <button type="button" class="btn btn-link"
-                    @onclick="@(() => OnClickSearchEmployee(_selectModel.SelectedEmployee))">Cerca</button>
+                    @onclick="@(() => OnClickSearchEmployee(_selectModel.SelectedEmployee))">
+                    <span class="oi oi-magnifying-glass"></span>
+                    Cerca
+                </button>
             </div>
-            <div class="container-selected-_employees">
-                <span>Dipendenti selezionati per questa attività@_model.EmployeesActivities.Count</span> <br>
-                <table class="table table-striped">
-                    <thead>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Email</th>
-                    </thead>
-                    <tbody>
-                        @if (_model.EmployeesActivities.Count != 0) {
-                            @foreach (var em in _model.EmployeesActivities) {
-                                <tr>
-                                    <td> <span> @em.Email </span> </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger" value="@em"
-                                            @onclick="(() => OnClickRemoveAsSelected(em))">Elimina</button>
-                                    </td>
-                                </tr>
+            <div class="child">
+                <div style="width: 400px; height:150px; left: 0; overflow-y: scroll;">
+                    <span>Dipendenti selezionati per questa attività @_model.EmployeesActivities.Count</span> <br>
+                    <table class="table table-striped">
+                        <thead>
+                            <th scope="col">Email</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            @if (_model.EmployeesActivities.Count != 0) {
+                                @foreach (var em in _model.EmployeesActivities) {
+                                    <tr>
+                                        <td> 
+                                            <span class="oi oi-envelope-closed"></span>
+                                            <span> @em.Email </span> 
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" value="@em"
+                                                @onclick="(() => OnClickRemoveAsSelected(em))">
+                                                <span class="oi oi-trash"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        }
-                    </tbody>
-                </table>
-                <br>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
             </div>
         </div>
         <div class="wrapper-btn">
@@ -112,8 +130,8 @@
     private List<WorkorderSelectDTO> _workorders = new();
     private List<EmployeeSelectDTO> _employees = new();
 
-    protected override async Task OnInitializedAsync() {
-       await Task.Run(() => _model.EmployeesActivities = new());
+    protected override void OnInitialized() {
+       _model.EmployeesActivities = new();
     } 
 
     private async Task OnClickSearchWorkorder(string workorder) {

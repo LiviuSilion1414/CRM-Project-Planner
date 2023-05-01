@@ -20,7 +20,6 @@
     <h4>Login</h4>
     <EditForm Model="@model" OnValidSubmit="LoginOnValidInput">
         <DataAnnotationsValidator/>
-        
         <div class="form-group">
             <label for="Email">Email:</label>
             <input type="email" class="form-control" @bind="model.Email" required/>
@@ -32,7 +31,12 @@
             <ValidationMessage For="@(() => model.Password)"/>
         </div>
         <div class="wrapper">
-            <button type="submit" class="btn btn-primary">Accedi</button>
+            <button type="submit" class="btn btn-primary" @onclick="OnClickLogin">
+                @if (IsClicked) {
+                    <span class="spinner-border spinner-border-sm"></span>
+                }
+                <span>Accedi</span>
+            </button>
         </div>
     </EditForm>
 </div>
@@ -41,15 +45,21 @@
     private EmployeeLoginDTO model = new();   
     private string Message { get; set; }
     private bool IsError { get; set; }
-    private CurrentEmployee currentEmployee { get; set; }
+    private bool IsClicked { get; set; }
+    private CurrentEmployee CurrentEmployeeId { get; set; }
     private const string SPECIAL_EMAIL = "account.manager@gmail.com";
+
+    public async Task OnClickLogin() {
+        IsClicked = true;
+        await Task.Delay(1000);
+    }
 
     public async Task LoginOnValidInput() {
         var response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
         
         if (model.Email != SPECIAL_EMAIL) {
-            currentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
-            if (currentEmployee == null) { 
+            CurrentEmployeeId = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
+            if (CurrentEmployeeId == null) { 
                 IsError = true; Message="ERR: ID non trovato"; 
             }
         }
@@ -65,9 +75,9 @@
                 } else if (role == nameof(Roles.PROJECT_MANAGER)) {
                     navManager.NavigateTo("/project-manager", true);
                 } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
-                    navManager.NavigateTo($"/senior-developer/{currentEmployee.Id}", true);
+                    navManager.NavigateTo($"/senior-developer/{CurrentEmployeeId.Id}", true);
                 } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
-                    navManager.NavigateTo($"/junior-developer/{currentEmployee.Id}", true);
+                    navManager.NavigateTo($"/junior-developer/{CurrentEmployeeId.Id}", true);
                 }
             }
         } else {

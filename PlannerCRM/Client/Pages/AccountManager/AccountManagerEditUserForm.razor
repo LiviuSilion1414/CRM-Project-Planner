@@ -13,56 +13,65 @@
 <div class="container-fluid">
     <h1>Modifica utente</h1>
     <EditForm Model="@_model" OnValidSubmit="OnClickConfirm" class="form">
+        <DataAnnotationsValidator/>
         <div class="form-group">
+            <span class="oi oi-person"></span>
             <label for="Nome">Nome</label>
             <input type="text" class="form-control" @bind="_model.FirstName" required/>
             <ValidationMessage For="@(() => _model.FirstName)"/>
         </div>
         <div class="form-group">
+            <span class="oi oi-person"></span>
             <label for="Cognome">Cognome</label>
             <input type="text" class="form-control" @bind="_model.LastName" required/>
             <ValidationMessage For="@(() => _model.LastName)"/>
         </div>
         <div class="form-group">
+            <span class="oi oi-envelope-closed"></span>
             <label for="Email">Email</label>
             <input type="email" class="form-control" @bind="_model.Email" required/>
             <ValidationMessage For="@(() => _model.Email)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data di nascita">Data di nascita</label>
-            <input type="text" class="form-control" @bind="@_model.BirthDay" required/>
+            <input type="date" class="form-control" @bind="@_model.BirthDay" required/>
             <ValidationMessage For="@(() => _model.BirthDay)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio</label>
-            <input type="text" class="form-control" @bind="@_model.StartDate" required/>
+            <input type="date" class="form-control" @bind="@_model.StartDate" required/>
             <ValidationMessage For="@(() => _model.StartDate)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-briefcase"></span>
             <label for="Codice fiscale">Codice fiscale</label>
             <input type="text" class="form-control" @bind="_model.NumericCode" required/>
             <ValidationMessage For="@(() => _model.NumericCode)" />
         </div>
         <div class="form-group">
-            <label for="Ruolo">Ruolo
+            <span class="oi oi-star"></span>
+            <label for="Ruolo">Ruolo</label>
                 <div class="form-control">
                     <select class="dropdown-item" @bind="_model.Role" required>
                         @foreach (var role in Enum.GetValues(typeof(Roles))) {
-                            if (!role.Equals(Roles.ACCOUNT_MANAGER)) {
+                            if ((Roles)role != Roles.ACCOUNT_MANAGER) {
                                 <option value="@role">@role</option>
                             }
                         }
                     </select>
                     <ValidationMessage For="@(() => _model.Role)" />
                 </div>
-            </label>
         </div>
-        <div>
+        <div class="form-group">
+            <span class="oi oi-euro"></span>
             <label for="Tariffa oraria">Tariffa oraria</label>
             <input type="number" class="form-control" @bind="_model.HourPay" required/>
             <ValidationMessage For="@(() => _model.HourPay)" />
         </div>
         <div class="form-group">
+            <span class="oi oi-key"></span>
             <label for="Password">Password</label>
             <input type="password" class="form-control" @bind="_model.Password" required/>
             <ValidationMessage For="@(() => _model.Password)" />

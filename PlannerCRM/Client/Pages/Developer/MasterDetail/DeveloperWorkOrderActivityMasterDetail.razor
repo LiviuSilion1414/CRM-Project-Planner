@@ -15,6 +15,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Commessa</th>
                 <th>Nome</th>
                 <th>Data d'inizio</th>
@@ -26,16 +27,21 @@
         <tbody>
             @foreach (var ac in _activities) {
                 <tr>
+                    <td><span class="oi oi-briefcase"></span></td>
                     <td>@_workorders.Find(wo => wo.Id == ac.WorkOrderId).Name</td>
                     <td>@ac.Name</td>
                     <td>@ac.StartDate.ToShortDateString()</td>
                     <td>@ac.FinishDate.ToShortDateString()</td>
                     @if (_workTimeRecords == null || _workTimeRecords.Count == 0) {
                         <td><em>Nessun orario</em></td>
-                    } else {
-                        <td>@_workTimeRecords.Find(wtr => wtr.ActivityId == ac.Id).Hours</td>
                     }
-                    <td>
+                        @foreach (var wtr in _workTimeRecords) {
+                            @if (wtr.ActivityId == ac.Id) {
+                                <td>@wtr.Hours</td>
+                            }
+                            
+                        }
+                        <td>
                         <button type="button" class="btn btn-primary" 
                             @onclick="@(() => OnClickAddWorkedHours(activityId: ac.Id))">Aggiungi orario</button>                
                     </td> 

@@ -15,22 +15,27 @@
     <EditForm Model="@_model" OnValidSubmit="OnClickAddWorkedHours">
         <DataAnnotationsValidator/>
         <div class="form-group">
+            <span class="oi oi-briefcase"></span>
             <label for="Nome commessa:">Nome commessa </label> <span>(@_workorder.StartDate.ToShortDateString() - @_workorder.FinishDate.ToShortDateString())</span>
             <input type="text" class="form-control" @bind="_workorder.Name" readonly/>
         </div>
         <div class="form-group">
+            <span class="oi oi-puzzle-piece"></span>
             <label for="Nome attività">Nome attività </label>
             <input type="text" class="form-control" @bind="_model.Name" readonly/>
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio </label>
             <input type="date" class="form-control" @bind="@_model.StartDate" readonly/>
         </div>
         <div class="form-group">
+            <span class="oi oi-calendar"></span>
             <label for="Data di fine">Data fine </label>
             <input type="date" class="form-control" @bind="@_model.FinishDate" readonly/>
         </div>
         <div class="form-group">
+            <span class="oi oi-clock"></span>
            <label for="Orario di lavoro">Inserisci il tuo orario di lavoro</label>
            <input type="number" class="form-control" @bind="@WorkedHours" required>
         </div>
