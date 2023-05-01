@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Client.Services;
@@ -61,5 +62,13 @@ public class CustomAuthState : AuthenticationStateProvider
         await _api.Login(loginParameters);
         
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+    }
+
+    public async Task<CurrentEmployee> GetCurrentEmployeeId(string email) {
+       return await _api.GetCurrentEmployeeIdAsync(email);
+    }
+
+    public async Task<CurrentUser> GetCurrentUserInfoAsync() {
+        return await _api.CurrentUserInfo();
     }
 }

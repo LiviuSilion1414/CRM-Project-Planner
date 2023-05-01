@@ -1,4 +1,5 @@
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.Models;
 using System.Net.Http.Json;
 
@@ -26,5 +27,9 @@ public class AuthService
 
     public async Task Logout() {
         var result = await _httpClient.GetAsync("http://localhost:5032/account/logout");
+    }
+
+    public async Task<CurrentEmployee> GetCurrentEmployeeIdAsync(string email) {
+        return await _httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{email}");
     }
 }

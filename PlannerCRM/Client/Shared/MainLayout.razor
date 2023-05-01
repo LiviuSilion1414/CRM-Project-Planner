@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 @using PlannerCRM.Shared.Models
+@using PlannerCRM.Shared.DTOs.EmployeeDto.Views
 
 @inject NavigationManager navManager
 @inject CustomAuthState authStateProvider
@@ -8,9 +9,9 @@
 <div class="page">
     <main>
         <div class="navbar">
-            <NavLink class="nav-link" href="/" @onclick="NavigateBasedOnRole">
-                <span aria-hidden="true">PlannerCRM</span>
-            </NavLink>
+            <a class="nav-link" @onclick="NavigateBasedOnRole">
+                PlannerCRM
+            </a>
             <AuthorizeView>
                 <Authorized>
                     <div class="parent">
@@ -19,7 +20,10 @@
                             <span class="user-info">Ruolo: @UserRole</span>
                         </div>
                         <div class="child">
-                            <button type="button" class="btn btn-danger" @onclick="LogoutClick">Disconettiti</button>
+                            <button type="button" class="btn btn-danger" @onclick="LogoutClick">
+                                <span class="oi oi-account-logout"></span>
+                                Disconettiti
+                            </button>
                         </div>
                     </div>
                 </Authorized>
@@ -39,6 +43,10 @@
 @code {
     private bool IsAuthenticated { get; set; }
     private string UserRole { get; set; }
+    private CurrentEmployee CurrentEmployee { get; set; }
+    private CurrentUser CurrentUser { get; set; }
+    private const string SPECIAL_EMAIL = "account.manager@gmail.com";
+
 
     protected override async Task OnInitializedAsync() {
         var authState = await authStateProvider.GetAuthenticationStateAsync();
@@ -54,6 +62,11 @@
 
     async Task NavigateBasedOnRole() {
         var rolesList = await authStateProvider.GetRoles();
+        CurrentUser = await authStateProvider.GetCurrentUserInfoAsync();
+
+        if (CurrentUser.UserName != SPECIAL_EMAIL || !string.IsNullOrEmpty(CurrentUser.UserName)) {
+            CurrentEmployee = await authStateProvider.GetCurrentEmployeeId(CurrentUser.UserName);
+        }
 
         foreach (var role in rolesList) {
             if (role == nameof(Roles.ACCOUNT_MANAGER)) {
@@ -63,9 +76,9 @@
             } else if (role == nameof(Roles.PROJECT_MANAGER)) {
                 navManager.NavigateTo("/project-manager");
             } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
-                navManager.NavigateTo("/senior-developer");
+                navManager.NavigateTo($"/senior-developer/{CurrentEmployee.Id}");
             } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
-                navManager.NavigateTo("/junior-developer");
+                navManager.NavigateTo($"/junior-developer/{CurrentEmployee.Id}");
             } else {
                 navManager.NavigateTo("/");
             }
@@ -77,4 +90,6 @@
         navManager.NavigateTo("/login");
     }
 }
+
+
 
