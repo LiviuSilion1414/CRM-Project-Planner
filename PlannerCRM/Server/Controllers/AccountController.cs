@@ -39,16 +39,18 @@ public class AccountController : ControllerBase
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeForm employeeAdd) {
+    public async Task<ActionResult> AddUser(EmployeeAddForm employeeAdd) {
         if (!ModelState.IsValid) {
-            return BadRequest();
+            return BadRequest("Input non valido.");
         }
 
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
-
-        if (person == null) {
+        
+        if (person != null) {
+            return Redirect("Utente già esistente.");
+        } else if (person == null) {
             var user = new IdentityUser {
                 Email = employeeAdd.Email,
                 EmailConfirmed = true,
@@ -56,45 +58,67 @@ public class AccountController : ControllerBase
             };
 
             var result = await _userManager.CreateAsync(user, employeeAdd.Password);
-
-            await _userManager.AddToRoleAsync(user, employeeAdd.Role.ToString());
+            if (result.Succeeded) {
+                await _userManager.AddToRoleAsync(user, employeeAdd.Role.ToString());
+            } else {
+                return BadRequest("Impossibile aggiungere l'utente!");
+            }
         }
-        return Ok();
+
+        return Ok("Utente aggiunto con successo!");
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task EditUser(EmployeeForm employeeEdit, string oldEmail) {
+    public async Task<ActionResult> EditUser(EmployeeEditForm employeeEdit, string oldEmail) {
         var person = await _userManager.FindByEmailAsync(oldEmail);
+        
+        if (person == null) {
+            return Redirect("http://localhost:5032/account-manager");
+        } else if (person != null) {
+            if (employeeEdit.Email == oldEmail) {
+                return BadRequest("Utente già presente con questo email.");
+            } else {
+                var user = new IdentityUser {
+                    Email = employeeEdit.Email,
+                    EmailConfirmed = true,
+                    UserName = employeeEdit.Email
+                };
 
-        if (person != null) {
-            person = new IdentityUser {
-                Email = employeeEdit.Email,
-                EmailConfirmed = true,
-                UserName = employeeEdit.Email
-            };
-
-            await _userManager.CreateAsync(person, employeeEdit.Password);
-
-            await _userManager.AddToRoleAsync(person, employeeEdit.Role.ToString());
+                var result = await _userManager.CreateAsync(user, employeeEdit.Password);
+                if (result.Succeeded) {
+                    await _userManager.AddToRoleAsync(user, employeeEdit.Role.ToString());
+                } else {
+                    return BadRequest("Impossibile modificare l'utente.");
+                }
+            }
         }
+        
+        return Ok("Utente modificato con successo!");
     }
     
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/user/{email}")]
-    public async Task DeleteUser(string email) {
+    public async Task<ActionResult> DeleteUser(string email) {
         var user = await _userManager.FindByEmailAsync(email);
-
+        
+        if (user == null) {
+            return BadRequest("Utente non trovato.");
+        }
+        
         await _userManager.DeleteAsync(user);
+        return Ok("Utente eliminato con successo!");
     }
 
     [HttpGet]
     [Route("user/role")]
-    public async Task<List<string>> GetUserRole() {
+    public async Task<string> GetUserRole() {
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
         var roles = await _userManager.GetRolesAsync(user);
         
-        return roles.ToList();
+        return roles.ToList().Count() != 0 
+            ? roles.ToList()[0] 
+            : string.Empty;
     }
 
     [Authorize]
