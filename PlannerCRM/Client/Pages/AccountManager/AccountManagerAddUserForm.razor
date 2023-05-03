@@ -1,6 +1,8 @@
 @page "/account-manager/add/user"
 
+@using System.Globalization
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
+@using static PlannerCRM.Shared.Constants.ConstantValues
 @using PlannerCRM.Shared.Models
 
 @inject NavigationManager navManager
@@ -8,72 +10,76 @@
 
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
-<PageTitle>Account Manager</PageTitle>
+<PageTitle>Account Manager - Add user</PageTitle>
 
 <div class="container-fluid">
     <h1>Aggiungi utente</h1>
-    <EditForm Model="@_model" OnValidSubmit="OnClickConfirm" class="form">
+    <EditForm Model="@_model" OnValidSubmit="OnClickConfirm">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <span class="oi oi-person"></span>
             <label for="Nome">Nome</label>
-            <input type="text" class="form-control" @bind="_model.FirstName" required/>
-            <ValidationMessage For="@(() => _model.FirstName)"/>
+            <input type="text" class="form-control" @bind="_model.FirstName"/>
         </div>
+            <ValidationMessage For="@(() => _model.FirstName)"/>
         <div class="form-group">
             <span class="oi oi-person"></span>
             <label for="Cognome">Cognome</label>
-            <input type="text" class="form-control" @bind="_model.LastName" required/>
+            <input type="text" class="form-control" @bind="_model.LastName"/>
             <ValidationMessage For="@(() => _model.LastName)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-envelope-closed"></span>
             <label for="Email">Email</label>
-            <input type="email" class="form-control" @bind="_model.Email" required/>
+            <input type="email" class="form-control" @bind="_model.Email"/>
             <ValidationMessage For="@(() => _model.Email)" />
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data di nascita">Data di nascita</label>
-            <input type="date" class="form-control" @bind="@_model.BirthDay" required/>
+            <input type="date" class="form-control" @bind="_model.BirthDay"/>
             <ValidationMessage For="@(() => _model.BirthDay)" />
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio</label>
-            <input type="date" class="form-control" @bind="@_model.StartDate" required/>
+            <input type="date"class="form-control" @bind="@_model.StartDate"/>
             <ValidationMessage For="@(() => _model.StartDate)" />
         </div>
         <div class="form-group">
             <span class="oi oi-briefcase"></span>
             <label for="Codice fiscale">Codice fiscale</label>
-            <input type="text" class="form-control" @bind="_model.NumericCode" required/>
+            <input type="text" class="form-control" @bind="_model.NumericCode"/>
             <ValidationMessage For="@(() => _model.NumericCode)" />
         </div>
         <div class="form-group">
             <span class="oi oi-star"></span>
             <label for="Ruolo">Ruolo</label>
                 <div class="form-control">
-                    <select class="dropdown-item" @bind="_model.Role" required>
+                    <select class="dropdown-item" @bind="_model.Role">
                         @foreach (var role in Enum.GetValues(typeof(Roles))) {
                             if ((Roles)role != Roles.ACCOUNT_MANAGER) {
                                 <option value="@role">@role</option>
                             }
                         }
                     </select>
-                    <ValidationMessage For="@(() => _model.Role)" />
                 </div>
+                <ValidationMessage For="@(() => _model.Role)" />
         </div>
         <div class="form-group">
             <span class="oi oi-euro"></span>
             <label for="Tariffa oraria">Tariffa oraria</label>
-            <input type="number" class="form-control" @bind="_model.HourPay" required/>
+            <input type="number" class="form-control" @bind="_model.HourPay"/>
             <ValidationMessage For="@(() => _model.HourPay)" />
         </div>
         <div class="form-group">
             <span class="oi oi-key"></span>
-            <label for="Password">Password</label>
-            <input type="password" class="form-control" @bind="_model.Password" required/>
+            <div style="margin: 0 auto; margin: 10px 5px;">
+                <label for="Password">Password</label>
+                <input type="@TypeField" class="form-control" @bind="_model.Password"/>
+                <input type="checkbox" style="float:left; margin-top: 5px;" @onclick="SwitchShowPassword"/>
+                <span style="margin: 10px 5px;">Vedi password</span>
+            </div>
             <ValidationMessage For="@(() => _model.Password)" />
         </div>
         <div class="wrapper-btn">
@@ -88,15 +94,36 @@
 </div>
 
 @code {
-    private EmployeeForm _model = new();
+    private int MinAge { get; set; }
+    private int MaxAge { get; set; }
+    private bool IsError { get; set; }
+    private string Message { get; set; }
+    private bool IsCheckboxClicked { get; set; }
+    private string TypeField = InputType.TEXT.ToString().ToLower();
+    private EmployeeAddForm _model = new();
+
+    public void SwitchShowPassword() {
+        if (IsCheckboxClicked) {
+            IsCheckboxClicked = false;
+            TypeField = InputType.TEXT.ToString().ToLower();
+        } else {
+            IsCheckboxClicked = true;
+            TypeField = InputType.PASSWORD.ToString().ToLower();
+        }
+    }
 
     private void OnClickCancel() {
         navManager.NavigateTo("/account-manager");
     }
 
-    private async void OnClickConfirm() {
-        await httpClient.PostAsJsonAsync<EmployeeForm>("http://localhost:5032/account/add/user", _model);
-        await httpClient.PostAsJsonAsync<EmployeeForm>("http://localhost:5032/employee/add", _model);
+    private async Task OnClickConfirm() {
+
+        var firstResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/account/add/user", _model);
+        var secondResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/employee/add", _model);
+        if (!firstResponse.IsSuccessStatusCode || 
+            !secondResponse.IsSuccessStatusCode) {
+            Message = await firstResponse.Content.ReadAsStringAsync();
+        }
 
         navManager.NavigateTo("/account-manager");
     }

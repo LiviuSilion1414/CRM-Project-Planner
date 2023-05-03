@@ -8,7 +8,7 @@
 
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
-<PageTitle>Account Manager</PageTitle>
+<PageTitle>Account Manager - Edit user</PageTitle>
 
 <div class="container-fluid">
     <h1>Modifica utente</h1>
@@ -17,44 +17,44 @@
         <div class="form-group">
             <span class="oi oi-person"></span>
             <label for="Nome">Nome</label>
-            <input type="text" class="form-control" @bind="_model.FirstName" required/>
+            <input type="text" class="form-control" @bind="_model.FirstName"/>
             <ValidationMessage For="@(() => _model.FirstName)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-person"></span>
             <label for="Cognome">Cognome</label>
-            <input type="text" class="form-control" @bind="_model.LastName" required/>
+            <input type="text" class="form-control" @bind="_model.LastName"/>
             <ValidationMessage For="@(() => _model.LastName)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-envelope-closed"></span>
             <label for="Email">Email</label>
-            <input type="email" class="form-control" @bind="_model.Email" required/>
+            <input type="email" class="form-control" @bind="_model.Email"/>
             <ValidationMessage For="@(() => _model.Email)" />
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data di nascita">Data di nascita</label>
-            <input type="date" class="form-control" @bind="@_model.BirthDay" required/>
+            <input type="date" class="form-control" @bind="@_model.BirthDay"/>
             <ValidationMessage For="@(() => _model.BirthDay)" />
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio</label>
-            <input type="date" class="form-control" @bind="@_model.StartDate" required/>
+            <input type="date" class="form-control" @bind="@_model.StartDate"/>
             <ValidationMessage For="@(() => _model.StartDate)" />
         </div>
         <div class="form-group">
             <span class="oi oi-briefcase"></span>
             <label for="Codice fiscale">Codice fiscale</label>
-            <input type="text" class="form-control" @bind="_model.NumericCode" required/>
+            <input type="text" class="form-control" @bind="_model.NumericCode"/>
             <ValidationMessage For="@(() => _model.NumericCode)" />
         </div>
         <div class="form-group">
             <span class="oi oi-star"></span>
             <label for="Ruolo">Ruolo</label>
                 <div class="form-control">
-                    <select class="dropdown-item" @bind="_model.Role" required>
+                    <select class="dropdown-item" @bind="_model.Role">
                         @foreach (var role in Enum.GetValues(typeof(Roles))) {
                             if ((Roles)role != Roles.ACCOUNT_MANAGER) {
                                 <option value="@role">@role</option>
@@ -67,13 +67,15 @@
         <div class="form-group">
             <span class="oi oi-euro"></span>
             <label for="Tariffa oraria">Tariffa oraria</label>
-            <input type="number" class="form-control" @bind="_model.HourPay" required/>
+            <input type="number" class="form-control" @bind="_model.HourPay"/>
             <ValidationMessage For="@(() => _model.HourPay)" />
         </div>
         <div class="form-group">
             <span class="oi oi-key"></span>
             <label for="Password">Password</label>
-            <input type="password" class="form-control" @bind="_model.Password" required/>
+            <input type="@TypeField" class="form-control" @bind="_model.Password"/>
+            <input type="checkbox" style="float:left; margin-top:5px;" @onclick="SwitchShowPassword"/>
+            <span style="margin: 10px 5px;">Vedi password</span>
             <ValidationMessage For="@(() => _model.Password)" />
         </div>
         <div class="wrapper-btn">
@@ -90,11 +92,23 @@
 @code {
     [Parameter] public int Id { get; set; }
     private string _CurrentEmail { get; set; }
-    private EmployeeForm _model = new();
+    private bool IsCheckboxClicked { get; set; }
+    private string TypeField = InputType.TEXT.ToString().ToLower();
+    private EmployeeEditForm _model = new();
 
     protected override async Task OnInitializedAsync() {
-        _model = await httpClient.GetFromJsonAsync<EmployeeForm>($"http://localhost:5032/employee/get/for/edit/{Id}");
+        _model = await httpClient.GetFromJsonAsync<EmployeeEditForm>($"http://localhost:5032/employee/get/for/edit/{Id}");
         _CurrentEmail = _model.Email;
+    }
+
+    public void SwitchShowPassword() {
+        if (IsCheckboxClicked) {
+            IsCheckboxClicked = false;
+            TypeField = InputType.TEXT.ToString().ToLower();
+        } else {
+            IsCheckboxClicked = true;
+            TypeField = InputType.PASSWORD.ToString().ToLower();
+        }
     }
 
     public void RedirectToPage() {
@@ -106,8 +120,8 @@
     }
 
     private async void OnClickConfirm() {
-        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/employee/edit", _model);
-        await httpClient.PutAsJsonAsync<EmployeeForm>($"http://localhost:5032/account/edit/user/{_CurrentEmail}", _model);
+        await httpClient.PutAsJsonAsync<EmployeeEditForm>($"http://localhost:5032/employee/edit", _model);
+        await httpClient.PutAsJsonAsync<EmployeeEditForm>($"http://localhost:5032/account/edit/user/{_CurrentEmail}", _model);
 
         RedirectToPage();
     }

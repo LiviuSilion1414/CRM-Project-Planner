@@ -43,7 +43,10 @@
                         }
                         <td>
                         <button type="button" class="btn btn-primary" 
-                            @onclick="@(() => OnClickAddWorkedHours(activityId: ac.Id))">Aggiungi orario</button>                
+                            @onclick="@(() => OnClickAddWorkedHours(ac.Id))">
+                            <span class="oi oi-clock"></span>
+                            <span>Aggiungi orario</span>
+                        </button>                
                     </td> 
                     
                 </tr>

@@ -16,62 +16,90 @@
 
 @if (IsError) {
     <div class="alert alert-danger" 
-        style="margin: 0 auto; width: 300px; padding: 5px; text-align: center;">
+        style="position: relative; margin: 0 auto; width: 300px; padding: 5px; text-align: center; display: @TypeShow; overflow: hidden;">
         <span> @Message </span>
-        <span id="x" style="float:right;" class="oi oi-circle-x" onclick="this.parentElement.style.display='none';"></span>
+        <span id="x" style="float:right;" class="oi oi-circle-x" @onclick="SwitchShowAlert"></span>
     </div>
 }
+
 <h4>Login</h4>
-<EditForm Model="@model" OnValidSubmit="LoginOnValidInput">
-    <DataAnnotationsValidator/>
-    <div class="form-group">
-        <label for="Email">Email:</label>
-        <input type="email" class="form-control" @bind="model.Email"/>
-        <ValidationMessage For="@(() => model.Email)"/>
-    </div>
-    <div class="form-group">
-        <label for="Password">Password:</label>
-        <input type="password" class="form-control" @bind="model.Password"/>
-        <ValidationMessage For="@(() => model.Password)"/>
-    </div>
-    <div class="wrapper">
-        <button type="submit" class="btn btn-primary">
-            <span>Accedi</span>
-        </button>
-    </div>
-</EditForm>
+<div class="container-fluid">
+    <EditForm Model="@model" OnValidSubmit="LoginOnValidInput">
+        <DataAnnotationsValidator/>
+        <div class="form-group">
+            <label for="Email">Email:</label>
+            <input type="email" class="form-control" @bind="model.Email"/>
+            <ValidationMessage For="@(() => model.Email)"/>
+        </div>
+        <div class="form-group">
+            <label for="Password">Password:</label>
+            <div style="margin: 0 auto; margin: 10px 5px;">
+                <input type="@TypeField" class="form-control" @bind="model.Password"/>
+                <input type="checkbox" style="float:left; margin-top: 5px;" @onclick="SwitchShowPassword"/>
+                <span style="margin: 10px 5px;">Vedi password</span>
+            </div>
+            <ValidationMessage For="@(() => model.Password)"/>
+        </div>
+        <div class="wrapper">
+            <button type="submit" id="submit" class="btn btn-primary">
+                <span>Accedi</span>
+                <span class="oi oi-account-login"></span>  
+            </button>
+        </div>
+    </EditForm>
+</div>
 
 @code {
     private EmployeeLoginDTO model = new();   
     private HttpResponseMessage response = new();
     private string Message { get; set; }
     private bool IsError { get; set; }
-    private CurrentEmployee CurrentEmployeeId { get; set; }
+    private bool IsCheckboxClicked { get; set; }
+    private bool IsXAlertClicked { get; set; }
+    private string TypeField = InputType.PASSWORD.ToString().ToLower();
+    private string TypeShow { get; set; }
+    private CurrentEmployee CurrentEmployee { get; set; }
     private const string SPECIAL_EMAIL = "account.manager@gmail.com";
+
+    public void SwitchShowAlert() {
+        if (IsXAlertClicked) {
+            IsXAlertClicked = false;
+            TypeShow = ShowType.NONE.ToString().ToLower();
+        } else {
+            IsXAlertClicked = true;
+            TypeShow = ShowType.BLOCK.ToString().ToLower();
+        }
+    }
+
+    public void SwitchShowPassword() {
+         if (IsCheckboxClicked) {
+            IsCheckboxClicked = false;
+            TypeField = InputType.TEXT.ToString().ToLower();
+        } else {
+            IsCheckboxClicked = true;
+            TypeField = InputType.PASSWORD.ToString().ToLower();
+        }
+    }
 
     public async Task LoginOnValidInput() {
         response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
         
         if (response.StatusCode == HttpStatusCode.OK && model.Email != SPECIAL_EMAIL) {
-            CurrentEmployeeId = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
+            CurrentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
         }
         
         if (response.StatusCode == HttpStatusCode.OK) {
-            var rolesList = await httpClient.GetFromJsonAsync<List<string>>("http://localhost:5032/account/user/role");
+            var responseMessage = await httpClient.GetAsync("http://localhost:5032/account/user/role");
+            var role = await responseMessage.Content.ReadAsStringAsync();
 
-            foreach (var role in rolesList) {
-                if (role == nameof(Roles.ACCOUNT_MANAGER)) {
-                    navManager.NavigateTo("/account-manager", true);
-                } else if (role == nameof(Roles.OPERATION_MANAGER)) {
-                    navManager.NavigateTo("/operation-manager", true);
-                } else if (role == nameof(Roles.PROJECT_MANAGER)) {
-                    navManager.NavigateTo("/project-manager", true);
-                } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
-                    navManager.NavigateTo($"/senior-developer/{CurrentEmployeeId.Id}", true);
-                } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
-                    navManager.NavigateTo($"/junior-developer/{CurrentEmployeeId.Id}", true);
-                } else {
-                    navManager.NavigateTo("/", true);
+            foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
+                if (possibleRole.ToString() == role) {
+                    if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
+                        possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
+                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{CurrentEmployee.Id}", true);
+                    } else {
+                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
+                    }
                 }
             }
         } else {

@@ -47,8 +47,8 @@ public class CustomAuthState : AuthenticationStateProvider
             return _currentUser;
         }
     }
-    public async Task<List<string>> GetRoles() {
-        return await _api.GetRoles();
+    public async Task<string> GetRole() {
+        return await _api.GetRole();
     }
 
     public async Task Logout() {

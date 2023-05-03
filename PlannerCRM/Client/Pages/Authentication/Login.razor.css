@@ -1,10 +1,14 @@
+#error {
+    text-align: center;
+    color:red;
+}
+
 h4 {
     text-align: center;
 }
 
-#error {
-    text-align: center;
-    color:red;
+.container {
+    width: 70%;
 }
 
 .form-group {
@@ -15,4 +19,8 @@ h4 {
 
 .wrapper {
     text-align: center;
+}
+
+#submit {
+    width: 250px;
 }

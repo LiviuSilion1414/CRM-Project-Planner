@@ -59,13 +59,15 @@
     private WorkTimeRecordFormDTO _workTimeRecord = new();
     private ActivityViewDTO _model = new();
     private WorkorderViewDTO _workorder = new();
-    private List<string> _rolesList = new();
+    private string _role { get; set; }
 
     protected override async Task OnInitializedAsync() {
-        _rolesList = await httpClient.GetFromJsonAsync<List<string>>("http://localhost:5032/account/user/role");
-        foreach (var role in _rolesList) {
-            if (role == nameof(Roles.SENIOR_DEVELOPER) || role == nameof(Roles.JUNIOR_DEVELOPER)) {
-                Role = role;
+        var responseMessage = await httpClient.GetAsync("http://localhost:5032/account/user/role");
+        var _role = await responseMessage.Content.ReadAsStringAsync();
+        foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
+            if ((possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) && possibleRole.ToString() == _role) || 
+                (possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER) && possibleRole.ToString() == _role)) {
+                Role = _role;
             }
         }
             
@@ -74,11 +76,11 @@
     }
 
     public void RedirectToPage() {
-        foreach (var role in _rolesList) {
-            if (role == Role && role == nameof(Roles.JUNIOR_DEVELOPER)) {
-                navManager.NavigateTo($"/junior-developer/{EmployeeId}");
+        foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
+            if (((possibleRole.ToString() == _role) && (possibleRole.ToString() == Role)) && ((possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER)))) {
+                navManager.NavigateTo($"/senior-developer/{EmployeeId}");
             }
-            if (role == Role && role == nameof(Roles.SENIOR_DEVELOPER)) {
+            if (((possibleRole.ToString() == _role) && (possibleRole.ToString() == Role)) && ((possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)))) {
                 navManager.NavigateTo($"/senior-developer/{EmployeeId}");
             }
         }

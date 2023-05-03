@@ -23,6 +23,7 @@
             <th scope="col">Email</th>
             <th scope="col">Nome</th>
             <th scope="col">Data di nascita</th>
+            <th scope="col">Data d'inizio</th>
             <th scope="col">Ruolo</th>
             <th scope="col">Tariffa oraria</th>
             <th scope="col"></th>
@@ -38,6 +39,7 @@
                 </td>
                 <td>@user.FullName</td>
                 <td>@user.BirthDay.ToShortDateString()</td>
+                <td>@user.StartDate.ToShortDateString()</td>
                 <td>@user.Role</td>
                 <td>@user.HourPay</td>
                 <td>

@@ -53,8 +53,7 @@
         IsAuthenticated = authState.User.Identity.IsAuthenticated;
         
         if (IsAuthenticated) {
-            UserRole = (await authStateProvider.GetRoles())
-                .ToList()[0]
+            UserRole = (await authStateProvider.GetRole())
                 .ToUpper()
                 .Replace('_', ' ');
         }
@@ -62,24 +61,21 @@
 
     async Task NavigateBasedOnRole() {
         if (IsAuthenticated) {
-            var rolesList = await authStateProvider.GetRoles();
+            var role = await authStateProvider.GetRole();
             CurrentUser = await authStateProvider.GetCurrentUserInfoAsync();
 
             if (CurrentUser.UserName != SPECIAL_EMAIL) {
                 CurrentEmployee = await authStateProvider.GetCurrentEmployeeId(CurrentUser.UserName);
             }
 
-            foreach (var role in rolesList) {
-                if (role == nameof(Roles.ACCOUNT_MANAGER)) {
-                    navManager.NavigateTo("/account-manager", true);
-                } else if (role == nameof(Roles.OPERATION_MANAGER)) {
-                    navManager.NavigateTo("/operation-manager", true);
-                } else if (role == nameof(Roles.PROJECT_MANAGER)) {
-                    navManager.NavigateTo("/project-manager", true);
-                } else if (role == nameof(Roles.SENIOR_DEVELOPER)) {
-                    navManager.NavigateTo($"/senior-developer/{CurrentEmployee.Id}", true);
-                } else if (role == nameof(Roles.JUNIOR_DEVELOPER)) {
-                    navManager.NavigateTo($"/junior-developer/{CurrentEmployee.Id}", true);
+            foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
+                if (possibleRole.ToString() == role) {
+                    if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
+                        possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
+                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{CurrentEmployee.Id}", true);
+                    } else {
+                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
+                    }
                 }
             }
         } else {
