@@ -25,7 +25,7 @@ public class EmployeeRepository
             StartDate = entity.StartDate,
             Password = entity.Password,
             NumericCode = entity.NumericCode,
-            Role = entity.Role ?? throw new NullReferenceException(),
+            Role = entity.Role,
             Salaries = new List<EmployeeSalary> {
                 new EmployeeSalary {
                     EmployeeId = entity.Id,
