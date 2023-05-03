@@ -23,7 +23,7 @@
                 <div class="child">
                 <span class="oi oi-briefcase"></span>
                 <label for="Nome commessa">Commessa</label>
-                    <input type="search" @bind="_selectModel.SelectedWorkorder" class="form-control" required/>
+                    <input type="search" @bind="_selectModel.SelectedWorkorder" class="form-control"/>
                     <ul>
                         @foreach (var wo in _workorders) {
                             <li class="dropdown-item" value="@wo" 
@@ -44,26 +44,26 @@
         <div class="form-group">
             <span class="oi oi-text"></span>
             <label for="Nome attività">Nome</label>
-            <input type="text" class="form-control" @bind="_model.Name" required/>
+            <input type="text" class="form-control" @bind="_model.Name"/>
             <ValidationMessage For="@(() => _model.Name)" />
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio</label>
-            <input type="date" class="form-control" @bind="@_model.StartDate" required/>
+            <input type="date" class="form-control" @bind="@_model.StartDate"/>
             <ValidationMessage For="@(() => _model.StartDate)" />
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data di fine">Data di fine</label>
-            <input type="date" class="form-control" @bind="@_model.FinishDate" required/>
+            <input type="date" class="form-control" @bind="@_model.FinishDate"/>
             <ValidationMessage For="@(() => _model.FinishDate)" />
         </div>
         <div class="container-fluid">
             <div class="child">
                 <span class="oi oi-people"></span>
                 <label for="Assegna dipendenti">Assegna a dipendenti</label>
-                <input type="search" class="form-control" @bind="_selectModel.SelectedEmployee" required/>
+                <input type="search" class="form-control" @bind="_selectModel.SelectedEmployee"/>
                 @if (_employees.Count != 0) {
                     <ul>
                         @foreach (var em in _employees) {
