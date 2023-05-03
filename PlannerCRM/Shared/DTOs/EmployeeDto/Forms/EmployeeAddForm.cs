@@ -37,7 +37,7 @@ public class EmployeeAddForm
 
     [Required(ErrorMessage = """Campo "Ruolo" richiesto""")]
     [EnumDataType(typeof(Roles))]
-    public Roles? Role { get; set; }
+    public Roles Role { get; set; }
 
     [Required(ErrorMessage = """Campo "Tariffa oraria" richiesto""")]
     public decimal? HourPay { get; set; }
