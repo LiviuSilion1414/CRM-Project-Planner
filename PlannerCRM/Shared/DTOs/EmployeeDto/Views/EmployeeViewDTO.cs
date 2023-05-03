@@ -7,5 +7,6 @@ public class EmployeeViewDTO
     public string FullName { get; set; }
     public string Role { get; set; }
     public DateTime BirthDay { get; set; }
+    public DateTime StartDate { get; set; }
     public decimal HourPay { get; set; }
 }
