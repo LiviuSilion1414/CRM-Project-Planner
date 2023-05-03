@@ -14,9 +14,9 @@ public class StartDateRangeAttribute : ValidationAttribute
 
     public override bool IsValid(object value) {
         if (value.GetType() == typeof(DateTime)) {
-            var startDate = Convert.ToDateTime(value).Year;
+            var startDate = Convert.ToDateTime(value);
             
-            return ((startDate >= _Minimum) && (startDate <= _Maximum)) 
+            return ((startDate.Month >= _Minimum) && (startDate.Month <= _Maximum)) 
                 ? true 
                 : false;
         } else {

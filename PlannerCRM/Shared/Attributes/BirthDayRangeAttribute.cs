@@ -16,7 +16,7 @@ public class BirthDayRangeAttribute : ValidationAttribute
         if (value.GetType() == typeof(DateTime)) { 
             var birthDay = Convert.ToDateTime(value).Year;
         
-            return ((birthDay >= _Minimum) && (birthDay <= _Maximum)) 
+            return ((birthDay >= _Minimum) || (birthDay <= _Maximum)) 
                 ? true 
                 : false;
         } else {
