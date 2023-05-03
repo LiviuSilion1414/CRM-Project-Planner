@@ -16,7 +16,7 @@ public class EmployeeRepository
         _db = db;
     }
 
-    public async Task AddAsync(EmployeeForm entity) {
+    public async Task AddAsync(EmployeeAddForm entity) {
         _db.Employees.Add(new Employee {
             Email = entity.Email,
             FirstName = entity.FirstName,
@@ -25,13 +25,13 @@ public class EmployeeRepository
             StartDate = entity.StartDate,
             Password = entity.Password,
             NumericCode = entity.NumericCode,
-            Role = entity.Role,
+            Role = entity.Role ?? throw new NullReferenceException(),
             Salaries = new List<EmployeeSalary> {
                 new EmployeeSalary {
                     EmployeeId = entity.Id,
                     StartDate = entity.StartDate,
                     FinishDate = entity.StartDate,
-                    Salary = entity.HourPay
+                    Salary = entity.HourPay ?? throw new NullReferenceException()
                 }
             }
         });
@@ -46,7 +46,7 @@ public class EmployeeRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> EditAsync(EmployeeForm entity) {
+    public async Task<bool> EditAsync(EmployeeEditForm entity) {
         var model = await _db.Employees.SingleOrDefaultAsync(e => e.Id == entity.Id);
         
         if (model == null) {
@@ -80,14 +80,15 @@ public class EmployeeRepository
                 Id = e.Id,
                 FullName = $"{e.FirstName} {e.LastName}",
                 BirthDay = e.BirthDay,
+                StartDate = e.StartDate,
                 Email = e.Email,
                 Role = e.Role.ToString().Replace('_', ' ')})
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
-    public async Task<EmployeeForm> GetForEditAsync(int id) {
+    public async Task<EmployeeEditForm> GetForEditAsync(int id) {
         return await _db.Employees
-            .Select(e => new EmployeeForm {
+            .Select(e => new EmployeeEditForm {
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
@@ -140,9 +141,9 @@ public class EmployeeRepository
         }
     }
 
-    public async Task<EmployeeForm> SearchEmployeeCompleteAsync(string email) {
+    public async Task<EmployeeEditForm> SearchEmployeeCompleteAsync(string email) {
         var employee = await _db.Employees
-            .Select(e => new EmployeeForm {
+            .Select(e => new EmployeeEditForm {
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
@@ -181,6 +182,7 @@ public class EmployeeRepository
                 Id = e.Id,
                 FullName = $"{e.FirstName} {e.LastName}",
                 BirthDay = e.BirthDay,
+                StartDate = e.StartDate,
                 Email = e.Email,
                 Role = e.Role.ToString().ToUpper().Replace('_', ' ')})
             .ToListAsync();

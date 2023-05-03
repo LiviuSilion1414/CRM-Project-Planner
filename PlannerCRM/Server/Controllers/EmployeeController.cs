@@ -19,20 +19,52 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task AddUser(EmployeeForm employeeAdd) {
-        await _repo.AddAsync(employeeAdd);
+    public async Task<ActionResult> AddUser(EmployeeAddForm employeeAdd) {
+        var employees = await _repo.SearchEmployeeAsync(employeeAdd.Email);
+
+        if (employeeAdd == null) {
+            return BadRequest("Impossibile aggiungere l'utente.");
+        } else {
+            if (employees.Count() != 0) {
+                return BadRequest("Utente già esistente!");
+            } else {
+                await _repo.AddAsync(employeeAdd);
+
+                return Ok("Utente aggiunto con successo!");
+            }
+        }
     }
 
     [Authorize]
     [HttpPut("edit")]
-    public async Task EditUser(EmployeeForm employeeEdit) {
-        await _repo.EditAsync(employeeEdit);
+    public async Task<ActionResult> EditUser(EmployeeEditForm employeeEdit) {
+        var employees = await _repo.SearchEmployeeAsync(employeeEdit.Email);
+        
+        if (employeeEdit == null) {
+            return NotFound("Utente non trovato!");
+        } else {
+            if (employees.Count() != 0) {
+                return BadRequest("Utente già esistente!");
+            } else {
+                await _repo.EditAsync(employeeEdit);
+
+                return Ok("Utente modificato con successo!");
+            }
+        }
     }
 
     [Authorize]
     [HttpDelete("delete/{id}")]
-    public async Task DeleteUser(int id) {
-        await _repo.DeleteAsync(id);
+    public async Task<ActionResult> DeleteUser(int id) {
+        var employee = await _repo.GetForViewAsync(id);
+        
+        if (employee == null) {
+            return NotFound("Utente non trovato!");
+        } else {
+            await _repo.DeleteAsync(id);
+
+            return Ok("Utente eliminato con successo!");
+        }
     }
 
     [Authorize]
@@ -43,7 +75,7 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpGet("get/for/edit/{id}")]
-    public async Task<EmployeeForm> GetForEditById(int id) {
+    public async Task<EmployeeEditForm> GetForEditById(int id) {
        return await _repo.GetForEditAsync(id);
     }
 
@@ -61,7 +93,7 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
 	[HttpGet("search/complete/{email}")]
-	public async Task<EmployeeForm> SearchEmployeeComplete(string email) {
+	public async Task<EmployeeEditForm> SearchEmployeeComplete(string email) {
 		return await _repo.SearchEmployeeCompleteAsync(email);
 	}
 
