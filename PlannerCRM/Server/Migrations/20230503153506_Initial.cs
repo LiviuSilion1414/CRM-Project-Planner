@@ -62,7 +62,7 @@ namespace PlannerCRM.Server.Migrations
                     Email = table.Column<string>(type: "text", nullable: true),
                     Password = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Birthday = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    BirthDay = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     NumericCode = table.Column<string>(type: "text", nullable: true),
                     Role = table.Column<int>(type: "integer", nullable: false)
                 },

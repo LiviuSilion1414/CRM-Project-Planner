@@ -17,19 +17,19 @@
         <div class="form-group">
             <span class="oi oi-text"></span>
             <label for="Nome commessa">Nome</label>
-            <input type="text" class="form-control" @bind="model.Name" required/>
+            <input type="text" class="form-control" @bind="model.Name"/>
             <ValidationMessage For="@(() => model.Name)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label>Data d'inzio</label>
-            <input type="date" class="form-control" @bind="@model.StartDate" required/> 
+            <input type="date" class="form-control" @bind="@model.StartDate"/> 
             <ValidationMessage For="@(() => model.StartDate)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label>Data fine</label>
-            <input type="date" class="form-control" @bind="@model.FinishDate" required/>
+            <input type="date" class="form-control" @bind="@model.FinishDate"/>
             <ValidationMessage For="@(() => model.FinishDate)"/>
         </div>
         <div class="wrapper-btn">
