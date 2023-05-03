@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -97,7 +98,6 @@ public class EmployeeController: ControllerBase
 		return await _repo.SearchEmployeeCompleteAsync(email);
 	}
 
-
     [Authorize]
     [HttpGet("get/all")]
     public async Task<List<EmployeeViewDTO>> GetAll() {
@@ -106,6 +106,38 @@ public class EmployeeController: ControllerBase
 
     [HttpGet("get/id/{email}")]
     public async Task<CurrentEmployee> GetUserId(string email) {
+        var emptyEmployee = new CurrentEmployee {
+            Id = INVALID_ID,
+            Email = NOT_FOUND_RESOURCE
+        };
+        
+        if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email)) {
+            return emptyEmployee;
+        } else {
+            var employee = await _repo.SearchEmployeeAsync(email);
+            if (employee == null) {
+                return emptyEmployee;
+            }
+        }
+    
         return await _repo.GetUserIdAsync(email);
+    }
+
+    [HttpGet("get/id-check/{email}")]
+    public async Task<ActionResult> GetUserIdCheck(string email) {
+        var emptyEmployee = new CurrentEmployee {
+            Id = INVALID_ID,
+            Email = NOT_FOUND_RESOURCE
+        };
+        
+        if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email)) {
+            return BadRequest("L'email non può essere vuoto!");
+        } else {
+            var employee = await _repo.SearchEmployeeAsync(email);
+            if (employee == null) {
+                return NotFound("Utente non trovato!");
+            }
+        }
+        return Ok("OK");
     }
 }
