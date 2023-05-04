@@ -7,6 +7,8 @@ public static class ConstantValues
     public static DateTime CURRENT_DATE = DateTime.Now;
     public const int MIN_WORKORDER_MONTH_CONTRACT = 3;
     public const int MAX_WORKORDER_MONTH_CONTRACT = 24;
+    public const int MIN_ACTIVITY_MONTH_PERIOD = 1;
+    public const int MAX_ACTIVITY_MONTH_PERIOD = 6;
     public const int INVALID_ID = -1;
     public const string NOT_FOUND_RESOURCE = "Risorsa non trovata.";
     public const int MAJOR_AGE = 18;
