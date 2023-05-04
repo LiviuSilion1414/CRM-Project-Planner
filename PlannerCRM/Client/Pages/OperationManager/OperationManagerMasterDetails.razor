@@ -27,13 +27,13 @@
                         <tr>
                             <td><span class="oi oi-puzzle-piece"></span></td>
                             <td>@ac.Name</td>
-                            <td>@ac.StartDate.ToShortDateString()</td>
-                            <td>@ac.FinishDate.ToShortDateString()</td>
+                            <td>@ac.StartDate?.ToShortDateString()</td>
+                            <td>@ac.FinishDate?.ToShortDateString()</td>
                             <td>
-                                @foreach (var em in ac.EmployeesActivities) {
+                                @foreach (var ea in ac.EmployeesActivities) {
                                     <tr>
                                         <td>
-                                            @em.Email
+                                            @ea.Employee.Email
                                         </td>
                                     </tr>
                                 }

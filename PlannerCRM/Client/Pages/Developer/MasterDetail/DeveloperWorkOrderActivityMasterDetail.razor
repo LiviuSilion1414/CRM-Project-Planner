@@ -36,8 +36,8 @@
                         }
                     </td>
                     <td>@ac.Name</td>
-                    <td>@ac.StartDate.ToShortDateString()</td>
-                    <td>@ac.FinishDate.ToShortDateString()</td>
+                    <td>@ac.StartDate?.ToShortDateString()</td>
+                    <td>@ac.FinishDate?.ToShortDateString()</td>
                     @if (_workTimeRecords == null || _workTimeRecords.Count == 0) {
                         <td><em>Nessun orario</em></td>
                     } else {

@@ -72,15 +72,15 @@
                         </thead>
                         <tbody>
                             @if (_model.EmployeesActivities.Count != 0) {
-                                @foreach (var em in _model.EmployeesActivities) {
+                                @foreach (var ea in _model.EmployeesActivities) {
                                     <tr>
                                         <td> 
                                             <span class="oi oi-envelope-closed"></span>
-                                            <span> @em.Email </span> 
+                                            <span> @ea.Employee.Email </span> 
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-danger" value="@em"
-                                                @onclick="(() => OnClickRemoveAsSelected(em))">Elimina</button>
+                                            <button type="button" class="btn btn-danger" value="@ea.Employee"
+                                                @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">Elimina</button>
                                         </td>
                                     </tr>
                                 }
@@ -133,20 +133,44 @@
         _employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDTO>>($"http://localhost:5032/employee/search/{employee}");
     }
 
-    private void OnClickAddAsSelected(EmployeeSelectDTO employee) {
-        foreach (var em in _model.EmployeesActivities.ToList()) {
-            if (em.Email != employee.Email) {
-                _model.EmployeesActivities.Add(employee);
-            }
-        }
+     private async Task OnClickAddAsSelected(EmployeeSelectDTO employee) {
+        await Task.Run(() => {
+            _model.EmployeesActivities.Add(
+                new EmployeeActivityDto {
+                    EmployeeId = employee.Id,
+                    Employee = employee,
+                    ActivityId = _model.Id,
+                    Activity = new ActivitySelectDTO {
+                        Id = _model.Id,
+                        Name = _model.Name,
+                        StartDate = _model.StartDate ?? throw new NullReferenceException(),
+                        FinishDate = _model.FinishDate ?? throw new NullReferenceException(),
+                        WorkOrderId = _model.WorkOrderId ?? throw new NullReferenceException(),
+                    },
+                }
+            );
+        });
     }
 
-    private void OnClickRemoveAsSelected(EmployeeSelectDTO employee) {
-        foreach (var em in _model.EmployeesActivities.ToList()) {
-            if (em.Email == employee.Email) {
-                _model.EmployeesActivities.Remove(employee);
+    private async Task OnClickRemoveAsSelected(EmployeeSelectDTO employee) {
+        await Task.Run(() => {
+            var employeeActivity = new EmployeeActivityDto {
+                EmployeeId = employee.Id,
+                Employee = employee,
+                ActivityId = _model.Id,
+                Activity = new ActivitySelectDTO {
+                    Id = _model.Id,
+                    Name = _model.Name,
+                    StartDate = _model.StartDate ?? throw new NullReferenceException(),
+                    FinishDate = _model.FinishDate ?? throw new NullReferenceException(),
+                    WorkOrderId = _model.WorkOrderId ?? throw new NullReferenceException(),
+                }
+            };
+
+            if (_model.EmployeesActivities.Contains(employeeActivity)) {
+                _model.EmployeesActivities.Remove(employeeActivity);
             }
-        }
+        });
     }
     
     private void RedirectToPage() {

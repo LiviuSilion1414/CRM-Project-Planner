@@ -69,8 +69,18 @@
         <div class="form-group">
             <span class="oi oi-euro"></span>
             <label for="Tariffa oraria">Tariffa oraria</label>
-            <input type="number" class="form-control" @bind="_model.HourPay"/>
-            <ValidationMessage For="@(() => _model.HourPay)" />
+            <input type="number" class="form-control" @bind="_model.HourlyRate"/>
+            <ValidationMessage For="@(() => _model.HourlyRate)" />
+            <div>
+                <label>Da: 
+                    <input type="date" class="form-control" @bind="_model.StartDateHourlyRate">
+                </label>
+                <ValidationMessage For="(() => _model.StartDateHourlyRate)"/>
+                <label>A: 
+                    <input type="date" class="form-control" @bind="_model.FinishDateHourlyRate">
+                </label>
+                <ValidationMessage For="(() => _model.FinishDateHourlyRate)"/>
+            </div>
         </div>
         <div class="form-group">
             <span class="oi oi-key"></span>
@@ -117,6 +127,18 @@
     }
 
     private async Task OnClickConfirm() {
+        await Task.Run(() => { 
+            var obj = new object();
+            
+            _model.EmployeeSalaries
+                .Add(new EmployeeSalaryDto {
+                    EmployeeId = _model.Id,
+                    Salary = _model.HourlyRate ?? throw new NullReferenceException(),
+                    StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),
+                    FinishDate = _model.FinishDateHourlyRate ?? throw new NullReferenceException(),
+                });
+            }
+        );
 
         var firstResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/account/add/user", _model);
         var secondResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/employee/add", _model);
