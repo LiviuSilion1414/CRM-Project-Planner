@@ -19,15 +19,43 @@ public class ActivityRepository
         _db.Activities.Add(new Activity {
             Id = entity.Id,
             Name = entity.Name,
-            StartDate = entity.StartDate,
-            FinishDate = entity.FinishDate,
-            WorkOrderId = entity.WorkOrderId,
-            EmployeeActivity = entity.EmployeesActivities
+            StartDate = entity.StartDate ?? throw new NullReferenceException(),
+            FinishDate = entity.FinishDate ?? throw new NullReferenceException(),
+            WorkOrderId = entity.WorkOrderId ?? throw new NullReferenceException(),
+            EmployeeActivity = (entity.EmployeesActivities
                 .Select(e => new EmployeeActivity {
-                    EmployeeId = e.Id,
-                    ActivityId = entity.Id,
-                }).ToList()
+                    Id = e.Id,
+                    ActivityId = e.ActivityId,
+                    Activity = new Activity {
+                        Id = entity.Id,
+                        Name = entity.Name,
+                        StartDate = entity.StartDate ?? throw new NullReferenceException(),
+                        FinishDate = entity.FinishDate ?? throw new NullReferenceException(),
+                        WorkOrderId = entity.WorkOrderId ?? throw new NullReferenceException() 
+                    },
+                    EmployeeId = e.EmployeeId,
+                    Employee = new Employee {
+                            Email = e.Employee.Email,
+                            FirstName = e.Employee.FirstName,
+                            LastName = e.Employee.LastName,
+                            Role = e.Employee.Role,
+                            Salaries = e.Employee.EmployeeSalaries
+                                .Select(ems => new List<EmployeeSalary> {
+                                    new EmployeeSalary {
+                                        Id = ems.Id,
+                                        EmployeeId = ems.EmployeeId,
+                                        StartDate = ems.StartDate,
+                                        FinishDate = ems.FinishDate,
+                                        Salary = decimal.Parse(ems.Salary.ToString()),
+                                    }})
+                                .ToList()
+                                .First(),
+                    }
+                })
+                
+            .ToList())
         });
+
         await _db.SaveChangesAsync();
     }
 
@@ -47,9 +75,9 @@ public class ActivityRepository
 
         model.Id = entity.Id;
         model.Name = entity.Name;
-        model.StartDate = entity.StartDate;
-        model.FinishDate = entity.FinishDate;
-        model.WorkOrderId = entity.WorkOrderId;
+        model.StartDate = entity.StartDate ?? throw new NullReferenceException();
+        model.FinishDate = entity.FinishDate ?? throw new NullReferenceException();
+        model.WorkOrderId = entity.WorkOrderId ?? throw new NullReferenceException();
         model.EmployeeActivity = entity.EmployeesActivities
             .Where(es => 
                 model.EmployeeActivity
@@ -85,9 +113,24 @@ public class ActivityRepository
                 FinishDate = e.FinishDate,
                 WorkOrderId = e.WorkOrderId,
                 EmployeesActivities = e.EmployeeActivity
-                    .Select(ea => new EmployeeSelectDTO {
-                        Id = ea.EmployeeId,
-                        Email = ea.Employee.Email
+                    .Select(ea => new EmployeeActivityDto {
+                        Id = ea.Id,
+                        EmployeeId = ea.Employee.Id,
+                        Employee = new EmployeeSelectDTO {
+                            Id = ea.Employee.Id,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            Role = ea.Employee.Role
+                        },
+                        ActivityId = ea.ActivityId,
+                        Activity = new ActivitySelectDTO {
+                            Id = ea.Activity.Id,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
                     })
                     .ToList()   
             })
@@ -114,9 +157,24 @@ public class ActivityRepository
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
-                    .Select(ea => new EmployeeSelectDTO {
+                    .Select(ea => new EmployeeActivityDto {
                         Id = ea.EmployeeId,
-                        Email = ea.Employee.Email
+                        EmployeeId = ea.Employee.Id,
+                        Employee = new EmployeeSelectDTO {
+                            Id = ea.Employee.Id,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            Role = ea.Employee.Role
+                        },
+                        ActivityId = ea.ActivityId,
+                        Activity = new ActivitySelectDTO {
+                            Id = ea.Activity.Id,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
                     })
                     .ToList()   
             })
@@ -134,9 +192,24 @@ public class ActivityRepository
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
-                    .Select(ea => new EmployeeSelectDTO {
-                        Id = ea.EmployeeId,
-                        Email = ea.Employee.Email
+                    .Select(ea => new EmployeeActivityDto {
+                        Id = ea.Id,
+                        EmployeeId = ea.Employee.Id,
+                        Employee = new EmployeeSelectDTO {
+                            Id = ea.Employee.Id,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            Role = ea.Employee.Role
+                        },
+                        ActivityId = ea.ActivityId,
+                        Activity = new ActivitySelectDTO {
+                            Id = ea.Activity.Id,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
                     })
                     .ToList()   
             })

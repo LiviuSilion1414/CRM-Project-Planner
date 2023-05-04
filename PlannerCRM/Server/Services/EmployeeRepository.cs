@@ -21,19 +21,20 @@ public class EmployeeRepository
             Email = entity.Email,
             FirstName = entity.FirstName,
             LastName = entity.LastName,
-            BirthDay = entity.BirthDay,
-            StartDate = entity.StartDate,
+            BirthDay = entity.BirthDay ?? throw new NullReferenceException(),
+            StartDate = entity.StartDate ?? throw new NullReferenceException(),
             Password = entity.Password,
             NumericCode = entity.NumericCode,
-            Role = entity.Role,
-            Salaries = new List<EmployeeSalary> {
-                new EmployeeSalary {
-                    EmployeeId = entity.Id,
-                    StartDate = entity.StartDate,
-                    FinishDate = entity.StartDate,
-                    Salary = entity.HourPay ?? throw new NullReferenceException()
-                }
-            }
+            Role = entity.Role ?? throw new NullReferenceException(),
+            Salaries = entity.EmployeeSalaries
+                .Select(ems =>
+                    new EmployeeSalary {
+                        EmployeeId = ems.EmployeeId,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.FinishDate,
+                        Salary = decimal.Parse(ems.Salary.ToString())
+                    })
+                .ToList()
         });
 
         await _db.SaveChangesAsync();
@@ -65,7 +66,7 @@ public class EmployeeRepository
                     EmployeeId = entity.Id,
                     StartDate = entity.StartDate,
                     FinishDate = entity.StartDate,
-                    Salary = entity.HourPay
+                    Salary = decimal.Parse(entity.EmployeeSalaries.First().Salary.ToString())
                 }
             };
         }
