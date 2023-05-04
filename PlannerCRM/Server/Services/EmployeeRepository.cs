@@ -79,11 +79,43 @@ public class EmployeeRepository
         return await _db.Employees
             .Select(e => new EmployeeViewDTO {
                 Id = e.Id,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
                 FullName = $"{e.FirstName} {e.LastName}",
                 BirthDay = e.BirthDay,
                 StartDate = e.StartDate,
                 Email = e.Email,
-                Role = e.Role.ToString().Replace('_', ' ')})
+                Role = e.Role.ToString().Replace('_', ' '), 
+                EmployeeSalaries = e.Salaries
+                    .Select( ems => new EmployeeSalaryDTO {
+                        EmployeeId = ems.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.StartDate,
+                        Salary = float.Parse(ems.Salary.ToString())})
+                    .ToList(),
+                EmployeeActivities = e.EmployeeActivity
+                    .Select( ems =>
+                        new EmployeeActivityDTO {
+                            EmployeeId = ems.Id,
+                            Employee = new EmployeeSelectDTO {
+                                Id = ems.EmployeeId,
+                                FirstName = ems.Employee.FirstName,
+                                LastName = ems.Employee.LastName,
+                                Email = ems.Employee.Email,
+                                Role = ems.Employee.Role, 
+                            },
+                            ActivityId = ems.ActivityId,
+                            Activity = new ActivitySelectDTO {
+                                Id = ems.ActivityId,
+                                Name = ems.Activity.Name,
+                                StartDate = ems.Activity.StartDate,
+                                FinishDate = ems.Activity.FinishDate,
+                                WorkOrderId = ems.Activity.WorkOrderId
+                            }
+                        }
+                    ).ToList()
+                })
+                
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
@@ -98,7 +130,36 @@ public class EmployeeRepository
                 StartDate = e.StartDate,
                 Role = e.Role,
                 NumericCode = e.NumericCode,
-                Password = e.Password})
+                Password = e.Password,
+                EmployeeSalaries = e.Salaries
+                    .Select( ems => new EmployeeSalaryDTO {
+                        EmployeeId = ems.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.StartDate,
+                        Salary = float.Parse(ems.Salary.ToString())})
+                    .ToList(),
+                EmployeeActivities = e.EmployeeActivity
+                    .Select(ems =>
+                        new EmployeeActivityDTO {
+                            EmployeeId = ems.Id,
+                            Employee = new EmployeeSelectDTO {
+                                Id = ems.EmployeeId,
+                                FirstName = ems.Employee.FirstName,
+                                LastName = ems.Employee.LastName,
+                                Email = ems.Employee.Email,
+                                Role = ems.Employee.Role, 
+                            },
+                            ActivityId = ems.ActivityId,
+                            Activity = new ActivitySelectDTO {
+                                Id = ems.ActivityId,
+                                Name = ems.Activity.Name,
+                                StartDate = ems.Activity.StartDate,
+                                FinishDate = ems.Activity.FinishDate,
+                                WorkOrderId = ems.Activity.WorkOrderId
+                            }
+                        })
+                    .ToList()
+                })
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
@@ -126,14 +187,72 @@ public class EmployeeRepository
                 return foundByUsername
                     .Select(e => new EmployeeSelectDTO {
                         Id = e.Id,
-                        Email = e.Email
-                    }).ToList();
+                        Email = e.Email,
+                        FirstName = e.FirstName,
+                        LastName = e.LastName,
+                        EmployeeSalaries = e.EmployeeSalaries
+                            .Select( ems => new EmployeeSalaryDTO {
+                                EmployeeId = ems.Id,
+                                StartDate = ems.StartDate,
+                                FinishDate = ems.StartDate,
+                                Salary = float.Parse(ems.Salary.ToString())})
+                            .ToList(),
+                        EmployeeActivities = e.EmployeeActivities
+                            .Select(ems =>
+                                new EmployeeActivityDTO {
+                                    EmployeeId = ems.Id,
+                                    Employee = new EmployeeSelectDTO {
+                                        Id = ems.EmployeeId,
+                                        FirstName = ems.Employee.FirstName,
+                                        LastName = ems.Employee.LastName,
+                                        Email = ems.Employee.Email,
+                                        Role = ems.Employee.Role, 
+                                    },
+                                    ActivityId = ems.ActivityId,
+                                    Activity = new ActivitySelectDTO {
+                                        Id = ems.ActivityId,
+                                        Name = ems.Activity.Name,
+                                        StartDate = ems.Activity.StartDate,
+                                        FinishDate = ems.Activity.FinishDate,
+                                        WorkOrderId = ems.Activity.WorkOrderId
+                                    }
+                                }).ToList()
+                            }).ToList();
             } else if (foundByEmail.Count() != 0) {
                 return foundByEmail
                     .Select(e => new EmployeeSelectDTO {
                         Id = e.Id,
-                        Email = e.Email
-                    }).ToList();
+                        Email = e.Email,
+                        FirstName = e.FirstName,
+                        LastName = e.LastName,
+                        EmployeeSalaries = e.EmployeeSalaries
+                            .Select( ems => new EmployeeSalaryDTO {
+                                EmployeeId = ems.Id,
+                                StartDate = ems.StartDate,
+                                FinishDate = ems.StartDate,
+                                Salary = float.Parse(ems.Salary.ToString())})
+                            .ToList(),
+                        EmployeeActivities = e.EmployeeActivities
+                            .Select(ems =>
+                                new EmployeeActivityDTO {
+                                    EmployeeId = ems.Id,
+                                    Employee = new EmployeeSelectDTO {
+                                        Id = ems.EmployeeId,
+                                        FirstName = ems.Employee.FirstName,
+                                        LastName = ems.Employee.LastName,
+                                        Email = ems.Employee.Email,
+                                        Role = ems.Employee.Role, 
+                                    },
+                                    ActivityId = ems.ActivityId,
+                                    Activity = new ActivitySelectDTO {
+                                        Id = ems.ActivityId,
+                                        Name = ems.Activity.Name,
+                                        StartDate = ems.Activity.StartDate,
+                                        FinishDate = ems.Activity.FinishDate,
+                                        WorkOrderId = ems.Activity.WorkOrderId
+                                    }
+                                }).ToList()
+                    }).ToList();                   
             } else {
                 return new List<EmployeeSelectDTO>();
             }
@@ -170,7 +289,14 @@ public class EmployeeRepository
                             Email = e.Email
                         },
                         EmployeeId = e.Id
-                    }).ToList()
+                    }).ToList(),
+                EmployeeSalaries = e.Salaries
+                    .Select( ems => new EmployeeSalaryDTO {
+                        EmployeeId = ems.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.StartDate,
+                        Salary = float.Parse(ems.Salary.ToString())})
+                    .ToList(),
             })
             .Where(e => EF.Functions.Like(email, $"%{email}%"))
             .FirstAsync();
@@ -185,7 +311,32 @@ public class EmployeeRepository
                 BirthDay = e.BirthDay,
                 StartDate = e.StartDate,
                 Email = e.Email,
-                Role = e.Role.ToString().ToUpper().Replace('_', ' ')})
+                Role = e.Role.ToString().ToUpper().Replace('_', ' '),
+                EmployeeActivities = e.EmployeeActivity
+                    .Select(ea => new EmployeeActivityDTO {
+                        Id = ea.Activity.Id,
+                        Activity = new ActivitySelectDTO {
+                            Id = ea.Activity.Id,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        },
+                        ActivityId = ea.Activity.Id,
+                        Employee = new EmployeeSelectDTO {
+                            Id = e.Id,
+                            Email = e.Email
+                        },
+                        EmployeeId = e.Id
+                    }).ToList(),
+                EmployeeSalaries = e.Salaries
+                    .Select( ems => new EmployeeSalaryDTO {
+                        EmployeeId = ems.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.StartDate,
+                        Salary = float.Parse(ems.Salary.ToString())})
+                    .ToList(),
+            })
             .ToListAsync();
     }
 
