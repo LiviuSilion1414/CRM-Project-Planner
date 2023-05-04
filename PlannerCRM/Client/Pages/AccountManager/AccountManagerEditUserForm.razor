@@ -2,6 +2,7 @@
 
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.Models
+@using static PlannerCRM.Shared.Constants.ConstantValues
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
@@ -102,21 +103,25 @@
 @code {
     [Parameter] public int Id { get; set; }
     private string _CurrentEmail { get; set; }
-    private bool IsCheckboxClicked { get; set; }
+    private float _HourlyRate { get; set; }
+    private bool _IsCheckboxClicked { get; set; }
     private string TypeField = InputType.TEXT.ToString().ToLower();
     private EmployeeEditForm _model = new();
 
     protected override async Task OnInitializedAsync() {
         _model = await httpClient.GetFromJsonAsync<EmployeeEditForm>($"http://localhost:5032/employee/get/for/edit/{Id}");
         _CurrentEmail = _model.Email;
+        _HourlyRate = _model.EmployeeSalaries != null && _model.EmployeeSalaries.Count() != 0 
+            ? _model.EmployeeSalaries.First().Salary 
+            : 0.0F;
     }
 
     public void SwitchShowPassword() {
-        if (IsCheckboxClicked) {
-            IsCheckboxClicked = false;
+        if (_IsCheckboxClicked) {
+            _IsCheckboxClicked = false;
             TypeField = InputType.TEXT.ToString().ToLower();
         } else {
-            IsCheckboxClicked = true;
+            _IsCheckboxClicked = true;
             TypeField = InputType.PASSWORD.ToString().ToLower();
         }
     }
