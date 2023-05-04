@@ -155,7 +155,7 @@ public class EmployeeRepository
                 NumericCode = e.NumericCode,
                 Password = e.Password,
                 EmployeeActivities = e.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
+                    .Select(ea => new EmployeeActivityDTO {
                         Id = ea.Activity.Id,
                         Activity = new ActivitySelectDTO {
                             Id = ea.Activity.Id,

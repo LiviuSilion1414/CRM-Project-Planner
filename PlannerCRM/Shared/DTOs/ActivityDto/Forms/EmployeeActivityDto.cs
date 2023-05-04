@@ -3,7 +3,7 @@ using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
 namespace PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 
-public class EmployeeActivityDto
+public class EmployeeActivityDTO
 {
     public int Id { get; set; }
     

@@ -131,7 +131,7 @@
             var obj = new object();
             
             _model.EmployeeSalaries
-                .Add(new EmployeeSalaryDto {
+                .Add(new EmployeeSalaryDTO {
                     EmployeeId = _model.Id,
                     Salary = _model.HourlyRate ?? throw new NullReferenceException(),
                     StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),

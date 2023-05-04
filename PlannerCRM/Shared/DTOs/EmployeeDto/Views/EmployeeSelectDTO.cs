@@ -10,5 +10,5 @@ public class EmployeeSelectDTO
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public Roles Role { get; set; }
-    public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
+    public List<EmployeeSalaryDTO> EmployeeSalaries { get; set; }
 }

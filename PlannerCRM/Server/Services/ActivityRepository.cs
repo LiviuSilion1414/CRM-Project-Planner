@@ -99,7 +99,7 @@ public class ActivityRepository
                 Name = e.Name,
                 StartDate = e.StartDate,
                 FinishDate = e.FinishDate,
-                WorkOrderId = e.WorkOrderId
+                WorkOrderId = e.WorkOrderId,
             })
             .SingleOrDefaultAsync(a => a.Id == id);
     }
@@ -113,7 +113,7 @@ public class ActivityRepository
                 FinishDate = e.FinishDate,
                 WorkOrderId = e.WorkOrderId,
                 EmployeesActivities = e.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
+                    .Select(ea => new EmployeeActivityDTO {
                         Id = ea.Id,
                         EmployeeId = ea.Employee.Id,
                         Employee = new EmployeeSelectDTO {
@@ -157,7 +157,7 @@ public class ActivityRepository
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
+                    .Select(ea => new EmployeeActivityDTO {
                         Id = ea.EmployeeId,
                         EmployeeId = ea.Employee.Id,
                         Employee = new EmployeeSelectDTO {
@@ -192,7 +192,7 @@ public class ActivityRepository
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
+                    .Select(ea => new EmployeeActivityDTO {
                         Id = ea.Id,
                         EmployeeId = ea.Employee.Id,
                         Employee = new EmployeeSelectDTO {
