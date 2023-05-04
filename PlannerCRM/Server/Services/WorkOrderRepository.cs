@@ -17,8 +17,8 @@ public class WorkOrderRepository
 	public async Task AddAsync(WorkorderForm entity) {
 		_db.WorkOrders.Add(new WorkOrder {
 			Name = entity.Name,
-			StartDate = entity.StartDate,
-			FinishDate = entity.FinishDate
+			StartDate = entity.StartDate ?? throw new NullReferenceException(),
+			FinishDate = entity.FinishDate ?? throw new NullReferenceException()
 		});
 
 		await _db.SaveChangesAsync();
@@ -44,8 +44,8 @@ public class WorkOrderRepository
 
 		model.Id = entity.Id;
 		model.Name = entity.Name;
-		model.StartDate = entity.StartDate;
-		model.FinishDate = entity.FinishDate;
+		model.StartDate = entity.StartDate ?? throw new NullReferenceException();
+		model.FinishDate = entity.FinishDate ?? throw new NullReferenceException();
 
 		await _db.SaveChangesAsync();
 		return true;
