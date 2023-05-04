@@ -53,7 +53,7 @@ public class AccountController : ControllerBase
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
         
         if (person != null) {
-            return Redirect("Utente già esistente.");
+            return BadRequest("Utente già esistente.");
         } else if (person == null) {
             var user = new IdentityUser {
                 Email = employeeAdd.Email,
@@ -82,24 +82,16 @@ public class AccountController : ControllerBase
         var person = await _userManager.FindByEmailAsync(oldEmail);
         
         if (person == null) {
-            return Redirect("http://localhost:5032/account-manager");
+            return BadRequest("http://localhost:5032/account-manager");
         } else if (person != null) {
-            if (employeeEdit.Email == oldEmail) {
-                return BadRequest("Utente già presente con questo email.");
-            } else {
-                var user = new IdentityUser {
-                    Email = employeeEdit.Email,
-                    EmailConfirmed = true,
-                    UserName = employeeEdit.Email
-                };
+            var user = new IdentityUser {
+                Email = employeeEdit.Email,
+                EmailConfirmed = true,
+                UserName = employeeEdit.Email
+            };
 
-                var result = await _userManager.CreateAsync(user, employeeEdit.Password);
-                if (result.Succeeded) {
-                    await _userManager.AddToRoleAsync(user, employeeEdit.Role.ToString());
-                } else {
-                    return BadRequest("Impossibile modificare l'utente.");
-                }
-            }
+            await _userManager.CreateAsync(user, employeeEdit.Password);
+            await _userManager.AddToRoleAsync(user, employeeEdit.Role.ToString());
         }
         
         return Ok("Utente modificato con successo!");

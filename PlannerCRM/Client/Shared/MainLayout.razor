@@ -57,6 +57,30 @@
                 .ToUpper()
                 .Replace('_', ' ');
         }
+        var currentPage = navManager.Uri.Replace(navManager.BaseUri, "/");
+        if (currentPage == "/login" || currentPage == "/") {
+            await Task.Delay(1500);
+            var state = await authStateProvider.GetAuthenticationStateAsync();
+            var loggedInUserID = new CurrentEmployee();
+            var loggedInUserRole = string.Empty;
+            if (state.User.Identity.IsAuthenticated) {
+                loggedInUserRole = await authStateProvider.GetRole();
+                if (state.User.Identity.Name != SPECIAL_EMAIL) {
+                    loggedInUserID = await authStateProvider.GetCurrentEmployeeId(state.User.Identity.Name);
+                }
+                foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
+                    if (possibleRole.ToString() == loggedInUserRole) {
+                        if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
+                            possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
+
+                            navManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}/{loggedInUserID.Id}",false, true);
+                        } else {
+                            navManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}", false, true);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     async Task NavigateBasedOnRole() {
