@@ -12,13 +12,16 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public AccountController(
         UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager)
+        SignInManager<IdentityUser> signInManager,
+        RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
     }
 
     [HttpPost("login")]
@@ -60,13 +63,20 @@ public class AccountController : ControllerBase
                 EmailConfirmed = true,
                 UserName = employeeAdd.Email
             };
-
-            var result = await _userManager.CreateAsync(user, employeeAdd.Password);
-            if (result.Succeeded) {
-                await _userManager.AddToRoleAsync(user, employeeAdd.Role.ToString());
-            } else {
-                return BadRequest("Impossibile aggiungere l'utente!");
-            }
+            
+            await _userManager.CreateAsync(user, employeeAdd.Password);
+            var userRole = string.Empty;
+            
+            await Task.Run(() => 
+                userRole = _roleManager.Roles
+                    .ToList()
+                    .Where(aspRole => Enum.GetNames(typeof(Roles))
+                        .ToList()
+                        .Any(role => role == aspRole.Name))
+                    .ToList()
+                    .SingleOrDefault().Name
+            );
+            await _userManager.AddToRoleAsync(user, userRole);
         }
 
         return Ok("Utente aggiunto con successo!");

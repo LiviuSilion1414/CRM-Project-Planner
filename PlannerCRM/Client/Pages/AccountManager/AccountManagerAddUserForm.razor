@@ -83,8 +83,8 @@
             </div>
         </div>
         <div class="form-group">
-            <span class="oi oi-key"></span>
             <div style="margin: 0 auto; margin: 10px 5px;">
+                <span class="oi oi-key"></span>
                 <label for="Password">Password</label>
                 <input type="@TypeField" class="form-control" @bind="_model.Password"/>
                 <input type="checkbox" style="float:left; margin-top: 5px;" @onclick="SwitchShowPassword"/>
@@ -104,8 +104,6 @@
 </div>
 
 @code {
-    private int MinAge { get; set; }
-    private int MaxAge { get; set; }
     private bool IsError { get; set; }
     private string Message { get; set; }
     private bool IsCheckboxClicked { get; set; }
@@ -128,10 +126,10 @@
 
     private async Task OnClickConfirm() {
         await Task.Run(() => { 
-            var obj = new object();
-            
+            _model.EmployeeSalaries = new();
             _model.EmployeeSalaries
                 .Add(new EmployeeSalaryDTO {
+                    Id = _model.Id,
                     EmployeeId = _model.Id,
                     Salary = _model.HourlyRate ?? throw new NullReferenceException(),
                     StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),
@@ -140,12 +138,8 @@
             }
         );
 
-        var firstResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/account/add/user", _model);
-        var secondResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/employee/add", _model);
-        if (!firstResponse.IsSuccessStatusCode || 
-            !secondResponse.IsSuccessStatusCode) {
-            Message = await firstResponse.Content.ReadAsStringAsync();
-        }
+        await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/account/add/user", _model);
+        await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/employee/add", _model);
 
         navManager.NavigateTo("/account-manager");
     }

@@ -82,11 +82,13 @@
             </div>
         </div>
         <div class="form-group">
-            <span class="oi oi-key"></span>
-            <label for="Password">Password</label>
-            <input type="@TypeField" class="form-control" @bind="_model.Password"/>
-            <input type="checkbox" style="float:left; margin-top:5px;" @onclick="SwitchShowPassword"/>
-            <span style="margin: 10px 5px;">Vedi password</span>
+            <div style="margin: 0 auto; margin: 10px 5px;">
+                <span class="oi oi-key"></span>
+                <label for="Password">Password</label>
+                <input type="@TypeField" class="form-control" @bind="_model.Password"/>
+                <input type="checkbox" style="float:left; margin-top:5px;" @onclick="SwitchShowPassword"/>
+                <span style="margin: 10px 5px;">Vedi password</span>
+            </div>
             <ValidationMessage For="@(() => _model.Password)" />
         </div>
         <div class="wrapper-btn">
@@ -111,9 +113,6 @@
     protected override async Task OnInitializedAsync() {
         _model = await httpClient.GetFromJsonAsync<EmployeeEditForm>($"http://localhost:5032/employee/get/for/edit/{Id}");
         _CurrentEmail = _model.Email;
-        _HourlyRate = _model.EmployeeSalaries != null && _model.EmployeeSalaries.Count() != 0 
-            ? _model.EmployeeSalaries.First().Salary 
-            : 0.0F;
     }
 
     public void SwitchShowPassword() {
@@ -136,10 +135,10 @@
 
     private async void OnClickConfirm() {
         await Task.Run(() => { 
-            var obj = new object();
             
             _model.EmployeeSalaries
                 .Add(new EmployeeSalaryDTO {
+                    Id = _model.Id,
                     EmployeeId = _model.Id,
                     Salary = _model.HourlyRate,
                     StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),

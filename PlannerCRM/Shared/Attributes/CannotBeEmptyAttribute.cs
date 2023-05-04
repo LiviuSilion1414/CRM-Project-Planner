@@ -8,14 +8,11 @@ namespace PlannerCRM.Shared.Attributes;
 public sealed class CannotBeEmptyAttribute : RequiredAttribute
 {
     public override bool IsValid(object value) {
-        if (value.GetType() == typeof(IEnumerable<EmployeeActivityDTO>) || 
-            value.GetType() == typeof(IEnumerable<EmployeeSalaryDTO>)) {
+        if (value.GetType() == typeof(List<EmployeeSalaryDTO>)) {
+            var list = value as List<EmployeeSalaryDTO>;
+            list = new();
             
-            var listEA = value as IEnumerable<EmployeeActivityDTO>; 
-            var listES = value as IEnumerable<EmployeeSalaryDTO>;
-            
-            return listEA != null && listEA.GetEnumerator().MoveNext() ||
-                listES != null && listES.GetEnumerator().MoveNext()
+            return list != null || list.GetEnumerator().MoveNext()
                 ? true
                 : false;
         } else {

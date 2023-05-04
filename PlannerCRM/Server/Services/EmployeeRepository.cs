@@ -66,7 +66,7 @@ public class EmployeeRepository
                     EmployeeId = entity.Id,
                     StartDate = entity.StartDate,
                     FinishDate = entity.StartDate,
-                    Salary = decimal.Parse(entity.EmployeeSalaries.First().Salary.ToString())
+                    Salary = decimal.Parse(entity.EmployeeSalaries.SingleOrDefault().Salary.ToString())
                 }
             };
         }
@@ -131,6 +131,11 @@ public class EmployeeRepository
                 Role = e.Role,
                 NumericCode = e.NumericCode,
                 Password = e.Password,
+                HourlyRate = e.Salaries.Count() != 0 
+                    ? float.Parse(e.Salaries.SingleOrDefault().Salary.ToString())
+                    : 0.0F,
+                StartDateHourlyRate = e.Salaries.SingleOrDefault().StartDate,
+                FinishDateHourlyRate = e.Salaries.SingleOrDefault().FinishDate,
                 EmployeeSalaries = e.Salaries
                     .Select( ems => new EmployeeSalaryDTO {
                         EmployeeId = ems.Id,
@@ -307,6 +312,8 @@ public class EmployeeRepository
         return await _db.Employees
             .Select(e => new EmployeeViewDTO {
                 Id = e.Id,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
                 FullName = $"{e.FirstName} {e.LastName}",
                 BirthDay = e.BirthDay,
                 StartDate = e.StartDate,
