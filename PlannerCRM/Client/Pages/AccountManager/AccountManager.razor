@@ -41,7 +41,13 @@
                 <td>@user.BirthDay.ToShortDateString()</td>
                 <td>@user.StartDate.ToShortDateString()</td>
                 <td>@user.Role</td>
-                <td>@user.HourPay</td>
+                <td>
+                    @foreach (var hourRate in user.EmployeeSalaries) {
+                        if (hourRate.EmployeeId == user.Id) {
+                            @hourRate.Salary
+                        }
+                    }
+                </td>
                 <td>
                     <button type="button" class="btn btn-primary" @onclick="@(() => OnClickEdit(user.Id))">
                         <span class="oi oi-pencil"></span>
