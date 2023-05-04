@@ -26,7 +26,13 @@ public class EmployeeEditForm
 
     public Roles Role { get; set; }
 
-    public decimal HourPay { get; set; }
+    public float HourlyRate { get; set; }
+
+    public DateTime? StartDateHourlyRate { get; set; }
+
+    public DateTime? FinishDateHourlyRate { get; set; }
+
+    public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
 
     public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }

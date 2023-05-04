@@ -26,21 +26,33 @@ public class EmployeeAddForm
     [Required(ErrorMessage = """Campo "Email" richiesto""")]
     public string Email { get; set; }
 
-    [StartDateRange(MINIMUM_YEAR, CURRENT_YEAR, ErrorMessage = "La data dev'essere tra il 01/01/1973 e l'anno del giorno stesso")]
-    public DateTime StartDate { get; set; }
+    [Required(ErrorMessage = """ Campo "Data d'inizio" richiesto. """)]
+    [EmployeeStartDateRange(MINIMUM_YEAR, CURRENT_YEAR, ErrorMessage = "La data dev'essere tra il 01/01/1973 e l'anno del giorno stesso")]
+    public DateTime? StartDate { get; set; }
     
-    [BirthDayRange(MAJOR_AGE, MAX_AGE, ErrorMessage = """L'età dell'impiegato deve essere tra i 18 e i 50 anni.""")]
-    public DateTime BirthDay { get; set; } 
+    [Required(ErrorMessage = """ Campo "Data di fine" richiesto. """)]
+    [BirthDayRange(ErrorMessage = """L'età dell'impiegato deve essere tra i 18 e i 50 anni.""")]
+    public DateTime? BirthDay { get; set; } 
 
     [Required(ErrorMessage = """Campo "Codice fiscale" richiesto""")]
     public string NumericCode { get; set; }
 
     [Required(ErrorMessage = """Campo "Ruolo" richiesto""")]
     [EnumDataType(typeof(Roles))]
-    public Roles Role { get; set; }
+    public Roles? Role { get; set; }
 
+    [Required(ErrorMessage = """ Campo "Tariffa oraria" richiesto """)]
+    public float? HourlyRate { get; set; }
+
+    [Required(ErrorMessage = """ Campo "Data d'inizio tariffa oraria" richiesto """)]
+    public DateTime? StartDateHourlyRate { get; set; }
+
+    [Required(ErrorMessage = """ Campo "Data di fine tariffa oraria" richiesto """)]
+    public DateTime? FinishDateHourlyRate { get; set; }
+
+    [CannotBeEmpty]
     [Required(ErrorMessage = """Campo "Tariffa oraria" richiesto""")]
-    public decimal? HourPay { get; set; }
+    public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
 
     public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }
