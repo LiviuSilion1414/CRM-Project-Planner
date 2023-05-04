@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -19,20 +20,49 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPost("add")]
-	public async Task AddWorkorder(WorkorderForm model) {
-		await _repo.AddAsync(model);
+	public async Task<ActionResult> AddWorkorder(WorkorderForm entity) {
+		if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
+		var workorder = await _repo.SearchWorkorderAsync(entity.Name);
+		
+		if (workorder == null) {
+			await _repo.AddAsync(entity);
+			return Ok("Commessa aggiunta con successo!");
+		} 
+
+		return BadRequest("Commessa già presente!");
 	}
 
     [Authorize]
 	[HttpPut("edit")]
-	public async Task EditWorkorder(WorkorderForm model) {
-		await _repo.EditAsync(model);
+	public async Task<ActionResult> EditWorkorder(WorkorderForm entity) {
+		if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
+		var workorder = await _repo.GetForEditAsync(entity.Id);
+		
+		if (workorder == null) {
+			return NotFound(NOT_FOUND_RESOURCE);
+		}
+
+		await _repo.EditAsync(entity);
+		return Ok("Commessa modificata con successo!");
 	}
 
     [Authorize]
 	[HttpDelete("delete/{id}")]
-	public async Task DeleteWorkorder(int id) {
+	public async Task<ActionResult> DeleteWorkorder(int id) {
+		var workorder = await _repo.GetForDeleteAsync(id);
+		
+		if (workorder == null) {
+			return NotFound(NOT_FOUND_RESOURCE);
+		}
+
 		await _repo.DeleteAsync(id);
+		return Ok("Commessa modificata con successo!");
 	}
 
 	[Authorize]

@@ -23,6 +23,10 @@ public class AccountController : ControllerBase
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(EmployeeLoginDTO employee) {
+        if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
         var user = await _userManager.FindByEmailAsync(employee.Email);
 
         if (user == null) {
@@ -71,6 +75,10 @@ public class AccountController : ControllerBase
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit/user/{oldEmail}")]
     public async Task<ActionResult> EditUser(EmployeeEditForm employeeEdit, string oldEmail) {
+        if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
         var person = await _userManager.FindByEmailAsync(oldEmail);
         
         if (person == null) {

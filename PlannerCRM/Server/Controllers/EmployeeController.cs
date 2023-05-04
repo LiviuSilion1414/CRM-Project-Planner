@@ -21,6 +21,10 @@ public class EmployeeController: ControllerBase
     [Authorize]
     [HttpPost("add")]
     public async Task<ActionResult> AddUser(EmployeeAddForm employeeAdd) {
+        if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
         var employees = await _repo.SearchEmployeeAsync(employeeAdd.Email);
 
         if (employeeAdd == null) {
@@ -39,6 +43,10 @@ public class EmployeeController: ControllerBase
     [Authorize]
     [HttpPut("edit")]
     public async Task<ActionResult> EditUser(EmployeeEditForm employeeEdit) {
+        if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
         var employees = await _repo.SearchEmployeeAsync(employeeEdit.Email);
         
         if (employeeEdit == null) {

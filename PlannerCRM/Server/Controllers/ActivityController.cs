@@ -4,6 +4,7 @@ using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.Models;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -20,14 +21,36 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task AddActivity(ActivityForm entity) {
-        await _repo.AddAsync(entity);
+    public async Task<ActionResult> AddActivity(ActivityForm entity) {
+        if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
+        var activities = await _repo.GetActivitiesPerWorkOrderAsync(entity.WorkOrderId ?? throw new NullReferenceException());
+        
+        if (activities == null || activities.Count() == 0) {
+            await _repo.AddAsync(entity);
+            return Ok("Attività aggiunta con successo!");
+        }
+
+        return BadRequest("Attività già presente su questa commessa!");
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task EditActivity(ActivityForm entity) {
-        await _repo.EditAsync(entity);
+    public async Task<ActionResult> EditActivity(ActivityForm entity) {
+        if (!ModelState.IsValid) {
+            return BadRequest("Input non valido!");
+        }
+
+        var activities = await _repo.GetActivitiesPerWorkOrderAsync(entity.WorkOrderId ?? throw new NullReferenceException());
+        
+        if (activities != null || activities.Count() != 0) {
+            await _repo.EditAsync(entity);
+            return Ok("Attività modificata con successo!");
+        }
+
+        return NotFound(NOT_FOUND_RESOURCE);
     }    
 
     [Authorize]
@@ -68,7 +91,14 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{id}")]
-    public async Task DeleteActivity(int id) {
+    public async Task<ActionResult> DeleteActivity(int id) {
+        var activity = await _repo.GetForViewAsync(id);
+
+        if (activity == null) {
+            return NotFound(NOT_FOUND_RESOURCE);
+        } 
+
         await _repo.DeleteAsync(id);
+        return Ok("Attività eliminata con successo");
     }
 }
