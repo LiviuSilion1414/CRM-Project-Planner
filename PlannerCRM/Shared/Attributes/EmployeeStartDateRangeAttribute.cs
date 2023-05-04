@@ -2,12 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlannerCRM.Shared.Attributes;
 
-public class StartDateRangeAttribute : ValidationAttribute
+public class EmployeeStartDateRangeAttribute : ValidationAttribute
 {
     private int _Minimum { get; set; }
     private int _Maximum { get; set; }
 
-    public StartDateRangeAttribute(int minimum, int maximum) {
+    public EmployeeStartDateRangeAttribute(int minimum, int maximum) {
        _Minimum = minimum;
        _Maximum = maximum;
     }
