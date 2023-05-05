@@ -2,6 +2,7 @@
 
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.Models
+@using static PlannerCRM.Shared.Constants.ConstantValues
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
@@ -81,11 +82,13 @@
             </div>
         </div>
         <div class="form-group">
-            <span class="oi oi-key"></span>
-            <label for="Password">Password</label>
-            <input type="@TypeField" class="form-control" @bind="_model.Password"/>
-            <input type="checkbox" style="float:left; margin-top:5px;" @onclick="SwitchShowPassword"/>
-            <span style="margin: 10px 5px;">Vedi password</span>
+            <div style="margin: 0 auto; margin: 10px 5px;">
+                <span class="oi oi-key"></span>
+                <label for="Password">Password</label>
+                <input type="@TypeField" class="form-control" @bind="_model.Password"/>
+                <input type="checkbox" style="float:left; margin-top:5px;" @onclick="SwitchShowPassword"/>
+                <span style="margin: 10px 5px;">Vedi password</span>
+            </div>
             <ValidationMessage For="@(() => _model.Password)" />
         </div>
         <div class="wrapper-btn">
@@ -102,7 +105,8 @@
 @code {
     [Parameter] public int Id { get; set; }
     private string _CurrentEmail { get; set; }
-    private bool IsCheckboxClicked { get; set; }
+    private float _HourlyRate { get; set; }
+    private bool _IsCheckboxClicked { get; set; }
     private string TypeField = InputType.TEXT.ToString().ToLower();
     private EmployeeEditForm _model = new();
 
@@ -112,11 +116,11 @@
     }
 
     public void SwitchShowPassword() {
-        if (IsCheckboxClicked) {
-            IsCheckboxClicked = false;
+        if (_IsCheckboxClicked) {
+            _IsCheckboxClicked = false;
             TypeField = InputType.TEXT.ToString().ToLower();
         } else {
-            IsCheckboxClicked = true;
+            _IsCheckboxClicked = true;
             TypeField = InputType.PASSWORD.ToString().ToLower();
         }
     }
@@ -135,6 +139,7 @@
             
             _model.EmployeeSalaries
                 .Add(new EmployeeSalaryDTO {
+                    Id = _model.Id,
                     EmployeeId = _model.Id,
                     Salary = _model.HourlyRate,
                     StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),

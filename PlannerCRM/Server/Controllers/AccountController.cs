@@ -12,13 +12,16 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public AccountController(
         UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager)
+        SignInManager<IdentityUser> signInManager,
+        RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
     }
 
     [HttpPost("login")]
@@ -53,20 +56,27 @@ public class AccountController : ControllerBase
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
         
         if (person != null) {
-            return Redirect("Utente già esistente.");
+            return BadRequest("Utente già esistente.");
         } else if (person == null) {
             var user = new IdentityUser {
                 Email = employeeAdd.Email,
                 EmailConfirmed = true,
                 UserName = employeeAdd.Email
             };
-
-            var result = await _userManager.CreateAsync(user, employeeAdd.Password);
-            if (result.Succeeded) {
-                await _userManager.AddToRoleAsync(user, employeeAdd.Role.ToString());
-            } else {
-                return BadRequest("Impossibile aggiungere l'utente!");
-            }
+            
+            await _userManager.CreateAsync(user, employeeAdd.Password);
+            var userRole = string.Empty;
+            
+            await Task.Run(() => 
+                userRole = _roleManager.Roles
+                    .ToList()
+                    .Where(aspRole => Enum.GetNames(typeof(Roles))
+                        .ToList()
+                        .Any(role => role == aspRole.Name))
+                    .ToList()
+                    .SingleOrDefault().Name
+            );
+            await _userManager.AddToRoleAsync(user, userRole);
         }
 
         return Ok("Utente aggiunto con successo!");
@@ -82,24 +92,16 @@ public class AccountController : ControllerBase
         var person = await _userManager.FindByEmailAsync(oldEmail);
         
         if (person == null) {
-            return Redirect("http://localhost:5032/account-manager");
+            return BadRequest("Utente non trovato!");
         } else if (person != null) {
-            if (employeeEdit.Email == oldEmail) {
-                return BadRequest("Utente già presente con questo email.");
-            } else {
-                var user = new IdentityUser {
-                    Email = employeeEdit.Email,
-                    EmailConfirmed = true,
-                    UserName = employeeEdit.Email
-                };
+            var user = new IdentityUser {
+                Email = employeeEdit.Email,
+                EmailConfirmed = true,
+                UserName = employeeEdit.Email
+            };
 
-                var result = await _userManager.CreateAsync(user, employeeEdit.Password);
-                if (result.Succeeded) {
-                    await _userManager.AddToRoleAsync(user, employeeEdit.Role.ToString());
-                } else {
-                    return BadRequest("Impossibile modificare l'utente.");
-                }
-            }
+            await _userManager.CreateAsync(user, employeeEdit.Password);
+            await _userManager.AddToRoleAsync(user, employeeEdit.Role.ToString());
         }
         
         return Ok("Utente modificato con successo!");

@@ -52,13 +52,9 @@ public class EmployeeController: ControllerBase
         if (employeeEdit == null) {
             return NotFound("Utente non trovato!");
         } else {
-            if (employees.Count() != 0) {
-                return BadRequest("Utente già esistente!");
-            } else {
-                await _repo.EditAsync(employeeEdit);
+            await _repo.EditAsync(employeeEdit);
 
-                return Ok("Utente modificato con successo!");
-            }
+            return Ok("Utente modificato con successo!");
         }
     }
 

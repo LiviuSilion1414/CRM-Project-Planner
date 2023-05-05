@@ -1,3 +1,4 @@
+using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
 
@@ -11,4 +12,5 @@ public class EmployeeSelectDTO
     public string LastName { get; set; }
     public Roles Role { get; set; }
     public List<EmployeeSalaryDTO> EmployeeSalaries { get; set; }
+    public List<EmployeeActivityDTO> EmployeeActivities { get; set; }
 }
