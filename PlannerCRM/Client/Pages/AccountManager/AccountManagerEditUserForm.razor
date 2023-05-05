@@ -131,7 +131,7 @@
 
     private async void OnClickConfirm() {
         await Task.Run(() => { 
-            var obj = new object();
+            _model.EmployeeSalaries = new();
             
             _model.EmployeeSalaries
                 .Add(new EmployeeSalaryDTO {

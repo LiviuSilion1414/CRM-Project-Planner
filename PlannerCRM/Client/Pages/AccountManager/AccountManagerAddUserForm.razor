@@ -104,8 +104,6 @@
 </div>
 
 @code {
-    private int MinAge { get; set; }
-    private int MaxAge { get; set; }
     private bool IsError { get; set; }
     private string Message { get; set; }
     private bool IsCheckboxClicked { get; set; }
@@ -128,8 +126,7 @@
 
     private async Task OnClickConfirm() {
         await Task.Run(() => { 
-            var obj = new object();
-            
+            _model.EmployeeSalaries = new();
             _model.EmployeeSalaries
                 .Add(new EmployeeSalaryDTO {
                     EmployeeId = _model.Id,
@@ -140,12 +137,8 @@
             }
         );
 
-        var firstResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/account/add/user", _model);
-        var secondResponse = await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/employee/add", _model);
-        if (!firstResponse.IsSuccessStatusCode || 
-            !secondResponse.IsSuccessStatusCode) {
-            Message = await firstResponse.Content.ReadAsStringAsync();
-        }
+        await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/account/add/user", _model);
+        await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/employee/add", _model);
 
         navManager.NavigateTo("/account-manager");
     }

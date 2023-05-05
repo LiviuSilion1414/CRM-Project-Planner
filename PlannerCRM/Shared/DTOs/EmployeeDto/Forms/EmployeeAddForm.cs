@@ -50,10 +50,8 @@ public class EmployeeAddForm
     [Required(ErrorMessage = """ Campo "Data di fine tariffa oraria" richiesto """)]
     public DateTime? FinishDateHourlyRate { get; set; }
 
-    [CannotBeEmpty(ErrorMessage = "La lista non può essere vuota")]
-    [Required(ErrorMessage = """Campo "Tariffa oraria" richiesto""")]
+    //[Required(ErrorMessage = """Campo "Tariffa oraria" richiesto""")]
     public List<EmployeeSalaryDTO> EmployeeSalaries { get; set; }
 
-    [CannotBeEmpty(ErrorMessage = "La lista non può essere vuota")]
     public List<EmployeeActivityDTO> EmployeeActivities { get; set; }
 }

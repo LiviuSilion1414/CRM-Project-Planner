@@ -22,6 +22,6 @@ public partial class ActivityForm
     [Required(ErrorMessage = """ Campo "Commessa" richiesto. """)]
     public int? WorkOrderId { get; set; }
 
-    [CannotBeEmpty(ErrorMessage = """ Campo "Dipendenti selezionati" richiesto. """)]
+    [Required(ErrorMessage = """ Campo "Dipendenti selezionati" richiesto. """)]
     public List<EmployeeActivityDTO> EmployeesActivities { get; set; }
 }
