@@ -359,6 +359,7 @@ public class EmployeeRepository
             .Select(e => new CurrentEmployee {
                 Id = e.Id,
                 Email = e.Email})
-            .SingleOrDefaultAsync(e => e.Email == email);
+            .Where(e => e.Email == email)
+            .FirstOrDefaultAsync();
     }
 }

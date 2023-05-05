@@ -108,6 +108,7 @@ public class EmployeeController: ControllerBase
         return await _repo.GetAllAsync();
     }
 
+    [Authorize]
     [HttpGet("get/id/{email}")]
     public async Task<CurrentEmployee> GetUserId(string email) {
         var emptyEmployee = new CurrentEmployee {

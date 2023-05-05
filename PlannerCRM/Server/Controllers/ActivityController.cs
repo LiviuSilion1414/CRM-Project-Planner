@@ -26,9 +26,9 @@ public class ActivityController : ControllerBase
             return BadRequest("Input non valido!");
         }
 
-        var activities = await _repo.GetActivitiesPerWorkOrderAsync(entity.WorkOrderId ?? throw new NullReferenceException());
+        var activities = await _repo.GetForViewAsync(entity.Id);
         
-        if (activities == null || activities.Count() == 0) {
+        if (activities == null) {
             await _repo.AddAsync(entity);
             return Ok("Attività aggiunta con successo!");
         }
