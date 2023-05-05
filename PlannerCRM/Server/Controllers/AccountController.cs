@@ -92,7 +92,7 @@ public class AccountController : ControllerBase
         var person = await _userManager.FindByEmailAsync(oldEmail);
         
         if (person == null) {
-            return BadRequest("http://localhost:5032/account-manager");
+            return BadRequest("Utente non trovato!");
         } else if (person != null) {
             var user = new IdentityUser {
                 Email = employeeEdit.Email,

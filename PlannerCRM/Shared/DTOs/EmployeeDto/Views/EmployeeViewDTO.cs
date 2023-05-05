@@ -11,6 +11,7 @@ public class EmployeeViewDTO
     public string LastName { get; set; }
     public string FullName { get; set; }
     public string Role { get; set; }
+    public float HourlyRate { get; set; }
     public DateTime BirthDay { get; set; }
     public DateTime StartDate { get; set; }
     public List<EmployeeSalaryDTO> EmployeeSalaries { get; set; }

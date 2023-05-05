@@ -61,14 +61,15 @@ public class EmployeeRepository
             model.Email = entity.Email;
             model.Role = entity.Role;
             model.NumericCode = entity.NumericCode;
-            model.Salaries = new List<EmployeeSalary> {
-                new EmployeeSalary {
-                    EmployeeId = entity.Id,
-                    StartDate = entity.StartDate,
-                    FinishDate = entity.StartDate,
-                    Salary = decimal.Parse(entity.EmployeeSalaries.SingleOrDefault().Salary.ToString())
-                }
-            };
+            model.Salaries = entity.EmployeeSalaries
+                .Select(ems => 
+                    new EmployeeSalary {
+                        EmployeeId = ems.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.FinishDate,
+                        Salary = decimal.Parse(ems.Salary.ToString())
+                    }
+                ).ToList();
         }
 
         await _db.SaveChangesAsync();
@@ -86,6 +87,9 @@ public class EmployeeRepository
                 StartDate = e.StartDate,
                 Email = e.Email,
                 Role = e.Role.ToString().Replace('_', ' '), 
+                HourlyRate = e.Salaries.Count() != 0 
+                    ? float.Parse(e.Salaries.SingleOrDefault().Salary.ToString())
+                    : 0.0F,
                 EmployeeSalaries = e.Salaries
                     .Select( ems => new EmployeeSalaryDTO {
                         EmployeeId = ems.Id,
@@ -319,6 +323,9 @@ public class EmployeeRepository
                 StartDate = e.StartDate,
                 Email = e.Email,
                 Role = e.Role.ToString().ToUpper().Replace('_', ' '),
+                HourlyRate = e.Salaries.Count() != 0 
+                    ? float.Parse(e.Salaries.SingleOrDefault().Salary.ToString())
+                    : 0.0F,
                 EmployeeActivities = e.EmployeeActivity
                     .Select(ea => new EmployeeActivityDTO {
                         Id = ea.Activity.Id,
