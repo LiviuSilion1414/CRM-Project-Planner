@@ -20,32 +20,25 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPost("add")]
-	public async Task<ActionResult> AddWorkorder(WorkorderForm entity) {
-		if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
-
+	public async Task<ActionResult> AddWorkorder(WorkorderForm entity) { //check inutile se c'è l'attributo [ApiController]-proprietà già controllate
 		var workorder = await _repo.SearchWorkorderAsync(entity.Name);
 		
 		if (workorder == null) {
 			await _repo.AddAsync(entity);
 			return Ok("Commessa aggiunta con successo!");
-		} 
+		}
 
 		return BadRequest("Commessa già presente!");
 	}
 
     [Authorize]
 	[HttpPut("edit")]
-	public async Task<ActionResult> EditWorkorder(WorkorderForm entity) {
-		if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
+	public async Task<ActionResult> EditWorkorder(WorkorderForm entity) { //dto non entity
+		var workorder = await _repo.GetForEditAsync(entity.Id);			
 
-		var workorder = await _repo.GetForEditAsync(entity.Id);
-		
-		if (workorder == null) {
-			return NotFound(NOT_FOUND_RESOURCE);
+		if (workorder == null) { //check inutile - farlo sul dbContext
+			return NotFound(NOT_FOUND_RESOURCE); //repo lancia un'eccezione
+												//middleware - prende l'eccezione e genera uno codice di stato in base all'eccezione
 		}
 
 		await _repo.EditAsync(entity);

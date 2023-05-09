@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
 
@@ -57,7 +58,7 @@ public class AccountController : ControllerBase
         
         if (person != null) {
             return BadRequest("Utente già esistente.");
-        } else if (person == null) {
+        } else {
             var user = new IdentityUser {
                 Email = employeeAdd.Email,
                 EmailConfirmed = true,
@@ -65,18 +66,10 @@ public class AccountController : ControllerBase
             };
             
             await _userManager.CreateAsync(user, employeeAdd.Password);
-            var userRole = string.Empty;
+            var userRole = await _roleManager.Roles
+                .SingleAsync(aspRole => Enum.GetNames(typeof(Roles)).Any(role => role == aspRole.Name));
             
-            await Task.Run(() => 
-                userRole = _roleManager.Roles
-                    .ToList()
-                    .Where(aspRole => Enum.GetNames(typeof(Roles))
-                        .ToList()
-                        .Any(role => role == aspRole.Name))
-                    .ToList()
-                    .SingleOrDefault().Name
-            );
-            await _userManager.AddToRoleAsync(user, userRole);
+            await _userManager.AddToRoleAsync(user, userRole.Name);
         }
 
         return Ok("Utente aggiunto con successo!");
@@ -100,7 +93,7 @@ public class AccountController : ControllerBase
                 UserName = employeeEdit.Email
             };
 
-            await _userManager.CreateAsync(user, employeeEdit.Password);
+            await _userManager.CreateAsync(user, employeeEdit.Password);  //Da corregere il CreateAsync
             await _userManager.AddToRoleAsync(user, employeeEdit.Role.ToString());
         }
         
@@ -126,7 +119,7 @@ public class AccountController : ControllerBase
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
         var roles = await _userManager.GetRolesAsync(user);
         
-        return roles.ToList().Count() != 0 
+        return roles.ToList().Count() != 0 //riscrivere la query in modo più pulito
             ? roles.ToList()[0] 
             : string.Empty;
     }

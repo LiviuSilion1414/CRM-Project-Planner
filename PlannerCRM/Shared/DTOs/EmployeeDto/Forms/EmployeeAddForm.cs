@@ -27,11 +27,11 @@ public class EmployeeAddForm
     public string Email { get; set; }
 
     [Required(ErrorMessage = """ Campo "Data d'inizio" richiesto. """)]
-    [EmployeeStartDateRange(MINIMUM_YEAR, CURRENT_YEAR, ErrorMessage = "La data dev'essere tra il 01/01/1973 e l'anno del giorno stesso")]
+    //[EmployeeStartDateRange(MINIMUM_YEAR, CURRENT_YEAR, ErrorMessage = "La data dev'essere tra il 01/01/1973 e l'anno del giorno stesso")]
     public DateTime? StartDate { get; set; }
     
     [Required(ErrorMessage = """ Campo "Data di nascita" richiesto. """)]
-    [BirthDayRange(ErrorMessage = """L'età dell'impiegato deve essere tra i 18 e i 50 anni.""")]
+    //[BirthDayRange(ErrorMessage = """L'età dell'impiegato deve essere tra i 18 e i 50 anni.""")]
     public DateTime? BirthDay { get; set; } 
 
     [Required(ErrorMessage = """Campo "Codice fiscale" richiesto""")]
