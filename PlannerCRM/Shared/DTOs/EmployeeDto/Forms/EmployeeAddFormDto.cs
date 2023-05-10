@@ -37,6 +37,7 @@ public class EmployeeAddFormDto
     [Required(ErrorMessage = """Campo "Codice fiscale" richiesto""")]
     public string NumericCode { get; set; }
 
+    [IsNotAdminRole(ADMIN_ROLE)]
     [Required(ErrorMessage = """Campo "Ruolo" richiesto""")]
     [EnumDataType(typeof(Roles))]
     public Roles? Role { get; set; }

@@ -24,6 +24,7 @@ public class EmployeeEditFormDto
     
     public string NumericCode { get; set; }
 
+    [IsNotAdminRole(ADMIN_ROLE)]
     public Roles Role { get; set; }
 
     public float HourlyRate { get; set; }
