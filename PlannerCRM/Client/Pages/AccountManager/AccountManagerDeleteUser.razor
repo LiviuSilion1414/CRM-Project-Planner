@@ -40,7 +40,7 @@
 
     public async Task OnClickDeleteUser() {
         await httpClient.DeleteAsync($"http://localhost:5032/employee/delete/{Id}");
-        await httpClient.DeleteAsync($"http://localhost:5032/account/delete/user/{_model.Email}");
+        await httpClient.DeleteAsync($"http://localhost:5032/applicationuser/delete/user/{_model.Email}");
         
         RedirectToPage();
     }
