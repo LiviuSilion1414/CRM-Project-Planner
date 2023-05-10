@@ -24,10 +24,10 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    public EmployeeDeleteDTO _model = new();
+    public EmployeeDeleteDto _model = new();
 
     protected override async Task OnInitializedAsync() {
-        _model = await httpClient.GetFromJsonAsync<EmployeeDeleteDTO>($"http://localhost:5032/employee/get/for/delete/{Id}");
+        _model = await httpClient.GetFromJsonAsync<EmployeeDeleteDto>($"http://localhost:5032/employee/get/for/delete/{Id}");
     }
 
     public void RedirectToPage() {

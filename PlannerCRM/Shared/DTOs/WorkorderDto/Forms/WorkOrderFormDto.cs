@@ -1,12 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using PlannerCRM.Shared.Attributes;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using static PlannerCRM.Shared.Constants.ConstantValues;
 
-namespace PlannerCRM.Shared.DTOs.ActivityDto.Forms;
+namespace PlannerCRM.Shared.DTOs.Workorder.Forms;
 
-public partial class ActivityForm
+public partial class WorkOrderFormDto
 {
     public int Id { get; set; }
     
@@ -14,14 +12,11 @@ public partial class ActivityForm
     public string Name { get; set; }
     
     [Required(ErrorMessage = """ Campo "Data d'inizio" richiesto. """)]
+    [WorkOrderStartDateRange(ErrorMessage = "Il periodo contrattuale dev'essere tra 3 e 12 mesi.")]
     public DateTime? StartDate { get; set; }
     
     [Required(ErrorMessage = """ Campo "Data di fine" richiesto. """)]
+    [FinishDateRange(MIN_WORKORDER_MONTH_CONTRACT, MAX_WORKORDER_MONTH_CONTRACT, 
+        ErrorMessage = "Il periodo contrattuale dev'essere tra 3 e 12 mesi.")]
     public DateTime? FinishDate { get; set; }
-
-    [Required(ErrorMessage = """ Campo "Commessa" richiesto. """)]
-    public int? WorkOrderId { get; set; }
-
-    [Required(ErrorMessage = """ Campo "Dipendenti selezionati" richiesto. """)]
-    public List<EmployeeActivityDTO> EmployeesActivities { get; set; }
 }

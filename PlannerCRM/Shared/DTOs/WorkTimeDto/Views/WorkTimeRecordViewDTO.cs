@@ -2,7 +2,7 @@ using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
 namespace PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
 
-public class WorkTimeRecordViewDTO
+public class WorkTimeRecordViewDto
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }

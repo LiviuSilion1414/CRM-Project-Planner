@@ -1,6 +1,6 @@
 namespace PlannerCRM.Shared.DTOs.Workorder.Views;
 
-public class WorkorderDeleteDTO
+public class WorkOrderDeleteDto
 {
 	public int Id { get; set; }
 	public string Name { get; set; }

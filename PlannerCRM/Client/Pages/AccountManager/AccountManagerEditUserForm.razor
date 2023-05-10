@@ -108,10 +108,10 @@
     private float _HourlyRate { get; set; }
     private bool _IsCheckboxClicked { get; set; }
     private string TypeField = InputType.TEXT.ToString().ToLower();
-    private EmployeeEditForm _model = new();
+    private EmployeeEditFormDto _model = new();
 
     protected override async Task OnInitializedAsync() {
-        _model = await httpClient.GetFromJsonAsync<EmployeeEditForm>($"http://localhost:5032/employee/get/for/edit/{Id}");
+        _model = await httpClient.GetFromJsonAsync<EmployeeEditFormDto>($"http://localhost:5032/employee/get/for/edit/{Id}");
         _CurrentEmail = _model.Email;
     }
 
@@ -138,7 +138,7 @@
             _model.EmployeeSalaries = new();
             
             _model.EmployeeSalaries
-                .Add(new EmployeeSalaryDTO {
+                .Add(new EmployeeSalaryDto {
                     Id = _model.Id,
                     EmployeeId = _model.Id,
                     Salary = _model.HourlyRate,
@@ -148,8 +148,8 @@
             }
         );
 
-        await httpClient.PutAsJsonAsync<EmployeeEditForm>($"http://localhost:5032/employee/edit", _model);
-        await httpClient.PutAsJsonAsync<EmployeeEditForm>($"http://localhost:5032/applicationuser/edit/user/{_CurrentEmail}", _model);
+        await httpClient.PutAsJsonAsync<EmployeeEditFormDto>($"http://localhost:5032/employee/edit", _model);
+        await httpClient.PutAsJsonAsync<EmployeeEditFormDto>($"http://localhost:5032/applicationuser/edit/user/{_CurrentEmail}", _model);
 
         RedirectToPage();
     }

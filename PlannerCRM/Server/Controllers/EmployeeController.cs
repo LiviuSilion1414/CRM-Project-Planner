@@ -20,7 +20,7 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task<ActionResult> AddUser(EmployeeAddForm employeeAdd) {
+    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAdd) {
         if (!ModelState.IsValid) {
             return BadRequest("Input non valido!");
         }
@@ -42,7 +42,7 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditUser(EmployeeEditForm employeeEdit) {
+    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEdit) {
         if (!ModelState.IsValid) {
             return BadRequest("Input non valido!");
         }
@@ -74,44 +74,44 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpGet("get/for/view/{id}")]
-    public async Task<EmployeeViewDTO> GetForViewById(int id) {
+    public async Task<EmployeeViewDto> GetForViewById(int id) {
        return await _repo.GetForViewAsync(id);
     }
 
     [Authorize]
     [HttpGet("get/for/edit/{id}")]
-    public async Task<EmployeeEditForm> GetForEditById(int id) {
+    public async Task<EmployeeEditFormDto> GetForEditById(int id) {
        return await _repo.GetForEditAsync(id);
     }
 
     [Authorize]
     [HttpGet("get/for/delete/{id}")]
-    public async Task<EmployeeDeleteDTO> GetForDeleteById(int id) {
+    public async Task<EmployeeDeleteDto> GetForDeleteById(int id) {
        return await _repo.GetForDeleteAsync(id);
     }
 
     [Authorize]
 	[HttpGet("search/{email}")]
-	public async Task<List<EmployeeSelectDTO>> SearchEmployee(string email) {
+	public async Task<List<EmployeeSelectDto>> SearchEmployee(string email) {
 		return await _repo.SearchEmployeeAsync(email);
 	}
 
     [Authorize]
 	[HttpGet("search/complete/{email}")]
-	public async Task<EmployeeEditForm> SearchEmployeeComplete(string email) {
+	public async Task<EmployeeEditFormDto> SearchEmployeeComplete(string email) {
 		return await _repo.SearchEmployeeCompleteAsync(email);
 	}
 
     [Authorize]
     [HttpGet("get/all")]
-    public async Task<List<EmployeeViewDTO>> GetAll() {
+    public async Task<List<EmployeeViewDto>> GetAll() {
         return await _repo.GetAllAsync();
     }
 
     [Authorize]
     [HttpGet("get/id/{email}")]
-    public async Task<CurrentEmployee> GetUserId(string email) {
-        var emptyEmployee = new CurrentEmployee {
+    public async Task<CurrentEmployeeDto> GetUserId(string email) {
+        var emptyEmployee = new CurrentEmployeeDto {
             Id = INVALID_ID,
             Email = NOT_FOUND_RESOURCE
         };
@@ -130,7 +130,7 @@ public class EmployeeController: ControllerBase
 
     [HttpGet("get/id-check/{email}")]
     public async Task<ActionResult> GetUserIdCheck(string email) {
-        var emptyEmployee = new CurrentEmployee {
+        var emptyEmployee = new CurrentEmployeeDto {
             Id = INVALID_ID,
             Email = NOT_FOUND_RESOURCE
         };

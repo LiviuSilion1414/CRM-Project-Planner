@@ -56,9 +56,9 @@
     [Parameter] public int WorkorderId { get; set; }
     private string Role { get; set; }  
     private int WorkedHours { get; set; }
-    private WorkTimeRecordFormDTO _workTimeRecord = new();
-    private ActivityViewDTO _model = new();
-    private WorkorderViewDTO _workorder = new();
+    private WorkTimeRecordFormDto _workTimeRecord = new();
+    private ActivityViewDto _model = new();
+    private WorkOrderViewDto _workorder = new();
     private string _role { get; set; }
 
     protected override async Task OnInitializedAsync() {
@@ -71,8 +71,8 @@
             }
         }
             
-        _model = await httpClient.GetFromJsonAsync<ActivityViewDTO>($"http://localhost:5032/activity/get/{ActivityId}");
-        _workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{_model.WorkOrderId}");
+        _model = await httpClient.GetFromJsonAsync<ActivityViewDto>($"http://localhost:5032/activity/get/{ActivityId}");
+        _workorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{_model.WorkOrderId}");
     }
 
     public void RedirectToPage() {
@@ -98,7 +98,7 @@
             _workTimeRecord.EmployeeId = EmployeeId;
             _workTimeRecord.WorkOrderId = _model.WorkOrderId;
         });
-        await httpClient.PostAsJsonAsync<WorkTimeRecordFormDTO>($"http://localhost:5032/worktimerecord/add/", _workTimeRecord);
+        await httpClient.PostAsJsonAsync<WorkTimeRecordFormDto>($"http://localhost:5032/worktimerecord/add/", _workTimeRecord);
         
         RedirectToPage();
     }

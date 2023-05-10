@@ -108,7 +108,7 @@
     private string Message { get; set; }
     private bool IsCheckboxClicked { get; set; }
     private string TypeField = InputType.TEXT.ToString().ToLower();
-    private EmployeeAddForm _model = new();
+    private EmployeeAddFormDto _model = new();
 
     public void SwitchShowPassword() {
         if (IsCheckboxClicked) {
@@ -128,7 +128,7 @@
         await Task.Run(() => { 
             _model.EmployeeSalaries = new();
             _model.EmployeeSalaries
-                .Add(new EmployeeSalaryDTO {
+                .Add(new EmployeeSalaryDto {
                     Id = _model.Id,
                     EmployeeId = _model.Id,
                     Salary = _model.HourlyRate ?? throw new NullReferenceException(),
@@ -138,8 +138,8 @@
             }
         );
 
-        await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/applicationuser/add/user", _model);
-        await httpClient.PostAsJsonAsync<EmployeeAddForm>("http://localhost:5032/employee/add", _model);
+        await httpClient.PostAsJsonAsync<EmployeeAddFormDto>("http://localhost:5032/applicationuser/add/user", _model);
+        await httpClient.PostAsJsonAsync<EmployeeAddFormDto>("http://localhost:5032/employee/add", _model);
 
         navManager.NavigateTo("/account-manager");
     }

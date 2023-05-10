@@ -60,12 +60,12 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    private WorkorderViewDTO _workorder = new(); 
-    private List<ActivityForm> _activities = new();
+    private WorkOrderViewDto _workorder = new(); 
+    private List<ActivityFormDto> _activities = new();
 
     protected override async Task OnInitializedAsync() {
-        _workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{Id}");
-        _activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/workorder/{_workorder.Id}"); 
+        _workorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{Id}");
+        _activities = await httpClient.GetFromJsonAsync<List<ActivityFormDto>>($"http://localhost:5032/activity/get/activity/per/workorder/{_workorder.Id}"); 
     }
 
     public void OnClickEdit(int activityId) {

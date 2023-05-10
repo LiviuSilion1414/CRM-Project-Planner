@@ -2,7 +2,7 @@ using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 
 namespace PlannerCRM.Shared.DTOs.Workorder.Views;
 
-public class WorkorderViewDTO
+public class WorkOrderViewDto
 {
     public int Id { get; set; }
     public string Name { get; set; }

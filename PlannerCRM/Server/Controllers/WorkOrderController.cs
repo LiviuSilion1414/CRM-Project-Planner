@@ -20,7 +20,7 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPost("add")]
-	public async Task<ActionResult> AddWorkorder(WorkorderForm entity) { //check inutile se c'è l'attributo [ApiController]-proprietà già controllate
+	public async Task<ActionResult> AddWorkorder(WorkOrderFormDto entity) { //check inutile se c'è l'attributo [ApiController]-proprietà già controllate
 		var workorder = await _repo.SearchWorkorderAsync(entity.Name);
 		
 		if (workorder == null) {
@@ -33,12 +33,13 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPut("edit")]
-	public async Task<ActionResult> EditWorkorder(WorkorderForm entity) { //dto non entity
+	public async Task<ActionResult> EditWorkorder(WorkOrderFormDto entity) { //dto non entity
 		var workorder = await _repo.GetForEditAsync(entity.Id);			
 
 		if (workorder == null) { //check inutile - farlo sul dbContext
 			return NotFound(NOT_FOUND_RESOURCE); //repo lancia un'eccezione
 												//middleware - prende l'eccezione e genera uno codice di stato in base all'eccezione
+												//con try/catch
 		}
 
 		await _repo.EditAsync(entity);
@@ -60,31 +61,31 @@ public class WorkOrderController : ControllerBase
 
 	[Authorize]
 	[HttpGet("search/{workorder}")]
-	public async Task<List<WorkorderSelectDTO>> SearchWorkorder(string workorder) {
+	public async Task<List<WorkOrderSelectDto>> SearchWorkorder(string workorder) {
 		return await _repo.SearchWorkorderAsync(workorder);
 	}
 
     [Authorize]
 	[HttpGet("get/for/edit/{id}")]
-	public async Task<WorkorderForm> GetForEdit(int id) {
+	public async Task<WorkOrderFormDto> GetForEdit(int id) {
 		return await _repo.GetForEditAsync(id);
 	}
 	
     [Authorize]
 	[HttpGet("get/for/view/{id}")]
-	public async Task<WorkorderViewDTO> GetForViewId(int id) {
+	public async Task<WorkOrderViewDto> GetForViewId(int id) {
 		return await _repo.GetForViewAsync(id);
 	}
 	
     [Authorize]
 	[HttpGet("get/for/delete/{id}")]
-	public async Task<WorkorderDeleteDTO> GetForDeleteId(int id) {
+	public async Task<WorkOrderDeleteDto> GetForDeleteId(int id) {
 		return await _repo.GetForDeleteAsync(id);
 	}
 
     [Authorize]
 	[HttpGet("get/all")]
-	public async Task<List<WorkorderViewDTO>> GetAll() {
+	public async Task<List<WorkOrderViewDto>> GetAll() {
 		return await _repo.GetAllAsync();
 	}
 }

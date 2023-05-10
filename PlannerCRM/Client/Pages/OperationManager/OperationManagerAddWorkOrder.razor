@@ -44,14 +44,14 @@
 </div>
 
 @code {
-    private WorkorderForm model = new();
+    private WorkOrderFormDto model = new();
 
     private void RedirectToPage() {
         navManager.NavigateTo("/operation-manager");
     }
 
     public async Task OnClickConfirm() {
-        await httpClient.PostAsJsonAsync<WorkorderForm>("http://localhost:5032/workorder/add", model);
+        await httpClient.PostAsJsonAsync<WorkOrderFormDto>("http://localhost:5032/workorder/add", model);
             
         RedirectToPage();
     }

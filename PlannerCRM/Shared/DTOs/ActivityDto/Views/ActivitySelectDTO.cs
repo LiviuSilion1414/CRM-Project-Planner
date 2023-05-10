@@ -3,7 +3,7 @@ using PlannerCRM.Shared.DTOs.Workorder.Views;
 
 namespace PlannerCRM.Shared.DTOs.ActivityDto.Views;
 
-public class ActivitySelectDTO
+public class ActivitySelectDto
 {
     public int Id { get; set; }
     public string Name { get; set; }

@@ -1,6 +1,6 @@
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
-public class EmployeeDeleteDTO
+public class EmployeeDeleteDto
 {
     public int Id { get; set; }
     public string FullName { get; set; }

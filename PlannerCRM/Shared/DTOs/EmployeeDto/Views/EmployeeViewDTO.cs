@@ -3,7 +3,7 @@ using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
-public class EmployeeViewDTO
+public class EmployeeViewDto
 { 
     public int Id { get; set; }
     public string Email { get; set; }
@@ -14,6 +14,6 @@ public class EmployeeViewDTO
     public float HourlyRate { get; set; }
     public DateTime BirthDay { get; set; }
     public DateTime StartDate { get; set; }
-    public List<EmployeeSalaryDTO> EmployeeSalaries { get; set; }
-    public List<EmployeeActivityDTO> EmployeeActivities { get; set; }
+    public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
+    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }

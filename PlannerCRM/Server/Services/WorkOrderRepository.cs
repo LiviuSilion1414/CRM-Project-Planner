@@ -14,7 +14,7 @@ public class WorkOrderRepository
 		_db = db;
 	}
 
-	public async Task AddAsync(WorkorderForm entity) {
+	public async Task AddAsync(WorkOrderFormDto entity) {
 		_db.WorkOrders.Add(new WorkOrder {
 			Name = entity.Name,
 			StartDate = entity.StartDate ?? throw new NullReferenceException(),
@@ -35,7 +35,7 @@ public class WorkOrderRepository
 		await _db.SaveChangesAsync();
 	}
 
-	public async Task<bool> EditAsync(WorkorderForm entity) {
+	public async Task<bool> EditAsync(WorkOrderFormDto entity) {
 		var model = await _db.WorkOrders.SingleOrDefaultAsync(w => w.Id == entity.Id);
 		
 		if (model == null) {
@@ -51,9 +51,9 @@ public class WorkOrderRepository
 		return true;
 	}
 	
-	public async Task<WorkorderDeleteDTO> GetForDeleteAsync(int id) {
+	public async Task<WorkOrderDeleteDto> GetForDeleteAsync(int id) {
 		return await _db.WorkOrders
-			.Select(e => new WorkorderDeleteDTO {
+			.Select(e => new WorkOrderDeleteDto {
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
@@ -61,9 +61,9 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
 
-	public async Task<WorkorderViewDTO> GetForViewAsync(int id) {
+	public async Task<WorkOrderViewDto> GetForViewAsync(int id) {
 		return await _db.WorkOrders
-			.Select(e => new WorkorderViewDTO {
+			.Select(e => new WorkOrderViewDto {
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
@@ -71,9 +71,9 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
 	
-	public async Task<WorkorderForm> GetForEditAsync(int id) {
+	public async Task<WorkOrderFormDto> GetForEditAsync(int id) {
 		return await _db.WorkOrders
-			.Select(e => new WorkorderForm {
+			.Select(e => new WorkOrderFormDto {
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
@@ -81,9 +81,9 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(e => e.Id == id);
 	}
 	
-	public async Task<List<WorkorderViewDTO>> GetAllAsync() {
+	public async Task<List<WorkOrderViewDto>> GetAllAsync() {
 		return await _db.WorkOrders
-			.Select(e => new WorkorderViewDTO {
+			.Select(e => new WorkOrderViewDto {
 				Id = e.Id,
 				Name = e.Name,
 				StartDate = e.StartDate,
@@ -91,9 +91,9 @@ public class WorkOrderRepository
 			.ToListAsync();
 	}
 
-    public async Task<List<WorkorderSelectDTO>> SearchWorkorderAsync(string workorder) {
+    public async Task<List<WorkOrderSelectDto>> SearchWorkorderAsync(string workorder) {
         return await _db.WorkOrders
-			.Select(wo => new WorkorderSelectDTO{
+			.Select(wo => new WorkOrderSelectDto{
 				Id = wo.Id,
 				Name = wo.Name})
 			.Where(e => EF.Functions.Like(e.Name , $"%{workorder}%"))

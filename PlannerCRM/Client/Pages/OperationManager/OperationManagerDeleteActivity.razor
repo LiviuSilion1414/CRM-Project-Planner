@@ -30,12 +30,12 @@
 @code {
     [Parameter] public int workorderId { get; set; }
     [Parameter] public int activityId { get; set; }
-    private WorkorderViewDTO _currentWorkorder = new();
-    private ActivityDeleteDTO _currentActivity = new();
+    private WorkOrderViewDto _currentWorkorder = new();
+    private ActivityDeleteDto _currentActivity = new();
 
     protected override async Task OnInitializedAsync() {
-        _currentWorkorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{workorderId}");
-        _currentActivity = await httpClient.GetFromJsonAsync<ActivityDeleteDTO>($"http://localhost:5032/activity/get/for/delete/{activityId}");
+        _currentWorkorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{workorderId}");
+        _currentActivity = await httpClient.GetFromJsonAsync<ActivityDeleteDto>($"http://localhost:5032/activity/get/for/delete/{activityId}");
     }
 
     private void RedirectToPage() {

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlannerCRM.Shared.DTOs.Workorder.Views;
 
-public class WorkorderSelectDTO
+public class WorkOrderSelectDto
 {
     public int Id { get; set; }
     [Required]

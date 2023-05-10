@@ -21,7 +21,7 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddActivity(ActivityForm entity) {
+    public async Task<ActionResult> AddActivity(ActivityFormDto entity) {
         if (!ModelState.IsValid) {
             return BadRequest("Input non valido!");
         }
@@ -38,7 +38,7 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditActivity(ActivityForm entity) {
+    public async Task<ActionResult> EditActivity(ActivityFormDto entity) {
         if (!ModelState.IsValid) {
             return BadRequest("Input non valido!");
         }
@@ -55,37 +55,37 @@ public class ActivityController : ControllerBase
 
     [Authorize]
     [HttpGet("get/{id}")]
-    public async Task<ActivityViewDTO> GetForView(int id) {
+    public async Task<ActivityViewDto> GetForView(int id) {
         return await _repo.GetForViewAsync(id);
     }
 
     [Authorize]
     [HttpGet("get/for/edit/{id}")]
-    public async Task<ActivityForm> GetForEdit(int id) {
+    public async Task<ActivityFormDto> GetForEdit(int id) {
         return await _repo.GetForEditAsync(id);
     }
 
     [Authorize]
     [HttpGet("get/for/delete/{id}")]
-    public async Task<ActivityDeleteDTO> GetForDelete(int id) {
+    public async Task<ActivityDeleteDto> GetForDelete(int id) {
         return await _repo.GetForDeleteAsync(id);
     }
 
     [Authorize]
     [HttpGet("get/activity/per/workorder/{workorderId}")]
-    public async Task<List<ActivityForm>> GetActivitiesPerWorkorderAsync(int workorderId) {
+    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkorderAsync(int workorderId) {
         return await _repo.GetActivitiesPerWorkOrderAsync(workorderId);
     }
 
     [Authorize]
     [HttpGet("get/activity/per/employee/{employeeId}")]
-    public async Task<List<ActivityForm>> GetActivitiesPerEmployee(int employeeId) {
+    public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId) {
         return await _repo.GetActivityByJuniorEmployeeId(employeeId);
     }
 
     [Authorize]
     [HttpGet("get/all")]
-    public async Task<List<ActivityViewDTO>> GetAll() {
+    public async Task<List<ActivityViewDto>> GetAll() {
         return await _repo.GetAllAsync();
     }
 

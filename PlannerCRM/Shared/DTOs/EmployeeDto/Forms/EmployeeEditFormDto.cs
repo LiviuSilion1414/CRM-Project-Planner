@@ -6,7 +6,7 @@ using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
-public class EmployeeEditForm
+public class EmployeeEditFormDto
 {
     public int Id { get; set; }
 
@@ -32,7 +32,7 @@ public class EmployeeEditForm
 
     public DateTime? FinishDateHourlyRate { get; set; }
 
-    public List<EmployeeSalaryDTO> EmployeeSalaries { get; set; }
+    public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
 
-    public List<EmployeeActivityDTO> EmployeeActivities { get; set; }
+    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }

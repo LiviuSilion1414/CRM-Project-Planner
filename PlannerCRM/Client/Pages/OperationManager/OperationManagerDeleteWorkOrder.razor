@@ -26,10 +26,10 @@
 
 @code {
     [Parameter] public string Id { get; set; }
-    private WorkorderDeleteDTO _model = new();
+    private WorkOrderDeleteDto _model = new();
 
     protected override async Task OnInitializedAsync() {
-        _model = await httpClient.GetFromJsonAsync<WorkorderDeleteDTO>($"http://localhost:5032/workorder/get/for/delete/{Id}");
+        _model = await httpClient.GetFromJsonAsync<WorkOrderDeleteDto>($"http://localhost:5032/workorder/get/for/delete/{Id}");
     }
 
     private void RedirectToPage() {

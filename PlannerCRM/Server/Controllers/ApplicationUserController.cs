@@ -24,7 +24,7 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeAddForm employeeAdd) {
+    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAdd) {
         var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
         
         if (person != null) {
@@ -49,7 +49,7 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task<ActionResult> EditUser(EmployeeEditForm employeeEdit, string oldEmail) {
+    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEdit, string oldEmail) {
         var person = await _userManager.FindByEmailAsync(oldEmail);
         
         if (person == null) {

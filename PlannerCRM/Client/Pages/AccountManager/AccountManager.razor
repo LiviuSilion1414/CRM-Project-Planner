@@ -58,10 +58,10 @@
 </table>
 
 @code {
-    private List<EmployeeViewDTO> _users = new();
+    private List<EmployeeViewDto> _users = new();
 
     protected override async Task OnInitializedAsync() {
-        _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDTO>>("http://localhost:5032/employee/get/all");
+        _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDto>>("http://localhost:5032/employee/get/all");
     }
     
     public void OnClickAddUser() {

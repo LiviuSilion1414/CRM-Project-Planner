@@ -15,7 +15,7 @@ public class ActivityRepository
         _db = db;
     }
 
-    public async Task AddAsync(ActivityForm entity) {
+    public async Task AddAsync(ActivityFormDto entity) {
         _db.Activities.Add(new Activity {
             Id = entity.Id,
             Name = entity.Name,
@@ -70,7 +70,7 @@ public class ActivityRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task EditAsync(ActivityForm entity) {
+    public async Task EditAsync(ActivityFormDto entity) {
         var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == entity.Id);
 
         model.Id = entity.Id;
@@ -92,9 +92,9 @@ public class ActivityRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<ActivityViewDTO> GetForViewAsync(int id) {
+    public async Task<ActivityViewDto> GetForViewAsync(int id) {
         return await _db.Activities
-            .Select(e => new ActivityViewDTO {
+            .Select(e => new ActivityViewDto {
                 Id = e.Id,
                 Name = e.Name,
                 StartDate = e.StartDate,
@@ -104,19 +104,19 @@ public class ActivityRepository
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    public async Task<ActivityForm> GetForEditAsync(int id) {
+    public async Task<ActivityFormDto> GetForEditAsync(int id) {
         return await _db.Activities
-            .Select(e => new ActivityForm {
+            .Select(e => new ActivityFormDto {
                 Id = e.Id,
                 Name = e.Name,
                 StartDate = e.StartDate,
                 FinishDate = e.FinishDate,
                 WorkOrderId = e.WorkOrderId,
                 EmployeesActivities = e.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDTO {
+                    .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.Employee.Id,
-                        Employee = new EmployeeSelectDTO {
+                        Employee = new EmployeeSelectDto {
                             Id = ea.Employee.Id,
                             Email = ea.Employee.Email,
                             FirstName = ea.Employee.FirstName,
@@ -124,7 +124,7 @@ public class ActivityRepository
                             Role = ea.Employee.Role
                         },
                         ActivityId = ea.ActivityId,
-                        Activity = new ActivitySelectDTO {
+                        Activity = new ActivitySelectDto {
                             Id = ea.Activity.Id,
                             Name = ea.Activity.Name,
                             StartDate = ea.Activity.StartDate,
@@ -137,9 +137,9 @@ public class ActivityRepository
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    public async Task<ActivityDeleteDTO> GetForDeleteAsync(int id) {
+    public async Task<ActivityDeleteDto> GetForDeleteAsync(int id) {
         return await _db.Activities
-            .Select(e => new ActivityDeleteDTO {
+            .Select(e => new ActivityDeleteDto {
                 Id = e.Id,
                 Name = e.Name,
                 StartDate = e.StartDate,
@@ -148,19 +148,19 @@ public class ActivityRepository
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    public async Task<List<ActivityForm>> GetActivityByJuniorEmployeeId(int employeeId) {
+    public async Task<List<ActivityFormDto>> GetActivityByJuniorEmployeeId(int employeeId) {
          return await _db.Activities
-            .Select(ac => new ActivityForm {
+            .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDTO {
+                    .Select(ea => new EmployeeActivityDto {
                         Id = ea.EmployeeId,
                         EmployeeId = ea.Employee.Id,
-                        Employee = new EmployeeSelectDTO {
+                        Employee = new EmployeeSelectDto {
                             Id = ea.Employee.Id,
                             Email = ea.Employee.Email,
                             FirstName = ea.Employee.FirstName,
@@ -168,7 +168,7 @@ public class ActivityRepository
                             Role = ea.Employee.Role
                         },
                         ActivityId = ea.ActivityId,
-                        Activity = new ActivitySelectDTO {
+                        Activity = new ActivitySelectDto {
                             Id = ea.Activity.Id,
                             Name = ea.Activity.Name,
                             StartDate = ea.Activity.StartDate,
@@ -183,19 +183,19 @@ public class ActivityRepository
             .ToListAsync();
     }
 
-    public async Task<List<ActivityForm>> GetActivitiesPerWorkOrderAsync(int workorderId) {
+    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkOrderAsync(int workorderId) {
         return await _db.Activities
-            .Select(ac => new ActivityForm {
+            .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
                 EmployeesActivities = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDTO {
+                    .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.Employee.Id,
-                        Employee = new EmployeeSelectDTO {
+                        Employee = new EmployeeSelectDto {
                             Id = ea.Employee.Id,
                             Email = ea.Employee.Email,
                             FirstName = ea.Employee.FirstName,
@@ -203,7 +203,7 @@ public class ActivityRepository
                             Role = ea.Employee.Role
                         },
                         ActivityId = ea.ActivityId,
-                        Activity = new ActivitySelectDTO {
+                        Activity = new ActivitySelectDto {
                             Id = ea.Activity.Id,
                             Name = ea.Activity.Name,
                             StartDate = ea.Activity.StartDate,
@@ -217,9 +217,9 @@ public class ActivityRepository
             .ToListAsync();
     }
 
-    public async Task<List<ActivityViewDTO>> GetAllAsync() {
+    public async Task<List<ActivityViewDto>> GetAllAsync() {
         return await _db.Activities
-            .Select(e => new ActivityViewDTO {
+            .Select(e => new ActivityViewDto {
                 Id = e.Id,
                 Name = e.Name,
                 StartDate = e.StartDate,

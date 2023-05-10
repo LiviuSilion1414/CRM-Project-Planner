@@ -26,7 +26,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDTO employeeLogin) {
+    public async Task<ActionResult> Login(EmployeeLoginDto employeeLogin) {
         var user = await _userManager.FindByEmailAsync(employeeLogin.Email);
 
         if (user == null) {

@@ -64,20 +64,20 @@
 
 @code {
     [Parameter] public int Id { get; set; } //EmployeeId
-    private List<WorkorderViewDTO> _workorders = new();
-    private List<ActivityForm> _activities = new();
-    private List<WorkTimeRecordViewDTO> _workTimeRecords = new();
+    private List<WorkOrderViewDto> _workorders = new();
+    private List<ActivityFormDto> _activities = new();
+    private List<WorkTimeRecordViewDto> _workTimeRecords = new();
 
     protected override async Task OnInitializedAsync() {
-        _activities = await httpClient.GetFromJsonAsync<List<ActivityForm>>($"http://localhost:5032/activity/get/activity/per/employee/{Id}"); 
+        _activities = await httpClient.GetFromJsonAsync<List<ActivityFormDto>>($"http://localhost:5032/activity/get/activity/per/employee/{Id}"); 
         var listSizeByEmployeeId = await httpClient.GetFromJsonAsync<int>($"http://localhost:5032/worktimerecord/get/size/by/employee/{Id}");
     
         if (listSizeByEmployeeId != 0) {
-            _workTimeRecords = await httpClient.GetFromJsonAsync<List<WorkTimeRecordViewDTO>>($"http://localhost:5032/worktimerecord/get/all/by/employee/{Id}");
+            _workTimeRecords = await httpClient.GetFromJsonAsync<List<WorkTimeRecordViewDto>>($"http://localhost:5032/worktimerecord/get/all/by/employee/{Id}");
         }
 
         foreach(var ac in _activities) {
-            var workorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{ac.WorkOrderId}");
+            var workorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{ac.WorkOrderId}");
             _workorders.Add(workorder);
         }
     }

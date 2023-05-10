@@ -1,4 +1,4 @@
-@page "/operation-manager/edit/activity/{workorderId:int}/{activityId:int}"
+@page "/operation-manager/edit/activity/{workOrderId:int}/{activityId:int}"
 
 @using PlannerCRM.Shared.DTOs.ActivityDto.Forms
 @using PlannerCRM.Shared.DTOs.ActivityDto.Views
@@ -103,26 +103,26 @@
 </div>
 
 @code {
-    [Parameter] public int workorderId { get; set; }
+    [Parameter] public int workOrderId { get; set; }
     [Parameter] public int activityId { get; set; }
-    private ActivityForm _model = new();
-    private ActivitySelectHelperDTO _selectModel = new();
-    private List<WorkorderSelectDTO> _workorders = new();
-    private WorkorderViewDTO _currentWorkorder = new();
-    private List<EmployeeSelectDTO> _employees = new();
+    private ActivityFormDto _model = new();
+    private ActivitySelectHelperDto _selectModel = new();
+    private List<WorkOrderSelectDto> _workorders = new();
+    private WorkOrderViewDto _currentWorkorder = new();
+    private List<EmployeeSelectDto> _employees = new();
     
     protected override async Task OnInitializedAsync() {
         _model.EmployeesActivities = new();
 
-        _currentWorkorder = await httpClient.GetFromJsonAsync<WorkorderViewDTO>($"http://localhost:5032/workorder/get/for/view/{workorderId}");
-        _model = await httpClient.GetFromJsonAsync<ActivityForm>($"http://localhost:5032/activity/get/for/edit/{activityId}");
+        _currentWorkorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{workOrderId}");
+        _model = await httpClient.GetFromJsonAsync<ActivityFormDto>($"http://localhost:5032/activity/get/for/edit/{activityId}");
     } 
 
     private async Task OnClickSearchWorkorder(string workorder) {
-        _workorders = await httpClient.GetFromJsonAsync<List<WorkorderSelectDTO>>($"http://localhost:5032/workorder/search/{workorder}");
+        _workorders = await httpClient.GetFromJsonAsync<List<WorkOrderSelectDto>>($"http://localhost:5032/workorder/search/{workorder}");
     }
 
-    private async Task OnClickSetWorkorder(WorkorderSelectDTO workorderSelect) {
+    private async Task OnClickSetWorkorder(WorkOrderSelectDto workorderSelect) {
         await Task.Run(() => {
             _model.WorkOrderId = workorderSelect.Id;
             _selectModel.SelectedWorkorder = workorderSelect.Name;
@@ -130,17 +130,17 @@
     }
 
     private async Task OnClickSearchEmployee(string employee) {
-        _employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDTO>>($"http://localhost:5032/employee/search/{employee}");
+        _employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDto>>($"http://localhost:5032/employee/search/{employee}");
     }
 
-     private async Task OnClickAddAsSelected(EmployeeSelectDTO employee) {
+     private async Task OnClickAddAsSelected(EmployeeSelectDto employee) {
         await Task.Run(() => {
             _model.EmployeesActivities.Add(
-                new EmployeeActivityDTO {
+                new EmployeeActivityDto {
                     EmployeeId = employee.Id,
                     Employee = employee,
                     ActivityId = _model.Id,
-                    Activity = new ActivitySelectDTO {
+                    Activity = new ActivitySelectDto {
                         Id = _model.Id,
                         Name = _model.Name,
                         StartDate = _model.StartDate ?? throw new NullReferenceException(),
@@ -152,13 +152,13 @@
         });
     }
 
-    private async Task OnClickRemoveAsSelected(EmployeeSelectDTO employee) {
+    private async Task OnClickRemoveAsSelected(EmployeeSelectDto employee) {
         await Task.Run(() => {
-            var employeeActivity = new EmployeeActivityDTO {
+            var employeeActivity = new EmployeeActivityDto {
                 EmployeeId = employee.Id,
                 Employee = employee,
                 ActivityId = _model.Id,
-                Activity = new ActivitySelectDTO {
+                Activity = new ActivitySelectDto {
                     Id = _model.Id,
                     Name = _model.Name,
                     StartDate = _model.StartDate ?? throw new NullReferenceException(),
@@ -178,7 +178,7 @@
     }
 
     private async Task OnClickEditActivity() {
-        await httpClient.PutAsJsonAsync<ActivityForm>("http://localhost:5032/activity/edit", _model);
+        await httpClient.PutAsJsonAsync<ActivityFormDto>("http://localhost:5032/activity/edit", _model);
 
         RedirectToPage();
     }

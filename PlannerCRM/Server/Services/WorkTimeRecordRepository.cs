@@ -14,7 +14,7 @@ public class WorkTimeRecordRepository
         _db = db;
     }
 
-    public async Task AddAsync(WorkTimeRecordFormDTO entity) {
+    public async Task AddAsync(WorkTimeRecordFormDto entity) {
         _db.WorkTimeRecords.Add(new WorkTimeRecord {
             Id = entity.Id,
             Date = entity.Date,
@@ -41,7 +41,8 @@ public class WorkTimeRecordRepository
         
         await _db.SaveChangesAsync();
     }
-    public async Task EditAsync(WorkTimeRecordFormDTO entity) {
+    
+    public async Task EditAsync(WorkTimeRecordFormDto entity) {
         var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == entity.Id);
 
         model.Id = entity.Id;
@@ -58,9 +59,9 @@ public class WorkTimeRecordRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<WorkTimeRecordViewDTO> GetAsync(int activityId) {
+    public async Task<WorkTimeRecordViewDto> GetAsync(int activityId) {
         return await _db.WorkTimeRecords
-            .Select(wo => new WorkTimeRecordViewDTO {
+            .Select(wo => new WorkTimeRecordViewDto {
                 Id = wo.Id,
                 Date = wo.Date,
                 Hours = wo.Hours,
@@ -72,9 +73,9 @@ public class WorkTimeRecordRepository
             .SingleOrDefaultAsync();
     }
 
-    public async Task<List<WorkTimeRecordViewDTO>> GetAllAsync() {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {
         return await _db.WorkTimeRecords
-            .Select(wo => new WorkTimeRecordViewDTO {
+            .Select(wo => new WorkTimeRecordViewDto {
                 Id = wo.Id,
                 Date = wo.Date,
                 Hours = wo.Hours,
@@ -84,10 +85,10 @@ public class WorkTimeRecordRepository
             .ToListAsync();
     }
 
-    public async Task<List<WorkTimeRecordViewDTO>> GetAllAsync(int employeeId) {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllAsync(int employeeId) {
         return await _db.WorkTimeRecords
             .Where(wo => wo.EmployeeId == employeeId)
-            .Select(wo => new WorkTimeRecordViewDTO {
+            .Select(wo => new WorkTimeRecordViewDto {
                 Id = wo.Id,
                 Date = wo.Date,
                 Hours = wo.Hours,

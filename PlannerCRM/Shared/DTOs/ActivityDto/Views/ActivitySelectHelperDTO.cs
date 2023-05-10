@@ -4,7 +4,7 @@ using PlannerCRM.Shared.DTOs.Workorder.Views;
 
 namespace PlannerCRM.Shared.DTOs.ActivityDto.Views;
 
-public class ActivitySelectHelperDTO
+public class ActivitySelectHelperDto
 {   
     [Required]
     public string SelectedWorkorder { get; set; }
@@ -13,8 +13,8 @@ public class ActivitySelectHelperDTO
     public string SelectedEmployee { get; set; }
 
     [Required]
-    public WorkorderSelectDTO WorkorderDto { get; set; }
+    public WorkOrderSelectDto WorkorderDto { get; set; }
     
     [Required]
-    public EmployeeSelectDTO EmployeeDto { get; set; }
+    public EmployeeSelectDto EmployeeDto { get; set; }
 }

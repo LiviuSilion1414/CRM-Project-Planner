@@ -12,7 +12,7 @@
 
 <PageTitle>Login</PageTitle>
 
-<h3>Entra nel tuo account gestionale.</h3>
+<h3>Entra nel tuo account gestionale.</h3> <!-- Aggiungi messaggi d'errore su tutte le pagine</p> -->
 
 @if (IsError) {
     <div class="alert alert-danger" 
@@ -50,7 +50,7 @@
 </div>
 
 @code {
-    private EmployeeLoginDTO model = new();   
+    private EmployeeLoginDto model = new();   
     private HttpResponseMessage response = new();
     private string Message { get; set; }
     private bool IsError { get; set; }
@@ -58,7 +58,7 @@
     private bool IsXAlertClicked { get; set; }
     private string TypeField = InputType.PASSWORD.ToString().ToLower();
     private string TypeShow { get; set; }
-    private CurrentEmployee CurrentEmployee { get; set; }
+    private CurrentEmployeeDto CurrentEmployee { get; set; }
     private const string SPECIAL_EMAIL = "account.manager@gmail.com";
 
     public void SwitchShowAlert() {
@@ -82,10 +82,10 @@
     }
 
     public async Task LoginOnValidInput() {
-        response = await httpClient.PostAsJsonAsync<EmployeeLoginDTO>("http://localhost:5032/account/login", model);
+        response = await httpClient.PostAsJsonAsync<EmployeeLoginDto>("http://localhost:5032/account/login", model);
         
         if (response.StatusCode == HttpStatusCode.OK && model.Email != SPECIAL_EMAIL) {
-            CurrentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{model.Email}");
+            CurrentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployeeDto>($"http://localhost:5032/employee/get/id/{model.Email}");
         }
         
         if (response.StatusCode == HttpStatusCode.OK) {

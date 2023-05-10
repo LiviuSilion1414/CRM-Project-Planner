@@ -90,12 +90,12 @@
 </table>
 
 @code {
-    private List<WorkorderViewDTO> _workorders = new();
+    private List<WorkOrderViewDto> _workorders = new();
     private int _activitiesListSize = 0;
     private bool trIsClicked = false;
 
     protected override async Task OnInitializedAsync() {
-        _workorders = await httpClient.GetFromJsonAsync<List<WorkorderViewDTO>>("http://localhost:5032/workorder/get/all");
+        _workorders = await httpClient.GetFromJsonAsync<List<WorkOrderViewDto>>("http://localhost:5032/workorder/get/all");
     }
     
     public void OnClickTableRow(int workorderId) {

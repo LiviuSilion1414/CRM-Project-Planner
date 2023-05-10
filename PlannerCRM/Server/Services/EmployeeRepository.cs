@@ -16,7 +16,7 @@ public class EmployeeRepository
         _db = db;
     }
 
-    public async Task AddAsync(EmployeeAddForm entity) {
+    public async Task AddAsync(EmployeeAddFormDto entity) {
         _db.Employees.Add(new Employee {
             Email = entity.Email,
             FirstName = entity.FirstName,
@@ -47,7 +47,7 @@ public class EmployeeRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> EditAsync(EmployeeEditForm entity) {
+    public async Task<bool> EditAsync(EmployeeEditFormDto entity) {
         var model = await _db.Employees.SingleOrDefaultAsync(e => e.Id == entity.Id);
         
         if (model == null) {
@@ -76,9 +76,9 @@ public class EmployeeRepository
         return true;
     }
 
-    public async Task<EmployeeViewDTO> GetForViewAsync(int id) {
+    public async Task<EmployeeViewDto> GetForViewAsync(int id) {
         return await _db.Employees
-            .Select(e => new EmployeeViewDTO {
+            .Select(e => new EmployeeViewDto {
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
@@ -91,7 +91,7 @@ public class EmployeeRepository
                     ? float.Parse(e.Salaries.SingleOrDefault().Salary.ToString())
                     : 0.0F,
                 EmployeeSalaries = e.Salaries
-                    .Select( ems => new EmployeeSalaryDTO {
+                    .Select( ems => new EmployeeSalaryDto {
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
@@ -99,9 +99,9 @@ public class EmployeeRepository
                     .ToList(),
                 EmployeeActivities = e.EmployeeActivity
                     .Select( ems =>
-                        new EmployeeActivityDTO {
+                        new EmployeeActivityDto {
                             EmployeeId = ems.Id,
-                            Employee = new EmployeeSelectDTO {
+                            Employee = new EmployeeSelectDto {
                                 Id = ems.EmployeeId,
                                 FirstName = ems.Employee.FirstName,
                                 LastName = ems.Employee.LastName,
@@ -109,7 +109,7 @@ public class EmployeeRepository
                                 Role = ems.Employee.Role, 
                             },
                             ActivityId = ems.ActivityId,
-                            Activity = new ActivitySelectDTO {
+                            Activity = new ActivitySelectDto {
                                 Id = ems.ActivityId,
                                 Name = ems.Activity.Name,
                                 StartDate = ems.Activity.StartDate,
@@ -123,9 +123,9 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
-    public async Task<EmployeeEditForm> GetForEditAsync(int id) {
+    public async Task<EmployeeEditFormDto> GetForEditAsync(int id) {
         return await _db.Employees
-            .Select(e => new EmployeeEditForm {
+            .Select(e => new EmployeeEditFormDto {
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
@@ -141,7 +141,7 @@ public class EmployeeRepository
                 StartDateHourlyRate = e.Salaries.SingleOrDefault().StartDate,
                 FinishDateHourlyRate = e.Salaries.SingleOrDefault().FinishDate,
                 EmployeeSalaries = e.Salaries
-                    .Select( ems => new EmployeeSalaryDTO {
+                    .Select( ems => new EmployeeSalaryDto {
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
@@ -149,9 +149,9 @@ public class EmployeeRepository
                     .ToList(),
                 EmployeeActivities = e.EmployeeActivity
                     .Select(ems =>
-                        new EmployeeActivityDTO {
+                        new EmployeeActivityDto {
                             EmployeeId = ems.Id,
-                            Employee = new EmployeeSelectDTO {
+                            Employee = new EmployeeSelectDto {
                                 Id = ems.EmployeeId,
                                 FirstName = ems.Employee.FirstName,
                                 LastName = ems.Employee.LastName,
@@ -159,7 +159,7 @@ public class EmployeeRepository
                                 Role = ems.Employee.Role, 
                             },
                             ActivityId = ems.ActivityId,
-                            Activity = new ActivitySelectDTO {
+                            Activity = new ActivitySelectDto {
                                 Id = ems.ActivityId,
                                 Name = ems.Activity.Name,
                                 StartDate = ems.Activity.StartDate,
@@ -172,9 +172,9 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(e => e.Id == id);
     }
 
-    public async Task<EmployeeDeleteDTO> GetForDeleteAsync(int id) {
+    public async Task<EmployeeDeleteDto> GetForDeleteAsync(int id) {
         return await _db.Employees
-            .Select(e => new EmployeeDeleteDTO {
+            .Select(e => new EmployeeDeleteDto {
                 Id = e.Id,
                 FullName = $"{e.FirstName} {e.LastName}",
                 Email = e.Email,
@@ -185,7 +185,7 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(e => e.Id == id);
     }
     
-    public async Task<List<EmployeeSelectDTO>> SearchEmployeeAsync(string email) {
+    public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
         var employees = await GetAllAsync();
 
         if (!string.IsNullOrEmpty(email)) {
@@ -194,13 +194,13 @@ public class EmployeeRepository
             
             if (foundByUsername.Count() != 0) {
                 return foundByUsername
-                    .Select(e => new EmployeeSelectDTO {
+                    .Select(e => new EmployeeSelectDto {
                         Id = e.Id,
                         Email = e.Email,
                         FirstName = e.FirstName,
                         LastName = e.LastName,
                         EmployeeSalaries = e.EmployeeSalaries
-                            .Select( ems => new EmployeeSalaryDTO {
+                            .Select( ems => new EmployeeSalaryDto {
                                 EmployeeId = ems.Id,
                                 StartDate = ems.StartDate,
                                 FinishDate = ems.StartDate,
@@ -208,9 +208,9 @@ public class EmployeeRepository
                             .ToList(),
                         EmployeeActivities = e.EmployeeActivities
                             .Select(ems =>
-                                new EmployeeActivityDTO {
+                                new EmployeeActivityDto {
                                     EmployeeId = ems.Id,
-                                    Employee = new EmployeeSelectDTO {
+                                    Employee = new EmployeeSelectDto {
                                         Id = ems.EmployeeId,
                                         FirstName = ems.Employee.FirstName,
                                         LastName = ems.Employee.LastName,
@@ -218,7 +218,7 @@ public class EmployeeRepository
                                         Role = ems.Employee.Role, 
                                     },
                                     ActivityId = ems.ActivityId,
-                                    Activity = new ActivitySelectDTO {
+                                    Activity = new ActivitySelectDto {
                                         Id = ems.ActivityId,
                                         Name = ems.Activity.Name,
                                         StartDate = ems.Activity.StartDate,
@@ -229,13 +229,13 @@ public class EmployeeRepository
                             }).ToList();
             } else if (foundByEmail.Count() != 0) {
                 return foundByEmail
-                    .Select(e => new EmployeeSelectDTO {
+                    .Select(e => new EmployeeSelectDto {
                         Id = e.Id,
                         Email = e.Email,
                         FirstName = e.FirstName,
                         LastName = e.LastName,
                         EmployeeSalaries = e.EmployeeSalaries
-                            .Select( ems => new EmployeeSalaryDTO {
+                            .Select( ems => new EmployeeSalaryDto {
                                 EmployeeId = ems.Id,
                                 StartDate = ems.StartDate,
                                 FinishDate = ems.StartDate,
@@ -243,9 +243,9 @@ public class EmployeeRepository
                             .ToList(),
                         EmployeeActivities = e.EmployeeActivities
                             .Select(ems =>
-                                new EmployeeActivityDTO {
+                                new EmployeeActivityDto {
                                     EmployeeId = ems.Id,
-                                    Employee = new EmployeeSelectDTO {
+                                    Employee = new EmployeeSelectDto {
                                         Id = ems.EmployeeId,
                                         FirstName = ems.Employee.FirstName,
                                         LastName = ems.Employee.LastName,
@@ -253,7 +253,7 @@ public class EmployeeRepository
                                         Role = ems.Employee.Role, 
                                     },
                                     ActivityId = ems.ActivityId,
-                                    Activity = new ActivitySelectDTO {
+                                    Activity = new ActivitySelectDto {
                                         Id = ems.ActivityId,
                                         Name = ems.Activity.Name,
                                         StartDate = ems.Activity.StartDate,
@@ -263,16 +263,16 @@ public class EmployeeRepository
                                 }).ToList()
                     }).ToList();                   
             } else {
-                return new List<EmployeeSelectDTO>();
+                return new List<EmployeeSelectDto>();
             }
         } else {
-            return new List<EmployeeSelectDTO>();
+            return new List<EmployeeSelectDto>();
         }
     }
 
-    public async Task<EmployeeEditForm> SearchEmployeeCompleteAsync(string email) {
+    public async Task<EmployeeEditFormDto> SearchEmployeeCompleteAsync(string email) {
         var employee = await _db.Employees
-            .Select(e => new EmployeeEditForm {
+            .Select(e => new EmployeeEditFormDto {
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
@@ -283,9 +283,9 @@ public class EmployeeRepository
                 NumericCode = e.NumericCode,
                 Password = e.Password,
                 EmployeeActivities = e.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDTO {
+                    .Select(ea => new EmployeeActivityDto {
                         Id = ea.Activity.Id,
-                        Activity = new ActivitySelectDTO {
+                        Activity = new ActivitySelectDto {
                             Id = ea.Activity.Id,
                             Name = ea.Activity.Name,
                             StartDate = ea.Activity.StartDate,
@@ -293,14 +293,14 @@ public class EmployeeRepository
                             WorkOrderId = ea.Activity.WorkOrderId
                         },
                         ActivityId = ea.Activity.Id,
-                        Employee = new EmployeeSelectDTO {
+                        Employee = new EmployeeSelectDto {
                             Id = e.Id,
                             Email = e.Email
                         },
                         EmployeeId = e.Id
                     }).ToList(),
                 EmployeeSalaries = e.Salaries
-                    .Select( ems => new EmployeeSalaryDTO {
+                    .Select( ems => new EmployeeSalaryDto {
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
@@ -312,9 +312,9 @@ public class EmployeeRepository
         return employee;
     }
 
-    public async Task<List<EmployeeViewDTO>> GetAllAsync() {
+    public async Task<List<EmployeeViewDto>> GetAllAsync() {
         return await _db.Employees
-            .Select(e => new EmployeeViewDTO {
+            .Select(e => new EmployeeViewDto {
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
@@ -327,9 +327,9 @@ public class EmployeeRepository
                     ? float.Parse(e.Salaries.SingleOrDefault().Salary.ToString())
                     : 0.0F,
                 EmployeeActivities = e.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDTO {
+                    .Select(ea => new EmployeeActivityDto {
                         Id = ea.Activity.Id,
-                        Activity = new ActivitySelectDTO {
+                        Activity = new ActivitySelectDto {
                             Id = ea.Activity.Id,
                             Name = ea.Activity.Name,
                             StartDate = ea.Activity.StartDate,
@@ -337,14 +337,14 @@ public class EmployeeRepository
                             WorkOrderId = ea.Activity.WorkOrderId
                         },
                         ActivityId = ea.Activity.Id,
-                        Employee = new EmployeeSelectDTO {
+                        Employee = new EmployeeSelectDto {
                             Id = e.Id,
                             Email = e.Email
                         },
                         EmployeeId = e.Id
                     }).ToList(),
                 EmployeeSalaries = e.Salaries
-                    .Select( ems => new EmployeeSalaryDTO {
+                    .Select( ems => new EmployeeSalaryDto {
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
@@ -354,9 +354,9 @@ public class EmployeeRepository
             .ToListAsync();
     }
 
-    public async Task<CurrentEmployee> GetUserIdAsync(string email) {
+    public async Task<CurrentEmployeeDto> GetUserIdAsync(string email) {
         return await _db.Employees
-            .Select(e => new CurrentEmployee {
+            .Select(e => new CurrentEmployeeDto {
                 Id = e.Id,
                 Email = e.Email})
             .Where(e => e.Email == email)

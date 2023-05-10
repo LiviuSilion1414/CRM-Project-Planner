@@ -4,7 +4,7 @@ using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
-public class EmployeeLoginDTO
+public class EmployeeLoginDto
 {
     public int Id { get; set; }
 

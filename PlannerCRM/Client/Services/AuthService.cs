@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 
 namespace PlannerCRM.Client.Services;
 
-public class AuthService
+public class AuthService //usare questo service per le chiamate http e suddividerlo in categorie
 {
     private readonly HttpClient _httpClient;
 
@@ -22,7 +22,7 @@ public class AuthService
         return await responseMessage.Content.ReadAsStringAsync();
     }
 
-    public async Task Login(EmployeeLoginDTO loginRequest) {
+    public async Task Login(EmployeeLoginDto loginRequest) {
         await _httpClient.PostAsJsonAsync("http://localhost:5032/account/login", loginRequest);
     }
 
@@ -30,7 +30,7 @@ public class AuthService
         var result = await _httpClient.GetAsync("http://localhost:5032/account/logout");
     }
 
-    public async Task<CurrentEmployee> GetCurrentEmployeeIdAsync(string email) {
-        return await _httpClient.GetFromJsonAsync<CurrentEmployee>($"http://localhost:5032/employee/get/id/{email}");
+    public async Task<CurrentEmployeeDto> GetCurrentEmployeeIdAsync(string email) {
+        return await _httpClient.GetFromJsonAsync<CurrentEmployeeDto>($"http://localhost:5032/employee/get/id/{email}");
     }
 }

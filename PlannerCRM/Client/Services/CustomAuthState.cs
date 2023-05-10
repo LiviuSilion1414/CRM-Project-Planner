@@ -58,13 +58,13 @@ public class CustomAuthState : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
     
-    public async Task Login(EmployeeLoginDTO loginParameters) {
+    public async Task Login(EmployeeLoginDto loginParameters) {
         await _api.Login(loginParameters);
         
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
-    public async Task<CurrentEmployee> GetCurrentEmployeeId(string email) {
+    public async Task<CurrentEmployeeDto> GetCurrentEmployeeId(string email) {
        return await _api.GetCurrentEmployeeIdAsync(email);
     }
 

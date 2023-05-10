@@ -1,6 +1,6 @@
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
-public class EmployeeSalaryDTO
+public class EmployeeSalaryDto
 {
     public int Id { get; set; }
     public int EmployeeId { get; set; }

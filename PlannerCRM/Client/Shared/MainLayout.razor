@@ -43,7 +43,7 @@
 @code {
     private bool IsAuthenticated { get; set; }
     private string UserRole { get; set; }
-    private CurrentEmployee CurrentEmployee { get; set; }
+    private CurrentEmployeeDto CurrentEmployee { get; set; }
     private CurrentUser CurrentUser { get; set; }
     private const string SPECIAL_EMAIL = "account.manager@gmail.com";
 
@@ -61,7 +61,7 @@
         if (currentPage == "/login" || currentPage == "/") {
             await Task.Delay(1500);
             var state = await authStateProvider.GetAuthenticationStateAsync();
-            var loggedInUserID = new CurrentEmployee();
+            var loggedInUserID = new CurrentEmployeeDto();
             var loggedInUserRole = string.Empty;
             if (state.User.Identity.IsAuthenticated) {
                 loggedInUserRole = await authStateProvider.GetRole();

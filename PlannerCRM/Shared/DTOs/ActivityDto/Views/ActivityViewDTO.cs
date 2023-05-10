@@ -2,7 +2,7 @@ using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 
 namespace PlannerCRM.Shared.DTOs.ActivityDto.Views;
 
-public class ActivityViewDTO
+public class ActivityViewDto
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -10,5 +10,5 @@ public class ActivityViewDTO
     public DateTime FinishDate { get; set; }
     public int WorkOrderId { get; set; }
     
-    public List<EmployeeActivityDTO> EmployeeActivities { get; set; }
+    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }

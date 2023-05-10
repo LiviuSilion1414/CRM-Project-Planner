@@ -16,28 +16,28 @@ public class WorkTimeRecordController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task AddWorkTimeRecord(WorkTimeRecordFormDTO entity) {
+    public async Task AddWorkTimeRecord(WorkTimeRecordFormDto entity) {
         await _repo.AddAsync(entity);
     }
 
     [HttpPut("edit")]
-    public async Task EditWorkTimeRecord(WorkTimeRecordFormDTO entity) {
+    public async Task EditWorkTimeRecord(WorkTimeRecordFormDto entity) {
         await _repo.EditAsync(entity);
     }
 
 
     [HttpGet("get/{activityId}")]
-    public async Task<WorkTimeRecordViewDTO> GetWorkTimeRecord(int activityId) {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int activityId) {
         return await _repo.GetAsync(activityId);
     }
 
     [HttpGet("get/all")]
-    public async Task<List<WorkTimeRecordViewDTO>> GetAllWorkTimeRecords() {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecords() {
         return await _repo.GetAllAsync();
     }
 
     [HttpGet("get/all/by/employee/{employeeId}")]
-    public async Task<List<WorkTimeRecordViewDTO>> GetAllWorkTimeRecordsByWorkOrder(int employeeId) {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByWorkOrder(int employeeId) {
         return await _repo.GetAllAsync(employeeId);
     }
 

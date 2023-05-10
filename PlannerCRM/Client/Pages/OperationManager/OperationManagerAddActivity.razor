@@ -125,19 +125,19 @@
 </div>
 
 @code {
-    private ActivityForm _model = new();
-    private ActivitySelectHelperDTO _selectModel = new();
-    private List<WorkorderSelectDTO> _workorders = new();
-    private List<EmployeeSelectDTO> _employees = new();
+    private ActivityFormDto _model = new();
+    private ActivitySelectHelperDto _selectModel = new();
+    private List<WorkOrderSelectDto> _workorders = new();
+    private List<EmployeeSelectDto> _employees = new();
 
     protected override void OnInitialized() {
        _model.EmployeesActivities = new();
     } 
 
     private async Task OnClickSearchWorkorder(string workorder) {
-        _workorders = await httpClient.GetFromJsonAsync<List<WorkorderSelectDTO>>($"http://localhost:5032/workorder/search/{workorder}");
+        _workorders = await httpClient.GetFromJsonAsync<List<WorkOrderSelectDto>>($"http://localhost:5032/workorder/search/{workorder}");
     }
-    private async Task OnClickSetWorkorder(WorkorderSelectDTO workorderSelect) {
+    private async Task OnClickSetWorkorder(WorkOrderSelectDto workorderSelect) {
         await Task.Run(() => {
             _model.WorkOrderId = workorderSelect.Id;
             _selectModel.SelectedWorkorder = workorderSelect.Name;
@@ -145,17 +145,17 @@
     }
 
     private async Task OnClickSearchEmployee(string employee) {
-        _employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDTO>>($"http://localhost:5032/employee/search/{employee}");
+        _employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDto>>($"http://localhost:5032/employee/search/{employee}");
     }
 
-    private async Task OnClickAddAsSelected(EmployeeSelectDTO employee) {
+    private async Task OnClickAddAsSelected(EmployeeSelectDto employee) {
         await Task.Run(() => {
-            _model.EmployeesActivities.Add(
-                new EmployeeActivityDTO {
+            _model.EmployeesActivities.Add( // await Task.Run è inutile???
+                new EmployeeActivityDto {
                     EmployeeId = employee.Id,
                     Employee = employee,
                     ActivityId = _model.Id,
-                    Activity = new ActivitySelectDTO {
+                    Activity = new ActivitySelectDto {
                         Id = _model.Id,
                         Name = _model.Name,
                         StartDate = _model.StartDate ?? throw new NullReferenceException(),
@@ -167,13 +167,13 @@
         });
     }
 
-    private async Task OnClickRemoveAsSelected(EmployeeSelectDTO employee) {
+    private async Task OnClickRemoveAsSelected(EmployeeSelectDto employee) {
         await Task.Run(() => {
-            var employeeActivity = new EmployeeActivityDTO {
+            var employeeActivity = new EmployeeActivityDto {
                 EmployeeId = employee.Id,
                 Employee = employee,
                 ActivityId = _model.Id,
-                Activity = new ActivitySelectDTO {
+                Activity = new ActivitySelectDto {
                     Id = _model.Id,
                     Name = _model.Name,
                     StartDate = _model.StartDate ?? throw new NullReferenceException(),
@@ -189,7 +189,7 @@
     }
     
     private async Task OnClickAddActivity() {
-        await httpClient.PostAsJsonAsync<ActivityForm>("http://localhost:5032/activity/add", _model);
+        await httpClient.PostAsJsonAsync<ActivityFormDto>("http://localhost:5032/activity/add", _model);
 
         navManager.NavigateTo("/operation-manager");
     }
