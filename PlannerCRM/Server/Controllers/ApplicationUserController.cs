@@ -38,7 +38,7 @@ public class ApplicationUserController : ControllerBase
             
             var userRole = await _roleManager.Roles
                 .Where(aspRole => Enum.GetNames(typeof(Roles)).Any(role => role == aspRole.Name))
-                .FirstOrDefaultAsync(); //da sistemare la query
+                .FirstAsync();
             
             await _userManager.CreateAsync(user, employeeAdd.Password);
             await _userManager.AddToRoleAsync(user, userRole.Name);
@@ -64,7 +64,7 @@ public class ApplicationUserController : ControllerBase
             
             var user = await _userManager.FindByNameAsync(oldEmail);
             var rolesList = await _userManager.GetRolesAsync(user);
-            var userRole = rolesList.SingleOrDefault(); //da sistemare la query
+            var userRole = rolesList.Single();
 
             var isInRole = await _userManager.IsInRoleAsync(person, userRole);
             if (isInRole) {
