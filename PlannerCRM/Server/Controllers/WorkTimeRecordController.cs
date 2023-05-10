@@ -16,19 +16,19 @@ public class WorkTimeRecordController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task AddWorkTimeRecord(WorkTimeRecordFormDto entity) {
-        await _repo.AddAsync(entity);
+    public async Task AddWorkTimeRecord(WorkTimeRecordFormDto workTimeRecordFormDto) {
+        await _repo.AddAsync(workTimeRecordFormDto);
     }
 
     [HttpPut("edit")]
-    public async Task EditWorkTimeRecord(WorkTimeRecordFormDto entity) {
-        await _repo.EditAsync(entity);
+    public async Task EditWorkTimeRecord(WorkTimeRecordFormDto workTimeRecordFormDto) {
+        await _repo.EditAsync(workTimeRecordFormDto);
     }
 
 
-    [HttpGet("get/{activityId}")]
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int activityId) {
-        return await _repo.GetAsync(activityId);
+    [HttpGet("get/{workTimeRecordId}")]
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int workTimeRecordId) {
+        return await _repo.GetAsync(workTimeRecordId);
     }
 
     [HttpGet("get/all")]

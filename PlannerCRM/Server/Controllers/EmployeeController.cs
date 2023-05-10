@@ -20,20 +20,16 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAdd) {
-        if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
+    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAddFormDto) {
+        var employees = await _repo.SearchEmployeeAsync(employeeAddFormDto.Email);
 
-        var employees = await _repo.SearchEmployeeAsync(employeeAdd.Email);
-
-        if (employeeAdd == null) {
+        if (employeeAddFormDto == null) {
             return BadRequest("Impossibile aggiungere l'utente.");
         } else {
             if (employees.Count() != 0) {
                 return BadRequest("Utente già esistente!");
             } else {
-                await _repo.AddAsync(employeeAdd);
+                await _repo.AddAsync(employeeAddFormDto);
 
                 return Ok("Utente aggiunto con successo!");
             }
@@ -42,52 +38,48 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEdit) {
-        if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
-
-        var employees = await _repo.SearchEmployeeAsync(employeeEdit.Email);
+    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEditFormDto) {
+        var employees = await _repo.SearchEmployeeAsync(employeeEditFormDto.Email);
         
-        if (employeeEdit == null) {
+        if (employeeEditFormDto == null) {
             return NotFound("Utente non trovato!");
         } else {
-            await _repo.EditAsync(employeeEdit);
+            await _repo.EditAsync(employeeEditFormDto);
 
             return Ok("Utente modificato con successo!");
         }
     }
 
     [Authorize]
-    [HttpDelete("delete/{id}")]
-    public async Task<ActionResult> DeleteUser(int id) {
-        var employee = await _repo.GetForViewAsync(id);
+    [HttpDelete("delete/{employeeId}")]
+    public async Task<ActionResult> DeleteUser(int employeeId) {
+        var employee = await _repo.GetForViewAsync(employeeId);
         
         if (employee == null) {
             return NotFound("Utente non trovato!");
         } else {
-            await _repo.DeleteAsync(id);
+            await _repo.DeleteAsync(employeeId);
 
             return Ok("Utente eliminato con successo!");
         }
     }
 
     [Authorize]
-    [HttpGet("get/for/view/{id}")]
-    public async Task<EmployeeViewDto> GetForViewById(int id) {
-       return await _repo.GetForViewAsync(id);
+    [HttpGet("get/for/view/{employeeId}")]
+    public async Task<EmployeeViewDto> GetForViewById(int employeeId) {
+       return await _repo.GetForViewAsync(employeeId);
     }
 
     [Authorize]
-    [HttpGet("get/for/edit/{id}")]
-    public async Task<EmployeeEditFormDto> GetForEditById(int id) {
-       return await _repo.GetForEditAsync(id);
+    [HttpGet("get/for/edit/{employeeId}")]
+    public async Task<EmployeeEditFormDto> GetForEditById(int employeeId) {
+       return await _repo.GetForEditAsync(employeeId);
     }
 
     [Authorize]
-    [HttpGet("get/for/delete/{id}")]
-    public async Task<EmployeeDeleteDto> GetForDeleteById(int id) {
-       return await _repo.GetForDeleteAsync(id);
+    [HttpGet("get/for/delete/{employeeId}")]
+    public async Task<EmployeeDeleteDto> GetForDeleteById(int employeeId) {
+       return await _repo.GetForDeleteAsync(employeeId);
     }
 
     [Authorize]
@@ -120,6 +112,7 @@ public class EmployeeController: ControllerBase
             return emptyEmployee;
         } else {
             var employee = await _repo.SearchEmployeeAsync(email);
+
             if (employee == null) {
                 return emptyEmployee;
             }
@@ -139,6 +132,7 @@ public class EmployeeController: ControllerBase
             return BadRequest("L'email non può essere vuoto!");
         } else {
             var employee = await _repo.SearchEmployeeAsync(email);
+            
             if (employee == null) {
                 return NotFound("Utente non trovato!");
             }

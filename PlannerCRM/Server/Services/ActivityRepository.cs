@@ -148,7 +148,7 @@ public class ActivityRepository
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    public async Task<List<ActivityFormDto>> GetActivityByJuniorEmployeeId(int employeeId) {
+    public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId) {
          return await _db.Activities
             .Select(ac => new ActivityFormDto {
                 Id = ac.Id,

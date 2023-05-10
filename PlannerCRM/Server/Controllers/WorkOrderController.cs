@@ -20,11 +20,11 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPost("add")]
-	public async Task<ActionResult> AddWorkorder(WorkOrderFormDto entity) { //check inutile se c'è l'attributo [ApiController]-proprietà già controllate
-		var workorder = await _repo.SearchWorkorderAsync(entity.Name);
+	public async Task<ActionResult> AddWorkorder(WorkOrderFormDto workOrderFormDto) { //check inutile se c'è l'attributo [ApiController]-proprietà già controllate
+		var workorder = await _repo.SearchWorkorderAsync(workOrderFormDto.Name);
 		
 		if (workorder == null) {
-			await _repo.AddAsync(entity);
+			await _repo.AddAsync(workOrderFormDto);
 			return Ok("Commessa aggiunta con successo!");
 		}
 
@@ -33,8 +33,8 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPut("edit")]
-	public async Task<ActionResult> EditWorkorder(WorkOrderFormDto entity) { //dto non entity
-		var workorder = await _repo.GetForEditAsync(entity.Id);			
+	public async Task<ActionResult> EditWorkorder(WorkOrderFormDto workOrderFormDto) { //dto non workOrderFormDto
+		var workorder = await _repo.GetForEditAsync(workOrderFormDto.Id);			
 
 		if (workorder == null) { //check inutile - farlo sul dbContext
 			return NotFound(NOT_FOUND_RESOURCE); //repo lancia un'eccezione
@@ -42,20 +42,20 @@ public class WorkOrderController : ControllerBase
 												//con try/catch
 		}
 
-		await _repo.EditAsync(entity);
+		await _repo.EditAsync(workOrderFormDto);
 		return Ok("Commessa modificata con successo!");
 	}
 
     [Authorize]
-	[HttpDelete("delete/{id}")]
-	public async Task<ActionResult> DeleteWorkorder(int id) {
-		var workorder = await _repo.GetForDeleteAsync(id);
+	[HttpDelete("delete/{workOrderId}")]
+	public async Task<ActionResult> DeleteWorkorder(int workOrderId) {
+		var workorder = await _repo.GetForDeleteAsync(workOrderId);
 		
 		if (workorder == null) {
 			return NotFound(NOT_FOUND_RESOURCE);
 		}
 
-		await _repo.DeleteAsync(id);
+		await _repo.DeleteAsync(workOrderId);
 		return Ok("Commessa modificata con successo!");
 	}
 
@@ -66,21 +66,21 @@ public class WorkOrderController : ControllerBase
 	}
 
     [Authorize]
-	[HttpGet("get/for/edit/{id}")]
-	public async Task<WorkOrderFormDto> GetForEdit(int id) {
-		return await _repo.GetForEditAsync(id);
+	[HttpGet("get/for/edit/{workOrderId}")]
+	public async Task<WorkOrderFormDto> GetForEdit(int workOrderId) {
+		return await _repo.GetForEditAsync(workOrderId);
 	}
 	
     [Authorize]
-	[HttpGet("get/for/view/{id}")]
-	public async Task<WorkOrderViewDto> GetForViewId(int id) {
-		return await _repo.GetForViewAsync(id);
+	[HttpGet("get/for/view/{workOrderId}")]
+	public async Task<WorkOrderViewDto> GetForViewId(int workOrderId) {
+		return await _repo.GetForViewAsync(workOrderId);
 	}
 	
     [Authorize]
-	[HttpGet("get/for/delete/{id}")]
-	public async Task<WorkOrderDeleteDto> GetForDeleteId(int id) {
-		return await _repo.GetForDeleteAsync(id);
+	[HttpGet("get/for/delete/{workOrderId}")]
+	public async Task<WorkOrderDeleteDto> GetForDeleteId(int workOrderId) {
+		return await _repo.GetForDeleteAsync(workOrderId);
 	}
 
     [Authorize]

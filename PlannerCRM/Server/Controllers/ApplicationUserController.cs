@@ -24,23 +24,23 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAdd) {
-        var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
+    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAddFormDto) {
+        var person = await _userManager.FindByEmailAsync(employeeAddFormDto.Email);
         
         if (person != null) {
             return BadRequest("Utente già esistente.");
         } else {
             var user = new IdentityUser {
-                Email = employeeAdd.Email,
+                Email = employeeAddFormDto.Email,
                 EmailConfirmed = true,
-                UserName = employeeAdd.Email
+                UserName = employeeAddFormDto.Email
             };
             
             var userRole = await _roleManager.Roles
                 .Where(aspRole => Enum.GetNames(typeof(Roles)).Any(role => role == aspRole.Name))
                 .FirstAsync();
             
-            await _userManager.CreateAsync(user, employeeAdd.Password);
+            await _userManager.CreateAsync(user, employeeAddFormDto.Password);
             await _userManager.AddToRoleAsync(user, userRole.Name);
         }
 
@@ -49,35 +49,34 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEdit, string oldEmail) {
+    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEditFormDto, string oldEmail) {
         var person = await _userManager.FindByEmailAsync(oldEmail);
         
         if (person == null) {
             return BadRequest("Utente non trovato!");
-        } else if (person != null) {
-            person.Email = employeeEdit.Email;
-            person.EmailConfirmed = true;
-            person.UserName = employeeEdit.Email;
+        } 
 
-            await _userManager.ChangePasswordAsync(person, person.PasswordHash, employeeEdit.Password);
-            await _userManager.UpdateAsync(person);            
-            
-            var user = await _userManager.FindByNameAsync(oldEmail);
-            var rolesList = await _userManager.GetRolesAsync(user);
-            var userRole = rolesList.Single();
+        person.Email = employeeEditFormDto.Email;
+        person.EmailConfirmed = true;
+        person.UserName = employeeEditFormDto.Email;
 
-            var isInRole = await _userManager.IsInRoleAsync(person, userRole);
-            if (isInRole) {
-                await _userManager.RemoveFromRoleAsync(person, userRole);
-                await _userManager.AddToRoleAsync(person, employeeEdit.Role.ToString());
-                
-                return Ok("Ruolo riassegnato.");
-            } else {
-                return BadRequest("Impossibile riassegnare il ruolo.");
-            }
-        }
+        await _userManager.ChangePasswordAsync(person, person.PasswordHash, employeeEditFormDto.Password);
+        await _userManager.UpdateAsync(person);            
         
-        return Ok("Utente modificato con successo!");
+        var user = await _userManager.FindByNameAsync(oldEmail);
+        var rolesList = await _userManager.GetRolesAsync(user);
+        var userRole = rolesList.Single();
+
+        var isInRole = await _userManager.IsInRoleAsync(person, userRole);
+        
+        if (isInRole) {
+            await _userManager.RemoveFromRoleAsync(person, userRole);
+            await _userManager.AddToRoleAsync(person, employeeEditFormDto.Role.ToString());
+            
+            return Ok("Utente modificato con successo!");
+        } else {
+            return BadRequest("Impossibile modificare il ruolo.");
+        } 
     }
     
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
@@ -90,6 +89,7 @@ public class ApplicationUserController : ControllerBase
         }
         
         await _userManager.DeleteAsync(user);
+        
         return Ok("Utente eliminato con successo!");
     }
 }

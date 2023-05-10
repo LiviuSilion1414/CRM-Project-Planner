@@ -21,15 +21,12 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddActivity(ActivityFormDto entity) {
-        if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
-
-        var activities = await _repo.GetForViewAsync(entity.Id);
+    public async Task<ActionResult> AddActivity(ActivityFormDto activityFormDto) {
+        var activities = await _repo.GetForViewAsync(activityFormDto.Id);
         
         if (activities == null) {
-            await _repo.AddAsync(entity);
+            await _repo.AddAsync(activityFormDto);
+
             return Ok("Attività aggiunta con successo!");
         }
 
@@ -38,15 +35,12 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditActivity(ActivityFormDto entity) {
-        if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
-
-        var activities = await _repo.GetActivitiesPerWorkOrderAsync(entity.WorkOrderId ?? throw new NullReferenceException());
+    public async Task<ActionResult> EditActivity(ActivityFormDto activityFormDto) {
+        var activities = await _repo.GetActivitiesPerWorkOrderAsync(activityFormDto.WorkOrderId ?? throw new NullReferenceException());
         
         if (activities != null || activities.Count() != 0) {
-            await _repo.EditAsync(entity);
+            await _repo.EditAsync(activityFormDto);
+
             return Ok("Attività modificata con successo!");
         }
 
@@ -54,33 +48,33 @@ public class ActivityController : ControllerBase
     }    
 
     [Authorize]
-    [HttpGet("get/{id}")]
-    public async Task<ActivityViewDto> GetForView(int id) {
-        return await _repo.GetForViewAsync(id);
+    [HttpGet("get/{activityId}")]
+    public async Task<ActivityViewDto> GetForView(int activityId) {
+        return await _repo.GetForViewAsync(activityId);
     }
 
     [Authorize]
-    [HttpGet("get/for/edit/{id}")]
-    public async Task<ActivityFormDto> GetForEdit(int id) {
-        return await _repo.GetForEditAsync(id);
+    [HttpGet("get/for/edit/{activityId}")]
+    public async Task<ActivityFormDto> GetForEdit(int activityId) {
+        return await _repo.GetForEditAsync(activityId);
     }
 
     [Authorize]
-    [HttpGet("get/for/delete/{id}")]
-    public async Task<ActivityDeleteDto> GetForDelete(int id) {
-        return await _repo.GetForDeleteAsync(id);
+    [HttpGet("get/for/delete/{activityId}")]
+    public async Task<ActivityDeleteDto> GetForDelete(int activityId) {
+        return await _repo.GetForDeleteAsync(activityId);
     }
 
     [Authorize]
-    [HttpGet("get/activity/per/workorder/{workorderId}")]
-    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkorderAsync(int workorderId) {
-        return await _repo.GetActivitiesPerWorkOrderAsync(workorderId);
+    [HttpGet("get/activity/per/workorder/{workOrderId}")]
+    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkorderAsync(int workOrderId) {
+        return await _repo.GetActivitiesPerWorkOrderAsync(workOrderId);
     }
 
     [Authorize]
     [HttpGet("get/activity/per/employee/{employeeId}")]
     public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId) {
-        return await _repo.GetActivityByJuniorEmployeeId(employeeId);
+        return await _repo.GetActivityByEmployeeId(employeeId);
     }
 
     [Authorize]
@@ -90,15 +84,16 @@ public class ActivityController : ControllerBase
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpDelete("delete/{id}")]
-    public async Task<ActionResult> DeleteActivity(int id) {
-        var activity = await _repo.GetForViewAsync(id);
+    [HttpDelete("delete/{activityId}")]
+    public async Task<ActionResult> DeleteActivity(int activityId) {
+        var activity = await _repo.GetForViewAsync(activityId);
 
         if (activity == null) {
             return NotFound(NOT_FOUND_RESOURCE);
         } 
 
-        await _repo.DeleteAsync(id);
+        await _repo.DeleteAsync(activityId);
+        
         return Ok("Attività eliminata con successo");
     }
 }
