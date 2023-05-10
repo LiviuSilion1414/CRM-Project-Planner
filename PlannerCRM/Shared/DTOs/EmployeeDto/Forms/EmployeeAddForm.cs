@@ -50,7 +50,7 @@ public class EmployeeAddForm
     [Required(ErrorMessage = """ Campo "Data di fine tariffa oraria" richiesto """)]
     public DateTime? FinishDateHourlyRate { get; set; }
 
-    [Required(ErrorMessage = """Campo "Tariffa oraria" richiesto""")]
+    //[Required(ErrorMessage = """Campo "Tariffa oraria" richiesto""")]
     public List<EmployeeSalaryDTO> EmployeeSalaries { get; set; }
 
     public List<EmployeeActivityDTO> EmployeeActivities { get; set; }
