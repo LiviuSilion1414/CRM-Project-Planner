@@ -5,12 +5,13 @@
 @using PlannerCRM.Shared.Models
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Views
+@using static PlannerCRM.Shared.Constants.ConstantValues
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
 @inject CustomAuthState authStateProvider
 
-<PageTitle>Login</PageTitle>
+<PageTitle>CRM - Login</PageTitle>
 
 <h3>Entra nel tuo account gestionale.</h3> <!-- Aggiungi messaggi d'errore su tutte le pagine</p> -->
 
@@ -52,16 +53,15 @@
 @code {
     private EmployeeLoginDto model = new();   
     private HttpResponseMessage response = new();
+    private CurrentEmployeeDto CurrentEmployee { get; set; }
+    private string TypeField = InputType.PASSWORD.ToString().ToLower();
     private string Message { get; set; }
     private bool IsError { get; set; }
     private bool IsCheckboxClicked { get; set; }
     private bool IsXAlertClicked { get; set; }
-    private string TypeField = InputType.PASSWORD.ToString().ToLower();
     private string TypeShow { get; set; }
-    private CurrentEmployeeDto CurrentEmployee { get; set; }
-    private const string SPECIAL_EMAIL = "account.manager@gmail.com";
 
-    public void SwitchShowAlert() {
+    private void SwitchShowAlert() {
         if (IsXAlertClicked) {
             IsXAlertClicked = false;
             TypeShow = ShowType.NONE.ToString().ToLower();
@@ -71,7 +71,7 @@
         }
     }
 
-    public void SwitchShowPassword() {
+    private void SwitchShowPassword() {
          if (IsCheckboxClicked) {
             IsCheckboxClicked = false;
             TypeField = InputType.TEXT.ToString().ToLower();
@@ -81,10 +81,10 @@
         }
     }
 
-    public async Task LoginOnValidInput() {
-        response = await httpClient.PostAsJsonAsync<EmployeeLoginDto>("http://localhost:5032/account/login", model);
+    private async Task LoginOnValidInput() {
+        response = await httpClient.PostAsJsonAsync<EmployeeLoginDto>("http://localhost:5032/account/login", model); //usa chiamate api da authservice
         
-        if (response.StatusCode == HttpStatusCode.OK && model.Email != SPECIAL_EMAIL) {
+        if (response.StatusCode == HttpStatusCode.OK && model.Email != ADMIN_EMAIL) {
             CurrentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployeeDto>($"http://localhost:5032/employee/get/id/{model.Email}");
         }
         

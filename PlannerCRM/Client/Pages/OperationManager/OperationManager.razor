@@ -30,7 +30,7 @@
 <table class="table">
     <thead>
         <tr>
-            @if (trIsClicked) {
+            @if (_trIsClicked) {
                 <th scope="col">#</th>
                 <th scope="col">Nome</th>
                 <th scope="col">Data d'inizio</th>
@@ -50,7 +50,7 @@
     <tbody>
         @foreach (var wo in _workorders) {
             <tr data-widget="expandable-table" @onclick="(() => OnClickTableRow(wo.Id))">
-                @if (trIsClicked) {
+                @if (_trIsClicked) {
                     <td>
                         <span class="oi oi-briefcase"></span> 
                     </td>
@@ -92,33 +92,33 @@
 @code {
     private List<WorkOrderViewDto> _workorders = new();
     private int _activitiesListSize = 0;
-    private bool trIsClicked = false;
+    private bool _trIsClicked = false;
 
     protected override async Task OnInitializedAsync() {
         _workorders = await httpClient.GetFromJsonAsync<List<WorkOrderViewDto>>("http://localhost:5032/workorder/get/all");
     }
     
-    public void OnClickTableRow(int workorderId) {
-        if (trIsClicked) {
-            trIsClicked = false;
+    private void OnClickTableRow(int workorderId) {
+        if (_trIsClicked) {
+            _trIsClicked = false;
         } else {
-            trIsClicked = true;
+            _trIsClicked = true;
         }
     }
 
-    public void OnClickAddWorkorder() {
+    private void OnClickAddWorkorder() {
         navManager.NavigateTo("/operation-manager/add/workorder");
     }
 
-    public void OnClickAddActivity() {
+    private void OnClickAddActivity() {
         navManager.NavigateTo("/operation-manager/add/activity");
     }
 
-    public void OnClickEdit(int id) {
+    private void OnClickEdit(int id) {
         navManager.NavigateTo($"/operation-manager/edit/workorder/{id}");
     }
 
-    public void OnClickDelete(int id) {
+    private void OnClickDelete(int id) {
         navManager.NavigateTo($"/operation-manager/delete/workorder/{id}");
     }
 }

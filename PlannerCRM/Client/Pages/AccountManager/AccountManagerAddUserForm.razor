@@ -1,8 +1,6 @@
 @page "/account-manager/add/user"
 
-@using System.Globalization
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
-@using static PlannerCRM.Shared.Constants.ConstantValues
 @using PlannerCRM.Shared.Models
 
 @inject NavigationManager navManager
@@ -10,7 +8,7 @@
 
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
-<PageTitle>Account Manager - Add user</PageTitle>
+<PageTitle>Aggiungi utente</PageTitle>
 
 <div class="container-fluid">
     <h1>Aggiungi utente</h1>
@@ -104,13 +102,13 @@
 </div>
 
 @code {
+    private EmployeeAddFormDto _model = new();
+    private string TypeField = InputType.TEXT.ToString().ToLower();
     private bool IsError { get; set; }
     private string Message { get; set; }
     private bool IsCheckboxClicked { get; set; }
-    private string TypeField = InputType.TEXT.ToString().ToLower();
-    private EmployeeAddFormDto _model = new();
 
-    public void SwitchShowPassword() {
+    private void SwitchShowPassword() {
         if (IsCheckboxClicked) {
             IsCheckboxClicked = false;
             TypeField = InputType.TEXT.ToString().ToLower();
@@ -120,27 +118,28 @@
         }
     }
 
-    private void OnClickCancel() {
+    private void RedirectToPage() {
         navManager.NavigateTo("/account-manager");
     }
 
+    private void OnClickCancel() {
+        RedirectToPage();
+    }
+
     private async Task OnClickConfirm() {
-        await Task.Run(() => { 
-            _model.EmployeeSalaries = new();
-            _model.EmployeeSalaries
-                .Add(new EmployeeSalaryDto {
-                    Id = _model.Id,
-                    EmployeeId = _model.Id,
-                    Salary = _model.HourlyRate ?? throw new NullReferenceException(),
-                    StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),
-                    FinishDate = _model.FinishDateHourlyRate ?? throw new NullReferenceException(),
-                });
-            }
-        );
+        _model.EmployeeSalaries = new();
+        _model.EmployeeSalaries
+            .Add(new EmployeeSalaryDto {
+                Id = _model.Id,
+                EmployeeId = _model.Id,
+                Salary = _model.HourlyRate ?? throw new NullReferenceException(),
+                StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),
+                FinishDate = _model.FinishDateHourlyRate ?? throw new NullReferenceException(),
+            });
 
         await httpClient.PostAsJsonAsync<EmployeeAddFormDto>("http://localhost:5032/applicationuser/add/user", _model);
         await httpClient.PostAsJsonAsync<EmployeeAddFormDto>("http://localhost:5032/employee/add", _model);
 
-        navManager.NavigateTo("/account-manager");
+        RedirectToPage();
     }
 }

@@ -12,7 +12,7 @@
 
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
-<PageTitle>Operation Manager</PageTitle>
+<PageTitle>Aggiungi attività</PageTitle>
 
 <div class="container-fluid">
     <h1>Aggiungi attività</h1>
@@ -137,39 +137,18 @@
     private async Task OnClickSearchWorkorder(string workorder) {
         _workorders = await httpClient.GetFromJsonAsync<List<WorkOrderSelectDto>>($"http://localhost:5032/workorder/search/{workorder}");
     }
-    private async Task OnClickSetWorkorder(WorkOrderSelectDto workorderSelect) {
-        await Task.Run(() => {
-            _model.WorkOrderId = workorderSelect.Id;
-            _selectModel.SelectedWorkorder = workorderSelect.Name;
-        });
+    private void OnClickSetWorkorder(WorkOrderSelectDto workorderSelect) {
+        _model.WorkOrderId = workorderSelect.Id;
+        _selectModel.SelectedWorkorder = workorderSelect.Name;
     }
 
     private async Task OnClickSearchEmployee(string employee) {
         _employees = await httpClient.GetFromJsonAsync<List<EmployeeSelectDto>>($"http://localhost:5032/employee/search/{employee}");
     }
 
-    private async Task OnClickAddAsSelected(EmployeeSelectDto employee) {
-        await Task.Run(() => {
-            _model.EmployeesActivities.Add( // await Task.Run è inutile???
-                new EmployeeActivityDto {
-                    EmployeeId = employee.Id,
-                    Employee = employee,
-                    ActivityId = _model.Id,
-                    Activity = new ActivitySelectDto {
-                        Id = _model.Id,
-                        Name = _model.Name,
-                        StartDate = _model.StartDate ?? throw new NullReferenceException(),
-                        FinishDate = _model.FinishDate ?? throw new NullReferenceException(),
-                        WorkOrderId = _model.WorkOrderId ?? throw new NullReferenceException(),
-                    },
-                }
-            );
-        });
-    }
-
-    private async Task OnClickRemoveAsSelected(EmployeeSelectDto employee) {
-        await Task.Run(() => {
-            var employeeActivity = new EmployeeActivityDto {
+    private void OnClickAddAsSelected(EmployeeSelectDto employee) {
+        _model.EmployeesActivities.Add(
+            new EmployeeActivityDto {
                 EmployeeId = employee.Id,
                 Employee = employee,
                 ActivityId = _model.Id,
@@ -179,22 +158,41 @@
                     StartDate = _model.StartDate ?? throw new NullReferenceException(),
                     FinishDate = _model.FinishDate ?? throw new NullReferenceException(),
                     WorkOrderId = _model.WorkOrderId ?? throw new NullReferenceException(),
-                }
-            };
-
-            if (_model.EmployeesActivities.Contains(employeeActivity)) {
-                _model.EmployeesActivities.Remove(employeeActivity);
+                },
             }
-        });
+        );
+    }
+
+    private void OnClickRemoveAsSelected(EmployeeSelectDto employee) {
+        var employeeActivity = new EmployeeActivityDto {
+            EmployeeId = employee.Id,
+            Employee = employee,
+            ActivityId = _model.Id,
+            Activity = new ActivitySelectDto {
+                Id = _model.Id,
+                Name = _model.Name,
+                StartDate = _model.StartDate ?? throw new NullReferenceException(),
+                FinishDate = _model.FinishDate ?? throw new NullReferenceException(),
+                WorkOrderId = _model.WorkOrderId ?? throw new NullReferenceException(),
+            }
+        };
+
+        if (_model.EmployeesActivities.Contains(employeeActivity)) {
+            _model.EmployeesActivities.Remove(employeeActivity);
+        }
     }
     
-    private async Task OnClickAddActivity() {
-        await httpClient.PostAsJsonAsync<ActivityFormDto>("http://localhost:5032/activity/add", _model);
-
+    private void RedirectToPage() {
         navManager.NavigateTo("/operation-manager");
     }
 
     private void OnClickCancel() {
-        navManager.NavigateTo("/operation-manager");
+        RedirectToPage();
+    }
+
+    private async Task OnClickAddActivity() {
+        await httpClient.PostAsJsonAsync<ActivityFormDto>("http://localhost:5032/activity/add", _model);
+
+        RedirectToPage();
     }
 }

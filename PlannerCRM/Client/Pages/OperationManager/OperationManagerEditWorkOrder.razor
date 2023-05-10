@@ -8,7 +8,7 @@
 
 @attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 
-<PageTitle>Operation Manager</PageTitle>
+<PageTitle>Modifica commessa</PageTitle>
 
 <div class="container-fluid">
     <h1>Modifica commessa</h1>
@@ -52,13 +52,13 @@
         navManager.NavigateTo("/operation-manager");
     }
 
-    public async Task OnClickConfirm() {
+    private async Task OnClickConfirm() {
         await httpClient.PutAsJsonAsync<WorkOrderFormDto>("http://localhost:5032/workorder/edit", _model);
             
         RedirectToPage();
     }
 
-    public void OnClickCancel() {
+    private void OnClickCancel() {
         RedirectToPage();
     }
 }

@@ -2,6 +2,7 @@
 
 @using PlannerCRM.Shared.Models
 @using PlannerCRM.Shared.DTOs.EmployeeDto.Views
+@using static PlannerCRM.Shared.Constants.ConstantValues
 
 @inject NavigationManager navManager
 @inject CustomAuthState authStateProvider
@@ -20,7 +21,7 @@
                             <span class="user-info">Ruolo: @UserRole</span>
                         </div>
                         <div class="child">
-                            <button type="button" class="btn btn-danger" @onclick="LogoutClick">
+                            <button type="button" class="btn btn-danger" @onclick="OnClickLogout">
                                 <span class="oi oi-account-logout"></span>
                                 Disconettiti
                             </button>
@@ -41,12 +42,10 @@
 </div>
 
 @code {
+    private CurrentEmployeeDto _currentEmployee { get; set; }
+    private CurrentUser _currentUser { get; set; }
     private bool IsAuthenticated { get; set; }
     private string UserRole { get; set; }
-    private CurrentEmployeeDto CurrentEmployee { get; set; }
-    private CurrentUser CurrentUser { get; set; }
-    private const string SPECIAL_EMAIL = "account.manager@gmail.com";
-
 
     protected override async Task OnInitializedAsync() {
         var authState = await authStateProvider.GetAuthenticationStateAsync();
@@ -59,13 +58,12 @@
         }
         var currentPage = navManager.Uri.Replace(navManager.BaseUri, "/");
         if (currentPage == "/login" || currentPage == "/") {
-            await Task.Delay(1500);
             var state = await authStateProvider.GetAuthenticationStateAsync();
             var loggedInUserID = new CurrentEmployeeDto();
             var loggedInUserRole = string.Empty;
             if (state.User.Identity.IsAuthenticated) {
                 loggedInUserRole = await authStateProvider.GetRole();
-                if (state.User.Identity.Name != SPECIAL_EMAIL) {
+                if (state.User.Identity.Name != ADMIN_EMAIL) {
                     loggedInUserID = await authStateProvider.GetCurrentEmployeeId(state.User.Identity.Name);
                 }
                 foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
@@ -83,20 +81,20 @@
         }
     }
 
-    async Task NavigateBasedOnRole() {
+    private async Task NavigateBasedOnRole() {
         if (IsAuthenticated) {
             var role = await authStateProvider.GetRole();
-            CurrentUser = await authStateProvider.GetCurrentUserInfoAsync();
+            _currentUser = await authStateProvider.GetCurrentUserInfoAsync();
 
-            if (CurrentUser.UserName != SPECIAL_EMAIL) {
-                CurrentEmployee = await authStateProvider.GetCurrentEmployeeId(CurrentUser.UserName);
+            if (_currentUser.UserName != ADMIN_EMAIL) {
+                _currentEmployee = await authStateProvider.GetCurrentEmployeeId(_currentUser.UserName);
             }
 
             foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
                 if (possibleRole.ToString() == role) {
                     if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
                         possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
-                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{CurrentEmployee.Id}", true);
+                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
                     } else {
                         navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
                     }
@@ -107,8 +105,9 @@
         }
     }
 
-    async Task LogoutClick() {
+    private async Task OnClickLogout() {
         await authStateProvider.Logout();
+
         navManager.NavigateTo("/login");
     }
 }

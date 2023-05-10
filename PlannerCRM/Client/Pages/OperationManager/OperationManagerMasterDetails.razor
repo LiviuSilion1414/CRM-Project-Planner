@@ -68,11 +68,11 @@
         _activities = await httpClient.GetFromJsonAsync<List<ActivityFormDto>>($"http://localhost:5032/activity/get/activity/per/workorder/{_workorder.Id}"); 
     }
 
-    public void OnClickEdit(int activityId) {
+    private void OnClickEdit(int activityId) {
         navManager.NavigateTo($"/operation-manager/edit/activity/{_workorder.Id}/{activityId}");
     }
 
-    public void OnClickDelete(int activityId) {
+    private void OnClickDelete(int activityId) {
         navManager.NavigateTo($"/operation-manager/delete/activity/{_workorder.Id}/{activityId}");
     }
 }

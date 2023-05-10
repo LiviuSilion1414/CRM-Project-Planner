@@ -8,7 +8,7 @@
 
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
-<PageTitle>Account Manager</PageTitle>
+<PageTitle>Elimina utente</PageTitle>
 
 <div>
     <span>Vuoi eliminare:
@@ -24,21 +24,21 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    public EmployeeDeleteDto _model = new();
+    private EmployeeDeleteDto _model = new();
 
     protected override async Task OnInitializedAsync() {
         _model = await httpClient.GetFromJsonAsync<EmployeeDeleteDto>($"http://localhost:5032/employee/get/for/delete/{Id}");
     }
 
-    public void RedirectToPage() {
+    private void RedirectToPage() {
         navManager.NavigateTo("/account-manager");
     }
 
-    public void OnClickCancel() {
+    private void OnClickCancel() {
         RedirectToPage();
     }
 
-    public async Task OnClickDeleteUser() {
+    private async Task OnClickDeleteUser() {
         await httpClient.DeleteAsync($"http://localhost:5032/employee/delete/{Id}");
         await httpClient.DeleteAsync($"http://localhost:5032/applicationuser/delete/user/{_model.Email}");
         

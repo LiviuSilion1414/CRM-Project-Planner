@@ -57,22 +57,22 @@
     </tbody>
 </table>
 
-@code {
+@code { //mettere lato codice in folder apparte example.razor.cs
     private List<EmployeeViewDto> _users = new();
 
     protected override async Task OnInitializedAsync() {
         _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDto>>("http://localhost:5032/employee/get/all");
     }
     
-    public void OnClickAddUser() {
+    private void OnClickAddUser() {
         navManager.NavigateTo("/account-manager/add/user");
     }
 
-    public void OnClickEdit(int id) {
+    private void OnClickEdit(int id) {
         navManager.NavigateTo($"/account-manager/edit/user/{id}");
     }
 
-    public void OnClickDelete(int id) {
+    private void OnClickDelete(int id) {
         navManager.NavigateTo($"/account-manager/delete/user/{id}");
     }
 }

@@ -9,7 +9,7 @@
 
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
-<PageTitle>Account Manager - Edit user</PageTitle>
+<PageTitle>Modifica utente</PageTitle>
 
 <div class="container-fluid">
     <h1>Modifica utente</h1>
@@ -104,18 +104,18 @@
 
 @code {
     [Parameter] public int Id { get; set; }
+    private EmployeeEditFormDto _model = new();
+    private string TypeField = InputType.TEXT.ToString().ToLower();
     private string _CurrentEmail { get; set; }
     private float _HourlyRate { get; set; }
     private bool _IsCheckboxClicked { get; set; }
-    private string TypeField = InputType.TEXT.ToString().ToLower();
-    private EmployeeEditFormDto _model = new();
 
     protected override async Task OnInitializedAsync() {
         _model = await httpClient.GetFromJsonAsync<EmployeeEditFormDto>($"http://localhost:5032/employee/get/for/edit/{Id}");
         _CurrentEmail = _model.Email;
     }
 
-    public void SwitchShowPassword() {
+    private void SwitchShowPassword() {
         if (_IsCheckboxClicked) {
             _IsCheckboxClicked = false;
             TypeField = InputType.TEXT.ToString().ToLower();
@@ -125,7 +125,7 @@
         }
     }
 
-    public void RedirectToPage() {
+    private void RedirectToPage() {
         navManager.NavigateTo("/account-manager");
     }
 
@@ -134,19 +134,15 @@
     }
 
     private async void OnClickConfirm() {
-        await Task.Run(() => { 
-            _model.EmployeeSalaries = new();
-            
-            _model.EmployeeSalaries
-                .Add(new EmployeeSalaryDto {
-                    Id = _model.Id,
-                    EmployeeId = _model.Id,
-                    Salary = _model.HourlyRate,
-                    StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),
-                    FinishDate = _model.FinishDateHourlyRate ?? throw new NullReferenceException(),
-                });
-            }
-        );
+        _model.EmployeeSalaries = new();
+        _model.EmployeeSalaries
+            .Add(new EmployeeSalaryDto {
+                Id = _model.Id,
+                EmployeeId = _model.Id,
+                Salary = _model.HourlyRate,
+                StartDate = _model.StartDateHourlyRate ?? throw new NullReferenceException(),
+                FinishDate = _model.FinishDateHourlyRate ?? throw new NullReferenceException(),
+            });
 
         await httpClient.PutAsJsonAsync<EmployeeEditFormDto>($"http://localhost:5032/employee/edit", _model);
         await httpClient.PutAsJsonAsync<EmployeeEditFormDto>($"http://localhost:5032/applicationuser/edit/user/{_CurrentEmail}", _model);
