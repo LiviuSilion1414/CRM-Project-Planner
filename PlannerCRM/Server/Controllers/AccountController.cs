@@ -26,17 +26,13 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(EmployeeLoginDTO employee) {
-        if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
-
-        var user = await _userManager.FindByEmailAsync(employee.Email);
+    public async Task<ActionResult> Login(EmployeeLoginDTO employeeLogin) {
+        var user = await _userManager.FindByEmailAsync(employeeLogin.Email);
 
         if (user == null) {
             return BadRequest("Utente non trovato!");
         } else {
-            var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, employee.Password);
+            var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, employeeLogin.Password);
 
             if (!userPasswordIsCorrect) {
                 return BadRequest("Password sbagliata!");
@@ -46,88 +42,20 @@ public class AccountController : ControllerBase
             }
         }
     }
-
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeAddForm employeeAdd) {
-        if (!ModelState.IsValid) {
-            return BadRequest("Input non valido.");
-        }
-
-        var person = await _userManager.FindByEmailAsync(employeeAdd.Email);
-        
-        if (person != null) {
-            return BadRequest("Utente già esistente.");
-        } else {
-            var user = new IdentityUser {
-                Email = employeeAdd.Email,
-                EmailConfirmed = true,
-                UserName = employeeAdd.Email
-            };
-            
-            await _userManager.CreateAsync(user, employeeAdd.Password);
-            var userRole = await _roleManager.Roles
-                .SingleAsync(aspRole => Enum.GetNames(typeof(Roles)).Any(role => role == aspRole.Name));
-            
-            await _userManager.AddToRoleAsync(user, userRole.Name);
-        }
-
-        return Ok("Utente aggiunto con successo!");
-    }
-
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpPut("edit/user/{oldEmail}")]
-    public async Task<ActionResult> EditUser(EmployeeEditForm employeeEdit, string oldEmail) {
-        if (!ModelState.IsValid) {
-            return BadRequest("Input non valido!");
-        }
-
-        var person = await _userManager.FindByEmailAsync(oldEmail);
-        
-        if (person == null) {
-            return BadRequest("Utente non trovato!");
-        } else if (person != null) {
-            var user = new IdentityUser {
-                Email = employeeEdit.Email,
-                EmailConfirmed = true,
-                UserName = employeeEdit.Email
-            };
-
-            await _userManager.CreateAsync(user, employeeEdit.Password);  //Da corregere il CreateAsync
-            await _userManager.AddToRoleAsync(user, employeeEdit.Role.ToString());
-        }
-        
-        return Ok("Utente modificato con successo!");
-    }
     
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpDelete("delete/user/{email}")]
-    public async Task<ActionResult> DeleteUser(string email) {
-        var user = await _userManager.FindByEmailAsync(email);
-        
-        if (user == null) {
-            return BadRequest("Utente non trovato.");
-        }
-        
-        await _userManager.DeleteAsync(user);
-        return Ok("Utente eliminato con successo!");
+    [Authorize]
+    [HttpGet("logout")]
+    public async Task Logout() {
+        await _signInManager.SignOutAsync();
     }
 
     [HttpGet]
     [Route("user/role")]
     public async Task<string> GetUserRole() {
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
-        var roles = await _userManager.GetRolesAsync(user);
-        
-        return roles.ToList().Count() != 0 //riscrivere la query in modo più pulito
-            ? roles.ToList()[0] 
-            : string.Empty;
-    }
+        var roles = (await _userManager.GetRolesAsync(user));
 
-    [Authorize]
-    [HttpGet("logout")]
-    public async Task Logout() {
-        await _signInManager.SignOutAsync();
+        return roles.Single();
     }
 
     [HttpGet("current/user/info")]
