@@ -10,7 +10,6 @@ public static class ConstantValues
     public const int MIN_ACTIVITY_MONTH_PERIOD = 1;
     public const int MAX_ACTIVITY_MONTH_PERIOD = 6;
     public const int INVALID_ID = -1;
-    public const string NOT_FOUND_RESOURCE = "Risorsa non trovata.";
     public const string ADMIN_EMAIL = "account.manager@gmail.com";
     public const Roles ADMIN_ROLE = Roles.ACCOUNT_MANAGER;
     public const int MAJOR_AGE = 18;

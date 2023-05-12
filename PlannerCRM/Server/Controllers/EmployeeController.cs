@@ -105,7 +105,7 @@ public class EmployeeController: ControllerBase
     public async Task<CurrentEmployeeDto> GetUserId(string email) {
         var emptyEmployee = new CurrentEmployeeDto {
             Id = INVALID_ID,
-            Email = NOT_FOUND_RESOURCE
+            Email = null
         };
         
         if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email)) {
@@ -125,7 +125,7 @@ public class EmployeeController: ControllerBase
     public async Task<ActionResult> GetUserIdCheck(string email) {
         var emptyEmployee = new CurrentEmployeeDto {
             Id = INVALID_ID,
-            Email = NOT_FOUND_RESOURCE
+            Email = null
         };
         
         if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email)) {

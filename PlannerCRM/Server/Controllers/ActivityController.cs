@@ -44,7 +44,7 @@ public class ActivityController : ControllerBase
             return Ok("Attività modificata con successo!");
         }
 
-        return NotFound(NOT_FOUND_RESOURCE);
+        return NotFound("Attività non trovata.");
     }    
 
     [Authorize]
@@ -89,7 +89,7 @@ public class ActivityController : ControllerBase
         var activity = await _repo.GetForViewAsync(activityId);
 
         if (activity == null) {
-            return NotFound(NOT_FOUND_RESOURCE);
+            return NotFound("Attività non trovata");
         } 
 
         await _repo.DeleteAsync(activityId);

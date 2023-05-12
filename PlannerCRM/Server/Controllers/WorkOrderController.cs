@@ -37,7 +37,7 @@ public class WorkOrderController : ControllerBase
 		var workorder = await _repo.GetForEditAsync(workOrderFormDto.Id);			
 
 		if (workorder == null) { //check inutile - farlo sul dbContext
-			return NotFound(NOT_FOUND_RESOURCE); //repo lancia un'eccezione
+			return NotFound("Commessa non trovata."); //repo lancia un'eccezione
 												//middleware - prende l'eccezione e genera uno codice di stato in base all'eccezione
 												//con try/catch
 		}
@@ -52,7 +52,7 @@ public class WorkOrderController : ControllerBase
 		var workorder = await _repo.GetForDeleteAsync(workOrderId);
 		
 		if (workorder == null) {
-			return NotFound(NOT_FOUND_RESOURCE);
+			return NotFound("Commessa non trovata.");
 		}
 
 		await _repo.DeleteAsync(workOrderId);
