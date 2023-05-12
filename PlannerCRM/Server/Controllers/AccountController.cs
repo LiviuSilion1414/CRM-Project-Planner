@@ -48,10 +48,14 @@ public class AccountController : ControllerBase
 
     [HttpGet("user/role")]
     public async Task<string> GetUserRole() {
-        var user = await _userManager.FindByNameAsync(User.Identity.Name);
-        var roles = await _userManager.GetRolesAsync(user);
+        if (User.Identity.IsAuthenticated) {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var roles = await _userManager.GetRolesAsync(user);
 
-        return roles.Single();
+            return roles.Single();
+        } else {
+            return null;
+        }
     }
 
     [HttpGet("current/user/info")]
