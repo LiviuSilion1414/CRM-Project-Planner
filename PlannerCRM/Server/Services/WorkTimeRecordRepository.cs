@@ -14,46 +14,46 @@ public class WorkTimeRecordRepository
         _db = db;
     }
 
-    public async Task AddAsync(WorkTimeRecordFormDto entity) {
+    public async Task AddAsync(WorkTimeRecordFormDto workTimeRecordFormDto) {
         _db.WorkTimeRecords.Add(new WorkTimeRecord {
-            Id = entity.Id,
-            Date = entity.Date,
-            Hours = entity.Hours,
-            TotalPrice = entity.TotalPrice,
-            ActivityId = entity.ActivityId,
-            EmployeeId = entity.EmployeeId,
+            Id = workTimeRecordFormDto.Id,
+            Date = workTimeRecordFormDto.Date,
+            Hours = workTimeRecordFormDto.Hours,
+            TotalPrice = workTimeRecordFormDto.TotalPrice,
+            ActivityId = workTimeRecordFormDto.ActivityId,
+            EmployeeId = workTimeRecordFormDto.EmployeeId,
             Employee = await _db.Employees
-                .Where(e => e.Id == entity.EmployeeId)
+                .Where(e => e.Id == workTimeRecordFormDto.EmployeeId)
                 .SingleOrDefaultAsync(),
-            WorkOrderId = entity.WorkOrderId
+            WorkOrderId = workTimeRecordFormDto.WorkOrderId
         });
 
         await _db.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id) {
-        var entity = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == id);
+        var workTimeRecordDelete = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == id);
         
-        if (entity == null) {
+        if (workTimeRecordDelete == null) {
             return;
         }
-        _db.WorkTimeRecords.Remove(entity);
+        _db.WorkTimeRecords.Remove(workTimeRecordDelete);
         
         await _db.SaveChangesAsync();
     }
     
-    public async Task EditAsync(WorkTimeRecordFormDto entity) {
-        var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == entity.Id);
+    public async Task EditAsync(WorkTimeRecordFormDto workTimeRecordFormDto) {
+        var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == workTimeRecordFormDto.Id);
 
-        model.Id = entity.Id;
-        model.Date = entity.Date;
-        model.Hours = entity.Hours;
-        model.TotalPrice = entity.TotalPrice;
-        model.ActivityId = entity.ActivityId;
-        model.WorkOrderId = entity.WorkOrderId;
-        model.EmployeeId = entity.EmployeeId;
+        model.Id = workTimeRecordFormDto.Id;
+        model.Date = workTimeRecordFormDto.Date;
+        model.Hours = workTimeRecordFormDto.Hours;
+        model.TotalPrice = workTimeRecordFormDto.TotalPrice;
+        model.ActivityId = workTimeRecordFormDto.ActivityId;
+        model.WorkOrderId = workTimeRecordFormDto.WorkOrderId;
+        model.EmployeeId = workTimeRecordFormDto.EmployeeId;
         model.Employee = await _db.Employees
-            .Where(e => e.Id == entity.EmployeeId)
+            .Where(e => e.Id == workTimeRecordFormDto.EmployeeId)
             .SingleOrDefaultAsync();
 
         await _db.SaveChangesAsync();

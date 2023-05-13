@@ -16,17 +16,17 @@ public class EmployeeRepository
         _db = db;
     }
 
-    public async Task AddAsync(EmployeeAddFormDto entity) {
+    public async Task AddAsync(EmployeeAddFormDto employeeAddFormDto) {
         _db.Employees.Add(new Employee {
-            Email = entity.Email,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            BirthDay = entity.BirthDay ?? throw new NullReferenceException(),
-            StartDate = entity.StartDate ?? throw new NullReferenceException(),
-            Password = entity.Password,
-            NumericCode = entity.NumericCode,
-            Role = entity.Role ?? throw new NullReferenceException(),
-            Salaries = entity.EmployeeSalaries
+            Email = employeeAddFormDto.Email,
+            FirstName = employeeAddFormDto.FirstName,
+            LastName = employeeAddFormDto.LastName,
+            BirthDay = employeeAddFormDto.BirthDay ?? throw new NullReferenceException(),
+            StartDate = employeeAddFormDto.StartDate ?? throw new NullReferenceException(),
+            Password = employeeAddFormDto.Password,
+            NumericCode = employeeAddFormDto.NumericCode,
+            Role = employeeAddFormDto.Role ?? throw new NullReferenceException(),
+            Salaries = employeeAddFormDto.EmployeeSalaries
                 .Select(ems =>
                     new EmployeeSalary {
                         EmployeeId = ems.EmployeeId,
@@ -41,27 +41,27 @@ public class EmployeeRepository
     }
 
     public async Task DeleteAsync(int id) {
-        var entity = await _db.Employees.SingleOrDefaultAsync(e => e.Id == id);
-        _db.Employees.Remove(entity);
+        var employeeDelete = await _db.Employees.SingleOrDefaultAsync(e => e.Id == id);
+        _db.Employees.Remove(employeeDelete);
 
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> EditAsync(EmployeeEditFormDto entity) {
-        var model = await _db.Employees.SingleOrDefaultAsync(e => e.Id == entity.Id);
+    public async Task<bool> EditAsync(EmployeeEditFormDto employeeEditFormDto) {
+        var model = await _db.Employees.SingleOrDefaultAsync(e => e.Id == employeeEditFormDto.Id);
         
         if (model == null) {
             return false;
         } else {
-            model.Id = entity.Id;
-            model.FirstName = entity.FirstName;
-            model.LastName = entity.LastName;
-            model.BirthDay = entity.BirthDay;
-            model.StartDate = entity.StartDate;
-            model.Email = entity.Email;
-            model.Role = entity.Role;
-            model.NumericCode = entity.NumericCode;
-            model.Salaries = entity.EmployeeSalaries
+            model.Id = employeeEditFormDto.Id;
+            model.FirstName = employeeEditFormDto.FirstName;
+            model.LastName = employeeEditFormDto.LastName;
+            model.BirthDay = employeeEditFormDto.BirthDay;
+            model.StartDate = employeeEditFormDto.StartDate;
+            model.Email = employeeEditFormDto.Email;
+            model.Role = employeeEditFormDto.Role;
+            model.NumericCode = employeeEditFormDto.NumericCode;
+            model.Salaries = employeeEditFormDto.EmployeeSalaries
                 .Select(ems => 
                     new EmployeeSalary {
                         EmployeeId = ems.Id,
@@ -189,8 +189,11 @@ public class EmployeeRepository
         var employees = await GetAllAsync();
 
         if (!string.IsNullOrEmpty(email)) {
-            var foundByUsername = employees.Where(e => e.FullName.Contains(email, StringComparison.InvariantCultureIgnoreCase));
-            var foundByEmail = employees.Where(e => e.Email.Contains(email, StringComparison.InvariantCultureIgnoreCase));
+            var foundByUsername = employees
+                .Where(e => e.FullName.Contains(email, StringComparison.InvariantCultureIgnoreCase));
+            
+            var foundByEmail = employees
+                .Where(e => e.Email.Contains(email, StringComparison.InvariantCultureIgnoreCase));
             
             if (foundByUsername.Count() != 0) {
                 return foundByUsername

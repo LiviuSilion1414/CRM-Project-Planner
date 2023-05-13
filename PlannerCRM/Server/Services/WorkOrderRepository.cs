@@ -14,38 +14,38 @@ public class WorkOrderRepository
 		_db = db;
 	}
 
-	public async Task AddAsync(WorkOrderFormDto entity) {
+	public async Task AddAsync(WorkOrderFormDto workOrderFormDto) {
 		_db.WorkOrders.Add(new WorkOrder {
-			Name = entity.Name,
-			StartDate = entity.StartDate ?? throw new NullReferenceException(),
-			FinishDate = entity.FinishDate ?? throw new NullReferenceException()
+			Name = workOrderFormDto.Name,
+			StartDate = workOrderFormDto.StartDate ?? throw new NullReferenceException(),
+			FinishDate = workOrderFormDto.FinishDate ?? throw new NullReferenceException()
 		});
 
 		await _db.SaveChangesAsync();
 	}
 
 	public async Task DeleteAsync(int id) {
-		var entity = await _db.WorkOrders.SingleOrDefaultAsync(w => w.Id == id);
+		var workOrderDelete = await _db.WorkOrders.SingleOrDefaultAsync(w => w.Id == id);
 		
-		if (entity == null) {
+		if (workOrderDelete == null) {
 			return;
 		}
-		_db.WorkOrders.Remove(entity);
+		_db.WorkOrders.Remove(workOrderDelete);
 		
 		await _db.SaveChangesAsync();
 	}
 
-	public async Task<bool> EditAsync(WorkOrderFormDto entity) {
-		var model = await _db.WorkOrders.SingleOrDefaultAsync(w => w.Id == entity.Id);
+	public async Task<bool> EditAsync(WorkOrderFormDto workOrderFormDto) {
+		var model = await _db.WorkOrders.SingleOrDefaultAsync(w => w.Id == workOrderFormDto.Id);
 		
 		if (model == null) {
 			return false;
 		}
 
-		model.Id = entity.Id;
-		model.Name = entity.Name;
-		model.StartDate = entity.StartDate ?? throw new NullReferenceException();
-		model.FinishDate = entity.FinishDate ?? throw new NullReferenceException();
+		model.Id = workOrderFormDto.Id;
+		model.Name = workOrderFormDto.Name;
+		model.StartDate = workOrderFormDto.StartDate ?? throw new NullReferenceException();
+		model.FinishDate = workOrderFormDto.FinishDate ?? throw new NullReferenceException();
 
 		await _db.SaveChangesAsync();
 		return true;

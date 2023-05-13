@@ -15,23 +15,23 @@ public class ActivityRepository
         _db = db;
     }
 
-    public async Task AddAsync(ActivityFormDto entity) {
+    public async Task AddAsync(ActivityFormDto activityFormDto) {
         _db.Activities.Add(new Activity {
-            Id = entity.Id,
-            Name = entity.Name,
-            StartDate = entity.StartDate ?? throw new NullReferenceException(),
-            FinishDate = entity.FinishDate ?? throw new NullReferenceException(),
-            WorkOrderId = entity.WorkOrderId ?? throw new NullReferenceException(),
-            EmployeeActivity = (entity.EmployeesActivities
+            Id = activityFormDto.Id,
+            Name = activityFormDto.Name,
+            StartDate = activityFormDto.StartDate ?? throw new NullReferenceException(),
+            FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException(),
+            WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException(),
+            EmployeeActivity = (activityFormDto.EmployeesActivities
                 .Select(e => new EmployeeActivity {
                     Id = e.Id,
                     ActivityId = e.ActivityId,
                     Activity = new Activity {
-                        Id = entity.Id,
-                        Name = entity.Name,
-                        StartDate = entity.StartDate ?? throw new NullReferenceException(),
-                        FinishDate = entity.FinishDate ?? throw new NullReferenceException(),
-                        WorkOrderId = entity.WorkOrderId ?? throw new NullReferenceException() 
+                        Id = activityFormDto.Id,
+                        Name = activityFormDto.Name,
+                        StartDate = activityFormDto.StartDate ?? throw new NullReferenceException(),
+                        FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException(),
+                        WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException() 
                     },
                     EmployeeId = e.EmployeeId,
                     Employee = new Employee {
@@ -60,32 +60,32 @@ public class ActivityRepository
     }
 
     public async Task DeleteAsync(int id) {
-        var entity = await _db.Activities.SingleOrDefaultAsync(a => a.Id == id);
+        var activityDelete = await _db.Activities.SingleOrDefaultAsync(a => a.Id == id);
 
-        if (entity == null) {
+        if (activityDelete == null) {
             return;
         }
-        _db.Activities.Remove(entity);
+        _db.Activities.Remove(activityDelete);
 
         await _db.SaveChangesAsync();
     }
 
-    public async Task EditAsync(ActivityFormDto entity) {
-        var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == entity.Id);
+    public async Task EditAsync(ActivityFormDto activityFormDto) {
+        var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == activityFormDto.Id);
 
-        model.Id = entity.Id;
-        model.Name = entity.Name;
-        model.StartDate = entity.StartDate ?? throw new NullReferenceException();
-        model.FinishDate = entity.FinishDate ?? throw new NullReferenceException();
-        model.WorkOrderId = entity.WorkOrderId ?? throw new NullReferenceException();
-        model.EmployeeActivity = entity.EmployeesActivities
+        model.Id = activityFormDto.Id;
+        model.Name = activityFormDto.Name;
+        model.StartDate = activityFormDto.StartDate ?? throw new NullReferenceException();
+        model.FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException();
+        model.WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException();
+        model.EmployeeActivity = activityFormDto.EmployeesActivities
             .Where(es => 
                 model.EmployeeActivity
                     .Any(ea => ea.EmployeeId != es.Id))
             .ToList()
             .Select(es => new EmployeeActivity {
                 EmployeeId = es.Id,
-                ActivityId = entity.Id
+                ActivityId = activityFormDto.Id
             })
             .ToList();
         
