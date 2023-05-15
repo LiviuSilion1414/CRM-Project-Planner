@@ -3,6 +3,7 @@ using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
+using PlannerCRM.Server.CustomExceptions;
 
 namespace PlannerCRM.Server.Services;
 
@@ -15,7 +16,23 @@ public class WorkTimeRecordRepository
     }
 
     public async Task AddAsync(WorkTimeRecordFormDto workTimeRecordFormDto) {
-        _db.WorkTimeRecords.Add(new WorkTimeRecord {
+        if (workTimeRecordFormDto.GetType() == null) {
+            throw new NullReferenceException("Oggetto null.");
+        }
+
+        var isNull = workTimeRecordFormDto.GetType().GetProperties()
+            .All(prop => prop.GetValue(workTimeRecordFormDto) != null);
+        if (isNull) {
+            throw new ArgumentNullException("Parametri null");
+        }
+        
+        var isAlreadyPresent = await _db.Employees
+            .SingleOrDefaultAsync(workTimeRec => workTimeRec.Id == workTimeRec.Id);
+        if (isAlreadyPresent != null) {
+            throw new DuplicateElementException("Oggetto già presente");
+        }
+
+        await _db.WorkTimeRecords.AddAsync(new WorkTimeRecord {
             Id = workTimeRecordFormDto.Id,
             Date = workTimeRecordFormDto.Date,
             Hours = workTimeRecordFormDto.Hours,
@@ -28,22 +45,43 @@ public class WorkTimeRecordRepository
             WorkOrderId = workTimeRecordFormDto.WorkOrderId
         });
 
-        await _db.SaveChangesAsync();
+        var rowsAffected = await _db.SaveChangesAsync();
+        if (rowsAffected == 0) {
+            throw new DbUpdateException("Impossibile salvare i dati.");
+        }
     }
 
     public async Task DeleteAsync(int id) {
-        var workTimeRecordDelete = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == id);
+        var workTimeRecordDelete = await _db.WorkTimeRecords
+            .SingleOrDefaultAsync(wtr => wtr.Id == id);
         
         if (workTimeRecordDelete == null) {
-            return;
+            throw new InvalidOperationException("Oggetto non trovato");
         }
         _db.WorkTimeRecords.Remove(workTimeRecordDelete);
         
-        await _db.SaveChangesAsync();
+        var rowsAffected = await _db.SaveChangesAsync();
+        if (rowsAffected == 0) {
+            throw new DbUpdateException("Impossibile salvare i dati.");
+        }
     }
     
     public async Task EditAsync(WorkTimeRecordFormDto workTimeRecordFormDto) {
-        var model = await _db.WorkTimeRecords.SingleOrDefaultAsync(w => w.Id == workTimeRecordFormDto.Id);
+        if (workTimeRecordFormDto == null) {
+            throw new NullReferenceException("Oggetto null.");
+        }
+
+        var isNull = workTimeRecordFormDto.GetType().GetProperties()
+            .All(prop => prop.GetValue(workTimeRecordFormDto) != null);
+        if (isNull) {
+            throw new ArgumentNullException("Parametri null");
+        }
+
+        var model = await _db.WorkTimeRecords
+            .SingleOrDefaultAsync(wtr => wtr.Id == workTimeRecordFormDto.Id);
+        if (model == null) {
+            throw new KeyNotFoundException("Oggetto non trovato");
+        }
 
         model.Id = workTimeRecordFormDto.Id;
         model.Date = workTimeRecordFormDto.Date;
@@ -53,48 +91,49 @@ public class WorkTimeRecordRepository
         model.WorkOrderId = workTimeRecordFormDto.WorkOrderId;
         model.EmployeeId = workTimeRecordFormDto.EmployeeId;
         model.Employee = await _db.Employees
-            .Where(e => e.Id == workTimeRecordFormDto.EmployeeId)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(em => em.Id == workTimeRecordFormDto.EmployeeId);
 
-        await _db.SaveChangesAsync();
+        var rowsAffected = await _db.SaveChangesAsync();
+        if (rowsAffected == 0) {
+            throw new DbUpdateException("Impossibile proseguire.");
+        }
     }
 
     public async Task<WorkTimeRecordViewDto> GetAsync(int activityId) {
         return await _db.WorkTimeRecords
-            .Select(wo => new WorkTimeRecordViewDto {
-                Id = wo.Id,
-                Date = wo.Date,
-                Hours = wo.Hours,
-                TotalPrice = wo.TotalPrice,
-                ActivityId = wo.ActivityId,
-                EmployeeId = wo.EmployeeId,
-                WorkOrderId = wo.WorkOrderId})
-            .Where(wtr => wtr.ActivityId == activityId)
-            .SingleOrDefaultAsync();
+            .Select(wtr => new WorkTimeRecordViewDto {
+                Id = wtr.Id,
+                Date = wtr.Date,
+                Hours = wtr.Hours,
+                TotalPrice = wtr.TotalPrice,
+                ActivityId = wtr.ActivityId,
+                EmployeeId = wtr.EmployeeId,
+                WorkOrderId = wtr.WorkOrderId})
+            .SingleOrDefaultAsync(wtr => wtr.ActivityId == activityId);
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {
         return await _db.WorkTimeRecords
-            .Select(wo => new WorkTimeRecordViewDto {
-                Id = wo.Id,
-                Date = wo.Date,
-                Hours = wo.Hours,
-                TotalPrice = wo.TotalPrice,
-                ActivityId = wo.ActivityId,
-                EmployeeId = wo.EmployeeId})
+            .Select(wtr => new WorkTimeRecordViewDto {
+                Id = wtr.Id,
+                Date = wtr.Date,
+                Hours = wtr.Hours,
+                TotalPrice = wtr.TotalPrice,
+                ActivityId = wtr.ActivityId,
+                EmployeeId = wtr.EmployeeId})
             .ToListAsync();
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllAsync(int employeeId) {
         return await _db.WorkTimeRecords
-            .Where(wo => wo.EmployeeId == employeeId)
-            .Select(wo => new WorkTimeRecordViewDto {
-                Id = wo.Id,
-                Date = wo.Date,
-                Hours = wo.Hours,
-                TotalPrice = wo.TotalPrice,
-                ActivityId = wo.ActivityId,
-                EmployeeId = wo.EmployeeId})
+            .Where(wtr => wtr.EmployeeId == employeeId)
+            .Select(wtr => new WorkTimeRecordViewDto {
+                Id = wtr.Id,
+                Date = wtr.Date,
+                Hours = wtr.Hours,
+                TotalPrice = wtr.TotalPrice,
+                ActivityId = wtr.ActivityId,
+                EmployeeId = wtr.EmployeeId})
             .ToListAsync();
     }
 

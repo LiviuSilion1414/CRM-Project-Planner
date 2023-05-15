@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PlannerCRM.Server.CustomExceptions;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
@@ -14,37 +16,70 @@ namespace PlannerCRM.Server.Controllers;
 public class ActivityController : ControllerBase
 {
     private readonly ActivityRepository _repo;
+    private readonly Logger<ActivityRepository> _logger;
     
-    public ActivityController(ActivityRepository repo) {
+    public ActivityController(
+        ActivityRepository repo, 
+        Logger<ActivityRepository> logger) 
+    {
         _repo = repo;
+        _logger = logger;
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
     public async Task<ActionResult> AddActivity(ActivityFormDto activityFormDto) {
-        var activities = await _repo.GetForViewAsync(activityFormDto.Id);
+        try {
+            var activities = await _repo.GetForViewAsync(activityFormDto.Id);
+            
+            if (activities == null) {
+                await _repo.AddAsync(activityFormDto);
+    
+                return Ok("Attività aggiunta con successo!");
+            }
+    
+            return BadRequest("Attività già presente su questa commessa!");
+        } catch (NullReferenceException nullRefExc) {
+            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+        } catch (ArgumentNullException argNullExc) {
+            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+        } catch (DuplicateElementException duplicateElemExc) {
+            _logger.LogError(duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
+        } catch (DbUpdateException dbUpdateExc) {
+            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+        } catch (Exception exc) {
+            _logger.LogError(exc.StackTrace);
+        }            
         
-        if (activities == null) {
-            await _repo.AddAsync(activityFormDto);
-
-            return Ok("Attività aggiunta con successo!");
-        }
-
-        return BadRequest("Attività già presente su questa commessa!");
+        return NoContent();
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
     public async Task<ActionResult> EditActivity(ActivityFormDto activityFormDto) {
-        var activities = await _repo.GetActivitiesPerWorkOrderAsync(activityFormDto.WorkOrderId ?? throw new NullReferenceException());
+        try {
+            var activities = await _repo
+                .GetActivitiesPerWorkOrderAsync(activityFormDto.WorkOrderId 
+                    ?? throw new NullReferenceException());
+            
+            if (activities != null || activities.Count() != 0) {
+                await _repo.EditAsync(activityFormDto);
+    
+                return Ok("Attività modificata con successo!");
+            }
+    
+            return NotFound("Attività non trovata.");
+        } catch (NullReferenceException nullRefExc) {
+            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+        } catch (ArgumentNullException argNullExc) {
+            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+        } catch (DbUpdateException dbUpdateExc) {
+            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+        } catch (Exception exc) {
+            _logger.LogError(exc.StackTrace);
+        }            
         
-        if (activities != null || activities.Count() != 0) {
-            await _repo.EditAsync(activityFormDto);
-
-            return Ok("Attività modificata con successo!");
-        }
-
-        return NotFound("Attività non trovata.");
+        return NoContent();
     }    
 
     [Authorize]
@@ -86,14 +121,24 @@ public class ActivityController : ControllerBase
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{activityId}")]
     public async Task<ActionResult> DeleteActivity(int activityId) {
-        var activity = await _repo.GetForViewAsync(activityId);
+        try {
+            var activity = await _repo.GetForViewAsync(activityId);
+    
+            if (activity == null) {
+                return NotFound("Attività non trovata");
+            } 
+    
+            await _repo.DeleteAsync(activityId);
+            
+            return Ok("Attività eliminata con successo");
+        } catch (InvalidOperationException invalidOpExc) {
+            _logger.LogError(invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+        } catch (DbUpdateException dbUpdateExc) {
+            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+        } catch (Exception exc) {
+            _logger.LogError(exc.StackTrace);
+        }
 
-        if (activity == null) {
-            return NotFound("Attività non trovata");
-        } 
-
-        await _repo.DeleteAsync(activityId);
-        
-        return Ok("Attività eliminata con successo");
+        return NoContent();
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
+using PlannerCRM.Server.CustomExceptions;
 
 namespace PlannerCRM.Server.Services;
 
@@ -16,16 +17,32 @@ public class ActivityRepository
     }
 
     public async Task AddAsync(ActivityFormDto activityFormDto) {
-        _db.Activities.Add(new Activity {
+        if (activityFormDto.GetType() == null) {
+            throw new NullReferenceException("Oggetto null.");
+        }
+
+        var isNull = activityFormDto.GetType().GetProperties()
+            .All(prop => prop.GetValue(activityFormDto) != null);
+        if (isNull) {
+            throw new ArgumentNullException("Parametri null");
+        }
+        
+        var isAlreadyPresent = await _db.Activities
+            .SingleOrDefaultAsync(ac => ac.Id == activityFormDto.Id);
+        if (isAlreadyPresent != null) {
+            throw new DuplicateElementException("Oggetto già presente");
+        }
+
+        await _db.Activities.AddAsync(new Activity {
             Id = activityFormDto.Id,
             Name = activityFormDto.Name,
             StartDate = activityFormDto.StartDate ?? throw new NullReferenceException(),
             FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException(),
             WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException(),
-            EmployeeActivity = (activityFormDto.EmployeesActivities
-                .Select(e => new EmployeeActivity {
-                    Id = e.Id,
-                    ActivityId = e.ActivityId,
+            EmployeeActivity = activityFormDto.EmployeesActivities
+                .Select(ea => new EmployeeActivity {
+                    Id = ea.Id,
+                    ActivityId = ea.ActivityId,
                     Activity = new Activity {
                         Id = activityFormDto.Id,
                         Name = activityFormDto.Name,
@@ -33,45 +50,65 @@ public class ActivityRepository
                         FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException(),
                         WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException() 
                     },
-                    EmployeeId = e.EmployeeId,
+                    EmployeeId = ea.EmployeeId,
                     Employee = new Employee {
-                            Email = e.Employee.Email,
-                            FirstName = e.Employee.FirstName,
-                            LastName = e.Employee.LastName,
-                            Role = e.Employee.Role,
-                            Salaries = e.Employee.EmployeeSalaries
-                                .Select(ems => new List<EmployeeSalary> {
-                                    new EmployeeSalary {
-                                        Id = ems.Id,
-                                        EmployeeId = ems.EmployeeId,
-                                        StartDate = ems.StartDate,
-                                        FinishDate = ems.FinishDate,
-                                        Salary = decimal.Parse(ems.Salary.ToString()),
-                                    }})
-                                .ToList()
-                                .First(),
+                        Email = ea.Employee.Email,
+                        FirstName = ea.Employee.FirstName,
+                        LastName = ea.Employee.LastName,
+                        Role = ea.Employee.Role,
+                        Salaries = ea.Employee.EmployeeSalaries
+                            .Select(ems => new List<EmployeeSalary> {
+                                new EmployeeSalary {
+                                    Id = ems.Id,
+                                    EmployeeId = ems.EmployeeId,
+                                    StartDate = ems.StartDate,
+                                    FinishDate = ems.FinishDate,
+                                    Salary = decimal.Parse(ems.Salary.ToString()),
+                                }})
+                            .First(),
                     }
                 })
-                
-            .ToList())
+            .ToList()
         });
 
-        await _db.SaveChangesAsync();
+        var rowsAffected = await _db.SaveChangesAsync();
+        if (rowsAffected == 0) {
+            throw new DbUpdateException("Impossibile salvare i dati.");
+        }
     }
 
     public async Task DeleteAsync(int id) {
-        var activityDelete = await _db.Activities.SingleOrDefaultAsync(a => a.Id == id);
+        var activityDelete = await _db.Activities
+            .SingleOrDefaultAsync(ac => ac.Id == id);
 
         if (activityDelete == null) {
-            return;
+            throw new InvalidOperationException("Impossibile eliminare l'elemento");
         }
         _db.Activities.Remove(activityDelete);
 
-        await _db.SaveChangesAsync();
+        var rowsAffected = await _db.SaveChangesAsync();
+        if (rowsAffected == 0) {
+            throw new DbUpdateException("Impossibile salvare i dati.");
+        }
     }
 
     public async Task EditAsync(ActivityFormDto activityFormDto) {
-        var model = await _db.Activities.SingleOrDefaultAsync(a => a.Id == activityFormDto.Id);
+        if (activityFormDto == null) {
+            throw new NullReferenceException("Oggetto null.");
+        }
+
+        var isNull = activityFormDto.GetType().GetProperties()
+            .All(prop => prop.GetValue(activityFormDto) != null);
+        if (isNull) {
+            throw new ArgumentNullException("Parametri null");
+        }
+        
+        var model = await _db.Activities
+            .SingleOrDefaultAsync(ac => ac.Id == activityFormDto.Id);
+
+        if (model == null) {
+            throw new KeyNotFoundException("Oggetto non trovato");
+        }
 
         model.Id = activityFormDto.Id;
         model.Name = activityFormDto.Name;
@@ -79,40 +116,42 @@ public class ActivityRepository
         model.FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException();
         model.WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException();
         model.EmployeeActivity = activityFormDto.EmployeesActivities
-            .Where(es => 
+            .Where(ea => 
                 model.EmployeeActivity
-                    .Any(ea => ea.EmployeeId != es.Id))
-            .ToList()
-            .Select(es => new EmployeeActivity {
-                EmployeeId = es.Id,
+                    .Any(ea => ea.EmployeeId != ea.Id))
+            .Select(ea => new EmployeeActivity {
+                EmployeeId = ea.Id,
                 ActivityId = activityFormDto.Id
             })
             .ToList();
         
-        await _db.SaveChangesAsync();
+        var rowsAffected = await _db.SaveChangesAsync();
+        if (rowsAffected == 0) {
+            throw new DbUpdateException("Impossibile salvare i dati.");
+        }
     }
 
     public async Task<ActivityViewDto> GetForViewAsync(int id) {
         return await _db.Activities
-            .Select(e => new ActivityViewDto {
-                Id = e.Id,
-                Name = e.Name,
-                StartDate = e.StartDate,
-                FinishDate = e.FinishDate,
-                WorkOrderId = e.WorkOrderId,
+            .Select(ac => new ActivityViewDto {
+                Id = ac.Id,
+                Name = ac.Name,
+                StartDate = ac.StartDate,
+                FinishDate = ac.FinishDate,
+                WorkOrderId = ac.WorkOrderId,
             })
-            .SingleOrDefaultAsync(a => a.Id == id);
+            .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
     public async Task<ActivityFormDto> GetForEditAsync(int id) {
         return await _db.Activities
-            .Select(e => new ActivityFormDto {
-                Id = e.Id,
-                Name = e.Name,
-                StartDate = e.StartDate,
-                FinishDate = e.FinishDate,
-                WorkOrderId = e.WorkOrderId,
-                EmployeesActivities = e.EmployeeActivity
+            .Select(ac => new ActivityFormDto {
+                Id = ac.Id,
+                Name = ac.Name,
+                StartDate = ac.StartDate,
+                FinishDate = ac.FinishDate,
+                WorkOrderId = ac.WorkOrderId,
+                EmployeesActivities = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.Employee.Id,
@@ -134,18 +173,18 @@ public class ActivityRepository
                     })
                     .ToList()   
             })
-            .SingleOrDefaultAsync(a => a.Id == id);
+            .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteAsync(int id) {
         return await _db.Activities
-            .Select(e => new ActivityDeleteDto {
-                Id = e.Id,
-                Name = e.Name,
-                StartDate = e.StartDate,
-                FinishDate = e.FinishDate
+            .Select(ac => new ActivityDeleteDto {
+                Id = ac.Id,
+                Name = ac.Name,
+                StartDate = ac.StartDate,
+                FinishDate = ac.FinishDate
             })
-            .SingleOrDefaultAsync(a => a.Id == id);
+            .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
     public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId) {
@@ -183,7 +222,7 @@ public class ActivityRepository
             .ToListAsync();
     }
 
-    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkOrderAsync(int workorderId) {
+    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
         return await _db.Activities
             .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
@@ -213,18 +252,18 @@ public class ActivityRepository
                     })
                     .ToList()   
             })
-            .Where(ac => ac.WorkOrderId == workorderId)
+            .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
     }
 
     public async Task<List<ActivityViewDto>> GetAllAsync() {
         return await _db.Activities
-            .Select(e => new ActivityViewDto {
-                Id = e.Id,
-                Name = e.Name,
-                StartDate = e.StartDate,
-                FinishDate = e.FinishDate,
-                WorkOrderId = e.WorkOrderId
+            .Select(ac => new ActivityViewDto {
+                Id = ac.Id,
+                Name = ac.Name,
+                StartDate = ac.StartDate,
+                FinishDate = ac.FinishDate,
+                WorkOrderId = ac.WorkOrderId
             })
             .ToListAsync();
     }
