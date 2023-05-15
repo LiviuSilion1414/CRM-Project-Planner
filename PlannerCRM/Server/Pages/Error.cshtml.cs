@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -19,8 +20,19 @@ public class ErrorModel : PageModel
         _logger = logger;
     }
 
-    public void OnGet()
-    {
+    public void OnGet() {
         RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        var exceptionHandlerPathFeature =
+            HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+        
+        if (exceptionHandlerPathFeature.Error is NotSupportedException) {
+            _logger.LogError("Richiesta http non valida.");
+        } else if (exceptionHandlerPathFeature.Error is InvalidOperationException) {
+            _logger.LogError("Operazione non valida.");
+        } else if (exceptionHandlerPathFeature.Error is ArgumentNullException) {
+            _logger.LogError("Argomenti di tipo null non validi.");
+        } else {
+            _logger.LogWarning("Qualcosa è andato storto.");
+        }
     }
 }
