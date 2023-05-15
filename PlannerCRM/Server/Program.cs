@@ -83,6 +83,7 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment()) {
     app.UseWebAssemblyDebugging();
+    app.UseDeveloperExceptionPage();
 } else {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
