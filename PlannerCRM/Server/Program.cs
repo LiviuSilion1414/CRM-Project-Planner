@@ -50,6 +50,9 @@ builder.Services.AddScoped<ActivityRepository>();
 builder.Services.AddScoped<WorkTimeRecordRepository>();
 builder.Services.AddScoped<CalculateService>();
 
+builder.Logging.AddConfiguration(
+    builder.Configuration.GetSection("Logging"));
+
 var app = builder.Build();
 
 var accountManagerEmail = "account.manager@gmail.com";
