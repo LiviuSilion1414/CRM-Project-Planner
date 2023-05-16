@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PlannerCRM.Server.CustomExceptions;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
@@ -13,130 +15,169 @@ namespace PlannerCRM.Server.Controllers;
 public class EmployeeController: ControllerBase
 {
     private readonly EmployeeRepository _repo;
+    private readonly Logger<EmployeeRepository> _logger;
 
-    public EmployeeController(EmployeeRepository repo) {
+    public EmployeeController(
+        EmployeeRepository repo,
+        Logger<EmployeeRepository> logger) 
+    {
         _repo = repo;
+        _logger = logger;
     }
 
     [Authorize]
     [HttpPost("add")]
     public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAddFormDto) {
-        var employees = await _repo.SearchEmployeeAsync(employeeAddFormDto.Email);
+        try {
+            await _repo.AddAsync(employeeAddFormDto);
 
-        if (employeeAddFormDto == null) {
-            return BadRequest("Impossibile aggiungere l'utente.");
-        } else {
-            if (employees.Count() != 0) {
-                return BadRequest("Utente già esistente!");
-            } else {
-                await _repo.AddAsync(employeeAddFormDto);
-
-                return Ok("Utente aggiunto con successo!");
-            }
-        }
+            return Ok("Utente aggiunto con successo!");
+        } catch (NullReferenceException nullRefExc) {
+            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            return BadRequest(nullRefExc.Message);
+        } catch (ArgumentNullException argNullExc) {
+            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            return BadRequest(argNullExc.Message);
+        } catch (DuplicateElementException duplicateElemExc) {
+            _logger.LogError(duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return BadRequest(duplicateElemExc.Message);
+        } catch (DbUpdateException dbUpdateExc) {
+            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }       
     }
 
     [Authorize]
     [HttpPut("edit")]
     public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEditFormDto) {
-        var employees = await _repo.SearchEmployeeAsync(employeeEditFormDto.Email);
-        
-        if (employeeEditFormDto == null) {
-            return NotFound("Utente non trovato!");
-        } else {
+        try {
             await _repo.EditAsync(employeeEditFormDto);
 
             return Ok("Utente modificato con successo!");
+        } catch (NullReferenceException nullRefExc) {
+            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            return NotFound(nullRefExc.Message);
+        } catch (ArgumentNullException argNullExc) {
+            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            return BadRequest(argNullExc.Message);
+        } catch (KeyNotFoundException keyNotFoundExc) {
+            _logger.LogError(keyNotFoundExc, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            return NotFound(keyNotFoundExc.Message);
+        } catch (DbUpdateException dbUpdateExc) {
+            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
     [Authorize]
     [HttpDelete("delete/{employeeId}")]
     public async Task<ActionResult> DeleteUser(int employeeId) {
-        var employee = await _repo.GetForViewAsync(employeeId);
-        
-        if (employee == null) {
-            return NotFound("Utente non trovato!");
-        } else {
+        try {
             await _repo.DeleteAsync(employeeId);
 
             return Ok("Utente eliminato con successo!");
-        }
+        } catch(InvalidOperationException invalidOpExc) {
+            _logger.LogError(invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+            return BadRequest(invalidOpExc.Message);
+        } catch (DbUpdateException dbUpdateExc) {
+             _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return BadRequest(dbUpdateExc.Message);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);        }
     }
 
     [Authorize]
     [HttpGet("get/for/view/{employeeId}")]
     public async Task<EmployeeViewDto> GetForViewById(int employeeId) {
-       return await _repo.GetForViewAsync(employeeId);
+        try {
+            return await _repo.GetForViewAsync(employeeId);
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return new EmployeeViewDto();
+       }
     }
 
     [Authorize]
     [HttpGet("get/for/edit/{employeeId}")]
     public async Task<EmployeeEditFormDto> GetForEditById(int employeeId) {
-       return await _repo.GetForEditAsync(employeeId);
+        try {
+            return await _repo.GetForEditAsync(employeeId);
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return new EmployeeEditFormDto();
+        }
     }
 
     [Authorize]
     [HttpGet("get/for/delete/{employeeId}")]
     public async Task<EmployeeDeleteDto> GetForDeleteById(int employeeId) {
-       return await _repo.GetForDeleteAsync(employeeId);
+        try {
+            return await _repo.GetForDeleteAsync(employeeId);
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return new EmployeeDeleteDto();
+        }
     }
 
     [Authorize]
 	[HttpGet("search/{email}")]
 	public async Task<List<EmployeeSelectDto>> SearchEmployee(string email) {
-		return await _repo.SearchEmployeeAsync(email);
+        try {
+            return await _repo.SearchEmployeeAsync(email);
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return new List<EmployeeSelectDto>();
+        }
 	}
 
     [Authorize]
 	[HttpGet("search/complete/{email}")]
 	public async Task<EmployeeEditFormDto> SearchEmployeeComplete(string email) {
-		return await _repo.SearchEmployeeCompleteAsync(email);
+        try {
+            return await _repo.SearchEmployeeCompleteAsync(email);
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return new EmployeeEditFormDto();
+       }
 	}
 
     [Authorize]
     [HttpGet("get/all")]
     public async Task<List<EmployeeViewDto>> GetAll() {
-        return await _repo.GetAllAsync();
+        try {
+            return await _repo.GetAllAsync();
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return new List<EmployeeViewDto>();
+       }
     }
 
     [Authorize]
     [HttpGet("get/id/{email}")]
     public async Task<CurrentEmployeeDto> GetUserId(string email) {
-        var emptyEmployee = new CurrentEmployeeDto {
-            Id = INVALID_ID,
-            Email = null
-        };
-        
-        if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email)) {
-            return emptyEmployee;
-        } else {
-            var employee = await _repo.SearchEmployeeAsync(email);
-
-            if (employee == null) {
-                return emptyEmployee;
-            }
-        }
-    
-        return await _repo.GetUserIdAsync(email);
+        try {
+            return await _repo.GetUserIdAsync(email);
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return new CurrentEmployeeDto();
+       }
     }
 
     [HttpGet("get/id-check/{email}")]
-    public async Task<ActionResult> GetUserIdCheck(string email) {
-        var emptyEmployee = new CurrentEmployeeDto {
-            Id = INVALID_ID,
-            Email = null
-        };
-        
-        if (string.IsNullOrEmpty(email) || string.IsNullOrWhiteSpace(email)) {
-            return BadRequest("L'email non può essere vuoto!");
-        } else {
-            var employee = await _repo.SearchEmployeeAsync(email);
-            
-            if (employee == null) {
-                return NotFound("Utente non trovato!");
-            }
-        }
-        return Ok("OK");
+    public async Task<int> GetUserIdCheck(string email) {
+        try {
+            var currentEmployee = await _repo.GetUserIdAsync(email);
+            return currentEmployee.Id;
+        } catch (Exception exc) {
+            _logger.LogError(exc, exc.Message, exc.StackTrace);
+            return 0;
+       }
     }
 }

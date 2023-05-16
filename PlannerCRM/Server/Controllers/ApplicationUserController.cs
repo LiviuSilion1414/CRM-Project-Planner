@@ -2,94 +2,95 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PlannerCRM.Server.CustomExceptions;
+using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 [ApiController]
 [Route("[controller]")]
 public class ApplicationUserController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly ApplicationUserRepository _repo;
+    private readonly Logger<ApplicationUserRepository> _logger;
 
     public ApplicationUserController(
-        UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager) 
+        ApplicationUserRepository repo,
+        Logger<ApplicationUserRepository> logger) 
     {
-        _userManager = userManager;    
-        _roleManager = roleManager;
+        _repo = repo;
+        _logger = logger;
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add/user")]
     public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAddFormDto) {
-        var person = await _userManager.FindByEmailAsync(employeeAddFormDto.Email);
-        
-        if (person != null) {
-            return BadRequest("Utente già esistente.");
-        } else {
-            var user = new IdentityUser {
-                Email = employeeAddFormDto.Email,
-                EmailConfirmed = true,
-                UserName = employeeAddFormDto.Email
-            };
-            
-            var userRole = await _roleManager.Roles
-                .Where(aspRole => Enum.GetNames(typeof(Roles)).Any(role => role == aspRole.Name))
-                .FirstAsync();
-            
-            await _userManager.CreateAsync(user, employeeAddFormDto.Password);
-            await _userManager.AddToRoleAsync(user, userRole.Name);
+        try {
+            await _repo.AddAsync(employeeAddFormDto);
+    
+            return Ok("Utente aggiunto con successo!");
+        } catch (NullReferenceException nullRefExc) {
+            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            return BadRequest(nullRefExc.Message);
+        } catch (ArgumentNullException argNullExc) {
+            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            return BadRequest(argNullExc.Message);
+        } catch (InvalidOperationException invalidOpExc) {
+            _logger.LogError(invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+            return BadRequest(invalidOpExc.Message);
+        } catch (DuplicateElementException duplicateElemExc) {
+            _logger.LogError(duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return BadRequest(duplicateElemExc.Message);
+        } catch (Exception exc) {
+            _logger.LogError(exc.StackTrace);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
-
-        return Ok("Utente aggiunto con successo!");
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit/user/{oldEmail}")]
     public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEditFormDto, string oldEmail) {
-        var person = await _userManager.FindByEmailAsync(oldEmail);
-        
-        if (person == null) {
-            return BadRequest("Utente non trovato!");
-        } 
-
-        person.Email = employeeEditFormDto.Email;
-        person.EmailConfirmed = true;
-        person.UserName = employeeEditFormDto.Email;
-
-        await _userManager.ChangePasswordAsync(person, person.PasswordHash, employeeEditFormDto.Password);
-        await _userManager.UpdateAsync(person);            
-        
-        var user = await _userManager.FindByNameAsync(oldEmail);
-        var rolesList = await _userManager.GetRolesAsync(user);
-        var userRole = rolesList.Single();
-
-        var isInRole = await _userManager.IsInRoleAsync(person, userRole);
-        
-        if (isInRole) {
-            await _userManager.RemoveFromRoleAsync(person, userRole);
-            await _userManager.AddToRoleAsync(person, employeeEditFormDto.Role.ToString());
-            
+        try {
+            await _repo.EditAsync(employeeEditFormDto, oldEmail);
+    
             return Ok("Utente modificato con successo!");
-        } else {
-            return BadRequest("Impossibile modificare il ruolo.");
+        } catch (NullReferenceException nullRefExc) {
+            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            return NotFound(nullRefExc.Message);
+        } catch (ArgumentNullException argNullExc) {
+            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            return BadRequest(argNullExc.Message);
+        } catch (KeyNotFoundException keyNotFoundExc) {
+            _logger.LogError(keyNotFoundExc, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            return NotFound(keyNotFoundExc.Message);
+        } catch (InvalidOperationException invalidOpExc) {
+            _logger.LogError(invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+            return BadRequest(invalidOpExc.Message);
+        } catch (Exception exc) {
+            _logger.LogError(exc.StackTrace);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         } 
     }
     
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/user/{email}")]
     public async Task<ActionResult> DeleteUser(string email) {
-        var user = await _userManager.FindByEmailAsync(email);
-        
-        if (user == null) {
-            return BadRequest("Utente non trovato.");
+        try {
+            await _repo.DeleteAsync(email);
+
+            return Ok("Utente eliminato con successo!");
+        } catch (NullReferenceException nullRefExc) {
+            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            return BadRequest(nullRefExc.Message);
+        } catch (KeyNotFoundException keyNotFoundExc) {
+            _logger.LogError(keyNotFoundExc, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            return BadRequest(keyNotFoundExc.Message);
+        } catch (Exception exc) {
+            _logger.LogError(exc.StackTrace);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
-        
-        await _userManager.DeleteAsync(user);
-        
-        return Ok("Utente eliminato con successo!");
     }
 }

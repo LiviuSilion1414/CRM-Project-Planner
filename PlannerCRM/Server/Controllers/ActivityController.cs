@@ -30,115 +30,134 @@ public class ActivityController : ControllerBase
     [HttpPost("add")]
     public async Task<ActionResult> AddActivity(ActivityFormDto activityFormDto) {
         try {
-            var activities = await _repo.GetForViewAsync(activityFormDto.Id);
-            
-            if (activities == null) {
-                await _repo.AddAsync(activityFormDto);
-    
-                return Ok("Attività aggiunta con successo!");
-            }
-    
-            return BadRequest("Attività già presente su questa commessa!");
+            await _repo.AddAsync(activityFormDto);
+
+            return Ok("Attività aggiunta con successo!");
         } catch (NullReferenceException nullRefExc) {
             _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            return BadRequest(nullRefExc.Message);
         } catch (ArgumentNullException argNullExc) {
             _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            return BadRequest(argNullExc.Message);
         } catch (DuplicateElementException duplicateElemExc) {
             _logger.LogError(duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return BadRequest(duplicateElemExc.Message);
         } catch (DbUpdateException dbUpdateExc) {
             _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError(exc.StackTrace);
+            _logger.LogError(exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }            
-        
-        return NoContent();
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
     public async Task<ActionResult> EditActivity(ActivityFormDto activityFormDto) {
         try {
-            var activities = await _repo
-                .GetActivitiesPerWorkOrderAsync(activityFormDto.WorkOrderId 
-                    ?? throw new NullReferenceException());
-            
-            if (activities != null || activities.Count() != 0) {
-                await _repo.EditAsync(activityFormDto);
-    
-                return Ok("Attività modificata con successo!");
-            }
-    
-            return NotFound("Attività non trovata.");
+            await _repo.EditAsync(activityFormDto);
+
+            return Ok("Attività aggiunta con successo!");
         } catch (NullReferenceException nullRefExc) {
             _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            return NotFound(nullRefExc.Message);
         } catch (ArgumentNullException argNullExc) {
             _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            return BadRequest(argNullExc.Message);
+        } catch (KeyNotFoundException keyNotFoundExc) {
+            _logger.LogError(keyNotFoundExc, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            return NotFound(keyNotFoundExc.Message);
         } catch (DbUpdateException dbUpdateExc) {
             _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError(exc.StackTrace);
-        }            
-        
-        return NoContent();
+            _logger.LogError(exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
     }    
 
     [Authorize]
     [HttpGet("get/{activityId}")]
     public async Task<ActivityViewDto> GetForView(int activityId) {
-        return await _repo.GetForViewAsync(activityId);
+        try {
+            return await _repo.GetForViewAsync(activityId);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return new ActivityViewDto();
+        }
     }
 
     [Authorize]
     [HttpGet("get/for/edit/{activityId}")]
     public async Task<ActivityFormDto> GetForEdit(int activityId) {
-        return await _repo.GetForEditAsync(activityId);
+        try {
+            return await _repo.GetForEditAsync(activityId);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return new ActivityFormDto();
+        }
     }
 
     [Authorize]
     [HttpGet("get/for/delete/{activityId}")]
     public async Task<ActivityDeleteDto> GetForDelete(int activityId) {
-        return await _repo.GetForDeleteAsync(activityId);
+        try {
+            return await _repo.GetForDeleteAsync(activityId);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return new ActivityDeleteDto();
+        }
     }
 
     [Authorize]
     [HttpGet("get/activity/per/workorder/{workOrderId}")]
     public async Task<List<ActivityFormDto>> GetActivitiesPerWorkorderAsync(int workOrderId) {
-        return await _repo.GetActivitiesPerWorkOrderAsync(workOrderId);
+        try {
+            return await _repo.GetActivitiesPerWorkOrderAsync(workOrderId);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return new List<ActivityFormDto>();
+        }
     }
 
     [Authorize]
     [HttpGet("get/activity/per/employee/{employeeId}")]
     public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId) {
-        return await _repo.GetActivityByEmployeeId(employeeId);
+        try {
+            return await _repo.GetActivityByEmployeeId(employeeId);
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return new List<ActivityFormDto>();
+        }
     }
 
     [Authorize]
     [HttpGet("get/all")]
     public async Task<List<ActivityViewDto>> GetAll() {
-        return await _repo.GetAllAsync();
+        try {
+            return await _repo.GetAllAsync();
+        } catch (Exception exc) {
+            _logger.LogError(exc.Message);
+            return new List<ActivityViewDto>();
+        }
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{activityId}")]
     public async Task<ActionResult> DeleteActivity(int activityId) {
         try {
-            var activity = await _repo.GetForViewAsync(activityId);
-    
-            if (activity == null) {
-                return NotFound("Attività non trovata");
-            } 
-    
             await _repo.DeleteAsync(activityId);
             
             return Ok("Attività eliminata con successo");
         } catch (InvalidOperationException invalidOpExc) {
             _logger.LogError(invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+            return BadRequest(invalidOpExc.Message);
         } catch (DbUpdateException dbUpdateExc) {
             _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError(exc.StackTrace);
+            _logger.LogError(exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
-
-        return NoContent();
     }
 }
