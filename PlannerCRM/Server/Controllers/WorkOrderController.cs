@@ -26,9 +26,9 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPost("add")]
-	public async Task<ActionResult> AddWorkorder(WorkOrderFormDto workOrderFormDto) {
+	public async Task<ActionResult> AddWorkorder(WorkOrderFormDto dto) {
 		try {
-			await _repo.AddAsync(workOrderFormDto);
+			await _repo.AddAsync(dto);
 			
 			return Ok("Commessa aggiunta con successo!");
         } catch (Exception exc) {
@@ -39,9 +39,9 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
 	[HttpPut("edit")]
-	public async Task<ActionResult> EditWorkorder(WorkOrderFormDto workOrderFormDto) { //dto non workOrderFormDto
+	public async Task<ActionResult> EditWorkorder(WorkOrderFormDto dto) { //dto non workOrderFormDto
 		try {
-			await _repo.EditAsync(workOrderFormDto);
+			await _repo.EditAsync(dto);
 			return Ok("Commessa modificata con successo!");
 		} catch (NullReferenceException nullRefExc) {
 			_logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
@@ -81,10 +81,10 @@ public class WorkOrderController : ControllerBase
 	}
 
 	[Authorize]
-	[HttpGet("search/{workorder}")]
-	public async Task<List<WorkOrderSelectDto>> SearchWorkorder(string workorder) {
+	[HttpGet("search/{workOrder}")]
+	public async Task<List<WorkOrderSelectDto>> SearchWorkorder(string workOrder) {
 		try {
-			return await _repo.SearchWorkOrderAsync(workorder);
+			return await _repo.SearchWorkOrderAsync(workOrder);
 		} catch (Exception exc) {
 			_logger.LogError(exc, exc.Message, exc.StackTrace);
 			return new List<WorkOrderSelectDto>();

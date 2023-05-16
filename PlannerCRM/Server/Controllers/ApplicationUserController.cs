@@ -27,9 +27,9 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAddFormDto) {
+    public async Task<ActionResult> AddUser(EmployeeAddFormDto dto) {
         try {
-            await _repo.AddAsync(employeeAddFormDto);
+            await _repo.AddAsync(dto);
     
             return Ok("Utente aggiunto con successo!");
         } catch (NullReferenceException nullRefExc) {
@@ -52,9 +52,12 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit/user/{oldEmail}")]
-    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEditFormDto, string oldEmail) {
+    public async Task<ActionResult> EditUser(
+        EmployeeEditFormDto dto, 
+        string oldEmail) 
+    {
         try {
-            await _repo.EditAsync(employeeEditFormDto, oldEmail);
+            await _repo.EditAsync(dto, oldEmail);
     
             return Ok("Utente modificato con successo!");
         } catch (NullReferenceException nullRefExc) {

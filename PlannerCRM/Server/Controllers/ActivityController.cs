@@ -28,16 +28,16 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddActivity(ActivityFormDto activityFormDto) {
+    public async Task<ActionResult> AddActivity(ActivityFormDto dto) {
         try {
-            await _repo.AddAsync(activityFormDto);
+            await _repo.AddAsync(dto);
 
             return Ok("Attività aggiunta con successo!");
         } catch (NullReferenceException nullRefExc) {
             _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
             return BadRequest(nullRefExc.Message);
         } catch (ArgumentNullException argNullExc) {
-            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error, argNullExc.Message, "Parametri dell'entità sono null");
             return BadRequest(argNullExc.Message);
         } catch (DuplicateElementException duplicateElemExc) {
             _logger.LogError(duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
@@ -53,9 +53,9 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditActivity(ActivityFormDto activityFormDto) {
+    public async Task<ActionResult> EditActivity(ActivityFormDto dto) {
         try {
-            await _repo.EditAsync(activityFormDto);
+            await _repo.EditAsync(dto);
 
             return Ok("Attività aggiunta con successo!");
         } catch (NullReferenceException nullRefExc) {

@@ -27,9 +27,9 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task<ActionResult> AddUser(EmployeeAddFormDto employeeAddFormDto) {
+    public async Task<ActionResult> AddUser(EmployeeAddFormDto dto) {
         try {
-            await _repo.AddAsync(employeeAddFormDto);
+            await _repo.AddAsync(dto);
 
             return Ok("Utente aggiunto con successo!");
         } catch (NullReferenceException nullRefExc) {
@@ -52,9 +52,9 @@ public class EmployeeController: ControllerBase
 
     [Authorize]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditUser(EmployeeEditFormDto employeeEditFormDto) {
+    public async Task<ActionResult> EditUser(EmployeeEditFormDto dto) {
         try {
-            await _repo.EditAsync(employeeEditFormDto);
+            await _repo.EditAsync(dto);
 
             return Ok("Utente modificato con successo!");
         } catch (NullReferenceException nullRefExc) {

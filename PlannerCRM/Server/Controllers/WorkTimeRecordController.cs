@@ -4,6 +4,7 @@ using PlannerCRM.Server.CustomExceptions;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -23,9 +24,9 @@ public class WorkTimeRecordController : ControllerBase
     }
 
     [HttpPost("add")]
-    public async Task<ActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto workTimeRecordFormDto) {
+    public async Task<ActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto dto) {
         try {
-            await _repo.AddAsync(workTimeRecordFormDto);
+            await _repo.AddAsync(dto);
 
             return Ok("Orario di lavoro aggiunto con successo!");
         } catch (NullReferenceException nullRefExc) {
@@ -46,9 +47,9 @@ public class WorkTimeRecordController : ControllerBase
     }
 
     [HttpPut("edit")]
-    public async Task<ActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto workTimeRecordFormDto) {
+    public async Task<ActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto dto) {
         try {
-            await _repo.EditAsync(workTimeRecordFormDto);
+            await _repo.EditAsync(dto);
 
             return Ok("Orario di lavoro modificato con successo!");
         } catch (NullReferenceException nullRefExc) {
@@ -108,7 +109,7 @@ public class WorkTimeRecordController : ControllerBase
             return await _repo.GetWorkTimeRecordsSizeByEmployeeId(employeeId);
         } catch (Exception exc) {
             _logger.LogError(exc.Message, exc.StackTrace);
-            return -1; //usa valori costanti
+            return INVALID_ID;
         }
     }
 }

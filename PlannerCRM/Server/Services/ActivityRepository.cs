@@ -16,39 +16,39 @@ public class ActivityRepository
         _db = db;
     }
 
-    public async Task AddAsync(ActivityFormDto activityFormDto) {
-        if (activityFormDto.GetType() == null) {
+    public async Task AddAsync(ActivityFormDto dto) {
+        if (dto.GetType() == null) {
             throw new NullReferenceException("Oggetto null.");
         }
 
-        var innerPropertiesAreNull = activityFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(activityFormDto) != null);
+        var innerPropertiesAreNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (innerPropertiesAreNull) {
             throw new ArgumentNullException("Parametri null");
         }
         
         var isAlreadyPresent = await _db.Activities
-            .SingleOrDefaultAsync(ac => ac.Id == activityFormDto.Id);
+            .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException("Oggetto già presente");
         }
 
         await _db.Activities.AddAsync(new Activity {
-            Id = activityFormDto.Id,
-            Name = activityFormDto.Name,
-            StartDate = activityFormDto.StartDate ?? throw new NullReferenceException(),
-            FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException(),
-            WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException(),
-            EmployeeActivity = activityFormDto.EmployeesActivities
+            Id = dto.Id,
+            Name = dto.Name,
+            StartDate = dto.StartDate ?? throw new NullReferenceException(),
+            FinishDate = dto.FinishDate ?? throw new NullReferenceException(),
+            WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(),
+            EmployeeActivity = dto.EmployeesActivities
                 .Select(ea => new EmployeeActivity {
                     Id = ea.Id,
                     ActivityId = ea.ActivityId,
                     Activity = new Activity {
-                        Id = activityFormDto.Id,
-                        Name = activityFormDto.Name,
-                        StartDate = activityFormDto.StartDate ?? throw new NullReferenceException(),
-                        FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException(),
-                        WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException() 
+                        Id = dto.Id,
+                        Name = dto.Name,
+                        StartDate = dto.StartDate ?? throw new NullReferenceException(),
+                        FinishDate = dto.FinishDate ?? throw new NullReferenceException(),
+                        WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException() 
                     },
                     EmployeeId = ea.EmployeeId,
                     Employee = new Employee {
@@ -92,36 +92,36 @@ public class ActivityRepository
         }
     }
 
-    public async Task EditAsync(ActivityFormDto activityFormDto) {
-        if (activityFormDto == null) {
+    public async Task EditAsync(ActivityFormDto dto) {
+        if (dto == null) {
             throw new NullReferenceException("Oggetto null.");
         }
 
-        var isNull = activityFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(activityFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
         
         var model = await _db.Activities
-            .SingleOrDefaultAsync(ac => ac.Id == activityFormDto.Id);
+            .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
 
         if (model == null) {
             throw new KeyNotFoundException("Oggetto non trovato");
         }
 
-        model.Id = activityFormDto.Id;
-        model.Name = activityFormDto.Name;
-        model.StartDate = activityFormDto.StartDate ?? throw new NullReferenceException();
-        model.FinishDate = activityFormDto.FinishDate ?? throw new NullReferenceException();
-        model.WorkOrderId = activityFormDto.WorkOrderId ?? throw new NullReferenceException();
-        model.EmployeeActivity = activityFormDto.EmployeesActivities
+        model.Id = dto.Id;
+        model.Name = dto.Name;
+        model.StartDate = dto.StartDate ?? throw new NullReferenceException();
+        model.FinishDate = dto.FinishDate ?? throw new NullReferenceException();
+        model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException();
+        model.EmployeeActivity = dto.EmployeesActivities
             .Where(ea => 
                 model.EmployeeActivity
                     .Any(ea => ea.EmployeeId != ea.Id))
             .Select(ea => new EmployeeActivity {
                 EmployeeId = ea.Id,
-                ActivityId = activityFormDto.Id
+                ActivityId = dto.Id
             })
             .ToList();
         
@@ -140,7 +140,7 @@ public class ActivityRepository
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
             })
-            .SingleOrDefaultAsync(ac => ac.Id == id) ?? throw new Exception() ?? throw new FormatException();
+            .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
     public async Task<ActivityFormDto> GetForEditAsync(int id) {

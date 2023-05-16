@@ -15,13 +15,13 @@ public class WorkTimeRecordRepository
         _db = db;
     }
 
-    public async Task AddAsync(WorkTimeRecordFormDto workTimeRecordFormDto) {
-        if (workTimeRecordFormDto.GetType() == null) {
+    public async Task AddAsync(WorkTimeRecordFormDto dto) {
+        if (dto.GetType() == null) {
             throw new NullReferenceException("Oggetto null.");
         }
 
-        var isNull = workTimeRecordFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(workTimeRecordFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
@@ -33,16 +33,16 @@ public class WorkTimeRecordRepository
         }
 
         await _db.WorkTimeRecords.AddAsync(new WorkTimeRecord {
-            Id = workTimeRecordFormDto.Id,
-            Date = workTimeRecordFormDto.Date,
-            Hours = workTimeRecordFormDto.Hours,
-            TotalPrice = workTimeRecordFormDto.TotalPrice,
-            ActivityId = workTimeRecordFormDto.ActivityId,
-            EmployeeId = workTimeRecordFormDto.EmployeeId,
+            Id = dto.Id,
+            Date = dto.Date,
+            Hours = dto.Hours,
+            TotalPrice = dto.TotalPrice,
+            ActivityId = dto.ActivityId,
+            EmployeeId = dto.EmployeeId,
             Employee = await _db.Employees
-                .Where(e => e.Id == workTimeRecordFormDto.EmployeeId)
+                .Where(e => e.Id == dto.EmployeeId)
                 .SingleOrDefaultAsync(),
-            WorkOrderId = workTimeRecordFormDto.WorkOrderId
+            WorkOrderId = dto.WorkOrderId
         });
 
         var rowsAffected = await _db.SaveChangesAsync();
@@ -66,32 +66,32 @@ public class WorkTimeRecordRepository
         }
     }
     
-    public async Task EditAsync(WorkTimeRecordFormDto workTimeRecordFormDto) {
-        if (workTimeRecordFormDto == null) {
+    public async Task EditAsync(WorkTimeRecordFormDto dto) {
+        if (dto == null) {
             throw new NullReferenceException("Oggetto null.");
         }
 
-        var isNull = workTimeRecordFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(workTimeRecordFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
 
         var model = await _db.WorkTimeRecords
-            .SingleOrDefaultAsync(wtr => wtr.Id == workTimeRecordFormDto.Id);
+            .SingleOrDefaultAsync(wtr => wtr.Id == dto.Id);
         if (model == null) {
             throw new KeyNotFoundException("Oggetto non trovato");
         }
 
-        model.Id = workTimeRecordFormDto.Id;
-        model.Date = workTimeRecordFormDto.Date;
-        model.Hours = workTimeRecordFormDto.Hours;
-        model.TotalPrice = workTimeRecordFormDto.TotalPrice;
-        model.ActivityId = workTimeRecordFormDto.ActivityId;
-        model.WorkOrderId = workTimeRecordFormDto.WorkOrderId;
-        model.EmployeeId = workTimeRecordFormDto.EmployeeId;
+        model.Id = dto.Id;
+        model.Date = dto.Date;
+        model.Hours = dto.Hours;
+        model.TotalPrice = dto.TotalPrice;
+        model.ActivityId = dto.ActivityId;
+        model.WorkOrderId = dto.WorkOrderId;
+        model.EmployeeId = dto.EmployeeId;
         model.Employee = await _db.Employees
-            .SingleOrDefaultAsync(em => em.Id == workTimeRecordFormDto.EmployeeId);
+            .SingleOrDefaultAsync(em => em.Id == dto.EmployeeId);
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {

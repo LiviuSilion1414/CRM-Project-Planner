@@ -22,13 +22,13 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDto employeeLoginDto) {
-        var user = await _userManager.FindByEmailAsync(employeeLoginDto.Email);
+    public async Task<ActionResult> Login(EmployeeLoginDto dto) {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
 
         if (user == null) {
             return BadRequest("Utente non trovato!");
         } else {
-            var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, employeeLoginDto.Password);
+            var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
 
             if (!userPasswordIsCorrect) {
                 return BadRequest("Password sbagliata!");

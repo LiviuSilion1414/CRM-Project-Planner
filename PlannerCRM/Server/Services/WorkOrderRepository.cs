@@ -15,27 +15,27 @@ public class WorkOrderRepository
 		_db = db;
 	}
 
-	public async Task AddAsync(WorkOrderFormDto workOrderFormDto) {
-		if (workOrderFormDto.GetType() == null) {
+	public async Task AddAsync(WorkOrderFormDto dto) {
+		if (dto.GetType() == null) {
             throw new NullReferenceException("Oggetto null.");
         }
-        var isNull = workOrderFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(workOrderFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
         
         var isAlreadyPresent = await _db.WorkOrders
-            .SingleOrDefaultAsync(em => em.Id == workOrderFormDto.Id);
+            .SingleOrDefaultAsync(em => em.Id == dto.Id);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException("Oggetto già presente");
         }
 
 		await _db.WorkOrders.AddAsync(new WorkOrder {
-			Name = workOrderFormDto.Name,
-			StartDate = workOrderFormDto.StartDate ?? throw new NullReferenceException(),
-			FinishDate = workOrderFormDto.FinishDate ?? throw new NullReferenceException()
+			Name = dto.Name,
+			StartDate = dto.StartDate ?? throw new NullReferenceException(),
+			FinishDate = dto.FinishDate ?? throw new NullReferenceException()
 		});
 
 		var rowsAffected = await _db.SaveChangesAsync();
@@ -59,27 +59,27 @@ public class WorkOrderRepository
         }
 	}
 
-	public async Task EditAsync(WorkOrderFormDto workOrderFormDto) {
-		if (workOrderFormDto == null) {
+	public async Task EditAsync(WorkOrderFormDto dto) {
+		if (dto == null) {
             throw new NullReferenceException("Oggetto null.");
         }
-        var isNull = workOrderFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(workOrderFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
         
         var model = await _db.WorkOrders
-			.SingleOrDefaultAsync(wo => wo.Id == workOrderFormDto.Id);
+			.SingleOrDefaultAsync(wo => wo.Id == dto.Id);
 
         if (model == null) {
             throw new KeyNotFoundException("Oggetto non trovato");
         }
 
-		model.Id = workOrderFormDto.Id;
-		model.Name = workOrderFormDto.Name;
-		model.StartDate = workOrderFormDto.StartDate ?? throw new NullReferenceException();
-		model.FinishDate = workOrderFormDto.FinishDate ?? throw new NullReferenceException();
+		model.Id = dto.Id;
+		model.Name = dto.Name;
+		model.StartDate = dto.StartDate ?? throw new NullReferenceException();
+		model.FinishDate = dto.FinishDate ?? throw new NullReferenceException();
 
 		var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {

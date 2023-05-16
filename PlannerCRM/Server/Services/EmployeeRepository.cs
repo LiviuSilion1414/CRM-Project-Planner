@@ -17,33 +17,33 @@ public class EmployeeRepository
         _db = db;
     }
 
-    public async Task AddAsync(EmployeeAddFormDto employeeAddFormDto) {
-        if (employeeAddFormDto == null) {
+    public async Task AddAsync(EmployeeAddFormDto dto) {
+        if (dto == null) {
             throw new NullReferenceException("Oggetto null");
         }
 
-        var isNull = employeeAddFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(employeeAddFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
         
         var isAlreadyPresent = await _db.Employees
-            .SingleOrDefaultAsync(em => em.Id == employeeAddFormDto.Id);
+            .SingleOrDefaultAsync(em => em.Id == dto.Id);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException("Oggetto già presente");
         }
 
         await _db.Employees.AddAsync(new Employee {
-            Email = employeeAddFormDto.Email,
-            FirstName = employeeAddFormDto.FirstName,
-            LastName = employeeAddFormDto.LastName,
-            BirthDay = employeeAddFormDto.BirthDay ?? throw new NullReferenceException(),
-            StartDate = employeeAddFormDto.StartDate ?? throw new NullReferenceException(),
-            Password = employeeAddFormDto.Password,
-            NumericCode = employeeAddFormDto.NumericCode,
-            Role = employeeAddFormDto.Role ?? throw new NullReferenceException(),
-            Salaries = employeeAddFormDto.EmployeeSalaries
+            Email = dto.Email,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            BirthDay = dto.BirthDay ?? throw new NullReferenceException(),
+            StartDate = dto.StartDate ?? throw new NullReferenceException(),
+            Password = dto.Password,
+            NumericCode = dto.NumericCode,
+            Role = dto.Role ?? throw new NullReferenceException(),
+            Salaries = dto.EmployeeSalaries
                 .Select(ems =>
                     new EmployeeSalary {
                         EmployeeId = ems.EmployeeId,
@@ -76,33 +76,33 @@ public class EmployeeRepository
         }
     }
 
-    public async Task EditAsync(EmployeeEditFormDto employeeEditFormDto) {
-        if (employeeEditFormDto == null) {
+    public async Task EditAsync(EmployeeEditFormDto dto) {
+        if (dto == null) {
             throw new NullReferenceException("Oggetto null.");
         }
 
-        var isNull = employeeEditFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(employeeEditFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
 
         var model = await _db.Employees
-            .SingleOrDefaultAsync(em => em.Id == employeeEditFormDto.Id);
+            .SingleOrDefaultAsync(em => em.Id == dto.Id);
         
         if (model == null) {
             throw new KeyNotFoundException("Oggetto non trovato");
         }
 
-        model.Id = employeeEditFormDto.Id;
-        model.FirstName = employeeEditFormDto.FirstName;
-        model.LastName = employeeEditFormDto.LastName;
-        model.BirthDay = employeeEditFormDto.BirthDay;
-        model.StartDate = employeeEditFormDto.StartDate;
-        model.Email = employeeEditFormDto.Email;
-        model.Role = employeeEditFormDto.Role;
-        model.NumericCode = employeeEditFormDto.NumericCode;
-        model.Salaries = employeeEditFormDto.EmployeeSalaries
+        model.Id = dto.Id;
+        model.FirstName = dto.FirstName;
+        model.LastName = dto.LastName;
+        model.BirthDay = dto.BirthDay;
+        model.StartDate = dto.StartDate;
+        model.Email = dto.Email;
+        model.Role = dto.Role;
+        model.NumericCode = dto.NumericCode;
+        model.Salaries = dto.EmployeeSalaries
             .Select(ems => 
                 new EmployeeSalary {
                     EmployeeId = ems.Id,

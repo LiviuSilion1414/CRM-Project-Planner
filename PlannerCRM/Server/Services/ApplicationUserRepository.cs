@@ -19,40 +19,40 @@ public class ApplicationUserRepository
         _roleManager = roleManager;
     }
 
-    public async Task AddAsync(EmployeeAddFormDto employeeAddFormDto) {
-        if (employeeAddFormDto.GetType() == null) {
+    public async Task AddAsync(EmployeeAddFormDto dto) {
+        if (dto.GetType() == null) {
             throw new NullReferenceException("Oggetto null");
         } 
         
-        var isNull = employeeAddFormDto.GetType().GetProperties()
-            .All(prop => prop.GetValue(employeeAddFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
         }
         
-        var person = await _userManager.FindByEmailAsync(employeeAddFormDto.Email);
+        var person = await _userManager.FindByEmailAsync(dto.Email);
         
         if (person != null) {
             throw new InvalidOperationException("Utente già presente");
         }
 
         var isAlreadyPresent = await _userManager.Users
-            .SingleOrDefaultAsync(user => user.UserName == employeeAddFormDto.Email);
+            .SingleOrDefaultAsync(user => user.UserName == dto.Email);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException("Oggetto già presente");
         }
 
         var user = new IdentityUser {
-            Email = employeeAddFormDto.Email,
+            Email = dto.Email,
             EmailConfirmed = true,
-            UserName = employeeAddFormDto.Email
+            UserName = dto.Email
         };
         
         var userRole = await _roleManager.Roles
             .FirstAsync(aspRole => Enum.GetNames(typeof(Roles))
                 .Any(role => role == aspRole.Name));
         
-        var creationResult = await _userManager.CreateAsync(user, employeeAddFormDto.Password);
+        var creationResult = await _userManager.CreateAsync(user, dto.Password);
         var assignmentResult = await _userManager.AddToRoleAsync(user, userRole.Name);
         
         if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
@@ -60,13 +60,13 @@ public class ApplicationUserRepository
         }
     }
 
-    public async Task EditAsync(EmployeeEditFormDto employeeEditFormDto, string oldEmail) {
-        if (employeeEditFormDto.GetType() == null) {
+    public async Task EditAsync(EmployeeEditFormDto dto, string oldEmail) {
+        if (dto.GetType() == null) {
             throw new NullReferenceException("Oggetto null");
         } 
         
-        var isNull = employeeEditFormDto.GetType().GetProperties()
-            .All(em => em.GetValue(employeeEditFormDto) != null);
+        var isNull = dto.GetType().GetProperties()
+            .Any(em => em.GetValue(dto) != null);
         
         if (isNull) {
             throw new ArgumentNullException("Parametri null");
@@ -82,11 +82,11 @@ public class ApplicationUserRepository
             throw new KeyNotFoundException("Oggetto non trovato");
         } 
 
-        user.Email = employeeEditFormDto.Email;
+        user.Email = dto.Email;
         user.EmailConfirmed = true;
-        user.UserName = employeeEditFormDto.Email;
+        user.UserName = dto.Email;
 
-        var passChangeResult = await _userManager.ChangePasswordAsync(user, user.PasswordHash, employeeEditFormDto.Password);
+        var passChangeResult = await _userManager.ChangePasswordAsync(user, user.PasswordHash, dto.Password);
         var updateResult = await _userManager.UpdateAsync(user);
 
         if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
@@ -101,7 +101,7 @@ public class ApplicationUserRepository
         
         if (isInRole) {
             await _userManager.RemoveFromRoleAsync(user, userRole);
-            await _userManager.AddToRoleAsync(user, employeeEditFormDto.Role.ToString());
+            await _userManager.AddToRoleAsync(user, dto.Role.ToString());
         } else {
             throw new InvalidOperationException("Impossibile modificare il ruolo.");
         } 
