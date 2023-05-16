@@ -26,7 +26,7 @@ public class AccountController : ControllerBase
         var user = await _userManager.FindByEmailAsync(dto.Email);
 
         if (user == null) {
-            return BadRequest("Utente non trovato!");
+            return NotFound("Utente non trovato!");
         } else {
             var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
 
