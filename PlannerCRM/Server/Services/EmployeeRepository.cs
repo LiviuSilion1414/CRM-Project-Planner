@@ -65,7 +65,7 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == id);
 
         if (employeeDelete == null) {
-            throw new InvalidOperationException("Impossibile eliminare l'elemento");
+            throw new KeyNotFoundException("Impossibile eliminare l'elemento");
         }
 
         _db.Employees.Remove(employeeDelete);
@@ -429,7 +429,6 @@ public class EmployeeRepository
             .Select(em => new CurrentEmployeeDto {
                 Id = em.Id,
                 Email = em.Email})
-            .Where(em => em.Email == email)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(em => em.Email == email);
     }
 }

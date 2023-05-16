@@ -21,9 +21,9 @@ public class ActivityRepository
             throw new NullReferenceException("Oggetto null.");
         }
 
-        var isNull = activityFormDto.GetType().GetProperties()
+        var innerPropertiesAreNull = activityFormDto.GetType().GetProperties()
             .All(prop => prop.GetValue(activityFormDto) != null);
-        if (isNull) {
+        if (innerPropertiesAreNull) {
             throw new ArgumentNullException("Parametri null");
         }
         
@@ -140,7 +140,7 @@ public class ActivityRepository
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
             })
-            .SingleOrDefaultAsync(ac => ac.Id == id);
+            .SingleOrDefaultAsync(ac => ac.Id == id) ?? throw new Exception() ?? throw new FormatException();
     }
 
     public async Task<ActivityFormDto> GetForEditAsync(int id) {

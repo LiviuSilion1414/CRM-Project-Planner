@@ -26,7 +26,7 @@ public class WorkOrderRepository
             throw new ArgumentNullException("Parametri null");
         }
         
-        var isAlreadyPresent = await _db.Employees
+        var isAlreadyPresent = await _db.WorkOrders
             .SingleOrDefaultAsync(em => em.Id == workOrderFormDto.Id);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException("Oggetto già presente");
@@ -49,7 +49,7 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(w => w.Id == id);
 		
 		if (workOrderDelete == null) {
-			throw new InvalidOperationException("Impossibile eliminare l'elemento");
+			throw new KeyNotFoundException("Impossibile eliminare l'elemento");
 		}
 		_db.WorkOrders.Remove(workOrderDelete);
 		
@@ -69,7 +69,7 @@ public class WorkOrderRepository
             throw new ArgumentNullException("Parametri null");
         }
         
-        var model = await _db.Activities
+        var model = await _db.WorkOrders
 			.SingleOrDefaultAsync(wo => wo.Id == workOrderFormDto.Id);
 
         if (model == null) {
@@ -127,7 +127,7 @@ public class WorkOrderRepository
 			.ToListAsync();
 	}
 
-    public async Task<List<WorkOrderSelectDto>> SearchWorkorderAsync(string workOrder) {
+    public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {
         return await _db.WorkOrders
 			.Select(wo => new WorkOrderSelectDto{
 				Id = wo.Id,

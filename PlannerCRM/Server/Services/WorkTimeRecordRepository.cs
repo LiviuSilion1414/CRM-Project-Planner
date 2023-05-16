@@ -56,7 +56,7 @@ public class WorkTimeRecordRepository
             .SingleOrDefaultAsync(wtr => wtr.Id == id);
         
         if (workTimeRecordDelete == null) {
-            throw new InvalidOperationException("Oggetto non trovato");
+            throw new KeyNotFoundException("Oggetto non trovato");
         }
         _db.WorkTimeRecords.Remove(workTimeRecordDelete);
         
