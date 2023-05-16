@@ -33,7 +33,7 @@ public class AccountController : ControllerBase
             if (!userPasswordIsCorrect) {
                 return BadRequest("Password sbagliata!");
             } else {
-                await _signInManager.SignInAsync(user, true);
+                await _signInManager.SignInAsync(user, false);
                 
                 return Ok("Connesso!");
             }
