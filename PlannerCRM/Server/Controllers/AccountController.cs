@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
+using static PlannerCRM.Shared.Constants.LoginFeedBack;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -28,7 +29,7 @@ public class AccountController : ControllerBase
 
         if (user == null)
         {
-            return NotFound("Utente non trovato!");
+            return NotFound(USER_NOT_FOUND);
         }
         else
         {
@@ -36,13 +37,13 @@ public class AccountController : ControllerBase
 
             if (!userPasswordIsCorrect)
             {
-                return BadRequest("Password sbagliata!");
+                return BadRequest(WRONG_PASSWORD);
             }
             else
             {
                 await _signInManager.SignInAsync(user, false);
 
-                return Ok("Connesso!");
+                return Ok(CONNECTED);
             }
         }
     }

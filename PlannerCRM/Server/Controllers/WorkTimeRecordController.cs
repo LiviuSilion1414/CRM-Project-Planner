@@ -5,6 +5,7 @@ using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
 using static PlannerCRM.Shared.Constants.ConstantValues;
+using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace PlannerCRM.Server.Controllers;
@@ -31,7 +32,7 @@ public class WorkTimeRecordController : ControllerBase
         {
             await _repo.AddAsync(dto);
 
-            return Ok("Orario di lavoro aggiunto con successo!");
+            return Ok(WORKTIMERECORD_ADD);
         }
         catch (NullReferenceException nullRefExc)
         {
@@ -66,7 +67,7 @@ public class WorkTimeRecordController : ControllerBase
         {
             await _repo.EditAsync(dto);
 
-            return Ok("Orario di lavoro modificato con successo!");
+            return Ok(WORKTIMERECORD_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {

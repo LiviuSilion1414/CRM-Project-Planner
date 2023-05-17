@@ -5,6 +5,7 @@ using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -32,7 +33,7 @@ public class ApplicationUserController : ControllerBase
         {
             await _repo.AddAsync(dto);
 
-            return Ok("Utente aggiunto con successo!");
+            return Ok(USER_ADD);
         }
         catch (NullReferenceException nullRefExc)
         {
@@ -71,7 +72,7 @@ public class ApplicationUserController : ControllerBase
         {
             await _repo.EditAsync(dto, oldEmail);
 
-            return Ok("Utente modificato con successo!");
+            return Ok(USER_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {
@@ -108,7 +109,7 @@ public class ApplicationUserController : ControllerBase
         {
             await _repo.DeleteAsync(email);
 
-            return Ok("Utente eliminato con successo!");
+            return Ok(USER_DELETE);
         }
         catch (NullReferenceException nullRefExc)
         {

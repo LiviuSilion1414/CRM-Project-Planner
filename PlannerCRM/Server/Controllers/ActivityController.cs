@@ -7,6 +7,7 @@ using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.Models;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -34,7 +35,7 @@ public class ActivityController : ControllerBase
         {
             await _repo.AddAsync(dto);
 
-            return Ok("Attività aggiunta con successo!");
+            return Ok(ACTIVITY_ADD);
         }
         catch (NullReferenceException nullRefExc)
         {
@@ -71,7 +72,7 @@ public class ActivityController : ControllerBase
         {
             await _repo.EditAsync(dto);
 
-            return Ok("Attività aggiunta con successo!");
+            return Ok(ACTIVITY_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {
@@ -87,6 +88,33 @@ public class ActivityController : ControllerBase
         {
             _logger.LogError(keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
             return NotFound(keyNotFoundExc.Message);
+        }
+        catch (DbUpdateException dbUpdateExc)
+        {
+            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(Status500InternalServerError);
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError(exc.StackTrace, exc.Message);
+            return StatusCode(Status503ServiceUnavailable);
+        }
+    }
+    
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+    [HttpDelete("delete/{activityId}")]
+    public async Task<ActionResult> DeleteActivity(int activityId)
+    {
+        try
+        {
+            await _repo.DeleteAsync(activityId);
+
+            return Ok(ACTIVITY_DELETE);
+        }
+        catch (InvalidOperationException invalidOpExc)
+        {
+            _logger.LogError(invalidOpExc.Message, invalidOpExc.StackTrace);
+            return BadRequest(invalidOpExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
@@ -187,33 +215,6 @@ public class ActivityController : ControllerBase
         {
             _logger.LogError(exc.StackTrace, exc.Message);
             return new List<ActivityViewDto>();
-        }
-    }
-
-    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpDelete("delete/{activityId}")]
-    public async Task<ActionResult> DeleteActivity(int activityId)
-    {
-        try
-        {
-            await _repo.DeleteAsync(activityId);
-
-            return Ok("Attività eliminata con successo");
-        }
-        catch (InvalidOperationException invalidOpExc)
-        {
-            _logger.LogError(invalidOpExc.Message, invalidOpExc.StackTrace);
-            return BadRequest(invalidOpExc.Message);
-        }
-        catch (DbUpdateException dbUpdateExc)
-        {
-            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return StatusCode(Status500InternalServerError);
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError(exc.StackTrace, exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
         }
     }
 }

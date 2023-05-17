@@ -6,6 +6,7 @@ using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -33,7 +34,7 @@ public class WorkOrderController : ControllerBase
         {
             await _repo.AddAsync(dto);
 
-            return Ok("Commessa aggiunta con successo!");
+            return Ok(WORKORDER_ADD);
         }
         catch (Exception exc)
         {
@@ -49,7 +50,7 @@ public class WorkOrderController : ControllerBase
         try
         {
             await _repo.EditAsync(dto);
-            return Ok("Commessa modificata con successo!");
+            return Ok(WORKORDER_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {
@@ -86,7 +87,7 @@ public class WorkOrderController : ControllerBase
         {
             await _repo.DeleteAsync(workOrderId);
 
-            return Ok("Commessa modificata con successo!");
+            return Ok(WORKORDER_DELETE);
         }
         catch (InvalidOperationException invalidOpExc)
         {
