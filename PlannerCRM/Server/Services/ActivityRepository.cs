@@ -5,6 +5,7 @@ using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Server.CustomExceptions;
+using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 
 namespace PlannerCRM.Server.Services;
 
@@ -18,27 +19,27 @@ public class ActivityRepository
 
     public async Task AddAsync(ActivityFormDto dto) {
         if (dto.GetType() == null) {
-            throw new NullReferenceException("Oggetto null.");
+            throw new NullReferenceException(NULL_OBJECT);
         }
 
         var innerPropertiesAreNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
         if (innerPropertiesAreNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
         
         var isAlreadyPresent = await _db.Activities
             .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
         if (isAlreadyPresent != null) {
-            throw new DuplicateElementException("Oggetto già presente");
+            throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
 
         await _db.Activities.AddAsync(new Activity {
             Id = dto.Id,
             Name = dto.Name,
-            StartDate = dto.StartDate ?? throw new NullReferenceException(),
-            FinishDate = dto.FinishDate ?? throw new NullReferenceException(),
-            WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(),
+            StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
+            FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP),
+            WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(NULL_PROP),
             EmployeeActivity = dto.EmployeesActivities
                 .Select(ea => new EmployeeActivity {
                     Id = ea.Id,
@@ -46,9 +47,9 @@ public class ActivityRepository
                     Activity = new Activity {
                         Id = dto.Id,
                         Name = dto.Name,
-                        StartDate = dto.StartDate ?? throw new NullReferenceException(),
-                        FinishDate = dto.FinishDate ?? throw new NullReferenceException(),
-                        WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException() 
+                        StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
+                        FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP),
+                        WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(NULL_PROP)
                     },
                     EmployeeId = ea.EmployeeId,
                     Employee = new Employee {
@@ -73,7 +74,7 @@ public class ActivityRepository
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile salvare i dati.");
+            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
         }
     }
 
@@ -82,39 +83,39 @@ public class ActivityRepository
             .SingleOrDefaultAsync(ac => ac.Id == id);
 
         if (activityDelete == null) {
-            throw new InvalidOperationException("Impossibile eliminare l'elemento");
+            throw new InvalidOperationException(IMPOSSIBLE_DELETE);
         }
         _db.Activities.Remove(activityDelete);
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile salvare i dati.");
+            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
         }
     }
 
     public async Task EditAsync(ActivityFormDto dto) {
         if (dto == null) {
-            throw new NullReferenceException("Oggetto null.");
+            throw new NullReferenceException(NULL_OBJECT);
         }
 
         var isNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
         
         var model = await _db.Activities
             .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
 
         if (model == null) {
-            throw new KeyNotFoundException("Oggetto non trovato");
+            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
         }
 
         model.Id = dto.Id;
         model.Name = dto.Name;
-        model.StartDate = dto.StartDate ?? throw new NullReferenceException();
-        model.FinishDate = dto.FinishDate ?? throw new NullReferenceException();
-        model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException();
+        model.StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP);
+        model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP);
+        model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(NULL_PROP);
         model.EmployeeActivity = dto.EmployeesActivities
             .Where(ea => 
                 model.EmployeeActivity
@@ -127,7 +128,7 @@ public class ActivityRepository
         
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile salvare i dati.");
+            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
         }
     }
 

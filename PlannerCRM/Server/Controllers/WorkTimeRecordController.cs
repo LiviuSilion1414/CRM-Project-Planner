@@ -5,6 +5,7 @@ using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
 using static PlannerCRM.Shared.Constants.ConstantValues;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -17,97 +18,139 @@ public class WorkTimeRecordController : ControllerBase
 
     public WorkTimeRecordController(
         WorkTimeRecordRepository repo,
-        Logger<WorkTimeRecordRepository> logger) 
+        Logger<WorkTimeRecordRepository> logger)
     {
         _repo = repo;
         _logger = logger;
     }
 
     [HttpPost("add")]
-    public async Task<ActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto dto) {
-        try {
+    public async Task<ActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto dto)
+    {
+        try
+        {
             await _repo.AddAsync(dto);
 
             return Ok("Orario di lavoro aggiunto con successo!");
-        } catch (NullReferenceException nullRefExc) {
+        }
+        catch (NullReferenceException nullRefExc)
+        {
             _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
-            return NotFound(nullRefExc.Message);           
-        } catch (ArgumentNullException argNullExc) {
+            return NotFound(nullRefExc.Message);
+        }
+        catch (ArgumentNullException argNullExc)
+        {
             _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
-        } catch (DuplicateElementException duplicateElemExc) {
+        }
+        catch (DuplicateElementException duplicateElemExc)
+        {
             _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
-        } catch (DbUpdateException dbUpdateExc) {
+        }
+        catch (DbUpdateException dbUpdateExc)
+        {
             _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
             return BadRequest(dbUpdateExc.Message);
-        } catch (Exception exc) {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, exc.Message);
+        }
+        catch (Exception exc)
+        {
+            return StatusCode(Status503ServiceUnavailable, exc.Message);
         }
     }
 
     [HttpPut("edit")]
-    public async Task<ActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto dto) {
-        try {
+    public async Task<ActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto dto)
+    {
+        try
+        {
             await _repo.EditAsync(dto);
 
             return Ok("Orario di lavoro modificato con successo!");
-        } catch (NullReferenceException nullRefExc) {
+        }
+        catch (NullReferenceException nullRefExc)
+        {
             _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
-            return BadRequest(nullRefExc.Message);           
-        } catch (ArgumentNullException argNullExc) {
+            return BadRequest(nullRefExc.Message);
+        }
+        catch (ArgumentNullException argNullExc)
+        {
             _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
-        } catch (KeyNotFoundException keyNotFoundExc) {
+        }
+        catch (KeyNotFoundException keyNotFoundExc)
+        {
             _logger.LogError(keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
             return NotFound(keyNotFoundExc.Message);
-        } catch (DuplicateElementException duplicateElemExc) {
+        }
+        catch (DuplicateElementException duplicateElemExc)
+        {
             _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
-        } catch (DbUpdateException dbUpdateExc) {
+        }
+        catch (DbUpdateException dbUpdateExc)
+        {
             _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
             return BadRequest(dbUpdateExc.Message);
-        } catch (Exception exc) {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, exc.Message);
+        }
+        catch (Exception exc)
+        {
+            return StatusCode(Status503ServiceUnavailable, exc.Message);
         }
     }
 
     [HttpGet("get/{workTimeRecordId}")]
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int workTimeRecordId) {
-        try {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int workTimeRecordId)
+    {
+        try
+        {
             return await _repo.GetAsync(workTimeRecordId);
 
-        } catch (Exception exc) {
+        }
+        catch (Exception exc)
+        {
             _logger.LogError(exc.Message, exc.StackTrace);
             return new WorkTimeRecordViewDto();
         }
     }
 
     [HttpGet("get/all")]
-    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecords() {
-        try {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecords()
+    {
+        try
+        {
             return await _repo.GetAllAsync();
-        } catch (Exception exc) {
+        }
+        catch (Exception exc)
+        {
             _logger.LogError(exc.Message, exc.StackTrace);
             return new List<WorkTimeRecordViewDto>();
         }
     }
 
     [HttpGet("get/all/by/employee/{employeeId}")]
-    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByWorkOrder(int employeeId) {
-        try {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByWorkOrder(int employeeId)
+    {
+        try
+        {
             return await _repo.GetAllAsync(employeeId);
-        } catch (Exception exc) {
+        }
+        catch (Exception exc)
+        {
             _logger.LogError(exc.Message, exc.StackTrace);
             return new List<WorkTimeRecordViewDto>();
         }
     }
 
     [HttpGet("get/size/by/employee/{employeeId}")]
-    public async Task<int> GetWorkTimeRecordsSize(int employeeId) {
-        try  {
+    public async Task<int> GetWorkTimeRecordsSize(int employeeId)
+    {
+        try
+        {
             return await _repo.GetWorkTimeRecordsSizeByEmployeeId(employeeId);
-        } catch (Exception exc) {
+        }
+        catch (Exception exc)
+        {
             _logger.LogError(exc.Message, exc.StackTrace);
             return INVALID_ID;
         }

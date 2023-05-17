@@ -22,45 +22,59 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDto dto) {
+    public async Task<ActionResult> Login(EmployeeLoginDto dto)
+    {
         var user = await _userManager.FindByEmailAsync(dto.Email);
 
-        if (user == null) {
+        if (user == null)
+        {
             return NotFound("Utente non trovato!");
-        } else {
+        }
+        else
+        {
             var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
 
-            if (!userPasswordIsCorrect) {
+            if (!userPasswordIsCorrect)
+            {
                 return BadRequest("Password sbagliata!");
-            } else {
+            }
+            else
+            {
                 await _signInManager.SignInAsync(user, false);
-                
+
                 return Ok("Connesso!");
             }
         }
     }
-    
+
     [Authorize]
     [HttpGet("logout")]
-    public async Task Logout() {
+    public async Task Logout()
+    {
         await _signInManager.SignOutAsync();
     }
 
     [HttpGet("user/role")]
-    public async Task<string> GetUserRole() {
-        if (User.Identity.IsAuthenticated) {
+    public async Task<string> GetUserRole()
+    {
+        if (User.Identity.IsAuthenticated)
+        {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
 
             return roles.Single();
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
 
     [HttpGet("current/user/info")]
-    public CurrentUser CurrentUserInfo() {
-        return new CurrentUser {
+    public CurrentUser CurrentUserInfo()
+    {
+        return new CurrentUser
+        {
             IsAuthenticated = User.Identity.IsAuthenticated,
             UserName = User.Identity.Name,
             Claims = User.Claims

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
 using PlannerCRM.Server.CustomExceptions;
+using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 
 namespace PlannerCRM.Server.Services;
 
@@ -17,30 +18,30 @@ public class WorkOrderRepository
 
 	public async Task AddAsync(WorkOrderFormDto dto) {
 		if (dto.GetType() == null) {
-            throw new NullReferenceException("Oggetto null.");
+            throw new NullReferenceException(NULL_OBJECT);
         }
         var isNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
         
         if (isNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
         
         var isAlreadyPresent = await _db.WorkOrders
             .SingleOrDefaultAsync(em => em.Id == dto.Id);
         if (isAlreadyPresent != null) {
-            throw new DuplicateElementException("Oggetto già presente");
+            throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
 
 		await _db.WorkOrders.AddAsync(new WorkOrder {
 			Name = dto.Name,
-			StartDate = dto.StartDate ?? throw new NullReferenceException(),
-			FinishDate = dto.FinishDate ?? throw new NullReferenceException()
+			StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
+			FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP)
 		});
 
 		var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile proseguire.");
+            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
         }
 	}
 
@@ -49,41 +50,41 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(w => w.Id == id);
 		
 		if (workOrderDelete == null) {
-			throw new KeyNotFoundException("Impossibile eliminare l'elemento");
+			throw new KeyNotFoundException(IMPOSSIBLE_DELETE);
 		}
 		_db.WorkOrders.Remove(workOrderDelete);
 		
 		var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile salvare i dati.");
+            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
         }
 	}
 
 	public async Task EditAsync(WorkOrderFormDto dto) {
 		if (dto == null) {
-            throw new NullReferenceException("Oggetto null.");
+            throw new NullReferenceException(NULL_OBJECT);
         }
         var isNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
         
         var model = await _db.WorkOrders
 			.SingleOrDefaultAsync(wo => wo.Id == dto.Id);
 
         if (model == null) {
-            throw new KeyNotFoundException("Oggetto non trovato");
+            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
         }
 
 		model.Id = dto.Id;
 		model.Name = dto.Name;
-		model.StartDate = dto.StartDate ?? throw new NullReferenceException();
-		model.FinishDate = dto.FinishDate ?? throw new NullReferenceException();
+		model.StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP);
+		model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP);
 
 		var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile salvare i dati.");
+            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
         }
 	}
 	

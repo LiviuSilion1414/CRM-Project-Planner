@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Server.CustomExceptions;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
+using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 
 namespace PlannerCRM.Server.Services;
 
@@ -21,25 +22,25 @@ public class ApplicationUserRepository
 
     public async Task AddAsync(EmployeeAddFormDto dto) {
         if (dto.GetType() == null) {
-            throw new NullReferenceException("Oggetto null");
+            throw new NullReferenceException(NULL_OBJECT);
         } 
         
         var isNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
         
         var person = await _userManager.FindByEmailAsync(dto.Email);
         
         if (person != null) {
-            throw new InvalidOperationException("Utente già presente");
+            throw new InvalidOperationException(OBJECT_ALREADY_PRESENT);
         }
 
         var isAlreadyPresent = await _userManager.Users
             .SingleOrDefaultAsync(user => user.UserName == dto.Email);
         if (isAlreadyPresent != null) {
-            throw new DuplicateElementException("Oggetto già presente");
+            throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
 
         var user = new IdentityUser {
@@ -56,30 +57,30 @@ public class ApplicationUserRepository
         var assignmentResult = await _userManager.AddToRoleAsync(user, userRole.Name);
         
         if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
-            throw new InvalidOperationException("Impossibile proseguire");
+            throw new InvalidOperationException(IMPOSSIBILE_GOING_FORWARD);
         }
     }
 
     public async Task EditAsync(EmployeeEditFormDto dto, string oldEmail) {
         if (dto.GetType() == null) {
-            throw new NullReferenceException("Oggetto null");
+            throw new NullReferenceException(NULL_OBJECT);
         } 
         
         var isNull = dto.GetType().GetProperties()
             .Any(em => em.GetValue(dto) != null);
         
         if (isNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
 
         if (string.IsNullOrEmpty(oldEmail)) {
-            throw new NullReferenceException("Oggetto null");
+            throw new NullReferenceException(NULL_OBJECT);
         }
 
         var user = await _userManager.FindByEmailAsync(oldEmail);
         
         if (user == null) {
-            throw new KeyNotFoundException("Oggetto non trovato");
+            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
         } 
 
         user.Email = dto.Email;
@@ -90,7 +91,7 @@ public class ApplicationUserRepository
         var updateResult = await _userManager.UpdateAsync(user);
 
         if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
-            throw new InvalidOperationException("Impossibile proseguire");
+            throw new InvalidOperationException(IMPOSSIBILE_GOING_FORWARD);
         } 
         
         var currentUser = await _userManager.FindByNameAsync(oldEmail);
@@ -103,19 +104,19 @@ public class ApplicationUserRepository
             await _userManager.RemoveFromRoleAsync(user, userRole);
             await _userManager.AddToRoleAsync(user, dto.Role.ToString());
         } else {
-            throw new InvalidOperationException("Impossibile modificare il ruolo.");
+            throw new InvalidOperationException(IMPOSSIBLE_EDIT);
         } 
     }
     
     public async Task DeleteAsync(string email) {
         if (string.IsNullOrEmpty(email)) {
-            throw new NullReferenceException("Oggetto null");
+            throw new NullReferenceException(NULL_OBJECT);
         }
 
         var user = await _userManager.FindByEmailAsync(email);
         
         if (user == null) {
-            throw new KeyNotFoundException("Utente non trovato.");
+            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
         }
         
         await _userManager.DeleteAsync(user);

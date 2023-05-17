@@ -6,6 +6,7 @@ using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Server.CustomExceptions;
+using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 
 namespace PlannerCRM.Server.Services;
 
@@ -19,30 +20,30 @@ public class EmployeeRepository
 
     public async Task AddAsync(EmployeeAddFormDto dto) {
         if (dto == null) {
-            throw new NullReferenceException("Oggetto null");
+            throw new NullReferenceException(NULL_OBJECT);
         }
 
         var isNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
         
         var isAlreadyPresent = await _db.Employees
             .SingleOrDefaultAsync(em => em.Id == dto.Id);
         if (isAlreadyPresent != null) {
-            throw new DuplicateElementException("Oggetto già presente");
+            throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
 
         await _db.Employees.AddAsync(new Employee {
             Email = dto.Email,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
-            BirthDay = dto.BirthDay ?? throw new NullReferenceException(),
-            StartDate = dto.StartDate ?? throw new NullReferenceException(),
+            BirthDay = dto.BirthDay ?? throw new NullReferenceException(NULL_PROP),
+            StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PARAM),
             Password = dto.Password,
             NumericCode = dto.NumericCode,
-            Role = dto.Role ?? throw new NullReferenceException(),
+            Role = dto.Role ?? throw new NullReferenceException(NULL_PARAM),
             Salaries = dto.EmployeeSalaries
                 .Select(ems =>
                     new EmployeeSalary {
@@ -56,7 +57,7 @@ public class EmployeeRepository
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile proseguire.");
+            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
         }
     }
 
@@ -65,33 +66,33 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == id);
 
         if (employeeDelete == null) {
-            throw new KeyNotFoundException("Impossibile eliminare l'elemento");
+            throw new KeyNotFoundException(IMPOSSIBLE_DELETE);
         }
 
         _db.Employees.Remove(employeeDelete);
         
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile proseguire.");
+            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
         }
     }
 
     public async Task EditAsync(EmployeeEditFormDto dto) {
         if (dto == null) {
-            throw new NullReferenceException("Oggetto null.");
+            throw new NullReferenceException(NULL_OBJECT);
         }
 
         var isNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
         if (isNull) {
-            throw new ArgumentNullException("Parametri null");
+            throw new ArgumentNullException(NULL_PARAM);
         }
 
         var model = await _db.Employees
             .SingleOrDefaultAsync(em => em.Id == dto.Id);
         
         if (model == null) {
-            throw new KeyNotFoundException("Oggetto non trovato");
+            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
         }
 
         model.Id = dto.Id;
@@ -114,7 +115,7 @@ public class EmployeeRepository
         
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException("Impossibile proseguire.");
+            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
         }
     }
 
