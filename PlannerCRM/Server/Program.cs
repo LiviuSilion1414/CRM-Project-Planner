@@ -44,6 +44,7 @@ builder.Services
         o.Lockout.MaxFailedAccessAttempts = 5;
     });
 
+builder.Services.AddScoped<ApplicationUserRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
 builder.Services.AddScoped<WorkOrderRepository>();
 builder.Services.AddScoped<ActivityRepository>();
@@ -55,6 +56,7 @@ builder.Services.AddScoped<Logger<WorkOrderRepository>>();
 builder.Services.AddScoped<Logger<ActivityRepository>>();
 builder.Services.AddScoped<Logger<WorkTimeRecordRepository>>();
 builder.Services.AddScoped<Logger<CalculateService>>();
+builder.Services.AddScoped<Logger<ApplicationUserRepository>>();
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
