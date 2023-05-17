@@ -67,7 +67,7 @@ public class ApplicationUserRepository
         } 
         
         var isNull = dto.GetType().GetProperties()
-            .Any(em => em.GetValue(dto) != null);
+            .Any(em => em.GetValue(dto) == null);
         
         if (isNull) {
             throw new ArgumentNullException(NULL_PARAM);
@@ -87,8 +87,8 @@ public class ApplicationUserRepository
         user.EmailConfirmed = true;
         user.UserName = dto.Email;
 
-        var passChangeResult = await _userManager.ChangePasswordAsync(user, user.PasswordHash, dto.Password);
-        var updateResult = await _userManager.UpdateAsync(user);
+        var passChangeResult = await _userManager.RemovePasswordAsync(user);
+        var updateResult = await _userManager.AddPasswordAsync(user, dto.Password);
 
         if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
             throw new InvalidOperationException(IMPOSSIBILE_GOING_FORWARD);
