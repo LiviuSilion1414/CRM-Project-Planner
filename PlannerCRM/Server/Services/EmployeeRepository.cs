@@ -198,27 +198,6 @@ public class EmployeeRepository
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
                         Salary = float.Parse(ems.Salary.ToString())})
-                    .ToList(),
-                EmployeeActivities = em.EmployeeActivity
-                    .Select(ems =>
-                        new EmployeeActivityDto {
-                            EmployeeId = ems.Id,
-                            Employee = new EmployeeSelectDto {
-                                Id = ems.EmployeeId,
-                                FirstName = ems.Employee.FirstName,
-                                LastName = ems.Employee.LastName,
-                                Email = ems.Employee.Email,
-                                Role = ems.Employee.Role, 
-                            },
-                            ActivityId = ems.ActivityId,
-                            Activity = new ActivitySelectDto {
-                                Id = ems.ActivityId,
-                                Name = ems.Activity.Name,
-                                StartDate = ems.Activity.StartDate,
-                                FinishDate = ems.Activity.FinishDate,
-                                WorkOrderId = ems.Activity.WorkOrderId
-                            }
-                        })
                     .ToList()
                 })
             .SingleOrDefaultAsync(em => em.Id == id);
@@ -329,50 +308,6 @@ public class EmployeeRepository
         } else {
             return new List<EmployeeSelectDto>();
         }
-    }
-
-    public async Task<EmployeeEditFormDto> SearchEmployeeCompleteAsync(string email) {
-        var employee = await _db.Employees
-            .Select(em => new EmployeeEditFormDto {
-                Id = em.Id,
-                FirstName = em.FirstName,
-                LastName = em.LastName,
-                Email = em.Email,
-                BirthDay = em.BirthDay,
-                StartDate = em.StartDate,
-                Role = em.Role,
-                NumericCode = em.NumericCode,
-                Password = em.Password,
-                EmployeeActivities = em.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
-                        Id = ea.Activity.Id,
-                        Activity = new ActivitySelectDto {
-                            Id = ea.Activity.Id,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        },
-                        ActivityId = ea.Activity.Id,
-                        Employee = new EmployeeSelectDto {
-                            Id = em.Id,
-                            Email = em.Email
-                        },
-                        EmployeeId = em.Id
-                    }).ToList(),
-                EmployeeSalaries = em.Salaries
-                    .Select( ems => new EmployeeSalaryDto {
-                        EmployeeId = ems.Id,
-                        StartDate = ems.StartDate,
-                        FinishDate = ems.StartDate,
-                        Salary = float.Parse(ems
-                            .Salary
-                            .ToString())})
-                    .ToList(),
-            })
-            .Where(em => EF.Functions.Like(email, $"%{email}%"))
-            .FirstAsync();
-        return employee;
     }
 
     public async Task<List<EmployeeViewDto>> GetAllAsync() {

@@ -187,21 +187,6 @@ public class EmployeeController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("search/complete/{email}")]
-    public async Task<EmployeeEditFormDto> SearchEmployeeComplete(string email)
-    {
-        try
-        {
-            return await _repo.SearchEmployeeCompleteAsync(email);
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return new EmployeeEditFormDto();
-        }
-    }
-
-    [Authorize]
     [HttpGet("get/all")]
     public async Task<List<EmployeeViewDto>> GetAll()
     {

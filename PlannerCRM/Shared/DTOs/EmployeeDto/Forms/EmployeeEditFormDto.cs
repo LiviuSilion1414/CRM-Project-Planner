@@ -34,6 +34,4 @@ public class EmployeeEditFormDto
     public DateTime? FinishDateHourlyRate { get; set; }
 
     public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
-
-    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }
