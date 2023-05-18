@@ -5,7 +5,7 @@
 @using static PlannerCRM.Shared.Constants.ConstantValues
 
 @inject NavigationManager navManager
-@inject CustomAuthState authStateProvider
+@inject AuthenticationStateService authStateService
 
 <div class="page">
     <main>
@@ -48,23 +48,23 @@
     private string UserRole { get; set; }
 
     protected override async Task OnInitializedAsync() {
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var authState = await authStateService.GetAuthenticationStateAsync();
         IsAuthenticated = authState.User.Identity.IsAuthenticated;
         
         if (IsAuthenticated) {
-            UserRole = (await authStateProvider.GetRole())
+            UserRole = (await authStateService.GetCurrentUserRoleAsync())
                 .ToUpper()
                 .Replace('_', ' ');
         }
         var currentPage = navManager.Uri.Replace(navManager.BaseUri, "/");
         if (currentPage == "/login" || currentPage == "/") {
-            var state = await authStateProvider.GetAuthenticationStateAsync();
+            var state = await authStateService.GetAuthenticationStateAsync();
             var loggedInUserID = new CurrentEmployeeDto();
             var loggedInUserRole = string.Empty;
             if (state.User.Identity.IsAuthenticated) {
-                loggedInUserRole = await authStateProvider.GetRole();
+                loggedInUserRole = await authStateService.GetCurrentUserRoleAsync();
                 if (state.User.Identity.Name != ADMIN_EMAIL) {
-                    loggedInUserID = await authStateProvider.GetCurrentEmployeeId(state.User.Identity.Name);
+                    loggedInUserID = await authStateService.GetCurrentEmployeeIdAsync(state.User.Identity.Name);
                 }
                 foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
                     if (possibleRole.ToString() == loggedInUserRole) {
@@ -83,11 +83,11 @@
 
     private async Task NavigateBasedOnRole() {
         if (IsAuthenticated) {
-            var role = await authStateProvider.GetRole();
-            _currentUser = await authStateProvider.GetCurrentUserInfoAsync();
+            var role = await authStateService.GetCurrentUserRoleAsync();
+            _currentUser = await authStateService.GetCurrentUserInfoAsync();
 
             if (_currentUser.UserName != ADMIN_EMAIL) {
-                _currentEmployee = await authStateProvider.GetCurrentEmployeeId(_currentUser.UserName);
+                _currentEmployee = await authStateService.GetCurrentEmployeeIdAsync(_currentUser.UserName);
             }
 
             foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
@@ -106,7 +106,7 @@
     }
 
     private async Task OnClickLogout() {
-        await authStateProvider.Logout();
+        await authStateService.LogoutAsync();
 
         navManager.NavigateTo("/login");
     }

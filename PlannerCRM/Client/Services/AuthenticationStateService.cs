@@ -6,19 +6,20 @@ using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Client.Services;
 
-public class CustomAuthState : AuthenticationStateProvider
+public class AuthenticationStateService : AuthenticationStateProvider
 {
-    private readonly AuthService _api;
+    private readonly AuthenticationInfoService _authInfoService;
+    private readonly LoginService _loginService;
     private CurrentUser _currentUser;
 
-    public CustomAuthState(AuthService api) {
-        this._api = api;
+    public AuthenticationStateService(AuthenticationInfoService api) {
+        this._authInfoService = api;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
         var identity = new ClaimsIdentity();
         try {
-            var userInfo = await GetCurrentUser();
+            var userInfo = await GetCurrentUserAsync();
             if (userInfo.IsAuthenticated) {
                 var claims = new List<Claim> { 
                     new Claim(ClaimTypes.Name, _currentUser.UserName) 
@@ -33,13 +34,15 @@ public class CustomAuthState : AuthenticationStateProvider
             }
         } catch (HttpRequestException ex) {
             Console.WriteLine("Request failed:" + ex.ToString());
+        } catch (Exception exc) {
+            Console.WriteLine("Exception:" + exc.ToString());
         }
         
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }
 
-    private async Task<CurrentUser> GetCurrentUser() {
-        _currentUser = await _api.CurrentUserInfo();
+    public async Task<CurrentUser> GetCurrentUserAsync() {
+        _currentUser = await _authInfoService.GetCurrentUserInfoAsync();
 
         if (_currentUser != null && _currentUser.IsAuthenticated) {
             return _currentUser;
@@ -47,28 +50,26 @@ public class CustomAuthState : AuthenticationStateProvider
             return _currentUser;
         }
     }
-    public async Task<string> GetRole() {
-        return await _api.GetRole();
-    }
 
-    public async Task Logout() {
-        await _api.Logout();
-        _currentUser = null;
-
+    public async Task<string> LoginAsync(EmployeeLoginDto dto) {
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        return await _loginService.LoginAsync(dto);
     }
     
-    public async Task Login(EmployeeLoginDto loginParameters) {
-        await _api.Login(loginParameters);
-        
+    public async Task LogoutAsync() {
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        await _loginService.LogoutAsync();
     }
 
-    public async Task<CurrentEmployeeDto> GetCurrentEmployeeId(string email) {
-       return await _api.GetCurrentEmployeeIdAsync(email);
+    public async Task<string> GetCurrentUserRoleAsync() {
+        return await _authInfoService.GetCurrentUserRoleAsync(); 
+    }    
+
+    public async Task<CurrentEmployeeDto> GetCurrentEmployeeIdAsync(string email) {
+       return await _authInfoService.GetCurrentEmployeeIdAsync(email);
     }
 
     public async Task<CurrentUser> GetCurrentUserInfoAsync() {
-        return await _api.CurrentUserInfo();
+        return await _authInfoService.GetCurrentUserInfoAsync();
     }
 }
