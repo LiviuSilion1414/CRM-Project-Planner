@@ -12,7 +12,7 @@
 
 <div class="container-fluid">
     <h1>Modifica commessa</h1>
-    <EditForm Model="@_model" OnValidSubmit="OnClickConfirm">
+    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickConfirm">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <label for="Nome commessa">Nome</label>
@@ -40,12 +40,17 @@
     </EditForm>
 </div>
 
+<NavigationLock ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
+
 @code {
+    [Inject] public NavigationLockService navLockService { get; set; }
     [Parameter] public string Id { get; set; }
     private WorkOrderFormDto _model = new WorkOrderFormDto();
+    private EditContext _editContext { get; set; }
 
     protected override async Task OnInitializedAsync() {
         _model = await httpClient.GetFromJsonAsync<WorkOrderFormDto>($"http://localhost:5032/workorder/get/for/edit/{Id}");
+        _editContext = new(_model);
     }
 
     private void RedirectToPage() {

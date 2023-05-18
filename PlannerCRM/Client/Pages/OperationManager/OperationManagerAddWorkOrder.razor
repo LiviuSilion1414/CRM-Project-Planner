@@ -12,25 +12,25 @@
 
 <div class="container-fluid">
     <h1>Aggiungi commessa</h1>
-    <EditForm Model="@model" OnValidSubmit="OnClickConfirm">
+    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickConfirm">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <span class="oi oi-text"></span>
             <label for="Nome commessa">Nome</label>
-            <input type="text" class="form-control" @bind="model.Name"/>
-            <ValidationMessage For="@(() => model.Name)"/>
+            <input type="text" class="form-control" @bind="_model.Name"/>
+            <ValidationMessage For="@(() => _model.Name)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label>Data d'inzio</label>
-            <input type="date" class="form-control" @bind="@model.StartDate"/> 
-            <ValidationMessage For="@(() => model.StartDate)"/>
+            <input type="date" class="form-control" @bind="@_model.StartDate"/> 
+            <ValidationMessage For="@(() => _model.StartDate)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label>Data fine</label>
-            <input type="date" class="form-control" @bind="@model.FinishDate"/>
-            <ValidationMessage For="@(() => model.FinishDate)"/>
+            <input type="date" class="form-control" @bind="@_model.FinishDate"/>
+            <ValidationMessage For="@(() => _model.FinishDate)"/>
         </div>
         <div class="wrapper-btn">
             <div class="btn-cancel">
@@ -43,15 +43,23 @@
     </EditForm>
 </div>
 
+<NavigationLock ConfirmExternalNavigation="@navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="@navLockService.ConfirmInternalSite"/>
+
 @code {
-    private WorkOrderFormDto model = new();
+    [Inject] public NavigationLockService navLockService { get; set; }
+    private WorkOrderFormDto _model = new();
+    private EditContext _editContext { get; set; }
+
+    protected override void OnInitialized() {
+        _editContext = new(_model);
+    }
 
     private void RedirectToPage() {
         navManager.NavigateTo("/operation-manager");
     }
 
     private async Task OnClickConfirm() {
-        await httpClient.PostAsJsonAsync<WorkOrderFormDto>("http://localhost:5032/workorder/add", model);
+        await httpClient.PostAsJsonAsync<WorkOrderFormDto>("http://localhost:5032/workorder/add", _model);
             
         RedirectToPage();
     }
@@ -60,3 +68,4 @@
         RedirectToPage();
     }
 }
+

@@ -6,6 +6,7 @@
 
 @inject NavigationManager navManager
 @inject HttpClient httpClient
+@inject IJSRuntime JS
 
 @attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 
@@ -13,7 +14,7 @@
 
 <div class="container-fluid">
     <h1>Modifica utente</h1>
-    <EditForm Model="@_model" OnValidSubmit="OnClickConfirm" class="form">
+    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickConfirm" class="form">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <span class="oi oi-person"></span>
@@ -102,9 +103,13 @@
     </EditForm>
 </div>
 
+<NavigationLock title="Dati" ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
+
 @code {
     [Parameter] public int Id { get; set; }
+    [Inject] private NavigationLockService navLockService { get; set; }
     private EmployeeEditFormDto _model = new();
+    private EditContext _editContext { get; set; }
     private string TypeField = InputType.TEXT.ToString().ToLower();
     private string _CurrentEmail { get; set; }
     private float _HourlyRate { get; set; }
@@ -112,7 +117,11 @@
 
     protected override async Task OnInitializedAsync() {
         _model = await httpClient.GetFromJsonAsync<EmployeeEditFormDto>($"http://localhost:5032/employee/get/for/edit/{Id}");
-        _CurrentEmail = _model.Email;
+        _CurrentEmail = _model.Email;   
+    }
+
+    protected override void OnInitialized() {
+        _editContext = new(_model);
     }
 
     private void SwitchShowPassword() {

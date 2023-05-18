@@ -12,7 +12,7 @@
 
 <div class="container-fluid">
     <h3>Aggiungi orario di lavoro</h3>
-    <EditForm Model="@_model" OnValidSubmit="OnClickAddWorkedHours">
+    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickAddWorkedHours">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <span class="oi oi-briefcase"></span>
@@ -50,12 +50,16 @@
     </EditForm>
 </div>
 
+<NavigationLock ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
+
 @code {
     [Parameter] public int EmployeeId { get; set; }
     [Parameter] public int ActivityId { get; set; }
     [Parameter] public int WorkorderId { get; set; }
-    private WorkTimeRecordFormDto _workTimeRecord = new();
+    [Inject] public NavigationLockService navLockService { get; set; }
     private ActivityViewDto _model = new();
+    private EditContext _editContext { get; set; }
+    private WorkTimeRecordFormDto _workTimeRecord = new();
     private WorkOrderViewDto _workorder = new();
     private string _employeeRole { get; set; }  
     private int _workedHours { get; set; }
@@ -72,6 +76,7 @@
             
         _model = await httpClient.GetFromJsonAsync<ActivityViewDto>($"http://localhost:5032/activity/get/{ActivityId}");
         _workorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{_model.WorkOrderId}");
+        _editContext = new(_model);
     }
 
     private void RedirectToPage() {

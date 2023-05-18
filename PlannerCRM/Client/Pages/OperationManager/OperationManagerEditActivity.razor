@@ -16,7 +16,7 @@
 
 <div class="container-fluid">
     <h1>Modifica attività</h1>
-    <EditForm Model="_model" OnValidSubmit="OnClickEditActivity">
+    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickEditActivity">
         <DataAnnotationsValidator />
         <div class="form-group">
             <span class="oi oi-briefcase"></span>
@@ -102,10 +102,14 @@
     </EditForm>
 </div>
 
+<NavigationLock ConfirmExternalNavigation="@navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="@navLockService.ConfirmInternalSite"/>
+
 @code {
+    [Inject] public NavigationLockService navLockService { get; set; }
     [Parameter] public int workOrderId { get; set; }
     [Parameter] public int activityId { get; set; }
     private ActivityFormDto _model = new();
+    private EditContext _editContext { get; set; }
     private ActivitySelectHelperDto _selectModel = new();
     private List<WorkOrderSelectDto> _workOrders = new();
     private WorkOrderViewDto _currentWorkOrder = new();
@@ -116,6 +120,7 @@
 
         _model = await httpClient.GetFromJsonAsync<ActivityFormDto>($"http://localhost:5032/activity/get/for/edit/{activityId}");
         _currentWorkOrder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{workOrderId}");
+        _editContext = new(_model);
     } 
 
     private async Task OnClickSearchWorkorder(string workorder) {

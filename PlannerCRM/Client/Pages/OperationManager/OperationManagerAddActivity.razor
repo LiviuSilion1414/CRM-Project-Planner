@@ -16,7 +16,7 @@
 
 <div class="container-fluid">
     <h1>Aggiungi attività</h1>
-    <EditForm Model="_model" OnValidSubmit="OnClickAddActivity">
+    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickAddActivity">
         <DataAnnotationsValidator />
         <div class="form-group">
             <div class="child">
@@ -124,14 +124,19 @@
     </EditForm>
 </div>
 
-@code {
+<NavigationLock ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
+
+@code { 
+    [Inject] NavigationLockService navLockService { get; set; }
     private ActivityFormDto _model = new();
+    private EditContext _editContext { get; set; }
     private ActivitySelectHelperDto _selectModel = new();
     private List<WorkOrderSelectDto> _workorders = new();
     private List<EmployeeSelectDto> _employees = new();
 
     protected override void OnInitialized() {
        _model.EmployeesActivities = new();
+       _editContext = new(_model);
     } 
 
     private async Task OnClickSearchWorkorder(string workorder) {

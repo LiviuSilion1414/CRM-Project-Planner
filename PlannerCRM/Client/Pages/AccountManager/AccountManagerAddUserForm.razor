@@ -12,7 +12,7 @@
 
 <div class="container-fluid">
     <h1>Aggiungi utente</h1>
-    <EditForm Model="@_model" OnValidSubmit="OnClickConfirm">
+    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickConfirm">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <span class="oi oi-person"></span>
@@ -101,12 +101,20 @@
     </EditForm>
 </div>
 
+<NavigationLock ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
+
 @code {
+    [Inject] public NavigationLockService navLockService { get; set; }
     private EmployeeAddFormDto _model = new();
+    private EditContext _editContext { get; set; }
     private string TypeField = InputType.TEXT.ToString().ToLower();
     private bool IsError { get; set; }
     private string Message { get; set; }
     private bool IsCheckboxClicked { get; set; }
+
+    protected override void OnInitialized() {
+        _editContext = new(_model);
+    }
 
     private void SwitchShowPassword() {
         if (IsCheckboxClicked) {
