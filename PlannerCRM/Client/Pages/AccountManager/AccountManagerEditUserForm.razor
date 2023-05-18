@@ -103,7 +103,7 @@
     </EditForm>
 </div>
 
-<NavigationLock title="Dati" ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
+<NavigationLock ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
 
 @code {
     [Parameter] public int Id { get; set; }
