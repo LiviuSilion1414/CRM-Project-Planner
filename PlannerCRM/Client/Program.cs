@@ -21,6 +21,13 @@ builder.Services.AddScoped<OperationManagerCrudService>();
 builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
 
+builder.Services.AddScoped<Logger<AuthenticationStateService>>();
+builder.Services.AddScoped<Logger<LoginService>>();
+builder.Services.AddScoped<Logger<CurrentUserInfoService>>();
+builder.Services.AddScoped<Logger<OperationManagerCrudService>>();
+builder.Services.AddScoped<Logger<OperationManagerCrudService>>();
+builder.Services.AddScoped<Logger<DeveloperService>>();
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();
