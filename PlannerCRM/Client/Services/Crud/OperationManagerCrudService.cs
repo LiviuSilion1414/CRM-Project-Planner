@@ -13,11 +13,11 @@ namespace PlannerCRM.Client.Services.Crud;
 public class OperationManagerCrudService
 {
     private readonly HttpClient _http;
-    private readonly ILogger _logger;
+    private readonly Logger<OperationManagerCrudService> _logger;
 
     public OperationManagerCrudService(
         HttpClient http,
-        ILogger logger)
+        Logger<OperationManagerCrudService> logger)
     {
         _http = http;
         _logger = logger;

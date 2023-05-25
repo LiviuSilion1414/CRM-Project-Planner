@@ -8,11 +8,11 @@ namespace PlannerCRM.Client.Services;
 public class LoginService
 {
     private readonly HttpClient _http;
-    private readonly ILogger _logger;
+    private readonly Logger<LoginService> _logger;
 
     public LoginService(
         HttpClient http,
-        ILogger logger)
+        Logger<LoginService> logger)
     {
         _http = http;
         _logger = logger;

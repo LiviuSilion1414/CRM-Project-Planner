@@ -9,12 +9,12 @@ namespace PlannerCRM.Client.Services;
 public class AuthenticationStateService : AuthenticationStateProvider
 {
     private readonly CurrentUserInfoService _authInfoService;
-    private readonly ILogger _logger;
+    private readonly Logger<AuthenticationStateService> _logger;
     private CurrentUser _currentUser;
 
     public AuthenticationStateService(
         CurrentUserInfoService api, 
-        ILogger logger)
+        Logger<AuthenticationStateService> logger)
     {
         this._authInfoService = api;
         this._logger = logger;

@@ -9,12 +9,11 @@ namespace PlannerCRM.Client.Services;
 public class CurrentUserInfoService
 {
     private readonly HttpClient _http;
-    private readonly ILogger _logger;
+    private readonly Logger<CurrentUserInfoService> _logger;
 
     public CurrentUserInfoService(
         HttpClient http,
-        ILogger logger
-        )
+        Logger<CurrentUserInfoService> logger)
     {
         _http = http;
         _logger = logger;

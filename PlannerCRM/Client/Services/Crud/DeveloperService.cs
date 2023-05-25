@@ -15,9 +15,12 @@ namespace PlannerCRM.Client.Services.Crud;
 public class DeveloperService
 {
     private readonly HttpClient _http;
-    private readonly ILogger _logger;
+    private readonly Logger<DeveloperService> _logger;
 
-    public DeveloperService(HttpClient http, ILogger logger) {
+    public DeveloperService(
+        HttpClient http, 
+        Logger<DeveloperService> logger) 
+    {
         _http = http;
         _logger = logger;
     }

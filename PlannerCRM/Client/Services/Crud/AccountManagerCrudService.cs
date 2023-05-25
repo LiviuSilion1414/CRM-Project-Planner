@@ -11,10 +11,14 @@ namespace PlannerCRM.Client.Services.Crud;
 public class AccountManagerCrudService
 {
     private readonly HttpClient _http;
-    private readonly ILogger _logger;
+    private readonly Logger<AccountManagerCrudService> _logger;
+
     public AccountManagerCrudService(
-        HttpClient http) {
+        HttpClient http,
+        Logger<AccountManagerCrudService> logger) 
+    {
         _http = http;
+        _logger = logger;
     }
 
     public async Task<List<EmployeeViewDto>> GetAllEmployeesAsync() {

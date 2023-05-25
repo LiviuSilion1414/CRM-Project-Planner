@@ -8,7 +8,8 @@ public class NavigationLockService
     private readonly IJSRuntime _js;
     public bool ConfirmedExternalExit { get { return true; } }
     
-    public NavigationLockService(IJSRuntime js) {
+    public NavigationLockService(IJSRuntime js) 
+    {
         _js = js;
     }
 
