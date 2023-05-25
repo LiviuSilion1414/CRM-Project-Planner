@@ -1,4 +1,4 @@
-namespace PlannerCRM.Server.CustomExceptions;
+namespace PlannerCRM.Shared.CustomExceptions;
 
 public class DuplicateElementException : Exception
 {
