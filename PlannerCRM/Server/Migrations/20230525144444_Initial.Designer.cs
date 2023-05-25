@@ -12,7 +12,7 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230503153506_Initial")]
+    [Migration("20230525144444_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
