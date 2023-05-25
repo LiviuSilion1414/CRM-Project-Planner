@@ -13,7 +13,11 @@ public class IsNotAdminRoleAttribute : ValidationAttribute
 
     public override bool IsValid(object value) {
         if (value.GetType() == typeof(Roles)) {
-            if ((Roles) value != Roles.ACCOUNT_MANAGER) {
+            var isInAdminRole = value.GetType()
+                .GetProperties()
+                .Any(role => role.Name == nameof(Roles.ACCOUNT_MANAGER));
+            
+            if (!isInAdminRole) {
                 return true;
             } else {
                 return false;
