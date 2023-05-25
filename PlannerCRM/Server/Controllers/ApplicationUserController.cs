@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PlannerCRM.Server.CustomExceptions;
+using PlannerCRM.Shared.CustomExceptions;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
@@ -58,7 +58,7 @@ public class ApplicationUserController : ControllerBase
         catch (Exception exc)
         {
             _logger.LogError(exc.StackTrace, exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            return BadRequest(exc.Message);
         }
     }
 

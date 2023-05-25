@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Server.CustomExceptions;
+using PlannerCRM.Shared.CustomExceptions;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;

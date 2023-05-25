@@ -3,7 +3,7 @@ using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
-using PlannerCRM.Server.CustomExceptions;
+using PlannerCRM.Shared.CustomExceptions;
 using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 
 namespace PlannerCRM.Server.Services;

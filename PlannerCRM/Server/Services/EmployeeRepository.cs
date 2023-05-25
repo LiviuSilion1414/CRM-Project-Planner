@@ -5,7 +5,7 @@ using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
-using PlannerCRM.Server.CustomExceptions;
+using PlannerCRM.Shared.CustomExceptions;
 using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 
 namespace PlannerCRM.Server.Services;

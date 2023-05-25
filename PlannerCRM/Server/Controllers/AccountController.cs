@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
 using static PlannerCRM.Shared.Constants.LoginFeedBack;
@@ -13,13 +14,16 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public AccountController(
         UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager)
+        SignInManager<IdentityUser> signInManager,
+        RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
     }
 
     [HttpPost("login")]
@@ -58,15 +62,12 @@ public class AccountController : ControllerBase
     [HttpGet("user/role")]
     public async Task<string> GetUserRole()
     {
-        if (User.Identity.IsAuthenticated)
-        {
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+        if (User.Identity.IsAuthenticated) {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
 
             return roles.Single();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }

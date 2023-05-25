@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Server.CustomExceptions;
+using PlannerCRM.Shared.CustomExceptions;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
 using static PlannerCRM.Shared.Constants.ExceptionsMessages;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Server.Services;
 
@@ -37,6 +38,10 @@ public class ApplicationUserRepository
             throw new InvalidOperationException(OBJECT_ALREADY_PRESENT);
         }
 
+        if (dto.Role == ADMIN_ROLE) {
+            throw new InvalidOperationException(NOT_ASSEGNABLE_ROLE);
+        }
+
         var isAlreadyPresent = await _userManager.Users
             .SingleOrDefaultAsync(user => user.UserName == dto.Email);
         if (isAlreadyPresent != null) {
@@ -49,12 +54,17 @@ public class ApplicationUserRepository
             UserName = dto.Email
         };
         
-        var userRole = await _roleManager.Roles
+        var foundUserRole = await _roleManager.Roles
             .FirstAsync(aspRole => Enum.GetNames(typeof(Roles))
                 .Any(role => role == aspRole.Name));
-        
+
+        var userRole = new IdentityRole {
+            Name = foundUserRole.Name,
+            NormalizedName = foundUserRole.Name.ToUpper()
+        };
+
         var creationResult = await _userManager.CreateAsync(user, dto.Password);
-        var assignmentResult = await _userManager.AddToRoleAsync(user, userRole.Name);
+        var assignmentResult = await _userManager.AddToRoleAsync(user, userRole.NormalizedName);
         
         if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
             throw new InvalidOperationException(IMPOSSIBILE_GOING_FORWARD);

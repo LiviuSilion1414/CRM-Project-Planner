@@ -12,7 +12,7 @@ namespace PlannerCRM.Client.Pages.Developer.MasterDetail;
 [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 public partial class WorkOrderActivityMasterDetail
 {
-    [Parameter] public int EmployeeId { get; set; } //EmployeeId
+    [Parameter] public int EmployeeId { get; set; }
 
     [Inject] private DeveloperService DeveloperService { get; set; }
     [Inject] private NavigationManager NavManager { get; set; }

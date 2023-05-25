@@ -1,8 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using PlannerCRM.Shared.Attributes;
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.Models;
-using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
@@ -24,7 +20,6 @@ public class EmployeeEditFormDto
     
     public string NumericCode { get; set; }
 
-    [IsNotAdminRole(ADMIN_ROLE)]
     public Roles Role { get; set; }
 
     public float HourlyRate { get; set; }

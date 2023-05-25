@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Server.CustomExceptions;
+using PlannerCRM.Shared.CustomExceptions;
 using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
@@ -35,6 +35,26 @@ public class WorkOrderController : ControllerBase
             await _repo.AddAsync(dto);
 
             return Ok(WORKORDER_ADD);
+        }
+        catch (NullReferenceException nullRefExc)
+        {
+            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            return NotFound(nullRefExc.Message);
+        }
+        catch (ArgumentNullException argNullExc)
+        {
+            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
+            return NotFound(argNullExc.Message);
+        }
+        catch (DuplicateElementException duplicateElemExc)
+        {
+            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return NotFound(duplicateElemExc.Message);
+        }
+        catch (DbUpdateException dbUpdateExc)
+        {
+            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return NotFound(dbUpdateExc.Message);
         }
         catch (Exception exc)
         {
