@@ -8,12 +8,16 @@ namespace PlannerCRM.Client.Services;
 
 public class AuthenticationStateService : AuthenticationStateProvider
 {
-    private readonly AuthenticationInfoService _authInfoService;
-    private readonly LoginService _loginService;
+    private readonly CurrentUserInfoService _authInfoService;
+    private readonly ILogger _logger;
     private CurrentUser _currentUser;
 
-    public AuthenticationStateService(AuthenticationInfoService api) {
+    public AuthenticationStateService(
+        CurrentUserInfoService api, 
+        ILogger logger)
+    {
         this._authInfoService = api;
+        this._logger = logger;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
@@ -49,27 +53,5 @@ public class AuthenticationStateService : AuthenticationStateProvider
         } else {
             return _currentUser;
         }
-    }
-
-    public async Task<string> LoginAsync(EmployeeLoginDto dto) {
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        return await _loginService.LoginAsync(dto);
-    }
-    
-    public async Task LogoutAsync() {
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        await _loginService.LogoutAsync();
-    }
-
-    public async Task<string> GetCurrentUserRoleAsync() {
-        return await _authInfoService.GetCurrentUserRoleAsync(); 
-    }    
-
-    public async Task<CurrentEmployeeDto> GetCurrentEmployeeIdAsync(string email) {
-       return await _authInfoService.GetCurrentEmployeeIdAsync(email);
-    }
-
-    public async Task<CurrentUser> GetCurrentUserInfoAsync() {
-        return await _authInfoService.GetCurrentUserInfoAsync();
     }
 }
