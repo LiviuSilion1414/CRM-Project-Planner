@@ -1,13 +1,6 @@
 @page "/junior-developer/{EmployeeId:int}"
 @page "/junior-developer"
 
-@using PlannerCRM.Shared.Models
-@attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
+<PageTitle>CRM - Junior Developer</PageTitle>
 
-<PageTitle>Junior Developer</PageTitle>
-
-<WorkOrderActivityMasterDetail Id="EmployeeId"/> 
-
-@code {
-    [Parameter] public int EmployeeId { get; set; }
-}
+<WorkOrderActivityMasterDetail EmployeeId="@EmployeeId"/> 

@@ -1,12 +1,5 @@
 ﻿@inherits LayoutComponentBase
 
-@using PlannerCRM.Shared.Models
-@using PlannerCRM.Shared.DTOs.EmployeeDto.Views
-@using static PlannerCRM.Shared.Constants.ConstantValues
-
-@inject NavigationManager navManager
-@inject AuthenticationStateService authStateService
-
 <div class="page">
     <main>
         <div class="navbar">
@@ -40,77 +33,3 @@
         </article>
     </main>
 </div>
-
-@code {
-    private CurrentEmployeeDto _currentEmployee { get; set; }
-    private CurrentUser _currentUser { get; set; }
-    private bool IsAuthenticated { get; set; }
-    private string UserRole { get; set; }
-
-    protected override async Task OnInitializedAsync() {
-        var authState = await authStateService.GetAuthenticationStateAsync();
-        IsAuthenticated = authState.User.Identity.IsAuthenticated;
-        
-        if (IsAuthenticated) {
-            UserRole = (await authStateService.GetCurrentUserRoleAsync())
-                .ToUpper()
-                .Replace('_', ' ');
-        }
-        var currentPage = navManager.Uri.Replace(navManager.BaseUri, "/");
-        if (currentPage == "/login" || currentPage == "/") {
-            var state = await authStateService.GetAuthenticationStateAsync();
-            var loggedInUserID = new CurrentEmployeeDto();
-            var loggedInUserRole = string.Empty;
-            if (state.User.Identity.IsAuthenticated) {
-                loggedInUserRole = await authStateService.GetCurrentUserRoleAsync();
-                if (state.User.Identity.Name != ADMIN_EMAIL) {
-                    loggedInUserID = await authStateService.GetCurrentEmployeeIdAsync(state.User.Identity.Name);
-                }
-                foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                    if (possibleRole.ToString() == loggedInUserRole) {
-                        if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
-                            possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
-
-                            navManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}/{loggedInUserID.Id}",false, true);
-                        } else {
-                            navManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}", false, true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private async Task NavigateBasedOnRole() {
-        if (IsAuthenticated) {
-            var role = await authStateService.GetCurrentUserRoleAsync();
-            _currentUser = await authStateService.GetCurrentUserInfoAsync();
-
-            if (_currentUser.UserName != ADMIN_EMAIL) {
-                _currentEmployee = await authStateService.GetCurrentEmployeeIdAsync(_currentUser.UserName);
-            }
-
-            foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                if (possibleRole.ToString() == role) {
-                    if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
-                        possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
-                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
-                    } else {
-                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
-                    }
-                }
-            }
-        } else {
-            navManager.NavigateTo("/", true);
-        }
-    }
-
-    private async Task OnClickLogout() {
-        await authStateService.LogoutAsync();
-
-        navManager.NavigateTo("/login");
-    }
-}
-
-
-

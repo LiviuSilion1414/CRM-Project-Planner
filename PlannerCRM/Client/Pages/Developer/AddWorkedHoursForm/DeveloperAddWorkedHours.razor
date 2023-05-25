@@ -1,43 +1,43 @@
 @page "/developer/add/worked-hours/{EmployeeId:int}/{ActivityId:int}"
 
-@using PlannerCRM.Shared.DTOs.ActivityDto.Views
-@using PlannerCRM.Shared.DTOs.Workorder.Views
-@using PlannerCRM.Shared.DTOs.WorkTimeDto.Form
 @using PlannerCRM.Shared.Models
 
-@inject HttpClient httpClient
-@inject NavigationManager navManager
+<PageTitle>CRM - Aggiungi orario di lavoro</PageTitle>
 
-<PageTitle>Aggiungi orario di lavoro</PageTitle>
+@if (_IsError) {
+    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
+} else {
+    <Feedback Severity="@BannerType.SUCCESS" Message="@_Message"></Feedback>
+}
 
 <div class="container-fluid">
     <h3>Aggiungi orario di lavoro</h3>
-    <EditForm EditContext="@_editContext" OnValidSubmit="OnClickAddWorkedHours">
+    <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickAddWorkedHours">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <span class="oi oi-briefcase"></span>
-            <label for="Nome commessa:">Nome commessa </label> <span>(@_workorder.StartDate.ToShortDateString() - @_workorder.FinishDate.ToShortDateString())</span>
-            <input type="text" class="form-control" @bind="_workorder.Name" readonly/>
+            <label for="Nome commessa:">Nome commessa </label> <span>(@_WorkOrder.StartDate.ToShortDateString() - @_WorkOrder.FinishDate.ToShortDateString())</span>
+            <input type="text" class="form-control" @bind="_WorkOrder.Name" readonly/>
         </div>
         <div class="form-group">
             <span class="oi oi-puzzle-piece"></span>
             <label for="Nome attività">Nome attività </label>
-            <input type="text" class="form-control" @bind="_model.Name" readonly/>
+            <input type="text" class="form-control" @bind="_Model.Name" readonly/>
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data d'inizio">Data d'inizio </label>
-            <input type="date" class="form-control" @bind="@_model.StartDate" readonly/>
+            <input type="date" class="form-control" @bind="@_Model.StartDate" readonly/>
         </div>
         <div class="form-group">
             <span class="oi oi-calendar"></span>
             <label for="Data di fine">Data fine </label>
-            <input type="date" class="form-control" @bind="@_model.FinishDate" readonly/>
+            <input type="date" class="form-control" @bind="@_Model.FinishDate" readonly/>
         </div>
         <div class="form-group">
             <span class="oi oi-clock"></span>
            <label for="Orario di lavoro">Inserisci il tuo orario di lavoro</label>
-           <input type="number" class="form-control" @bind="@_workedHours" required>
+           <input type="number" class="form-control" @bind="@_WorkedHours" required>
         </div>
         <div class="wrapper-btn">
             <div class="btn-cancel">
@@ -50,64 +50,5 @@
     </EditForm>
 </div>
 
-<NavigationLock ConfirmExternalNavigation="navLockService.ConfirmedExternalExit" OnBeforeInternalNavigation="navLockService.ConfirmInternalSite"/>
-
-@code {
-    [Parameter] public int EmployeeId { get; set; }
-    [Parameter] public int ActivityId { get; set; }
-    [Parameter] public int WorkorderId { get; set; }
-    [Inject] public NavigationLockService navLockService { get; set; }
-    private ActivityViewDto _model = new();
-    private EditContext _editContext { get; set; }
-    private WorkTimeRecordFormDto _workTimeRecord = new();
-    private WorkOrderViewDto _workorder = new();
-    private string _employeeRole { get; set; }  
-    private int _workedHours { get; set; }
-
-    protected override async Task OnInitializedAsync() {
-        var responseMessage = await httpClient.GetAsync("http://localhost:5032/account/user/role");
-        _employeeRole = await responseMessage.Content.ReadAsStringAsync();
-        foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-            if ((possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) && possibleRole.ToString() == _employeeRole) || 
-                (possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER) && possibleRole.ToString() == _employeeRole)) {
-                _employeeRole = _employeeRole;
-            }
-        }
-            
-        _model = await httpClient.GetFromJsonAsync<ActivityViewDto>($"http://localhost:5032/activity/get/{ActivityId}");
-        _workorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{_model.WorkOrderId}");
-        _editContext = new(_model);
-    }
-
-    private void RedirectToPage() {
-        foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-            if (((possibleRole.ToString() == _employeeRole) && (possibleRole.ToString() == _employeeRole)) && 
-                ((possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER)))) {
-                
-                navManager.NavigateTo($"/senior-developer/{EmployeeId}");
-            }
-            if (((possibleRole.ToString() == _employeeRole) && (possibleRole.ToString() == _employeeRole)) && 
-                ((possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)))) {
-                
-                navManager.NavigateTo($"/junior-developer/{EmployeeId}");
-            }
-        }
-    }
-    
-    private void OnClickCancel() {
-        RedirectToPage();
-    }
-
-    private async Task OnClickAddWorkedHours() {
-        _workTimeRecord.Date = DateTime.Now;
-        _workTimeRecord.Hours = _workedHours;
-        _workTimeRecord.ActivityId = _model.Id;
-        _workTimeRecord.EmployeeId = EmployeeId;
-        _workTimeRecord.WorkOrderId = _model.WorkOrderId;
-
-        await httpClient.PostAsJsonAsync<WorkTimeRecordFormDto>($"http://localhost:5032/worktimerecord/add/", _workTimeRecord);
-        
-        RedirectToPage();
-    }
-
-}
+<NavigationLock ConfirmExternalNavigation="NavLockService.ConfirmedExternalExit" 
+    OnBeforeInternalNavigation="NavLockService.ConfirmInternalExit"/>

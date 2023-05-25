@@ -1,0 +1,27 @@
+@page "/operation-manager/delete/activity/{workorderId:int}/{activityId:int}"
+
+@using PlannerCRM.Shared.Models
+
+<PageTitle>CRM - Elimina attività</PageTitle>
+
+@if (_IsError) {
+    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback> 
+} else {
+    <Feedback Severity="@BannerType.SUCCESS" Message="@_Message"></Feedback> 
+}
+
+<div>
+    <h3> Commessa: @_CurrentWorkorder.Name </h3>
+    <br>
+    <span>Vuoi eliminare l'attività:
+        <br>  
+        <strong>Nome:</strong> @_CurrentActivity.Name 
+        <br>
+        <strong>Data d'inizio:</strong> @_CurrentActivity.StartDate.ToShortDateString()
+        <br>
+        <strong>Data fine:</strong> @_CurrentActivity.FinishDate.ToShortDateString() ?
+        <br>
+    </span>
+    <button type="button" class="btn btn-danger" @onclick="OnClickDeleteActivity">Conferma</button>
+    <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+</div>

@@ -1,14 +1,3 @@
-@using PlannerCRM.Shared.DTOs.Workorder.Views
-@using PlannerCRM.Shared.DTOs.ActivityDto.Forms
-@using PlannerCRM.Shared.DTOs.WorkTimeDto.Views
-@using PlannerCRM.Shared.Models
-
-@inject HttpClient httpClient
-@inject NavigationManager navManager
-
-@attribute [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
-@attribute [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
-
 @if (_activities == null) {
     <p><em>Non ti è stata ancora assegnata alcuna attività.</em></p>
 } else {
@@ -60,29 +49,4 @@
             }
         </tbody>
     </table>
-}
-
-@code {
-    [Parameter] public int Id { get; set; } //EmployeeId
-    private List<WorkOrderViewDto> _workorders = new();
-    private List<ActivityFormDto> _activities = new();
-    private List<WorkTimeRecordViewDto> _workTimeRecords = new();
-
-    protected override async Task OnInitializedAsync() {
-        _activities = await httpClient.GetFromJsonAsync<List<ActivityFormDto>>($"http://localhost:5032/activity/get/activity/per/employee/{Id}"); 
-        var listSizeByEmployeeId = await httpClient.GetFromJsonAsync<int>($"http://localhost:5032/worktimerecord/get/size/by/employee/{Id}");
-    
-        if (listSizeByEmployeeId != 0) {
-            _workTimeRecords = await httpClient.GetFromJsonAsync<List<WorkTimeRecordViewDto>>($"http://localhost:5032/worktimerecord/get/all/by/employee/{Id}");
-        }
-
-        foreach(var ac in _activities) {
-            var workorder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{ac.WorkOrderId}");
-            _workorders.Add(workorder);
-        }
-    }
-
-    private void OnClickAddWorkedHours(int activityId) {
-        navManager.NavigateTo($"/developer/add/worked-hours/{Id}/{activityId}");
-    }
 }

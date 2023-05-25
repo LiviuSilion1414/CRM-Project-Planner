@@ -1,45 +1,35 @@
 ﻿@page "/"
 @page "/login"
 
-@using System.Net
 @using PlannerCRM.Shared.Models
-@using PlannerCRM.Shared.DTOs.EmployeeDto.Forms
-@using PlannerCRM.Shared.DTOs.EmployeeDto.Views
-@using static PlannerCRM.Shared.Constants.ConstantValues
-
-@inject NavigationManager navManager
-@inject HttpClient httpClient
-@inject CustomAuthState authStateProvider
 
 <PageTitle>CRM - Login</PageTitle>
 
-<h3>Entra nel tuo account gestionale.</h3> <!-- Aggiungi messaggi d'errore su tutte le pagine</p> -->
+<h3>Entra nel tuo account gestionale.</h3>
 
-@if (IsError) {
-    <div class="alert alert-danger" 
-        style="position: relative; margin: 0 auto; width: 300px; padding: 5px; text-align: center; display: @TypeShow; overflow: hidden;">
-        <span> @Message </span>
-        <span id="x" style="float:right;" class="oi oi-circle-x" @onclick="SwitchShowAlert"></span>
-    </div>
+@if (_IsError) {
+    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
+} else {
+    <Feedback Severity="@BannerType.SUCCESS" Message="@_Message"></Feedback>
 }
 
 <h4>Login</h4>
 <div class="container-fluid">
-    <EditForm Model="@model" OnValidSubmit="LoginOnValidInput">
+    <EditForm Model="@_Model" OnValidSubmit="LoginOnValidInput">
         <DataAnnotationsValidator/>
         <div class="form-group">
             <label for="Email">Email:</label>
-            <input type="email" class="form-control" @bind="model.Email"/>
-            <ValidationMessage For="@(() => model.Email)"/>
+            <input type="email" class="form-control" @bind="_Model.Email"/>
+            <ValidationMessage For="@(() => _Model.Email)"/>
         </div>
         <div class="form-group">
             <label for="Password">Password:</label>
             <div style="margin: 0 auto; margin: 10px 5px;">
-                <input type="@TypeField" class="form-control" @bind="model.Password"/>
+                <input type="@_TypeField" class="form-control" @bind="_Model.Password"/>
                 <input type="checkbox" style="float:left; margin-top: 5px;" @onclick="SwitchShowPassword"/>
                 <span style="margin: 10px 5px;">Vedi password</span>
             </div>
-            <ValidationMessage For="@(() => model.Password)"/>
+            <ValidationMessage For="@(() => _Model.Password)"/>
         </div>
         <div class="wrapper">
             <button type="submit" id="submit" class="btn btn-primary">
@@ -49,63 +39,3 @@
         </div>
     </EditForm>
 </div>
-
-@code {
-    private EmployeeLoginDto model = new();   
-    private HttpResponseMessage response = new();
-    private CurrentEmployeeDto CurrentEmployee { get; set; }
-    private string TypeField = InputType.PASSWORD.ToString().ToLower();
-    private string Message { get; set; }
-    private bool IsError { get; set; }
-    private bool IsCheckboxClicked { get; set; }
-    private bool IsXAlertClicked { get; set; }
-    private string TypeShow { get; set; }
-
-    private void SwitchShowAlert() {
-        if (IsXAlertClicked) {
-            IsXAlertClicked = false;
-            TypeShow = ShowType.NONE.ToString().ToLower();
-        } else {
-            IsXAlertClicked = true;
-            TypeShow = ShowType.BLOCK.ToString().ToLower();
-        }
-    }
-
-    private void SwitchShowPassword() {
-         if (IsCheckboxClicked) {
-            IsCheckboxClicked = false;
-            TypeField = InputType.TEXT.ToString().ToLower();
-        } else {
-            IsCheckboxClicked = true;
-            TypeField = InputType.PASSWORD.ToString().ToLower();
-        }
-    }
-
-    private async Task LoginOnValidInput() {
-        response = await httpClient.PostAsJsonAsync<EmployeeLoginDto>("http://localhost:5032/account/login", model); //usa chiamate api da authservice
-        
-        if (response.StatusCode == HttpStatusCode.OK && model.Email != ADMIN_EMAIL) {
-            CurrentEmployee = await httpClient.GetFromJsonAsync<CurrentEmployeeDto>($"http://localhost:5032/employee/get/id/{model.Email}");
-        }
-        
-        if (response.StatusCode == HttpStatusCode.OK) {
-            var responseMessage = await httpClient.GetAsync("http://localhost:5032/account/user/role");
-            var role = await responseMessage.Content.ReadAsStringAsync();
-
-            foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                if (possibleRole.ToString() == role) {
-                    if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
-                        possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
-                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{CurrentEmployee.Id}", true);
-                    } else {
-                        navManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
-                    }
-                }
-            }
-        } else {
-            IsError = true;
-            Message = await response.Content.ReadAsStringAsync();
-        }
-    }
-}
-

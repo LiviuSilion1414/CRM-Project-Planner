@@ -1,0 +1,102 @@
+@page "/operation-manager/edit/activity/{workOrderId:int}/{activityId:int}"
+
+@using PlannerCRM.Shared.Models
+
+<PageTitle>Modifica attività</PageTitle>
+
+@if (_IsError) {
+    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
+} else {
+    <Feedback Severity="@BannerType.SUCCESS" Message="@_Message"></Feedback>
+}
+
+<div class="container-fluid">
+    <h1>Modifica attività</h1>
+    <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickEditActivity">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <span class="oi oi-briefcase"></span>
+            <label for="Nome commessa">Commessa</label>
+            <div class="form-control">
+                <input type="text" class="form-control" @bind="_CurrentWorkOrder.Name" readonly/>
+            </div>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-text"></span>
+            <label for="Nome attività">Nome</label>
+            <input type="text" class="form-control" @bind="_Model.Name"/>
+            <ValidationMessage For="@(() => _Model.Name)" />
+        </div>
+        <div class="form-group">
+            <span class="oi oi-calendar"></span>
+            <label for="Data d'inizio">Data d'inizio</label>
+            <input type="date" class="form-control" @bind="@_Model.StartDate"/>
+            <ValidationMessage For="@(() => _Model.StartDate)"/>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-calendar"></span>
+            <label for="Data di fine">Data di fine</label>
+            <input type="date" class="form-control" @bind="@_Model.FinishDate"/>
+            <ValidationMessage For="@(() => _Model.FinishDate)" />
+        </div>
+        <div class="container-fluid">
+            <div class="child">
+                <span class="oi oi-people"></span>
+                <label for="Assegna dipendenti">Assegna a dipendenti </label>
+                <input type="search" class="form-control" @bind="_SelectModel.SelectedEmployee"/>
+                @if (_Employees.Count != 0) {
+                    <ul>
+                        @foreach (var em in _Employees) {
+                            <li class="dropdown-item" value="@em" @onclick="@(() => OnClickAddAsSelected(em))"> 
+                                 @em.Email
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+            <div class="child">
+                <button type="button" class="btn btn-link"
+                    @onclick="@(() => OnClickSearchEmployee(_SelectModel.SelectedEmployee))">Cerca</button>
+            </div>
+            <div class="child">
+                <div style="width: 400px; height:150px; left: 0; overflow-y: scroll;">
+                    <span>Dipendenti selezionati per questa attività: @_Model.EmployeesActivities.Count</span> <br>
+                    <table class="table table-striped">
+                        <thead>
+                            <th>Email</th>
+                        <th></th>
+                        </thead>
+                        <tbody>
+                            @if (_Model.EmployeesActivities.Count != 0) {
+                                @foreach (var ea in _Model.EmployeesActivities) {
+                                    <tr>
+                                        <td> 
+                                            <span class="oi oi-envelope-closed"></span>
+                                            <span> @ea.Employee.Email </span> 
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" value="@ea.Employee"
+                                                @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">Elimina</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div class="wrapper-btn">
+            <div class="btn-cancel">
+                <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+            </div>
+            <div class="btn-confirm">
+                <button type="submit" class="btn btn-primary">Conferma</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<NavigationLock ConfirmExternalNavigation="@NavLockService.ConfirmedExternalExit" 
+    OnBeforeInternalNavigation="@NavLockService.ConfirmInternalExit"/>

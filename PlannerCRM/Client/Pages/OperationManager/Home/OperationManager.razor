@@ -1,23 +1,16 @@
 @page "/operation-manager"
-@using PlannerCRM.Shared.DTOs.Workorder.Views
-@using PlannerCRM.Shared.Models
 
-@inject HttpClient httpClient
-@inject NavigationManager navManager
-
-@attribute [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-
-<PageTitle>Operation Manager</PageTitle>
+<PageTitle>CRM - Operation Manager</PageTitle>
 
 <div class="parent">
     <div class="child">
-        <button class="btn btn-primary" @onclick="OnClickAddWorkorder">
+        <button class="btn btn-primary" @onclick="OnClickAddWorkOrder">
             <span class="oi oi-plus"></span>
             Aggiungi commessa
         </button>
     </div>
     
-    @if (_workorders.Count != 0) {
+    @if (_WorkOrders.Count != 0) {
         <div class="child">
             <button class="btn btn-primary" @onclick="OnClickAddActivity">
                 <span class="oi oi-plus"></span>
@@ -30,7 +23,7 @@
 <table class="table">
     <thead>
         <tr>
-            @if (_trIsClicked) {
+            @if (_TrIsClicked) {
                 <th scope="col">#</th>
                 <th scope="col">Nome</th>
                 <th scope="col">Data d'inizio</th>
@@ -48,9 +41,9 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var wo in _workorders) {
+        @foreach (var wo in _WorkOrders) {
             <tr data-widget="expandable-table" @onclick="(() => OnClickTableRow(wo.Id))">
-                @if (_trIsClicked) {
+                @if (_TrIsClicked) {
                     <td>
                         <span class="oi oi-briefcase"></span> 
                     </td>
@@ -88,36 +81,3 @@
         }
     </tbody>
 </table>
-
-@code {
-    private List<WorkOrderViewDto> _workorders = new();
-    private bool _trIsClicked = false;
-
-    protected override async Task OnInitializedAsync() {
-        _workorders = await httpClient.GetFromJsonAsync<List<WorkOrderViewDto>>("http://localhost:5032/workorder/get/all");
-    }
-    
-    private void OnClickTableRow(int workorderId) {
-        if (_trIsClicked) {
-            _trIsClicked = false;
-        } else {
-            _trIsClicked = true;
-        }
-    }
-
-    private void OnClickAddWorkorder() {
-        navManager.NavigateTo("/operation-manager/add/workorder");
-    }
-
-    private void OnClickAddActivity() {
-        navManager.NavigateTo("/operation-manager/add/activity");
-    }
-
-    private void OnClickEdit(int id) {
-        navManager.NavigateTo($"/operation-manager/edit/workorder/{id}");
-    }
-
-    private void OnClickDelete(int id) {
-        navManager.NavigateTo($"/operation-manager/delete/workorder/{id}");
-    }
-}

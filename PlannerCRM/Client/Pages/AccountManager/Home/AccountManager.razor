@@ -1,14 +1,12 @@
 @page "/account-manager"
 
-@using PlannerCRM.Shared.DTOs.EmployeeDto.Views
 @using PlannerCRM.Shared.Models
 
-@inject HttpClient httpClient
-@inject NavigationManager navManager
+<PageTitle>CRM - Account Manager</PageTitle>
 
-@attribute [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-
-<PageTitle>Account Manager</PageTitle>
+@if (_IsError) {
+    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
+}
 
 <div class="parent">
     <button type="button" class="btn btn-primary" @onclick="OnClickAddUser">
@@ -56,23 +54,3 @@
         }
     </tbody>
 </table>
-
-@code { //mettere lato codice in folder apparte example.razor.cs
-    private List<EmployeeViewDto> _users = new();
-
-    protected override async Task OnInitializedAsync() {
-        _users = await httpClient.GetFromJsonAsync<List<EmployeeViewDto>>("http://localhost:5032/employee/get/all");
-    }
-    
-    private void OnClickAddUser() {
-        navManager.NavigateTo("/account-manager/add/user");
-    }
-
-    private void OnClickEdit(int id) {
-        navManager.NavigateTo($"/account-manager/edit/user/{id}");
-    }
-
-    private void OnClickDelete(int id) {
-        navManager.NavigateTo($"/account-manager/delete/user/{id}");
-    }
-}

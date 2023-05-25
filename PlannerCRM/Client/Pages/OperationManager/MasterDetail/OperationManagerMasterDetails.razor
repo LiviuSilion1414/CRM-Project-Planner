@@ -1,10 +1,4 @@
-@using PlannerCRM.Shared.DTOs.Workorder.Views
-@using PlannerCRM.Shared.DTOs.ActivityDto.Forms
-
-@inject HttpClient httpClient
-@inject NavigationManager navManager
-
-@if (_activities.Count() == 0) {
+@if (_Activities.Count() == 0) {
     <td><p><em>Nessun'attività assegnata.</em></p></td>
 } else {
     <div class="master-detail">
@@ -23,7 +17,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ac in _activities) {
+                    @foreach (var ac in _Activities) {
                         <tr>
                             <td><span class="oi oi-puzzle-piece"></span></td>
                             <td>@ac.Name</td>
@@ -56,23 +50,4 @@
             </table>
         </div>
     </div>
-}
-
-@code {
-    [Parameter] public int Id { get; set; }
-    private WorkOrderViewDto _workOrder = new(); 
-    private List<ActivityFormDto> _activities = new();
-
-    protected override async Task OnInitializedAsync() {
-        _workOrder = await httpClient.GetFromJsonAsync<WorkOrderViewDto>($"http://localhost:5032/workorder/get/for/view/{Id}");
-        _activities = await httpClient.GetFromJsonAsync<List<ActivityFormDto>>($"http://localhost:5032/activity/get/activity/per/workorder/{_workOrder.Id}"); 
-    }
-
-    private void OnClickEdit(int activityId) {
-        navManager.NavigateTo($"/operation-manager/edit/activity/{_workOrder.Id}/{activityId}");
-    }
-
-    private void OnClickDelete(int activityId) {
-        navManager.NavigateTo($"/operation-manager/delete/activity/{_workOrder.Id}/{activityId}");
-    }
 }
