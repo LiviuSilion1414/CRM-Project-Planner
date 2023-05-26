@@ -8,8 +8,6 @@
     @foreach (var err in _ErrorMessages) {
         <Feedback Severity="@BannerType.DANGER" Message="@err"></Feedback>
     }
-} else {
-    <Feedback Severity="@BannerType.SUCCESS" Message="@_Message"></Feedback>
 }
 
 <div>

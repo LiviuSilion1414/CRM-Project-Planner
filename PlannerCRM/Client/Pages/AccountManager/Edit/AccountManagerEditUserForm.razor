@@ -6,10 +6,7 @@
 
 @if (_IsError) { 
     <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
-} else {
-    <Feedback Severity="@BannerType.SUCCESS" Message="@_Message"></Feedback>  
 }
-
 <div class="container-fluid">
     <h1>Modifica utente</h1>
     <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickConfirm" class="form">
