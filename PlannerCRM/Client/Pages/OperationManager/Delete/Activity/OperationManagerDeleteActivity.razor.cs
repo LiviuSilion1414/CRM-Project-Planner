@@ -40,8 +40,8 @@ public partial class OperationManagerDeleteActivity
         var responseDelete = await OperationManagerService.DeleteActivityAsync(ActivityId);
 
         if (!responseDelete.IsSuccessStatusCode) {
-            _IsError = true;
             _Message = await responseDelete.Content.ReadAsStringAsync();
+            _IsError = true;
         } else {
             RedirectToPage();
         }

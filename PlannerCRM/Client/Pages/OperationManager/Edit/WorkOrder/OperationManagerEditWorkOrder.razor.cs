@@ -38,8 +38,8 @@ public partial class OperationManagerEditWorkOrder
         var response = await OperationManagerService.EditWorkOrderAsync(_Model);
 
         if (!response.IsSuccessStatusCode) {
-            _IsError = true;
             _Message = await response.Content.ReadAsStringAsync();
+            _IsError = true;
         } else {
             RedirectToPage();
         }

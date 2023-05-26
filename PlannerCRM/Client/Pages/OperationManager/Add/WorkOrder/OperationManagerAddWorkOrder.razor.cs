@@ -32,8 +32,8 @@ public partial class OperationManagerAddWorkOrder
         var response = await OperationManagerService.AddWorkOrderAsync(_Model);
 
         if (!response.IsSuccessStatusCode) {
-            _IsError = true;
             _Message = await response.Content.ReadAsStringAsync();
+            _IsError = true;
         } else {
             RedirectToPage();
         } 

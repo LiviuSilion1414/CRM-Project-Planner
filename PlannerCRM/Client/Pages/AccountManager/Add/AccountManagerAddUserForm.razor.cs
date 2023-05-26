@@ -73,14 +73,12 @@ public partial class AccountManagerAddUserForm
             var responseEmployee = await AccountManagerService.AddUserAsync(_Model);
             var responseUser = await AccountManagerService.AddEmployeeAsync(_Model);
 
-            if (!responseEmployee.IsSuccessStatusCode) {
+            if (!responseEmployee.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
                 _Message = await responseEmployee.Content.ReadAsStringAsync();
-            } else if (!responseUser.IsSuccessStatusCode) {
-                _Message = await responseUser.Content.ReadAsStringAsync();
+                _IsError = true;
             } else {
                 RedirectToPage();
             }
-            _IsError = true;
         } catch (NullReferenceException nullRefExc) {
             _logger.Log(LogLevel.Error, nullRefExc.Message);
             _Message = nullRefExc.Message;

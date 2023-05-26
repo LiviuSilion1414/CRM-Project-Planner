@@ -76,10 +76,9 @@ public partial class AccountManagerEditUserForm
             var responseUser = await AccountManagerService.UpdateUserAsync(_Model, _CurrentEmail);
             var responseEmployee = await AccountManagerService.UpdateEmployeeAsync(_Model);
     
-            if (!responseUser.IsSuccessStatusCode) {
+            if (!responseUser.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
                 _Message = await responseUser.Content.ReadAsStringAsync();
-            } else if (!responseUser.IsSuccessStatusCode) {
-                _Message = await responseEmployee.Content.ReadAsStringAsync();
+                _IsError = true;
             } else {
                 RedirectToPage();
             }

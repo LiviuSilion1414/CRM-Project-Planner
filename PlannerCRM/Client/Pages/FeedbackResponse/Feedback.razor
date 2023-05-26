@@ -1,6 +1,12 @@
-<div class="alert alert-@Severity.ToString().ToLower()" 
-    style="position: relative; margin: 0 auto; width: 300px; 
-        padding: 5px; text-align: center; display: @_inputType; overflow: hidden;">
+<div class="alert alert-@Severity.ToString().ToLower()"
+    style="display: @_inputType;
+        width: 100%;
+        position: relative; 
+        margin: 0 auto; 
+        height: 30px;
+        padding: 5px; 
+        text-align: center; 
+        overflow: hidden;">
     <span> @Message </span>
     <span style="float:right;" class="oi oi-circle-x" @onclick="SwitchShowAlert"></span>
 </div>

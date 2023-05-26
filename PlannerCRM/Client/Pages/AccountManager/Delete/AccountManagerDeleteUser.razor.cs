@@ -36,12 +36,9 @@ public partial class AccountManagerDeleteUser
         var responseEmployee = await AccountManagerService.DeleteEmployeeAsync(Id);
         var responseUser = await AccountManagerService.DeleteUserAsync(_Model.Email);
         
-        if (!responseEmployee.IsSuccessStatusCode && !responseUser.IsSuccessStatusCode) {
-            _IsError = true;
+        if (!responseEmployee.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
             _Message = await responseEmployee.Content.ReadAsStringAsync();
-            _ErrorMessages.Add(_Message);
-            _Message = await responseUser.Content.ReadAsStringAsync();
-            _ErrorMessages.Add(_Message);
+            _IsError = true;
         } else {
             RedirectToPage();
         }

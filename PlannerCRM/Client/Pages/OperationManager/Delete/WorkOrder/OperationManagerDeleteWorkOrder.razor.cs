@@ -37,8 +37,8 @@ public partial class OperationManagerDeleteWorkOrder
         var responseDelete = await OperationManagerService.DeleteWorkOrderAsync(Id);
 
         if (!responseDelete.IsSuccessStatusCode) {
-            _IsError = true;
             _Message = await responseDelete.Content.ReadAsStringAsync();
+            _IsError = true;
         } else {
             RedirectToPage();
         }
