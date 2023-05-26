@@ -9,9 +9,13 @@ using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
 using PlannerCRM.Shared.CustomExceptions;
 using static System.Net.HttpStatusCode;
 using static PlannerCRM.Shared.Constants.ConstantValues;
+using Microsoft.AspNetCore.Authorization;
+using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Client.Services.Crud;
 
+[Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
+[Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
 public class DeveloperService
 {
     private readonly HttpClient _http;
@@ -30,7 +34,7 @@ public class DeveloperService
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("worktimerecord/add"),
+                RequestUri = new Uri("http://localhost:5032/worktimerecord/add"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         }
@@ -89,7 +93,7 @@ public class DeveloperService
     public async Task<List<ActivityFormDto>> GetActivitiesByEmployeeIdAsync(int employeeId) {
         try
         {
-            var response = await _http.GetAsync($"activity/get/activity/per/employee/{employeeId}"); 
+            var response = await _http.GetAsync($"http://localhost:5032/activity/get/activity/per/employee/{employeeId}"); 
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<List<ActivityFormDto>>(jsonObject);

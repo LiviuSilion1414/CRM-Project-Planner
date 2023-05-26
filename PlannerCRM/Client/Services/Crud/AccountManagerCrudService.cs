@@ -38,7 +38,7 @@ public class AccountManagerCrudService
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("employee/add"),
+                RequestUri = new Uri("http://localhost:5032/employee/add"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         } 
@@ -69,7 +69,7 @@ public class AccountManagerCrudService
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("applicationuser/add/user"),
+                RequestUri = new Uri("http://localhost:5032/applicationuser/add/user"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         }
@@ -99,8 +99,8 @@ public class AccountManagerCrudService
        try
        {
          return await _http.SendAsync(new HttpRequestMessage() {
-             Method = HttpMethod.Post,
-             RequestUri = new Uri("employee/edit"),
+             Method = HttpMethod.Put,
+             RequestUri = new Uri("http://localhost:5032/employee/edit"),
              Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
          });
        }
@@ -130,8 +130,8 @@ public class AccountManagerCrudService
         try
         {
             return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("applicationuser/edit/user"),
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"http://localhost:5032/applicationuser/edit/user/{currentEmail}"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         }
@@ -195,10 +195,7 @@ public class AccountManagerCrudService
     public async Task<HttpResponseMessage> DeleteUserAsync(string currentEmail) {
         try
         {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"applicationuser/delete/user/{currentEmail}")
-            });
+            return await _http.DeleteAsync($"http://localhost:5032/applicationuser/delete/user/{currentEmail}");
         }
         catch (InvalidOperationException invalidOpExc)
         {
@@ -215,10 +212,8 @@ public class AccountManagerCrudService
     public async Task<HttpResponseMessage> DeleteEmployeeAsync(int employeeId) {
         try 
         {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"employee/delete/{employeeId}")
-            });
+            return await _http.DeleteAsync($"http://localhost:5032/employee/delete/{employeeId}");
+
         }
         catch (InvalidOperationException invalidOpExc)
         {

@@ -2,6 +2,7 @@ using System.Text;
 using Newtonsoft.Json;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using static System.Net.HttpStatusCode;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Client.Services;
 
@@ -17,12 +18,12 @@ public class LoginService
         _http = http;
         _logger = logger;
     }
-    
+
     public async Task<HttpResponseMessage> LoginAsync(EmployeeLoginDto dto) {
         try
         {
             return await _http.SendAsync(new HttpRequestMessage() {
-                RequestUri = new Uri("account/login"),
+                RequestUri = new Uri("http://localhost:5032/account/login"),
                 Method = HttpMethod.Post,
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });

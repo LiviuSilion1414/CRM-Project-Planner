@@ -73,7 +73,7 @@ public class OperationManagerCrudService
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("workorder/add"),
+                RequestUri = new Uri("http://localhost:5032/workorder/add"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         }
@@ -103,7 +103,7 @@ public class OperationManagerCrudService
         try {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Put,
-                RequestUri = new Uri("workorder/edit"),
+                RequestUri = new Uri("http://localhost:5032/workorder/edit"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         }
@@ -134,7 +134,7 @@ public class OperationManagerCrudService
         { 
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("activity/add"),
+                RequestUri = new Uri("http://localhost:5032/activity/add"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         } 
@@ -165,7 +165,7 @@ public class OperationManagerCrudService
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Put,
-                RequestUri = new Uri("activity/edit"),
+                RequestUri = new Uri("http://localhost:5032/activity/edit"),
                 Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
             });
         }
@@ -194,10 +194,7 @@ public class OperationManagerCrudService
     public async Task<HttpResponseMessage> DeleteActivityAsync(int activityId) {
         try
         {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"activity/delete/{activityId}")
-            });
+            return await _http.DeleteAsync($"http://localhost:5032/activity/delete/{activityId}");
         }
         catch (InvalidOperationException invalidOpExc)
         {
@@ -214,10 +211,7 @@ public class OperationManagerCrudService
     public async Task<HttpResponseMessage> DeleteWorkOrderAsync(int workOrderId) {
         try
         {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri($"workorder/delete/{workOrderId}")
-            });
+            return await _http.DeleteAsync($"http://localhost:5032/workorder/delete/{workOrderId}");
         }
         catch (InvalidOperationException invalidOpExc)
         {
