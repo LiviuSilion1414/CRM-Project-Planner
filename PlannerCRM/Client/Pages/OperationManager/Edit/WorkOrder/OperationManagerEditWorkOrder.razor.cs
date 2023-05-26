@@ -24,7 +24,10 @@ public partial class OperationManagerEditWorkOrder
 
     protected override async Task OnInitializedAsync() {
         _Model = await OperationManagerService.GetWorkOrderForEditAsync(Id);
-        _EditContext = new(_Model);
+    }
+
+    protected override void OnInitialized() {
+        _EditContext = new EditContext(_Model);
     }
 
     private void RedirectToPage() {

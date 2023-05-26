@@ -20,6 +20,8 @@ public partial class OperationManagerEditActivity
         _logger = logger;
     }
 
+    public OperationManagerEditActivity() { }
+
     [Parameter] public int WorkOrderId { get; set; }
     [Parameter] public int ActivityId { get; set; }
     
@@ -41,8 +43,11 @@ public partial class OperationManagerEditActivity
 
         _Model = await OperationManagerService.GetActivityForEditAsync(ActivityId);
         _CurrentWorkOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
+    }
+
+    protected override void OnInitialized() {
         _EditContext = new(_Model);
-    } 
+    }
 
     public async Task OnClickSearchWorkorder(string workorder) {
         _WorkOrders = await OperationManagerService.SearchWorkOrderAsync(workorder);

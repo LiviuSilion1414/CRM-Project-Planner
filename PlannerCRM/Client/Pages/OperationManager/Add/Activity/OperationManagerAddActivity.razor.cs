@@ -21,6 +21,8 @@ public partial class OperationManagerAddActivity
         _logger = logger;
     }
 
+    public OperationManagerAddActivity() { }
+
     [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] private NavigationManager NavManager { get; set; }
     [Inject] private NavigationLockService NavLockService { get; set; }

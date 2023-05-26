@@ -11,7 +11,6 @@ namespace PlannerCRM.Client.Pages.AccountManager.Delete;
 public partial class AccountManagerDeleteUser
 {
     [Parameter] public int Id { get; set; }
-
     
     [Inject] private NavigationManager NavigationManager { get; set; }
     [Inject] private AccountManagerCrudService AccountManagerService { get; set; }

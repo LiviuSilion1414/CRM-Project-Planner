@@ -17,6 +17,8 @@ public partial class AccountManagerEditUserForm
         _logger = logger;
     }
 
+    public AccountManagerEditUserForm() { }
+
     [Parameter] public int Id { get; set; }
     [Inject] private AccountManagerCrudService AccountManagerService { get; set;}
     [Inject] private NavigationLockService NavLockService { get; set; }
@@ -33,6 +35,9 @@ public partial class AccountManagerEditUserForm
     protected override async Task OnInitializedAsync() {
         _Model = await AccountManagerService.GetEmployeeForEditAsync(Id);
         _CurrentEmail = _Model.Email;   
+    }
+
+    protected override void OnInitialized() {
         _EditContext = new(_Model);
     }
 

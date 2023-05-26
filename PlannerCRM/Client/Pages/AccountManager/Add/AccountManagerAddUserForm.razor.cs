@@ -20,6 +20,8 @@ public partial class AccountManagerAddUserForm
         _logger = logger;
     }
 
+    public AccountManagerAddUserForm() { }
+
     [Inject] private AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }
     [Inject] private NavigationLockService NavLockService { get; set; }
