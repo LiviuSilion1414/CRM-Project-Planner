@@ -26,9 +26,9 @@ public class ApplicationUserRepository
             throw new NullReferenceException(NULL_OBJECT);
         } 
         
-        var isNull = dto.GetType().GetProperties()
+        var HasPropertiesNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
-        if (isNull) {
+        if (HasPropertiesNull) {
             throw new ArgumentNullException(NULL_PARAM);
         }
         
@@ -54,17 +54,16 @@ public class ApplicationUserRepository
             UserName = dto.Email
         };
         
-        var foundUserRole = await _roleManager.Roles
-            .FirstAsync(aspRole => Enum.GetNames(typeof(Roles))
-                .Any(role => role == aspRole.Name));
+        Roles foundUserRole = default;
 
-        var userRole = new IdentityRole {
-            Name = foundUserRole.Name,
-            NormalizedName = foundUserRole.Name.ToUpper()
-        };
+        foreach (var role in Enum.GetValues(typeof(Roles))) {
+            if ((Roles) role == dto.Role) {
+                foundUserRole = (Roles) role;
+            }
+        }
 
         var creationResult = await _userManager.CreateAsync(user, dto.Password);
-        var assignmentResult = await _userManager.AddToRoleAsync(user, userRole.NormalizedName);
+        var assignmentResult = await _userManager.AddToRoleAsync(user, foundUserRole.ToString());
         
         if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
             throw new InvalidOperationException(IMPOSSIBILE_GOING_FORWARD);
@@ -76,12 +75,12 @@ public class ApplicationUserRepository
             throw new NullReferenceException(NULL_OBJECT);
         } 
         
-        var isNull = dto.GetType().GetProperties()
-            .Any(em => em.GetValue(dto) == null);
-        
-        if (isNull) {
-            throw new ArgumentNullException(NULL_PARAM);
-        }
+       // var HasPropertiesNull = dto.GetType().GetProperties() //throws exception
+       //     .Any(em => em.GetValue(dto) == null);
+       // 
+       // if (HasPropertiesNull) {
+       //     throw new ArgumentNullException(NULL_PARAM);
+       // }
 
         if (string.IsNullOrEmpty(oldEmail)) {
             throw new NullReferenceException(NULL_OBJECT);

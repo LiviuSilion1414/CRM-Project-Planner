@@ -21,9 +21,9 @@ public class WorkTimeRecordRepository
             throw new NullReferenceException(NULL_OBJECT);
         }
 
-        var isNull = dto.GetType().GetProperties()
+        var HasPropertiesNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
-        if (isNull) {
+        if (HasPropertiesNull) {
             throw new ArgumentNullException(NULL_PARAM);
         }
         
@@ -72,9 +72,9 @@ public class WorkTimeRecordRepository
             throw new NullReferenceException(NULL_OBJECT);
         }
 
-        var isNull = dto.GetType().GetProperties()
+        var HasPropertiesNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
-        if (isNull) {
+        if (HasPropertiesNull) {
             throw new ArgumentNullException(NULL_PARAM);
         }
 

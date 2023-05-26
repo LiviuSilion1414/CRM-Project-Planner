@@ -98,11 +98,11 @@ public class ActivityRepository
             throw new NullReferenceException(NULL_OBJECT);
         }
 
-        var isNull = dto.GetType().GetProperties()
-            .Any(prop => prop.GetValue(dto) == null);
-        if (isNull) {
-            throw new ArgumentNullException(NULL_PARAM);
-        }
+       // var HasPropertiesNull = dto.GetType().GetProperties()  //exception when updating activity
+       //     .Any(prop => prop.GetValue(dto) == null);
+       // if (HasPropertiesNull) {
+       //     throw new ArgumentNullException(NULL_PARAM);
+       // }
         
         var model = await _db.Activities
             .SingleOrDefaultAsync(ac => ac.Id == dto.Id);

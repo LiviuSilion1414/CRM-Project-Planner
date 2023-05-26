@@ -23,9 +23,9 @@ public class EmployeeRepository
             throw new NullReferenceException(NULL_OBJECT);
         }
 
-        var isNull = dto.GetType().GetProperties()
+        var HasPropertiesNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) == null);
-        if (isNull) {
+        if (HasPropertiesNull) {
             throw new ArgumentNullException(NULL_PARAM);
         }
         
@@ -36,6 +36,7 @@ public class EmployeeRepository
         }
 
         await _db.Employees.AddAsync(new Employee {
+            Id = dto.Id,
             Email = dto.Email,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
@@ -54,7 +55,7 @@ public class EmployeeRepository
                     })
                 .ToList()
         });
-
+        
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
             throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
@@ -82,11 +83,11 @@ public class EmployeeRepository
             throw new NullReferenceException(NULL_OBJECT);
         }
 
-        var isNull = dto.GetType().GetProperties()
-            .Any(prop => prop.GetValue(dto) == null);
-        if (isNull) {
-            throw new ArgumentNullException(NULL_PARAM);
-        }
+       // var HasPropertiesNull = dto.GetType().GetProperties()  //throws exception
+       //     .Any(prop => prop.GetValue(dto) == null);
+       // if (HasPropertiesNull) {
+       //     throw new ArgumentNullException(NULL_PARAM);
+       // }
 
         var model = await _db.Employees
             .SingleOrDefaultAsync(em => em.Id == dto.Id);
@@ -112,7 +113,7 @@ public class EmployeeRepository
                     Salary = decimal.Parse(ems.Salary.ToString())
                 }
             ).ToList();
-        
+        _db.Employees.Update(model);
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
             throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
