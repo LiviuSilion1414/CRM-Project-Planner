@@ -129,7 +129,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddActivityAsync(ActivityFormDto dto) {
+    public async Task<HttpResponseMessage> AddActivityAsync(ActivityAddFormDto dto) {
         try 
         { 
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -160,7 +160,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> EditActivityAsync(ActivityFormDto dto) {
+    public async Task<HttpResponseMessage> EditActivityAsync(ActivityEditFormDto dto) {
         try 
         {
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -225,18 +225,18 @@ public class OperationManagerCrudService
         }
     }
     
-    public async Task<ActivityFormDto> GetActivityForEditAsync(int activityId) {
+    public async Task<ActivityEditFormDto> GetActivityForEditAsync(int activityId) {
         try
         {
             var response = await _http.GetAsync($"activity/get/for/edit/{activityId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<ActivityFormDto>(jsonObject);
+            return JsonConvert.DeserializeObject<ActivityEditFormDto>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new ActivityFormDto();
+            return new ActivityEditFormDto();
         }
     }
 
@@ -300,18 +300,18 @@ public class OperationManagerCrudService
        }
     }
 
-    public async Task<List<ActivityFormDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
+    public async Task<List<ActivityEditFormDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
         try
         {
             var response = await _http.GetAsync($"activity/get/activity/per/workorder/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<List<ActivityFormDto>>(jsonObject);
+            return JsonConvert.DeserializeObject<List<ActivityEditFormDto>>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new List<ActivityFormDto>();
+            return new List<ActivityEditFormDto>();
         }
     }
 }

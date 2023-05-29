@@ -15,9 +15,9 @@ namespace PlannerCRM.Client.Pages.OperationManager.Add.Activity;
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 public partial class OperationManagerAddActivity
 {
-    private readonly Logger<ActivityFormDto> _logger;
+    private readonly Logger<ActivityAddFormDto> _logger;
 
-    public OperationManagerAddActivity(Logger<ActivityFormDto> logger) {
+    public OperationManagerAddActivity(Logger<ActivityAddFormDto> logger) {
         _logger = logger;
     }
 
@@ -27,7 +27,7 @@ public partial class OperationManagerAddActivity
     [Inject] private NavigationManager NavManager { get; set; }
     [Inject] private NavigationLockService NavLockService { get; set; }
 
-    private ActivityFormDto _Model = new();
+    private ActivityAddFormDto _Model = new();
     private EditContext _EditContext { get; set; }
     private ActivitySelectHelperDto _SelectModel = new();
     private List<WorkOrderSelectDto> _WorkOrders = new();

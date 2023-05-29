@@ -14,9 +14,9 @@ namespace PlannerCRM.Client.Pages.OperationManager.Edit.Activity;
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 public partial class OperationManagerEditActivity
 {
-    private readonly Logger<ActivityFormDto> _logger;
+    private readonly Logger<ActivityEditFormDto> _logger;
 
-    public OperationManagerEditActivity(Logger<ActivityFormDto> logger) {
+    public OperationManagerEditActivity(Logger<ActivityEditFormDto> logger) {
         _logger = logger;
     }
 
@@ -29,7 +29,7 @@ public partial class OperationManagerEditActivity
     [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] private NavigationLockService NavLockService { get; set; }
 
-    private ActivityFormDto _Model = new();
+    private ActivityEditFormDto _Model = new();
     private EditContext _EditContext { get; set; }
     private ActivitySelectHelperDto _SelectModel = new();
     private List<WorkOrderSelectDto> _WorkOrders = new();

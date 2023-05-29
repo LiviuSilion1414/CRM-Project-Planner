@@ -90,18 +90,18 @@ public class DeveloperService
         }
     }
 
-    public async Task<List<ActivityFormDto>> GetActivitiesByEmployeeIdAsync(int employeeId) {
+    public async Task<List<ActivityEditFormDto>> GetActivitiesByEmployeeIdAsync(int employeeId) {
         try
         {
             var response = await _http.GetAsync($"http://localhost:5032/activity/get/activity/per/employee/{employeeId}"); 
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<List<ActivityFormDto>>(jsonObject);
+            return JsonConvert.DeserializeObject<List<ActivityEditFormDto>>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new List<ActivityFormDto>();
+            return new List<ActivityEditFormDto>();
         }
     }
 

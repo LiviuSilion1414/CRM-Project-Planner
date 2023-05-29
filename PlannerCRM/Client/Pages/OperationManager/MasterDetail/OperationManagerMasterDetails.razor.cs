@@ -16,7 +16,7 @@ public partial class OperationManagerMasterDetails
     [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
 
     private WorkOrderViewDto _WorkOrder = new();
-    private List<ActivityFormDto> _Activities = new();
+    private List<ActivityEditFormDto> _Activities = new();
 
     protected override async Task OnInitializedAsync() {
         _WorkOrder = await OperationManagerService.GetWorkOrderForViewAsync(Id);

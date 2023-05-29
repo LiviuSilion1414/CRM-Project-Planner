@@ -18,7 +18,7 @@ public partial class WorkOrderActivityMasterDetail
     [Inject] private NavigationManager NavManager { get; set; }
 
     private List<WorkOrderViewDto> _workorders = new();
-    private List<ActivityFormDto> _activities = new();
+    private List<ActivityEditFormDto> _activities = new();
     private List<WorkTimeRecordViewDto> _workTimeRecords = new();
 
     protected override async Task OnInitializedAsync() {

@@ -17,7 +17,7 @@ public class ActivityRepository
         _db = db;
     }
 
-    public async Task AddAsync(ActivityFormDto dto) {
+    public async Task AddAsync(ActivityAddFormDto dto) {
         if (dto.GetType() == null) {
             throw new NullReferenceException(NULL_OBJECT);
         }
@@ -44,23 +44,9 @@ public class ActivityRepository
                 .Select(ea => new EmployeeActivity {
                     Id = ea.Id,
                     ActivityId = ea.ActivityId,
-                    Activity = new Activity {
-                        Id = ea.Activity.Id,
-                        Name = ea.Activity.Name,
-                        StartDate = ea.Activity.StartDate,
-                        FinishDate = ea.Activity.FinishDate,
-                        WorkOrderId = ea.Activity.WorkOrderId
-                    },
-                    EmployeeId = ea.EmployeeId,
-                    Employee = new Employee {
-                        Id = ea.Employee.Id,
-                        Email = ea.Employee.Email,
-                        FirstName = ea.Employee.FirstName,
-                        LastName = ea.Employee.LastName,
-                        Role = ea.Employee.Role
-                    }
+                    EmployeeId = ea.EmployeeId
                 })
-            .ToList()
+               .ToList(),
         });
 
         var rowsAffected = await _db.SaveChangesAsync();
@@ -84,7 +70,7 @@ public class ActivityRepository
         }
     }
 
-    public async Task EditAsync(ActivityFormDto dto) {
+    public async Task EditAsync(ActivityEditFormDto dto) {
         if (dto == null) {
             throw new NullReferenceException(NULL_OBJECT);
         }
@@ -135,9 +121,9 @@ public class ActivityRepository
             .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
-    public async Task<ActivityFormDto> GetForEditAsync(int id) {
+    public async Task<ActivityEditFormDto> GetForEditAsync(int id) {
         return await _db.Activities
-            .Select(ac => new ActivityFormDto {
+            .Select(ac => new ActivityEditFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
@@ -146,26 +132,30 @@ public class ActivityRepository
                 EmployeesActivities = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
-                        EmployeeId = ea.Employee.Id,
-                        Employee = new EmployeeSelectDto {
-                            Id = ea.Employee.Id,
-                            Email = ea.Employee.Email,
-                            FirstName = ea.Employee.FirstName,
-                            LastName = ea.Employee.LastName,
-                            Role = ea.Employee.Role
-                        },
+                        EmployeeId = ea.EmployeeId,
+                        Employee = _db.Employees
+                            .Select(em => new EmployeeSelectDto {
+                                Id = em.Id,
+                                Email = em.Email,
+                                FirstName = em.FirstName,
+                                LastName = em.LastName,
+                                Role = em.Role
+                            })
+                            .Single(em => em.Id == ea.EmployeeId),
                         ActivityId = ea.ActivityId,
-                        Activity = new ActivitySelectDto {
-                            Id = ea.Activity.Id,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        }
+                        Activity = _db.Activities
+                            .Select(ac => new ActivitySelectDto {
+                            Id = ac.Id,
+                            Name = ac.Name,
+                            StartDate = ac.StartDate,
+                            FinishDate = ac.FinishDate,
+                            WorkOrderId = ac.WorkOrderId
+                        })
+                        .Single(ac => ac.Id == ea.ActivityId)
                     })
-                    .ToList()   
+                    .ToList()
             })
-            .SingleOrDefaultAsync(ac => ac.Id == id);
+            .SingleAsync(ac => ac.Id == id);
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteAsync(int id) {
@@ -179,9 +169,9 @@ public class ActivityRepository
             .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
-    public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId) {
+    public async Task<List<ActivityEditFormDto>> GetActivityByEmployeeId(int employeeId) {
          return await _db.Activities
-            .Select(ac => new ActivityFormDto {
+            .Select(ac => new ActivityEditFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
@@ -190,22 +180,25 @@ public class ActivityRepository
                 EmployeesActivities = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.EmployeeId,
-                        EmployeeId = ea.Employee.Id,
-                        Employee = new EmployeeSelectDto {
-                            Id = ea.Employee.Id,
-                            Email = ea.Employee.Email,
-                            FirstName = ea.Employee.FirstName,
-                            LastName = ea.Employee.LastName,
-                            Role = ea.Employee.Role
-                        },
-                        ActivityId = ea.ActivityId,
-                        Activity = new ActivitySelectDto {
-                            Id = ea.Activity.Id,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        }
+                        EmployeeId = ea.EmployeeId,
+                        Employee = _db.Employees
+                            .Select(em => new EmployeeSelectDto {
+                                Id = em.Id,
+                                Email = em.Email,
+                                FirstName = em.FirstName,
+                                LastName = em.LastName,
+                                Role = em.Role
+                            })
+                            .Single(em => em.Id == ea.EmployeeId),
+                        Activity = _db.Activities
+                            .Select(ac => new ActivitySelectDto {
+                            Id = ac.Id,
+                            Name = ac.Name,
+                            StartDate = ac.StartDate,
+                            FinishDate = ac.FinishDate,
+                            WorkOrderId = ac.WorkOrderId
+                        })
+                        .Single(ac => ac.Id == ea.ActivityId)
                     })
                     .ToList()   
             })
@@ -214,9 +207,9 @@ public class ActivityRepository
             .ToListAsync();
     }
 
-    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
+    public async Task<List<ActivityEditFormDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
         return await _db.Activities
-            .Select(ac => new ActivityFormDto {
+            .Select(ac => new ActivityEditFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
@@ -225,22 +218,26 @@ public class ActivityRepository
                 EmployeesActivities = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
-                        EmployeeId = ea.Employee.Id,
-                        Employee = new EmployeeSelectDto {
-                            Id = ea.Employee.Id,
-                            Email = ea.Employee.Email,
-                            FirstName = ea.Employee.FirstName,
-                            LastName = ea.Employee.LastName,
-                            Role = ea.Employee.Role
-                        },
+                        EmployeeId = ea.EmployeeId,
+                        Employee = _db.Employees
+                            .Select(em => new EmployeeSelectDto {
+                                Id = em.Id,
+                                Email = em.Email,
+                                FirstName = em.FirstName,
+                                LastName = em.LastName,
+                                Role = em.Role
+                            })
+                            .Single(em => em.Id == ea.EmployeeId),
                         ActivityId = ea.ActivityId,
-                        Activity = new ActivitySelectDto {
-                            Id = ea.Activity.Id,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        }
+                        Activity = _db.Activities
+                            .Select(ac => new ActivitySelectDto {
+                            Id = ac.Id,
+                            Name = ac.Name,
+                            StartDate = ac.StartDate,
+                            FinishDate = ac.FinishDate,
+                            WorkOrderId = ac.WorkOrderId
+                        })
+                        .Single(ac => ac.Id == ea.ActivityId)
                     })
                     .ToList()   
             })
