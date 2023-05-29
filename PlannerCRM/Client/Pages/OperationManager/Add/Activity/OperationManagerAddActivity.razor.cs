@@ -56,23 +56,32 @@ public partial class OperationManagerAddActivity
 
     private void OnClickAddAsSelected(EmployeeSelectDto employee) {
         try {
-            _Model.EmployeesActivities.Add(
-                new EmployeeActivityDto {
-                    EmployeeId = employee.Id,
-                    Employee = employee,
-                    ActivityId = _Model.Id,
-                    Activity = new ActivitySelectDto {
-                        Id = _Model.Id,
-                        Name = _Model.Name,
-                        StartDate = _Model.StartDate 
-                            ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDate)} non può essere null."""),
-                        FinishDate = _Model.FinishDate 
-                            ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDate)} non può essere null."""),
-                        WorkOrderId = _Model.WorkOrderId 
-                            ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.WorkOrderId)} non può essere null."""),
-                    }
+            var isNotContained = true;
+
+            foreach (var ea in _Model.EmployeesActivities) {
+                if (ea.Employee.Email == employee.Email) {
+                    isNotContained = false;
                 }
-            );
+            }
+
+            if (isNotContained) {
+                _Model.EmployeesActivities.Add(
+                    new EmployeeActivityDto {
+                        EmployeeId = employee.Id,
+                        Employee = employee,
+                        ActivityId = _Model.Id,
+                        Activity = new ActivitySelectDto {
+                            Id = _Model.Id,
+                            Name = _Model.Name,
+                            StartDate = _Model.StartDate 
+                                ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDate)} non può essere null."""),
+                            FinishDate = _Model.FinishDate 
+                                ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDate)} non può essere null."""),
+                            WorkOrderId = _Model.WorkOrderId 
+                                ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.WorkOrderId)} non può essere null."""),
+                        }
+                });
+            }
         } catch (NullReferenceException nullRefExc) {
             _logger.Log(LogLevel.Error, nullRefExc.Message);
             _Message = nullRefExc.Message;
@@ -81,30 +90,10 @@ public partial class OperationManagerAddActivity
     }
 
     private void OnClickRemoveAsSelected(EmployeeSelectDto employee) {
-        try {
-            var employeeActivity = new EmployeeActivityDto {
-                EmployeeId = employee.Id,
-                Employee = employee,
-                ActivityId = _Model.Id,
-                Activity = new ActivitySelectDto {
-                    Id = _Model.Id,
-                    Name = _Model.Name,
-                    StartDate = _Model.StartDate 
-                        ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDate)} non può essere null."""),
-                    FinishDate = _Model.FinishDate 
-                        ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDate)} non può essere null."""),
-                    WorkOrderId = _Model.WorkOrderId 
-                        ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.WorkOrderId)} non può essere null."""),
-                }
-            };
-    
-            if (_Model.EmployeesActivities.Contains(employeeActivity)) {
-                _Model.EmployeesActivities.Remove(employeeActivity);
+        foreach (var ea in _Model.EmployeesActivities.ToList()) {
+            if (ea.Employee.Email == employee.Email) {
+                _Model.EmployeesActivities.Remove(ea);
             }
-        } catch (NullReferenceException nullRefExc) {
-            _logger.Log(LogLevel.Error, nullRefExc.Message);
-            _Message = nullRefExc.Message;
-            _IsError = true;
         }
     }
     
