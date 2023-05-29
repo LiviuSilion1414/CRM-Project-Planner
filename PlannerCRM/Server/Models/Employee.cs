@@ -14,6 +14,7 @@ public class Employee
     public DateTime BirthDay { get; set; }
     public string NumericCode { get; set; }
     public Roles Role { get; set; }
+    public bool IsDeleted { get; set; }
     public List<EmployeeSalary> Salaries { get; set; }
     public List<EmployeeActivity> EmployeeActivity { get; set; }
 }
