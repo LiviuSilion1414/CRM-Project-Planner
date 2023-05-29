@@ -154,21 +154,25 @@ public class EmployeeRepository
                     .Select( ea =>
                         new EmployeeActivityDto {
                             EmployeeId = ea.Id,
-                            Employee = new EmployeeSelectDto {
-                                Id = ea.EmployeeId,
-                                FirstName = ea.Employee.FirstName,
-                                LastName = ea.Employee.LastName,
-                                Email = ea.Employee.Email,
-                                Role = ea.Employee.Role, 
-                            },
+                            Employee = _db.Employees
+                            .Select(em => new EmployeeSelectDto {
+                                Id = em.Id,
+                                Email = em.Email,
+                                FirstName = em.FirstName,
+                                LastName = em.LastName,
+                                Role = em.Role
+                            })
+                            .Single(em => em.Id == ea.EmployeeId),
                             ActivityId = ea.ActivityId,
-                            Activity = new ActivitySelectDto {
-                                Id = ea.ActivityId,
-                                Name = ea.Activity.Name,
-                                StartDate = ea.Activity.StartDate,
-                                FinishDate = ea.Activity.FinishDate,
-                                WorkOrderId = ea.Activity.WorkOrderId
-                            }
+                            Activity = _db.Activities
+                                .Select(ac => new ActivitySelectDto {
+                                    Id = ac.Id,
+                                    Name = ac.Name,
+                                    StartDate = ac.StartDate,
+                                    FinishDate = ac.FinishDate,
+                                    WorkOrderId = ac.WorkOrderId
+                                })
+                                .Single(ac => ac.Id == ea.ActivityId)
                         })
                     .ToList()
                 })   
@@ -256,20 +260,27 @@ public class EmployeeRepository
                     : 0.0F,
                 EmployeeActivities = em.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
-                        Id = ea.Activity.Id,
-                        Activity = new ActivitySelectDto {
-                            Id = ea.Activity.Id,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        },
-                        ActivityId = ea.Activity.Id,
-                        Employee = new EmployeeSelectDto {
-                            Id = em.Id,
-                            Email = em.Email
-                        },
-                        EmployeeId = em.Id
+                        Id = ea.ActivityId,
+                        EmployeeId = em.Id,
+                        Employee = _db.Employees
+                            .Select(em => new EmployeeSelectDto {
+                                Id = em.Id,
+                                Email = em.Email,
+                                FirstName = em.FirstName,
+                                LastName = em.LastName,
+                                Role = em.Role
+                            })
+                            .Single(em => em.Id == ea.EmployeeId),
+                        ActivityId = ea.ActivityId,
+                        Activity = _db.Activities
+                            .Select(ac => new ActivitySelectDto {
+                            Id = ac.Id,
+                            Name = ac.Name,
+                            StartDate = ac.StartDate,
+                            FinishDate = ac.FinishDate,
+                            WorkOrderId = ac.WorkOrderId
+                        })
+                        .Single(ac => ac.Id == ea.ActivityId),
                     }).ToList(),
                 EmployeeSalaries = em.Salaries
                     .Select( ems => new EmployeeSalaryDto {

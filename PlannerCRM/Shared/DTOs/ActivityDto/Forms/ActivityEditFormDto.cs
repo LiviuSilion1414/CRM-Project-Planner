@@ -6,22 +6,17 @@ using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 
-public partial class ActivityFormDto
+public partial class ActivityEditFormDto
 {
     public int Id { get; set; }
     
-    [Required(ErrorMessage = """ Campo "Nome" richiesto. """)]
     public string Name { get; set; }
     
-    [Required(ErrorMessage = """ Campo "Data d'inizio" richiesto. """)]
     public DateTime? StartDate { get; set; }
     
-    [Required(ErrorMessage = """ Campo "Data di fine" richiesto. """)]
     public DateTime? FinishDate { get; set; }
 
-    [Required(ErrorMessage = """ Campo "Commessa" richiesto. """)]
     public int? WorkOrderId { get; set; }
 
-    [Required(ErrorMessage = """ Campo "Dipendenti selezionati" richiesto. """)]
     public List<EmployeeActivityDto> EmployeesActivities { get; set; }
 }
