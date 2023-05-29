@@ -16,7 +16,7 @@ public class WorkOrderRepository
 		_db = db;
 	}
 
-	public async Task AddAsync(WorkOrderFormDto dto) {
+	public async Task AddAsync(WorkOrderAddFormDto dto) {
 		if (dto.GetType() == null) {
             throw new NullReferenceException(NULL_OBJECT);
         }
@@ -60,7 +60,7 @@ public class WorkOrderRepository
         }
 	}
 
-	public async Task EditAsync(WorkOrderFormDto dto) {
+	public async Task EditAsync(WorkOrderEditFormDto dto) {
 		if (dto == null) {
             throw new NullReferenceException(NULL_OBJECT);
         }
@@ -79,8 +79,8 @@ public class WorkOrderRepository
 
 		model.Id = dto.Id;
 		model.Name = dto.Name;
-		model.StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP);
-		model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP);
+		model.StartDate = dto.StartDate;
+		model.FinishDate = dto.FinishDate;
 
 		var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
@@ -108,9 +108,9 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
 	
-	public async Task<WorkOrderFormDto> GetForEditAsync(int id) {
+	public async Task<WorkOrderEditFormDto> GetForEditAsync(int id) {
 		return await _db.WorkOrders
-			.Select(wo => new WorkOrderFormDto {
+			.Select(wo => new WorkOrderEditFormDto {
 				Id = wo.Id,
 				Name = wo.Name,
 				StartDate = wo.StartDate,

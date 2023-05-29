@@ -68,7 +68,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddWorkOrderAsync(WorkOrderFormDto dto) {
+    public async Task<HttpResponseMessage> AddWorkOrderAsync(WorkOrderAddFormDto dto) {
         try
         {
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -99,7 +99,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> EditWorkOrderAsync(WorkOrderFormDto dto) {
+    public async Task<HttpResponseMessage> EditWorkOrderAsync(WorkOrderEditFormDto dto) {
         try {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Put,
@@ -270,18 +270,18 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<WorkOrderFormDto> GetWorkOrderForEditAsync(int workOrderId) {
+    public async Task<WorkOrderEditFormDto> GetWorkOrderForEditAsync(int workOrderId) {
         try
         {
             var response = await _http.GetAsync($"workorder/get/for/edit/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<WorkOrderFormDto>(jsonObject);
+            return JsonConvert.DeserializeObject<WorkOrderEditFormDto>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new WorkOrderFormDto();
+            return new WorkOrderEditFormDto();
         }
     }
 

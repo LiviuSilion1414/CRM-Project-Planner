@@ -45,28 +45,19 @@ public class ActivityRepository
                     Id = ea.Id,
                     ActivityId = ea.ActivityId,
                     Activity = new Activity {
-                        Id = dto.Id,
-                        Name = dto.Name,
-                        StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
-                        FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP),
-                        WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(NULL_PROP)
+                        Id = ea.Activity.Id,
+                        Name = ea.Activity.Name,
+                        StartDate = ea.Activity.StartDate,
+                        FinishDate = ea.Activity.FinishDate,
+                        WorkOrderId = ea.Activity.WorkOrderId
                     },
                     EmployeeId = ea.EmployeeId,
                     Employee = new Employee {
+                        Id = ea.Employee.Id,
                         Email = ea.Employee.Email,
                         FirstName = ea.Employee.FirstName,
                         LastName = ea.Employee.LastName,
-                        Role = ea.Employee.Role,
-                        Salaries = ea.Employee.EmployeeSalaries
-                            .Select(ems => new List<EmployeeSalary> {
-                                new EmployeeSalary {
-                                    Id = ems.Id,
-                                    EmployeeId = ems.EmployeeId,
-                                    StartDate = ems.StartDate,
-                                    FinishDate = ems.FinishDate,
-                                    Salary = decimal.Parse(ems.Salary.ToString()),
-                                }})
-                            .First(),
+                        Role = ea.Employee.Role
                     }
                 })
             .ToList()
@@ -98,11 +89,11 @@ public class ActivityRepository
             throw new NullReferenceException(NULL_OBJECT);
         }
 
-       // var HasPropertiesNull = dto.GetType().GetProperties()  //exception when updating activity
-       //     .Any(prop => prop.GetValue(dto) == null);
-       // if (HasPropertiesNull) {
-       //     throw new ArgumentNullException(NULL_PARAM);
-       // }
+        var HasPropertiesNull = dto.GetType().GetProperties()  //exception when updating activity
+            .Any(prop => prop.GetValue(dto) == null);
+        if (HasPropertiesNull) {
+            throw new ArgumentNullException(NULL_PARAM);
+        }
         
         var model = await _db.Activities
             .SingleOrDefaultAsync(ac => ac.Id == dto.Id);

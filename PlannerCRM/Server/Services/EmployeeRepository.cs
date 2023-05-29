@@ -40,6 +40,7 @@ public class EmployeeRepository
             Email = dto.Email,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
+            FullName = $"{dto.FirstName + dto.LastName}",
             BirthDay = dto.BirthDay ?? throw new NullReferenceException(NULL_PROP),
             StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PARAM),
             Password = dto.Password,
@@ -99,6 +100,7 @@ public class EmployeeRepository
         model.Id = dto.Id;
         model.FirstName = dto.FirstName;
         model.LastName = dto.LastName;
+        model.FullName = $"{dto.FirstName + dto.LastName}";
         model.BirthDay = dto.BirthDay;
         model.StartDate = dto.StartDate;
         model.Email = dto.Email;
@@ -219,97 +221,17 @@ public class EmployeeRepository
     }
     
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
-        var employees = await GetAllAsync();
-
-        if (!string.IsNullOrEmpty(email)) {
-            var foundByUsername = employees
-                .Where(em => em.FullName
-                    .Contains(email, StringComparison.InvariantCultureIgnoreCase));
-            
-            var foundByEmail = employees
-                .Where(em => em.Email
-                    .Contains(email, StringComparison.InvariantCultureIgnoreCase));
-            
-            if (foundByUsername.Count() != 0) {
-                return foundByUsername
-                    .Select(em => new EmployeeSelectDto {
-                        Id = em.Id,
-                        Email = em.Email,
-                        FirstName = em.FirstName,
-                        LastName = em.LastName,
-                        EmployeeSalaries = em.EmployeeSalaries
-                            .Select( ems => new EmployeeSalaryDto {
-                                EmployeeId = ems.Id,
-                                StartDate = ems.StartDate,
-                                FinishDate = ems.StartDate,
-                                Salary = float.Parse(ems
-                                    .Salary
-                                    .ToString())})
-                            .ToList(),
-                        EmployeeActivities = em.EmployeeActivities
-                            .Select(ems =>
-                                new EmployeeActivityDto {
-                                    EmployeeId = ems.Id,
-                                    Employee = new EmployeeSelectDto {
-                                        Id = ems.EmployeeId,
-                                        FirstName = ems.Employee.FirstName,
-                                        LastName = ems.Employee.LastName,
-                                        Email = ems.Employee.Email,
-                                        Role = ems.Employee.Role, 
-                                    },
-                                    ActivityId = ems.ActivityId,
-                                    Activity = new ActivitySelectDto {
-                                        Id = ems.ActivityId,
-                                        Name = ems.Activity.Name,
-                                        StartDate = ems.Activity.StartDate,
-                                        FinishDate = ems.Activity.FinishDate,
-                                        WorkOrderId = ems.Activity.WorkOrderId
-                                    }
-                                }).ToList()
-                            }).ToList();
-            } else if (foundByEmail.Count() != 0) {
-                return foundByEmail
-                    .Select(em => new EmployeeSelectDto {
-                        Id = em.Id,
-                        Email = em.Email,
-                        FirstName = em.FirstName,
-                        LastName = em.LastName,
-                        EmployeeSalaries = em.EmployeeSalaries
-                            .Select( ems => new EmployeeSalaryDto {
-                                EmployeeId = ems.Id,
-                                StartDate = ems.StartDate,
-                                FinishDate = ems.StartDate,
-                                Salary = float.Parse(ems
-                                    .Salary
-                                    .ToString())})
-                            .ToList(),
-                        EmployeeActivities = em.EmployeeActivities
-                            .Select(ems =>
-                                new EmployeeActivityDto {
-                                    EmployeeId = ems.Id,
-                                    Employee = new EmployeeSelectDto {
-                                        Id = ems.EmployeeId,
-                                        FirstName = ems.Employee.FirstName,
-                                        LastName = ems.Employee.LastName,
-                                        Email = ems.Employee.Email,
-                                        Role = ems.Employee.Role, 
-                                    },
-                                    ActivityId = ems.ActivityId,
-                                    Activity = new ActivitySelectDto {
-                                        Id = ems.ActivityId,
-                                        Name = ems.Activity.Name,
-                                        StartDate = ems.Activity.StartDate,
-                                        FinishDate = ems.Activity.FinishDate,
-                                        WorkOrderId = ems.Activity.WorkOrderId
-                                    }
-                                }).ToList()
-                    }).ToList();                   
-            } else {
-                return new List<EmployeeSelectDto>();
-            }
-        } else {
-            return new List<EmployeeSelectDto>();
-        }
+        return await _db.Employees
+            .Select(em => new EmployeeSelectDto {
+                Id = em.Id,
+                Email = em.Email,
+                FirstName = em.FirstName,
+                LastName = em.LastName,
+                FullName = em.FullName,
+                Role = em.Role
+            })
+            .Where(em => EF.Functions.Like(em.FullName, $"%{email}%") || EF.Functions.Like(em.Email, $"%{email}%"))
+            .ToListAsync();
     }
 
     public async Task<List<EmployeeViewDto>> GetAllAsync() {

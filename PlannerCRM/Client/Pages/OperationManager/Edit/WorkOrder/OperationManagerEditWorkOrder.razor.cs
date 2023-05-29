@@ -17,7 +17,7 @@ public partial class OperationManagerEditWorkOrder
     [Inject] private NavigationLockService NavLockService { get; set; } 
     [Inject] private NavigationManager NavManager { get; set; }
 
-    private WorkOrderFormDto _Model = new WorkOrderFormDto();
+    private WorkOrderEditFormDto _Model = new();
     private EditContext _EditContext { get; set; }
     private bool _IsError { get; set; }
     private string _Message { get; set; }

@@ -3,12 +3,12 @@ using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Shared.Attributes;
 
-public class FinishDateRangeAttribute : ValidationAttribute
+public class WorkOrderFinishDateRangeAttribute : ValidationAttribute
 {
     private int _Minimum { get; set; }
     private int _Maximum { get; set; }
 
-    public FinishDateRangeAttribute(int minimum, int maximum) {
+    public WorkOrderFinishDateRangeAttribute(int minimum, int maximum) {
         _Minimum = minimum;
         _Maximum = maximum;
     }
