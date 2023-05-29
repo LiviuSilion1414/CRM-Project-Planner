@@ -27,14 +27,12 @@ public partial class AccountManagerEditUserForm
     private EmployeeEditFormDto _Model = new();
     private EditContext _EditContext { get; set; }
     private string _TypeField = InputType.PASSWORD.ToString().ToLower();
-    private string _CurrentEmail { get; set; }
     private bool _IsCheckboxClicked { get; set; }
     private bool _IsError { get; set; }
     private string _Message { get; set; }
 
     protected override async Task OnInitializedAsync() {
         _Model = await AccountManagerService.GetEmployeeForEditAsync(Id);
-        _CurrentEmail = _Model.Email;   
     }
 
     protected override void OnInitialized() {
@@ -73,7 +71,7 @@ public partial class AccountManagerEditUserForm
                         ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDateHourlyRate)} non può essere null."""),
                 });
     
-            var responseUser = await AccountManagerService.UpdateUserAsync(_Model, _CurrentEmail);
+            var responseUser = await AccountManagerService.UpdateUserAsync(_Model);
             var responseEmployee = await AccountManagerService.UpdateEmployeeAsync(_Model);
     
             if (!responseUser.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
