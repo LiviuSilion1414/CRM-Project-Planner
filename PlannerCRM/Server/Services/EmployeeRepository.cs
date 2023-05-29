@@ -58,7 +58,7 @@ public class EmployeeRepository
         
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
+            throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
         }
     }
 
@@ -74,7 +74,7 @@ public class EmployeeRepository
         
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
+            throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
         }
     }
 
@@ -116,7 +116,7 @@ public class EmployeeRepository
         _db.Employees.Update(model);
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
+            throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
         }
     }
 
@@ -173,13 +173,14 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == id);
     }
 
-    public async Task<EmployeeEditFormDto> GetForEditAsync(int id) {
+    public async Task<EmployeeEditFormDto> GetForEditAsync(int id) { 
         return await _db.Employees
             .Select(em => new EmployeeEditFormDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
                 LastName = em.LastName,
                 Email = em.Email,
+                OldEmail = em.Email,
                 BirthDay = em.BirthDay,
                 StartDate = em.StartDate,
                 Role = em.Role,

@@ -96,7 +96,7 @@ public class WorkTimeRecordRepository
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBILE_GOING_FORWARD);
+            throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
         }
     }
 

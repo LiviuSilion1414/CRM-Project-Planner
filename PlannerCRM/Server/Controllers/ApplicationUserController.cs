@@ -63,14 +63,12 @@ public class ApplicationUserController : ControllerBase
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpPut("edit/user/{oldEmail}")]
-    public async Task<ActionResult> EditUser(
-        EmployeeEditFormDto dto,
-        string oldEmail)
+    [HttpPut("edit/user")]
+    public async Task<ActionResult> EditUser(EmployeeEditFormDto dto)
     {
         try
         {
-            await _repo.EditAsync(dto, oldEmail);
+            await _repo.EditAsync(dto);
 
             return Ok(USER_EDIT);
         }
@@ -107,8 +105,8 @@ public class ApplicationUserController : ControllerBase
     {
         try
         {
-            await _repo.DeleteAsync(email);
-
+            await _repo.DeleteAsync(email);  //colonna IsDeleted = true per eliminare l'utente
+                                              //oppure chidere conferma per eliminazione a cascata di tutti eventi
             return Ok(USER_DELETE);
         }
         catch (NullReferenceException nullRefExc)

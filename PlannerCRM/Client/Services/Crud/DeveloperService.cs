@@ -29,13 +29,13 @@ public class DeveloperService
         _logger = logger;
     }
 
-    public async Task<HttpResponseMessage> AddWorkedHoursAsync(WorkTimeRecordFormDto model) {
+    public async Task<HttpResponseMessage> AddWorkedHoursAsync(WorkTimeRecordFormDto dto) {
         try
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("http://localhost:5032/worktimerecord/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
         catch (NullReferenceException nullRefExc)

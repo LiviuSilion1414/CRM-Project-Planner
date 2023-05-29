@@ -33,13 +33,13 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddEmployeeAsync(EmployeeAddFormDto model) {
+    public async Task<HttpResponseMessage> AddEmployeeAsync(EmployeeAddFormDto dto) {
         try 
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("http://localhost:5032/employee/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         } 
         catch (NullReferenceException nullRefExc)
@@ -64,13 +64,13 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddUserAsync(EmployeeAddFormDto model) {
+    public async Task<HttpResponseMessage> AddUserAsync(EmployeeAddFormDto dto) {
         try 
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("http://localhost:5032/applicationuser/add/user"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
         catch (NullReferenceException nullRefExc)
@@ -95,13 +95,13 @@ public class AccountManagerCrudService
         }
     } 
 
-    public async Task<HttpResponseMessage> UpdateEmployeeAsync(EmployeeEditFormDto model) {
+    public async Task<HttpResponseMessage> UpdateEmployeeAsync(EmployeeEditFormDto dto) {
        try
        {
          return await _http.SendAsync(new HttpRequestMessage() {
              Method = HttpMethod.Put,
              RequestUri = new Uri("http://localhost:5032/employee/edit"),
-             Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+             Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
          });
        }
        catch (NullReferenceException nullRefExc)
@@ -126,14 +126,11 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> UpdateUserAsync(EmployeeEditFormDto model, string currentEmail) {
+    public async Task<HttpResponseMessage> UpdateUserAsync(EmployeeEditFormDto dto) {
         try
         {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri($"http://localhost:5032/applicationuser/edit/user/{currentEmail}"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
-            });
+            return await _http.PutAsync("http://localhost:5032/applicationuser/edit/user", 
+                new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json"));
         }
         catch (NullReferenceException nullRefExc)
         {

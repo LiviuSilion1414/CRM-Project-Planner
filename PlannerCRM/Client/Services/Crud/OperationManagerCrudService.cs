@@ -68,13 +68,13 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddWorkOrderAsync(WorkOrderFormDto model) {
+    public async Task<HttpResponseMessage> AddWorkOrderAsync(WorkOrderFormDto dto) {
         try
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("http://localhost:5032/workorder/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
         catch (NullReferenceException nullRefExc)
@@ -99,12 +99,12 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> EditWorkOrderAsync(WorkOrderFormDto model) {
+    public async Task<HttpResponseMessage> EditWorkOrderAsync(WorkOrderFormDto dto) {
         try {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Put,
                 RequestUri = new Uri("http://localhost:5032/workorder/edit"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
         catch (NullReferenceException nullRefExc)
@@ -129,13 +129,13 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddActivityAsync(ActivityFormDto model) {
+    public async Task<HttpResponseMessage> AddActivityAsync(ActivityFormDto dto) {
         try 
         { 
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri("http://localhost:5032/activity/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         } 
         catch (NullReferenceException nullRefExc)
@@ -160,13 +160,13 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> EditActivityAsync(ActivityFormDto model) {
+    public async Task<HttpResponseMessage> EditActivityAsync(ActivityFormDto dto) {
         try 
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Put,
                 RequestUri = new Uri("http://localhost:5032/activity/edit"),
-                Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
         catch (NullReferenceException nullRefExc)

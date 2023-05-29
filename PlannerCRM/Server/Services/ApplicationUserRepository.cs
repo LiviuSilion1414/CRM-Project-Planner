@@ -51,42 +51,36 @@ public class ApplicationUserRepository
         var user = new IdentityUser {
             Email = dto.Email,
             EmailConfirmed = true,
-            UserName = dto.Email
+            UserName = dto.Email,
         };
         
-        Roles foundUserRole = default;
-
-        foreach (var role in Enum.GetValues(typeof(Roles))) {
-            if ((Roles) role == dto.Role) {
-                foundUserRole = (Roles) role;
-            }
-        }
+        var foundUserRole = await _roleManager.Roles.SingleAsync(aspRole => aspRole.Name == dto.Role.ToString());
 
         var creationResult = await _userManager.CreateAsync(user, dto.Password);
-        var assignmentResult = await _userManager.AddToRoleAsync(user, foundUserRole.ToString());
+        var assignmentResult = await _userManager.AddToRoleAsync(user, foundUserRole.Name);
         
         if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
-            throw new InvalidOperationException(IMPOSSIBILE_GOING_FORWARD);
+            throw new InvalidOperationException(IMPOSSIBLE_GOING_FORWARD);
         }
     }
 
-    public async Task EditAsync(EmployeeEditFormDto dto, string oldEmail) {
+    public async Task EditAsync(EmployeeEditFormDto dto) {
         if (dto.GetType() == null) {
             throw new NullReferenceException(NULL_OBJECT);
         } 
         
-       // var HasPropertiesNull = dto.GetType().GetProperties() //throws exception
-       //     .Any(em => em.GetValue(dto) == null);
-       // 
-       // if (HasPropertiesNull) {
-       //     throw new ArgumentNullException(NULL_PARAM);
-       // }
-
-        if (string.IsNullOrEmpty(oldEmail)) {
-            throw new NullReferenceException(NULL_OBJECT);
+        var HasPropertiesNull = dto.GetType().GetProperties() //throws exception
+            .Any(em => em.GetValue(dto) == null);
+        
+        if (HasPropertiesNull) {
+            throw new ArgumentNullException(NULL_PARAM);
         }
 
-        var user = await _userManager.FindByEmailAsync(oldEmail);
+        if (dto.Role == ADMIN_ROLE) {
+            throw new InvalidOperationException(NOT_ASSEGNABLE_ROLE);
+        }
+
+        var user = await _userManager.FindByEmailAsync(dto.OldEmail);
         
         if (user == null) {
             throw new KeyNotFoundException(OBJECT_NOT_FOUND);
@@ -100,18 +94,21 @@ public class ApplicationUserRepository
         var updateResult = await _userManager.AddPasswordAsync(user, dto.Password);
 
         if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
-            throw new InvalidOperationException(IMPOSSIBILE_GOING_FORWARD);
+            throw new InvalidOperationException(IMPOSSIBLE_GOING_FORWARD);
         } 
         
-        var currentUser = await _userManager.FindByNameAsync(oldEmail);
-        var rolesList = await _userManager.GetRolesAsync(currentUser);
+        var rolesList = await _userManager.GetRolesAsync(user);
         var userRole = rolesList.Single();
 
         var isInRole = await _userManager.IsInRoleAsync(user, userRole);
         
         if (isInRole) {
-            await _userManager.RemoveFromRoleAsync(user, userRole);
-            await _userManager.AddToRoleAsync(user, dto.Role.ToString());
+            var deleteRoleResult = await _userManager.RemoveFromRoleAsync(user, userRole);
+            var reassignmentRoleResult = await _userManager.AddToRoleAsync(user, dto.Role.ToString());
+            
+            if (!deleteRoleResult.Succeeded || !reassignmentRoleResult.Succeeded) {
+                throw new InvalidOperationException(IMPOSSIBLE_GOING_FORWARD);
+            }
         } else {
             throw new InvalidOperationException(IMPOSSIBLE_EDIT);
         } 

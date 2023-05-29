@@ -13,6 +13,6 @@ public static class ExceptionsMessages
     public const string IMPOSSIBLE_ADD = "Impossibile aggiungere l'oggetto.";
     public const string IMPOSSIBLE_DELETE = "Impossibile eliminare l'oggetto.";
     public const string IMPOSSIBLE_EDIT = "Impossibile modificare l'oggetto.";
-    public const string IMPOSSIBILE_GOING_FORWARD = "Impossibile proseguire.";
+    public const string IMPOSSIBLE_GOING_FORWARD = "Impossibile proseguire.";
     public const string OBJECT_NOT_FOUND = "Oggetto non trovato.";
 }
