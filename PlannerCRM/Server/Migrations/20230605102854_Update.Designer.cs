@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230529144454_Secundary")]
-    partial class Secundary
+    [Migration("20230605102854_Update")]
+    partial class Update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -258,6 +258,9 @@ namespace PlannerCRM.Server.Migrations
 
                     b.Property<DateTime>("BirthDay")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("CurrentHourlyRate")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");

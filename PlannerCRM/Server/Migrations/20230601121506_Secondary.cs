@@ -5,24 +5,24 @@
 namespace PlannerCRM.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Secundary : Migration
+    public partial class Secondary : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "IsDeleted",
+            migrationBuilder.AddColumn<decimal>(
+                name: "CurrentHourlyRate",
                 table: "Employees",
-                type: "boolean",
+                type: "numeric",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: 0m);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "IsDeleted",
+                name: "CurrentHourlyRate",
                 table: "Employees");
         }
     }
