@@ -112,7 +112,8 @@ public class ApplicationUserController : ControllerBase
         {
             await _repo.DeleteAsync(email);  //colonna IsDeleted = true per eliminare l'utente
                                               //oppure chidere conferma per eliminazione a cascata di tutti eventi
-            return Ok(USER_DELETE);
+            return Ok(USER_DELETE);            //es: se l'utente ha compiuto delle attività in un progetto e non c'e piu nell'azienda
+                                                //deve comparire come cancellato
         }
         catch (NullReferenceException nullRefExc)
         {
