@@ -100,18 +100,17 @@ public class WorkTimeRecordController : ControllerBase
         }
     }
 
-    [HttpGet("get/{workTimeRecordId}")]
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int workTimeRecordId)
+    [HttpGet("get/{activityId}")]
+    public async Task<List<WorkTimeRecordViewDto>> GetWorkTimeRecord(int activityId)
     {
         try
         {
-            return await _repo.GetAsync(workTimeRecordId);
-
+            return await _repo.GetAsync(activityId);
         }
         catch (Exception exc)
         {
             _logger.LogError(exc.Message, exc.StackTrace);
-            return new WorkTimeRecordViewDto();
+            return new List<WorkTimeRecordViewDto>();
         }
     }
 
@@ -129,31 +128,17 @@ public class WorkTimeRecordController : ControllerBase
         }
     }
 
-    [HttpGet("get/all/by/employee/{employeeId}")]
-    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByWorkOrder(int employeeId)
+    [HttpGet("get/by/employee/{employeeId}")]
+    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByWorkOrder(int employeeId)
     {
         try
         {
-            return await _repo.GetAllAsync(employeeId);
+            return await _repo.GetByEmployeeIdAsync(employeeId);
         }
         catch (Exception exc)
         {
             _logger.LogError(exc.Message, exc.StackTrace);
-            return new List<WorkTimeRecordViewDto>();
-        }
-    }
-
-    [HttpGet("get/size/by/employee/{employeeId}")]
-    public async Task<int> GetWorkTimeRecordsSize(int employeeId)
-    {
-        try
-        {
-            return await _repo.GetWorkTimeRecordsSizeByEmployeeId(employeeId);
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return INVALID_ID;
+            return new WorkTimeRecordViewDto();
         }
     }
 }
