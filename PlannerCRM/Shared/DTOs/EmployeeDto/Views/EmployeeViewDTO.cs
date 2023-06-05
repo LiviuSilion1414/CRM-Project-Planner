@@ -12,6 +12,7 @@ public class EmployeeViewDto
     public string FullName { get; set; }
     public string Role { get; set; }
     public decimal HourlyRate { get; set; }
+    public bool IsDeleted { get; init; }
     public DateTime BirthDay { get; set; }
     public DateTime StartDate { get; set; }
     public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }

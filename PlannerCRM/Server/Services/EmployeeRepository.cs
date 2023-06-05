@@ -30,7 +30,7 @@ public class EmployeeRepository
         }
         
         var isAlreadyPresent = await _db.Employees
-            .SingleOrDefaultAsync(em => em.Id == dto.Id);
+            .SingleOrDefaultAsync(em => em.Id == dto.Id || em.IsDeleted);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
@@ -70,9 +70,19 @@ public class EmployeeRepository
 
         if (employeeDelete == null) {
             throw new KeyNotFoundException(IMPOSSIBLE_DELETE);
+        } else  {
+            var hasRelationships = await _db.EmployeeActivity
+                .AnyAsync(ea  => ea.EmployeeId == employeeDelete.Id);
+
+            if (hasRelationships) {
+                employeeDelete.IsDeleted = true;
+
+                //_db.Employees.Remove(employeeDelete);
+            } 
+             _db.Update(employeeDelete);
+             await _db.SaveChangesAsync();
         }
 
-        _db.Employees.Remove(employeeDelete);
         
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
@@ -92,6 +102,7 @@ public class EmployeeRepository
        // }
 
         var model = await _db.Employees
+            .Where(em => !em.IsDeleted)
             .SingleOrDefaultAsync(em => em.Id == dto.Id);
         
         if (model == null) {
@@ -117,7 +128,9 @@ public class EmployeeRepository
                     Salary = decimal.Parse(ems.Salary.ToString())
                 }
             ).ToList();
+        
         _db.Employees.Update(model);
+        
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
             throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
@@ -126,6 +139,7 @@ public class EmployeeRepository
 
     public async Task<EmployeeViewDto> GetForViewAsync(int id) {
         return await _db.Employees
+            .Where(em => !em.IsDeleted)
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
@@ -134,6 +148,7 @@ public class EmployeeRepository
                 BirthDay = em.BirthDay,
                 StartDate = em.StartDate,
                 Email = em.Email,
+                IsDeleted = em.IsDeleted,
                 Role = em.Role
                     .ToString()
                     .Replace('_', ' '), 
@@ -176,6 +191,7 @@ public class EmployeeRepository
 
     public async Task<EmployeeEditFormDto> GetForEditAsync(int id) { 
         return await _db.Employees
+            .Where(em => !em.IsDeleted)
             .Select(em => new EmployeeEditFormDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
@@ -188,6 +204,7 @@ public class EmployeeRepository
                 NumericCode = em.NumericCode,
                 Password = em.Password,
                 HourlyRate = em.CurrentHourlyRate,
+                IsDeleted = em.IsDeleted,
                 StartDateHourlyRate = em.Salaries.SingleOrDefault().StartDate,
                 FinishDateHourlyRate = em.Salaries.SingleOrDefault().FinishDate,
                 EmployeeSalaries = em.Salaries
@@ -203,6 +220,7 @@ public class EmployeeRepository
 
     public async Task<EmployeeDeleteDto> GetForDeleteAsync(int id) {
         return await _db.Employees
+            .Where(em => !em.IsDeleted)
             .Select(em => new EmployeeDeleteDto {
                 Id = em.Id,
                 FullName = $"{em.FirstName} {em.LastName}",
@@ -216,6 +234,7 @@ public class EmployeeRepository
     
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
         return await _db.Employees
+            .Where(em => !em.IsDeleted)
             .Select(em => new EmployeeSelectDto {
                 Id = em.Id,
                 Email = em.Email,
@@ -224,12 +243,14 @@ public class EmployeeRepository
                 FullName = em.FullName,
                 Role = em.Role
             })
-            .Where(em => EF.Functions.Like(em.FullName, $"%{email}%") || EF.Functions.Like(em.Email, $"%{email}%"))
+            .Where(em => EF.Functions.Like(em.FullName, $"%{email}%") || 
+                EF.Functions.Like(em.Email, $"%{email}%"))
             .ToListAsync();
     }
 
     public async Task<List<EmployeeViewDto>> GetAllAsync() {
         return await _db.Employees
+            .Where(em => !em.IsDeleted)
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
@@ -280,6 +301,7 @@ public class EmployeeRepository
 
     public async Task<CurrentEmployeeDto> GetUserIdAsync(string email) {
         return await _db.Employees
+            .Where(em => !em.IsDeleted)
             .Select(em => new CurrentEmployeeDto {
                 Id = em.Id,
                 Email = em.Email})

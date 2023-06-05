@@ -13,12 +13,15 @@ public class EmployeeEditFormDto
     public string Password { get; set; }
 
     public string Email { get; set; }
+
     public string OldEmail { get; set; }
 
     public DateTime StartDate { get; set; }
 
     public DateTime BirthDay { get; set; }
     
+    public bool IsDeleted { get; init; }
+
     public string NumericCode { get; set; }
 
     public Roles Role { get; set; }

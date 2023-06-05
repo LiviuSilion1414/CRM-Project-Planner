@@ -47,7 +47,7 @@ public class ActivityRepository
             EmployeeActivity = dto.EmployeeActivity
                 .Select(ea => new EmployeeActivity {
                     Id = ea.Id,
-                    EmployeeId = ea.EmployeeId,
+                    EmployeeId = ea.EmployeeId, //fill employee and activity props
                     ActivityId = ea.ActivityId
                 }).ToHashSet()
                ,
@@ -66,7 +66,11 @@ public class ActivityRepository
         if (activityDelete == null) {
             throw new InvalidOperationException(IMPOSSIBLE_DELETE);
         }
+        var employeeActivityDelete = await _db.EmployeeActivity
+            .SingleAsync(ea => ea.ActivityId == activityDelete.Id);
+
         _db.Activities.Remove(activityDelete);
+        _db.EmployeeActivity.Remove(employeeActivityDelete);
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
@@ -96,9 +100,10 @@ public class ActivityRepository
         model.FinishDate = dto.FinishDate;
         model.WorkOrderId = dto.WorkOrderId;
         model.EmployeeActivity = dto.EmployeeActivity
-            .Where(eaDto => _db.EmployeeActivity.Any(ea => eaDto.EmployeeId != ea.EmployeeId))
+            .Where(eaDto => _db.EmployeeActivity
+                .Any(ea => eaDto.EmployeeId != ea.EmployeeId))
             .Select(ea => new EmployeeActivity {
-                EmployeeId = ea.EmployeeId,
+                EmployeeId = ea.EmployeeId,     //fill employee and activity props
                 ActivityId = ea.ActivityId
             })
             .ToHashSet();
@@ -137,6 +142,7 @@ public class ActivityRepository
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
                         Employee = _db.Employees
+                            .Where(em => !em.IsDeleted)
                             .Select(em => new EmployeeSelectDto {
                                 Id = em.Id,
                                 Email = em.Email,
@@ -185,6 +191,7 @@ public class ActivityRepository
                         Id = ea.EmployeeId,
                         EmployeeId = ea.EmployeeId,
                         Employee = _db.Employees
+                            .Where(em => !em.IsDeleted)
                             .Select(em => new EmployeeSelectDto {
                                 Id = em.Id,
                                 Email = em.Email,
@@ -223,6 +230,7 @@ public class ActivityRepository
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
                         Employee = _db.Employees
+                            .Where(em => !em.IsDeleted)
                             .Select(em => new EmployeeSelectDto {
                                 Id = em.Id,
                                 Email = em.Email,

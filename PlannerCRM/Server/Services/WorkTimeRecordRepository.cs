@@ -42,6 +42,7 @@ public class WorkTimeRecordRepository
                 ActivityId = dto.ActivityId,
                 EmployeeId = dto.EmployeeId,
                 Employee = await _db.Employees
+                    .Where(em => !em.IsDeleted)
                     .SingleAsync(e => e.Id == dto.EmployeeId),
                 WorkOrderId = dto.WorkOrderId
             }
@@ -93,6 +94,7 @@ public class WorkTimeRecordRepository
         model.WorkOrderId = dto.WorkOrderId;
         model.EmployeeId = dto.EmployeeId;
         model.Employee = await _db.Employees
+            .Where(em => !em.IsDeleted)
             .SingleOrDefaultAsync(em => em.Id == dto.EmployeeId);
 
         var rowsAffected = await _db.SaveChangesAsync();
@@ -113,7 +115,6 @@ public class WorkTimeRecordRepository
                 EmployeeId = wtr.EmployeeId,
                 WorkOrderId = wtr.WorkOrderId})
             .Where(wtr => wtr.ActivityId == activityId)
-            .Distinct()
             .ToListAsync();
     }
 
@@ -125,7 +126,8 @@ public class WorkTimeRecordRepository
                 Hours = wtr.Hours,
                 TotalPrice = wtr.TotalPrice,
                 ActivityId = wtr.ActivityId,
-                EmployeeId = wtr.EmployeeId})
+                EmployeeId = wtr.EmployeeId
+            })
             .ToListAsync();
     }
 
