@@ -7,6 +7,6 @@ public class Activity
     public DateTime StartDate { get; set; }
     public DateTime FinishDate { get; set; }
     
-    public List<EmployeeActivity> EmployeeActivity { get; set; }
+    public HashSet<EmployeeActivity> EmployeeActivity { get; set; }
     public int WorkOrderId { get; set; }
 }

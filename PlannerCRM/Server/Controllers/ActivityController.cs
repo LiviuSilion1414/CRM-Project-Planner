@@ -97,7 +97,7 @@ public class ActivityController : ControllerBase
         catch (Exception exc)
         {
             _logger.LogError(exc.StackTrace, exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            return BadRequest(exc.Message);
         }
     }
     

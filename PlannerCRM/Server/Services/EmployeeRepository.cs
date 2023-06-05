@@ -42,10 +42,11 @@ public class EmployeeRepository
             LastName = dto.LastName,
             FullName = $"{dto.FirstName + dto.LastName}",
             BirthDay = dto.BirthDay ?? throw new NullReferenceException(NULL_PROP),
-            StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PARAM),
+            StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
             Password = dto.Password,
             NumericCode = dto.NumericCode,
-            Role = dto.Role ?? throw new NullReferenceException(NULL_PARAM),
+            Role = dto.Role ?? throw new NullReferenceException(NULL_PROP),
+            CurrentHourlyRate = dto.HourlyRate ?? throw new NullReferenceException(NULL_PROP),
             Salaries = dto.EmployeeSalaries
                 .Select(ems =>
                     new EmployeeSalary {
@@ -106,6 +107,7 @@ public class EmployeeRepository
         model.Email = dto.Email;
         model.Role = dto.Role;
         model.NumericCode = dto.NumericCode;
+        model.CurrentHourlyRate = dto.HourlyRate;
         model.Salaries = dto.EmployeeSalaries
             .Select(ems => 
                 new EmployeeSalary {
@@ -135,20 +137,13 @@ public class EmployeeRepository
                 Role = em.Role
                     .ToString()
                     .Replace('_', ' '), 
-                HourlyRate = em.Salaries.Count() != 0 
-                    ? float.Parse(em.Salaries
-                        .SingleOrDefault()
-                        .Salary
-                        .ToString())
-                    : 0.0F,
+                HourlyRate = em.CurrentHourlyRate,
                 EmployeeSalaries = em.Salaries
                     .Select( ems => new EmployeeSalaryDto {
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
-                        Salary = float.Parse(ems
-                            .Salary
-                            .ToString())})
+                        Salary = ems.Salary})
                     .ToList(),
                 EmployeeActivities = em.EmployeeActivity
                     .Select( ea =>
@@ -192,12 +187,7 @@ public class EmployeeRepository
                 Role = em.Role,
                 NumericCode = em.NumericCode,
                 Password = em.Password,
-                HourlyRate = em.Salaries.Count() != 0 
-                    ? float.Parse(em.Salaries
-                        .SingleOrDefault()
-                        .Salary
-                        .ToString())
-                    : 0.0F,
+                HourlyRate = em.CurrentHourlyRate,
                 StartDateHourlyRate = em.Salaries.SingleOrDefault().StartDate,
                 FinishDateHourlyRate = em.Salaries.SingleOrDefault().FinishDate,
                 EmployeeSalaries = em.Salaries
@@ -205,7 +195,7 @@ public class EmployeeRepository
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
-                        Salary = float.Parse(ems.Salary.ToString())})
+                        Salary = ems.Salary})
                     .ToList()
                 })
             .SingleOrDefaultAsync(em => em.Id == id);
@@ -252,12 +242,7 @@ public class EmployeeRepository
                     .ToString()
                     .ToUpper()
                     .Replace('_', ' '),
-                HourlyRate = em.Salaries.Count() != 0 
-                    ? float.Parse(em.Salaries
-                        .SingleOrDefault()
-                        .Salary
-                        .ToString())
-                    : 0.0F,
+                HourlyRate = em.CurrentHourlyRate,
                 EmployeeActivities = em.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.ActivityId,
@@ -287,9 +272,7 @@ public class EmployeeRepository
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
-                        Salary = float.Parse(ems
-                            .Salary
-                            .ToString())})
+                        Salary = ems.Salary})
                     .ToList(),
             })
             .ToListAsync();
