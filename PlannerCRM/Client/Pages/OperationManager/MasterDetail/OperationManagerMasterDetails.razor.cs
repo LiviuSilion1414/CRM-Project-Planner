@@ -22,7 +22,6 @@ public partial class OperationManagerMasterDetails
         _WorkOrder = await OperationManagerService.GetWorkOrderForViewAsync(Id);
         _Activities = await OperationManagerService.GetActivityPerWorkOrderAsync(_WorkOrder.Id); 
     }
-
     private void OnClickEdit(int activityId) {
         NavManager.NavigateTo($"/operation-manager/edit/activity/{_WorkOrder.Id}/{activityId}");
     }

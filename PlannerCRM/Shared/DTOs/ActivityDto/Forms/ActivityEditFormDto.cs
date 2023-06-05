@@ -9,14 +9,12 @@ namespace PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 public partial class ActivityEditFormDto
 {
     public int Id { get; set; }
-    
     public string Name { get; set; }
-    
-    public DateTime? StartDate { get; set; }
-    
-    public DateTime? FinishDate { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime FinishDate { get; set; }
 
-    public int? WorkOrderId { get; set; }
+    public int WorkOrderId { get; set; }
 
-    public List<EmployeeActivityDto> EmployeesActivities { get; set; }
+    public HashSet<EmployeeActivityDto> EmployeeActivity { get; set; }
+    public HashSet<EmployeeActivityDto> ViewEmployeeActivity { get; set; }
 }

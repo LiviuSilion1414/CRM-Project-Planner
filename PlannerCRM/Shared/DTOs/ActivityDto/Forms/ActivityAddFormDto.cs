@@ -23,5 +23,5 @@ public partial class ActivityAddFormDto
     public int? WorkOrderId { get; set; }
 
     [Required(ErrorMessage = """ Campo "Dipendenti selezionati" richiesto. """)]
-    public List<EmployeeActivityDto> EmployeesActivities { get; set; }
+    public HashSet<EmployeeActivityDto> EmployeeActivity { get; set; }
 }

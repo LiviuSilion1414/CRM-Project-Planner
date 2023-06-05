@@ -17,7 +17,7 @@ public class EmployeeAddFormDto
     [Required(ErrorMessage = """Campo "Cognome" richiesto""")]
     public string LastName { get; set; }
 
-    [RangeValidator(PASS_MIN_LENGTH, PASS_MAX_LENGTH, 
+    [PasswordValidator(PASS_MIN_LENGTH, PASS_MAX_LENGTH, 
         ErrorMessage="La password deve avere tra 8 e 16 caratteri.")]
     [Required(ErrorMessage = """Campo "Password" richiesto""")]
     public string Password { get; set; }
@@ -41,7 +41,7 @@ public class EmployeeAddFormDto
     public Roles? Role { get; set; }
 
     [Required(ErrorMessage = """ Campo "Tariffa oraria" richiesto """)]
-    public float? HourlyRate { get; set; }
+    public decimal? HourlyRate { get; set; }
 
     [Required(ErrorMessage = """ Campo "Data d'inizio tariffa oraria" richiesto """)]
     public DateTime? StartDateHourlyRate { get; set; }

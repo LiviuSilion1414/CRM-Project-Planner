@@ -19,23 +19,26 @@
                     <td><span class="oi oi-briefcase"></span></td>
                     <td>
                         @foreach (var wo in _workorders) {
-                            if (wo.Id == ac.WorkOrderId) {
+                            if (ac.WorkOrderId == wo.Id) {
                                 @wo.Name;
                             }
                         }
                     </td>
                     <td>@ac.Name</td>
-                    <td>@ac.StartDate?.ToShortDateString()</td>
-                    <td>@ac.FinishDate?.ToShortDateString()</td>
-                    @if (_workTimeRecords == null || _workTimeRecords.Count == 0) {
+                    <td>@ac.StartDate.ToShortDateString()</td>
+                    <td>@ac.FinishDate.ToShortDateString()</td>
+                    @if (_workTimeRecords == null) {
                         <td><em>Nessun orario</em></td>
                     } else {
                         <td>
-                            @foreach (var wtr in _workTimeRecords) {
-                                if (wtr.ActivityId == ac.Id) {
-                                     @wtr.Hours
+                            @foreach (var wtrSubList in _workTimeRecords) {
+                                @foreach (var wtr in wtrSubList)
+                                {
+                                    <td>
+                                        @wtr.Hours
+                                    </td>
                                 }
-                            } 
+                            }
                         </td>
                     }
                     <td>

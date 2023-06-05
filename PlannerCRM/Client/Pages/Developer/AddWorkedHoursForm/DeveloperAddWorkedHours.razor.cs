@@ -10,8 +10,8 @@ using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Client.Pages.Developer.AddWorkedHoursForm;
 
-[Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
-[Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
+// [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
+// [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
 public partial class DeveloperAddWorkedHours
 {
     [Parameter] public int EmployeeId { get; set; }
@@ -43,6 +43,9 @@ public partial class DeveloperAddWorkedHours
             
         _Model = await DeveloperService.GetActivityByIdAsync(ActivityId);
         _WorkOrder = await DeveloperService.GetWorkOrderByIdAsync(_Model.WorkOrderId);
+    }
+    
+    protected override void OnInitialized() {
         _EditContext = new(_Model);
     }
 
@@ -70,7 +73,8 @@ public partial class DeveloperAddWorkedHours
         _WorkTimeRecord.Hours = _WorkedHours;
         _WorkTimeRecord.ActivityId = _Model.Id;
         _WorkTimeRecord.EmployeeId = EmployeeId;
-        _WorkTimeRecord.WorkOrderId = _Model.WorkOrderId;
+        _WorkTimeRecord.WorkOrderId = _WorkOrder.Id;
+        _WorkTimeRecord.Hours = _WorkedHours;
 
         var response = await DeveloperService.AddWorkedHoursAsync(_WorkTimeRecord);
         

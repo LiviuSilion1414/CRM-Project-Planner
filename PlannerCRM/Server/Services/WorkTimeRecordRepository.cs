@@ -27,24 +27,25 @@ public class WorkTimeRecordRepository
             throw new ArgumentNullException(NULL_PARAM);
         }
         
-        var isAlreadyPresent = await _db.Employees
-            .SingleOrDefaultAsync(workTimeRec => workTimeRec.Id == workTimeRec.Id);
-        if (isAlreadyPresent != null) {
+        var presentWorkTime = await _db.WorkTimeRecords
+            .SingleOrDefaultAsync(workTimeRec => dto.Id == workTimeRec.Id);
+        if (presentWorkTime != null) {
             throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
-
-        await _db.WorkTimeRecords.AddAsync(new WorkTimeRecord {
-            Id = dto.Id,
-            Date = dto.Date,
-            Hours = dto.Hours,
-            TotalPrice = dto.TotalPrice,
-            ActivityId = dto.ActivityId,
-            EmployeeId = dto.EmployeeId,
-            Employee = await _db.Employees
-                .Where(e => e.Id == dto.EmployeeId)
-                .SingleOrDefaultAsync(),
-            WorkOrderId = dto.WorkOrderId
-        });
+        
+        await _db.WorkTimeRecords.AddAsync(
+            new WorkTimeRecord {
+                Id = dto.Id,
+                Date = dto.Date,
+                Hours = dto.Hours,
+                TotalPrice = dto.TotalPrice + dto.Hours,
+                ActivityId = dto.ActivityId,
+                EmployeeId = dto.EmployeeId,
+                Employee = await _db.Employees
+                    .SingleAsync(e => e.Id == dto.EmployeeId),
+                WorkOrderId = dto.WorkOrderId
+            }
+        );
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
@@ -100,17 +101,20 @@ public class WorkTimeRecordRepository
         }
     }
 
-    public async Task<WorkTimeRecordViewDto> GetAsync(int activityId) {
+    public async Task<List<WorkTimeRecordViewDto>> GetAsync(int activityId) {
         return await _db.WorkTimeRecords
             .Select(wtr => new WorkTimeRecordViewDto {
                 Id = wtr.Id,
                 Date = wtr.Date,
-                Hours = wtr.Hours,
+                Hours = _db.WorkTimeRecords
+                    .Sum(wtrSum => wtrSum.Hours),
                 TotalPrice = wtr.TotalPrice,
                 ActivityId = wtr.ActivityId,
                 EmployeeId = wtr.EmployeeId,
                 WorkOrderId = wtr.WorkOrderId})
-            .SingleOrDefaultAsync(wtr => wtr.ActivityId == activityId);
+            .Where(wtr => wtr.ActivityId == activityId)
+            .Distinct()
+            .ToListAsync();
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {
@@ -125,22 +129,18 @@ public class WorkTimeRecordRepository
             .ToListAsync();
     }
 
-    public async Task<List<WorkTimeRecordViewDto>> GetAllAsync(int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetByEmployeeIdAsync(int employeeId) {
         return await _db.WorkTimeRecords
-            .Where(wtr => wtr.EmployeeId == employeeId)
-            .Select(wtr => new WorkTimeRecordViewDto {
-                Id = wtr.Id,
-                Date = wtr.Date,
-                Hours = wtr.Hours,
-                TotalPrice = wtr.TotalPrice,
-                ActivityId = wtr.ActivityId,
-                EmployeeId = wtr.EmployeeId})
-            .ToListAsync();
-    }
-
-    public async Task<int> GetWorkTimeRecordsSizeByEmployeeId(int employeeId) {
-        return await _db.WorkTimeRecords
-            .Where(wtr => wtr.EmployeeId == employeeId)
-            .CountAsync();
+            .Select(wtr => 
+                new WorkTimeRecordViewDto {
+                    Id = wtr.Id,
+                    Date = wtr.Date,
+                    Hours = _db.WorkTimeRecords
+                        .Sum(wtrSum => wtrSum.Hours),
+                    TotalPrice = wtr.TotalPrice,
+                    ActivityId = wtr.ActivityId,
+                    EmployeeId = wtr.EmployeeId 
+                })
+            .SingleAsync(wtr => wtr.EmployeeId == employeeId);
     }
 }

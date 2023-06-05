@@ -23,7 +23,7 @@ public class EmployeeEditFormDto
 
     public Roles Role { get; set; }
 
-    public float HourlyRate { get; set; }
+    public decimal HourlyRate { get; set; }
 
     public DateTime? StartDateHourlyRate { get; set; }
 
