@@ -63,7 +63,7 @@ public class DeveloperService
     public async Task<ActivityViewDto> GetActivityByIdAsync(int activityId) {
         try
         {
-            var response = await _http.GetAsync($"worktimerecord/view/{activityId}");
+            var response = await _http.GetAsync($"http://localhost:5032/activity/get/{activityId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<ActivityViewDto>(jsonObject);
@@ -78,7 +78,7 @@ public class DeveloperService
     public async Task<WorkOrderViewDto> GetWorkOrderByIdAsync(int workOrderId) {
         try
         {
-            var response = await _http.GetAsync($"workorder/get/for/view/{workOrderId}");
+            var response = await _http.GetAsync($"http://localhost:5032/workorder/get/for/view/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<WorkOrderViewDto>(jsonObject);
@@ -90,18 +90,18 @@ public class DeveloperService
         }
     }
 
-    public async Task<List<ActivityEditFormDto>> GetActivitiesByEmployeeIdAsync(int employeeId) {
+    public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId) {
         try
         {
             var response = await _http.GetAsync($"http://localhost:5032/activity/get/activity/per/employee/{employeeId}"); 
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<List<ActivityEditFormDto>>(jsonObject);
+            return JsonConvert.DeserializeObject<List<ActivityViewDto>>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new List<ActivityEditFormDto>();
+            return new List<ActivityViewDto>();
         }
     }
 
@@ -123,7 +123,22 @@ public class DeveloperService
     public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByEmployeeId(int employeeId) {
         try
         {
-            var response = await _http.GetAsync($"worktimerecord/get/all/by/employee/{employeeId}");
+            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/by/employee/{employeeId}");
+            var jsonObject = await response.Content.ReadAsStringAsync();
+    
+            return JsonConvert.DeserializeObject<List<WorkTimeRecordViewDto>>(jsonObject);
+        }
+        catch (Exception exc)
+        {
+            _logger.Log(LogLevel.Error, exc.Message);
+            return new List<WorkTimeRecordViewDto>();
+        }
+    }
+    
+    public async Task<List<WorkTimeRecordViewDto>> GetWorkTimeRecordsByActivityId(int activityId) {
+        try
+        {
+            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/{activityId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<List<WorkTimeRecordViewDto>>(jsonObject);
