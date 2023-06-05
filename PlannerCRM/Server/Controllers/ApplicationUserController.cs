@@ -6,6 +6,7 @@ using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -54,6 +55,10 @@ public class ApplicationUserController : ControllerBase
         {
             _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
+        }
+        catch (DbUpdateException dbUpdateExc) {
+            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return BadRequest(dbUpdateExc.Message);
         }
         catch (Exception exc)
         {

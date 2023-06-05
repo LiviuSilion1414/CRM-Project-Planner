@@ -57,6 +57,10 @@ public class ApplicationUserRepository
         var foundUserRole = await _roleManager.Roles.SingleAsync(aspRole => aspRole.Name == dto.Role.ToString());
 
         var creationResult = await _userManager.CreateAsync(user, dto.Password);
+        if (!creationResult.Succeeded) {
+            throw new DbUpdateException("La password deve avere minimo 8 caratteri.");
+        }
+        
         var assignmentResult = await _userManager.AddToRoleAsync(user, foundUserRole.Name);
         
         if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
