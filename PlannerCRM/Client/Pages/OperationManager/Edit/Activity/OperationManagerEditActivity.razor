@@ -46,7 +46,7 @@
                     <ul>
                         @foreach (var em in _Employees) {
                             <li class="dropdown-item" value="@em" @onclick="@(() => OnClickAddAsSelected(em))"> 
-                                 @em.Email
+                                @em.Email
                             </li>
                         }
                     </ul>
@@ -57,32 +57,31 @@
                     @onclick="@(() => OnClickSearchEmployee(_SelectModel.SelectedEmployee))">Cerca</button>
             </div>
             <div class="child">
-                <div style="width: 400px; height:150px; left: 0; overflow-y: scroll;">
-                    <span>Dipendenti selezionati per questa attività: @_Model.EmployeesActivities.Count</span> <br>
+                <span>Dipendenti selezionati per questa attività: @_Model.ViewEmployeeActivity.Count</span> <br>
                     <table class="table table-striped">
                         <thead>
                             <th>Email</th>
-                        <th></th>
                         </thead>
                         <tbody>
-                            @if (_Model.EmployeesActivities.Count != 0) {
-                                @foreach (var ea in _Model.EmployeesActivities) {
-                                    <tr>
-                                        <td> 
-                                            <span class="oi oi-envelope-closed"></span>
-                                            <span> @ea.Employee.Email </span> 
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger" value="@ea.Employee"
-                                                @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">Elimina</button>
-                                        </td>
-                                    </tr>
+                            <div style="width: 500px; height:150px; padding: 15px; margin: 15px; overflow-y: scroll;">
+                                @if (_Model.ViewEmployeeActivity.Count != 0) {
+                                    @foreach (var ea in _Model.ViewEmployeeActivity) {
+                                        <tr>
+                                            <td> 
+                                                <span class="oi oi-envelope-closed"></span>
+                                                <span> @ea.Employee.Email </span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger" value="@ea.Employee"
+                                                    @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">Elimina</button>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
-                            }
+                            </div>
                         </tbody>
                     </table>
                     <br>
-                </div>
             </div>
         </div>
         <div class="wrapper-btn">

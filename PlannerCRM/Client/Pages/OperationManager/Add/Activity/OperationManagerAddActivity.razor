@@ -77,34 +77,32 @@
                 </button>
             </div>
             <div class="child">
-                <div style="width: 400px; height:150px; left: 0; overflow-y: scroll;">
-                    <span>Dipendenti selezionati per questa attività @_Model.EmployeesActivities.Count</span> <br>
+                <span>Dipendenti selezionati per questa attività: @_Model.EmployeeActivity.Count</span> <br>
                     <table class="table table-striped">
                         <thead>
-                            <th scope="col">Email</th>
-                            <th></th>
+                            <th>Email</th>
+                        <th></th>
                         </thead>
                         <tbody>
-                            @if (_Model.EmployeesActivities.Count != 0) {
-                                @foreach (var ea in _Model.EmployeesActivities) {
-                                    <tr>
-                                        <td> 
-                                            <span class="oi oi-envelope-closed"></span>
-                                            <span> @ea.Employee.Email </span> 
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger" value="@ea.Employee"
-                                                @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">
-                                                <span class="oi oi-trash"></span>
-                                            </button>
-                                        </td>
-                                    </tr>
+                            <div style="width: 500px; height:150px; left: 0; overflow-y: scroll;">
+                                @if (_Model.EmployeeActivity.Count != 0) {
+                                    @foreach (var ea in _Model.EmployeeActivity) {
+                                        <tr>
+                                            <td> 
+                                                <span class="oi oi-envelope-closed"></span>
+                                                <span> @ea.Employee.Email </span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger" value="@ea.Employee"
+                                                    @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">Elimina</button>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
-                            }
+                            </div>
                         </tbody>
                     </table>
                     <br>
-                </div>
             </div>
         </div>
         <div class="wrapper-btn">

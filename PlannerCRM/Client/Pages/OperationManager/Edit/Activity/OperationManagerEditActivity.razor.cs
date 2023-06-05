@@ -39,17 +39,17 @@ public partial class OperationManagerEditActivity
     private string _Message { get; set; }    
     
     protected override async Task OnInitializedAsync() {
-        _Model.EmployeesActivities = new();
-
         _Model = await OperationManagerService.GetActivityForEditAsync(ActivityId);
         _CurrentWorkOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
     }
 
     protected override void OnInitialized() {
         _EditContext = new(_Model);
+        _Model.ViewEmployeeActivity = new();
+        _Model.EmployeeActivity = new();
     }
 
-    public async Task OnClickSearchWorkorder(string workorder) {
+    public async Task OnClickSearchWorkorder(string workorder) { 
         _WorkOrders = await OperationManagerService.SearchWorkOrderAsync(workorder);
     }
 
@@ -62,49 +62,67 @@ public partial class OperationManagerEditActivity
         _Employees = await OperationManagerService.SearchEmployeeAsync(employee);
     }
 
-        private void OnClickAddAsSelected(EmployeeSelectDto employee) {
+    private void OnClickAddAsSelected(EmployeeSelectDto employee) {
         try {
-            var isNotContained = true;
-
-            foreach (var ea in _Model.EmployeesActivities) {
+            var contains = false;
+            foreach (var ea in _Model.ViewEmployeeActivity) {
                 if (ea.Employee.Email == employee.Email) {
-                    isNotContained = false;
+                    contains = true;
+                } else {
+                    contains = false;
                 }
             }
 
-            if (isNotContained) {
-                _Model.EmployeesActivities.Add(
-                    new EmployeeActivityDto {
-                        EmployeeId = employee.Id,
-                        Employee = employee,
-                        ActivityId = _Model.Id,
-                        Activity = new ActivitySelectDto {
-                            Id = _Model.Id,
-                            Name = _Model.Name,
-                            StartDate = _Model.StartDate 
-                                ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDate)} non può essere null."""),
-                            FinishDate = _Model.FinishDate 
-                                ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDate)} non può essere null."""),
-                            WorkOrderId = _Model.WorkOrderId 
-                                ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.WorkOrderId)} non può essere null."""),
+            if(!contains) {
+                var item =  new EmployeeActivityDto {
+                    EmployeeId = employee.Id,
+                    Employee = new EmployeeSelectDto {
+                        Id = employee.Id,
+                        Email = employee.Email,
+                        FirstName = employee.FirstName,
+                        LastName = employee.LastName,
+                        FullName = employee.FullName,
+                        Role = employee.Role,
+                        EmployeeActivities = new List<EmployeeActivityDto>() {
+                            new EmployeeActivityDto() {
+                                EmployeeId = employee.Id,
+                                ActivityId = _Model.Id,
+                            }
                         }
-                });
+                    },
+                    ActivityId = _Model.Id,
+                    Activity = new ActivitySelectDto {
+                        Id = _Model.Id,
+                        Name = _Model.Name,
+                        StartDate = _Model.StartDate,
+                        FinishDate = _Model.FinishDate,
+                        WorkOrderId = _Model.WorkOrderId, 
+                    }
+                };
+                _Model.EmployeeActivity.Add(item);
+                _Model.ViewEmployeeActivity.Add(item);
             }
         } catch (NullReferenceException nullRefExc) {
             _logger.Log(LogLevel.Error, nullRefExc.Message);
             _Message = nullRefExc.Message;
             _IsError = true;
         }
+        catch (Exception exc) {
+            _logger.Log(LogLevel.Error, exc.Message);
+            _Message = exc.Message;
+            _IsError = true;
+        }
     }
 
     private void OnClickRemoveAsSelected(EmployeeSelectDto employee) {
-        foreach (var ea in _Model.EmployeesActivities.ToList()) {
+        foreach (var ea in _Model.ViewEmployeeActivity.ToHashSet()) {
             if (ea.Employee.Email == employee.Email) {
-                _Model.EmployeesActivities.Remove(ea);
+                _Model.EmployeeActivity.Remove(ea);
+                _Model.ViewEmployeeActivity.Remove(ea);
             }
         }
     }
-    
+    //trovare un modo per mandare la lista con gli impiegati che sono stati aggiunti e non anche con quelli vecchi
     
     public void RedirectToPage() {
         NavManager.NavigateTo("/operation-manager");
@@ -112,7 +130,6 @@ public partial class OperationManagerEditActivity
 
     public async Task OnClickEditActivity() {
         var response = await OperationManagerService.EditActivityAsync(_Model);
-
         if (!response.IsSuccessStatusCode) {
             _IsError = true;
             _Message = await response.Content.ReadAsStringAsync();

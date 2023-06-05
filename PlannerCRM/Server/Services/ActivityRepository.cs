@@ -34,19 +34,23 @@ public class ActivityRepository
             throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
 
+        if (dto.EmployeeActivity == null || dto.EmployeeActivity.Count == 0) {
+            throw new NullReferenceException(NULL_PROP);
+        }
+        
         await _db.Activities.AddAsync(new Activity {
             Id = dto.Id,
             Name = dto.Name,
             StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
             FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP),
             WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(NULL_PROP),
-            EmployeeActivity = dto.EmployeesActivities
+            EmployeeActivity = dto.EmployeeActivity
                 .Select(ea => new EmployeeActivity {
                     Id = ea.Id,
-                    ActivityId = ea.ActivityId,
-                    EmployeeId = ea.EmployeeId
-                })
-               .ToList(),
+                    EmployeeId = ea.EmployeeId,
+                    ActivityId = ea.ActivityId
+                }).ToHashSet()
+               ,
         });
 
         var rowsAffected = await _db.SaveChangesAsync();
@@ -75,10 +79,8 @@ public class ActivityRepository
             throw new NullReferenceException(NULL_OBJECT);
         }
 
-        var HasPropertiesNull = dto.GetType().GetProperties()  //exception when updating activity
-            .Any(prop => prop.GetValue(dto) == null);
-        if (HasPropertiesNull) {
-            throw new ArgumentNullException(NULL_PARAM);
+        if (dto.EmployeeActivity == null || dto.EmployeeActivity.Count == 0) {
+            throw new NullReferenceException(NULL_PROP);
         }
         
         var model = await _db.Activities
@@ -90,19 +92,19 @@ public class ActivityRepository
 
         model.Id = dto.Id;
         model.Name = dto.Name;
-        model.StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP);
-        model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP);
-        model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(NULL_PROP);
-        model.EmployeeActivity = dto.EmployeesActivities
-            .Where(ea => 
-                model.EmployeeActivity
-                    .Any(ea => ea.EmployeeId != ea.Id))
+        model.StartDate = dto.StartDate;
+        model.FinishDate = dto.FinishDate;
+        model.WorkOrderId = dto.WorkOrderId;
+        model.EmployeeActivity = dto.EmployeeActivity
+            .Where(eaDto => _db.EmployeeActivity.Any(ea => eaDto.EmployeeId != ea.EmployeeId))
             .Select(ea => new EmployeeActivity {
-                EmployeeId = ea.Id,
-                ActivityId = dto.Id
+                EmployeeId = ea.EmployeeId,
+                ActivityId = ea.ActivityId
             })
-            .ToList();
-        
+            .ToHashSet();
+
+        _db.Update(model);
+
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
             throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
@@ -121,7 +123,7 @@ public class ActivityRepository
             .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
-    public async Task<ActivityEditFormDto> GetForEditAsync(int id) {
+    public async Task<ActivityEditFormDto> GetForEditAsync(int activityId) {
         return await _db.Activities
             .Select(ac => new ActivityEditFormDto {
                 Id = ac.Id,
@@ -129,7 +131,8 @@ public class ActivityRepository
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
-                EmployeesActivities = ac.EmployeeActivity
+                EmployeeActivity = new(),
+                ViewEmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
@@ -153,9 +156,9 @@ public class ActivityRepository
                         })
                         .Single(ac => ac.Id == ea.ActivityId)
                     })
-                    .ToList()
+                    .ToHashSet()
             })
-            .SingleAsync(ac => ac.Id == id);
+            .SingleAsync(ac => ac.Id == activityId);
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteAsync(int id) {
@@ -177,7 +180,7 @@ public class ActivityRepository
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
-                EmployeesActivities = ac.EmployeeActivity
+                EmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.EmployeeId,
                         EmployeeId = ea.EmployeeId,
@@ -192,15 +195,15 @@ public class ActivityRepository
                             .Single(em => em.Id == ea.EmployeeId),
                         Activity = _db.Activities
                             .Select(ac => new ActivitySelectDto {
-                            Id = ac.Id,
-                            Name = ac.Name,
-                            StartDate = ac.StartDate,
-                            FinishDate = ac.FinishDate,
-                            WorkOrderId = ac.WorkOrderId
-                        })
-                        .Single(ac => ac.Id == ea.ActivityId)
+                                Id = ac.Id,
+                                Name = ac.Name,
+                                StartDate = ac.StartDate,
+                                FinishDate = ac.FinishDate,
+                                WorkOrderId = ac.WorkOrderId
+                            })
+                            .Single(ac => ac.Id == ea.ActivityId)
                     })
-                    .ToList()   
+                    .ToHashSet()   
             })
             .Where(ac => _db.EmployeeActivity
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
@@ -215,7 +218,7 @@ public class ActivityRepository
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
-                EmployeesActivities = ac.EmployeeActivity
+                EmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
@@ -239,7 +242,7 @@ public class ActivityRepository
                         })
                         .Single(ac => ac.Id == ea.ActivityId)
                     })
-                    .ToList()   
+                    .ToHashSet()   
             })
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
