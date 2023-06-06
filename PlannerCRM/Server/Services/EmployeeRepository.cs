@@ -139,7 +139,6 @@ public class EmployeeRepository
 
     public async Task<EmployeeViewDto> GetForViewAsync(int id) {
         return await _db.Employees
-            .Where(em => !em.IsDeleted)
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
@@ -147,6 +146,10 @@ public class EmployeeRepository
                 FullName = $"{em.FirstName} {em.LastName}",
                 BirthDay = em.BirthDay,
                 StartDate = em.StartDate,
+                NumericCode = em.NumericCode,
+                Password = em.Password,
+                StartDateHourlyRate = em.Salaries.Single().StartDate,
+                FinishDateHourlyRate = em.Salaries.Single().FinishDate,
                 Email = em.Email,
                 IsDeleted = em.IsDeleted,
                 Role = em.Role
@@ -205,8 +208,8 @@ public class EmployeeRepository
                 Password = em.Password,
                 HourlyRate = em.CurrentHourlyRate,
                 IsDeleted = em.IsDeleted,
-                StartDateHourlyRate = em.Salaries.SingleOrDefault().StartDate,
-                FinishDateHourlyRate = em.Salaries.SingleOrDefault().FinishDate,
+                StartDateHourlyRate = em.Salaries.Single().StartDate,
+                FinishDateHourlyRate = em.Salaries.Single().FinishDate,
                 EmployeeSalaries = em.Salaries
                     .Select( ems => new EmployeeSalaryDto {
                         EmployeeId = ems.Id,
@@ -250,7 +253,6 @@ public class EmployeeRepository
 
     public async Task<List<EmployeeViewDto>> GetAllAsync() {
         return await _db.Employees
-            .Where(em => !em.IsDeleted)
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
@@ -264,6 +266,7 @@ public class EmployeeRepository
                     .ToUpper()
                     .Replace('_', ' '),
                 HourlyRate = em.CurrentHourlyRate,
+                IsDeleted = em.IsDeleted,
                 EmployeeActivities = em.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.ActivityId,

@@ -21,6 +21,10 @@ public partial class AccountManager
         _users = await AccountManagerService.GetAllEmployeesAsync();
     }
     
+    public void ShowDetails(int id) {
+        NavManager.NavigateTo($"/account/manager/show/details/{id}");
+    }
+
     public void OnClickAddUser() {
         NavManager.NavigateTo("/account-manager/add/user");
     }

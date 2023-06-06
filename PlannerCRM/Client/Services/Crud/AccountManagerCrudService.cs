@@ -189,6 +189,21 @@ public class AccountManagerCrudService
         }
     }
 
+    public async Task<EmployeeViewDto> GetEmployeeForViewAsync(int employeeId) {
+        try
+        {
+            var response = await _http.GetAsync($"employee/get/for/view/{employeeId}");
+            var jsonObject = await response.Content.ReadAsStringAsync();
+    
+            return JsonConvert.DeserializeObject<EmployeeViewDto>(jsonObject);
+        }
+        catch (Exception exc)
+        {
+            _logger.Log(LogLevel.Error, exc.Message);
+            return new EmployeeViewDto();
+        }
+    }
+
     public async Task<HttpResponseMessage> DeleteUserAsync(string currentEmail) {
         try
         {

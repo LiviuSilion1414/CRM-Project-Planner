@@ -11,7 +11,11 @@ public class EmployeeViewDto
     public string LastName { get; set; }
     public string FullName { get; set; }
     public string Role { get; set; }
+    public string NumericCode { get; set; }
+    public string Password { get; set; }
     public decimal HourlyRate { get; set; }
+    public DateTime StartDateHourlyRate { get; set; }
+    public DateTime FinishDateHourlyRate { get; set; }
     public bool IsDeleted { get; init; }
     public DateTime BirthDay { get; set; }
     public DateTime StartDate { get; set; }

@@ -1,0 +1,74 @@
+@page "/account/manager/show/details/{Id:int}"
+
+@using PlannerCRM.Shared.Models
+
+<div class="container-fluid">
+    <h1>Visualizza dati utente</h1>
+    <form class="form">
+        <div class="form-group">
+            <span class="oi oi-person"></span>
+            <label for="Nome">Nome</label>
+            <input type="text" class="form-control" @bind="_Model.FirstName" disabled="@true"/>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-person"></span>
+            <label for="Cognome">Cognome</label>
+            <input type="text" class="form-control" @bind="_Model.LastName" disabled="@true"/>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-envelope-closed"></span>
+            <label for="Email">Email</label>
+            <input type="email" class="form-control" @bind="_Model.Email" disabled="@true"/>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-calendar"></span>
+            <label for="Data di nascita">Data di nascita</label>
+            <input type="date" class="form-control" @bind="@_Model.BirthDay" disabled="@true"/>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-calendar"></span>
+            <label for="Data d'inizio">Data d'inizio</label>
+            <input type="date" class="form-control" @bind="@_Model.StartDate" disabled="@true"/>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-briefcase"></span>
+            <label for="Codice fiscale">Codice fiscale</label>
+            <input type="text" class="form-control" @bind="_Model.NumericCode" disabled="@true"/>
+        </div>
+        <div class="form-group">
+            <span class="oi oi-star"></span>
+            <label for="Ruolo">Ruolo</label>
+            <input type="text" class="form-control" @bind="_Model.Role" disabled="@true">
+        </div>
+        <div class="form-group">
+            <span class="oi oi-euro"></span>
+            <label for="Tariffa oraria">Tariffa oraria</label>
+            <input type="number" step="0.01" class="form-control" @bind="_Model.HourlyRate" disabled="@true"/>
+            <div>
+                <label>Da: 
+                    <input type="date" class="form-control" @bind="_Model.StartDateHourlyRate" disabled="@true">
+                </label>
+                <label>A: 
+                    <input type="date" class="form-control" @bind="_Model.FinishDateHourlyRate" disabled="@true">
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div style="margin: 0 auto; margin: 10px 5px;">
+                <span class="oi oi-key"></span>
+                <label for="Password">Password</label>
+                <input type="@_TypeField" class="form-control" @bind="_Model.Password" disabled="@true"/>
+                <input type="checkbox" style="float:left; margin-top:5px;" @onclick="SwitchShowPassword"/>
+                <span style="margin: 10px 5px;">Vedi password</span>
+            </div>
+        </div>
+        <div class="wrapper-btn">
+            <div class="btn-cancel">
+                <button type="button" class="btn btn-primary" @onclick="OnClickCancel">
+                    <i class="bi bi-arrow-left"></i>
+                    Torna indietro
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
