@@ -26,7 +26,7 @@ public partial class AccountManagerEditUserForm
     
     private EmployeeEditFormDto _Model = new();
     private EditContext _EditContext { get; set; }
-    private string _TypeField = InputType.PASSWORD.ToString().ToLower();
+    private string _TypeField { get; set;} = InputType.PASSWORD.ToString().ToLower();
     private bool _IsCheckboxClicked { get; set; }
     private bool _IsError { get; set; }
     private string _Message { get; set; }

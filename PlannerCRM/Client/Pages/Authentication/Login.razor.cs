@@ -16,7 +16,7 @@ public partial class Login
 
     private EmployeeLoginDto _Model = new();   
     private CurrentEmployeeDto _CurrentEmployee { get; set; }
-    private string _TypeField = InputType.PASSWORD.ToString().ToLower();
+    private string _TypeField { get; set; } = InputType.PASSWORD.ToString().ToLower();
     private bool _IsCheckboxClicked { get; set; }
     private string _Message { get; set; }
     private bool _IsError { get; set; }
