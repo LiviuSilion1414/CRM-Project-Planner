@@ -14,7 +14,7 @@ public class WorkTimeRecordRepository
 
     public WorkTimeRecordRepository(AppDbContext db) {
         _db = db;
-    }
+    }  //when operation manager wants to delete a workorder, set flag IsCompleted = true;
 
     public async Task AddAsync(WorkTimeRecordFormDto dto) {
         if (dto.GetType() == null) {
@@ -44,7 +44,9 @@ public class WorkTimeRecordRepository
                 Employee = await _db.Employees
                     .Where(em => !em.IsDeleted)
                     .SingleAsync(e => e.Id == dto.EmployeeId),
-                WorkOrderId = dto.WorkOrderId
+                WorkOrderId = await _db.WorkOrders.AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
+                    ? dto.WorkOrderId
+                    : throw new InvalidOperationException(IMPOSSIBLE_ADD)
             }
         );
 
@@ -95,7 +97,7 @@ public class WorkTimeRecordRepository
         model.EmployeeId = dto.EmployeeId;
         model.Employee = await _db.Employees
             .Where(em => !em.IsDeleted)
-            .SingleOrDefaultAsync(em => em.Id == dto.EmployeeId);
+            .SingleAsync(em => em.Id == dto.EmployeeId);
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {

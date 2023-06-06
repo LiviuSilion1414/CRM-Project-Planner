@@ -352,6 +352,9 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<DateTime>("FinishDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 

@@ -29,6 +29,7 @@ public class WorkOrderRepository
         }
         
         var isAlreadyPresent = await _db.WorkOrders
+			.Where(wo => !wo.IsCompleted)
             .SingleOrDefaultAsync(em => em.Id == dto.Id);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
@@ -37,7 +38,7 @@ public class WorkOrderRepository
 		await _db.WorkOrders.AddAsync(new WorkOrder {
 			Name = dto.Name,
 			StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
-			FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP)
+			FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP),
 		});
 
 		var rowsAffected = await _db.SaveChangesAsync();
@@ -52,8 +53,15 @@ public class WorkOrderRepository
 		
 		if (workOrderDelete == null) {
 			throw new KeyNotFoundException(IMPOSSIBLE_DELETE);
+		} else {
+			var hasRelationships = await _db.EmployeeActivity
+                .AnyAsync(ea  => ea.Activity.WorkOrderId == workOrderDelete.Id);
+
+            if (hasRelationships) {
+                workOrderDelete.IsDeleted = true;
+			//_db.WorkOrders.Remove(workOrderDelete);
+			}
 		}
-		_db.WorkOrders.Remove(workOrderDelete);
 		
 		var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
@@ -72,6 +80,7 @@ public class WorkOrderRepository
         }
         
         var model = await _db.WorkOrders
+			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
 			.SingleOrDefaultAsync(wo => wo.Id == dto.Id);
 
         if (model == null) {
@@ -91,6 +100,7 @@ public class WorkOrderRepository
 	
 	public async Task<WorkOrderDeleteDto> GetForDeleteAsync(int id) {
 		return await _db.WorkOrders
+			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
 			.Select(wo => new WorkOrderDeleteDto {
 				Id = wo.Id,
 				Name = wo.Name,
@@ -105,12 +115,16 @@ public class WorkOrderRepository
 				Id = wo.Id,
 				Name = wo.Name,
 				StartDate = wo.StartDate,
-				FinishDate = wo.FinishDate})
+				FinishDate = wo.FinishDate,
+				IsCompleted = wo.IsCompleted,
+				IsDeleted = wo.IsDeleted
+			})
 			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
 	
 	public async Task<WorkOrderEditFormDto> GetForEditAsync(int id) {
 		return await _db.WorkOrders
+			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
 			.Select(wo => new WorkOrderEditFormDto {
 				Id = wo.Id,
 				Name = wo.Name,
@@ -125,16 +139,19 @@ public class WorkOrderRepository
 				Id = wo.Id,
 				Name = wo.Name,
 				StartDate = wo.StartDate,
-				FinishDate = wo.FinishDate})
+				FinishDate = wo.FinishDate,
+				IsCompleted = wo.IsCompleted,
+				IsDeleted = wo.IsDeleted})
 			.ToListAsync();
 	}
 
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {
         return await _db.WorkOrders
+			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
 			.Select(wo => new WorkOrderSelectDto{
 				Id = wo.Id,
 				Name = wo.Name})
-			.Where(e => EF.Functions.Like(e.Name , $"%{workOrder}%"))
+			.Where(e => EF.Functions.ILike(e.Name , $"%{workOrder}%"))
 			.ToListAsync();
     }
 }

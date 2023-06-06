@@ -243,7 +243,7 @@ public class EmployeeRepository
                 FullName = em.FullName,
                 Role = em.Role
             })
-            .Where(em => EF.Functions.Like(em.FullName, $"%{email}%") || 
+            .Where(em => EF.Functions.ILike(em.FullName, $"%{email}%") || 
                 EF.Functions.Like(em.Email, $"%{email}%"))
             .ToListAsync();
     }
