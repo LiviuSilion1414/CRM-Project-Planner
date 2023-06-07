@@ -18,4 +18,7 @@ public static class ConstantValues
     public const int CURRENT_YEAR = 2023;
     public const int PASS_MIN_LENGTH = 8;
     public const int PASS_MAX_LENGTH = 16;
+    public const int PAGINATION_LIMIT = 5;
+    public const int ZERO = 0;
+    public const int ONE = 1;
 }

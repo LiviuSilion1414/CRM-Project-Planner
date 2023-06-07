@@ -30,7 +30,7 @@ public class EmployeeRepository
         }
         
         var isAlreadyPresent = await _db.Employees
-            .SingleOrDefaultAsync(em => em.Id == dto.Id || em.IsDeleted);
+            .SingleOrDefaultAsync(em => em.Id == dto.Id && em.IsDeleted);
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
@@ -71,22 +71,16 @@ public class EmployeeRepository
         if (employeeDelete == null) {
             throw new KeyNotFoundException(IMPOSSIBLE_DELETE);
         } else  {
-            var hasRelationships = await _db.EmployeeActivity
-                .AnyAsync(ea  => ea.EmployeeId == employeeDelete.Id);
+            //var hasRelationships = await _db.EmployeeActivity
+            //    .AnyAsync(ea  => ea.EmployeeId == employeeDelete.Id);
 
-            if (hasRelationships) {
-                employeeDelete.IsDeleted = true;
+            //if (hasRelationships) {
+            //} 
+            employeeDelete.IsDeleted = true;
 
-                //_db.Employees.Remove(employeeDelete);
-            } 
-             _db.Update(employeeDelete);
-             await _db.SaveChangesAsync();
-        }
+            _db.Update(employeeDelete);
 
-        
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
+            await _db.SaveChangesAsync();
         }
     }
 
@@ -267,7 +261,7 @@ public class EmployeeRepository
                     .Replace('_', ' '),
                 HourlyRate = em.CurrentHourlyRate,
                 IsDeleted = em.IsDeleted,
-                EmployeeActivities = em.EmployeeActivity
+                /*EmployeeActivities = em.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.ActivityId,
                         EmployeeId = em.Id,
@@ -290,7 +284,37 @@ public class EmployeeRepository
                             WorkOrderId = ac.WorkOrderId
                         })
                         .Single(ac => ac.Id == ea.ActivityId),
-                    }).ToList(),
+                    }).ToList(),*/
+                EmployeeSalaries = em.Salaries
+                    .Select( ems => new EmployeeSalaryDto {
+                        EmployeeId = ems.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.StartDate,
+                        Salary = ems.Salary})
+                    .ToList(),
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int skip, int take) {
+        return await _db.Employees
+            .Skip(skip)
+            .Take(take)
+            .OrderBy(em => em.Id)
+            .Select(em => new EmployeeViewDto {
+                Id = em.Id,
+                FirstName = em.FirstName,
+                LastName = em.LastName,
+                FullName = $"{em.FirstName} {em.LastName}",
+                BirthDay = em.BirthDay,
+                StartDate = em.StartDate,
+                Email = em.Email,
+                Role = em.Role
+                    .ToString()
+                    .ToUpper()
+                    .Replace('_', ' '),
+                HourlyRate = em.CurrentHourlyRate,
+                IsDeleted = em.IsDeleted,
                 EmployeeSalaries = em.Salaries
                     .Select( ems => new EmployeeSalaryDto {
                         EmployeeId = ems.Id,
@@ -309,5 +333,9 @@ public class EmployeeRepository
                 Id = em.Id,
                 Email = em.Email})
             .FirstOrDefaultAsync(em => em.Email == email);
+    }
+
+    public async Task<int> GetEmployeesSize() {
+        return await _db.Employees.CountAsync();
     }
 }

@@ -39,6 +39,8 @@ public class WorkOrderRepository
 			Name = dto.Name,
 			StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
 			FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP),
+			IsDeleted = false,
+			IsCompleted = false
 		});
 
 		var rowsAffected = await _db.SaveChangesAsync();
@@ -134,7 +136,7 @@ public class WorkOrderRepository
 	}
 	
 	public async Task<List<WorkOrderViewDto>> GetAllAsync() {
-		return await _db.WorkOrders
+		var res = await _db.WorkOrders
 			.Select(wo => new WorkOrderViewDto {
 				Id = wo.Id,
 				Name = wo.Name,
@@ -143,6 +145,7 @@ public class WorkOrderRepository
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted})
 			.ToListAsync();
+		return res;
 	}
 
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {
