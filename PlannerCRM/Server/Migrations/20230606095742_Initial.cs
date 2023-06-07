@@ -65,6 +65,7 @@ namespace PlannerCRM.Server.Migrations
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     BirthDay = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     NumericCode = table.Column<string>(type: "text", nullable: true),
+                    CurrentHourlyRate = table.Column<decimal>(type: "numeric", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -81,7 +82,9 @@ namespace PlannerCRM.Server.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,6 +228,7 @@ namespace PlannerCRM.Server.Migrations
                     Name = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     WorkOrderId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>

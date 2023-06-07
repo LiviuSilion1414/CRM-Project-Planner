@@ -229,6 +229,9 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<DateTime>("FinishDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -353,6 +356,9 @@ namespace PlannerCRM.Server.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
