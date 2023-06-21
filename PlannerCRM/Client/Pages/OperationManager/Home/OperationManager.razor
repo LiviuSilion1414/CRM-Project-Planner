@@ -10,7 +10,7 @@
         </button>
     </div>
     
-    @if (_WorkOrders.Count != 0) {
+    @if (_WorkOrders.Any()) {
         <div class="child">
             <button class="btn btn-primary" @onclick="OnClickAddActivity">
                 <span class="oi oi-plus"></span>
@@ -20,64 +20,94 @@
     }
 </div>
 
-<table class="table">
+<table class="table table-lg">
     <thead>
         <tr>
-            @if (_TrIsClicked) {
-                <th scope="col">#</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Data d'inizio</th>
-                <th scope="col">Data fine</th>
-                <th scope="col">Attività</th>
-            } else {
-                <th scope="col">#</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Data d'inizio</th>
-                <th scope="col">Data fine</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                
-            }
+            <th scope="col">Stato</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Data d'inizio</th>
+            <th scope="col">Data fine</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var wo in _WorkOrders) {
-            <tr data-widget="expandable-table" @onclick="(() => OnClickTableRow(wo.Id))">
-                @if (_TrIsClicked) {
+            @foreach (var wo in _WorkOrders) {
+                <tr>
                     <td>
-                        <span class="oi oi-briefcase"></span> 
+                        @if (wo.IsCompleted) {  
+                            <strong style="color: blue;">[Completato]</strong>
+                        } else if (wo.IsDeleted) {
+                            <strong style="color: darkred;">[Eliminato]</strong>
+                        } else {
+                            <strong style="color: green;">[Attivo]</strong>
+                        }
                     </td>
                     <td>
-                        <span class="oi oi-arrow-circle-top"></span> 
+                        @if (_TrIsClicked && (wo.Id == _CurrentWorkOrder.Id)) {
+                            <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" @onclick="(() => OnClickTableRow(wo.Id))">
+                            </i>
+                        } else {
+                            <i class="bi bi-arrow-down-square-fill" style="cursor: pointer; padding-right: 5px;" @onclick="(() => OnClickTableRow(wo.Id))"></i>
+                        }
                         @wo.Name
                     </td>
                     <td>@wo.StartDate.ToShortDateString()</td>
                     <td>@wo.FinishDate.ToShortDateString()</td>
-                    <tr> <OperationManagerMasterDetails Id="wo.Id"/> </tr>
-                } else {
-                    <td>
-                        <span class="oi oi-briefcase"></span> 
-                    </td>
-                    <td>
-                        <span class="oi oi-arrow-circle-bottom"></span> 
-                        @wo.Name
-                    </td>
-                    <td>@wo.StartDate.ToShortDateString()</td>
-                    <td>@wo.FinishDate.ToShortDateString()</td>
-                    <td>
-                        <button type="button" class="btn btn-primary" 
-                            @onclick="@(() => OnClickEdit(wo.Id))">
-                                <span class="oi oi-pencil"></span>
-                        </button>                
-                    </td> 
-                    <td> 
-                        <button type="button" class="btn btn-danger" 
-                            @onclick="@(() => OnClickDelete(wo.Id))">
-                                <span class="oi oi-trash"></span>
-                        </button>
-                    </td>
+                    @if (!wo.IsDeleted) {
+                        <td>
+                                <td style="padding-right: 10px;">
+                                    <button type="button" class="btn btn-primary"
+                                        @onclick="@(() => OnClickEdit(wo.Id))">
+                                            <span class="oi oi-pencil"></span>
+                                    </button>                
+                                </td> 
+                                <td> 
+                                    <button type="button" class="btn btn-danger" 
+                                        @onclick="@(() => OnClickDelete(wo.Id))">
+                                            <span class="oi oi-trash"></span>
+                                    </button>
+                                </td>
+                        </td>
+                    }
+                <td></td>
+                </tr>
+                @if (_TrIsClicked && (wo.Id == _CurrentWorkOrder.Id)) {
+                    <tr style="border: 1px solid blue;">
+                        <td></td>
+                        <td style="width: 100%; height: 80%;"> <OperationManagerMasterDetails WorkOrderId="@_CurrentWorkOrder.Id"/> </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 }
-            </tr>
-        }
+            }
     </tbody>
 </table>
+
+@if (_IsCreateWorkOrderClicked) { 
+    <OperationManagerAddWorkOrder></OperationManagerAddWorkOrder>
+}
+
+@if (_IsEditWorkOrderClicked) {
+    <OperationManagerEditWorkOrder Id="@_WorkOrderId"></OperationManagerEditWorkOrder>
+}
+
+@if (_IsDeleteWorkOrderClicked) {
+    <OperationManagerDeleteWorkOrder Id="@_WorkOrderId"></OperationManagerDeleteWorkOrder>
+}
+
+@if (_IsCreateActivityClicked) { 
+    <OperationManagerAddActivity></OperationManagerAddActivity>
+}
+
+<div class="container" 
+    style="text-align: center; padding: 10px; position: relative;
+        padding-top: 0%;">   
+    <i id="previous" class="bi bi-arrow-left-square-fill"
+        style="padding:10px; cursor: pointer;"
+        @onclick="@(() => Previous(_PageNumber))"></i>
+    <span style="padding: 10px;">@_PageNumber</span>
+    <i id="next" class="bi bi-arrow-right-square-fill"
+        style="padding:10px; cursor: pointer;"
+        @onclick="@(() => Next(_PageNumber))"></i>
+</div>

@@ -16,7 +16,6 @@ public partial class DeveloperAddWorkedHours
 {
     [Parameter] public int EmployeeId { get; set; }
     [Parameter] public int ActivityId { get; set; }
-    [Parameter] public int WorkorderId { get; set; }
     
     [Inject] private CurrentUserInfoService CurrentUserInfoService  { get; set; }
     [Inject] private DeveloperService DeveloperService { get; set; }
@@ -30,7 +29,9 @@ public partial class DeveloperAddWorkedHours
     private string _EmployeeRole { get; set; }  
     private int _WorkedHours { get; set; }
     private bool _IsError { get; set; }
+    private bool _IsCancelClicked { get; set; }
     private string _Message { get; set; }
+    private string _CurrentPage { get; set; }
 
     protected override async Task OnInitializedAsync() {
         _EmployeeRole = await CurrentUserInfoService.GetCurrentUserRoleAsync();
@@ -47,6 +48,7 @@ public partial class DeveloperAddWorkedHours
     
     protected override void OnInitialized() {
         _EditContext = new(_Model);
+        _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
     }
 
     public void RedirectToPage() {
@@ -63,26 +65,41 @@ public partial class DeveloperAddWorkedHours
             }
         }
     }
+
+    private void Toggle() =>  _IsCancelClicked = !_IsCancelClicked;
     
-    public void OnClickCancel() {
-        RedirectToPage();
+    public void OnClickModalCancel() {
+       Toggle();
     }
 
-    public async Task OnClickAddWorkedHours() {
-        _WorkTimeRecord.Date = DateTime.Now;
-        _WorkTimeRecord.Hours = _WorkedHours;
-        _WorkTimeRecord.ActivityId = _Model.Id;
-        _WorkTimeRecord.EmployeeId = EmployeeId;
-        _WorkTimeRecord.WorkOrderId = _WorkOrder.Id;
-        _WorkTimeRecord.Hours = _WorkedHours;
+    public async Task OnClickModalConfirm() {
+        try
+        {
+            if (_EditContext.IsModified() && _EditContext.Validate()) {
 
-        var response = await DeveloperService.AddWorkedHoursAsync(_WorkTimeRecord);
+                _WorkTimeRecord.Date = DateTime.Now;
+                _WorkTimeRecord.Hours = _WorkedHours;
+                _WorkTimeRecord.ActivityId = _Model.Id;
+                _WorkTimeRecord.EmployeeId = EmployeeId;
+                _WorkTimeRecord.WorkOrderId = _WorkOrder.Id;
+                _WorkTimeRecord.Hours = _WorkedHours;
         
-        if (!response.IsSuccessStatusCode) {
+                var response = await DeveloperService.AddWorkedHoursAsync(_WorkTimeRecord);
+                
+                if (!response.IsSuccessStatusCode) {
+                    _IsError = true;
+                    _Message = await response.Content.ReadAsStringAsync();
+                } else {
+                    Toggle();
+                    NavManager.NavigateTo(_CurrentPage, true);
+                }
+            } else {
+                Toggle();
+                NavManager.NavigateTo(_CurrentPage);
+            }
+        } catch (Exception exc) {
             _IsError = true;
-            _Message = await response.Content.ReadAsStringAsync();
+            _Message = exc.Message;
         }
-
-        RedirectToPage();
     }
 }

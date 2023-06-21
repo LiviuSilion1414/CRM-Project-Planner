@@ -1,3 +1,4 @@
+@*
 @page "/operation-manager/delete/activity/{workorderId:int}/{activityId:int}"
 
 @using PlannerCRM.Shared.Models
@@ -22,4 +23,50 @@
     </span>
     <button type="button" class="btn btn-danger" @onclick="OnClickDeleteActivity">Conferma</button>
     <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+</div> 
+*@
+
+<div class="modal" tabindex="-1" role="dialog"
+    style="display: block; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);"
+    hidden="@_IsCancelClicked">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Elimina attività</h5>
+            <i style="cursor: pointer;" class="bi bi-x-circle" @onclick="@(() => OnClickModalCancel())"></i>
+        </div>
+        <div class="modal-body">
+            <p>Commessa: @_CurrentWorkorder.Name 
+                <span>(@_CurrentWorkorder.StartDate.ToShortDateString() - @_CurrentWorkorder.FinishDate.ToShortDateString())</span></p>
+            <p>Vuoi davvero eliminare questa attività?</p>
+            <p> <strong>Nome:</strong> @_CurrentActivity.Name</p>
+            <p> <strong>Data d'inizio:</strong> @_CurrentActivity.StartDate.ToShortDateString()</p>
+            <p> <strong>Data di fine:</strong> @_CurrentActivity.FinishDate.ToShortDateString()</p>
+            <p> <strong>Dipendenti assegnati: </strong> </p>
+            <div class="card" style="height: min-content; overflow-y:scroll; border-width: thin;"> 
+                @foreach (var em in _CurrentActivity.Employees) {
+                    <div class="card" style="padding: 5px; border-width: 0.5rem;">
+                        <p><strong>Nome: </strong> @em.FullName</p>
+                        <p><strong>Email:</strong> @em.Email</p>
+                        <p><strong>Ruolo:</strong> @em.Role</p>
+                    </div>
+                    @if (_CurrentActivity.Employees.GetEnumerator().MoveNext()) {
+                        <br>
+                    }
+                }
+            </div>
+        </div>
+        <div class="modal-footer"
+            style="justify-content: space-between;">
+            <div style="float: left;">
+                <button type="button" id="btn-link" class="btn btn-link"
+                    @onclick="@(() => OnClickModalCancel())">Annulla</button>
+            </div>
+            <div style="float: right;">
+                <button type="button" class="btn btn-danger"
+                    @onclick="@(() => OnClickModalConfirm())">Conferma</button>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>

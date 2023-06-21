@@ -1,6 +1,6 @@
 @page "/account-manager"
 
-@using PlannerCRM.Shared.Models
+@using PlannerCRM.Shared.Models 
 
 <PageTitle>CRM - Account Manager</PageTitle>
 
@@ -35,7 +35,7 @@
             <tr>
                 <td>
                     @if (!user.IsDeleted) {
-                        <strong style="color: green;">Attivo</strong>
+                        <strong style="color: green;">[Attivo]</strong>
                     } else {
                         <strong style="color: darkred;">[Eliminato]</strong>
                     }
@@ -78,3 +78,22 @@
         }
     </tbody>
 </table>
+
+@if (_IsDeleteClicked) {
+    <AccountManagerDeleteUser Id="@_UserId"></AccountManagerDeleteUser>
+}
+
+<!-- Paginator -->
+<div class="container" 
+    style="text-align: center; padding: 10px; position: relative;
+        border: 0.5px;
+        padding-top: 0%;">   
+    <i id="previous" class="bi bi-arrow-left-square-fill"
+        style="padding:10px; pointer-events: all;"
+        @onclick="@(() => Previous(_PageNumber))"></i>
+    <span style="padding: 10px;">@_PageNumber</span>
+    <i id="next" class="bi bi-arrow-right-square-fill"
+        style="padding:10px;"
+        @onclick="@(() => Next(_PageNumber))"></i>
+</div>
+<!---->

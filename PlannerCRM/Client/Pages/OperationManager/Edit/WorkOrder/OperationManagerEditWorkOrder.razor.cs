@@ -21,31 +21,42 @@ public partial class OperationManagerEditWorkOrder
     private EditContext _EditContext { get; set; }
     private bool _IsError { get; set; }
     private string _Message { get; set; }
+    private string _CurrentPage { get; set; }
+    private bool _IsCancelClicked { get; set; }
 
     protected override async Task OnInitializedAsync() {
         _Model = await OperationManagerService.GetWorkOrderForEditAsync(Id);
     }
 
     protected override void OnInitialized() {
-        _EditContext = new EditContext(_Model);
+        _EditContext = new(_Model);
+        _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
     }
 
-    private void RedirectToPage() {
-        NavManager.NavigateTo("/operation-manager");
+    public void OnClickModalCancel() {
+        _IsCancelClicked = !_IsCancelClicked;
+        NavManager.NavigateTo(_CurrentPage);
     }
 
-    private async Task OnClickConfirm() {
-        var response = await OperationManagerService.EditWorkOrderAsync(_Model);
+    private async Task OnClickModalConfirm() {
+        try {
+            if (_EditContext.IsModified() && _EditContext.Validate()) {
+                var response = await OperationManagerService.EditWorkOrderAsync(_Model);
 
-        if (!response.IsSuccessStatusCode) {
-            _Message = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode) {
+                    _Message = await response.Content.ReadAsStringAsync();
+                    _IsError = true;
+                } else {
+                    _IsCancelClicked = !_IsCancelClicked;
+                    NavManager.NavigateTo(_CurrentPage, true);
+                }
+            } else {
+                _IsCancelClicked = !_IsCancelClicked;
+                NavManager.NavigateTo(_CurrentPage, true);
+            }
+        } catch (Exception exc) {
             _IsError = true;
-        } else {
-            RedirectToPage();
+            _Message = exc.Message;
         }
-    }
-
-    private void OnClickCancel() {
-        RedirectToPage();
-    }
+    }  
 }

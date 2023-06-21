@@ -5,6 +5,7 @@ using PlannerCRM.Client.Services;
 using PlannerCRM.Client.Services.Crud;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.Models;
+using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 
 namespace PlannerCRM.Client.Pages.AccountManager.Edit;
 
@@ -24,7 +25,7 @@ public partial class AccountManagerEditUserForm
     [Inject] private NavigationLockService NavLockService { get; set; }
     [Inject] private NavigationManager NavManager { get; set; }
     
-    private EmployeeEditFormDto _Model = new();
+    private EmployeeEditFormDto _Model;
     private EditContext _EditContext { get; set; }
     private string _TypeField { get; set;} = InputType.PASSWORD.ToString().ToLower();
     private bool _IsCheckboxClicked { get; set; }
@@ -36,6 +37,7 @@ public partial class AccountManagerEditUserForm
     }
 
     protected override void OnInitialized() {
+        _Model = new();
         _EditContext = new(_Model);
     }
 
@@ -59,28 +61,31 @@ public partial class AccountManagerEditUserForm
 
     public async void OnClickConfirm() {
         try {
-            _Model.EmployeeSalaries = new();
-            _Model.EmployeeSalaries
-                .Add(new EmployeeSalaryDto {
-                    Id = _Model.Id,
-                    EmployeeId = _Model.Id,
-                    Salary = _Model.HourlyRate,
-                    StartDate = _Model.StartDateHourlyRate 
-                        ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDateHourlyRate)} non può essere null."""),
-                    FinishDate = _Model.FinishDateHourlyRate 
-                        ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDateHourlyRate)} non può essere null."""),
-                });
-    
-            var responseUser = await AccountManagerService.UpdateUserAsync(_Model);
-            var responseEmployee = await AccountManagerService.UpdateEmployeeAsync(_Model);
-    
-            if (!responseUser.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
-                _Message = await responseUser.Content.ReadAsStringAsync();
+            if (_EditContext.Validate()) {       
+                _Model.EmployeeSalaries = new();
+                _Model.EmployeeSalaries
+                    .Add(new EmployeeSalaryDto {
+                        Id = _Model.Id,
+                        EmployeeId = _Model.Id,
+                        Salary = _Model.HourlyRate ?? throw new NullReferenceException(NULL_PROP),
+                        StartDate = _Model.StartDateHourlyRate 
+                            ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDateHourlyRate)} non può essere null."""),
+                        FinishDate = _Model.FinishDateHourlyRate 
+                            ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDateHourlyRate)} non può essere null."""),
+                    });
+                var responseUser = await AccountManagerService.UpdateUserAsync(_Model);
+                var responseEmployee = await AccountManagerService.UpdateEmployeeAsync(_Model);
+
+                if (!responseUser.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
+                    _Message = await responseUser.Content.ReadAsStringAsync();
+                    _IsError = true;
+                } else {
+                    RedirectToPage();
+                }
                 _IsError = true;
             } else {
                 RedirectToPage();
             }
-            _IsError = true;
         } catch (NullReferenceException nullRefExc) {
             _logger.Log(LogLevel.Error, nullRefExc.Message);
             _Message = nullRefExc.Message;

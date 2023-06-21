@@ -9,7 +9,7 @@ using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using Microsoft.AspNetCore.Components.Forms;
-
+using static PlannerCRM.Shared.Constants.ExceptionsMessages;
 namespace PlannerCRM.Client.Pages.OperationManager.Add.Activity;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
@@ -34,24 +34,45 @@ public partial class OperationManagerAddActivity
     private List<EmployeeSelectDto> _Employees = new();
     private bool _IsError { get; set; }
     private string _Message { get; set; }
+    private string _CurrentPage { get; set; }
+    private bool _HasElements { get; set; }
+    private bool _IsCancelClicked { get; set; }
+    private bool _HideWorkOrdersList { get; set; }
 
     protected override void OnInitialized() {
-       _EditContext = new(_Model);
-       _Model.EmployeeActivity = new();
+        _EditContext = new(_Model);
+        _Model.EmployeeActivity = new();
+        _HideWorkOrdersList = true;
+        _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
     } 
 
     private async Task OnClickSearchWorkOrder(string workOrder) {
         if (!string.IsNullOrEmpty(workOrder)) {
             _WorkOrders = await OperationManagerService.SearchWorkOrderAsync(workOrder);
+            _HasElements = _WorkOrders.Any();
+            if (_HasElements) {
+                Toggle();
+            } else {
+                _Message = WORKORDER_NOT_FOUND;
+            }
         }
     }
     private void OnClickSetWorkOrder(WorkOrderSelectDto workOrderSelect) {
         _Model.WorkOrderId = workOrderSelect.Id;
         _SelectModel.SelectedWorkorder = workOrderSelect.Name;
+        Toggle();
+    }
+
+    public void Toggle() {
+        _HideWorkOrdersList = !_HideWorkOrdersList;
     }
 
     private async Task OnClickSearchEmployee(string employee) {
         _Employees = await OperationManagerService.SearchEmployeeAsync(employee);
+        _HasElements = _Employees.Any();
+        if (!_HasElements) {
+            _Message = EMPLOYEE_NOT_FOUND;
+        }
     }
 
     private void OnClickAddAsSelected(EmployeeSelectDto employee) {
@@ -99,6 +120,8 @@ public partial class OperationManagerAddActivity
             _logger.Log(LogLevel.Error, nullRefExc.Message);
             _Message = nullRefExc.Message;
             _IsError = true;
+        } finally {
+            Toggle();
         }
     }
 
@@ -109,24 +132,31 @@ public partial class OperationManagerAddActivity
             }
         }
     }
-    
-    private void RedirectToPage() {
-        NavManager.NavigateTo("/operation-manager");
+
+    private void OnClickModalCancel() {
+        _IsCancelClicked = !_IsCancelClicked;
     }
 
-    private void OnClickCancel() {
-        RedirectToPage();
-    }
+    private async Task OnClickModalConfirm() {
+        try {
+            if (_EditContext.IsModified() && _EditContext.Validate()) {
 
-    private async Task OnClickAddActivity() {
-        var response = await OperationManagerService.AddActivityAsync(_Model);
-        
-        if (!response.IsSuccessStatusCode) {
+                var response = await OperationManagerService.AddActivityAsync(_Model);
+                
+                if (!response.IsSuccessStatusCode) {
+                    _IsError = true;
+                    _Message = await response.Content.ReadAsStringAsync();
+                } else {
+                    _IsCancelClicked = !_IsCancelClicked;
+                    NavManager.NavigateTo(_CurrentPage, true);
+                }
+            } else {
+                _IsCancelClicked = !_IsCancelClicked;
+                NavManager.NavigateTo(_CurrentPage);
+            }
+        } catch (Exception exc) {
             _IsError = true;
-            _Message = await response.Content.ReadAsStringAsync();
-        } else {
-            RedirectToPage();
+            _Message = exc.Message;
         }
-        
     }
 }

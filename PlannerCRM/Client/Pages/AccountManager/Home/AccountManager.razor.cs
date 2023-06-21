@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using PlannerCRM.Client.Services.Crud;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.Models;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Client.Pages.AccountManager.Home;
 
@@ -14,13 +15,45 @@ public partial class AccountManager
 
     private bool _IsError { get; set; }
     private string _Message { get; set; }
+    private int _CollectionSize { get; set; }
+    private int _TotalPageNumbers { get; set; }
+    private int _PageNumber { get; set; } = ONE;
+    private int _Skip { get; set; } = ZERO;
+    private int _Take { get => PAGINATION_LIMIT; }
 
-    public List<EmployeeViewDto> _users = new();  
+    private bool _IsDeleteClicked { get; set; }
+    private int _UserId { get; set; }
+
+    public List<EmployeeViewDto> _users { get; set; } = new();
 
     protected override async Task OnInitializedAsync() {
-        _users = await AccountManagerService.GetAllEmployeesAsync();
+        _users = await AccountManagerService.GetPaginatedEmployees(_Skip, _Take);
+        _CollectionSize = await AccountManagerService.GetEmployeesSize();
+        _TotalPageNumbers = (_CollectionSize / PAGINATION_LIMIT);
     }
     
+    public async Task Previous(int pageNumber) {
+        if (_Skip <= PAGINATION_LIMIT) {
+            _Skip = ZERO;
+            _PageNumber = ONE;
+        } else {
+            _Skip -= (_Skip - PAGINATION_LIMIT);
+            _PageNumber--;
+        }
+        _users = await AccountManagerService.GetPaginatedEmployees(_Skip, _Take);
+    }
+
+    public async Task Next(int pageNumber) {
+        if (_Skip < _TotalPageNumbers + PAGINATION_LIMIT) {
+            _Skip += PAGINATION_LIMIT;
+            _PageNumber++; 
+        } else {
+            _Skip = _TotalPageNumbers;
+            _PageNumber = _TotalPageNumbers + ONE;
+        }
+        _users = await AccountManagerService.GetPaginatedEmployees(_Skip, _Take);
+    }
+
     public void ShowDetails(int id) {
         NavManager.NavigateTo($"/account/manager/show/details/{id}");
     }
@@ -34,6 +67,8 @@ public partial class AccountManager
     }
 
     public void OnClickDelete(int id) {
-        NavManager.NavigateTo($"/account-manager/delete/user/{id}");
+        //NavManager.NavigateTo($"/account-manager/delete/user/{id}");
+        _IsDeleteClicked = !_IsDeleteClicked;
+        _UserId = id;
     }
 }

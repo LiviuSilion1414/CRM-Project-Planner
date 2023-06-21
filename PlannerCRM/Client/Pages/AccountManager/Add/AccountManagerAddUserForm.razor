@@ -15,65 +15,70 @@
         <div class="form-group">
             <span class="oi oi-person"></span>
             <label for="Nome">Nome</label>
-            <input type="text" class="form-control" @bind="_Model.FirstName"/>
+            <InputText class="form-control" @bind-Value="_Model.FirstName"/>
         </div>
             <ValidationMessage For="@(() => _Model.FirstName)"/>
         <div class="form-group">
             <span class="oi oi-person"></span>
             <label for="Cognome">Cognome</label>
-            <input type="text" class="form-control" @bind="_Model.LastName"/>
+            <InputText class="form-control" @bind-Value="_Model.LastName"/>
             <ValidationMessage For="@(() => _Model.LastName)"/>
         </div>
         <div class="form-group">
             <span class="oi oi-envelope-closed"></span>
             <label for="Email">Email</label>
-            <input type="email" class="form-control" @bind="_Model.Email"/>
+            <InputText Type="email" class="form-control" @bind-Value="_Model.Email"/>
             <ValidationMessage For="@(() => _Model.Email)" />
         </div>
-        <div class="form-group">
-            <span class="oi oi-calendar"></span>
-            <label for="Data di nascita">Data di nascita</label>
-            <input type="date" class="form-control" @bind="_Model.BirthDay"/>
-            <ValidationMessage For="@(() => _Model.BirthDay)" />
-        </div>
-        <div class="form-group">
-            <span class="oi oi-calendar"></span>
-            <label for="Data d'inizio">Data d'inizio</label>
-            <input type="date"class="form-control" @bind="@_Model.StartDate"/>
-            <ValidationMessage For="@(() => _Model.StartDate)" />
+        <div>
+            <div class="form-group" style="display: inline-block; padding-right: 15px;">
+                <span class="oi oi-calendar"></span>
+                <label for="Data di nascita">Data di nascita</label>
+                <InputDate class="form-control" @bind-Value="_Model.BirthDay"/>
+                <ValidationMessage For="@(() => _Model.BirthDay)" />
+            </div>
+            <div class="form-group" style="display: inline-block;">
+                <span class="oi oi-calendar"></span>
+                <label for="Data d'inizio">Data d'inizio</label>
+                <InputDate class="form-control" @bind-Value="@_Model.StartDate"/>
+                <ValidationMessage For="@(() => _Model.StartDate)" />
+            </div>
         </div>
         <div class="form-group">
             <span class="oi oi-briefcase"></span>
             <label for="Codice fiscale">Codice fiscale</label>
-            <input type="text" class="form-control" @bind="_Model.NumericCode"/>
+            <InputText class="form-control" @bind-Value="_Model.NumericCode"/>
             <ValidationMessage For="@(() => _Model.NumericCode)" />
         </div>
         <div class="form-group">
             <span class="oi oi-star"></span>
             <label for="Ruolo">Ruolo</label>
                 <div class="form-control">
-                    <select class="dropdown-item" @bind="_Model.Role">
+                    <InputSelect class="dropdown-item" @bind-Value="_Model.Role">
+                        <option disabled selected>-- Scegliere ruolo --</option>
                         @foreach (var role in Enum.GetValues(typeof(Roles))) {
                             if ((Roles)role != Roles.ACCOUNT_MANAGER) {
                                 <option value="@role">@role</option>
                             }
                         }
-                    </select>
+                    </InputSelect>
                 </div>
                 <ValidationMessage For="@(() => _Model.Role)" />
         </div>
         <div class="form-group">
             <span class="oi oi-euro"></span>
             <label for="Tariffa oraria">Tariffa oraria</label>
-            <input type="number" step="0.01" class="form-control" @bind="_Model.HourlyRate"/>
+            <InputNumber Step="0.01" class="form-control" @bind-Value="_Model.HourlyRate"/>
             <ValidationMessage For="@(() => _Model.HourlyRate)" />
             <div>
-                <label>Da: 
-                    <input type="date" class="form-control" @bind="_Model.StartDateHourlyRate">
-                </label>
+                <div style="padding-right: 15px; display: inline-block;">
+                    <label>Da
+                        <InputDate class="form-control" @bind-Value="_Model.StartDateHourlyRate"/>
+                    </label>
+                </div>
                 <ValidationMessage For="(() => _Model.StartDateHourlyRate)"/>
-                <label>A: 
-                    <input type="date" class="form-control" @bind="_Model.FinishDateHourlyRate">
+                <label>A 
+                    <InputDate class="form-control" @bind-Value="_Model.FinishDateHourlyRate"/>
                 </label>
                 <ValidationMessage For="(() => _Model.FinishDateHourlyRate)"/>
             </div>
@@ -82,9 +87,18 @@
             <div style="margin: 0 auto; margin: 10px 5px;">
                 <span class="oi oi-key"></span>
                 <label for="Password">Password</label>
-                <input type="@_TypeField" class="form-control" @bind="_Model.Password"/>
-                <input type="checkbox" style="float:left; margin-top: 5px;" @onclick="SwitchShowPassword"/>
+                <InputText Type="@_TypeField" class="form-control" @bind-Value="_Model.Password"/>
+                <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
                 <span style="margin: 10px 5px;">Vedi password</span>
+                <div style="margin: 20px;">
+                    <span class="strong">
+                        <p>Deve comprendere almeno: </p>
+                        <p>[8 - 16] - Lunghezza caratteri</p>
+                        <p>[A-Z] - Una lettera maiuscola.</p>
+                        <p>[a-z] - Una lettera minuscola.</p>
+                        <p>[0-9] - Un numero</p>
+                    </span>
+                </div>
             </div>
             <ValidationMessage For="@(() => _Model.Password)" />
         </div>

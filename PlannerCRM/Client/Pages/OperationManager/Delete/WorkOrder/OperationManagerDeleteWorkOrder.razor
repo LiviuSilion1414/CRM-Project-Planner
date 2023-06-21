@@ -1,4 +1,4 @@
-@page "/operation-manager/delete/workorder/{Id:int}"
+@*@page "/operation-manager/delete/workorder/{Id:int}"
 
 @using PlannerCRM.Shared.Models
 
@@ -19,4 +19,36 @@
     </span>
     <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>
     <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
+</div>
+*@
+
+
+<div class="modal" tabindex="-1" role="dialog"
+    style="display: block; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);"
+    hidden="@_IsCancelClicked">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Elimina commessa</h5>
+            <i style="cursor: pointer;" class="bi bi-x-circle" @onclick="@(() => OnClickModalCancel())"></i>
+        </div>
+        <div class="modal-body">
+            <p>Vuoi davvero eliminare questa commessa?</p>
+            <p> <strong>Nome:</strong> @_Model.Name</p>
+            <p> <strong>Email:</strong> @_Model.StartDate.ToShortDateString()</p>
+            <p> <strong>Ruolo:</strong> @_Model.FinishDate.ToShortDateString()</p>
+        </div>
+        <div class="modal-footer"
+            style="justify-content: space-between;">
+            <div style="float: left;">
+                <button type="button" id="btn-link" class="btn btn-link"
+                    @onclick="@(() => OnClickModalCancel())">Annulla</button>
+            </div>
+            <div style="float: right;">
+                <button type="button" class="btn btn-danger"
+                    @onclick="@(() => OnClickModalConfirm())">Conferma</button>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>

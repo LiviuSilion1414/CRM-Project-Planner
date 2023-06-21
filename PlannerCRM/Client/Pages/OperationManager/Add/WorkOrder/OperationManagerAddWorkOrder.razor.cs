@@ -19,27 +19,41 @@ public partial class OperationManagerAddWorkOrder
     private EditContext _EditContext;
     private bool _IsError { get; set; }
     private string _Message { get; set; }
+
+    private string _CurrentPage { get; set; }
+    private bool _IsCancelClicked { get; set; } = false;
+    public string Title { get; set; }    
+    public string Message { get; set; } 
     
     protected override void OnInitialized() {
         _EditContext = new(_Model);
+        _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
     }
 
-    public void RedirectToPage() {
-        NavManager.NavigateTo("/operation-manager");
+    public void OnClickModalCancel() {
+        _IsCancelClicked = !_IsCancelClicked;
+        NavManager.NavigateTo(_CurrentPage);
     }
+    
+    public async Task OnClickModalConfirm() {
+        try {
+            if (_EditContext.Validate()) {
+                var response = await OperationManagerService.AddWorkOrderAsync(_Model);
 
-    public async Task OnClickConfirm() {
-        var response = await OperationManagerService.AddWorkOrderAsync(_Model);
-
-        if (!response.IsSuccessStatusCode) {
-            _Message = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode) {
+                    _Message = await response.Content.ReadAsStringAsync();
+                    _IsError = true;
+                } else {
+                    _IsCancelClicked = !_IsCancelClicked;
+                    NavManager.NavigateTo("/operation-manager", true);
+                }
+            } else {
+                _IsCancelClicked = !_IsCancelClicked;
+                NavManager.NavigateTo(_CurrentPage, true);
+            }    
+        } catch (Exception ex) {
             _IsError = true;
-        } else {
-            RedirectToPage();
-        } 
-    }
-
-    public void OnClickCancel() {
-        RedirectToPage();
+            _Message = ex.Message;
+        }
     }
 }

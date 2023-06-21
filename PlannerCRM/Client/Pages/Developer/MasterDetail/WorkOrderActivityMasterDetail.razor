@@ -6,7 +6,7 @@
             <tr>
                 <th>#</th>
                 <th>Commessa</th>
-                <th>Nome</th>
+                <th>Attività</th>
                 <th>Data d'inizio</th>
                 <th>Data di fine</th>
                 <th>Ore segnate</th>
@@ -31,12 +31,9 @@
                         <td><em>Nessun orario</em></td>
                     } else {
                         <td>
-                            @foreach (var wtrSubList in _workTimeRecords) {
-                                @foreach (var wtr in wtrSubList)
-                                {
-                                    <td>
-                                        @wtr.Hours
-                                    </td>
+                            @foreach (var wtr in _workTimeRecords) {
+                                @if (wtr.WorkOrderId == ac.WorkOrderId) {
+                                    @wtr.Hours
                                 }
                             }
                         </td>
@@ -52,4 +49,8 @@
             }
         </tbody>
     </table>
+}
+
+@if (_IsAddClicked) {
+    <DeveloperAddWorkedHours ActivityId="@_ActivityId" EmployeeId="@EmployeeId"/>
 }

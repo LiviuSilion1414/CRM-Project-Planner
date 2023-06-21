@@ -1,3 +1,4 @@
+@*
 @page "/operation-manager/add/activity"
 
 @using PlannerCRM.Shared.Models
@@ -58,7 +59,7 @@
                 <span class="oi oi-people"></span>
                 <label for="Assegna dipendenti">Assegna a dipendenti</label>
                 <input type="search" class="form-control" @bind="_SelectModel.SelectedEmployee"/>
-                @if (_Employees.Count != 0) {
+                @if (_Employees.Any()) {
                     <ul>
                         @foreach (var em in _Employees) {
                             <li class="dropdown-item" value="@em" 
@@ -78,14 +79,14 @@
             </div>
             <div class="child">
                 <span>Dipendenti selezionati per questa attività: @_Model.EmployeeActivity.Count</span> <br>
-                    <table class="table table-striped">
+                    <table class="table">
                         <thead>
                             <th>Email</th>
                         <th></th>
                         </thead>
                         <tbody>
                             <div style="width: 500px; height:150px; left: 0; overflow-y: scroll;">
-                                @if (_Model.EmployeeActivity.Count != 0) {
+                                @if (_Model.EmployeeActivity.Any()) {
                                     @foreach (var ea in _Model.EmployeeActivity) {
                                         <tr>
                                             <td> 
@@ -118,3 +119,154 @@
 
 <NavigationLock ConfirmExternalNavigation="NavLockService.ConfirmedExternalExit" 
     OnBeforeInternalNavigation="NavLockService.ConfirmInternalExit"/>
+*@
+
+
+@using PlannerCRM.Shared.Models
+
+<PageTitle>CRM - Aggiungi attività</PageTitle>
+
+<div class="modal" tabindex="-1" role="dialog"
+    style="display: block; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);
+        width: 100%; height: 100%;"
+    hidden="@_IsCancelClicked">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Aggiungi attivita</h5>
+            <i style="cursor: pointer;" class="bi bi-x-circle" @onclick="@(() => OnClickModalCancel())"></i>
+        </div>
+        <div style="width: 100%; height:100%;padding: 10px;">
+        <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickModalConfirm">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <div class="child">
+                    <div class="child">
+                        <div class="form-group">
+                            <span class="oi oi-briefcase"></span>
+                            <label for="Nome commessa">Commessa</label>
+                                <InputText Type="search" @bind-Value="_SelectModel.SelectedWorkorder" style="width: 100%;" class="form-control"/>
+                                <ul hidden="@_HideWorkOrdersList" style="height: 80px; overflow-y: scroll; scrollbar-width: 0.5rem;" >
+                                    @if (!_HasElements) {
+                                        <li style="cursor: pointer;" @onclick="@(() => Toggle())">@_Message</li>
+                                    } else {
+                                        @foreach (var wo in _WorkOrders) {
+                                            <li style="cursor: pointer;" class="dropdown-item" value="@wo" 
+                                                @onclick="(() => OnClickSetWorkOrder(wo))">@wo.Name</li>
+                                        }
+                                    }
+                                </ul>
+                        </div>
+                    </div>
+                    <div class="child">
+                        <button type="button" class="btn btn-link"
+                            @onclick="@(() => OnClickSearchWorkOrder(_SelectModel.SelectedWorkorder))">
+                                <span class="oi oi-magnifying-glass"></span>
+                                Cerca
+                        </button>
+                    </div>
+                </div>
+                <ValidationMessage For="@(() => _Model.WorkOrderId)" />
+                <ValidationMessage For="@(() => _SelectModel.SelectedWorkorder)" />
+            </div>
+            <div class="form-group">
+                <span class="oi oi-text"></span>
+                <label for="Nome attività">Nome</label>
+                <InputText class="form-control" @bind-Value="_Model.Name"/>
+                <ValidationMessage For="@(() => _Model.Name)" />
+            </div>
+            <div>
+                <div class="form-group" style="display: inline-block;">
+                    <span class="oi oi-calendar"></span>
+                    <label for="Data d'inizio">Data d'inizio</label>
+                    <InputDate class="form-control" @bind-Value="@_Model.StartDate"/>
+                    <ValidationMessage For="@(() => _Model.StartDate)" />
+                </div>
+                <div class="form-group" style="display: inline-block;">
+                    <span class="oi oi-calendar"></span>
+                    <label for="Data di fine">Data di fine</label>
+                    <InputDate class="form-control" @bind-Value="@_Model.FinishDate"/>
+                    <ValidationMessage For="@(() => _Model.FinishDate)" />
+                </div>
+            </div>
+            <div class="container" style="height: 300px;">
+                <div class="child" style="float: left">
+                    <span class="oi oi-people"></span>
+                    <label for="Assegna dipendenti">Assegna a dipendenti</label>
+                    <InputText Type="search" class="form-control" @bind-Value="_SelectModel.SelectedEmployee"/>
+                    @if (_Employees.Any()) {
+                        <ul style="height: min-content; overflow-y: scroll;">
+                            @if (!_HasElements) {
+                                <li style="cursor: pointer;" @onclick="@(() => Toggle())">@_Message</li>
+                            } else {
+                                @foreach (var em in _Employees) {
+                                    <li style="cursor: pointer;" class="dropdown-item" value="@em" 
+                                        @onclick="@(() => OnClickAddAsSelected(em))"> 
+                                            @em.Email
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    }
+                    <ValidationMessage For="@(() => _SelectModel.SelectedEmployee)" />
+                </div>
+                <div class="child" style="padding-top: 15px;">
+                    <button type="button" class="btn btn-link"
+                        @onclick="@(() => OnClickSearchEmployee(_SelectModel.SelectedEmployee))">
+                        <span class="oi oi-magnifying-glass"></span>
+                        Cerca
+                    </button>
+                </div>
+                <div class="child" style="float: right">
+                    <span>Dipendenti selezionati per questa attività: @_Model.EmployeeActivity.Count</span> <br>
+                        <div>
+                            <table class="table">
+                                <thead>
+                                    <th>Email</th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                    <div>
+                                        @if (_Model.EmployeeActivity.Any()) {
+                                            @foreach (var ea in _Model.EmployeeActivity) {
+                                                <tr>
+                                                    <td> 
+                                                        <span class="oi oi-envelope-closed"></span>
+                                                        <span> @ea.Employee.Email </span>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger" value="@ea.Employee"
+                                                            @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">Elimina</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </div>
+                                </tbody>
+                            </table>
+                            <br>
+                            <ValidationMessage For="@(() => _Model.EmployeeActivity)"/>
+                        </div>
+                </div>
+            </div>
+            <ValidationMessage For="@(() => _SelectModel.SelectedEmployee)"/>
+            <div class="modal-footer" style="justify-content: space-between; padding: 10px 0; width: 100%;">
+                <div style="float: left;">
+                    <button type="button" id="btn-link" class="btn btn-link" style="text-decoration: none;"
+                        @onclick="@(() => OnClickModalCancel())">Annulla</button>
+                </div>
+                <div style="float: right;">
+                    <button type="submit" class="btn btn-primary">Conferma</button>
+                </div>
+            </div>
+            <NavigationLock ConfirmExternalNavigation="@NavLockService.ConfirmedExternalExit" 
+                OnBeforeInternalNavigation="@NavLockService.ConfirmInternalExit"/>
+        </EditForm>
+        </div>
+        </div>
+    </div>
+</div>
+
+ @if (_IsError) {
+    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback> 
+}

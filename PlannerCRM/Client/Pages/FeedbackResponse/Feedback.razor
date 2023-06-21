@@ -1,5 +1,9 @@
+@using PlannerCRM.Shared.Models
+
 <div class="alert alert-@Severity.ToString().ToLower()"
-    style="display: @_inputType;
+    style="display: @(_isXAlertClicked 
+        ? ShowType.NONE.ToString().ToLower()
+        : ShowType.BLOCK.ToString().ToLower());
         width: 100%;
         position: relative; 
         margin: 0 auto; 
@@ -8,5 +12,6 @@
         text-align: center; 
         overflow: hidden;">
     <span> @Message </span>
-    <span style="float:right;" class="oi oi-circle-x" @onclick="SwitchShowAlert"></span>
+    <i style="cursor: pointer; float:right;" class="bi bi-x-circle"
+        @onclick="@(() => SwitchShowAlert())"></i>
 </div>

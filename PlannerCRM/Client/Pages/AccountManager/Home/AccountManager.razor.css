@@ -3,3 +3,11 @@
     width: 160px;
     margin: 0 auto;
 }
+
+#previous:hover {
+    cursor: pointer;
+}
+
+#next:hover {
+    cursor: pointer;
+}

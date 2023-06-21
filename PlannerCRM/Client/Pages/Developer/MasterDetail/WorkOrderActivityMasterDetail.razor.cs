@@ -19,7 +19,10 @@ public partial class WorkOrderActivityMasterDetail
 
     private List<WorkOrderViewDto> _workorders = new();
     private List<ActivityViewDto> _activities = new();
-    private List<List<WorkTimeRecordViewDto>> _workTimeRecords = new();
+    private List<WorkTimeRecordViewDto> _workTimeRecords = new();
+    private bool _IsAddClicked { get; set; } = false;
+    private int _ActivityId { get; set; }
+    private int _WorkOrderId { get; set; }
 
     protected override async Task OnInitializedAsync() {
         _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId);
@@ -29,31 +32,14 @@ public partial class WorkOrderActivityMasterDetail
             _workorders.Add(workorder);
         }
 
-        foreach (var workOrder in _workorders) {
-            foreach (var activity in _activities) {
-                var workTimes = await DeveloperService.GetWorkTimeRecordsByActivityId(activity.Id);
-                
-                Console.WriteLine("*******************Start***********************");
-                if (workOrder.Id == activity.WorkOrderId) {
-                    Console.WriteLine("WorkOrder: {0}", workOrder.Name);
-                }
-
-                Console.WriteLine("Activity: {0}", activity.Name);
-                Console.WriteLine("{0} is populated? {1}", nameof(workTimes).ToUpper(), workTimes.Count != 0);
-
-                foreach (var item in workTimes) {
-                    if (item.ActivityId == activity.Id) {
-                        Console.WriteLine("WorkTimeRecord: {0}", item.Hours);
-                    }
-                }
-
-                _workTimeRecords.Add(workTimes);
-                Console.WriteLine("*******************End***********************");
-            }
+        foreach (var activity in _activities) {
+            var workTime = await DeveloperService.GetWorkTimeRecords(activity.Id, EmployeeId);
+            _workTimeRecords.Add(workTime);
         }
     }
 
     public void OnClickAddWorkedHours(int activityId) {
-        NavManager.NavigateTo($"/developer/add/worked-hours/{EmployeeId}/{activityId}");
+        _IsAddClicked = !_IsAddClicked;
+        _ActivityId = activityId;
     }
 }

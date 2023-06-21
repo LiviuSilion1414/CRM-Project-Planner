@@ -15,6 +15,11 @@ public partial class AccountManagerDeleteUser
     [Inject] private NavigationManager NavigationManager { get; set; }
     [Inject] private AccountManagerCrudService AccountManagerService { get; set; }
     
+    private bool _IsCancelClicked { get; set; } = false;
+    public string Title { get; set; }    
+    public string Message { get; set; } 
+
+    private string _CurrentPage { get; set; }
     private bool _IsError { get; set; }
     private string _Message { get; set; }
     private EmployeeDeleteDto _Model = new();
@@ -24,23 +29,24 @@ public partial class AccountManagerDeleteUser
         _Model = await AccountManagerService.GetEmployeeForDeleteAsync(Id);
     }
 
-    public void RedirectToPage() {
+    protected override void OnInitialized() {
+        _CurrentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
+    }
+
+    public void OnClickModalCancel() {
+        _IsCancelClicked = !_IsCancelClicked;
         NavigationManager.NavigateTo("/account-manager");
     }
 
-    public void OnClickCancel() {
-        RedirectToPage();
-    }
-
-    public async Task OnClickDeleteUser() {
+    public async Task OnClickModalConfirm() {
         var responseEmployee = await AccountManagerService.DeleteEmployeeAsync(Id);
         var responseUser = await AccountManagerService.DeleteUserAsync(_Model.Email);
         
         if (!responseEmployee.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
             _Message = await responseEmployee.Content.ReadAsStringAsync();
             _IsError = true;
-        } else {
-            RedirectToPage();
-        }
+        } 
+        _IsCancelClicked = !_IsCancelClicked;
+        NavigationManager.NavigateTo("/account-manager", true);
     }
 }

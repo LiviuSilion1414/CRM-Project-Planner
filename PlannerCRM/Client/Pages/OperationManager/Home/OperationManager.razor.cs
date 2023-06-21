@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using PlannerCRM.Client.Services.Crud;
 using PlannerCRM.Shared.Models;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
+using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Client.Pages.OperationManager.Home;
 
@@ -13,33 +14,74 @@ public partial class OperationManager
     [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
 
     private List<WorkOrderViewDto> _WorkOrders = new();
+    private WorkOrderViewDto _CurrentWorkOrder { get; set; } = new();
     private bool _TrIsClicked = false;
+    private int RowCounter { get; set; } = ONE;
+
+    public bool _IsCreateWorkOrderClicked { get; set; }
+    public bool _IsEditWorkOrderClicked { get; set; }
+    public bool _IsDeleteWorkOrderClicked { get; set; }
+    
+    public bool _IsCreateActivityClicked { get; set; }
+
+    public int _WorkOrderId { get; set; } 
+    public int _ActivityId { get; set; } 
+
+    private int _CollectionSize { get; set; }
+    private int _TotalPageNumbers { get; set; }
+    private int _PageNumber { get; set; } = ONE;
+    private int _Skip { get; set; } = ZERO;
+    private int _Take { get => PAGINATION_LIMIT; }
 
     protected override async Task OnInitializedAsync() {
-        _WorkOrders = await OperationManagerService.GetAllWorkOrdersAsync();
+        _WorkOrders = await OperationManagerService.GetCollectionPaginated();
+        _CollectionSize = await OperationManagerService.GetCollectionSize();
+        _TotalPageNumbers = (_CollectionSize % PAGINATION_LIMIT) == ZERO
+            ? (_CollectionSize / PAGINATION_LIMIT)
+            : (_CollectionSize / PAGINATION_LIMIT) + ONE;
     }
     
-    private void OnClickTableRow(int workorderId) {
-        if (_TrIsClicked) {
-            _TrIsClicked = false;
+    public async Task Previous(int pageNumber) {
+        if (_Skip <= PAGINATION_LIMIT) {
+            _Skip = ZERO;
+            _PageNumber = ONE;
         } else {
-            _TrIsClicked = true;
+            _Skip -= (_Skip - PAGINATION_LIMIT);
+            _PageNumber--;
         }
+        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Skip, _Take);
+    }
+
+    public async Task Next(int pageNumber) {
+        if (_Skip < (_TotalPageNumbers + PAGINATION_LIMIT)) {
+            _Skip += PAGINATION_LIMIT;
+            _PageNumber++; 
+        } else {
+            _Skip = _TotalPageNumbers;
+            _PageNumber = _TotalPageNumbers;
+        }
+        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Skip, _Take);
+    }
+    private void OnClickTableRow(int workorderId) {
+        _TrIsClicked = !_TrIsClicked;
+        _CurrentWorkOrder = _WorkOrders.Find(wo => wo.Id == workorderId);
     }
 
     private void OnClickAddWorkOrder() {
-        NavManager.NavigateTo("/operation-manager/add/workorder");
+       _IsCreateWorkOrderClicked = !_IsCreateWorkOrderClicked;
     }
 
     private void OnClickAddActivity() {
-        NavManager.NavigateTo("/operation-manager/add/activity");
+       _IsCreateActivityClicked = !_IsCreateActivityClicked;
     }
 
     private void OnClickEdit(int id) {
-        NavManager.NavigateTo($"/operation-manager/edit/workorder/{id}");
+        _IsEditWorkOrderClicked = !_IsEditWorkOrderClicked;
+        _WorkOrderId = id;
     }
 
-    private void OnClickDelete(int id) {
-        NavManager.NavigateTo($"/operation-manager/delete/workorder/{id}");
+    public void OnClickDelete(int id) {
+        _IsDeleteWorkOrderClicked = !_IsDeleteWorkOrderClicked;
+        _WorkOrderId = id;
     }
 }

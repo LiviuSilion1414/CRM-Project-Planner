@@ -7,6 +7,7 @@
 @if (_IsError) { 
     <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
 }
+
 <div class="container-fluid">
     <h1>Modifica utente</h1>
     <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickConfirm" class="form">
@@ -29,17 +30,19 @@
             <input type="email" class="form-control" @bind="_Model.Email"/>
             <ValidationMessage For="@(() => _Model.Email)" />
         </div>
-        <div class="form-group">
-            <span class="oi oi-calendar"></span>
-            <label for="Data di nascita">Data di nascita</label>
-            <input type="date" class="form-control" @bind="@_Model.BirthDay"/>
-            <ValidationMessage For="@(() => _Model.BirthDay)" />
-        </div>
-        <div class="form-group">
-            <span class="oi oi-calendar"></span>
-            <label for="Data d'inizio">Data d'inizio</label>
-            <input type="date" class="form-control" @bind="@_Model.StartDate"/>
-            <ValidationMessage For="@(() => _Model.StartDate)" />
+        <div>
+            <div class="form-group" style="display: inline-block; padding-right: 15px;">
+                <span class="oi oi-calendar"></span>
+                <label for="Data di nascita">Data di nascita</label>
+                <input type="date" class="form-control" @bind="@_Model.BirthDay"/>
+                <ValidationMessage For="@(() => _Model.BirthDay)" />
+            </div>
+            <div class="form-group" style="display: inline-block;">
+                <span class="oi oi-calendar"></span>
+                <label for="Data d'inizio">Data d'inizio</label>
+                <input type="date" class="form-control" @bind="@_Model.StartDate"/>
+                <ValidationMessage For="@(() => _Model.StartDate)" />
+            </div>
         </div>
         <div class="form-group">
             <span class="oi oi-briefcase"></span>
@@ -68,11 +71,11 @@
             <ValidationMessage For="@(() => _Model.HourlyRate)" />
             <div>
                 <label>Da: 
-                    <input type="date" class="form-control" @bind="_Model.StartDateHourlyRate">
+                    <input type="date" class="form-control" @bind="_Model.StartDateHourlyRate"/>
                 </label>
                 <ValidationMessage For="(() => _Model.StartDateHourlyRate)"/>
                 <label>A: 
-                    <input type="date" class="form-control" @bind="_Model.FinishDateHourlyRate">
+                    <input type="date" class="form-control" @bind="_Model.FinishDateHourlyRate"/>
                 </label>
                 <ValidationMessage For="(() => _Model.FinishDateHourlyRate)"/>
             </div>
@@ -82,7 +85,7 @@
                 <span class="oi oi-key"></span>
                 <label for="Password">Password</label>
                 <input type="@_TypeField" class="form-control" @bind="_Model.Password"/>
-                <input type="checkbox" style="float:left; margin-top:5px;" @onclick="SwitchShowPassword"/>
+                <input type="checkbox" style="float:left; margin-top:5px;" @bind="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
                 <span style="margin: 10px 5px;">Vedi password</span>
             </div>
             <ValidationMessage For="@(() => _Model.Password)" />

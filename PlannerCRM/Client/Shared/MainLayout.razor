@@ -3,9 +3,7 @@
 <div class="page">
     <main>
         <div class="navbar">
-            <a class="nav-link" @onclick="NavigateBasedOnRole">
-                PlannerCRM
-            </a>
+            <a class="nav-link" @onclick="NavigateBasedOnRole">CRM</a>
             <AuthorizeView>
                 <Authorized>
                     <div class="parent">
@@ -14,10 +12,10 @@
                             <span class="user-info">Ruolo: @UserRole</span>
                         </div>
                         <div class="child">
-                            <button type="button" class="btn btn-danger" @onclick="OnClickLogout">
-                                <span class="oi oi-account-logout"></span>
-                                Disconettiti
-                            </button>
+                            <span style="cursor: pointer;"@onclick="OnClickLogout">
+                                <span style="color: red;">Esci</span>
+                               <i class="bi bi-box-arrow-right" style="color: red;"></i>
+                            </span>
                         </div>
                     </div>
                 </Authorized>

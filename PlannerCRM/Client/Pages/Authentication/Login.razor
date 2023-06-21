@@ -17,19 +17,20 @@
         <DataAnnotationsValidator/>
         <div class="form-group">
             <label for="Email">Email:</label>
-            <input type="email" class="form-control" @bind="_Model.Email"/>
+            <InputText Type="email" class="form-control" @bind-Value="_Model.Email"/>
             <ValidationMessage For="@(() => _Model.Email)"/>
         </div>
         <div class="form-group">
             <label for="Password">Password:</label>
             <div style="margin: 0 auto; margin: 10px 5px;">
-                <input type="@_TypeField" class="form-control" @bind="_Model.Password"/>
-                <input type="checkbox" style="float:left; margin-top: 5px;" @onclick="SwitchShowPassword"/>
+                <InputText type="@_TypeField" class="form-control" @bind-Value="_Model.Password"/>
+                <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
                 <span style="margin: 10px 5px;">Vedi password</span>
             </div>
             <ValidationMessage For="@(() => _Model.Password)"/>
         </div>
         <div class="wrapper">
+            
             <button type="submit" id="submit" class="btn btn-primary">
                 <span>Accedi</span>
                 <span class="oi oi-account-login"></span>  

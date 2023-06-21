@@ -1,13 +1,11 @@
-@using System.Globalization
-
-@if (_Activities.Count() == 0) {
-    <td><p><em>Nessun'attività assegnata.</em></p></td>
+@if (!_Activities.Any()) {
+    <p><strong>Nessun'attività assegnata.</strong></p>
 } else {
     <div class="master-detail">
         <div class="container-fluid">
             <h3>Attività</h3>
             <table class="table">
-                <thead>
+                <thead>w
                     <tr>
                         <th>#</th>
                         <th>Nome</th>
@@ -52,4 +50,19 @@
             </table>
         </div>
     </div>
+}
+@if (_IsEditActivityClicked) { 
+    <CascadingValue Value="@_ActivityId" Name="ActivityId">
+        <CascadingValue Value="@WorkOrderId" Name="WorkOrderId">
+            <OperationManagerEditActivity></OperationManagerEditActivity> 
+        </CascadingValue>
+    </CascadingValue>
+}
+
+@if (_IsDeleteActivityClicked) {
+    <CascadingValue Value="@_ActivityId" Name="ActivityId">
+        <CascadingValue Value="@WorkOrderId" Name="WorkOrderId">
+            <OperationManagerDeleteActivity></OperationManagerDeleteActivity> 
+        </CascadingValue>
+    </CascadingValue>
 }
