@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.Feedbacks;
 using PlannerCRM.Shared.Models;
-using static PlannerCRM.Shared.Constants.LoginFeedBack;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -27,41 +26,29 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDto dto)
-    {
+    public async Task<ActionResult> Login(EmployeeLoginDto dto) {
         var user = await _userManager.FindByEmailAsync(dto.Email);
 
-        if (user == null)
-        {
-            return NotFound(USER_NOT_FOUND);
-        }
-        else
-        {
-            var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
+        if (user is null) return NotFound(LoginFeedBack.USER_NOT_FOUND);
+        
+        var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
 
-            if (!userPasswordIsCorrect)
-            {
-                return BadRequest(WRONG_PASSWORD);
-            }
-            else
-            {
-                await _signInManager.SignInAsync(user, false);
+        if (!userPasswordIsCorrect) {
+            return BadRequest(LoginFeedBack.WRONG_PASSWORD);
+        } else {
+            await _signInManager.SignInAsync(user, false);
 
-                return Ok(CONNECTED);
-            }
+            return Ok(LoginFeedBack.CONNECTED);
         }
     }
 
     [Authorize]
     [HttpGet("logout")]
-    public async Task Logout()
-    {
-        await _signInManager.SignOutAsync();
-    }
+    public async Task Logout() => await _signInManager.SignOutAsync();
+    
 
     [HttpGet("user/role")]
-    public async Task<string> GetUserRole()
-    {
+    public async Task<string> GetUserRole() {
         if (User.Identity.IsAuthenticated) {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
@@ -73,10 +60,8 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("current/user/info")]
-    public CurrentUser CurrentUserInfo()
-    {
-        return new CurrentUser
-        {
+    public CurrentUser CurrentUserInfo() {
+        return new CurrentUser {
             IsAuthenticated = User.Identity.IsAuthenticated,
             UserName = User.Identity.Name,
             Claims = User.Claims

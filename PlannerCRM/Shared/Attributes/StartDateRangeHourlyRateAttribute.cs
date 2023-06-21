@@ -15,16 +15,13 @@ public class StartDateRangeHourlyRateAttribute : ValidationAttribute
     }
 
     public override bool IsValid(object value) {
-        if (value == null) {
-            return false;
-        }
+        if (value is null) return false;
+        
         if (value.GetType() == typeof(DateTime)) {
             var startDate = Convert.ToDateTime(value);
             
-            return ((startDate.Year == CURRENT_YEAR) && ((startDate.Month >= _MinimumMonth) && (startDate.Month <= _MaximumMonth) 
-            &&(startDate.Day <= CURRENT_DATE.Day))) 
-                ? true 
-                : false;
+            return ((startDate.Year == CURRENT_YEAR) && ((startDate.Month >= _MinimumMonth) && 
+                (startDate.Month <= _MaximumMonth) &&(startDate.Day <= CURRENT_DATE.Day)));
         } else {
             return false;
         }

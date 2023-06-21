@@ -14,6 +14,8 @@ public class WorkOrderFinishDateRangeAttribute : ValidationAttribute
     }
 
     public override bool IsValid(object value) {
+        if (value is null) return false;
+
         if (value.GetType() == typeof(DateTime)) {
             var date = Convert.ToDateTime(value);
             if (date > CURRENT_DATE) {

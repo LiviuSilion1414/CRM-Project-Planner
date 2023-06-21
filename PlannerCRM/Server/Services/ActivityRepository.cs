@@ -1,11 +1,12 @@
-using PlannerCRM.Server.DataAccess;
-using PlannerCRM.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.CustomExceptions;
-using static PlannerCRM.Shared.Constants.ExceptionsMessages;
+using PlannerCRM.Server.DataAccess;
+using PlannerCRM.Shared.Constants;
+using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Services;
 
@@ -18,54 +19,73 @@ public class ActivityRepository
     }
 
     public async Task AddAsync(ActivityAddFormDto dto) {
-        if (dto.GetType() == null) {
-            throw new NullReferenceException(NULL_OBJECT);
-        }
+        if (dto.GetType() is null) 
+            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
         var innerPropertiesAreNull = dto.GetType().GetProperties()
-            .Any(prop => prop.GetValue(dto) == null);
-        if (innerPropertiesAreNull) {
-            throw new ArgumentNullException(NULL_PARAM);
-        }
+            .Any(prop => prop.GetValue(dto) is null);
+        if (innerPropertiesAreNull) 
+            throw new ArgumentNullException(ExceptionsMessages.NULL_PARAM);
         
         var isAlreadyPresent = await _db.Activities
             .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
-        if (isAlreadyPresent != null) {
-            throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
-        }
+        if (isAlreadyPresent != null) 
+            throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
 
-        if (dto.EmployeeActivity == null || dto.EmployeeActivity.Count == 0) {
-            throw new NullReferenceException(NULL_PROP);
-        }
+        if (dto.EmployeeActivity is null || !dto.EmployeeActivity.Any())
+            throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         
-        await _db.Activities.AddAsync(new Activity {
-            Id = dto.Id,
-            Name = dto.Name,
-            StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
-            FinishDate = dto.FinishDate ?? throw new NullReferenceException(NULL_PROP),
-            WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(NULL_PROP),
-            EmployeeActivity = dto.EmployeeActivity
-                .Select(ea => new EmployeeActivity {
-                    Id = ea.Id,
-                    EmployeeId = ea.EmployeeId, //fill employee and activity props
-                    ActivityId = ea.ActivityId
-                }).ToHashSet()
-               ,
-        });
+        await _db.Activities.AddAsync(
+            new Activity {
+                Id = dto.Id,
+                Name = dto.Name,
+                StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                EmployeeActivity = dto.EmployeeActivity
+                    .Select(ea => new EmployeeActivity {
+                        Id = ea.Id,
+                        EmployeeId = ea.EmployeeId,
+                        Employee = _db.Employees.Single(em => em.Id == ea.EmployeeId),
+                        ActivityId = ea.ActivityId,
+                        Activity = _db.Activities.Single(ac => ac.Id == ea.ActivityId),
+                    }).ToHashSet(),
+            }
+        );
 
+        var workOrder = await _db.WorkOrders
+            .SingleAsync(wo => wo.Id == dto.WorkOrderId);
+        workOrder.Activities.Add(
+            new Activity {
+                Id = dto.Id,
+                Name = dto.Name,
+                StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                EmployeeActivity = dto.EmployeeActivity
+                    .Select(ea => new EmployeeActivity {
+                        Id = ea.Id,
+                        EmployeeId = ea.EmployeeId,
+                        Employee = _db.Employees.Single(em => em.Id == ea.EmployeeId),
+                        ActivityId = ea.ActivityId,
+                        Activity = _db.Activities.Single(ac => ac.Id == ea.ActivityId),
+                    }).ToHashSet()
+        });    
+
+        _db.Update(workOrder);
+        
         var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
-        }
+        if (rowsAffected == 0)
+            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
     }
 
     public async Task DeleteAsync(int id) {
         var activityDelete = await _db.Activities
             .SingleOrDefaultAsync(ac => ac.Id == id);
 
-        if (activityDelete == null) {
-            throw new InvalidOperationException(IMPOSSIBLE_DELETE);
-        }
+        if (activityDelete is null)
+            throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_DELETE);
+        
         await _db.EmployeeActivity
             .Where(ea => ea.ActivityId == activityDelete.Id)
             .ForEachAsync(ea => 
@@ -76,26 +96,22 @@ public class ActivityRepository
         _db.Activities.Remove(activityDelete);
 
         var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
-        }
+        if (rowsAffected == 0) 
+            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
     }
 
     public async Task EditAsync(ActivityEditFormDto dto) {
-        if (dto == null) {
-            throw new NullReferenceException(NULL_OBJECT);
-        }
+        if (dto is null)
+            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
-        if (dto.EmployeeActivity == null || dto.EmployeeActivity.Count == 0) {
-            throw new NullReferenceException(NULL_PROP);
-        }
+        if (dto.EmployeeActivity is null || !dto.EmployeeActivity.Any())
+            throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         
         var model = await _db.Activities
             .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
 
-        if (model == null) {
-            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
-        }
+        if (model is null)
+            throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
 
         model.Id = dto.Id;
         model.Name = dto.Name;
@@ -106,17 +122,37 @@ public class ActivityRepository
             .Where(eaDto => _db.EmployeeActivity
                 .Any(ea => eaDto.EmployeeId != ea.EmployeeId))
             .Select(ea => new EmployeeActivity {
-                EmployeeId = ea.EmployeeId,     //fill employee and activity props
-                ActivityId = ea.ActivityId
+                EmployeeId = ea.EmployeeId,     
+                Employee = _db.Employees.Single(em => em.Id == ea.EmployeeId),
+                ActivityId = ea.ActivityId,
+                Activity = _db.Activities.Single(ac => ac.Id == ea.ActivityId)
             })
             .ToHashSet();
 
+        var workOrder = await _db.WorkOrders
+            .SingleAsync(wo => wo.Id == dto.WorkOrderId);
+        
+        var activity = workOrder.Activities.Find(ac => ac.Id == dto.Id);
+        activity.Id = dto.Id;
+        activity.Name = dto.Name;
+        activity.StartDate = dto.StartDate;
+        activity.FinishDate = dto.FinishDate;
+        activity.WorkOrderId = dto.WorkOrderId;
+        activity.EmployeeActivity = dto.EmployeeActivity
+            .Select(ea => new EmployeeActivity {
+                Id = ea.Id,
+                EmployeeId = ea.EmployeeId,
+                Employee = _db.Employees.Single(em => em.Id == ea.EmployeeId),
+                ActivityId = ea.ActivityId,
+                Activity = _db.Activities.Single(ac => ac.Id == ea.ActivityId),
+            }).ToHashSet();
+
         _db.Update(model);
+        _db.Update(workOrder);
 
         var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0) {
-            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
-        }
+        if (rowsAffected == 0)
+            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
     }
 
     public async Task<ActivityViewDto> GetForViewAsync(int id) {
@@ -127,6 +163,36 @@ public class ActivityRepository
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
+                EmployeeActivity = ac.EmployeeActivity
+                    .Select(ea => new EmployeeActivityDto {
+                        Id = ea.Id,
+                        EmployeeId = ea.EmployeeId,
+                        Employee = new EmployeeSelectDto {
+                            Id = ea.EmployeeId,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            FullName = ea.Employee.FullName,
+                            Role = ea.Employee.Role,
+                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                            EmployeeSalaries = ea.Employee.Salaries
+                                .Select(sal => new EmployeeSalaryDto {
+                                    Id = sal.Id,
+                                    EmployeeId = ea.EmployeeId,
+                                    StartDate = sal.StartDate,
+                                    FinishDate = sal.FinishDate,
+                                    Salary = sal.Salary,
+                                }).ToList()
+                        }, 
+                        ActivityId = ea.ActivityId,
+                        Activity =  new ActivitySelectDto {
+                            Id = ea.ActivityId,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
+                    }).ToHashSet()
             })
             .SingleOrDefaultAsync(ac => ac.Id == id);
     }
@@ -144,26 +210,55 @@ public class ActivityRepository
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
-                        Employee = _db.Employees
-                            .Where(em => !em.IsDeleted)
-                            .Select(em => new EmployeeSelectDto {
-                                Id = em.Id,
-                                Email = em.Email,
-                                FirstName = em.FirstName,
-                                LastName = em.LastName,
-                                Role = em.Role
-                            })
-                            .Single(em => em.Id == ea.EmployeeId),
+                        Employee = new EmployeeSelectDto {
+                            Id = ea.Employee.Id,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            FullName = ea.Employee.FullName,
+                            Role = ea.Employee.Role,
+                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                            EmployeeSalaries = ea.Employee.Salaries
+                                .Select(sal => new EmployeeSalaryDto {
+                                    Id = sal.Id,
+                                    EmployeeId = ea.EmployeeId,
+                                    StartDate = sal.StartDate,
+                                    FinishDate = sal.FinishDate,
+                                    Salary = sal.Salary,
+                                }).ToList(),
+                            EmployeeActivities = ea.Employee.EmployeeActivity
+                                .Select( _ => 
+                                    new EmployeeActivityDto { 
+                                        Id = ea.Id,
+                                        EmployeeId = ea.EmployeeId,
+                                        Employee = new EmployeeSelectDto { 
+                                            Id = ea.Employee.Id,
+                                            Email = ea.Employee.Email,
+                                            FirstName = ea.Employee.FirstName,
+                                            LastName = ea.Employee.LastName,
+                                            FullName = ea.Employee.FullName,
+                                            Role = ea.Employee.Role,
+                                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                                        },
+                                        ActivityId = ea.ActivityId,
+                                        Activity = new ActivitySelectDto {
+                                            Id = ea.Activity.Id,
+                                            Name = ea.Activity.Name,
+                                            StartDate = ea.Activity.StartDate,
+                                            FinishDate = ea.Activity.FinishDate,
+                                            WorkOrderId = ea.Activity.WorkOrderId
+                                        }
+                                })
+                                .ToList()
+                        },
                         ActivityId = ea.ActivityId,
-                        Activity = _db.Activities
-                            .Select(ac => new ActivitySelectDto {
-                            Id = ac.Id,
-                            Name = ac.Name,
-                            StartDate = ac.StartDate,
-                            FinishDate = ac.FinishDate,
-                            WorkOrderId = ac.WorkOrderId
-                        })
-                        .Single(ac => ac.Id == ea.ActivityId)
+                        Activity = new ActivitySelectDto {
+                            Id = ea.Activity.Id,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
                     })
                     .ToHashSet()
             })
@@ -181,15 +276,51 @@ public class ActivityRepository
                 Employees = _db.EmployeeActivity
                     .Where(ea => ea.ActivityId == id)
                     .Select(ea => new EmployeeSelectDto() {
-                        Email = _db.Employees
-                            .Single(em => em.Id == ea.EmployeeId)
-                            .Email,
-                        FullName = _db.Employees
-                            .Single(em => em.Id == ea.EmployeeId)
-                            .FullName,
-                        Role = _db.Employees
-                            .Single(em => em.Id == ea.EmployeeId)
-                            .Role
+                        Id = ea.EmployeeId,
+                        Email = ea.Employee.Email,
+                        FirstName = ea.Employee.FirstName,
+                        LastName = ea.Employee.LastName,
+                        FullName = ea.Employee.FullName,
+                        Role = ea.Employee.Role,
+                        CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                        EmployeeSalaries = ea.Employee.Salaries
+                            .Select(sal => new EmployeeSalaryDto {
+                                Id = sal.Id,
+                                EmployeeId = ea.EmployeeId,
+                                StartDate = sal.StartDate,
+                                FinishDate = sal.FinishDate,
+                                Salary = sal.Salary,
+                            }).ToList(),
+                        EmployeeActivities = ac.EmployeeActivity
+                            .Select(ea => new EmployeeActivityDto {
+                                Id = ea.Id,
+                                EmployeeId = ea.EmployeeId,
+                                Employee = new EmployeeSelectDto {
+                                    Id = ea.EmployeeId,
+                                    Email = ea.Employee.Email,
+                                    FirstName = ea.Employee.FirstName,
+                                    LastName = ea.Employee.LastName,
+                                    FullName = ea.Employee.FullName,
+                                    Role = ea.Employee.Role,
+                                    CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                                    EmployeeSalaries = ea.Employee.Salaries
+                                        .Select(sal => new EmployeeSalaryDto {
+                                            Id = sal.Id,
+                                            EmployeeId = ea.EmployeeId,
+                                            StartDate = sal.StartDate,
+                                            FinishDate = sal.FinishDate,
+                                            Salary = sal.Salary,
+                                        }).ToList()
+                                }, 
+                                ActivityId = ea.ActivityId,
+                                Activity =  new ActivitySelectDto {
+                                    Id = ea.ActivityId,
+                                    Name = ea.Activity.Name,
+                                    StartDate = ea.Activity.StartDate,
+                                    FinishDate = ea.Activity.FinishDate,
+                                    WorkOrderId = ea.Activity.WorkOrderId
+                                }
+                            }).ToList()
                     })
                     .ToHashSet()
             })
@@ -206,29 +337,34 @@ public class ActivityRepository
                 WorkOrderId = ac.WorkOrderId,
                 EmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
-                        Id = ea.EmployeeId,
+                        Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
-                        Employee = _db.Employees
-                            .Where(em => !em.IsDeleted)
-                            .Select(em => new EmployeeSelectDto {
-                                Id = em.Id,
-                                Email = em.Email,
-                                FirstName = em.FirstName,
-                                LastName = em.LastName,
-                                Role = em.Role
-                            })
-                            .Single(em => em.Id == ea.EmployeeId),
-                        Activity = _db.Activities
-                            .Select(ac => new ActivitySelectDto {
-                                Id = ac.Id,
-                                Name = ac.Name,
-                                StartDate = ac.StartDate,
-                                FinishDate = ac.FinishDate,
-                                WorkOrderId = ac.WorkOrderId
-                            })
-                            .Single(ac => ac.Id == ea.ActivityId)
-                    })
-                    .ToHashSet()   
+                        Employee = new EmployeeSelectDto {
+                            Id = ea.EmployeeId,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            FullName = ea.Employee.FullName,
+                            Role = ea.Employee.Role,
+                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                            EmployeeSalaries = ea.Employee.Salaries
+                                .Select(sal => new EmployeeSalaryDto {
+                                    Id = sal.Id,
+                                    EmployeeId = ea.EmployeeId,
+                                    StartDate = sal.StartDate,
+                                    FinishDate = sal.FinishDate,
+                                    Salary = sal.Salary,
+                                }).ToList()
+                        }, 
+                        ActivityId = ea.ActivityId,
+                        Activity =  new ActivitySelectDto {
+                            Id = ea.ActivityId,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
+                    }).ToHashSet()   
             })
             .Where(ac => _db.EmployeeActivity
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
@@ -248,28 +384,32 @@ public class ActivityRepository
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
-                        Employee = _db.Employees
-                            .Where(em => !em.IsDeleted)
-                            .Select(em => new EmployeeSelectDto {
-                                Id = em.Id,
-                                Email = em.Email,
-                                FirstName = em.FirstName,
-                                LastName = em.LastName,
-                                Role = em.Role
-                            })
-                            .Single(em => em.Id == ea.EmployeeId),
+                        Employee = new EmployeeSelectDto {
+                            Id = ea.EmployeeId,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            FullName = ea.Employee.FullName,
+                            Role = ea.Employee.Role,
+                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                            EmployeeSalaries = ea.Employee.Salaries
+                                .Select(sal => new EmployeeSalaryDto {
+                                    Id = sal.Id,
+                                    EmployeeId = ea.EmployeeId,
+                                    StartDate = sal.StartDate,
+                                    FinishDate = sal.FinishDate,
+                                    Salary = sal.Salary,
+                                }).ToList()
+                        }, 
                         ActivityId = ea.ActivityId,
-                        Activity = _db.Activities
-                            .Select(ac => new ActivitySelectDto {
-                            Id = ac.Id,
-                            Name = ac.Name,
-                            StartDate = ac.StartDate,
-                            FinishDate = ac.FinishDate,
-                            WorkOrderId = ac.WorkOrderId
-                        })
-                        .Single(ac => ac.Id == ea.ActivityId)
-                    })
-                    .ToHashSet()   
+                        Activity =  new ActivitySelectDto {
+                            Id = ea.ActivityId,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
+                    }).ToHashSet()   
             })
             .ToListAsync();
     }
@@ -281,7 +421,37 @@ public class ActivityRepository
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId
+                WorkOrderId = ac.WorkOrderId,
+                EmployeeActivity = ac.EmployeeActivity
+                    .Select(ea => new EmployeeActivityDto {
+                        Id = ea.Id,
+                        EmployeeId = ea.EmployeeId,
+                        Employee = new EmployeeSelectDto {
+                            Id = ea.EmployeeId,
+                            Email = ea.Employee.Email,
+                            FirstName = ea.Employee.FirstName,
+                            LastName = ea.Employee.LastName,
+                            FullName = ea.Employee.FullName,
+                            Role = ea.Employee.Role,
+                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
+                            EmployeeSalaries = ea.Employee.Salaries
+                                .Select(sal => new EmployeeSalaryDto {
+                                    Id = sal.Id,
+                                    EmployeeId = ea.EmployeeId,
+                                    StartDate = sal.StartDate,
+                                    FinishDate = sal.FinishDate,
+                                    Salary = sal.Salary,
+                                }).ToList()
+                        }, 
+                        ActivityId = ea.ActivityId,
+                        Activity =  new ActivitySelectDto {
+                            Id = ea.ActivityId,
+                            Name = ea.Activity.Name,
+                            StartDate = ea.Activity.StartDate,
+                            FinishDate = ea.Activity.FinishDate,
+                            WorkOrderId = ea.Activity.WorkOrderId
+                        }
+                    }).ToHashSet()   
             })
             .ToListAsync();
     }

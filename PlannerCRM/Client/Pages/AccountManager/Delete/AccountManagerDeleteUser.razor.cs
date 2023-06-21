@@ -35,7 +35,7 @@ public partial class AccountManagerDeleteUser
 
     public void OnClickModalCancel() {
         _IsCancelClicked = !_IsCancelClicked;
-        NavigationManager.NavigateTo("/account-manager");
+        NavigationManager.NavigateTo(_CurrentPage);
     }
 
     public async Task OnClickModalConfirm() {
@@ -46,6 +46,7 @@ public partial class AccountManagerDeleteUser
             _Message = await responseEmployee.Content.ReadAsStringAsync();
             _IsError = true;
         } 
+        
         _IsCancelClicked = !_IsCancelClicked;
         NavigationManager.NavigateTo("/account-manager", true);
     }

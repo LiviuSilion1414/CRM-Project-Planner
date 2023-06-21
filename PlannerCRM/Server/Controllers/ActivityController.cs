@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
+using PlannerCRM.Shared.CustomExceptions;
+using PlannerCRM.Shared.Feedbacks;
+using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.Models;
-using static Microsoft.AspNetCore.Http.StatusCodes;
-using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -29,38 +28,38 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddActivity(ActivityAddFormDto dto)
+    public async Task<ActionResult> AddActivity(ActivityAddFormDto dto) 
     {
         try
         {
             await _repo.AddAsync(dto);
 
-            return Ok(ACTIVITY_ADD);
+            return Ok(SuccessfulCrudFeedBack.ACTIVITY_ADD);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
             return BadRequest(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error, argNullExc, argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return StatusCode(Status500InternalServerError);
+            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
@@ -72,31 +71,31 @@ public class ActivityController : ControllerBase
         {
             await _repo.EditAsync(dto);
 
-            return Ok(ACTIVITY_EDIT);
+            return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
             return NotFound(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
         }
         catch (KeyNotFoundException keyNotFoundExc)
         {
-            _logger.LogError(keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
             return NotFound(keyNotFoundExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return StatusCode(Status500InternalServerError);
+            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return BadRequest(exc.Message);
         }
     }
@@ -109,22 +108,22 @@ public class ActivityController : ControllerBase
         {
             await _repo.DeleteAsync(activityId);
 
-            return Ok(ACTIVITY_DELETE);
+            return Ok(SuccessfulCrudFeedBack.ACTIVITY_DELETE);
         }
         catch (InvalidOperationException invalidOpExc)
         {
-            _logger.LogError(invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
             return BadRequest(invalidOpExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return StatusCode(Status500InternalServerError);
+            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
@@ -132,13 +131,12 @@ public class ActivityController : ControllerBase
     [HttpGet("get/{activityId}")]
     public async Task<ActivityViewDto> GetForView(int activityId)
     {
-        try
-        {
+        try {
             return await _repo.GetForViewAsync(activityId);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return new ActivityViewDto();
         }
     }
@@ -153,7 +151,7 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return new ActivityEditFormDto();
         }
     }
@@ -168,7 +166,7 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return new ActivityDeleteDto();
         }
     }
@@ -183,7 +181,7 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return new List<ActivityEditFormDto>();
         }
     }
@@ -198,7 +196,7 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return new List<ActivityEditFormDto>();
         }
     }
@@ -213,7 +211,7 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return new List<ActivityViewDto>();
         }
     }

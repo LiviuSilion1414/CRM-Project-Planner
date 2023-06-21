@@ -13,12 +13,12 @@ public class PasswordValidatorAttribute : ValidationAttribute
     }
 
     public override bool IsValid(object value) {
+        if (value is null) return false;
+
         if (value.GetType() == typeof(string)) { 
             var passLength = value.ToString().Count();
 
-            return ((passLength >= _Minimum) || (passLength <= _Maximum))
-                ? true 
-                : false;
+            return ((passLength >= _Minimum) || (passLength <= _Maximum));
         } else {
             return false;
         }

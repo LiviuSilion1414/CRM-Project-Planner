@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Server.Services;
+using Microsoft.AspNetCore.Mvc;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using static Microsoft.AspNetCore.Http.StatusCodes;
-using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
+using PlannerCRM.Shared.CustomExceptions;
+using PlannerCRM.Shared.Feedbacks;
+using PlannerCRM.Server.Services;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -34,32 +33,32 @@ public class EmployeeController : ControllerBase
         {
             await _repo.AddAsync(dto);
 
-            return Ok(USER_ADD);
+            return Ok(SuccessfulCrudFeedBack.USER_ADD);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
             return BadRequest(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error,argNullExc, argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.Log(LogLevel.Error,duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return StatusCode(Status500InternalServerError);
+            _logger.Log(LogLevel.Error,dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
@@ -71,32 +70,32 @@ public class EmployeeController : ControllerBase
         {
             await _repo.EditAsync(dto);
 
-            return Ok(USER_EDIT);
+            return Ok(SuccessfulCrudFeedBack.USER_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
             return NotFound(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error,argNullExc, argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
         }
         catch (KeyNotFoundException keyNotFoundExc)
         {
-            _logger.LogError(keyNotFoundExc, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            _logger.Log(LogLevel.Error,keyNotFoundExc, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
             return NotFound(keyNotFoundExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return StatusCode(Status500InternalServerError);
+            _logger.Log(LogLevel.Error,dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
@@ -108,22 +107,22 @@ public class EmployeeController : ControllerBase
         {
             await _repo.DeleteAsync(employeeId);
 
-            return Ok(USER_DELETE);
+            return Ok(SuccessfulCrudFeedBack.USER_DELETE);
         }
         catch (InvalidOperationException invalidOpExc)
         {
-            _logger.LogError(invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.Log(LogLevel.Error,invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
             return BadRequest(invalidOpExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            _logger.Log(LogLevel.Error,dbUpdateExc, dbUpdateExc.Message, dbUpdateExc.StackTrace);
             return BadRequest(dbUpdateExc.Message);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return StatusCode(Status503ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
@@ -137,7 +136,7 @@ public class EmployeeController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new EmployeeViewDto();
         }
     }
@@ -152,7 +151,7 @@ public class EmployeeController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new();
         }
     }
@@ -167,7 +166,7 @@ public class EmployeeController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new EmployeeDeleteDto();
         }
     }
@@ -182,23 +181,8 @@ public class EmployeeController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new List<EmployeeSelectDto>();
-        }
-    }
-
-    [Authorize]
-    [HttpGet("get/all")]
-    public async Task<List<EmployeeViewDto>> GetAll()
-    {
-        try
-        {
-            return await _repo.GetAllAsync();
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return new List<EmployeeViewDto>();
         }
     }
 
@@ -211,7 +195,7 @@ public class EmployeeController : ControllerBase
         }
         catch (Exception exc)
         {
-             _logger.LogError(exc.Message, exc.StackTrace);
+             _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new List<EmployeeViewDto>();
         }
     }
@@ -226,7 +210,7 @@ public class EmployeeController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new CurrentEmployeeDto();
         }
     }
@@ -242,7 +226,7 @@ public class EmployeeController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return 0;
         }
     }

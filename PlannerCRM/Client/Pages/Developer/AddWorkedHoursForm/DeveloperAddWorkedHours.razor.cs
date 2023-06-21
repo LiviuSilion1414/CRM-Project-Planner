@@ -19,6 +19,7 @@ public partial class DeveloperAddWorkedHours
     
     [Inject] private CurrentUserInfoService CurrentUserInfoService  { get; set; }
     [Inject] private DeveloperService DeveloperService { get; set; }
+    [Inject] private AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] private NavigationLockService NavLockService { get; set; }
     [Inject] private NavigationManager NavManager { get; set; }
     
@@ -41,7 +42,7 @@ public partial class DeveloperAddWorkedHours
                 _EmployeeRole = _EmployeeRole;
             }
         }
-            
+        _WorkTimeRecord.Employee = await AccountManagerService.GetEmployeeForViewAsync(EmployeeId);
         _Model = await DeveloperService.GetActivityByIdAsync(ActivityId);
         _WorkOrder = await DeveloperService.GetWorkOrderByIdAsync(_Model.WorkOrderId);
     }

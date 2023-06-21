@@ -4,13 +4,13 @@ namespace PlannerCRM.Shared.Constants;
 
 public static class ConstantValues
 {
-    public const int MAX_PERIOD_OF_MONTHS_HOURLY_RATE = 6;
-    public const int MINIMUM_HOURLY_RATE = 8;
-
     public static DateTime CURRENT_DATE { get => DateTime.Now; }
     public static int CURRENT_YEAR { get => DateTime.Now.Year; }
     public static int MINIMUM_YEAR { get => DateTime.Now.Year - MINIUM_AGE; }
     public static int MAXIMUM_YEAR { get => DateTime.Now.Year - MAXIMUMUM_AGE; }
+
+    public const int MAX_PERIOD_OF_MONTHS_HOURLY_RATE = 6;
+    public const int MINIMUM_HOURLY_RATE = 8;
 
     public const int MIN_WORKORDER_MONTH_CONTRACT = 3;
     public const int MAX_WORKORDER_MONTH_CONTRACT = 24;

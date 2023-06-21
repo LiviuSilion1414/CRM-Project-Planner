@@ -121,12 +121,12 @@ public partial class OperationManagerEditActivity
                 _Model.ViewEmployeeActivity.Add(item);
             }
         } catch (NullReferenceException nullRefExc) {
-            _logger.Log(LogLevel.Error, nullRefExc.Message);
+            _logger.Log(LogLevel.Error, nullRefExc, nullRefExc.Message);
             _Message = nullRefExc.Message;
             _IsError = true;
         }
         catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.Log(LogLevel.Error, exc, exc.Message);
             _Message = exc.Message;
             _IsError = true;
         } finally {

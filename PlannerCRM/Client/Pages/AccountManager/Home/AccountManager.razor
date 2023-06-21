@@ -5,7 +5,7 @@
 <PageTitle>CRM - Account Manager</PageTitle>
 
 @if (_IsError) {
-    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
+    <Feedback Severity="@FatalityType.DANGER" Message="@_Message"></Feedback>
 }
 
 <div class="parent">
@@ -48,7 +48,7 @@
                 <td>@user.BirthDay.ToShortDateString()</td>
                 <td>@user.StartDate.ToShortDateString()</td>
                 <td>@user.Role</td>
-                <td>@user.HourlyRate</td>
+                <td>@user.CurrentHourlyRate</td>
                 @if (!user.IsDeleted) {
                     <td>
                         <button type="button" class="btn btn-primary" title="Visualizza dettagli utente" @onclick="@(() => ShowDetails(user.Id))">
@@ -78,6 +78,18 @@
         }
     </tbody>
 </table>
+
+@if (_IsViewClicked) {
+    <AccountManagerShowUserDetails Id="@_UserId"/>
+}
+
+@if (_IsAddClicked) {
+    <AccountManagerAddUserForm/>
+} 
+
+@if (_IsEditClicked) {
+   <AccountManagerEditUserForm Id="@_UserId"/> 
+}
 
 @if (_IsDeleteClicked) {
     <AccountManagerDeleteUser Id="@_UserId"></AccountManagerDeleteUser>

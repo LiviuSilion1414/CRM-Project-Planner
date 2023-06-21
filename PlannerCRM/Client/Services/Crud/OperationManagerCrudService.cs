@@ -6,7 +6,7 @@ using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
-using static System.Net.HttpStatusCode;
+using System.Net;
 
 namespace PlannerCRM.Client.Services.Crud;
 
@@ -103,23 +103,23 @@ public class OperationManagerCrudService
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return new HttpResponseMessage(MultipleChoices);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return new HttpResponseMessage(ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
 
@@ -133,23 +133,23 @@ public class OperationManagerCrudService
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return new HttpResponseMessage(MultipleChoices);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return new HttpResponseMessage(ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
 
@@ -164,23 +164,23 @@ public class OperationManagerCrudService
         } 
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return new HttpResponseMessage(MultipleChoices);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return new HttpResponseMessage(ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
 
@@ -195,23 +195,23 @@ public class OperationManagerCrudService
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
-            return new HttpResponseMessage(BadRequest);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return new HttpResponseMessage(MultipleChoices);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
-            return new HttpResponseMessage(ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
 
@@ -222,13 +222,13 @@ public class OperationManagerCrudService
         }
         catch (InvalidOperationException invalidOpExc)
         {
-            _logger.LogError(invalidOpExc.Message, invalidOpExc.StackTrace);
-            return new HttpResponseMessage(NotImplemented);
+            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.NotImplemented);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new HttpResponseMessage(ServiceUnavailable);
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
 
@@ -239,13 +239,13 @@ public class OperationManagerCrudService
         }
         catch (InvalidOperationException invalidOpExc)
         {
-            _logger.LogError(invalidOpExc.Message, invalidOpExc.StackTrace);
-            return new HttpResponseMessage(NotImplemented);
+            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
+            return new HttpResponseMessage(HttpStatusCode.NotImplemented);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new HttpResponseMessage(ServiceUnavailable);
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
     

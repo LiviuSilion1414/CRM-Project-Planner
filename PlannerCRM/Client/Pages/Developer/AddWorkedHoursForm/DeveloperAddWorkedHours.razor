@@ -1,58 +1,3 @@
-@*@page "/developer/add/worked-hours/{EmployeeId:int}/{ActivityId:int}"
-
-@using PlannerCRM.Shared.Models
-
-<PageTitle>CRM - Aggiungi orario di lavoro</PageTitle>
-
-@if (_IsError) {
-    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
-} 
-
-<div class="container-fluid">
-    <h3>Aggiungi orario di lavoro</h3>
-    <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickAddWorkedHours">
-        <DataAnnotationsValidator/>
-        <div class="form-group">
-            <span class="oi oi-briefcase"></span>
-            <label for="Nome commessa:">Nome commessa </label> 
-            <input type="text" class="form-control" @bind="_WorkOrder.Name" readonly/>
-        </div>
-        <div class="form-group">
-            <span class="oi oi-puzzle-piece"></span>
-            <label for="Nome attività">Nome attività </label>
-            <input type="text" class="form-control" @bind="_Model.Name" readonly/>
-        </div>
-        <div class="form-group">
-            <span class="oi oi-calendar"></span>
-            <label for="Data d'inizio">Data d'inizio </label>
-            <input type="date" class="form-control" @bind="@_Model.StartDate" readonly/>
-        </div>
-        <div class="form-group">
-            <span class="oi oi-calendar"></span>
-            <label for="Data di fine">Data fine </label>
-            <input type="date" class="form-control" @bind="@_Model.FinishDate" readonly/>
-        </div>
-        <div class="form-group">
-            <span class="oi oi-clock"></span>
-           <label for="Orario di lavoro">Inserisci il tuo orario di lavoro</label>
-           <input type="number" class="form-control" @bind="@_WorkedHours" required>
-        </div>
-        <div class="wrapper-btn">
-            <div class="btn-cancel">
-                <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
-            </div>
-            <div class="btn-confirm">
-                <button type="submit" class="btn btn-primary">Conferma</button>
-            </div>
-        </div>
-    </EditForm>
-</div>
-
-<NavigationLock ConfirmExternalNavigation="NavLockService.ConfirmedExternalExit" 
-    OnBeforeInternalNavigation="NavLockService.ConfirmInternalExit"/>
-
-*@
-
 @using PlannerCRM.Shared.Models
 
 <div class="modal" tabindex="-1" role="dialog"
@@ -111,5 +56,5 @@
 </div>
 
  @if (_IsError) {
-    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback> 
+    <Feedback Severity="@FatalityType.DANGER" Message="@_Message"></Feedback> 
 }

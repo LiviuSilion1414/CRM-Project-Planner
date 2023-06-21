@@ -21,7 +21,11 @@ public partial class AccountManager
     private int _Skip { get; set; } = ZERO;
     private int _Take { get => PAGINATION_LIMIT; }
 
+    private bool _IsViewClicked { get; set; }
+    private bool _IsAddClicked { get; set; }
+    private bool _IsEditClicked { get; set; }
     private bool _IsDeleteClicked { get; set; }
+
     private int _UserId { get; set; }
 
     public List<EmployeeViewDto> _users { get; set; } = new();
@@ -55,19 +59,20 @@ public partial class AccountManager
     }
 
     public void ShowDetails(int id) {
-        NavManager.NavigateTo($"/account/manager/show/details/{id}");
+        _IsViewClicked = !_IsViewClicked;
+        _UserId = id;
     }
 
     public void OnClickAddUser() {
-        NavManager.NavigateTo("/account-manager/add/user");
+        _IsAddClicked = !_IsAddClicked;
     }
 
     public void OnClickEdit(int id) {
-        NavManager.NavigateTo($"/account-manager/edit/user/{id}");
+        _IsEditClicked = !_IsEditClicked;
+        _UserId = id;
     }
 
     public void OnClickDelete(int id) {
-        //NavManager.NavigateTo($"/account-manager/delete/user/{id}");
         _IsDeleteClicked = !_IsDeleteClicked;
         _UserId = id;
     }

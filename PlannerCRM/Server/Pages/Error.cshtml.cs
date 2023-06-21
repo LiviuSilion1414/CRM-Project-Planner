@@ -26,11 +26,11 @@ public class ErrorModel : PageModel
             HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         
         if (exceptionHandlerPathFeature.Error is NotSupportedException) {
-            _logger.LogError("Richiesta http non valida.");
+            _logger.Log(LogLevel.Error,"Richiesta http non valida.");
         } else if (exceptionHandlerPathFeature.Error is InvalidOperationException) {
-            _logger.LogError("Operazione non valida.");
+            _logger.Log(LogLevel.Error,"Operazione non valida.");
         } else if (exceptionHandlerPathFeature.Error is ArgumentNullException) {
-            _logger.LogError("Argomenti di tipo null non validi.");
+            _logger.Log(LogLevel.Error,"Argomenti di tipo null non validi.");
         } else {
             _logger.LogWarning("Qualcosa è andato storto.");
         }

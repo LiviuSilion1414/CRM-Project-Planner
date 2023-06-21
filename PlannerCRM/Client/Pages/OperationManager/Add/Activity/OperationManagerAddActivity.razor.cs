@@ -35,8 +35,8 @@ public partial class OperationManagerAddActivity
     private bool _IsError { get; set; }
     private string _Message { get; set; }
     private string _CurrentPage { get; set; }
-    private bool _HasElements { get; set; }
     private bool _IsCancelClicked { get; set; }
+    private bool _HasElements { get; set; }
     private bool _HideWorkOrdersList { get; set; }
 
     protected override void OnInitialized() {

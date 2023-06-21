@@ -15,13 +15,20 @@ public partial class AccountManagerShowUserDetails
     private EmployeeViewDto _Model = new();
     private string _TypeField { get; set; } = InputType.PASSWORD.ToString().ToLower();
     private bool _IsCheckboxClicked { get; set; }
+    public string _CurrentPage { get; set; }
+    public bool _IsCancelClicked { get; set; }
 
     protected override async Task OnInitializedAsync() {
         _Model = await AccountManagerService.GetEmployeeForViewAsync(Id);
     }
 
-    public void OnClickCancel() {
-        NavManager.NavigateTo("/account-manager");
+    protected override void OnInitialized() {
+        _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
+    }
+
+    public void OnClickModalCancel() {
+        _IsCancelClicked = !_IsCancelClicked;
+        NavManager.NavigateTo(_CurrentPage);
     }
 
     public void SwitchShowPassword() {

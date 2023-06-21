@@ -1,14 +1,12 @@
-using System.Net.Http.Headers;
-using System.Text;
 using Newtonsoft.Json;
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
+using System.Text;
+using System.Net;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
 using PlannerCRM.Shared.DTOs.Workorder.Views;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
 using PlannerCRM.Shared.CustomExceptions;
-using static System.Net.HttpStatusCode;
-using static PlannerCRM.Shared.Constants.ConstantValues;
+using PlannerCRM.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using PlannerCRM.Shared.Models;
 
@@ -41,22 +39,22 @@ public class DeveloperService
         catch (NullReferenceException nullRefExc)
         {
             _logger.Log(LogLevel.Error, nullRefExc.Message);
-            return new HttpResponseMessage(NotFound);
+            return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
         catch (ArgumentNullException argNullExc)
         {
             _logger.Log(LogLevel.Error, argNullExc.Message);
-            return new HttpResponseMessage(BadRequest);
+            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
             _logger.Log(LogLevel.Error, duplicateElemExc.Message);
-            return new HttpResponseMessage(MultipleChoices);
+            return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new HttpResponseMessage(ServiceUnavailable);
+            return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     } 
 
@@ -116,7 +114,7 @@ public class DeveloperService
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return INVALID_ID;
+            return ConstantValues.INVALID_ID;
         }
     }
 

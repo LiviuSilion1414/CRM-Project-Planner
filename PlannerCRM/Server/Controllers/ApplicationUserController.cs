@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Server.Services;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.Models;
-using static Microsoft.AspNetCore.Http.StatusCodes;
-using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.CustomExceptions;
+using PlannerCRM.Shared.Feedbacks;
+using PlannerCRM.Server.Services;
+using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -34,35 +33,35 @@ public class ApplicationUserController : ControllerBase
         {
             await _repo.AddAsync(dto);
 
-            return Ok(USER_ADD);
+            return Ok(SuccessfulCrudFeedBack.USER_ADD);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
             return BadRequest(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.StackTrace, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error,argNullExc.StackTrace, argNullExc.StackTrace);
             return BadRequest(argNullExc);
         }
         catch (InvalidOperationException invalidOpExc)
         {
-            _logger.LogError(invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
             return BadRequest(invalidOpExc.Message);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
         }
         catch (DbUpdateException dbUpdateExc) {
-            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
             return BadRequest(dbUpdateExc.Message);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
             return BadRequest(exc.Message);
         }
     }
@@ -75,32 +74,32 @@ public class ApplicationUserController : ControllerBase
         {
             await _repo.EditAsync(dto);
 
-            return Ok(USER_EDIT);
+            return Ok(SuccessfulCrudFeedBack.USER_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
             return NotFound(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
         }
         catch (KeyNotFoundException keyNotFoundExc)
         {
-            _logger.LogError(keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
             return NotFound(keyNotFoundExc.Message);
         }
         catch (InvalidOperationException invalidOpExc)
         {
-            _logger.LogError(invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
             return BadRequest(invalidOpExc.Message);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
@@ -110,25 +109,24 @@ public class ApplicationUserController : ControllerBase
     {
         try
         {
-            await _repo.DeleteAsync(email);  //colonna IsDeleted = true per eliminare l'utente
-                                              //oppure chidere conferma per eliminazione a cascata di tutti eventi
-            return Ok(USER_DELETE);            //es: se l'utente ha compiuto delle attività in un progetto e non c'e piu nell'azienda
-                                                //deve comparire come cancellato
+            await _repo.DeleteAsync(email);  
+
+            return Ok(SuccessfulCrudFeedBack.USER_DELETE);            
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
             return BadRequest(nullRefExc.Message);
         }
         catch (KeyNotFoundException keyNotFoundExc)
         {
-            _logger.LogError(keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
             return BadRequest(keyNotFoundExc.Message);
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.StackTrace, exc.Message);
-            return StatusCode(Status503ServiceUnavailable);
+            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 }

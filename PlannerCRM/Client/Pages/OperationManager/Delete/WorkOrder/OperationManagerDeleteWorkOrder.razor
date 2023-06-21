@@ -1,28 +1,3 @@
-@*@page "/operation-manager/delete/workorder/{Id:int}"
-
-@using PlannerCRM.Shared.Models
-
-<PageTitle>CRM - Elimina commessa</PageTitle>
-
-@if (_IsError) {
-    <Feedback Severity="@BannerType.SUCCESS" Message="@_Message"></Feedback>
-}
-<div>
-    <span>Vuoi eliminare:
-        <br>  
-        <strong>Nome:</strong> @_Model.Name 
-        <br>
-        <strong>Data d'inizio:</strong> @_Model.StartDate.ToShortDateString()
-        <br>
-        <strong>Data fine:</strong> @_Model.FinishDate.ToShortDateString() ?
-        <br>
-    </span>
-    <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>
-    <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
-</div>
-*@
-
-
 <div class="modal" tabindex="-1" role="dialog"
     style="display: block; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);"
     hidden="@_IsCancelClicked">

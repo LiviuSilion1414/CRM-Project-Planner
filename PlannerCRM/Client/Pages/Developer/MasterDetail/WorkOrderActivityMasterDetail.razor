@@ -1,4 +1,4 @@
-@if (_activities == null) {
+@if (_activities is null) {
     <p><em>Non ti è stata ancora assegnata alcuna attività.</em></p>
 } else {
     <table class="table">
@@ -27,7 +27,7 @@
                     <td>@ac.Name</td>
                     <td>@ac.StartDate.ToShortDateString()</td>
                     <td>@ac.FinishDate.ToShortDateString()</td>
-                    @if (_workTimeRecords == null) {
+                    @if (_workTimeRecords is null) {
                         <td><em>Nessun orario</em></td>
                     } else {
                         <td>

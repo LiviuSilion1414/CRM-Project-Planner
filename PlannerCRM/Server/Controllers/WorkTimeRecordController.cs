@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Server.Services;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
-using static PlannerCRM.Shared.Constants.ConstantValues;
-using static PlannerCRM.Shared.Constants.SuccessfulFeedBack;
-using static Microsoft.AspNetCore.Http.StatusCodes;
+using PlannerCRM.Shared.Feedbacks;
+using PlannerCRM.Server.Services;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -32,31 +30,31 @@ public class WorkTimeRecordController : ControllerBase
         {
             await _repo.AddAsync(dto);
 
-            return Ok(WORKTIMERECORD_ADD);
+            return Ok(SuccessfulCrudFeedBack.WORKTIMERECORD_ADD);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
             return NotFound(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
             return BadRequest(dbUpdateExc.Message);
         }
         catch (Exception exc)
         {
-            return StatusCode(Status503ServiceUnavailable, exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, exc.Message);
         }
     }
 
@@ -67,36 +65,36 @@ public class WorkTimeRecordController : ControllerBase
         {
             await _repo.EditAsync(dto);
 
-            return Ok(WORKTIMERECORD_EDIT);
+            return Ok(SuccessfulCrudFeedBack.WORKTIMERECORD_EDIT);
         }
         catch (NullReferenceException nullRefExc)
         {
-            _logger.LogError(nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
             return BadRequest(nullRefExc.Message);
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
+            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
             return BadRequest(argNullExc.Message);
         }
         catch (KeyNotFoundException keyNotFoundExc)
         {
-            _logger.LogError(keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
             return NotFound(keyNotFoundExc.Message);
         }
         catch (DuplicateElementException duplicateElemExc)
         {
-            _logger.LogError(duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
             return BadRequest(duplicateElemExc.Message);
         }
         catch (DbUpdateException dbUpdateExc)
         {
-            _logger.LogError(dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
             return BadRequest(dbUpdateExc.Message);
         }
         catch (Exception exc)
         {
-            return StatusCode(Status503ServiceUnavailable, exc.Message);
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, exc.Message);
         }
     }
 
@@ -109,7 +107,7 @@ public class WorkTimeRecordController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new();
         }
     }
@@ -123,7 +121,7 @@ public class WorkTimeRecordController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new List<WorkTimeRecordViewDto>();
         }
     }
@@ -137,7 +135,7 @@ public class WorkTimeRecordController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc.StackTrace);
+            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
             return new WorkTimeRecordViewDto();
         }
     }

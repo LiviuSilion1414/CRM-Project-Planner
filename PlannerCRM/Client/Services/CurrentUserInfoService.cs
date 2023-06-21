@@ -20,45 +20,36 @@ public class CurrentUserInfoService
     }
     
     public async Task<CurrentUser> GetCurrentUserInfoAsync() {
-        try
-        {
+        try {
             var response = await _http.GetAsync("account/current/user/info");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<CurrentUser>(jsonObject);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.Log(LogLevel.Error, exc.Message);
             return new CurrentUser();
         }
     }
 
     public async Task<string> GetCurrentUserRoleAsync() {
-        try
-        {
+        try {
             var response = await _http.GetAsync("account/user/role");
     
             return await response.Content.ReadAsStringAsync();
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.Log(LogLevel.Error, exc.Message);
             return string.Empty;
         }
     }
 
     public async Task<CurrentEmployeeDto> GetCurrentEmployeeIdAsync(string email) {
-        try
-        {
+        try {
             var response = await _http.GetAsync($"employee/get/id/{email}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<CurrentEmployeeDto>(jsonObject);
-        }
-        catch (Exception exc)
-        {
-            _logger.Log(LogLevel.Error, exc.Message);
+        } catch (Exception exc) {
+            _logger.Log(LogLevel.Error, exc, exc.Message);
             return new CurrentEmployeeDto();
         }
     }

@@ -6,14 +6,12 @@ namespace PlannerCRM.Shared.Attributes;
 public class StartDateRangeAttribute : ValidationAttribute
 {
     public override bool IsValid(object value) {
-        if (value == null) {
-            return false;
-        }
-
+        if (value is null) return false;
+        
         if (value.GetType() == typeof(DateTime) ) {
             var startDate = Convert.ToDateTime(value);
             
-            return (startDate <= CURRENT_DATE);
+            return startDate <= CURRENT_DATE;
         } else {
             return false;
         }

@@ -11,11 +11,12 @@ public class MinimumHourlyRateAttribute : ValidationAttribute
     }
 
     public override bool IsValid(object value) {
+        if (value is null) return false;
+
         if (value.GetType() == typeof(decimal)) {
             var hourlyRate = (decimal)value;
-            return hourlyRate >= _MinimumHourlyRate
-                ? true
-                : false;
+
+            return hourlyRate >= _MinimumHourlyRate;
         } else {
             return false;
         }

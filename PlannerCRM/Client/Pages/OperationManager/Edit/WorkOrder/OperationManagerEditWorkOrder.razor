@@ -1,49 +1,3 @@
-@*
-@page "/operation-manager/edit/workorder/{Id:int}"
-
-@using PlannerCRM.Shared.Models
-
-<PageTitle>CRM - Modifica commessa</PageTitle>
-
-@if (_IsError) {
-    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback>
-}
-
-<div class="container-fluid">
-    <h1>Modifica commessa</h1>
-    <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickConfirm">
-        <DataAnnotationsValidator/>
-        <div class="form-group">
-            <label for="Nome commessa">Nome</label>
-            <InputText class="form-control" @bind-Value="_Model.Name" />
-            <ValidationMessage For="@(() => _Model.Name)"/>
-        </div>
-        <div class="form-group">
-            <label for="Data d'inizio">Data d'inzio</label>
-            <InputDate class="form-control" @bind-Value="@_Model.StartDate" />
-            <ValidationMessage For="@(() => _Model.StartDate)"/>
-        </div>
-        <div class="form-group">
-            <label for="Data di fine">Data di fine</label>
-            <InputDate class="form-control" @bind-Value="@_Model.FinishDate" />
-            <ValidationMessage For="@(() => _Model.FinishDate)"/>
-        </div>
-        <div class="wrapper-btn">
-            <div class="btn-cancel">
-                <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
-            </div>
-            <div class="btn-confirm">
-                <button type="submit" class="btn btn-primary">Conferma</button>
-            </div>
-        </div>
-    </EditForm>
-</div>
-
-<NavigationLock ConfirmExternalNavigation="NavLockService.ConfirmedExternalExit" 
-    OnBeforeInternalNavigation="NavLockService.ConfirmInternalExit"/>
-*@
-
-
 @using PlannerCRM.Shared.Models
 
 <PageTitle>CRM - Aggiungi commessa</PageTitle>
@@ -101,5 +55,5 @@
 </div>
 
  @if (_IsError) {
-    <Feedback Severity="@BannerType.DANGER" Message="@_Message"></Feedback> 
+    <Feedback Severity="@FatalityType.DANGER" Message="@_Message"></Feedback> 
 }

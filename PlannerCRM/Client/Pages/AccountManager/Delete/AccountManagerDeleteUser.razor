@@ -1,32 +1,3 @@
-@*
-@page "/account-manager/delete/user/{Id:int}"
-
-@using PlannerCRM.Shared.Models
-
-<PageTitle>CRM - Elimina utente</PageTitle>
-
-@if (_IsError) {
-    @foreach (var err in _ErrorMessages) {
-        <Feedback Severity="@BannerType.DANGER" Message="@err"></Feedback>
-    }
-}
-
-<div>
-    <span>Vuoi eliminare:
-        <br>  
-        <strong>Nome:</strong> @_Model.FullName 
-        <br>
-        <strong>Ruolo:</strong> @_Model.Role ?
-        <br>
-    </span>
-    <button type="button" class="btn btn-danger" @onclick="OnClickDeleteUser">Conferma</button>
-    <button type="button" class="btn btn-link" @onclick="OnClickCancel">Annulla</button>
-</div> 
-
-*@
-
-<!-- Modal dialog box -->
-
 <div class="modal" tabindex="-1" role="dialog"
     style="display: block; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);"
     hidden="@_IsCancelClicked">
