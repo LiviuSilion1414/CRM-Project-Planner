@@ -1,6 +1,6 @@
 namespace PlannerCRM.Shared.Models;
 
-public enum BannerType
+public enum FatalityType
 {
     DANGER,
     SUCCESS

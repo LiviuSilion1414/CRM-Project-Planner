@@ -1,6 +1,6 @@
 namespace PlannerCRM.Shared.Models;
 
-public enum ShowType
+public enum DisplayType
 {
     NONE,
     BLOCK,
