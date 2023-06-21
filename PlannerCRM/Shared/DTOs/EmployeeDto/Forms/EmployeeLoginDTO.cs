@@ -8,6 +8,7 @@ public class EmployeeLoginDto
 {
     public int Id { get; set; }
 
+    [EmailAddress(ErrorMessage = "Indirizzo email non valido.")]
     [Required(ErrorMessage = """Campo "Email" richiesto""")]
     public string Email { get; set; }
 

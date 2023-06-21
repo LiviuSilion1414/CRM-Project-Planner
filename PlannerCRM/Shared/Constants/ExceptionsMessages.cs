@@ -15,4 +15,6 @@ public static class ExceptionsMessages
     public const string IMPOSSIBLE_EDIT = "Impossibile modificare l'oggetto.";
     public const string IMPOSSIBLE_GOING_FORWARD = "Impossibile proseguire.";
     public const string OBJECT_NOT_FOUND = "Oggetto non trovato.";
+    public const string WORKORDER_NOT_FOUND = "Nessuna commessa trovata.";
+    public const string EMPLOYEE_NOT_FOUND = "Dipendenti non trovati.";
 }

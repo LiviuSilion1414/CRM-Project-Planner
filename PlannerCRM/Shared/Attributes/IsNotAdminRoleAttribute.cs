@@ -12,6 +12,9 @@ public class IsNotAdminRoleAttribute : ValidationAttribute
     }
 
     public override bool IsValid(object value) {
+        if (value == null) {
+            return false;
+        }
         if (value.GetType() == typeof(Roles)) {
             var isInAdminRole = value.GetType()
                 .GetProperties()

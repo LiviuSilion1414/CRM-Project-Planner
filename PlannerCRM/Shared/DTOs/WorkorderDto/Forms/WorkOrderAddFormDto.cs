@@ -12,7 +12,7 @@ public partial class WorkOrderAddFormDto
     public string Name { get; set; }
     
     [Required(ErrorMessage = """ Campo "Data d'inizio" richiesto. """)]
-    [WorkOrderStartDateRange(ErrorMessage = "Il periodo contrattuale dev'essere tra 3 e 12 mesi.")]
+    [WorkOrderStartDateRange(ErrorMessage = "Il periodo contrattuale dev'essere tra 3 e 24 mesi.")]
     public DateTime? StartDate { get; set; }
     
     [Required(ErrorMessage = """ Campo "Data di fine" richiesto. """)]
