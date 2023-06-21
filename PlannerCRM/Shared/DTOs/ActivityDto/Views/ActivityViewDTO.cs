@@ -10,5 +10,5 @@ public class ActivityViewDto
     public DateTime FinishDate { get; set; }
     public int WorkOrderId { get; set; }
     
-    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
+    public HashSet<EmployeeActivityDto> EmployeeActivity { get; set; }
 }

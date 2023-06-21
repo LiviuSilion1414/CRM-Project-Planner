@@ -49,7 +49,7 @@ public class EmployeeAddFormDto
 
     [MinimumHourlyRate(MINIMUM_HOURLY_RATE, ErrorMessage = $"""La tariffa oraria non può essere minore di 8€. """)]
     [Required(ErrorMessage = """ Campo "Tariffa oraria" richiesto """)]
-    public decimal? HourlyRate { get; set; }
+    public decimal? CurrentHourlyRate { get; set; }
 
     [StartDateRangeHourlyRate(MINIMUM_MONTH, MAXIMUM_MONTH, 
         ErrorMessage = """La data d'inizio non può essere oltre la data del giorno stesso.""")]

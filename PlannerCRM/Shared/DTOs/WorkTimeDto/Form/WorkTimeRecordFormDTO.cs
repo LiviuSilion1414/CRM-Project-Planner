@@ -14,4 +14,5 @@ public class WorkTimeRecordFormDto
     public int WorkOrderId { get; set; }
 
     public int EmployeeId { get; set; }
+    public EmployeeViewDto Employee { get; set; }
 }

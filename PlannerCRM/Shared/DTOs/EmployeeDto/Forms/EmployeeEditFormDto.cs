@@ -15,15 +15,6 @@ public class EmployeeEditFormDto
     [Editable(allowEdit: true, AllowInitialValue = true)]
     public string LastName { get; set; }
 
-    //[StrongPasswordValidator(PASS_MIN_LENGTH, PASS_MAX_LENGTH,
-    //    ErrorMessage="""
-    //        La password deve avere tra 8 e 16 caratteri 
-    //        E deve avere almeno: 
-    //            - una lettera minuscola
-    //            - una lettera maiuscola 
-    //            - un numero.
-    //        """)]
-    //
     [Editable(allowEdit: true, AllowInitialValue = true)]
     public string Password { get; set; } = default;
         
@@ -33,13 +24,9 @@ public class EmployeeEditFormDto
     [Editable(allowEdit: false, AllowInitialValue = true)]
     public string OldEmail { get; set; }
 
-    //[StartDateRange(MINIMUM_YEAR, CURRENT_YEAR, MINIMUM_MONTH, MAXIMUM_MONTH, 
-    //    ErrorMessage = """La data d'inizio non può essere oltre la data del giorno stesso.""")]
     [Editable(allowEdit: true, AllowInitialValue = true)]
     public DateTime StartDate { get; set; }
 
-    //[BirthDayRange(MAJOR_AGE, MAX_AGE,  
-    //    ErrorMessage = $"""Il dipendente deve avere tra i 18 e i 55 anni.""")]
     [Editable(allowEdit: true, AllowInitialValue = true)]
     public DateTime BirthDay { get; set; } 
 
@@ -47,12 +34,11 @@ public class EmployeeEditFormDto
     public string NumericCode { get; set; }
 
     [Editable(allowEdit: true, AllowInitialValue = true)]
-   // [IsNotAdminRole(ADMIN_ROLE)]
     [EnumDataType(typeof(Roles))]
     public Roles Role { get; set; }
 
     [Editable(allowEdit: true, AllowInitialValue = true)]
-    public decimal? HourlyRate { get; set; }
+    public decimal? CurrentHourlyRate { get; set; }
 
     [Editable(allowEdit: true, AllowInitialValue = true)]
     public DateTime? StartDateHourlyRate { get; set; }

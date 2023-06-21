@@ -12,6 +12,7 @@ public class EmployeeSelectDto
     public string LastName { get; set; }
     public string FullName { get; set; }
     public Roles Role { get; set; }
+    public decimal CurrentHourlyRate { get; set; }
     public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
     public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }
