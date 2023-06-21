@@ -1,4 +1,4 @@
-﻿<CascadingAuthenticationState>
+﻿<CascadingAuthenticationState >
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
@@ -6,11 +6,13 @@
         </Found>
         <NotFound>
             <CascadingAuthenticationState>
-                <PageTitle>Pagina non trovata</PageTitle>
-                <LayoutView Layout="@typeof(MainLayout)">
-                    <p role="alert">Pagina non trovata. Errore 404.</p> <br>
-                    <p>Torna alla <a href="/login">homepage.</a></p>
-                </LayoutView> 
+                <div class="text-center">
+                    <PageTitle>Pagina non trovata</PageTitle>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p role="alert">Pagina non trovata. <strong>Errore 404.</strong></p> <br>
+                        <p>Torna alla <a href="/login">homepage.</a></p>
+                    </LayoutView> 
+                </div>
             </CascadingAuthenticationState> 
         </NotFound>
     </Router>
