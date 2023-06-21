@@ -1,6 +1,6 @@
-namespace PlannerCRM.Shared.Constants;
+namespace PlannerCRM.Shared.Feedbacks;
 
-public class SuccessfulFeedBack
+public class SuccessfulCrudFeedBack
 {
     public const string USER_ADD = "Utente aggiunto con successo!";
     public const string USER_EDIT = "Utente modificato con successo!";
@@ -15,5 +15,5 @@ public class SuccessfulFeedBack
     public const string ACTIVITY_DELETE = "Attività eliminata con successo!";
 
     public const string WORKTIMERECORD_ADD = "Orario di lavoro aggiunto con successo!";
-    public const string WORKTIMERECORD_EDIT = "Orario di lavoro modificata con successo!";
+    public const string WORKTIMERECORD_EDIT = "Orario di lavoro modificato con successo!";
 }

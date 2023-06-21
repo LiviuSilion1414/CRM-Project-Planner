@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.Constants;
+namespace PlannerCRM.Shared.Feedbacks;
 
 public class LoginFeedBack
 {
