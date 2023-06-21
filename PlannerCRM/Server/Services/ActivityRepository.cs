@@ -66,11 +66,14 @@ public class ActivityRepository
         if (activityDelete == null) {
             throw new InvalidOperationException(IMPOSSIBLE_DELETE);
         }
-        var employeeActivityDelete = await _db.EmployeeActivity
-            .SingleAsync(ea => ea.ActivityId == activityDelete.Id);
+        await _db.EmployeeActivity
+            .Where(ea => ea.ActivityId == activityDelete.Id)
+            .ForEachAsync(ea => 
+                _db.EmployeeActivity
+                    .Remove(ea)
+            );
 
         _db.Activities.Remove(activityDelete);
-        _db.EmployeeActivity.Remove(employeeActivityDelete);
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0) {
@@ -173,7 +176,22 @@ public class ActivityRepository
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
-                FinishDate = ac.FinishDate
+                FinishDate = ac.FinishDate,
+                WorkOrderId = ac.WorkOrderId,
+                Employees = _db.EmployeeActivity
+                    .Where(ea => ea.ActivityId == id)
+                    .Select(ea => new EmployeeSelectDto() {
+                        Email = _db.Employees
+                            .Single(em => em.Id == ea.EmployeeId)
+                            .Email,
+                        FullName = _db.Employees
+                            .Single(em => em.Id == ea.EmployeeId)
+                            .FullName,
+                        Role = _db.Employees
+                            .Single(em => em.Id == ea.EmployeeId)
+                            .Role
+                    })
+                    .ToHashSet()
             })
             .SingleOrDefaultAsync(ac => ac.Id == id);
     }
@@ -219,6 +237,7 @@ public class ActivityRepository
 
     public async Task<List<ActivityEditFormDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
         return await _db.Activities
+            .Where(ac => ac.WorkOrderId == workOrderId)
             .Select(ac => new ActivityEditFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
@@ -252,7 +271,6 @@ public class ActivityRepository
                     })
                     .ToHashSet()   
             })
-            .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
     }
 

@@ -135,18 +135,18 @@ public class DeveloperService
         }
     }
     
-    public async Task<List<WorkTimeRecordViewDto>> GetWorkTimeRecordsByActivityId(int activityId) {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecords(int activityId, int employeeId) {
         try
         {
-            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/{activityId}");
+            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/{activityId}/{employeeId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<List<WorkTimeRecordViewDto>>(jsonObject);
+            return JsonConvert.DeserializeObject<WorkTimeRecordViewDto>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new List<WorkTimeRecordViewDto>();
+            return new();
         }
     }
 }

@@ -43,8 +43,8 @@ public class ApplicationUserController : ControllerBase
         }
         catch (ArgumentNullException argNullExc)
         {
-            _logger.LogError(argNullExc.Message, argNullExc.StackTrace);
-            return BadRequest(argNullExc.Message);
+            _logger.LogError(argNullExc.StackTrace, argNullExc.StackTrace);
+            return BadRequest(argNullExc);
         }
         catch (InvalidOperationException invalidOpExc)
         {

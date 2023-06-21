@@ -100,17 +100,17 @@ public class WorkTimeRecordController : ControllerBase
         }
     }
 
-    [HttpGet("get/{activityId}")]
-    public async Task<List<WorkTimeRecordViewDto>> GetWorkTimeRecord(int activityId)
+    [HttpGet("get/{activityId}/{employeeId}")]
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int activityId, int employeeId)
     {
         try
         {
-            return await _repo.GetAsync(activityId);
+            return await _repo.GetAsync(activityId, employeeId);
         }
         catch (Exception exc)
         {
             _logger.LogError(exc.Message, exc.StackTrace);
-            return new List<WorkTimeRecordViewDto>();
+            return new();
         }
     }
 

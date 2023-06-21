@@ -105,19 +105,19 @@ public class WorkTimeRecordRepository
         }
     }
 
-    public async Task<List<WorkTimeRecordViewDto>> GetAsync(int activityId) {
+    public async Task<WorkTimeRecordViewDto> GetAsync(int activityId, int employeeId) {
         return await _db.WorkTimeRecords
             .Select(wtr => new WorkTimeRecordViewDto {
                 Id = wtr.Id,
                 Date = wtr.Date,
                 Hours = _db.WorkTimeRecords
+                    .Where(wtr => wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
                     .Sum(wtrSum => wtrSum.Hours),
                 TotalPrice = wtr.TotalPrice,
                 ActivityId = wtr.ActivityId,
                 EmployeeId = wtr.EmployeeId,
                 WorkOrderId = wtr.WorkOrderId})
-            .Where(wtr => wtr.ActivityId == activityId)
-            .ToListAsync();
+            .FirstAsync(wtr => wtr.ActivityId == activityId && wtr.EmployeeId == employeeId);
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {

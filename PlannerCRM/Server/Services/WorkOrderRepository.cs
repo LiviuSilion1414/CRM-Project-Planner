@@ -59,10 +59,8 @@ public class WorkOrderRepository
 			var hasRelationships = await _db.EmployeeActivity
                 .AnyAsync(ea  => ea.Activity.WorkOrderId == workOrderDelete.Id);
 
-            if (hasRelationships) {
                 workOrderDelete.IsDeleted = true;
 			//_db.WorkOrders.Remove(workOrderDelete);
-			}
 		}
 		
 		var rowsAffected = await _db.SaveChangesAsync();
@@ -136,7 +134,7 @@ public class WorkOrderRepository
 	}
 	
 	public async Task<List<WorkOrderViewDto>> GetAllAsync() {
-		var res = await _db.WorkOrders
+		return await _db.WorkOrders
 			.Select(wo => new WorkOrderViewDto {
 				Id = wo.Id,
 				Name = wo.Name,
@@ -145,7 +143,6 @@ public class WorkOrderRepository
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted})
 			.ToListAsync();
-		return res;
 	}
 
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {
@@ -157,5 +154,24 @@ public class WorkOrderRepository
 			.Where(e => EF.Functions.ILike(e.Name , $"%{workOrder}%"))
 			.ToListAsync();
     }
+
+	public async Task<int> GetSize() {
+		return await _db.WorkOrders.CountAsync();
+	}
+
+	public async Task<List<WorkOrderViewDto>> GetPaginated(int skip = 0, int take = 5) {
+		return await _db.WorkOrders
+			.OrderBy(wo => wo.Name)
+			.Skip(skip)
+			.Take(take)
+			.Select(wo => new WorkOrderViewDto {
+				Id = wo.Id,
+				Name = wo.Name,
+				StartDate = wo.StartDate,
+				FinishDate = wo.FinishDate,
+				IsCompleted = wo.IsCompleted,
+				IsDeleted = wo.IsDeleted})
+			.ToListAsync();
+	}
 }
 

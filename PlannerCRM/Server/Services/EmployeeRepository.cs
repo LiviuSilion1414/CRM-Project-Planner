@@ -30,7 +30,7 @@ public class EmployeeRepository
         }
         
         var isAlreadyPresent = await _db.Employees
-            .SingleOrDefaultAsync(em => em.Id == dto.Id && em.IsDeleted);
+            .SingleOrDefaultAsync((Employee em) => EF.Functions.ILike(em.Email, $"%{dto.Email}%"));
         if (isAlreadyPresent != null) {
             throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
         }
@@ -40,7 +40,7 @@ public class EmployeeRepository
             Email = dto.Email,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
-            FullName = $"{dto.FirstName + dto.LastName}",
+            FullName = $"{dto.FirstName} {dto.LastName}",
             BirthDay = dto.BirthDay ?? throw new NullReferenceException(NULL_PROP),
             StartDate = dto.StartDate ?? throw new NullReferenceException(NULL_PROP),
             Password = dto.Password,
@@ -107,16 +107,18 @@ public class EmployeeRepository
         model.FirstName = dto.FirstName;
         model.LastName = dto.LastName;
         model.FullName = $"{dto.FirstName + dto.LastName}";
-        model.BirthDay = dto.BirthDay;
-        model.StartDate = dto.StartDate;
+        model.BirthDay = dto.BirthDay ;//?? throw new NullReferenceException(NULL_PROP);
+        model.StartDate = dto.StartDate ;//?? throw new NullReferenceException(NULL_PROP);
         model.Email = dto.Email;
-        model.Role = dto.Role;
+        model.Role = dto.Role ;//?? throw new NullReferenceException(NULL_PROP);
         model.NumericCode = dto.NumericCode;
-        model.CurrentHourlyRate = dto.HourlyRate;
+        model.CurrentHourlyRate = dto.HourlyRate ?? throw new NullReferenceException(NULL_PROP);
         model.Salaries = dto.EmployeeSalaries
+            .Where(ems => _db.Employees
+                .Any(em => em.Id == ems.EmployeeId))
             .Select(ems => 
                 new EmployeeSalary {
-                    EmployeeId = ems.Id,
+                    EmployeeId = dto.Id,
                     StartDate = ems.StartDate,
                     FinishDate = ems.FinishDate,
                     Salary = decimal.Parse(ems.Salary.ToString())
@@ -205,14 +207,16 @@ public class EmployeeRepository
                 StartDateHourlyRate = em.Salaries.Single().StartDate,
                 FinishDateHourlyRate = em.Salaries.Single().FinishDate,
                 EmployeeSalaries = em.Salaries
-                    .Select( ems => new EmployeeSalaryDto {
-                        EmployeeId = ems.Id,
+                    .Where(ems => _db.Employees
+                        .Any(em => em.Id == ems.EmployeeId))
+                    .Select(ems => new EmployeeSalaryDto {
+                        EmployeeId = em.Id,
                         StartDate = ems.StartDate,
                         FinishDate = ems.StartDate,
-                        Salary = ems.Salary})
+                        Salary = ems.Salary })
                     .ToList()
                 })
-            .SingleOrDefaultAsync(em => em.Id == id);
+            .SingleAsync(em => em.Id == id);
     }
 
     public async Task<EmployeeDeleteDto> GetForDeleteAsync(int id) {
@@ -226,7 +230,7 @@ public class EmployeeRepository
                     .ToString()
                     .Replace('_', ' ')
             })
-            .SingleOrDefaultAsync(em => em.Id == id);
+            .SingleAsync(em => em.Id == id);
     }
     
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
@@ -298,9 +302,9 @@ public class EmployeeRepository
 
     public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int skip, int take) {
         return await _db.Employees
+            .OrderBy(em => em.Id)
             .Skip(skip)
             .Take(take)
-            .OrderBy(em => em.Id)
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
                 FirstName = em.FirstName,

@@ -153,7 +153,7 @@ public class EmployeeController : ControllerBase
         catch (Exception exc)
         {
             _logger.LogError(exc.Message, exc.StackTrace);
-            return new EmployeeEditFormDto();
+            return new();
         }
     }
 
@@ -203,6 +203,20 @@ public class EmployeeController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("get/paginated/{skip}/{take}")]
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int skip = 0, int take = 5) {
+        try
+        {
+            return await _repo.GetPaginatedEmployees(skip, take);
+        }
+        catch (Exception exc)
+        {
+             _logger.LogError(exc.Message, exc.StackTrace);
+            return new List<EmployeeViewDto>();
+        }
+    }
+
+    [Authorize]
     [HttpGet("get/id/{email}")]
     public async Task<CurrentEmployeeDto> GetUserId(string email)
     {
@@ -217,6 +231,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("get/id-check/{email}")]
     public async Task<int> GetUserIdCheck(string email)
     {
@@ -228,6 +243,20 @@ public class EmployeeController : ControllerBase
         catch (Exception exc)
         {
             _logger.LogError(exc.Message, exc.StackTrace);
+            return 0;
+        }
+    }
+
+    [Authorize]
+    [HttpGet("get/size")] 
+    public async Task<int> GetEmployeesSize() {
+        try
+        {
+            return await _repo.GetEmployeesSize();
+        }
+        catch (Exception exc)
+        {
+            _logger.Log(LogLevel.Error, exc.Message, exc.StackTrace);
             return 0;
         }
     }

@@ -21,6 +21,30 @@ public class AccountManagerCrudService
         _logger = logger;
     }
 
+    public async Task<int> GetEmployeesSize() {
+        try {
+            var response = await _http.GetAsync("employee/get/size/");
+            var jsonObject = await response.Content.ReadAsStringAsync();
+            
+            return JsonConvert.DeserializeObject<int>(jsonObject);
+        } catch (Exception exc) {
+            _logger.Log(LogLevel.Error, exc.Message);
+            return 0;
+        }
+    }
+
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int skip = 0, int take = 5) {
+        try {
+            var response = await _http.GetAsync($"http://localhost:5032/employee/get/paginated/{skip}/{take}");
+            var jsonObject = await response.Content.ReadAsStringAsync();
+            
+            return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);
+        } catch (Exception exc) {
+            _logger.Log(LogLevel.Error, exc.Message);
+            return new List<EmployeeViewDto>();
+        }
+    }
+
     public async Task<List<EmployeeViewDto>> GetAllEmployeesAsync() {
         try {
             var response = await _http.GetAsync("employee/get/all");
@@ -185,7 +209,7 @@ public class AccountManagerCrudService
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new EmployeeEditFormDto();
+            return new();
         }
     }
 

@@ -23,6 +23,30 @@ public class OperationManagerCrudService
         _logger = logger;
     }
 
+    public async Task<int> GetCollectionSize() {
+        try {
+            var response = await _http.GetAsync("http://localhost:5032/workorder/get/size/");
+            var jsonObject = await response.Content.ReadAsStringAsync();
+            
+            return JsonConvert.DeserializeObject<int>(jsonObject);
+        } catch (Exception exc) {
+            _logger.Log(LogLevel.Error, exc.Message);
+            return 0;
+        }
+    }
+
+    public async Task<List<WorkOrderViewDto>> GetCollectionPaginated(int skip = 0, int take = 5) {
+        try {
+            var response = await _http.GetAsync($"http://localhost:5032/workorder/get/paginated/{skip}/{take}");
+            var jsonObject = await response.Content.ReadAsStringAsync();
+            
+            return JsonConvert.DeserializeObject<List<WorkOrderViewDto>>(jsonObject);
+        } catch (Exception exc) {
+            _logger.Log(LogLevel.Error, exc.Message);
+            return new List<WorkOrderViewDto>();
+        }
+    }
+   
     public async Task<List<WorkOrderViewDto>> GetAllWorkOrdersAsync() {
         try
         {

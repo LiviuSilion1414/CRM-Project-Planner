@@ -200,4 +200,32 @@ public class WorkOrderController : ControllerBase
             return new List<WorkOrderViewDto>();
         }
     }
+
+    [Authorize]
+    [HttpGet("get/size")] 
+    public async Task<int> GetSize() {
+        try
+        {
+            return await _repo.GetSize();
+        }
+        catch (Exception exc)
+        {
+            _logger.Log(LogLevel.Error, exc.Message, exc.StackTrace);
+            return 0;
+        }
+    }
+
+    [Authorize]
+    [HttpGet("get/paginated/{skip}/{take}")]
+    public async Task<List<WorkOrderViewDto>> GetPaginated(int skip = 0, int take = 5) {
+        try
+        {
+            return await _repo.GetPaginated(skip, take);
+        }
+        catch (Exception exc)
+        {
+             _logger.LogError(exc.Message, exc.StackTrace);
+            return new List<WorkOrderViewDto>();
+        }
+    }
 }

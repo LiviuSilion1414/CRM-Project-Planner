@@ -58,7 +58,10 @@ public class ApplicationUserRepository
 
         var creationResult = await _userManager.CreateAsync(user, dto.Password);
         if (!creationResult.Succeeded) {
-            throw new DbUpdateException("La password deve avere minimo 8 caratteri.");
+            foreach (var error in creationResult.Errors) {
+                Console.WriteLine("Errors: {0}", error.Description);
+            }
+            throw new DbUpdateException();
         }
         
         var assignmentResult = await _userManager.AddToRoleAsync(user, foundUserRole.Name);
@@ -73,7 +76,7 @@ public class ApplicationUserRepository
             throw new NullReferenceException(NULL_OBJECT);
         } 
         
-        var HasPropertiesNull = dto.GetType().GetProperties() //throws exception
+        var HasPropertiesNull = dto.GetType().GetProperties()
             .Any(em => em.GetValue(dto) == null);
         
         if (HasPropertiesNull) {
