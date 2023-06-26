@@ -16,13 +16,7 @@ public class EmployeeAddFormDto
     public string LastName { get; set; }
 
     [StrongPasswordValidator(PASS_MIN_LENGTH, PASS_MAX_LENGTH,
-        ErrorMessage="""
-            La password deve avere tra 8 e 16 caratteri 
-            E deve avere almeno: 
-                - una lettera minuscola
-                - una lettera maiuscola 
-                - un numero.
-            """)]
+        ErrorMessage=""" Campo "Password" non valido. Riprovare. """)]
     [Required(ErrorMessage = """Campo "Password" richiesto""")]
     public string Password { get; set; }
 

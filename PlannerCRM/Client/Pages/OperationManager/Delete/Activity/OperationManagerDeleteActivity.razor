@@ -15,16 +15,13 @@
             <p> <strong>Data d'inizio:</strong> @_CurrentActivity.StartDate.ToShortDateString()</p>
             <p> <strong>Data di fine:</strong> @_CurrentActivity.FinishDate.ToShortDateString()</p>
             <p> <strong>Dipendenti assegnati: </strong> </p>
-            <div class="card" style="height: min-content; overflow-y:scroll; border-width: thin;"> 
+            <div class="card" style="height: fit-content; overflow-y:scroll; border-width: thin;"> 
                 @foreach (var em in _CurrentActivity.Employees) {
-                    <div class="card" style="padding: 5px; border-width: 0.5rem;">
+                    <div class="card" style="padding-left: 5px; border-width: 0.5rem;">
                         <p><strong>Nome: </strong> @em.FullName</p>
                         <p><strong>Email:</strong> @em.Email</p>
                         <p><strong>Ruolo:</strong> @em.Role</p>
                     </div>
-                    @if (_CurrentActivity.Employees.GetEnumerator().MoveNext()) {
-                        <br>
-                    }
                 }
             </div>
         </div>

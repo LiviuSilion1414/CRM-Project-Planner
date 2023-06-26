@@ -36,59 +36,59 @@ public partial class OperationManagerAddActivity
     private string _Message { get; set; }
     private string _CurrentPage { get; set; }
     private bool _IsCancelClicked { get; set; }
-    private bool _HasElements { get; set; }
+    private bool _WorkOrdersHasElements { get; set; } 
+    private bool _EmployeeHasElements { get; set; } 
     private bool _HideWorkOrdersList { get; set; }
+    private bool _HideEmployeesList { get; set; }
 
     protected override void OnInitialized() {
         _EditContext = new(_Model);
         _Model.EmployeeActivity = new();
         _HideWorkOrdersList = true;
+        _HideEmployeesList = true;
         _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
     } 
 
     private async Task OnClickSearchWorkOrder(string workOrder) {
         if (!string.IsNullOrEmpty(workOrder)) {
             _WorkOrders = await OperationManagerService.SearchWorkOrderAsync(workOrder);
-            _HasElements = _WorkOrders.Any();
-            if (_HasElements) {
-                Toggle();
-            } else {
+            _WorkOrdersHasElements = _WorkOrders.Any();
+            if (!_WorkOrdersHasElements) {
                 _Message = WORKORDER_NOT_FOUND;
             }
+            ToggleWorkOrderListView();
         }
     }
     private void OnClickSetWorkOrder(WorkOrderSelectDto workOrderSelect) {
         _Model.WorkOrderId = workOrderSelect.Id;
         _SelectModel.SelectedWorkorder = workOrderSelect.Name;
-        Toggle();
+        ToggleWorkOrderListView();
     }
 
-    public void Toggle() {
+    public void ToggleWorkOrderListView() {
         _HideWorkOrdersList = !_HideWorkOrdersList;
+    }
+    
+    public void ToggleEmployeesListView() {
+        _HideEmployeesList = !_HideEmployeesList;
     }
 
     private async Task OnClickSearchEmployee(string employee) {
         _Employees = await OperationManagerService.SearchEmployeeAsync(employee);
-        _HasElements = _Employees.Any();
-        if (!_HasElements) {
+        _EmployeeHasElements = _Employees.Any();
+        if (!_EmployeeHasElements) {
             _Message = EMPLOYEE_NOT_FOUND;
-        }
+        } 
+        ToggleEmployeesListView();
     }
 
     private void OnClickAddAsSelected(EmployeeSelectDto employee) {
         try {
-            var contains = false;
-
-            foreach (var ea in _Model.EmployeeActivity) {
-                if (ea.Employee.Email == employee.Email) {
-                    contains = true;
-                } else {
-                    contains = false;
-                }
-            }
-
+            var contains = _Model.EmployeeActivity.Any(ea => ea.Employee.Email == employee.Email);
+            
             if (!contains) {
-                var item = new EmployeeActivityDto {
+                _Model.EmployeeActivity.Add(
+                    new EmployeeActivityDto {
                         EmployeeId = employee.Id,
                         Employee = new EmployeeSelectDto {
                             Id = employee.Id,
@@ -110,27 +110,27 @@ public partial class OperationManagerAddActivity
                             Name = _Model.Name,
                             StartDate = _Model.StartDate ?? DateTime.Now,
                             FinishDate = _Model.FinishDate ?? DateTime.Now.AddMonths(4),
-                            WorkOrderId = _Model.WorkOrderId ?? 0 //TO FIX
+                            WorkOrderId = _Model.WorkOrderId ?? throw new NullReferenceException(NULL_PROP)
                         }
-                };
-
-                _Model.EmployeeActivity.Add(item);
+                    }
+                );
             }
+                ToggleEmployeesListView();
         } catch (NullReferenceException nullRefExc) {
-            _logger.Log(LogLevel.Error, nullRefExc.Message);
+            _logger.LogError(nullRefExc, nullRefExc.Message);
             _Message = nullRefExc.Message;
             _IsError = true;
-        } finally {
-            Toggle();
         }
     }
 
     private void OnClickRemoveAsSelected(EmployeeSelectDto employee) {
-        foreach (var ea in _Model.EmployeeActivity.ToList()) {
-            if (ea.Employee.Email == employee.Email) {
-                _Model.EmployeeActivity.Remove(ea);
+        _Model.EmployeeActivity
+            .ToList()
+            .ForEach(ea => {
+                if (ea.Employee.Id == employee.Id) 
+                    _Model.EmployeeActivity.Remove(ea);
             }
-        }
+        );
     }
 
     private void OnClickModalCancel() {
@@ -139,6 +139,13 @@ public partial class OperationManagerAddActivity
 
     private async Task OnClickModalConfirm() {
         try {
+            Console.WriteLine($"EmployeeActivity is null ? { _Model.EmployeeActivity is null}");
+            Console.WriteLine($"EmployeeActivity is empty ? {!_Model.EmployeeActivity.Any()}");
+            Console.WriteLine("EmployeeActivity items count {0}", _Model.EmployeeActivity.Count());
+
+            foreach (var item in _Model.EmployeeActivity) {
+                Console.WriteLine("Item is {0}", item.Employee.FullName);
+            }
             if (_EditContext.IsModified() && _EditContext.Validate()) {
 
                 var response = await OperationManagerService.AddActivityAsync(_Model);

@@ -17,6 +17,7 @@ public partial class AccountManagerShowUserDetails
     private bool _IsCheckboxClicked { get; set; }
     public string _CurrentPage { get; set; }
     public bool _IsCancelClicked { get; set; }
+    protected bool _IsDisabled { get => true;}
 
     protected override async Task OnInitializedAsync() {
         _Model = await AccountManagerService.GetEmployeeForViewAsync(Id);

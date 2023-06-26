@@ -1,7 +1,3 @@
-@using PlannerCRM.Shared.Models
-
-<PageTitle>CRM - Dettagli utente</PageTitle>
-
 <div class="modal" tabindex="-1" role="dialog"
     style="display: block; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);
         width: 100%; height: 100%;"
@@ -18,70 +14,61 @@
             <div class="form-group">
                 <span class="oi oi-person"></span>
                 <label for="Nome">Nome</label>
-                <InputText class="form-control" @bind-Value="_Model.FirstName"/>
+                <InputText class="form-control" @bind-Value="_Model.FirstName" Disabled="@_IsDisabled"/>
             </div>
                 <ValidationMessage For="@(() => _Model.FirstName)"/>
             <div class="form-group">
                 <span class="oi oi-person"></span>
                 <label for="Cognome">Cognome</label>
-                <InputText class="form-control" @bind-Value="_Model.LastName"/>
+                <InputText class="form-control" @bind-Value="_Model.LastName" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.LastName)"/>
             </div>
             <div class="form-group">
                 <span class="oi oi-envelope-closed"></span>
                 <label for="Email">Email</label>
-                <InputText Type="email" class="form-control" @bind-Value="_Model.Email"/>
+                <InputText Type="email" class="form-control" @bind-Value="_Model.Email" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.Email)" />
             </div>
             <div>
                 <div class="form-group" style="display: inline-block; padding-right: 15px;">
                     <span class="oi oi-calendar"></span>
                     <label for="Data di nascita">Data di nascita</label>
-                    <InputDate class="form-control" @bind-Value="_Model.BirthDay"/>
+                    <InputDate class="form-control" @bind-Value="_Model.BirthDay" Disabled="@_IsDisabled"/>
                     <ValidationMessage For="@(() => _Model.BirthDay)" />
                 </div>
                 <div class="form-group" style="display: inline-block;">
                     <span class="oi oi-calendar"></span>
                     <label for="Data d'inizio">Data d'inizio</label>
-                    <InputDate class="form-control" @bind-Value="@_Model.StartDate"/>
+                    <InputDate class="form-control" @bind-Value="@_Model.StartDate" Disabled="@_IsDisabled"/>
                     <ValidationMessage For="@(() => _Model.StartDate)" />
                 </div>
             </div>
             <div class="form-group">
                 <span class="oi oi-briefcase"></span>
                 <label for="Codice fiscale">Codice fiscale</label>
-                <InputText class="form-control" @bind-Value="_Model.NumericCode"/>
+                <InputText class="form-control" @bind-Value="_Model.NumericCode" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.NumericCode)" />
             </div>
             <div class="form-group">
                 <span class="oi oi-star"></span>
                 <label for="Ruolo">Ruolo</label>
-                    <div class="form-control">
-                        <InputSelect class="dropdown-item" @bind-Value="_Model.Role">
-                            <option disabled selected>-- Scegliere ruolo --</option>
-                            @foreach (var role in Enum.GetValues(typeof(Roles))) {
-                                if ((Roles)role != Roles.ACCOUNT_MANAGER) {
-                                    <option value="@role">@role</option>
-                                }
-                            }
-                        </InputSelect>
-                    </div>
-                    <ValidationMessage For="@(() => _Model.Role)" />
+                <input type="text" class="form-control" @bind="_Model.Role" disabled="@_IsDisabled"/>
+                <ValidationMessage For="@(() => _Model.Role)" />
             </div>
             <div class="form-group">
                 <span class="oi oi-euro"></span>
                 <label for="Tariffa oraria">Tariffa oraria</label>
-                <InputNumber Step="0.01" class="form-control" @bind-Value="_Model.CurrentHourlyRate"/>
+                <InputNumber Step="0.01" class="form-control" @bind-Value="_Model.CurrentHourlyRate" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.CurrentHourlyRate)" />
                 <div>
                     <div style="padding-right: 15px; display: inline-block;">
                         <label>Da
-                            <InputDate class="form-control" @bind-Value="_Model.StartDateHourlyRate"/>
+                            <InputDate class="form-control" @bind-Value="_Model.StartDateHourlyRate" Disabled="@_IsDisabled"/>
                         </label>
                     </div>
                     <ValidationMessage For="(() => _Model.StartDateHourlyRate)"/>
                     <label>A 
-                        <InputDate class="form-control" @bind-Value="_Model.FinishDateHourlyRate"/>
+                        <InputDate class="form-control" @bind-Value="_Model.FinishDateHourlyRate" Disabled="@_IsDisabled"/>
                     </label>
                     <ValidationMessage For="(() => _Model.FinishDateHourlyRate)"/>
                 </div>
@@ -90,18 +77,9 @@
                 <div style="margin: 0 auto; margin: 10px 5px;">
                     <span class="oi oi-key"></span>
                     <label for="Password">Password</label>
-                    <InputText Type="@_TypeField" class="form-control" @bind-Value="_Model.Password"/>
+                    <InputText Type="@_TypeField" class="form-control" @bind-Value="_Model.Password" Disabled="@_IsDisabled"/>
                     <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
                     <span style="margin: 10px 5px;">Vedi password</span>
-                    <div style="margin: 20px;">
-                        <span class="strong">
-                            <p>Deve comprendere almeno: </p>
-                            <p>[8 - 16] - Lunghezza caratteri</p>
-                            <p>[A-Z] - Una lettera maiuscola.</p>
-                            <p>[a-z] - Una lettera minuscola.</p>
-                            <p>[0-9] - Un numero</p>
-                        </span>
-                    </div>
                 </div>
                 <ValidationMessage For="@(() => _Model.Password)" />
             </div>

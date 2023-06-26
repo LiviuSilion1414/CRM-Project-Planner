@@ -26,3 +26,7 @@ h3 {
 .form-group {
     padding: 10px 0;
 }
+
+input:focus-visible {
+    cursor:not-allowed;
+}
