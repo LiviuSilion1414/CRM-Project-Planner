@@ -42,9 +42,9 @@ public partial class MainLayout
                         if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
                             possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
 
-                            NavManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}/{loggedInUserID.Id}",false, true);
+                            NavManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}/{loggedInUserID.Id}");
                         } else {
-                            NavManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}", false, true);
+                            NavManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}");
                         }
                     }
                 }
