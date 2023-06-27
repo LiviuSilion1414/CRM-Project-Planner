@@ -19,7 +19,7 @@
                 <tbody>
                     @foreach (var ac in _Activities) {
                         <tr>
-                            <td><span class="oi oi-puzzle-piece"></span></td>
+                            <td><i class="bi bi-puzzle"></i></td>
                             <td>@ac.Name</td>
                             <td>@ac.StartDate</td>
                             <td>@ac.FinishDate</td>
@@ -33,15 +33,15 @@
                                 }
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary" 
+                                <button type="button" class="btn btn-primary" title="Modifica attività"
                                     @onclick="@(() => OnClickEdit(ac.Id))">
-                                     <span class="oi oi-pencil"></span>
+                                    <i class="bi bi-pencil-square"></i>
                                 </button>                
                             </td> 
                             <td> 
-                                <button type="button" class="btn btn-danger" 
+                                <button type="button" class="btn btn-danger" title="Elimina attività"
                                     @onclick="@(() => OnClickDelete(ac.Id))">
-                                    <span class="oi oi-trash"></span>
+                                    <i class="bi bi-trash3"></i>
                                 </button>
                             </td>
                         </tr>

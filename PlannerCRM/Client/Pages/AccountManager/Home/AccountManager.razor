@@ -1,5 +1,6 @@
 @page "/account-manager"
-
+@layout MainLayout
+ 
 @using PlannerCRM.Shared.Models 
 
 <PageTitle>CRM - Account Manager</PageTitle>
@@ -9,8 +10,8 @@
 }
 
 <div class="parent">
-    <button type="button" class="btn btn-primary" @onclick="OnClickAddUser">
-        <span class="oi oi-plus"></span>
+    <button type="button" class="btn btn-primary" title="Aggiungi utente" @onclick="OnClickAddUser">
+        <i class="bi bi-person-add"></i>
         Aggiungi utente
     </button>
 </div>
@@ -41,8 +42,10 @@
                     }
                 </td>
                 <td>
-                    <span class="oi oi-person"></span>
-                    @user.Email
+                    <span>
+                        <i class="bi bi-person-circle"></i>
+                        @user.Email
+                    </span>
                 </td>
                 <td>@user.FullName</td>
                 <td>@user.BirthDay.ToShortDateString()</td>
@@ -57,12 +60,12 @@
                     </td>
                     <td>
                         <button type="button" class="btn btn-primary" title="Modifica utente" @onclick="@(() => OnClickEdit(user.Id))">
-                            <span class="oi oi-pencil"></span>
+                           <i class="bi bi-pencil-square"></i>
                         </button>                
                     </td> 
                     <td> 
                         <button type="button" class="btn btn-danger" title="Elimina utente" @onclick="@(() => OnClickDelete(user.Id))">
-                            <span class="oi oi-trash"></span>
+                            <i class="bi bi-trash3"></i>
                         </button>
                     </td>
                 } else {
@@ -99,11 +102,11 @@
     style="text-align: center; padding: 10px; position: relative;
         border: 0.5px;
         padding-top: 0%;">   
-    <i id="previous" class="bi bi-arrow-left-square-fill"
+    <i id="previous" class="bi bi-arrow-left-square-fill" title="Indietro"
         style="padding:10px; pointer-events: all;"
         @onclick="@(() => Previous(_PageNumber))"></i>
     <span style="padding: 10px;">@_PageNumber</span>
-    <i id="next" class="bi bi-arrow-right-square-fill"
+    <i id="next" class="bi bi-arrow-right-square-fill" title="Avanti"
         style="padding:10px;"
         @onclick="@(() => Next(_PageNumber))"></i>
 </div>

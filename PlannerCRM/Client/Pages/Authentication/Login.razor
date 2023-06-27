@@ -1,5 +1,6 @@
 ﻿@page "/"
 @page "/login"
+@layout MainLayout
 
 @using PlannerCRM.Shared.Models
 
@@ -30,10 +31,9 @@
             <ValidationMessage For="@(() => _Model.Password)"/>
         </div>
         <div class="wrapper">
-            
             <button type="submit" id="submit" class="btn btn-primary">
                 <span>Accedi</span>
-                <span class="oi oi-account-login"></span>  
+                <i class="bi bi-box-arrow-in-right"></i>
             </button>
         </div>
     </EditForm>

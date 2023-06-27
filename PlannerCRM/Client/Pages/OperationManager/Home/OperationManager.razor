@@ -1,19 +1,20 @@
 @page "/operation-manager"
-
+@layout MainLayout
+ 
 <PageTitle>CRM - Operation Manager</PageTitle>
 
 <div class="parent">
     <div class="child">
-        <button class="btn btn-primary" @onclick="OnClickAddWorkOrder">
-            <span class="oi oi-plus"></span>
+        <button class="btn btn-primary" title="Aggiungi commessa" @onclick="OnClickAddWorkOrder">
+            <i class="bi bi-plus-circle-fill"></i>
             Aggiungi commessa
         </button>
     </div>
     
     @if (_WorkOrders.Any()) {
         <div class="child">
-            <button class="btn btn-primary" @onclick="OnClickAddActivity">
-                <span class="oi oi-plus"></span>
+            <button class="btn btn-primary" title="Aggiungi attività" @onclick="OnClickAddActivity">
+                <i class="bi bi-plus-circle-fill"></i>
                 Aggiungi attività
             </button>
         </div>
@@ -44,10 +45,12 @@
                     </td>
                     <td>
                         @if (_TrIsClicked && (wo.Id == _CurrentWorkOrder.Id)) {
-                            <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" @onclick="(() => OnClickTableRow(wo.Id))">
+                            <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" 
+                                @onclick="(() => OnClickTableRow(wo.Id))" title="Comprimi">
                             </i>
                         } else {
-                            <i class="bi bi-arrow-down-square-fill" style="cursor: pointer; padding-right: 5px;" @onclick="(() => OnClickTableRow(wo.Id))"></i>
+                            <i class="bi bi-arrow-down-square-fill" style="cursor: pointer; padding-right: 5px;" 
+                                @onclick="(() => OnClickTableRow(wo.Id))" title="Espandi"></i>
                         }
                         @wo.Name
                     </td>
@@ -56,15 +59,15 @@
                     @if (!wo.IsDeleted) {
                         <td>
                                 <td style="padding-right: 10px;">
-                                    <button type="button" class="btn btn-primary"
+                                    <button type="button" class="btn btn-primary" title="Modifica commessa"
                                         @onclick="@(() => OnClickEdit(wo.Id))">
-                                            <span class="oi oi-pencil"></span>
+                                            <i class="bi bi-pencil-square"></i>
                                     </button>                
                                 </td> 
                                 <td> 
-                                    <button type="button" class="btn btn-danger" 
+                                    <button type="button" class="btn btn-danger" title="Elimina commessa" 
                                         @onclick="@(() => OnClickDelete(wo.Id))">
-                                            <span class="oi oi-trash"></span>
+                                            <i class="bi bi-trash3"></i>
                                     </button>
                                 </td>
                         </td>
@@ -72,7 +75,7 @@
                 <td></td>
                 </tr>
                 @if (_TrIsClicked && (wo.Id == _CurrentWorkOrder.Id)) {
-                    <tr style="border: 1px solid blue;">
+                    <tr style="border: 1px solid blue;" title="Visualizza attività su questa commessa">
                         <td></td>
                         <td style="width: 100%; height: 80%;"> <OperationManagerMasterDetails WorkOrderId="@_CurrentWorkOrder.Id"/> </td>
                         <td></td>
@@ -103,11 +106,11 @@
 <div class="container" 
     style="text-align: center; padding: 10px; position: relative;
         padding-top: 0%;">   
-    <i id="previous" class="bi bi-arrow-left-square-fill"
+    <i id="previous" class="bi bi-arrow-left-square-fill" title="Indietro"
         style="padding:10px; cursor: pointer;"
         @onclick="@(() => Previous(_PageNumber))"></i>
     <span style="padding: 10px;">@_PageNumber</span>
-    <i id="next" class="bi bi-arrow-right-square-fill"
+    <i id="next" class="bi bi-arrow-right-square-fill" title="Avanti"
         style="padding:10px; cursor: pointer;"
         @onclick="@(() => Next(_PageNumber))"></i>
 </div>

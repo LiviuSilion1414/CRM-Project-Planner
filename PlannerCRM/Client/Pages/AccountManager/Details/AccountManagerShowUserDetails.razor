@@ -12,39 +12,39 @@
         <EditForm Model="@_Model" OnSubmit="OnClickModalCancel">
             <DataAnnotationsValidator />
             <div class="form-group">
-                <span class="oi oi-person"></span>
+               <i class="bi bi-person-circle"></i>
                 <label for="Nome">Nome</label>
                 <InputText class="form-control" @bind-Value="_Model.FirstName" Disabled="@_IsDisabled"/>
             </div>
                 <ValidationMessage For="@(() => _Model.FirstName)"/>
             <div class="form-group">
-                <span class="oi oi-person"></span>
+               <i class="bi bi-person-circle"></i>
                 <label for="Cognome">Cognome</label>
                 <InputText class="form-control" @bind-Value="_Model.LastName" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.LastName)"/>
             </div>
             <div class="form-group">
-                <span class="oi oi-envelope-closed"></span>
+                <i class="bi bi-envelope-at"></i>
                 <label for="Email">Email</label>
                 <InputText Type="email" class="form-control" @bind-Value="_Model.Email" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.Email)" />
             </div>
             <div>
                 <div class="form-group" style="display: inline-block; padding-right: 15px;">
-                    <span class="oi oi-calendar"></span>
+                    <i class="bi bi-calendar3"></i>
                     <label for="Data di nascita">Data di nascita</label>
                     <InputDate class="form-control" @bind-Value="_Model.BirthDay" Disabled="@_IsDisabled"/>
                     <ValidationMessage For="@(() => _Model.BirthDay)" />
                 </div>
                 <div class="form-group" style="display: inline-block;">
-                    <span class="oi oi-calendar"></span>
+                    <i class="bi bi-calendar3"></i>
                     <label for="Data d'inizio">Data d'inizio</label>
                     <InputDate class="form-control" @bind-Value="@_Model.StartDate" Disabled="@_IsDisabled"/>
                     <ValidationMessage For="@(() => _Model.StartDate)" />
                 </div>
             </div>
             <div class="form-group">
-                <span class="oi oi-briefcase"></span>
+                <i class="bi bi-briefcase"></i>
                 <label for="Codice fiscale">Codice fiscale</label>
                 <InputText class="form-control" @bind-Value="_Model.NumericCode" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.NumericCode)" />
@@ -56,26 +56,24 @@
                 <ValidationMessage For="@(() => _Model.Role)" />
             </div>
             <div class="form-group">
-                <span class="oi oi-euro"></span>
+                <i class="bi bi-currency-euro"></i>
                 <label for="Tariffa oraria">Tariffa oraria</label>
                 <InputNumber Step="0.01" class="form-control" @bind-Value="_Model.CurrentHourlyRate" Disabled="@_IsDisabled"/>
                 <ValidationMessage For="@(() => _Model.CurrentHourlyRate)" />
                 <div>
                     <div style="padding-right: 15px; display: inline-block;">
-                        <label>Da
+                        <label>Da <i class="bi bi-calendar3"></i> </label>
                             <InputDate class="form-control" @bind-Value="_Model.StartDateHourlyRate" Disabled="@_IsDisabled"/>
-                        </label>
                     </div>
                     <ValidationMessage For="(() => _Model.StartDateHourlyRate)"/>
-                    <label>A 
+                    <label>A <i class="bi bi-calendar3"></i> </label>
                         <InputDate class="form-control" @bind-Value="_Model.FinishDateHourlyRate" Disabled="@_IsDisabled"/>
-                    </label>
                     <ValidationMessage For="(() => _Model.FinishDateHourlyRate)"/>
                 </div>
             </div>
             <div class="form-group">
                 <div style="margin: 0 auto; margin: 10px 5px;">
-                    <span class="oi oi-key"></span>
+                    <i class="bi bi-key-fill"></i>
                     <label for="Password">Password</label>
                     <InputText Type="@_TypeField" class="form-control" @bind-Value="_Model.Password" Disabled="@_IsDisabled"/>
                     <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>

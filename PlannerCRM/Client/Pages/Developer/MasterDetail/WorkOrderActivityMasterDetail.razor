@@ -16,7 +16,7 @@
         <tbody>
             @foreach (var ac in _activities) {
                 <tr>
-                    <td><span class="oi oi-briefcase"></span></td>
+                    <td><i class="bi bi-briefcase"></i></td> 
                     <td>
                         @(_workorders
                             .Distinct()
@@ -40,7 +40,7 @@
                     <td>
                         <button type="button" class="btn btn-primary" 
                             @onclick="@(() => OnClickAddWorkedHours(ac.Id))">
-                            <span class="oi oi-clock"></span>
+                            <i class="bi bi-clock-history"></i>
                             <span>Aggiungi orario</span>
                         </button> 
                     </td>
