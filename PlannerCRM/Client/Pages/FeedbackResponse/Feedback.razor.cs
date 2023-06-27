@@ -10,10 +10,6 @@ public partial class Feedback
     private bool _isXAlertClicked { get; set; }
 
     private void SwitchShowAlert() {
-        if (_isXAlertClicked) {
-            _isXAlertClicked = false;
-        } else {
-            _isXAlertClicked = true;
-        }
+        _isXAlertClicked = !_isXAlertClicked;
     }
 }

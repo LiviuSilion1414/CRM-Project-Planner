@@ -133,10 +133,10 @@ public class DeveloperService
         }
     }
     
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecords(int activityId, int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecords(int workOrderId, int activityId, int employeeId) {
         try
         {
-            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/{activityId}/{employeeId}");
+            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/{workOrderId}/{activityId}/{employeeId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<WorkTimeRecordViewDto>(jsonObject);

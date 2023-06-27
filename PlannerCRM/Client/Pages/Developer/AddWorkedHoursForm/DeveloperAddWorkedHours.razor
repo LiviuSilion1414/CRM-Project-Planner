@@ -7,7 +7,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Aggiungi attivita</h5>
+            <h5 class="modal-title">Aggiungi orario di lavoro</h5>
             <i style="cursor: pointer;" class="bi bi-x-circle" @onclick="@(() => OnClickModalCancel())"></i>
         </div>
         <div style="width: 100%; height:100%;padding: 10px;">
@@ -16,22 +16,22 @@
             <div class="form-group">
                 <span class="oi oi-briefcase"></span>
                 <label for="Nome commessa:">Nome commessa </label> 
-                <InputText class="form-control" @bind-Value="_WorkOrder.Name" readonly/>
+                <InputText class="form-control" @bind-Value="_WorkOrder.Name" Disabled="@_IsDisabled"/>
             </div>
             <div class="form-group">
                 <span class="oi oi-puzzle-piece"></span>
                 <label for="Nome attività">Nome attività </label>
-                <InputText class="form-control" @bind-Value="_Model.Name" readonly/>
+                <InputText class="form-control" @bind-Value="_Model.Name" Disabled="@_IsDisabled"/>
             </div>
             <div class="form-group">
                 <span class="oi oi-calendar"></span>
                 <label for="Data d'inizio">Data d'inizio </label>
-                <InputDate class="form-control" @bind-Value="@_Model.StartDate" readonly/>
+                <InputDate class="form-control" @bind-Value="@_Model.StartDate" Disabled="@_IsDisabled"/>
             </div>
             <div class="form-group">
                 <span class="oi oi-calendar"></span>
                 <label for="Data di fine">Data fine </label>
-                <InputDate class="form-control" @bind-Value="@_Model.FinishDate" readonly/>
+                <InputDate class="form-control" @bind-Value="@_Model.FinishDate" Disabled="@_IsDisabled"/>
             </div>
             <div class="form-group">
                 <span class="oi oi-clock"></span>

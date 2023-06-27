@@ -33,13 +33,11 @@ public partial class OperationManagerMasterDetails
     }
 
     private void OnClickEdit(int activityId) {
-        //NavManager.NavigateTo($"/operation-manager/edit/activity/{_WorkOrder.Id}/{activityId}");
         _IsEditActivityClicked = !_IsEditActivityClicked;
         _ActivityId = activityId;
     }
 
     private void OnClickDelete(int activityId) {
-        //NavManager.NavigateTo($"/operation-manager/delete/activity/{_WorkOrder.Id}/{activityId}");
         _IsDeleteActivityClicked = !_IsDeleteActivityClicked;
         _ActivityId = activityId;
     }

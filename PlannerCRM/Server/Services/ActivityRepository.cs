@@ -87,7 +87,7 @@ public class ActivityRepository
         if (dto is null)
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
-        if (dto.EmployeeActivity is null || !dto.EmployeeActivity.Any())
+        if (dto.EmployeeActivity is null || !dto.ViewEmployeeActivity.Any())
             throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         
         var model = await _db.Activities

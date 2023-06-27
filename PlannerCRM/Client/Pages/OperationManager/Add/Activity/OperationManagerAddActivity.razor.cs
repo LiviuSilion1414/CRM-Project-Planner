@@ -115,10 +115,14 @@ public partial class OperationManagerAddActivity
                     }
                 );
             }
-                ToggleEmployeesListView();
+            ToggleEmployeesListView();
         } catch (NullReferenceException nullRefExc) {
             _logger.LogError(nullRefExc, nullRefExc.Message);
             _Message = nullRefExc.Message;
+            _IsError = true;
+        } catch (Exception exc) {
+            _logger.Log(LogLevel.Error, exc, exc.Message);
+            _Message = exc.Message;
             _IsError = true;
         }
     }

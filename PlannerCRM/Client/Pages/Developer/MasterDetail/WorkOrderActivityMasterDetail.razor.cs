@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using PlannerCRM.Client.Services.Crud;
 using Microsoft.AspNetCore.Components;
 using PlannerCRM.Shared.DTOs.ActivityDto.Views;
+using System.Reflection;
 
 namespace PlannerCRM.Client.Pages.Developer.MasterDetail;
 
@@ -33,8 +34,10 @@ public partial class WorkOrderActivityMasterDetail
         }
 
         foreach (var activity in _activities) {
-            var workTime = await DeveloperService.GetWorkTimeRecords(activity.Id, EmployeeId);
-            _workTimeRecords.Add(workTime);
+            var workTime = await DeveloperService.GetWorkTimeRecords(activity.WorkOrderId ,activity.Id, EmployeeId);
+            if (workTime is not null) {
+                _workTimeRecords.Add(workTime);
+            }
         }
     }
 

@@ -27,12 +27,6 @@ public class WorkTimeRecordRepository
             throw new ArgumentNullException(NULL_PARAM);
         }
         
-        var presentWorkTime = await _db.WorkTimeRecords
-            .SingleOrDefaultAsync(workTimeRec => dto.Id == workTimeRec.Id);
-        if (presentWorkTime != null) {
-            throw new DuplicateElementException(OBJECT_ALREADY_PRESENT);
-        }
-        
         await _db.WorkTimeRecords.AddAsync(
             new WorkTimeRecord {
                 Id = dto.Id,
@@ -41,42 +35,15 @@ public class WorkTimeRecordRepository
                 TotalPrice = dto.TotalPrice + dto.Hours,
                 ActivityId = dto.ActivityId,
                 EmployeeId = dto.EmployeeId,
-                Employee = await _db.Employees
+                Employee = _db.Employees
                     .Where(em => !em.IsDeleted)
-                    .SingleAsync(e => e.Id == dto.EmployeeId),
-                WorkOrderId = await _db.WorkOrders.AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
-                    ? dto.WorkOrderId
-                    : throw new InvalidOperationException(IMPOSSIBLE_ADD)
+                    .Single(e => e.Id == dto.EmployeeId),
+                WorkOrderId = await _db.WorkOrders
+                    .AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
+                        ? dto.WorkOrderId
+                        : throw new InvalidOperationException(IMPOSSIBLE_ADD)
             }
         );
-        var workOrder = await _db.WorkOrders
-            .SingleAsync(wo => wo.Id == dto.WorkOrderId);
-        
-        workOrder.WorkTimeRecords.Add(new WorkTimeRecord {
-            Id = dto.Id,
-            Date = dto.Date,
-            Hours = dto.Hours,
-            TotalPrice = dto.TotalPrice, 
-            WorkOrderId = dto.WorkOrderId,
-            ActivityId = dto.ActivityId,
-            EmployeeId = dto.EmployeeId,
-            Employee = new Employee {
-                Id = dto.Employee.Id,
-                FirstName = dto.Employee.FirstName,
-                LastName = dto.Employee.LastName,
-                FullName = dto.Employee.FullName,
-                BirthDay = dto.Employee.BirthDay,
-                StartDate = dto.Employee.StartDate,
-                NumericCode = dto.Employee.NumericCode,
-                Password = dto.Employee.Password,
-                CurrentHourlyRate = dto.Employee.CurrentHourlyRate,
-                Email = dto.Employee.Email,
-                IsDeleted = dto.Employee.IsDeleted,
-                Role = dto.Employee.Role
-            }
-        });
-
-        _db.Update(workOrder);
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0)
@@ -122,55 +89,33 @@ public class WorkTimeRecordRepository
             .Where(em => !em.IsDeleted)
             .SingleAsync(em => em.Id == dto.EmployeeId);
 
-        var workOrder = await _db.WorkOrders
-            .SingleAsync(wo => wo.Id == dto.WorkOrderId);
-        
-        var workTime = workOrder.WorkTimeRecords.Find(wo => wo.Id == dto.Id);
-        workTime.Id = dto.Id;
-        workTime.Date = dto.Date;
-        workTime.Hours = dto.Hours;
-        workTime.TotalPrice = dto.TotalPrice; 
-        workTime.WorkOrderId = dto.WorkOrderId;
-        workTime.ActivityId = dto.ActivityId;
-        workTime.EmployeeId = dto.EmployeeId;
-        workTime.Employee = new Employee {
-            Id = dto.Employee.Id,
-            FirstName = dto.Employee.FirstName,
-            LastName = dto.Employee.LastName,
-            FullName = dto.Employee.FullName,
-            BirthDay = dto.Employee.BirthDay,
-            StartDate = dto.Employee.StartDate,
-            NumericCode = dto.Employee.NumericCode,
-            Password = dto.Employee.Password,
-            CurrentHourlyRate = dto.Employee.CurrentHourlyRate,
-            Email = dto.Employee.Email,
-            IsDeleted = dto.Employee.IsDeleted,
-            Role = dto.Employee.Role
-        };
-
         _db.Update(model);
-        _db.Update(workTime);
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0)
             throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
     }
 
-    public async Task<WorkTimeRecordViewDto> GetAsync(int activityId, int employeeId) {
-        return await _db.WorkTimeRecords
-            .Select(wtr => new WorkTimeRecordViewDto {
-                Id = wtr.Id,
-                Date = wtr.Date,
-                Hours = _db.WorkTimeRecords
-                    .Where(wtr => wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
-                    .Sum(wtrSum => wtrSum.Hours),
-                TotalPrice = wtr.TotalPrice,
-                ActivityId = wtr.ActivityId,
-                WorkOrderId = wtr.WorkOrderId,
-                EmployeeId = wtr.EmployeeId,
-            
+    public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, int employeeId) {
+        var hasElements = await _db.WorkTimeRecords
+            .AnyAsync(wtr => wtr.ActivityId == activityId && wtr.EmployeeId == employeeId);
+        return hasElements 
+            ? await _db.WorkTimeRecords
+                .Select(wtr => new WorkTimeRecordViewDto {
+                    Id = wtr.Id,
+                    Date = wtr.Date,
+                    Hours = _db.WorkTimeRecords
+                        .Where(wtr => wtr.WorkOrderId == workOrderId && wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
+                        .Distinct()
+                        .Sum(wtrSum => wtrSum.Hours),
+                    TotalPrice = wtr.TotalPrice,
+                    ActivityId = wtr.ActivityId,
+                    WorkOrderId = wtr.WorkOrderId,
+                    EmployeeId = wtr.EmployeeId,
                 })
-            .FirstAsync(wtr => wtr.ActivityId == activityId && wtr.EmployeeId == employeeId);
+                .OrderByDescending(wtr => wtr.Hours)
+                .FirstOrDefaultAsync(wtr => wtr.WorkOrderId == workOrderId && wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
+            : null;
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {

@@ -42,8 +42,10 @@ public partial class OperationManagerEditActivity
 
     private string _CurrentPage { get; set; }
     private bool _HasElements { get; set; }
+    private bool _EmployeeHasElements { get; set; } 
+    private bool _HideEmployeesList { get; set; }
     private bool _IsCancelClicked { get; set; }
-    private bool _HideWorkOrdersList { get; set; } = false;
+    private bool _IsDisabled { get => true; }
     
     protected override async Task OnInitializedAsync() {
         _Model = await OperationManagerService.GetActivityForEditAsync(ActivityId);
@@ -54,24 +56,12 @@ public partial class OperationManagerEditActivity
         _EditContext = new(_Model);
         _Model.ViewEmployeeActivity = new();
         _Model.EmployeeActivity = new();
-        _HideWorkOrdersList = true;
+        _HideEmployeesList = true;
         _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
     }
-
-    public async Task OnClickSearchWorkorder(string workorder) { 
-        if (!string.IsNullOrEmpty(workorder)) {
-            _WorkOrders = await OperationManagerService.SearchWorkOrderAsync(workorder);
-            _HasElements = _WorkOrders.Any();
-            if (_HasElements) {
-                Toggle();
-            } else {
-                _Message = WORKORDER_NOT_FOUND;
-            }
-        }
-    }
-
-    public void Toggle() {
-        _HideWorkOrdersList = !_HideWorkOrdersList;
+    
+    public void ToggleEmployeesListView() {
+        _HideEmployeesList = !_HideEmployeesList;
     }
 
     private void OnClickModalCancel() {
@@ -80,10 +70,12 @@ public partial class OperationManagerEditActivity
 
     public async Task OnClickSearchEmployee(string employee) {
         _Employees = await OperationManagerService.SearchEmployeeAsync(employee);
-        if (_Employees.Any()) {
+        _EmployeeHasElements = _Employees.Any();
+        if (!_EmployeeHasElements) {
             _HasElements = true;
             _Message = EMPLOYEE_NOT_FOUND;
         }
+        ToggleEmployeesListView();
     }
 
     private void OnClickAddAsSelected(EmployeeSelectDto employee) {
@@ -120,34 +112,30 @@ public partial class OperationManagerEditActivity
                 _Model.EmployeeActivity.Add(item);
                 _Model.ViewEmployeeActivity.Add(item);
             }
+            ToggleEmployeesListView();
         } catch (NullReferenceException nullRefExc) {
             _logger.Log(LogLevel.Error, nullRefExc, nullRefExc.Message);
             _Message = nullRefExc.Message;
             _IsError = true;
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             _logger.Log(LogLevel.Error, exc, exc.Message);
             _Message = exc.Message;
             _IsError = true;
-        } finally {
-            Toggle();
         }
     }
 
     private void OnClickRemoveAsSelected(EmployeeSelectDto employee) {
-        foreach (var ea in _Model.ViewEmployeeActivity.ToHashSet()) {
-            if (ea.Employee.Email == employee.Email) {
-                _Model.EmployeeActivity.Remove(ea);
-                _Model.ViewEmployeeActivity.Remove(ea);
+        _Model.ViewEmployeeActivity
+            .ToList()
+            .ForEach(ea => {
+                if (ea.Employee.Id == employee.Id) {
+                    _Model.ViewEmployeeActivity.Remove(ea);
+                    _Model.EmployeeActivity.Remove(ea);
+                }
             }
-        }
+        );
     }
-    //trovare un modo per mandare la lista con gli impiegati che sono stati aggiunti e non anche con quelli vecchi
     
-    public void RedirectToPage() {
-        NavManager.NavigateTo("/operation-manager");
-    }
-
     public async Task OnClickModalConfirm() {
         try
         {

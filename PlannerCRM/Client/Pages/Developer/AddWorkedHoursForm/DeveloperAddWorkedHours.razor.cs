@@ -10,8 +10,8 @@ using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Client.Pages.Developer.AddWorkedHoursForm;
 
-// [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
-// [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
+[Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
+[Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
 public partial class DeveloperAddWorkedHours
 {
     [Parameter] public int EmployeeId { get; set; }
@@ -33,6 +33,7 @@ public partial class DeveloperAddWorkedHours
     private bool _IsCancelClicked { get; set; }
     private string _Message { get; set; }
     private string _CurrentPage { get; set; }
+    private bool _IsDisabled { get => true;}
 
     protected override async Task OnInitializedAsync() {
         _EmployeeRole = await CurrentUserInfoService.GetCurrentUserRoleAsync();
