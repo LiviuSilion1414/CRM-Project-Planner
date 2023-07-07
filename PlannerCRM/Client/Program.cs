@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PlannerCRM.Client;
 using PlannerCRM.Client.Services;
 using PlannerCRM.Client.Services.Crud;
+using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
+using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
+using PlannerCRM.Shared.DTOs.Workorder.Forms;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -20,6 +23,8 @@ builder.Services.AddScoped<NavigationLockService>();
 builder.Services.AddScoped<OperationManagerCrudService>();
 builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
+
+builder.Services.AddScoped<ValidatorService>();
 
 builder.Services.AddScoped<Logger<AuthenticationStateService>>();
 builder.Services.AddScoped<Logger<LoginService>>();
