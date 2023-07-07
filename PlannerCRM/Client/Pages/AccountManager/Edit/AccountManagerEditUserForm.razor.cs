@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -12,9 +13,9 @@ namespace PlannerCRM.Client.Pages.AccountManager.Edit;
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public partial class AccountManagerEditUserForm
 {   
-    private readonly Logger<EmployeeEditFormDto> _logger;
+    private readonly Logger<EmployeeFormDto> _logger;
 
-    public AccountManagerEditUserForm(Logger<EmployeeEditFormDto> logger) {
+    public AccountManagerEditUserForm(Logger<EmployeeFormDto> logger) {
         _logger = logger;
     }
 
@@ -24,12 +25,15 @@ public partial class AccountManagerEditUserForm
     [Inject] private AccountManagerCrudService AccountManagerService { get; set;}
     [Inject] private NavigationLockService NavLockService { get; set; }
     [Inject] private NavigationManager NavManager { get; set; }
-    
-    private EmployeeEditFormDto _Model;
+    [Inject] private ValidatorService CustomValidatorService { get; set; }
+    ValidationMessage<string> ErrorMessage { get; set; }
+    List<ValidationMessage<string>> ErrorMessages { get; set; }
+
+    private EmployeeFormDto _Model;
     private EditContext _EditContext { get; set; }
-    private string _TypeField { get; set;} = InputType.PASSWORD.ToString().ToLower();
+    private ValidationMessageStore _MessageStore { get; set; }
     private bool _IsCheckboxClicked { get; set; }
-    private bool _IsError { get; set; }
+    private bool _IsError { get; set; } = false;
     private string _Message { get; set; }
     private string _CurrentPage { get; set; }
     private bool _IsCancelClicked { get; set; }
@@ -45,13 +49,7 @@ public partial class AccountManagerEditUserForm
     }
 
     public void SwitchShowPassword() {
-        if (_IsCheckboxClicked) {
-            _IsCheckboxClicked = false;
-            _TypeField = InputType.TEXT.ToString().ToLower();
-        } else {
-            _IsCheckboxClicked = true;
-            _TypeField = InputType.PASSWORD.ToString().ToLower();
-        }
+        _IsCheckboxClicked = !_IsCheckboxClicked;
     }
 
     public void OnClickModalCancel() {
@@ -59,9 +57,17 @@ public partial class AccountManagerEditUserForm
         NavManager.NavigateTo(_CurrentPage);
     }
 
+    public void OnClickInvalidSubmit() {
+        _IsError = true;
+        _Message = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
+    }
+
     public async void OnClickModalConfirm() {
         try {
-            if (_EditContext.IsModified() && _EditContext.Validate()) {       
+            var r = CustomValidatorService.Validate(_Model, out var validationResults);
+            var isValid = !validationResults.Any();
+            if (isValid) {
+                System.Console.WriteLine("is valid");
                 _Model.EmployeeSalaries = new();
                 _Model.EmployeeSalaries
                     .Add(new EmployeeSalaryDto {
@@ -77,23 +83,27 @@ public partial class AccountManagerEditUserForm
                 var responseEmployee = await AccountManagerService.UpdateEmployeeAsync(_Model);
 
                 if (!responseUser.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
-                    _Message = await responseUser.Content.ReadAsStringAsync();
                     _IsError = true;
+                    _Message = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
                 } else {
                     _IsCancelClicked = !_IsCancelClicked;
                     NavManager.NavigateTo(_CurrentPage, true);
                 }
                 _IsError = true;
             } else {
-                _IsCancelClicked = !_IsCancelClicked;
-                NavManager.NavigateTo(_CurrentPage);
+                OnClickInvalidSubmit();
+                _IsError = false;
             }
         } catch (NullReferenceException nullRefExc) {
-            _logger.Log(LogLevel.Error, nullRefExc.Message);
+            //_logger.Log(LogLevel.Error, nullRefExc.Message);
+            System.Console.WriteLine("hit: {0}, innerException: {1}", nullRefExc.Message, nullRefExc.InnerException);
+            System.Console.WriteLine("err: {0}", nullRefExc.StackTrace, nullRefExc.Source);
             _Message = nullRefExc.Message;
             _IsError = true;
+            
         } catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            System.Console.WriteLine("Exception: {0}, Name: {1}", exc.StackTrace, exc.GetType().ToString());
+           // _logger.LogError(new EventId(), exc, exc.Message, new string[] { exc.Message });
             _Message = exc.Message;
             _IsError = true;
         }
