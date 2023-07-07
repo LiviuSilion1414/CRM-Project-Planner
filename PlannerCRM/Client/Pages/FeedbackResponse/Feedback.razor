@@ -1,16 +1,15 @@
 @using PlannerCRM.Shared.Models
 
-<div class="alert alert-@Severity.ToString().ToLower()"
-    style="display: @(_isXAlertClicked 
-        ? DisplayType.NONE.ToString().ToLower()
-        : DisplayType.BLOCK.ToString().ToLower());
-        width: 100%;
+<div class="alert alert-danger"
+    style="width: 100%;
         position: relative; 
         margin: 0 auto; 
         height: 30px;
         padding: 5px; 
         text-align: center; 
-        overflow: hidden;">
+        overflow: hidden;"
+    hidden="@Hidden">
+    
     <span> @Message </span>
     <i style="cursor: pointer; float:right;" class="bi bi-x-circle"
         @onclick="@(() => SwitchShowAlert())"></i>

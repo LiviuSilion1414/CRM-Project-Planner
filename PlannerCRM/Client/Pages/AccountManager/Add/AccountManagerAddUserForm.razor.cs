@@ -12,10 +12,10 @@ namespace PlannerCRM.Client.Pages.AccountManager.Add;
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public partial class AccountManagerAddUserForm
 {   
-    private readonly Logger<EmployeeAddFormDto> _logger;
+    private readonly Logger<EmployeeFormDto> _logger;
     
     public AccountManagerAddUserForm(
-            Logger<EmployeeAddFormDto> logger) 
+            Logger<EmployeeFormDto> logger) 
     {
         _logger = logger;
     }
@@ -26,7 +26,7 @@ public partial class AccountManagerAddUserForm
     [Inject] private NavigationManager NavManager { get; set; }
     [Inject] private NavigationLockService NavLockService { get; set; }
 
-    public EmployeeAddFormDto _Model = new();
+    public EmployeeFormDto _Model = new();
     public EditContext _EditContext { get; set; }
     public string _TypeField { get; set; } = InputType.PASSWORD.ToString().ToLower();
     public bool _IsError { get; set; }
@@ -34,6 +34,8 @@ public partial class AccountManagerAddUserForm
     public bool _IsCheckboxClicked { get; set; }
     public string _CurrentPage { get; set; }
     public bool _IsCancelClicked { get; set; }
+    public EventCallback _CancelCallback { get; set; }
+
 
     protected override void OnInitialized() {
         _EditContext = new(_Model);
@@ -55,9 +57,20 @@ public partial class AccountManagerAddUserForm
         _IsCancelClicked = !_IsCancelClicked;
     }
 
+    public void OnClickInvalidSubmit() {
+        System.Console.WriteLine("Clicked");
+        System.Console.WriteLine("_IsError: {0}", _IsError);
+        System.Console.WriteLine("Is invalid: {0}", _EditContext.Validate());
+        _IsError = true;
+        _Message = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
+        System.Console.WriteLine("_IsError: {0}", _IsError);
+    }
+
+
     public async Task OnClickModalConfirm() {
         try {
             if (_EditContext.IsModified() && _EditContext.Validate()) {
+                _Model.OldEmail = _Model.Email;
                 _Model.EmployeeSalaries = new();
                 _Model.EmployeeSalaries
                     .Add(new EmployeeSalaryDto {

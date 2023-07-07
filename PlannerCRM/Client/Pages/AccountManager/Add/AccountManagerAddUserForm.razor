@@ -11,7 +11,10 @@
             <i style="cursor: pointer;" class="bi bi-x-circle" @onclick="@(() => OnClickModalCancel())"></i>
         </div>
         <div style="width: 100%; height:100%;padding: 10px;">
-        <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickModalConfirm">
+        @if (_IsError) {
+            <Feedback Message="@_Message"/> 
+        }
+        <EditForm EditContext="@_EditContext" OnValidSubmit="OnClickModalConfirm" OnInvalidSubmit="@(() => OnClickInvalidSubmit())">
             <DataAnnotationsValidator />
             <div class="form-group">
                 <i class="bi bi-person-circle"></i>
@@ -88,7 +91,7 @@
                 <div style="margin: 0 auto; margin: 10px 5px;">
                     <i class="bi bi-key-fill"></i>
                     <label for="Password">Password</label>
-                    <InputText Type="@_TypeField" class="form-control" @bind-Value="_Model.Password"/>
+                    <InputText Type="@_TypeField" class="form-control" @bind-Value="_Model.Password" Autocomplete="new-password"/>
                     <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
                     <span style="margin: 10px 5px;">Vedi password</span>
                     <div style="margin: 20px;">
@@ -119,7 +122,3 @@
         </div>
     </div>
 </div>
-
- @if (_IsError) {
-    <Feedback Severity="@FatalityType.DANGER" Message="@_Message"></Feedback> 
-}
