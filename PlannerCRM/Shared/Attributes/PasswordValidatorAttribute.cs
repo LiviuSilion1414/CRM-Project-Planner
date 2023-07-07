@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace PlannerCRM.Shared.Attributes;
 
 public class PasswordValidatorAttribute : ValidationAttribute

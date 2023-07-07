@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using static PlannerCRM.Shared.Constants.ConstantValues;
-
 namespace PlannerCRM.Shared.Attributes;
 
 public class BirthDayRangeAttribute : ValidationAttribute
@@ -12,6 +9,9 @@ public class BirthDayRangeAttribute : ValidationAttribute
         _Minimum = minimum;
         _Maximum = maximum;
     }
+
+    public BirthDayRangeAttribute()
+    { }
 
     public override bool IsValid(object value) {
         if (value is null) return false;

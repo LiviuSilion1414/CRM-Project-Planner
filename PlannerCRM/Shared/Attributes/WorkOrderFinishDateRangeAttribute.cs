@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using static PlannerCRM.Shared.Constants.ConstantValues;
-
 namespace PlannerCRM.Shared.Attributes;
 
 public class WorkOrderFinishDateRangeAttribute : ValidationAttribute
@@ -12,6 +9,9 @@ public class WorkOrderFinishDateRangeAttribute : ValidationAttribute
         _Minimum = minimum;
         _Maximum = maximum;
     }
+
+    public WorkOrderFinishDateRangeAttribute() 
+    { }
 
     public override bool IsValid(object value) {
         if (value is null) return false;

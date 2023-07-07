@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using PlannerCRM.Shared.Models;
-
 namespace PlannerCRM.Shared.Attributes;
 
 public class IsNotAdminRoleAttribute : ValidationAttribute
@@ -10,6 +7,9 @@ public class IsNotAdminRoleAttribute : ValidationAttribute
     public IsNotAdminRoleAttribute(Roles adminRole) {
         _AdminRole = adminRole;
     }
+
+    public IsNotAdminRoleAttribute()
+    { }
 
     public override bool IsValid(object value) {
         if (value is null) return false;

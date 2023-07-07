@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using static PlannerCRM.Shared.Constants.ConstantValues;
-
 namespace PlannerCRM.Shared.Attributes;
 
 public class StartDateRangeHourlyRateAttribute : ValidationAttribute
@@ -13,6 +10,9 @@ public class StartDateRangeHourlyRateAttribute : ValidationAttribute
        _MinimumMonth = minimumMonth;
        _MaximumMonth = maximumMonth;
     }
+    
+    public StartDateRangeHourlyRateAttribute()
+    { }
 
     public override bool IsValid(object value) {
         if (value is null) return false;
@@ -20,8 +20,7 @@ public class StartDateRangeHourlyRateAttribute : ValidationAttribute
         if (value.GetType() == typeof(DateTime)) {
             var startDate = Convert.ToDateTime(value);
             
-            return ((startDate.Year == CURRENT_YEAR) && ((startDate.Month >= _MinimumMonth) && 
-                (startDate.Month <= _MaximumMonth) &&(startDate.Day <= CURRENT_DATE.Day)));
+            return startDate <= CURRENT_DATE;
         } else {
             return false;
         }

@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace PlannerCRM.Shared.Attributes;
 
 public class MinimumHourlyRateAttribute : ValidationAttribute
@@ -9,6 +7,9 @@ public class MinimumHourlyRateAttribute : ValidationAttribute
     public MinimumHourlyRateAttribute(int minimumHourlyRate) {
         _MinimumHourlyRate = minimumHourlyRate;
     }
+
+    public MinimumHourlyRateAttribute() 
+    { }
 
     public override bool IsValid(object value) {
         if (value is null) return false;
