@@ -19,7 +19,7 @@ public class ApplicationUserRepository
         _roleManager = roleManager;
     }
 
-    public async Task AddAsync(EmployeeAddFormDto dto) {
+    public async Task AddAsync(EmployeeFormDto dto) {
         if (dto.GetType() is null)
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
         
@@ -60,7 +60,7 @@ public class ApplicationUserRepository
             throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
     }
 
-    public async Task EditAsync(EmployeeEditFormDto dto) {
+    public async Task EditAsync(EmployeeFormDto dto) {
         if (dto.GetType() is null)
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
         

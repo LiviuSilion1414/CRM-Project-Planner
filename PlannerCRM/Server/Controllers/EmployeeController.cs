@@ -9,7 +9,7 @@ using PlannerCRM.Server.Services;
 
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class EmployeeController : ControllerBase
@@ -27,7 +27,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task<ActionResult> AddUser(EmployeeAddFormDto dto)
+    public async Task<ActionResult> AddUser(EmployeeFormDto dto)
     {
         try
         {
@@ -64,7 +64,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditUser(EmployeeEditFormDto dto)
+    public async Task<ActionResult> EditUser(EmployeeFormDto dto)
     {
         try
         {
@@ -143,7 +143,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/for/edit/{employeeId}")]
-    public async Task<EmployeeEditFormDto> GetForEditById(int employeeId)
+    public async Task<EmployeeFormDto> GetForEditById(int employeeId)
     {
         try
         {

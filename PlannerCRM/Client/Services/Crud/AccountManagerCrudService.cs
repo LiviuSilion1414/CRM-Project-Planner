@@ -57,7 +57,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddEmployeeAsync(EmployeeAddFormDto dto) {
+    public async Task<HttpResponseMessage> AddEmployeeAsync(EmployeeFormDto dto) {
         try 
         {
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -88,7 +88,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddUserAsync(EmployeeAddFormDto dto) {
+    public async Task<HttpResponseMessage> AddUserAsync(EmployeeFormDto dto) {
         try 
         {
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -119,7 +119,7 @@ public class AccountManagerCrudService
         }
     } 
 
-    public async Task<HttpResponseMessage> UpdateEmployeeAsync(EmployeeEditFormDto dto) {
+    public async Task<HttpResponseMessage> UpdateEmployeeAsync(EmployeeFormDto dto) {
        try
        {
          return await _http.SendAsync(new HttpRequestMessage() {
@@ -150,7 +150,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> UpdateUserAsync(EmployeeEditFormDto dto) {
+    public async Task<HttpResponseMessage> UpdateUserAsync(EmployeeFormDto dto) {
         try
         {
             return await _http.PutAsync("http://localhost:5032/applicationuser/edit/user", 
@@ -198,13 +198,13 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<EmployeeEditFormDto> GetEmployeeForEditAsync(int employeeId) {
+    public async Task<EmployeeFormDto> GetEmployeeForEditAsync(int employeeId) {
         try
         {
             var response = await _http.GetAsync($"employee/get/for/edit/{employeeId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<EmployeeEditFormDto>(jsonObject);
+            return JsonConvert.DeserializeObject<EmployeeFormDto>(jsonObject);
         }
         catch (Exception exc)
         {

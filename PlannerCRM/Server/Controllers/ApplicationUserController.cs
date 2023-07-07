@@ -27,7 +27,7 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add/user")]
-    public async Task<ActionResult> AddUser(EmployeeAddFormDto dto)
+    public async Task<ActionResult> AddUser(EmployeeFormDto dto)
     {
         try
         {
@@ -68,7 +68,7 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit/user")]
-    public async Task<ActionResult> EditUser(EmployeeEditFormDto dto)
+    public async Task<ActionResult> EditUser(EmployeeFormDto dto)
     {
         try
         {

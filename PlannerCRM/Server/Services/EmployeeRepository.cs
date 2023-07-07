@@ -18,7 +18,7 @@ public class EmployeeRepository
         _db = db;
     }
 
-    public async Task AddAsync(EmployeeAddFormDto dto) {
+    public async Task AddAsync(EmployeeFormDto dto) {
         if (dto is null) 
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
@@ -74,7 +74,7 @@ public class EmployeeRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task EditAsync(EmployeeEditFormDto dto) {
+    public async Task EditAsync(EmployeeFormDto dto) {
         if (dto is null)
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
@@ -89,10 +89,10 @@ public class EmployeeRepository
         model.FirstName = dto.FirstName;
         model.LastName = dto.LastName;
         model.FullName = $"{dto.FirstName + dto.LastName}";
-        model.BirthDay = dto.BirthDay ;
-        model.StartDate = dto.StartDate ;
+        model.BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+        model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         model.Email = dto.Email;
-        model.Role = dto.Role ;
+        model.Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         model.NumericCode = dto.NumericCode;
         model.CurrentHourlyRate = dto.CurrentHourlyRate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         model.Salaries = dto.EmployeeSalaries
@@ -165,10 +165,10 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == id);
     }
 
-    public async Task<EmployeeEditFormDto> GetForEditAsync(int id) { 
+    public async Task<EmployeeFormDto> GetForEditAsync(int id) { 
         return await _db.Employees
             .Where(em => !em.IsDeleted)
-            .Select(em => new EmployeeEditFormDto {
+            .Select(em => new EmployeeFormDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
                 LastName = em.LastName,
