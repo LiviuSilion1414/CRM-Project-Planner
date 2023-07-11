@@ -24,8 +24,6 @@ builder.Services.AddScoped<OperationManagerCrudService>();
 builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
 
-builder.Services.AddScoped<ValidatorService>();
-
 builder.Services.AddScoped<Logger<AuthenticationStateService>>();
 builder.Services.AddScoped<Logger<LoginService>>();
 builder.Services.AddScoped<Logger<CurrentUserInfoService>>();

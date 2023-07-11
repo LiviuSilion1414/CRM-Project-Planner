@@ -76,8 +76,7 @@ public partial class AccountManagerAddUserForm
                     .Add(new EmployeeSalaryDto {
                         Id = _Model.Id,
                         EmployeeId = _Model.Id,
-                        Salary = _Model.CurrentHourlyRate 
-                            ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.CurrentHourlyRate)} non può essere null."""),
+                        Salary = _Model.CurrentHourlyRate,
                         StartDate = _Model.StartDateHourlyRate 
                             ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDateHourlyRate)} non può essere null."""),
                         FinishDate = _Model.FinishDateHourlyRate 

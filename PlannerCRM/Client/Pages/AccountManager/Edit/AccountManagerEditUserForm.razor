@@ -11,108 +11,100 @@
             <i style="cursor: pointer;" class="bi bi-x-circle" @onclick="@(() => OnClickModalCancel())"></i>
         </div>
         <div style="width: 100%; height:100%;padding: 10px;">
-        
-        @if (_IsError) {
-            <Feedback Hidden="@_IsError" Message="@_Message"/> 
-        }
-        
         <EditForm EditContext="@_EditContext" OnValidSubmit="@(() => OnClickModalConfirm())">
-            <ValidationSummary Model="@_Model"/>
-            <AnnotationsValidator Model="_Model"/>
-            
-            <div class="form-group">
-                <i class="bi bi-person-circle"></i>
-                <label for="Nome">Nome</label>
-                <InputText class="form-control" @bind-Value="_Model.FirstName"/>
-            </div>
-              @*
-              
-              *@  
-              <ValidationMessage For="@(() => _Model.FirstName)"/>
-            <div class="form-group">
-                <i class="bi bi-person-circle"></i>
-                <label for="Cognome">Cognome</label>
-                <InputText class="form-control" @bind-Value="_Model.LastName"/>
-                <ValidationMessage For="@(() => _Model.LastName)"/>
-            </div>
-            <div class="form-group">
-                <i class="bi bi-envelope-at-fill"></i>
-                <label for="Email">Email</label>
-                <InputText Type="email" class="form-control" @bind-Value="_Model.Email"/>
-                <ValidationMessage For="@(() => _Model.Email)" />
-            </div>
-            <div>
-                <div class="form-group" style="display: inline-block; padding-right: 15px;">
-                    <i class="bi bi-calendar3"></i>
-                    <label for="Data di nascita">Data di nascita</label>
-                    <InputDate class="form-control" @bind-Value="_Model.BirthDay"/>
-                    <ValidationMessage For="@(() => _Model.BirthDay)" />
+            <CascadingValue Value="@Errors" Name="Errors">
+                <CustomDataAnnotationsValidator @ref="_CustomValidator"/>
+                <div class="form-group">
+                    <i class="bi bi-person-circle"></i>
+                    <label for="Nome">Nome</label>
+                    <InputText class="form-control" @bind-Value="_Model.FirstName"/>
+                    <CustomValidationMessage FieldName="@nameof(_Model.FirstName)"/>
                 </div>
-                <div class="form-group" style="display: inline-block;">
-                    <i class="bi bi-calendar3"></i>
-                    <label for="Data d'inizio">Data d'inizio</label>
-                    <InputDate class="form-control" @bind-Value="@_Model.StartDate"/>
-                    <ValidationMessage For="@(() => _Model.StartDate)" />
+                <div class="form-group">
+                    <i class="bi bi-person-circle"></i>
+                    <label for="Cognome">Cognome</label>
+                    <InputText class="form-control" @bind-Value="_Model.LastName"/>
+                    <CustomValidationMessage FieldName="@nameof(_Model.LastName)"/>
                 </div>
-            </div>
-            <div class="form-group">
-                <i class="bi bi-briefcase"></i>
-                <label for="Codice fiscale">Codice fiscale</label>
-                <InputText class="form-control" @bind-Value="_Model.NumericCode"/>
-                <ValidationMessage For="@(() => _Model.NumericCode)" />
-            </div>
-            <div class="form-group">
-                <i class="bi bi-star-fill"></i>
-                <label for="Ruolo">Ruolo</label>
-                    <div class="form-control">
-                        <InputSelect class="dropdown-item" @bind-Value="_Model.Role">
-                            <option disabled selected>-- Scegliere ruolo --</option>
-                            @foreach (var role in Enum.GetValues(typeof(Roles))) {
-                                if ((Roles)role != Roles.ACCOUNT_MANAGER) {
-                                    <option value="@role">@role</option>
-                                }
-                            }
-                        </InputSelect>
-                    </div>
-                    <ValidationMessage For="@(() => _Model.Role)" />
-            </div>
-            <div class="form-group">
-                <i class="bi bi-euro"></i>
-                <label for="Tariffa oraria">Tariffa oraria</label>
-                <InputNumber Step="0.01" class="form-control" @bind-Value="_Model.CurrentHourlyRate"/>
-                <ValidationMessage For="@(() => _Model.CurrentHourlyRate)" />
+                <div class="form-group">
+                    <i class="bi bi-envelope-at-fill"></i>
+                    <label for="Email">Email</label>
+                    <InputText Type="email" class="form-control" @bind-Value="_Model.Email"/>
+                    <CustomValidationMessage FieldName="@nameof(_Model.Email)" />
+                </div>
                 <div>
-                    <div style="padding-right: 15px; display: inline-block;">
-                        <label>Da <i class="bi bi-calnedar3"></i> </label>
-                            <InputDate class="form-control" @bind-Value="_Model.StartDateHourlyRate"/>
+                    <div class="form-group" style="display: inline-block; padding-right: 15px;">
+                        <i class="bi bi-calendar3"></i>
+                        <label for="Data di nascita">Data di nascita</label>
+                        <InputDate class="form-control" @bind-Value="_Model.BirthDay"/>
+                        <CustomValidationMessage FieldName="@nameof(_Model.BirthDay)" />
                     </div>
-                    <ValidationMessage For="(() => _Model.StartDateHourlyRate)"/>
-                    <div style="display: inline-block;">
-                        <label>A <i class="bi bi-calnedar3"></i> </label>
-                        <InputDate class="form-control" @bind-Value="_Model.FinishDateHourlyRate"/>
-                    <ValidationMessage For="(() => _Model.FinishDateHourlyRate)"/>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div style="margin: 0 auto; margin: 10px 5px;">
-                    <i class="bi bi-key-fill"></i>
-                    <label for="Password">Password</label>
-                    <InputText Type=@(_IsCheckboxClicked ? "text" : "password") class="form-control" @bind-Value="_Model.Password"/>
-                    <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
-                    <span style="margin: 10px 5px;">Vedi password</span>
-                    <div style="margin: 20px;">
-                        <span class="strong">
-                            <p>La password deve contenere almeno: </p>
-                            <p>[8 - 16] - Lunghezza caratteri</p>
-                            <p>[A-Z] - Una lettera maiuscola.</p>
-                            <p>[a-z] - Una lettera minuscola.</p>
-                            <p>[0-9] - Un numero</p>
-                        </span>
+                    <div class="form-group" style="display: inline-block;">
+                        <i class="bi bi-calendar3"></i>
+                        <label for="Data d'inizio">Data d'inizio</label>
+                        <InputDate class="form-control" @bind-Value="@_Model.StartDate"/>
+                        <CustomValidationMessage FieldName="@nameof(_Model.StartDate)" />
                     </div>
                 </div>
-                <ValidationMessage For="@(() => _Model.Password)"/>
-            </div>
+                <div class="form-group">
+                    <i class="bi bi-briefcase"></i>
+                    <label for="Codice fiscale">Codice fiscale</label>
+                    <InputText class="form-control" @bind-Value="_Model.NumericCode"/>
+                    <CustomValidationMessage FieldName="@nameof(_Model.NumericCode)" />
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-star-fill"></i>
+                    <label for="Ruolo">Ruolo</label>
+                        <div class="form-control">
+                            <InputSelect class="dropdown-item" @bind-Value="_Model.Role">
+                                <option disabled selected>-- Scegliere ruolo --</option>
+                                @foreach (var role in Enum.GetValues(typeof(Roles))) {
+                                    if ((Roles)role != Roles.ACCOUNT_MANAGER) {
+                                        <option value="@role">@role</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                        <CustomValidationMessage FieldName="@nameof(_Model.Role)" />
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-euro"></i>
+                    <label for="Tariffa oraria">Tariffa oraria</label>
+                    <InputNumber Step="0.01" class="form-control" @bind-Value="_Model.CurrentHourlyRate"/>
+                    <CustomValidationMessage FieldName="@nameof(_Model.CurrentHourlyRate)" />
+                    <div>
+                        <div style="padding-right: 15px; display: inline-block;">
+                            <label>Da <i class="bi bi-calnedar3"></i> </label>
+                                <InputDate class="form-control" @bind-Value="_Model.StartDateHourlyRate"/>
+                        </div>
+                        <CustomValidationMessage FieldName="(nameof(_Model.StartDateHourlyRate"/>
+                        <div style="display: inline-block;">
+                            <label>A <i class="bi bi-calnedar3"></i> </label>
+                            <InputDate class="form-control" @bind-Value="_Model.FinishDateHourlyRate"/>
+                        <CustomValidationMessage FieldName="@nameof(_Model.FinishDateHourlyRate)"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div style="margin: 0 auto; margin: 10px 5px;">
+                        <i class="bi bi-key-fill"></i>
+                        <label for="Password">Password</label>
+                        <InputText Type=@(_IsCheckboxClicked ? "text" : "password") class="form-control" @bind-Value="_Model.Password"/>
+                        <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
+                        <span style="margin: 10px 5px;">Vedi password</span>
+                        <div style="margin: 20px;">
+                            <span class="strong">
+                                <p>La password deve contenere almeno: </p>
+                                <p>[8 - 16] - Lunghezza caratteri</p>
+                                <p>[A-Z] - Una lettera maiuscola.</p>
+                                <p>[a-z] - Una lettera minuscola.</p>
+                                <p>[0-9] - Un numero</p>
+                            </span>
+                        </div>
+                    </div>
+                    <CustomValidationMessage FieldName="@nameof(_Model.Password)"/>
+                </div>
+            </CascadingValue>
             <div class="modal-footer" style="justify-content: space-between; padding: 10px 0; width: 100%;">
                 <div style="float: left;">
                     <span id="btn-link" style="text-decoration: none; color: blue; cursor: pointer;"

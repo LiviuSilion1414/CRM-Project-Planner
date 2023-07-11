@@ -1,28 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Microsoft.AspNetCore.Components.Forms;
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.Workorder.Forms;
-using PlannerCRM.Shared.Models;
+using Microsoft.VisualBasic;
 
 namespace PlannerCRM.Client.Services;
 
-public class ValidatorService
+public static class ValidatorService
 {
-    private object _Model { get; set; }
+    public static bool ValidateModel(object model, out Dictionary<string, List<string>> errors) {
+        errors = new();
 
-    public ValidatorService(object Model) {
-        _Model = Model;
-    }
+        if (model is null) return false;
 
-    public ValidatorService()
-    { }
+        var memberNames = new List<string>();
 
-    public bool Validate(object Model, out List<ValidationResult> validationResults) {
-        validationResults = new();
-
-        var properties = Model 
+        var properties = model 
             .GetType()
             .GetProperties()
             .Select(prop => prop)
@@ -31,15 +22,36 @@ public class ValidatorService
         foreach (var property in properties) {
             var validationAttributes = property.GetCustomAttributes<ValidationAttribute>();
             foreach (var attribute in validationAttributes) {
-                var propertyValue = property.GetValue(Model) ?? false;
+                var propertyValue = property.GetValue(model);
+
                 var isValid = attribute.IsValid(propertyValue);
-                var validationResult = new ValidationResult(attribute.ErrorMessage);
+                var validationContext = new ValidationContext(property);
+                var memberName = validationContext.MemberName = property.Name;
                 
                 if (!isValid) {
-                    validationResults.Add(validationResult);
+                    memberNames.Add(validationContext.MemberName);
+                    errors.Add(memberName, new() { attribute.ErrorMessage });
                 } 
             }               
         }
-        return !validationResults.Any();
+        return !errors.Any();
+    }
+
+    public static bool ValidateProperty(object model, PropertyInfo property, out Dictionary<string, List<string>> errors) {
+        errors = new();
+
+        var propertyName = property.Name;
+        System.Console.WriteLine("Property name: {0}", propertyName);
+
+        var validationAttributes = property.GetCustomAttributes<ValidationAttribute>();
+        var propertyValue = property.GetValue(model, null);
+        
+        foreach(var attribute in validationAttributes) {
+            if (!attribute.IsValid(propertyValue)) {
+                errors.Add(propertyName, new() { attribute.ErrorMessage });
+            }
+        }
+        System.Console.WriteLine("is valid: {0}", !errors.Any());
+        return !errors.Any();
     }
 }

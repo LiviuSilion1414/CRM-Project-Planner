@@ -7,6 +7,7 @@ using PlannerCRM.Shared.CustomExceptions;
 using PlannerCRM.Server.DataAccess;
 using PlannerCRM.Shared.Constants;
 using PlannerCRM.Server.Models;
+using System.Diagnostics;
 
 namespace PlannerCRM.Server.Services;
 
@@ -43,7 +44,7 @@ public class EmployeeRepository
             Password = dto.Password,
             NumericCode = dto.NumericCode,
             Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-            CurrentHourlyRate = dto.CurrentHourlyRate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+            CurrentHourlyRate = dto.CurrentHourlyRate,
             Salaries = dto.EmployeeSalaries
                 .Select(ems =>
                     new EmployeeSalary {
@@ -94,18 +95,26 @@ public class EmployeeRepository
         model.Email = dto.Email;
         model.Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         model.NumericCode = dto.NumericCode;
-        model.CurrentHourlyRate = dto.CurrentHourlyRate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        model.Salaries = dto.EmployeeSalaries
-            .Where(ems => _db.Employees
-                .Any(em => em.Id == ems.EmployeeId))
-            .Select(ems => 
-                new EmployeeSalary {
-                    EmployeeId = dto.Id,
-                    StartDate = ems.StartDate,
-                    FinishDate = ems.FinishDate,
-                    Salary = ems.Salary
-                }
-            ).ToList();
+        model.CurrentHourlyRate = dto.CurrentHourlyRate;
+        
+        var isContainedModifiedHourlyRate = await _db.Employees
+            .AnyAsync(em => em.Id != dto.Id && 
+                em.Salaries
+                    .Any(s => s.Salary != dto.CurrentHourlyRate));
+        
+        if (!isContainedModifiedHourlyRate) {
+            model.Salaries = dto.EmployeeSalaries
+                .Where(ems => _db.Employees
+                    .Any(em => em.Id == ems.EmployeeId))
+                .Select(ems => 
+                    new EmployeeSalary {
+                        EmployeeId = dto.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.FinishDate,
+                        Salary = ems.Salary
+                    }
+                ).ToList();
+        }    
         
         _db.Employees.Update(model);
         

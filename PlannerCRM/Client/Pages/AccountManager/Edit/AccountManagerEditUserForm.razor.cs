@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using PlannerCRM.Client.Pages.ValidatorComponent;
 using PlannerCRM.Client.Services;
 using PlannerCRM.Client.Services.Crud;
 using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
@@ -25,9 +26,9 @@ public partial class AccountManagerEditUserForm
     [Inject] private AccountManagerCrudService AccountManagerService { get; set;}
     [Inject] private NavigationLockService NavLockService { get; set; }
     [Inject] private NavigationManager NavManager { get; set; }
-    [Inject] private ValidatorService CustomValidatorService { get; set; }
-    ValidationMessage<string> ErrorMessage { get; set; }
-    List<ValidationMessage<string>> ErrorMessages { get; set; }
+
+    private Dictionary<string, List<string>> Errors;
+    private CustomDataAnnotationsValidator _CustomValidator { get; set; }
 
     private EmployeeFormDto _Model;
     private EditContext _EditContext { get; set; }
@@ -64,21 +65,25 @@ public partial class AccountManagerEditUserForm
 
     public async void OnClickModalConfirm() {
         try {
-            var r = CustomValidatorService.Validate(_Model, out var validationResults);
-            var isValid = !validationResults.Any();
+            _CustomValidator.ClearErrors();
+        
+            var isValid = ValidatorService.ValidateModel(_Model, out Errors);
+
             if (isValid) {
-                System.Console.WriteLine("is valid");
-                _Model.EmployeeSalaries = new();
-                _Model.EmployeeSalaries
-                    .Add(new EmployeeSalaryDto {
+                Console.WriteLine("is valid");
+                _Model.EmployeeSalaries = new()
+                {
+                    new EmployeeSalaryDto
+                    {
                         Id = _Model.Id,
                         EmployeeId = _Model.Id,
-                        Salary = _Model.CurrentHourlyRate ?? throw new NullReferenceException(NULL_PROP),
-                        StartDate = _Model.StartDateHourlyRate 
+                        Salary = _Model.CurrentHourlyRate,
+                        StartDate = _Model.StartDateHourlyRate
                             ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.StartDateHourlyRate)} non può essere null."""),
-                        FinishDate = _Model.FinishDateHourlyRate 
+                        FinishDate = _Model.FinishDateHourlyRate
                             ?? throw new NullReferenceException($"""Proprietà {nameof(_Model.FinishDateHourlyRate)} non può essere null."""),
-                    });
+                    }
+                };
                 var responseUser = await AccountManagerService.UpdateUserAsync(_Model);
                 var responseEmployee = await AccountManagerService.UpdateEmployeeAsync(_Model);
 
@@ -91,18 +96,17 @@ public partial class AccountManagerEditUserForm
                 }
                 _IsError = true;
             } else {
-                OnClickInvalidSubmit();
-                _IsError = false;
+                _CustomValidator.DisplayErrors(Errors);
             }
         } catch (NullReferenceException nullRefExc) {
             //_logger.Log(LogLevel.Error, nullRefExc.Message);
-            System.Console.WriteLine("hit: {0}, innerException: {1}", nullRefExc.Message, nullRefExc.InnerException);
-            System.Console.WriteLine("err: {0}", nullRefExc.StackTrace, nullRefExc.Source);
+            Console.WriteLine("hit: {0}, innerException: {1}", nullRefExc.Message, nullRefExc.InnerException);
+            Console.WriteLine("err: {0}", nullRefExc.StackTrace, nullRefExc.Source);
             _Message = nullRefExc.Message;
             _IsError = true;
             
         } catch (Exception exc) {
-            System.Console.WriteLine("Exception: {0}, Name: {1}", exc.StackTrace, exc.GetType().ToString());
+            Console.WriteLine("Exception: {0}, Name: {1}", exc.StackTrace, exc.GetType().ToString());
            // _logger.LogError(new EventId(), exc, exc.Message, new string[] { exc.Message });
             _Message = exc.Message;
             _IsError = true;

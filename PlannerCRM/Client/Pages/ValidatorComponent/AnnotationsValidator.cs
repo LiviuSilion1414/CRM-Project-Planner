@@ -1,18 +1,18 @@
-using System.ComponentModel.DataAnnotations;
+/*using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using PlannerCRM.Client.Services;
 
-namespace PlannerCRM.Client.Pages.ObjectValidator;
+namespace PlannerCRM.Client.Pages.ValidatorComponent;
 
 public class AnnotationsValidator : ComponentBase, IDisposable
 {
     private IDisposable _subscriptions;
 
-    [Parameter] public object Model { get; set; }
     [CascadingParameter] EditContext CurrentEditContext { get; set; }
+    [Parameter] public object Model { get; set; }
+    
     [Inject] private IServiceProvider _ServiceProvider { get; set; }
-    [Inject] private ValidatorService _ValidatorService { get; set; }
     
     private ValidationMessageStore _messages { get; set; }
 
@@ -22,11 +22,12 @@ public class AnnotationsValidator : ComponentBase, IDisposable
         if (CurrentEditContext == null)
         {
             throw new InvalidOperationException($"{nameof(DataAnnotationsValidator)} requires a cascading " +
-                $"parameter of type {nameof(EditContext)}. For example, you can use {nameof(DataAnnotationsValidator)} " +
+                $"parameter of type {nameof(EditContext)}." +
+                $"For example, you can use {nameof(DataAnnotationsValidator)} " +
                 $"inside an EditForm.");
         }
+
         CurrentEditContext = new(Model);
-        _ValidatorService = new(Model);
 
         _messages= new(CurrentEditContext);
         
@@ -35,66 +36,44 @@ public class AnnotationsValidator : ComponentBase, IDisposable
 
         _subscriptions = CurrentEditContext.EnableDataAnnotationsValidation(_ServiceProvider);
     }
-    // working pretty good, except by it's not showing errors...
+
+    public void DisplayErrors(Dictionary<string, List<string>> errors)
+    {
+        foreach (var err in errors)
+        {
+            _messages.Add(CurrentEditContext.Field(err.Key), err.Value);
+        }        
+        CurrentEditContext.NotifyValidationStateChanged();
+    }
+
+
     private void OnFieldChanged(object? sender, FieldChangedEventArgs eventArgs)
     {
         var fieldIdentifier = eventArgs.FieldIdentifier;
-        if (_ValidatorService.Validate(fieldIdentifier, out var validationResults)) { //or Model
-            _messages.Clear(fieldIdentifier);
-            
-        } else {
-            foreach (var result in ValidatorService.ValidationErrors) {
-                _messages.Add(new FieldIdentifier(Model, result.PropertyName), result.ErrorMessage);
+        if (!ValidatorService.ValidateProperty(fieldIdentifier.FieldName, Model, out var validationResults)) { 
+            foreach (var result in validationResults) {
+                _messages.Add(new FieldIdentifier(Model, eventArgs.FieldIdentifier.FieldName), result.ErrorMessage);
+                CurrentEditContext.GetValidationMessages(fieldIdentifier);
             }
+        } else {
+            _messages.Clear(fieldIdentifier);
         }
     
         CurrentEditContext.NotifyValidationStateChanged();
     }
-    //private void OnFieldChanged(object? sender, FieldChangedEventArgs eventArgs)
-    //{
-    //    var fieldIdentifier = eventArgs.FieldIdentifier;
-    //    if (_ValidatorService.Validate(fieldIdentifier, out var validationResults))
-    //    {
-    //        _messages.Clear(fieldIdentifier);
-    //        foreach (var result in validationResults) {
-    //            _messages.Add(fieldIdentifier, result.ErrorMessage!);
-    //        }
-    //
-    //        CurrentEditContext.NotifyValidationStateChanged();
-    //    }
-    //}
 
-    // working pretty good, except by it's not showing errors...
-    //private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
-    //{
-    //    if (ValidatorService.Validate(Model, out List<ValidationResult> validationResults)) {
-    //        _messages.Clear();
-    //    }
-    //
-    //    foreach (var validationResult in ValidatorService.ValidationErrors) {
-    //        _messages.Add(CurrentEditContext.Field(validationResult.PropertyName), validationResult.ErrorMessage);
-    //    }
-    //
-    //    CurrentEditContext.NotifyValidationStateChanged();
-    //}
-
-    ///<summary>
-    /// Improve event handler for validation event.
-    ///
-    ///<summary/>
     private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
     {
-        _ValidatorService.Validate(Model, out var validationResults);
+        ValidatorService.ValidateModel(Model, out var validationResults);
 
-        _messages.Clear();
         foreach (var result in validationResults)
         {
-            if (result == null) {
+            if (result.Key == null) {
                 continue;
             }
 
             var hasMemberNames = false;
-            foreach (var memberName in result.MemberNames) {
+            foreach (var memberName in result.Value) {
                 hasMemberNames = true;
                 _messages.Add(CurrentEditContext.Field(memberName), result.ErrorMessage);
                 System.Console.WriteLine("membername {0}", memberName);
@@ -120,3 +99,4 @@ public class AnnotationsValidator : ComponentBase, IDisposable
         Dispose(disposing: true);
     }
 }
+*/
