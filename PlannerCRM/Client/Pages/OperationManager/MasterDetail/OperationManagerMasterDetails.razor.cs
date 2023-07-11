@@ -16,7 +16,7 @@ public partial class OperationManagerMasterDetails
     [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
 
     private WorkOrderViewDto _WorkOrder = new();
-    private List<ActivityEditFormDto> _Activities = new();
+    private List<ActivityFormDto> _Activities = new();
     public bool _IsEditActivityClicked { get; set; }
     public bool _IsDeleteActivityClicked { get; set; }
     public int _ActivityId { get; set; }

@@ -16,7 +16,7 @@ public class WorkOrderRepository
 		_db = db;
 	}
 
-	public async Task AddAsync(WorkOrderAddFormDto dto) {
+	public async Task AddAsync(WorkOrderFormDto dto) {
 		if (dto.GetType() is null) 
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
@@ -63,7 +63,7 @@ public class WorkOrderRepository
             throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 	}
 
-	public async Task EditAsync(WorkOrderEditFormDto dto) {
+	public async Task EditAsync(WorkOrderFormDto dto) {
 		if (dto is null)
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
         
@@ -81,8 +81,8 @@ public class WorkOrderRepository
 
 		model.Id = dto.Id;
 		model.Name = dto.Name;
-		model.StartDate = dto.StartDate;
-		model.FinishDate = dto.FinishDate;
+		model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+		model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
 
 		var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0)
@@ -113,10 +113,10 @@ public class WorkOrderRepository
 			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
 	
-	public async Task<WorkOrderEditFormDto> GetForEditAsync(int id) {
+	public async Task<WorkOrderFormDto> GetForEditAsync(int id) {
 		return await _db.WorkOrders
 			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
-			.Select(wo => new WorkOrderEditFormDto {
+			.Select(wo => new WorkOrderFormDto {
 				Id = wo.Id,
 				Name = wo.Name,
 				StartDate = wo.StartDate,

@@ -28,7 +28,7 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddActivity(ActivityAddFormDto dto) 
+    public async Task<ActionResult> AddActivity(ActivityFormDto dto) 
     {
         try
         {
@@ -65,7 +65,7 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditActivity(ActivityEditFormDto dto)
+    public async Task<ActionResult> EditActivity(ActivityFormDto dto)
     {
         try
         {
@@ -143,7 +143,7 @@ public class ActivityController : ControllerBase
 
     [Authorize]
     [HttpGet("get/for/edit/{activityId}")]
-    public async Task<ActivityEditFormDto> GetForEdit(int activityId)
+    public async Task<ActivityFormDto> GetForEdit(int activityId)
     {
         try
         {
@@ -152,7 +152,7 @@ public class ActivityController : ControllerBase
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
-            return new ActivityEditFormDto();
+            return new ActivityFormDto();
         }
     }
 
@@ -173,7 +173,7 @@ public class ActivityController : ControllerBase
 
     [Authorize]
     [HttpGet("get/activity/per/workorder/{workOrderId}")]
-    public async Task<List<ActivityEditFormDto>> GetActivitiesPerWorkorderAsync(int workOrderId)
+    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkorderAsync(int workOrderId)
     {
         try
         {
@@ -182,13 +182,13 @@ public class ActivityController : ControllerBase
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
-            return new List<ActivityEditFormDto>();
+            return new List<ActivityFormDto>();
         }
     }
 
     [Authorize]
     [HttpGet("get/activity/per/employee/{employeeId}")]
-    public async Task<List<ActivityEditFormDto>> GetActivitiesPerEmployee(int employeeId)
+    public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId)
     {
         try
         {
@@ -197,7 +197,7 @@ public class ActivityController : ControllerBase
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
-            return new List<ActivityEditFormDto>();
+            return new List<ActivityFormDto>();
         }
     }
 

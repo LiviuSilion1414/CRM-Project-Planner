@@ -6,7 +6,7 @@ using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 
-public partial class ActivityAddFormDto
+public partial class ActivityFormDto
 {
     public int Id { get; set; }
     
@@ -22,7 +22,8 @@ public partial class ActivityAddFormDto
     [Required(ErrorMessage = """ Campo "Commessa" richiesto. """)]
     public int? WorkOrderId { get; set; }
 
-
+    public HashSet<EmployeeActivityDto> EmployeeActivity { get; set; }
+    
     [CannotBeEmpty(ErrorMessage = """ Campo "Dipendenti selezionati" richiesto. """)]
-    public List<EmployeeActivityDto> EmployeeActivity { get; set; }
+    public HashSet<EmployeeActivityDto> ViewEmployeeActivity { get; set; }
 } 

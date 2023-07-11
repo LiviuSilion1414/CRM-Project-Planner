@@ -5,6 +5,7 @@ using PlannerCRM.Client.Services.Crud;
 using PlannerCRM.Shared.Models;
 using PlannerCRM.Shared.DTOs.Workorder.Forms;
 using Microsoft.AspNetCore.Components.Forms;
+using PlannerCRM.Client.Pages.ValidatorComponent;
 
 namespace PlannerCRM.Client.Pages.OperationManager.Edit.WorkOrder;
 
@@ -17,7 +18,10 @@ public partial class OperationManagerEditWorkOrder
     [Inject] private NavigationLockService NavLockService { get; set; } 
     [Inject] private NavigationManager NavManager { get; set; }
 
-    private WorkOrderEditFormDto _Model = new();
+    private CustomDataAnnotationsValidator _CustomValidator { get; set; }
+    private Dictionary<string, List<string>> Errors;
+
+    private WorkOrderFormDto _Model = new();
     private EditContext _EditContext { get; set; }
     private bool _IsError { get; set; }
     private string _Message { get; set; }
@@ -40,7 +44,9 @@ public partial class OperationManagerEditWorkOrder
 
     private async Task OnClickModalConfirm() {
         try {
-            if (_EditContext.IsModified() && _EditContext.Validate()) {
+            var isValid = ValidatorService.ValidateModel(_Model, out Errors);
+
+            if (isValid) {
                 var response = await OperationManagerService.EditWorkOrderAsync(_Model);
 
                 if (!response.IsSuccessStatusCode) {
@@ -51,8 +57,7 @@ public partial class OperationManagerEditWorkOrder
                     NavManager.NavigateTo(_CurrentPage, true);
                 }
             } else {
-                _IsCancelClicked = !_IsCancelClicked;
-                NavManager.NavigateTo(_CurrentPage, true);
+                _CustomValidator.DisplayErrors(Errors);
             }
         } catch (Exception exc) {
             _IsError = true;

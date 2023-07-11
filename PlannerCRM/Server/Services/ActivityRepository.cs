@@ -18,7 +18,7 @@ public class ActivityRepository
         _db = db;
     }
 
-    public async Task AddAsync(ActivityAddFormDto dto) {
+    public async Task AddAsync(ActivityFormDto dto) {
         if (dto.GetType() is null) 
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
@@ -83,7 +83,7 @@ public class ActivityRepository
             throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
     }
 
-    public async Task EditAsync(ActivityEditFormDto dto) {
+    public async Task EditAsync(ActivityFormDto dto) {
         if (dto is null)
             throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
@@ -98,9 +98,9 @@ public class ActivityRepository
 
         model.Id = dto.Id;
         model.Name = dto.Name;
-        model.StartDate = dto.StartDate;
-        model.FinishDate = dto.FinishDate;
-        model.WorkOrderId = dto.WorkOrderId;
+        model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+        model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+        model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         model.EmployeeActivity = dto.EmployeeActivity
             .Where(eaDto => _db.EmployeeActivity
                 .Any(ea => eaDto.EmployeeId != ea.EmployeeId))
@@ -116,9 +116,9 @@ public class ActivityRepository
         var activity = workOrder.Activities.Find(ac => ac.Id == dto.Id);
         activity.Id = dto.Id;
         activity.Name = dto.Name;
-        activity.StartDate = dto.StartDate;
-        activity.FinishDate = dto.FinishDate;
-        activity.WorkOrderId = dto.WorkOrderId;
+        activity.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+        activity.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+        activity.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
         activity.EmployeeActivity = dto.EmployeeActivity
             .Select(ea => new EmployeeActivity {
                 Id = ea.Id,
@@ -180,9 +180,9 @@ public class ActivityRepository
             .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
-    public async Task<ActivityEditFormDto> GetForEditAsync(int activityId) {
+    public async Task<ActivityFormDto> GetForEditAsync(int activityId) {
         return await _db.Activities
-            .Select(ac => new ActivityEditFormDto {
+            .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
@@ -294,9 +294,9 @@ public class ActivityRepository
             .SingleOrDefaultAsync(ac => ac.Id == id);
     }
 
-    public async Task<List<ActivityEditFormDto>> GetActivityByEmployeeId(int employeeId) {
+    public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId) {
          return await _db.Activities
-            .Select(ac => new ActivityEditFormDto {
+            .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
@@ -342,10 +342,10 @@ public class ActivityRepository
             .ToListAsync();
     }
 
-    public async Task<List<ActivityEditFormDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
+    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
         return await _db.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
-            .Select(ac => new ActivityEditFormDto {
+            .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,

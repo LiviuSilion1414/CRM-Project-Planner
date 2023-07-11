@@ -28,7 +28,7 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task<ActionResult> AddWorkorder(WorkOrderAddFormDto dto)
+    public async Task<ActionResult> AddWorkorder(WorkOrderFormDto dto)
     {
         try
         {
@@ -65,7 +65,7 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditWorkorder(WorkOrderEditFormDto dto)
+    public async Task<ActionResult> EditWorkorder(WorkOrderFormDto dto)
     {
         try
         {
@@ -143,7 +143,7 @@ public class WorkOrderController : ControllerBase
 
     [Authorize]
     [HttpGet("get/for/edit/{workOrderId}")]
-    public async Task<WorkOrderEditFormDto> GetForEdit(int workOrderId)
+    public async Task<WorkOrderFormDto> GetForEdit(int workOrderId)
     {
         try
         {
@@ -152,7 +152,7 @@ public class WorkOrderController : ControllerBase
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
-            return new WorkOrderEditFormDto();
+            return new WorkOrderFormDto();
         }
     }
 

@@ -92,7 +92,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddWorkOrderAsync(WorkOrderAddFormDto dto) {
+    public async Task<HttpResponseMessage> AddWorkOrderAsync(WorkOrderFormDto dto) {
         try
         {
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -123,7 +123,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> EditWorkOrderAsync(WorkOrderEditFormDto dto) {
+    public async Task<HttpResponseMessage> EditWorkOrderAsync(WorkOrderFormDto dto) {
         try {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Put,
@@ -153,7 +153,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddActivityAsync(ActivityAddFormDto dto) {
+    public async Task<HttpResponseMessage> AddActivityAsync(ActivityFormDto dto) {
         try 
         { 
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -184,7 +184,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> EditActivityAsync(ActivityEditFormDto dto) {
+    public async Task<HttpResponseMessage> EditActivityAsync(ActivityFormDto dto) {
         try 
         {
             return await _http.SendAsync(new HttpRequestMessage() {
@@ -249,18 +249,18 @@ public class OperationManagerCrudService
         }
     }
     
-    public async Task<ActivityEditFormDto> GetActivityForEditAsync(int activityId) {
+    public async Task<ActivityFormDto> GetActivityForEditAsync(int activityId) {
         try
         {
             var response = await _http.GetAsync($"activity/get/for/edit/{activityId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<ActivityEditFormDto>(jsonObject);
+            return JsonConvert.DeserializeObject<ActivityFormDto>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new ActivityEditFormDto();
+            return new ActivityFormDto();
         }
     }
 
@@ -294,18 +294,18 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<WorkOrderEditFormDto> GetWorkOrderForEditAsync(int workOrderId) {
+    public async Task<WorkOrderFormDto> GetWorkOrderForEditAsync(int workOrderId) {
         try
         {
             var response = await _http.GetAsync($"workorder/get/for/edit/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<WorkOrderEditFormDto>(jsonObject);
+            return JsonConvert.DeserializeObject<WorkOrderFormDto>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new WorkOrderEditFormDto();
+            return new WorkOrderFormDto();
         }
     }
 
@@ -324,18 +324,18 @@ public class OperationManagerCrudService
        }
     }
 
-    public async Task<List<ActivityEditFormDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
+    public async Task<List<ActivityFormDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
         try
         {
             var response = await _http.GetAsync($"activity/get/activity/per/workorder/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<List<ActivityEditFormDto>>(jsonObject);
+            return JsonConvert.DeserializeObject<List<ActivityFormDto>>(jsonObject);
         }
         catch (Exception exc)
         {
             _logger.Log(LogLevel.Error, exc.Message);
-            return new List<ActivityEditFormDto>();
+            return new List<ActivityFormDto>();
         }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using PlannerCRM.Client.Pages.ValidatorComponent;
 using PlannerCRM.Client.Services;
 using PlannerCRM.Client.Services.Crud;
 using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
@@ -15,9 +16,9 @@ namespace PlannerCRM.Client.Pages.OperationManager.Edit.Activity;
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 public partial class OperationManagerEditActivity
 {
-    private readonly Logger<ActivityEditFormDto> _logger;
+    private readonly Logger<ActivityFormDto> _logger;
 
-    public OperationManagerEditActivity(Logger<ActivityEditFormDto> logger) {
+    public OperationManagerEditActivity(Logger<ActivityFormDto> logger) {
         _logger = logger;
     }
 
@@ -31,7 +32,10 @@ public partial class OperationManagerEditActivity
     [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] private NavigationLockService NavLockService { get; set; }
 
-    private ActivityEditFormDto _Model = new();
+    private CustomDataAnnotationsValidator _CustomValidator { get; set; }
+    private Dictionary<string, List<string>> Errors;
+
+    private ActivityFormDto _Model = new();
     private EditContext _EditContext { get; set; }
     private ActivitySelectHelperDto _SelectModel = new();
     private List<WorkOrderSelectDto> _WorkOrders = new();
@@ -104,9 +108,9 @@ public partial class OperationManagerEditActivity
                     Activity = new ActivitySelectDto {
                         Id = _Model.Id,
                         Name = _Model.Name,
-                        StartDate = _Model.StartDate,
-                        FinishDate = _Model.FinishDate,
-                        WorkOrderId = _Model.WorkOrderId, 
+                        StartDate = _Model.StartDate ?? throw new NullReferenceException(NULL_PROP),
+                        FinishDate = _Model.FinishDate ?? throw new NullReferenceException(NULL_PROP),
+                        WorkOrderId = _Model.WorkOrderId ?? throw new NullReferenceException(NULL_PROP), 
                     }
                 };
                 _Model.EmployeeActivity.Add(item);
@@ -139,8 +143,9 @@ public partial class OperationManagerEditActivity
     public async Task OnClickModalConfirm() {
         try
         {
-            if (_EditContext.IsModified() && _EditContext.Validate()) {
-
+            var isValid = ValidatorService.ValidateModel(_Model, out Errors);
+            if (isValid) {
+                Console.WriteLine("is valid");
                 var response = await OperationManagerService.EditActivityAsync(_Model);
                 if (!response.IsSuccessStatusCode) {
                     _IsError = true;
@@ -150,8 +155,7 @@ public partial class OperationManagerEditActivity
                     NavManager.NavigateTo(_CurrentPage, true);
                 }
             } else {
-                _IsCancelClicked = !_IsCancelClicked;
-                NavManager.NavigateTo(_CurrentPage);
+                _CustomValidator.DisplayErrors(Errors);
             }
         } catch (Exception exc) {
             _IsError = true;

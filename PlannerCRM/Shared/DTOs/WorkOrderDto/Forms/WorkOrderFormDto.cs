@@ -4,7 +4,7 @@ using static PlannerCRM.Shared.Constants.ConstantValues;
 
 namespace PlannerCRM.Shared.DTOs.Workorder.Forms;
 
-public partial class WorkOrderAddFormDto
+public partial class WorkOrderFormDto
 {
     public int Id { get; set; }
     
