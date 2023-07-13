@@ -1,9 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Server.DataAccess;
-using PlannerCRM.Server.Services;
-using Microsoft.AspNetCore.Identity;
-using PlannerCRM.Shared.Models;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -57,6 +51,8 @@ builder.Services.AddScoped<Logger<ActivityRepository>>();
 builder.Services.AddScoped<Logger<WorkTimeRecordRepository>>();
 builder.Services.AddScoped<Logger<CalculateService>>();
 builder.Services.AddScoped<Logger<ApplicationUserRepository>>();
+
+builder.Services.AddScoped<Logger<DtoValidatorService>>();
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
