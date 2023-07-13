@@ -49,7 +49,7 @@ public partial class OperationManagerEditActivity
     private bool _EmployeeHasElements { get; set; } 
     private bool _HideEmployeesList { get; set; }
     private bool _IsCancelClicked { get; set; }
-    private bool _IsDisabled { get => true; }
+    private bool _IS_DISABLED { get => true; }
     
     protected override async Task OnInitializedAsync() {
         _Model = await OperationManagerService.GetActivityForEditAsync(ActivityId);
