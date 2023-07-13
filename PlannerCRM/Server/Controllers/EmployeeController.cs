@@ -1,15 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Shared.Feedbacks;
-using PlannerCRM.Server.Services;
-
 namespace PlannerCRM.Server.Controllers;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class EmployeeController : ControllerBase

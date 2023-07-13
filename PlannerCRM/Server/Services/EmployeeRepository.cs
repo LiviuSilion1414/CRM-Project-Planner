@@ -1,126 +1,129 @@
-using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
-using PlannerCRM.Shared.DTOs.ActivityDto.Views;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Server.DataAccess;
-using PlannerCRM.Shared.Constants;
-using PlannerCRM.Server.Models;
-using System.Diagnostics;
-
 namespace PlannerCRM.Server.Services;
 
 public class EmployeeRepository
 {
     private readonly AppDbContext _db;
+    private readonly DtoValidatorService _validator;
+    private readonly Logger<DtoValidatorService> _logger;
 
-    public EmployeeRepository(AppDbContext db) {
+    public EmployeeRepository(AppDbContext db, 
+        DtoValidatorService validator, 
+        Logger<DtoValidatorService> logger) 
+    {
         _db = db;
+        _validator = validator;
+        _logger = logger;
     }
 
     public async Task AddAsync(EmployeeFormDto dto) {
-        if (dto is null) 
-            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
+        try {
+            _validator.ValidateEmployee(dto, OperationType.ADD, out var isValid);
+            
+            if (isValid) {
+                await _db.Employees.AddAsync(new Employee {
+                    Id = dto.Id,
+                    Email = dto.Email,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    FullName = $"{dto.FirstName} {dto.LastName}",
+                    BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                    StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                    Password = dto.Password,
+                    NumericCode = dto.NumericCode,
+                    Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                    CurrentHourlyRate = dto.CurrentHourlyRate,
+                    Salaries = dto.EmployeeSalaries
+                        .Select(ems =>
+                            new EmployeeSalary {
+                                EmployeeId = ems.EmployeeId,
+                                StartDate = ems.StartDate,
+                                FinishDate = ems.FinishDate,
+                                Salary = ems.Salary
+                            })
+                        .ToList()
+                });
+                
+                var rowsAffected = await _db.SaveChangesAsync();
+                if (rowsAffected == 0)
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
+            }
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-        var HasPropertiesNull = dto.GetType().GetProperties()
-            .Any(prop => prop.GetValue(dto) is null);
-        if (HasPropertiesNull)
-            throw new ArgumentNullException(ExceptionsMessages.NULL_PARAM);
-        
-        var isAlreadyPresent = await _db.Employees
-            .SingleOrDefaultAsync((Employee em) => EF.Functions.ILike(em.Email, $"%{dto.Email}%"));
-        if (isAlreadyPresent != null)
-            throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
-
-        await _db.Employees.AddAsync(new Employee {
-            Id = dto.Id,
-            Email = dto.Email,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            FullName = $"{dto.FirstName} {dto.LastName}",
-            BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-            StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-            Password = dto.Password,
-            NumericCode = dto.NumericCode,
-            Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-            CurrentHourlyRate = dto.CurrentHourlyRate,
-            Salaries = dto.EmployeeSalaries
-                .Select(ems =>
-                    new EmployeeSalary {
-                        EmployeeId = ems.EmployeeId,
-                        StartDate = ems.StartDate,
-                        FinishDate = ems.FinishDate,
-                        Salary = ems.Salary
-                    })
-                .ToList()
-        });
-        
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0)
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
+            throw;
+        }
     }
 
     public async Task DeleteAsync(int id) {
-        var employeeDelete = await _db.Employees
-            .SingleOrDefaultAsync(em => em.Id == id);
+        try {
+            var employeeDelete = await _validator.ValidateDeleteEmployee(id: id);
 
-        if (employeeDelete is null)
-            throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
-        
-        employeeDelete.IsDeleted = true;
+            employeeDelete.IsDeleted = true;
 
-        _db.Update(employeeDelete);
+            _db.Update(employeeDelete);
 
-        await _db.SaveChangesAsync();
+            var rowsAffected = await _db.SaveChangesAsync();
+                if (rowsAffected == 0)
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            throw;
+        }
     }
 
     public async Task EditAsync(EmployeeFormDto dto) {
-        if (dto is null)
-            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
-
-        var model = await _db.Employees
-            .Where(em => !em.IsDeleted)
-            .SingleOrDefaultAsync(em => em.Id == dto.Id);
-        
-        if (model is null)
-            throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
-
-        model.Id = dto.Id;
-        model.FirstName = dto.FirstName;
-        model.LastName = dto.LastName;
-        model.FullName = $"{dto.FirstName + dto.LastName}";
-        model.BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        model.Email = dto.Email;
-        model.Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        model.NumericCode = dto.NumericCode;
-        model.CurrentHourlyRate = dto.CurrentHourlyRate;
-        
-        var isContainedModifiedHourlyRate = await _db.Employees
-            .AnyAsync(em => em.Id != dto.Id && 
-                em.Salaries
-                    .Any(s => s.Salary != dto.CurrentHourlyRate));
-        
-        if (!isContainedModifiedHourlyRate) {
-            model.Salaries = dto.EmployeeSalaries
-                .Where(ems => _db.Employees
-                    .Any(em => em.Id == ems.EmployeeId))
-                .Select(ems => 
-                    new EmployeeSalary {
-                        EmployeeId = dto.Id,
-                        StartDate = ems.StartDate,
-                        FinishDate = ems.FinishDate,
-                        Salary = ems.Salary
-                    }
-                ).ToList();
-        }    
-        
-        _db.Employees.Update(model);
-        
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0)
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
+        try {
+            _validator.ValidateEmployee(dto, OperationType.EDIT, out var isValid);
+            
+            if (isValid) {
+                var model = await _db.Employees
+                    .Where(em => !em.IsDeleted)
+                    .SingleAsync(em => em.Id == dto.Id);
+                
+                model.Id = dto.Id;
+                model.FirstName = dto.FirstName;
+                model.LastName = dto.LastName;
+                model.FullName = $"{dto.FirstName + dto.LastName}";
+                model.BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                model.Email = dto.Email;
+                model.Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                model.NumericCode = dto.NumericCode;
+                model.CurrentHourlyRate = dto.CurrentHourlyRate;
+                
+                var isContainedModifiedHourlyRate = await _db.Employees
+                    .AnyAsync(em => em.Id != dto.Id && 
+                        em.Salaries
+                            .Any(s => s.Salary != dto.CurrentHourlyRate));
+                
+                if (!isContainedModifiedHourlyRate) {
+                    model.Salaries = dto.EmployeeSalaries
+                        .Where(ems => _db.Employees
+                            .Any(em => em.Id == ems.EmployeeId))
+                        .Select(ems => 
+                            new EmployeeSalary {
+                                EmployeeId = dto.Id,
+                                StartDate = ems.StartDate,
+                                FinishDate = ems.FinishDate,
+                                Salary = ems.Salary
+                            }
+                        ).ToList();
+                }    
+                
+                _db.Employees.Update(model);
+                
+                var rowsAffected = await _db.SaveChangesAsync();
+                if (rowsAffected == 0)
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
+            }
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+        }
     }
 
     public async Task<EmployeeViewDto> GetForViewAsync(int id) {
@@ -297,7 +300,5 @@ public class EmployeeRepository
             .FirstOrDefaultAsync(em => em.Email == email);
     }
 
-    public async Task<int> GetEmployeesSize() {
-        return await _db.Employees.CountAsync();
-    }
+    public async Task<int> GetEmployeesSize() => await _db.Employees.CountAsync();
 }

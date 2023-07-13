@@ -1,12 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Shared.Feedbacks;
-using PlannerCRM.Server.Services;
-using PlannerCRM.Shared.Models;
-
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]

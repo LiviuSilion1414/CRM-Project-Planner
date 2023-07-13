@@ -1,11 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
-using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
-using PlannerCRM.Shared.Feedbacks;
-using PlannerCRM.Server.Services;
-
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]

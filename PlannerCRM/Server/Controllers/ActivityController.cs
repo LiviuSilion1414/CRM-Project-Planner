@@ -1,13 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
-using PlannerCRM.Shared.DTOs.ActivityDto.Views;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Shared.Feedbacks;
-using PlannerCRM.Server.Services;
-using PlannerCRM.Shared.Models;
-
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]

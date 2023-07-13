@@ -1,53 +1,55 @@
-using PlannerCRM.Server.DataAccess;
-using PlannerCRM.Server.Models;
-using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
-using PlannerCRM.Shared.DTOs.WorkTimeDto.Views;
-using PlannerCRM.Shared.CustomExceptions;
-using static PlannerCRM.Shared.Constants.ExceptionsMessages;
-
 namespace PlannerCRM.Server.Services;
 
 public class WorkTimeRecordRepository
 {
     private readonly AppDbContext _db;
+    private readonly DtoValidatorService _validator;
+	private readonly Logger<DtoValidatorService> _logger;
 
-    public WorkTimeRecordRepository(AppDbContext db) {
-        _db = db;
-    }
+    public WorkTimeRecordRepository(
+        AppDbContext db, 
+		DtoValidatorService validator, 
+		Logger<DtoValidatorService> logger) 
+	{
+		_db = db;
+		_validator = validator;
+		_logger = logger;
+	}
 
     public async Task AddAsync(WorkTimeRecordFormDto dto) {
-        if (dto.GetType() is null) {
-            throw new NullReferenceException(NULL_OBJECT);
-        }
+        try {
+            _validator.ValidateWorkTime(dto, out var isValid);
 
-        var HasPropertiesNull = dto.GetType().GetProperties()
-            .Any(prop => prop.GetValue(dto) is null);
-        if (HasPropertiesNull) {
-            throw new ArgumentNullException(NULL_PARAM);
-        }
+            if (isValid) {
+                await _db.WorkTimeRecords.AddAsync(
+                    new WorkTimeRecord {
+                        Id = dto.Id,
+                        Date = dto.Date,
+                        Hours = dto.Hours,
+                        TotalPrice = dto.TotalPrice + dto.Hours,
+                        ActivityId = dto.ActivityId,
+                        EmployeeId = dto.EmployeeId,
+                        Employee = _db.Employees
+                            .Where(em => !em.IsDeleted)
+                            .Single(e => e.Id == dto.EmployeeId),
+                        WorkOrderId = await _db.WorkOrders
+                            .AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
+                                ? dto.WorkOrderId
+                                : throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_ADD)
+                    }
+                );
         
-        await _db.WorkTimeRecords.AddAsync(
-            new WorkTimeRecord {
-                Id = dto.Id,
-                Date = dto.Date,
-                Hours = dto.Hours,
-                TotalPrice = dto.TotalPrice + dto.Hours,
-                ActivityId = dto.ActivityId,
-                EmployeeId = dto.EmployeeId,
-                Employee = _db.Employees
-                    .Where(em => !em.IsDeleted)
-                    .Single(e => e.Id == dto.EmployeeId),
-                WorkOrderId = await _db.WorkOrders
-                    .AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
-                        ? dto.WorkOrderId
-                        : throw new InvalidOperationException(IMPOSSIBLE_ADD)
+                var rowsAffected = await _db.SaveChangesAsync();
+                if (rowsAffected == 0)
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            } else {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
-        );
-
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0)
-            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            
+            throw;
+        }
     }
 
     public async Task DeleteAsync(int id) {
@@ -55,28 +57,28 @@ public class WorkTimeRecordRepository
             .SingleOrDefaultAsync(wtr => wtr.Id == id);
         
         if (workTimeRecordDelete is null)
-            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
+            throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
         
         _db.WorkTimeRecords.Remove(workTimeRecordDelete);
         
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0)
-            throw new DbUpdateException(IMPOSSIBLE_SAVE_CHANGES);
+            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
     }
     
     public async Task EditAsync(WorkTimeRecordFormDto dto) {
         if (dto is null)
-            throw new NullReferenceException(NULL_OBJECT);
+            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
 
         var HasPropertiesNull = dto.GetType().GetProperties()
             .Any(prop => prop.GetValue(dto) is null);
         if (HasPropertiesNull)
-            throw new ArgumentNullException(NULL_PARAM);
+            throw new ArgumentNullException(ExceptionsMessages.NULL_PARAM);
 
         var model = await _db.WorkTimeRecords
             .SingleOrDefaultAsync(wtr => wtr.Id == dto.Id);
         if (model is null)
-            throw new KeyNotFoundException(OBJECT_NOT_FOUND);
+            throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
 
         model.Id = dto.Id;
         model.Date = dto.Date;
@@ -93,7 +95,7 @@ public class WorkTimeRecordRepository
 
         var rowsAffected = await _db.SaveChangesAsync();
         if (rowsAffected == 0)
-            throw new DbUpdateException(IMPOSSIBLE_GOING_FORWARD);
+            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
     }
 
     public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, int employeeId) {

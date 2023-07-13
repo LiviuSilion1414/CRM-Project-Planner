@@ -1,137 +1,135 @@
-using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
-using PlannerCRM.Shared.DTOs.ActivityDto.Views;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.CustomExceptions;
-using PlannerCRM.Server.DataAccess;
-using PlannerCRM.Shared.Constants;
-using PlannerCRM.Server.Models;
-
 namespace PlannerCRM.Server.Services;
 
 public class ActivityRepository
 {
     private readonly AppDbContext _db;
+    private readonly DtoValidatorService _validator;
+    private readonly Logger<DtoValidatorService> _logger;
 
-    public ActivityRepository(AppDbContext db) {
-        _db = db;
-    }
+    public ActivityRepository(
+        AppDbContext db, 
+		DtoValidatorService validator, 
+		Logger<DtoValidatorService> logger) 
+	{
+		_db = db;
+		_validator = validator;
+		_logger = logger;
+	}
 
     public async Task AddAsync(ActivityFormDto dto) {
-        if (dto.GetType() is null) 
-            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
+        try {
+            _validator.ValidateActivity(dto, OperationType.ADD, out var isValid);
 
-        var innerPropertiesAreNull = dto.GetType().GetProperties()
-            .Any(prop => prop.GetValue(dto) is null);
-        if (innerPropertiesAreNull) 
-            throw new ArgumentNullException(ExceptionsMessages.NULL_PARAM);
+            if (isValid) {
+                var entity = new Activity {
+                    Id = dto.Id,
+                    Name = dto.Name,
+                    StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                    FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                    WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                    EmployeeActivity = dto.EmployeeActivity
+                        .Select(ea => new EmployeeActivity {
+                            Id = ea.Id,
+                            EmployeeId = ea.EmployeeId,
+                            ActivityId = dto.Id,
+                        }).ToHashSet(),
+                };
         
-        var isAlreadyPresent = await _db.Activities
-            .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
-        if (isAlreadyPresent != null) 
-            throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
-
-        if (dto.EmployeeActivity is null || !dto.EmployeeActivity.Any())
-            throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                await _db.Activities.AddAsync(entity);
         
-        var entity = new Activity {
-            Id = dto.Id,
-            Name = dto.Name,
-            StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-            FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-            WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-            EmployeeActivity = dto.EmployeeActivity
-                .Select(ea => new EmployeeActivity {
-                    Id = ea.Id,
-                    EmployeeId = ea.EmployeeId,
-                    ActivityId = dto.Id,
-                }).ToHashSet(),
-        };
-
-        await _db.Activities.AddAsync(entity);
-
-        var workOrder = await _db.WorkOrders
-            .SingleAsync(wo => wo.Id == dto.WorkOrderId);
-        workOrder.Activities.Add(entity);    
-
-        _db.Update(workOrder);
+                var workOrder = await _db.WorkOrders
+                    .SingleAsync(wo => wo.Id == dto.WorkOrderId);
+                workOrder.Activities.Add(entity);    
         
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0)
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                _db.Update(workOrder);
+                
+                var rowsAffected = await _db.SaveChangesAsync();
+                if (rowsAffected == 0)
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            }
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            throw;
+        }
     }
 
     public async Task DeleteAsync(int id) {
-        var activityDelete = await _db.Activities
-            .SingleOrDefaultAsync(ac => ac.Id == id);
+        try
+        {
+            var activityDelete = await _validator.ValidateDeleteActivityAsync(id);
 
-        if (activityDelete is null)
-            throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_DELETE);
-        
-        await _db.EmployeeActivity
-            .Where(ea => ea.ActivityId == activityDelete.Id)
-            .ForEachAsync(ea => 
-                _db.EmployeeActivity
-                    .Remove(ea)
-            );
+            await _db.EmployeeActivity
+                .Where(ea => ea.ActivityId == activityDelete.Id)
+                .ForEachAsync(ea => 
+                    _db.EmployeeActivity
+                        .Remove(ea)
+                );
+    
+            _db.Activities.Remove(activityDelete);
+    
+            var rowsAffected = await _db.SaveChangesAsync();
+            if (rowsAffected == 0) 
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-        _db.Activities.Remove(activityDelete);
-
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0) 
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            throw;
+        }
     }
 
     public async Task EditAsync(ActivityFormDto dto) {
-        if (dto is null)
-            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
+        try {
+            _validator.ValidateActivity(dto, OperationType.EDIT, out var isValid);
 
-        if (dto.EmployeeActivity is null || !dto.ViewEmployeeActivity.Any())
-            throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        
-        var model = await _db.Activities
-            .SingleOrDefaultAsync(ac => ac.Id == dto.Id);
+            if (isValid) {
+                var model = await _db.Activities
+                    .SingleAsync(ac => ac.Id == dto.Id);
 
-        if (model is null)
-            throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
+                model.Id = dto.Id;
+                model.Name = dto.Name;
+                model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                model.EmployeeActivity = dto.EmployeeActivity
+                    .Where(eaDto => _db.EmployeeActivity
+                        .Any(ea => eaDto.EmployeeId != ea.EmployeeId))
+                    .Select(ea => new EmployeeActivity {
+                        EmployeeId = ea.EmployeeId,     
+                        ActivityId = ea.ActivityId,
+                    })
+                    .ToHashSet();
 
-        model.Id = dto.Id;
-        model.Name = dto.Name;
-        model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        model.EmployeeActivity = dto.EmployeeActivity
-            .Where(eaDto => _db.EmployeeActivity
-                .Any(ea => eaDto.EmployeeId != ea.EmployeeId))
-            .Select(ea => new EmployeeActivity {
-                EmployeeId = ea.EmployeeId,     
-                ActivityId = ea.ActivityId,
-            })
-            .ToHashSet();
+                var workOrder = await _db.WorkOrders
+                    .SingleAsync(wo => wo.Id == dto.WorkOrderId);
+                
+                var activity = workOrder.Activities.Find(ac => ac.Id == dto.Id);
+                activity.Id = dto.Id;
+                activity.Name = dto.Name;
+                activity.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                activity.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                activity.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                activity.EmployeeActivity = dto.EmployeeActivity
+                    .Select(ea => new EmployeeActivity {
+                        Id = ea.Id,
+                        EmployeeId = ea.EmployeeId,
+                        ActivityId = ea.ActivityId,
+                    }).ToHashSet();
 
-        var workOrder = await _db.WorkOrders
-            .SingleAsync(wo => wo.Id == dto.WorkOrderId);
-        
-        var activity = workOrder.Activities.Find(ac => ac.Id == dto.Id);
-        activity.Id = dto.Id;
-        activity.Name = dto.Name;
-        activity.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        activity.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        activity.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        activity.EmployeeActivity = dto.EmployeeActivity
-            .Select(ea => new EmployeeActivity {
-                Id = ea.Id,
-                EmployeeId = ea.EmployeeId,
-                ActivityId = ea.ActivityId,
-            }).ToHashSet();
+                _db.Update(model);
+                _db.Update(workOrder);
 
-        _db.Update(model);
-        _db.Update(workOrder);
+                var rowsAffected = await _db.SaveChangesAsync();
+                if (rowsAffected == 0)
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            }
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0)
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            throw;
+        }
     }
 
     public async Task<ActivityViewDto> GetForViewAsync(int id) {

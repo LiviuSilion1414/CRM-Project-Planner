@@ -1,5 +1,3 @@
-using PlannerCRM.Shared.Models;
-
 namespace PlannerCRM.Server.Models;
 
 public class Employee
