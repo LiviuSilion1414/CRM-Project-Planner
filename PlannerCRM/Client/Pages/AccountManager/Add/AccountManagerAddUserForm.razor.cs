@@ -97,9 +97,9 @@ public partial class AccountManagerAddUserForm
                 _IsCancelClicked = !_IsCancelClicked;
                 NavManager.NavigateTo(_CurrentPage);
             }
-        } catch (NullReferenceException nullRefExc) {
-            _logger.Log(LogLevel.Error,nullRefExc, nullRefExc.Message);
-            _Message = nullRefExc.Message;
+        } catch (NullReferenceException exc) {
+            _logger.Log(LogLevel.Error, exc, exc.Message);
+            _Message = exc.Message;
             _IsError = true;
         }
         catch (Exception exc)

@@ -17,7 +17,7 @@ public class ApplicationUserController : ControllerBase
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpPost("add/user")]
+    [HttpPost("add")]
     public async Task<ActionResult> AddUser(EmployeeFormDto dto)
     {
         try
@@ -26,39 +26,39 @@ public class ApplicationUserController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.USER_ADD);
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
-            return BadRequest(nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.StackTrace, argNullExc.StackTrace);
-            return BadRequest(argNullExc);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc);
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
-            return BadRequest(invalidOpExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return BadRequest(duplicateElemExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DbUpdateException dbUpdateExc) {
-            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return BadRequest(dbUpdateExc.Message);
+        catch (DbUpdateException exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return BadRequest(exc.Message);
         }
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpPut("edit/user")]
+    [HttpPut("edit")]
     public async Task<ActionResult> EditUser(EmployeeFormDto dto)
     {
         try
@@ -67,35 +67,35 @@ public class ApplicationUserController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.USER_EDIT);
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
-            return NotFound(nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return NotFound(exc.Message);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
-            return BadRequest(argNullExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (KeyNotFoundException keyNotFoundExc)
+        catch (KeyNotFoundException exc)
         {
-            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
-            return NotFound(keyNotFoundExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return NotFound(exc.Message);
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
-            return BadRequest(invalidOpExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpDelete("delete/user/{email}")]
+    [HttpDelete("delete/{email}")]
     public async Task<ActionResult> DeleteUser(string email)
     {
         try
@@ -104,19 +104,19 @@ public class ApplicationUserController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.USER_DELETE);            
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
-            return BadRequest(nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (KeyNotFoundException keyNotFoundExc)
+        catch (KeyNotFoundException exc)
         {
-            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
-            return BadRequest(keyNotFoundExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }

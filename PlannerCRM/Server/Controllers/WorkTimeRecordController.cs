@@ -1,5 +1,6 @@
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class WorkTimeRecordController : ControllerBase
@@ -15,6 +16,7 @@ public class WorkTimeRecordController : ControllerBase
         _logger = logger;
     }
 
+    [Authorize]
     [HttpPost("add")]
     public async Task<ActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto dto)
     {
@@ -24,32 +26,33 @@ public class WorkTimeRecordController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.WORKTIMERECORD_ADD);
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
-            return NotFound(nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return NotFound(exc.Message);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
-            return BadRequest(argNullExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return BadRequest(duplicateElemExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DbUpdateException dbUpdateExc)
+        catch (DbUpdateException exc)
         {
-            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return BadRequest(dbUpdateExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
         catch (Exception exc)
         {
             return StatusCode(StatusCodes.Status503ServiceUnavailable, exc.Message);
         }
     }
-
+    
+    [Authorize]
     [HttpPut("edit")]
     public async Task<ActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto dto)
     {
@@ -59,37 +62,38 @@ public class WorkTimeRecordController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.WORKTIMERECORD_EDIT);
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
-            return BadRequest(nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
-            return BadRequest(argNullExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (KeyNotFoundException keyNotFoundExc)
+        catch (KeyNotFoundException exc)
         {
-            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
-            return NotFound(keyNotFoundExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return NotFound(exc.Message);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return BadRequest(duplicateElemExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DbUpdateException dbUpdateExc)
+        catch (DbUpdateException exc)
         {
-            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
-            return BadRequest(dbUpdateExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
         catch (Exception exc)
         {
             return StatusCode(StatusCodes.Status503ServiceUnavailable, exc.Message);
         }
     }
-
+    
+    [Authorize]
     [HttpGet("get/{workOrderId}/{activityId}/{employeeId}")]
     public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int workOrderId, int activityId, int employeeId)
     {
@@ -99,11 +103,12 @@ public class WorkTimeRecordController : ControllerBase
         }
         catch (KeyNotFoundException exc)
         {
-            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return null;
         }
     }
-
+    
+    [Authorize]
     [HttpGet("get/all")]
     public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecords()
     {
@@ -113,11 +118,12 @@ public class WorkTimeRecordController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new List<WorkTimeRecordViewDto>();
         }
     }
-
+    
+    [Authorize]
     [HttpGet("get/by/employee/{employeeId}")]
     public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByWorkOrder(int employeeId)
     {
@@ -127,7 +133,7 @@ public class WorkTimeRecordController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new WorkTimeRecordViewDto();
         }
     }

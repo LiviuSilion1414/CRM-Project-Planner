@@ -28,7 +28,8 @@ public class AccountManagerCrudService
             
             return JsonConvert.DeserializeObject<int>(jsonObject);
         } catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return 0;
         }
     }
@@ -40,7 +41,7 @@ public class AccountManagerCrudService
             
             return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);
         } catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new List<EmployeeViewDto>();
         }
     }
@@ -52,7 +53,8 @@ public class AccountManagerCrudService
             
             return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);
         } catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<EmployeeViewDto>();
         }
     }
@@ -66,24 +68,25 @@ public class AccountManagerCrudService
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         } 
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error, nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(NotFound);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error, argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error, duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(ServiceUnavailable);
         }
     }
@@ -93,28 +96,29 @@ public class AccountManagerCrudService
         {
             return await _http.SendAsync(new HttpRequestMessage() {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost:5032/applicationuser/add/user"),
+                RequestUri = new Uri("http://localhost:5032/applicationuser/add"),
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error, nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error, argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error, duplicateElemExc, duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(ServiceUnavailable);
         }
     } 
@@ -128,24 +132,25 @@ public class AccountManagerCrudService
              Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
          });
        }
-       catch (NullReferenceException nullRefExc)
+       catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error, nullRefExc, nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error, argNullExc, argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
-        catch (KeyNotFoundException keyNotFoundExc)
+        catch (KeyNotFoundException exc)
         {
-            _logger.Log(LogLevel.Error, keyNotFoundExc, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(NotFound);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(ServiceUnavailable);
         }
     }
@@ -153,32 +158,32 @@ public class AccountManagerCrudService
     public async Task<HttpResponseMessage> UpdateUserAsync(EmployeeFormDto dto) {
         try
         {
-            return await _http.PutAsync("http://localhost:5032/applicationuser/edit/user", 
+            return await _http.PutAsync("http://localhost:5032/applicationuser/edit", 
                 new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json"));
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error, nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(NotFound);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error, argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
-        catch (KeyNotFoundException keyNotFoundExc)
+        catch (KeyNotFoundException exc)
         {
-            _logger.Log(LogLevel.Error, keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(NotFound);
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error, invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(ServiceUnavailable);
         }
     } 
@@ -193,7 +198,8 @@ public class AccountManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new EmployeeDeleteDto();
         }
     }
@@ -208,7 +214,8 @@ public class AccountManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new();
         }
     }
@@ -223,7 +230,8 @@ public class AccountManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new EmployeeViewDto();
         }
     }
@@ -231,16 +239,16 @@ public class AccountManagerCrudService
     public async Task<HttpResponseMessage> DeleteUserAsync(string currentEmail) {
         try
         {
-            return await _http.DeleteAsync($"http://localhost:5032/applicationuser/delete/user/{currentEmail}");
+            return await _http.DeleteAsync($"http://localhost:5032/applicationuser/delete/{currentEmail}");
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error, invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(ServiceUnavailable);
         }
     }
@@ -251,14 +259,14 @@ public class AccountManagerCrudService
             return await _http.DeleteAsync($"http://localhost:5032/employee/delete/{employeeId}");
 
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error, invalidOpExc, invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(BadRequest);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(ServiceUnavailable);
         }
     }

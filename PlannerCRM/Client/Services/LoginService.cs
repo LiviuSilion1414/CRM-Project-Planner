@@ -26,7 +26,8 @@ public class LoginService
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         } catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
     }

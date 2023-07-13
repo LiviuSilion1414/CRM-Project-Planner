@@ -98,11 +98,11 @@ public partial class AccountManagerEditUserForm
             } else {
                 _CustomValidator.DisplayErrors(Errors);
             }
-        } catch (NullReferenceException nullRefExc) {
-            //_logger.Log(LogLevel.Error, nullRefExc.Message);
-            Console.WriteLine("hit: {0}, innerException: {1}", nullRefExc.Message, nullRefExc.InnerException);
-            Console.WriteLine("err: {0}", nullRefExc.StackTrace, nullRefExc.Source);
-            _Message = nullRefExc.Message;
+        } catch (NullReferenceException exc) {
+            //_logger.Log(LogLevel.Error, exc.Message);
+            Console.WriteLine("hit: {0}, innerException: {1}", exc.Message, exc.InnerException);
+            Console.WriteLine("err: {0}", exc.StackTrace, exc.Source);
+            _Message = exc.Message;
             _IsError = true;
             
         } catch (Exception exc) {

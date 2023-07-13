@@ -1,6 +1,10 @@
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = $"""
+    {nameof(Roles.OPERATION_MANAGER)}, 
+    {nameof(Roles.SENIOR_DEVELOPER)}, 
+    {nameof(Roles.JUNIOR_DEVELOPER)}
+""" )]
 [ApiController]
 [Route("[controller]")]
 public class ActivityController : ControllerBase
@@ -26,29 +30,29 @@ public class ActivityController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.ACTIVITY_ADD);
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
-            return BadRequest(nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error, argNullExc, argNullExc.Message, argNullExc.StackTrace);
-            return BadRequest(argNullExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
-            return BadRequest(duplicateElemExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DbUpdateException dbUpdateExc)
+        catch (DbUpdateException exc)
         {
-            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
@@ -63,29 +67,29 @@ public class ActivityController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
-            return NotFound(nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return NotFound(exc.Message);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
-            return BadRequest(argNullExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (KeyNotFoundException keyNotFoundExc)
+        catch (KeyNotFoundException exc)
         {
-            _logger.Log(LogLevel.Error,keyNotFoundExc.Message, keyNotFoundExc.StackTrace);
-            return NotFound(keyNotFoundExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return NotFound(exc.Message);
         }
-        catch (DbUpdateException dbUpdateExc)
+        catch (DbUpdateException exc)
         {
-            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return BadRequest(exc.Message);
         }
     }
@@ -100,24 +104,28 @@ public class ActivityController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.ACTIVITY_DELETE);
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
-            return BadRequest(invalidOpExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            return BadRequest(exc.Message);
         }
-        catch (DbUpdateException dbUpdateExc)
+        catch (DbUpdateException exc)
         {
-            _logger.Log(LogLevel.Error,dbUpdateExc.Message, dbUpdateExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = $"""
+        {nameof(Roles.OPERATION_MANAGER)}, 
+        {nameof(Roles.SENIOR_DEVELOPER)}, 
+        {nameof(Roles.JUNIOR_DEVELOPER)}
+    """ )]
     [HttpGet("get/{activityId}")]
     public async Task<ActivityViewDto> GetForView(int activityId)
     {
@@ -126,12 +134,12 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new ActivityViewDto();
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{activityId}")]
     public async Task<ActivityFormDto> GetForEdit(int activityId)
     {
@@ -141,12 +149,12 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new ActivityFormDto();
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{activityId}")]
     public async Task<ActivityDeleteDto> GetForDelete(int activityId)
     {
@@ -156,12 +164,16 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new ActivityDeleteDto();
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = $"""
+        {nameof(Roles.OPERATION_MANAGER)}, 
+        {nameof(Roles.SENIOR_DEVELOPER)}, 
+        {nameof(Roles.JUNIOR_DEVELOPER)}
+    """ )]
     [HttpGet("get/activity/per/workorder/{workOrderId}")]
     public async Task<List<ActivityFormDto>> GetActivitiesPerWorkorderAsync(int workOrderId)
     {
@@ -171,12 +183,16 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new List<ActivityFormDto>();
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = $"""
+        {nameof(Roles.OPERATION_MANAGER)}, 
+        {nameof(Roles.SENIOR_DEVELOPER)}, 
+        {nameof(Roles.JUNIOR_DEVELOPER)}
+    """ )]
     [HttpGet("get/activity/per/employee/{employeeId}")]
     public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId)
     {
@@ -186,12 +202,16 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new List<ActivityFormDto>();
         }
     }
-
-    [Authorize]
+    
+    [Authorize(Roles = $"""
+        {nameof(Roles.OPERATION_MANAGER)}, 
+        {nameof(Roles.SENIOR_DEVELOPER)}, 
+        {nameof(Roles.JUNIOR_DEVELOPER)}
+    """ )]
     [HttpGet("get/all")]
     public async Task<List<ActivityViewDto>> GetAll()
     {
@@ -201,7 +221,7 @@ public class ActivityController : ControllerBase
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.StackTrace, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new List<ActivityViewDto>();
         }
     }

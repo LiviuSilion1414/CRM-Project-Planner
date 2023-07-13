@@ -30,7 +30,8 @@ public class OperationManagerCrudService
             
             return JsonConvert.DeserializeObject<int>(jsonObject);
         } catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return 0;
         }
     }
@@ -42,7 +43,8 @@ public class OperationManagerCrudService
             
             return JsonConvert.DeserializeObject<List<WorkOrderViewDto>>(jsonObject);
         } catch (Exception exc) {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<WorkOrderViewDto>();
         }
     }
@@ -57,7 +59,8 @@ public class OperationManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<WorkOrderViewDto>();
         }
     }
@@ -72,7 +75,8 @@ public class OperationManagerCrudService
        }
        catch (Exception exc)
        {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<WorkOrderSelectDto>();
        }
     }
@@ -87,7 +91,8 @@ public class OperationManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<EmployeeSelectDto>();
         }
     }
@@ -101,24 +106,24 @@ public class OperationManagerCrudService
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -131,24 +136,24 @@ public class OperationManagerCrudService
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -162,24 +167,24 @@ public class OperationManagerCrudService
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         } 
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -193,24 +198,24 @@ public class OperationManagerCrudService
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error,nullRefExc.Message, nullRefExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error,argNullExc.Message, argNullExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error,duplicateElemExc.Message, duplicateElemExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error,exc.Message, exc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -220,14 +225,15 @@ public class OperationManagerCrudService
         {
             return await _http.DeleteAsync($"http://localhost:5032/activity/delete/{activityId}");
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.NotImplemented);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -237,14 +243,15 @@ public class OperationManagerCrudService
         {
             return await _http.DeleteAsync($"http://localhost:5032/workorder/delete/{workOrderId}");
         }
-        catch (InvalidOperationException invalidOpExc)
+        catch (InvalidOperationException exc)
         {
-            _logger.Log(LogLevel.Error,invalidOpExc.Message, invalidOpExc.StackTrace);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
             return new HttpResponseMessage(HttpStatusCode.NotImplemented);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -259,7 +266,8 @@ public class OperationManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new ActivityFormDto();
         }
     }
@@ -274,7 +282,8 @@ public class OperationManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new ActivityDeleteDto();
         }
     }
@@ -289,7 +298,8 @@ public class OperationManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new WorkOrderViewDto();
         }
     }
@@ -304,7 +314,8 @@ public class OperationManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new WorkOrderFormDto();
         }
     }
@@ -319,7 +330,8 @@ public class OperationManagerCrudService
        }
        catch (Exception exc)
        {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new WorkOrderDeleteDto(); 
        }
     }
@@ -334,7 +346,8 @@ public class OperationManagerCrudService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<ActivityFormDto>();
         }
     }

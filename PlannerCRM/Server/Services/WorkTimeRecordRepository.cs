@@ -16,7 +16,8 @@ public class WorkTimeRecordRepository
 		_logger = logger;
 	}
 
-    public async Task AddAsync(WorkTimeRecordFormDto dto) {
+    public async Task AddAsync(WorkTimeRecordFormDto dto) 
+    {
         try {
             _validator.ValidateWorkTime(dto, out var isValid);
 
@@ -52,12 +53,11 @@ public class WorkTimeRecordRepository
         }
     }
 
-    public async Task DeleteAsync(int id) {
+    public async Task DeleteAsync(int id) 
+    {
         var workTimeRecordDelete = await _db.WorkTimeRecords
-            .SingleOrDefaultAsync(wtr => wtr.Id == id);
-        
-        if (workTimeRecordDelete is null)
-            throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
+            .SingleOrDefaultAsync(wtr => wtr.Id == id)
+                ?? throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
         
         _db.WorkTimeRecords.Remove(workTimeRecordDelete);
         
@@ -66,36 +66,39 @@ public class WorkTimeRecordRepository
             throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
     }
     
-    public async Task EditAsync(WorkTimeRecordFormDto dto) {
-        if (dto is null)
-            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
-
-        var HasPropertiesNull = dto.GetType().GetProperties()
-            .Any(prop => prop.GetValue(dto) is null);
-        if (HasPropertiesNull)
-            throw new ArgumentNullException(ExceptionsMessages.NULL_PARAM);
-
-        var model = await _db.WorkTimeRecords
-            .SingleOrDefaultAsync(wtr => wtr.Id == dto.Id);
-        if (model is null)
-            throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
-
-        model.Id = dto.Id;
-        model.Date = dto.Date;
-        model.Hours = dto.Hours;
-        model.TotalPrice = dto.TotalPrice;
-        model.ActivityId = dto.ActivityId;
-        model.WorkOrderId = dto.WorkOrderId;
-        model.EmployeeId = dto.EmployeeId;
-        model.Employee = await _db.Employees
-            .Where(em => !em.IsDeleted)
-            .SingleAsync(em => em.Id == dto.EmployeeId);
-
-        _db.Update(model);
-
-        var rowsAffected = await _db.SaveChangesAsync();
-        if (rowsAffected == 0)
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+    public async Task EditAsync(WorkTimeRecordFormDto dto) 
+    {
+        try {
+            _validator.ValidateWorkTime(dto, out var isValid);
+            
+            if (isValid) {
+                var model = await _db.WorkTimeRecords
+                    .SingleOrDefaultAsync(wtr => wtr.Id == dto.Id);
+        
+                model.Id = dto.Id;
+                model.Date = dto.Date;
+                model.Hours = dto.Hours;
+                model.TotalPrice = dto.TotalPrice;
+                model.ActivityId = dto.ActivityId;
+                model.WorkOrderId = dto.WorkOrderId;
+                model.EmployeeId = dto.EmployeeId;
+                model.Employee = await _db.Employees
+                    .Where(em => !em.IsDeleted)
+                    .SingleAsync(em => em.Id == dto.EmployeeId);
+        
+                _db.Update(model);
+        
+                var rowsAffected = await _db.SaveChangesAsync();
+                if (rowsAffected == 0)
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            }
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);            
+            
+            throw;
+        }
     }
 
     public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, int employeeId) {

@@ -117,9 +117,9 @@ public partial class OperationManagerEditActivity
                 _Model.ViewEmployeeActivity.Add(item);
             }
             ToggleEmployeesListView();
-        } catch (NullReferenceException nullRefExc) {
-            _logger.Log(LogLevel.Error, nullRefExc, nullRefExc.Message);
-            _Message = nullRefExc.Message;
+        } catch (NullReferenceException exc) {
+            _logger.Log(LogLevel.Error, exc, exc.Message);
+            _Message = exc.Message;
             _IsError = true;
         } catch (Exception exc) {
             _logger.Log(LogLevel.Error, exc, exc.Message);

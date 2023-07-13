@@ -36,24 +36,28 @@ public class DeveloperService
                 Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
             });
         }
-        catch (NullReferenceException nullRefExc)
+        catch (NullReferenceException exc)
         {
-            _logger.Log(LogLevel.Error, nullRefExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
-        catch (ArgumentNullException argNullExc)
+        catch (ArgumentNullException exc)
         {
-            _logger.Log(LogLevel.Error, argNullExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
-        catch (DuplicateElementException duplicateElemExc)
+        catch (DuplicateElementException exc)
         {
-            _logger.Log(LogLevel.Error, duplicateElemExc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     } 
@@ -68,7 +72,8 @@ public class DeveloperService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new ActivityViewDto();
         }
     }
@@ -83,7 +88,8 @@ public class DeveloperService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new WorkOrderViewDto();
         }
     }
@@ -98,7 +104,8 @@ public class DeveloperService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<ActivityViewDto>();
         }
     }
@@ -113,7 +120,8 @@ public class DeveloperService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return ConstantValues.INVALID_ID;
         }
     }
@@ -128,7 +136,8 @@ public class DeveloperService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<WorkTimeRecordViewDto>();
         }
     }
@@ -143,7 +152,8 @@ public class DeveloperService
         }
         catch (Exception exc)
         {
-            _logger.Log(LogLevel.Error, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new();
         }
     }
