@@ -17,13 +17,7 @@
         </Found>
         <NotFound>
             <CascadingAuthenticationState>
-                <div class="text-center">
-                    <PageTitle>Pagina non trovata</PageTitle>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <p role="alert">Pagina non trovata. <strong>Errore 404.</strong></p> <br>
-                        <p>Torna alla <a href="/login">homepage.</a></p>
-                    </LayoutView> 
-                </div>
+                <NotFoundPage/>
             </CascadingAuthenticationState> 
         </NotFound>
     </Router>
