@@ -30,6 +30,7 @@ public class AccountManagerCrudService
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return 0;
         }
     }
@@ -42,6 +43,7 @@ public class AccountManagerCrudService
             return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new List<EmployeeViewDto>();
         }
     }
@@ -54,6 +56,7 @@ public class AccountManagerCrudService
             return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new List<EmployeeViewDto>();
         }
@@ -71,21 +74,25 @@ public class AccountManagerCrudService
         catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(NotFound);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (DuplicateElementException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new HttpResponseMessage(ServiceUnavailable);
         }
@@ -103,21 +110,25 @@ public class AccountManagerCrudService
         catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (DuplicateElementException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new HttpResponseMessage(ServiceUnavailable);
         }
@@ -135,21 +146,25 @@ public class AccountManagerCrudService
        catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (KeyNotFoundException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(NotFound);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new HttpResponseMessage(ServiceUnavailable);
         }
@@ -164,26 +179,31 @@ public class AccountManagerCrudService
         catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(NotFound);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (KeyNotFoundException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(NotFound);
         }
         catch (InvalidOperationException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(ServiceUnavailable);
         }
     } 
@@ -199,6 +219,7 @@ public class AccountManagerCrudService
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new EmployeeDeleteDto();
         }
@@ -216,6 +237,7 @@ public class AccountManagerCrudService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new();
         }
     }
@@ -232,6 +254,7 @@ public class AccountManagerCrudService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new EmployeeViewDto();
         }
     }
@@ -244,11 +267,13 @@ public class AccountManagerCrudService
         catch (InvalidOperationException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(ServiceUnavailable);
         }
     }
@@ -262,11 +287,13 @@ public class AccountManagerCrudService
         catch (InvalidOperationException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(BadRequest);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(ServiceUnavailable);
         }
     }

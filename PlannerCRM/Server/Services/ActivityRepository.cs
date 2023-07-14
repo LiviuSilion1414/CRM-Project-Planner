@@ -6,11 +6,7 @@ public class ActivityRepository
     private readonly DtoValidatorService _validator;
     private readonly Logger<DtoValidatorService> _logger;
 
-    public ActivityRepository(
-        AppDbContext db, 
-		DtoValidatorService validator, 
-		Logger<DtoValidatorService> logger) 
-	{
+    public ActivityRepository(AppDbContext db, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
 		_db = db;
 		_validator = validator;
 		_logger = logger;
@@ -44,8 +40,9 @@ public class ActivityRepository
                 _db.Update(workOrder);
                 
                 var rowsAffected = await _db.SaveChangesAsync();
-                if (rowsAffected == 0)
+                if (rowsAffected == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
             } else {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
@@ -57,8 +54,7 @@ public class ActivityRepository
     }
 
     public async Task DeleteAsync(int id) {
-        try
-        {
+        try {
             var activityDelete = await _validator.ValidateDeleteActivityAsync(id);
 
             await _db.EmployeeActivity
@@ -70,9 +66,9 @@ public class ActivityRepository
     
             _db.Activities.Remove(activityDelete);
     
-            var rowsAffected = await _db.SaveChangesAsync();
-            if (rowsAffected == 0) 
+            if (await _db.SaveChangesAsync() == 0) {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            }
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
@@ -121,9 +117,9 @@ public class ActivityRepository
                 _db.Update(model);
                 _db.Update(workOrder);
 
-                var rowsAffected = await _db.SaveChangesAsync();
-                if (rowsAffected == 0)
+                if (await _db.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
             }
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
@@ -289,7 +285,7 @@ public class ActivityRepository
                     })
                     .ToHashSet()
             })
-            .SingleOrDefaultAsync(ac => ac.Id == id);
+            .SingleAsync(ac => ac.Id == id);
     }
 
     public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId) {

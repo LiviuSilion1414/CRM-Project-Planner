@@ -40,11 +40,13 @@ public class DeveloperService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
@@ -52,11 +54,13 @@ public class DeveloperService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
@@ -74,6 +78,7 @@ public class DeveloperService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new ActivityViewDto();
         }
     }
@@ -89,6 +94,7 @@ public class DeveloperService
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new WorkOrderViewDto();
         }
@@ -106,6 +112,7 @@ public class DeveloperService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new List<ActivityViewDto>();
         }
     }
@@ -121,6 +128,7 @@ public class DeveloperService
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return ConstantValues.INVALID_ID;
         }
@@ -138,6 +146,7 @@ public class DeveloperService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new List<WorkTimeRecordViewDto>();
         }
     }
@@ -153,6 +162,7 @@ public class DeveloperService
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new();
         }

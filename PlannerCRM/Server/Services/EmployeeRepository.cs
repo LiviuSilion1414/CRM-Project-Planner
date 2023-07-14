@@ -6,10 +6,7 @@ public class EmployeeRepository
     private readonly DtoValidatorService _validator;
     private readonly Logger<DtoValidatorService> _logger;
 
-    public EmployeeRepository(AppDbContext db, 
-        DtoValidatorService validator, 
-        Logger<DtoValidatorService> logger) 
-    {
+    public EmployeeRepository(AppDbContext db, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
         _db = db;
         _validator = validator;
         _logger = logger;
@@ -43,9 +40,9 @@ public class EmployeeRepository
                         .ToList()
                 });
                 
-                var rowsAffected = await _db.SaveChangesAsync();
-                if (rowsAffected == 0)
+                if (await _db.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
             } else {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
             }
@@ -58,15 +55,15 @@ public class EmployeeRepository
 
     public async Task DeleteAsync(int id) {
         try {
-            var employeeDelete = await _validator.ValidateDeleteEmployee(id: id);
+            var employeeDelete = await _validator.ValidateDeleteEmployeeAsync(id: id);
 
             employeeDelete.IsDeleted = true;
 
             _db.Update(employeeDelete);
 
-            var rowsAffected = await _db.SaveChangesAsync();
-                if (rowsAffected == 0)
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            if (await _db.SaveChangesAsync() == 0) {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            }
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
@@ -116,13 +113,16 @@ public class EmployeeRepository
                 _db.Employees.Update(model);
                 
                 var rowsAffected = await _db.SaveChangesAsync();
-                if (rowsAffected == 0)
+                if (rowsAffected == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
             } else {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
             }
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            
+            throw;
         }
     }
 
@@ -174,7 +174,7 @@ public class EmployeeRepository
                         })
                     .ToList()
                 })   
-            .SingleOrDefaultAsync(em => em.Id == id);
+            .SingleAsync(em => em.Id == id);
     }
 
     public async Task<EmployeeFormDto> GetForEditAsync(int id) { 
@@ -220,7 +220,7 @@ public class EmployeeRepository
                     .ToString()
                     .Replace('_', ' ')
             })
-            .SingleOrDefaultAsync(em => em.Id == id);
+            .SingleAsync(em => em.Id == id);
     }
     
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
@@ -297,7 +297,7 @@ public class EmployeeRepository
             .Select(em => new CurrentEmployeeDto {
                 Id = em.Id,
                 Email = em.Email})
-            .FirstOrDefaultAsync(em => em.Email == email);
+            .FirstAsync(em => em.Email == email);
     }
 
     public async Task<int> GetEmployeesSize() => await _db.Employees.CountAsync();

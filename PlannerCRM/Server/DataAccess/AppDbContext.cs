@@ -1,5 +1,3 @@
-
-
 namespace PlannerCRM.Server.DataAccess;
 
 public class AppDbContext: IdentityDbContext
@@ -26,5 +24,5 @@ public class AppDbContext: IdentityDbContext
     public DbSet<Activity> Activities { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeActivity> EmployeeActivity { get; set; }
-    public DbSet<WorkTimeRecord> WorkTimeRecords { get; internal set; }
+    public DbSet<WorkTimeRecord> WorkTimeRecords { get; set; }
 }

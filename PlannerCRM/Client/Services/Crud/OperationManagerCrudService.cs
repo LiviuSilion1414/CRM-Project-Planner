@@ -32,6 +32,7 @@ public class OperationManagerCrudService
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return 0;
         }
     }
@@ -44,6 +45,7 @@ public class OperationManagerCrudService
             return JsonConvert.DeserializeObject<List<WorkOrderViewDto>>(jsonObject);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new List<WorkOrderViewDto>();
         }
@@ -61,6 +63,7 @@ public class OperationManagerCrudService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new List<WorkOrderViewDto>();
         }
     }
@@ -76,6 +79,7 @@ public class OperationManagerCrudService
        catch (Exception exc)
        {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new List<WorkOrderSelectDto>();
        }
@@ -93,6 +97,7 @@ public class OperationManagerCrudService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new List<EmployeeSelectDto>();
         }
     }
@@ -109,21 +114,25 @@ public class OperationManagerCrudService
         catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -139,21 +148,25 @@ public class OperationManagerCrudService
         catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -170,21 +183,25 @@ public class OperationManagerCrudService
         catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -201,21 +218,25 @@ public class OperationManagerCrudService
         catch (NullReferenceException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (ArgumentNullException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
         catch (DuplicateElementException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.MultipleChoices);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
     }
@@ -228,11 +249,13 @@ public class OperationManagerCrudService
         catch (InvalidOperationException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.NotImplemented);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
@@ -246,11 +269,13 @@ public class OperationManagerCrudService
         catch (InvalidOperationException exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new HttpResponseMessage(HttpStatusCode.NotImplemented);
         }
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         }
@@ -268,6 +293,7 @@ public class OperationManagerCrudService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new ActivityFormDto();
         }
     }
@@ -283,6 +309,7 @@ public class OperationManagerCrudService
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new ActivityDeleteDto();
         }
@@ -300,6 +327,7 @@ public class OperationManagerCrudService
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new WorkOrderViewDto();
         }
     }
@@ -315,6 +343,7 @@ public class OperationManagerCrudService
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new WorkOrderFormDto();
         }
@@ -332,6 +361,7 @@ public class OperationManagerCrudService
        {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new WorkOrderDeleteDto(); 
        }
     }
@@ -347,6 +377,7 @@ public class OperationManagerCrudService
         catch (Exception exc)
         {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return new List<ActivityFormDto>();
         }

@@ -12,171 +12,138 @@ public class WorkOrderController : ControllerBase
     private readonly WorkOrderRepository _repo;
     private readonly Logger<WorkOrderRepository> _logger;
 
-    public WorkOrderController(
-        WorkOrderRepository repo,
-        Logger<WorkOrderRepository> logger)
-    {
+    public WorkOrderController( WorkOrderRepository repo, Logger<WorkOrderRepository> logger) {
         _repo = repo;
         _logger = logger;
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddWorkorder(WorkOrderFormDto dto)
-    {
-        try
-        {
+    public async Task<ActionResult> AddWorkorder(WorkOrderFormDto dto) {
+        try {
             await _repo.AddAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_ADD);
-        }
-        catch (NullReferenceException exc)
-        {
+        } catch (NullReferenceException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (ArgumentNullException exc)
-        {
+        } catch (ArgumentNullException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (DuplicateElementException exc)
-        {
+        } catch (DuplicateElementException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (DbUpdateException exc)
-        {
+        } catch (DbUpdateException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditWorkorder(WorkOrderFormDto dto)
-    {
-        try
-        {
+    public async Task<ActionResult> EditWorkorder(WorkOrderFormDto dto) {
+        try {
             await _repo.EditAsync(dto);
+
             return Ok(SuccessfulCrudFeedBack.WORKORDER_EDIT);
-        }
-        catch (NullReferenceException exc)
-        {
+        } catch (NullReferenceException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (ArgumentNullException exc)
-        {
+        } catch (ArgumentNullException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (DuplicateElementException exc)
-        {
+        } catch (DuplicateElementException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (DbUpdateException exc)
-        {
+        } catch (DbUpdateException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
         }
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{workOrderId}")]
-    public async Task<ActionResult> DeleteWorkorder(int workOrderId)
-    {
-        try
-        {
+    public async Task<ActionResult> DeleteWorkorder(int workOrderId) {
+        try {
             await _repo.DeleteAsync(workOrderId);
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_DELETE);
-        }
-        catch (InvalidOperationException exc)
-        {
+        } catch (InvalidOperationException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (DbUpdateException exc)
-        {
+        } catch (DbUpdateException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
         }
     }
 
     [Authorize]
     [HttpGet("search/{workOrder}")]
-    public async Task<List<WorkOrderSelectDto>> SearchWorkorder(string workOrder)
-    {
-        try
-        {
+    public async Task<List<WorkOrderSelectDto>> SearchWorkorder(string workOrder) {
+        try {
             return await _repo.SearchWorkOrderAsync(workOrder);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-            return new List<WorkOrderSelectDto>();
+
+            return new();
         }
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{workOrderId}")]
-    public async Task<WorkOrderFormDto> GetForEdit(int workOrderId)
-    {
-        try
-        {
+    public async Task<WorkOrderFormDto> GetForEdit(int workOrderId) {
+        try {
             return await _repo.GetForEditAsync(workOrderId);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-            return new WorkOrderFormDto();
+
+            return new();
         }
     }
 
     [Authorize]
     [HttpGet("get/for/view/{workOrderId}")]
-    public async Task<WorkOrderViewDto> GetForViewId(int workOrderId)
-    {
-        try
-        {
+    public async Task<WorkOrderViewDto> GetForViewId(int workOrderId) {
+        try {
             return await _repo.GetForViewAsync(workOrderId);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-            return new WorkOrderViewDto();
+
+            return new();
         }
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{workOrderId}")]
-    public async Task<WorkOrderDeleteDto> GetForDeleteId(int workOrderId)
-    {
-        try
-        {
+    public async Task<WorkOrderDeleteDto> GetForDeleteId(int workOrderId) {
+        try {
             return await _repo.GetForDeleteAsync(workOrderId);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-            return new WorkOrderDeleteDto();
+
+            return new();
         }
     }
 
@@ -186,11 +153,10 @@ public class WorkOrderController : ControllerBase
         try
         {
             return await _repo.GetSize();
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-            return ConstantValues.ZERO;
+
+            return default;
         }
     }
 
@@ -200,11 +166,10 @@ public class WorkOrderController : ControllerBase
         try
         {
             return await _repo.GetPaginated(skip, take);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
              _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-            return new List<WorkOrderViewDto>();
+
+            return new();
         }
     }
 }

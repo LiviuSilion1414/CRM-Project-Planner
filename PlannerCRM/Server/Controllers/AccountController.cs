@@ -7,16 +7,14 @@ public class AccountController : ControllerBase
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
 
-    public AccountController(
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager)
-    {
+    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager) {
         _userManager = userManager;
         _signInManager = signInManager;
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDto dto) {
+    public async Task<ActionResult> Login(EmployeeLoginDto dto) 
+    {
         var user = await _userManager.FindByEmailAsync(dto.Email);
 
         if (user is null) return NotFound(LoginFeedBack.USER_NOT_FOUND);
@@ -45,7 +43,7 @@ public class AccountController : ControllerBase
 
             return roles.Single();
         } else {
-            return null;
+            return default;
         }
     }
 

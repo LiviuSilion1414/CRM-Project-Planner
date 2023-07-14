@@ -34,13 +34,15 @@ public class ApplicationUserRepository
                     .SingleAsync(aspRole => aspRole.Name == dto.Role.ToString());
         
                 var creationResult = await _userManager.CreateAsync(user, dto.Password);
-                if (!creationResult.Succeeded)
+                if (!creationResult.Succeeded) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
                 
                 var assignmentResult = await _userManager.AddToRoleAsync(user, foundUserRole.Name);
                 
-                if (!creationResult.Succeeded || !assignmentResult.Succeeded)
+                if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
             } else {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
             }
@@ -65,8 +67,9 @@ public class ApplicationUserRepository
                 var passChangeResult = await _userManager.RemovePasswordAsync(user);
                 var updateResult = await _userManager.AddPasswordAsync(user, dto.Password);
 
-                if (!passChangeResult.Succeeded || !updateResult.Succeeded)
+                if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
                 
                 var rolesList = await _userManager.GetRolesAsync(user);
                 var userRole = rolesList.Single();
@@ -77,8 +80,9 @@ public class ApplicationUserRepository
                     var deleteRoleResult = await _userManager.RemoveFromRoleAsync(user, userRole);
                     var reassignmentRoleResult = await _userManager.AddToRoleAsync(user, dto.Role.ToString());
                     
-                    if (!deleteRoleResult.Succeeded || !reassignmentRoleResult.Succeeded) 
+                    if (!deleteRoleResult.Succeeded || !reassignmentRoleResult.Succeeded) {
                         throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                    }
                 } else {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
                 } 

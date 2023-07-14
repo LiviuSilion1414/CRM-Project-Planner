@@ -28,6 +28,7 @@ public class LoginService
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
     }

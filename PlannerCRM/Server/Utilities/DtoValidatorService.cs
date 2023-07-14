@@ -5,10 +5,7 @@ public class DtoValidatorService
     private readonly AppDbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public DtoValidatorService(
-        AppDbContext context, 
-        UserManager<IdentityUser> userManager) 
-    {
+    public DtoValidatorService(AppDbContext context, UserManager<IdentityUser> userManager) {
         _context = context;
         _userManager = userManager;
     }
@@ -16,8 +13,9 @@ public class DtoValidatorService
     public void ValidateEmployee(EmployeeFormDto dto, OperationType operation, out bool isValid) {
         CheckDtoHealth(dto, out isValid);
 
-        if (dto.Role == ConstantValues.ADMIN_ROLE || dto.Email == ConstantValues.ADMIN_EMAIL)
+        if (dto.Role == ConstantValues.ADMIN_ROLE || dto.Email == ConstantValues.ADMIN_EMAIL) {
             throw new DuplicateElementException(message: ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
+        }
 
         var employeeIsAlreadyPresent = _context.Employees
             .Any(em => 
@@ -63,8 +61,10 @@ public class DtoValidatorService
 
         var isAlreadyPresent = _context.Activities
             .Any(ac => ac.Id == dto.Id);
-        if (isAlreadyPresent ) 
+
+        if (isAlreadyPresent) {
             throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+        }
 
         if (operation == OperationType.ADD) {
             if (isAlreadyPresent) {
@@ -76,9 +76,9 @@ public class DtoValidatorService
             }
         }
 
-        if (!dto.EmployeeActivity.Any())
+        if (!dto.EmployeeActivity.Any()) {
             throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        
+        }
     }
 
     public void ValidateWorkTime(WorkTimeRecordFormDto dto, out bool isValid) => CheckDtoHealth(dto, out isValid);
@@ -90,8 +90,9 @@ public class DtoValidatorService
     }
 
     public async Task<IdentityUser> ValidateDeleteUserAsync(string email) {
-        if (string.IsNullOrEmpty(email))
-            throw new NullReferenceException(ExceptionsMessages.NULL_OBJECT);
+        if (string.IsNullOrEmpty(email)) {
+            throw new ArgumentNullException(email, ExceptionsMessages.NULL_OBJECT);
+        }
 
         return await _userManager.FindByEmailAsync(email) 
             ?? throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
@@ -116,11 +117,13 @@ public class DtoValidatorService
     private static void CheckDtoHealth(object dto, out bool isValid) {
         isValid = false;
 
-        if (dto is null)
+        if (dto is null) {
             throw new ArgumentNullException(paramName: nameof(dto), message: ExceptionsMessages.NULL_OBJECT); 
+        }
 
-        if (dto.GetType() != typeof(EmployeeFormDto))
+        if (dto.GetType() != typeof(EmployeeFormDto)) {
             throw new TypeMismatchException(message: ExceptionsMessages.TYPE_MISMATCH);
+        }
         
         var propertyName = string.Empty;
         var hasPropertiesNull = dto
@@ -131,12 +134,14 @@ public class DtoValidatorService
                     propertyName = prop.Name;
                     return true;
                 }
+
                 return false;
             });
 
-        if (hasPropertiesNull)
+        if (hasPropertiesNull) {
             throw new ArgumentNullException(paramName: propertyName, message: ExceptionsMessages.NULL_ARG);
-        
+        }
+
         isValid = true;
     }
 }

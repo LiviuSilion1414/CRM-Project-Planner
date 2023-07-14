@@ -6,11 +6,7 @@ public class WorkOrderRepository
 	private readonly DtoValidatorService _validator;
 	private readonly Logger<DtoValidatorService> _logger;
 
-	public WorkOrderRepository(
-		AppDbContext db, 
-		DtoValidatorService validator, 
-		Logger<DtoValidatorService> logger) 
-	{
+	public WorkOrderRepository(AppDbContext db, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
 		_db = db;
 		_validator = validator;
 		_logger = logger;
@@ -30,9 +26,9 @@ public class WorkOrderRepository
 					IsCompleted = false
 				});
 
-				var rowsAffected = await _db.SaveChangesAsync();
-				if (rowsAffected == 0)
+				if (await _db.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+				}
 			} else {
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
 			}
@@ -49,11 +45,13 @@ public class WorkOrderRepository
 
 			workOrderDelete.IsDeleted = true;
 			
-			var rowsAffected = await _db.SaveChangesAsync();
-			if (rowsAffected == 0)
+			if (await _db.SaveChangesAsync() == 0) {
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+			}
 		} catch (Exception exc) {
 			_logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+			throw;
 		}
 	}
 
@@ -70,9 +68,9 @@ public class WorkOrderRepository
 				model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
 				model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
 		
-				var rowsAffected = await _db.SaveChangesAsync();
-				if (rowsAffected == 0)
+				if (await _db.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+				}
 			} else {
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}
@@ -91,7 +89,7 @@ public class WorkOrderRepository
 				Name = wo.Name,
 				StartDate = wo.StartDate,
 				FinishDate = wo.FinishDate})
-			.SingleOrDefaultAsync(wo => wo.Id == id);
+			.SingleAsync(wo => wo.Id == id);
 	}
 
 	public async Task<WorkOrderViewDto> GetForViewAsync(int id) {
@@ -104,7 +102,7 @@ public class WorkOrderRepository
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted
 			})
-			.SingleOrDefaultAsync(wo => wo.Id == id);
+			.SingleAsync(wo => wo.Id == id);
 	}
 	
 	public async Task<WorkOrderFormDto> GetForEditAsync(int id) {
@@ -115,7 +113,7 @@ public class WorkOrderRepository
 				Name = wo.Name,
 				StartDate = wo.StartDate,
 				FinishDate = wo.FinishDate})
-			.SingleOrDefaultAsync(wo => wo.Id == id);
+			.SingleAsync(wo => wo.Id == id);
 	}
 
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {

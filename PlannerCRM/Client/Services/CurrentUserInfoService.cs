@@ -28,6 +28,7 @@ public class CurrentUserInfoService
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
+
             return new CurrentUser();
         }
     }
@@ -39,6 +40,7 @@ public class CurrentUserInfoService
             return await response.Content.ReadAsStringAsync();
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
 
             return string.Empty;
         }
@@ -52,6 +54,7 @@ public class CurrentUserInfoService
             return JsonConvert.DeserializeObject<CurrentEmployeeDto>(jsonObject);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return new CurrentEmployeeDto();
         }
     }

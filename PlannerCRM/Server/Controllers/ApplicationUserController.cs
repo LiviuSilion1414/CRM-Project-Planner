@@ -8,115 +8,92 @@ public class ApplicationUserController : ControllerBase
     private readonly ApplicationUserRepository _repo;
     private readonly Logger<ApplicationUserRepository> _logger;
 
-    public ApplicationUserController(
-        ApplicationUserRepository repo,
-        Logger<ApplicationUserRepository> logger)
-    {
+    public ApplicationUserController(ApplicationUserRepository repo, Logger<ApplicationUserRepository> logger) {
         _repo = repo;
         _logger = logger;
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddUser(EmployeeFormDto dto)
-    {
-        try
-        {
+    public async Task<ActionResult> AddUser(EmployeeFormDto dto) {
+        try {
             await _repo.AddAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.USER_ADD);
-        }
-        catch (NullReferenceException exc)
-        {
+        } catch (NullReferenceException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (ArgumentNullException exc)
-        {
+        } catch (ArgumentNullException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc);
-        }
-        catch (InvalidOperationException exc)
-        {
+        } catch (InvalidOperationException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (DuplicateElementException exc)
-        {
+        } catch (DuplicateElementException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+        } catch (DbUpdateException exc) {    _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
         }
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditUser(EmployeeFormDto dto)
-    {
-        try
-        {
+    public async Task<ActionResult> EditUser(EmployeeFormDto dto) {
+        try {
             await _repo.EditAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.USER_EDIT);
-        }
-        catch (NullReferenceException exc)
-        {
+        } catch (NullReferenceException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (ArgumentNullException exc)
-        {
+        } catch (ArgumentNullException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (KeyNotFoundException exc)
-        {
+        } catch (KeyNotFoundException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return NotFound(exc.Message);
-        }
-        catch (InvalidOperationException exc)
-        {
+        } catch (InvalidOperationException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/{email}")]
-    public async Task<ActionResult> DeleteUser(string email)
-    {
-        try
-        {
+    public async Task<ActionResult> DeleteUser(string email) {
+        try {
             await _repo.DeleteAsync(email);  
 
             return Ok(SuccessfulCrudFeedBack.USER_DELETE);            
-        }
-        catch (NullReferenceException exc)
-        {
+        } catch (NullReferenceException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (KeyNotFoundException exc)
-        {
+        } catch (KeyNotFoundException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return BadRequest(exc.Message);
-        }
-        catch (Exception exc)
-        {
+        } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
     }
