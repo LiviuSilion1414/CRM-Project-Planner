@@ -1,8 +1,3 @@
-using System.Net;
-using System.Text;
-using Newtonsoft.Json;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-
 namespace PlannerCRM.Client.Services;
 
 public class LoginService
@@ -10,10 +5,7 @@ public class LoginService
     private readonly HttpClient _http;
     private readonly Logger<LoginService> _logger;
 
-    public LoginService(
-        HttpClient http,
-        Logger<LoginService> logger)
-    {
+    public LoginService(HttpClient http, Logger<LoginService> logger) {
         _http = http;
         _logger = logger;
     }
@@ -28,8 +20,7 @@ public class LoginService
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-
-            return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            return new(HttpStatusCode.BadRequest);
         }
     }
 

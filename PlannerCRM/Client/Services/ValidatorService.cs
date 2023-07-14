@@ -1,7 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using Microsoft.VisualBasic;
-
 namespace PlannerCRM.Client.Services;
 
 public static class ValidatorService
@@ -34,6 +30,7 @@ public static class ValidatorService
                 } 
             }               
         }
+
         return !errors.Any();
     }
 
@@ -41,7 +38,6 @@ public static class ValidatorService
         errors = new();
 
         var propertyName = property.Name;
-        System.Console.WriteLine("Property name: {0}", propertyName);
 
         var validationAttributes = property.GetCustomAttributes<ValidationAttribute>();
         var propertyValue = property.GetValue(model, null);
@@ -51,7 +47,7 @@ public static class ValidatorService
                 errors.Add(propertyName, new() { attribute.ErrorMessage });
             }
         }
-        System.Console.WriteLine("is valid: {0}", !errors.Any());
+        
         return !errors.Any();
     }
 }

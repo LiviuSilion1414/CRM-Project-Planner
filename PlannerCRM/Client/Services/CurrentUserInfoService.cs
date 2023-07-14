@@ -1,9 +1,3 @@
-using Newtonsoft.Json;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using PlannerCRM.Shared.Models;
-using System.Net.Http.Json;
-
 namespace PlannerCRM.Client.Services;
 
 public class CurrentUserInfoService
@@ -11,10 +5,7 @@ public class CurrentUserInfoService
     private readonly HttpClient _http;
     private readonly Logger<CurrentUserInfoService> _logger;
 
-    public CurrentUserInfoService(
-        HttpClient http,
-        Logger<CurrentUserInfoService> logger)
-    {
+    public CurrentUserInfoService(HttpClient http, Logger<CurrentUserInfoService> logger) {
         _http = http;
         _logger = logger;
     }
@@ -28,8 +19,7 @@ public class CurrentUserInfoService
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-
-            return new CurrentUser();
+            return new();
         }
     }
 
@@ -40,7 +30,6 @@ public class CurrentUserInfoService
             return await response.Content.ReadAsStringAsync();
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
 
             return string.Empty;
         }
@@ -55,7 +44,7 @@ public class CurrentUserInfoService
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new CurrentEmployeeDto();
+            return new();
         }
     }
 }

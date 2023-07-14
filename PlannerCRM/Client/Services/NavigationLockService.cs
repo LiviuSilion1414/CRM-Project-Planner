@@ -6,7 +6,7 @@ namespace PlannerCRM.Client.Services;
 public class NavigationLockService
 {
     private readonly IJSRuntime _js;
-    public bool ConfirmedExternalExit { get => true; }
+    public const bool ConfirmedExternalExit = true;
     
     public NavigationLockService(IJSRuntime js) {
         _js = js;

@@ -1,9 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Components.Authorization;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using PlannerCRM.Shared.Models;
-
 namespace PlannerCRM.Client.Services;
 
 public class AuthenticationStateService : AuthenticationStateProvider
@@ -12,12 +6,9 @@ public class AuthenticationStateService : AuthenticationStateProvider
     private readonly Logger<AuthenticationStateService> _logger;
     private CurrentUser _currentUser;
 
-    public AuthenticationStateService(
-        CurrentUserInfoService api, 
-        Logger<AuthenticationStateService> logger)
-    {
-        this._authInfoService = api;
-        this._logger = logger;
+    public AuthenticationStateService(CurrentUserInfoService authInfoService, Logger<AuthenticationStateService> logger) {
+        _authInfoService = authInfoService;
+        _logger = logger;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
@@ -27,8 +18,9 @@ public class AuthenticationStateService : AuthenticationStateProvider
             if (userInfo.IsAuthenticated) {
                 var claims = new List<Claim> { 
                     new Claim(ClaimTypes.Name, _currentUser.UserName) 
-                }.Concat(_currentUser.Claims
-                    .Select(c => new Claim(c.Key, c.Value)));
+                }
+                .Concat(_currentUser.Claims
+                .Select(c => new Claim(c.Key, c.Value)));
                
                 identity = new ClaimsIdentity(claims, "Server authentication");
             } else {
@@ -45,13 +37,5 @@ public class AuthenticationStateService : AuthenticationStateProvider
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }
 
-    public async Task<CurrentUser> GetCurrentUserAsync() {
-        _currentUser = await _authInfoService.GetCurrentUserInfoAsync();
-
-        if (_currentUser != null && _currentUser.IsAuthenticated) {
-            return _currentUser;
-        } else {
-            return _currentUser;
-        }
-    }
+    public async Task<CurrentUser> GetCurrentUserAsync() => await _authInfoService.GetCurrentUserInfoAsync();
 }
