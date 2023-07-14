@@ -37,9 +37,9 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<List<WorkOrderViewDto>> GetCollectionPaginated(int skip = 0, int take = 5) {
+    public async Task<List<WorkOrderViewDto>> GetCollectionPaginated(int limit = 0, int offset = 5) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/workorder/get/paginated/{skip}/{take}");
+            var response = await _http.GetAsync($"http://localhost:5032/workorder/get/paginated/{limit}/{offset}");
             var jsonObject = await response.Content.ReadAsStringAsync();
             
             return JsonConvert.DeserializeObject<List<WorkOrderViewDto>>(jsonObject);

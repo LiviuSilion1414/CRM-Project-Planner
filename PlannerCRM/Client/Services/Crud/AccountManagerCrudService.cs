@@ -35,9 +35,9 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int skip = 0, int take = 5) {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit = 0, int offset = 5) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/employee/get/paginated/{skip}/{take}");
+            var response = await _http.GetAsync($"http://localhost:5032/employee/get/paginated/{limit}/{offset}");
             var jsonObject = await response.Content.ReadAsStringAsync();
             
             return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);

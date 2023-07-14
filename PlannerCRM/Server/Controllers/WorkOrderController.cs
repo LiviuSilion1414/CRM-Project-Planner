@@ -161,11 +161,11 @@ public class WorkOrderController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("get/paginated/{skip}/{take}")]
-    public async Task<List<WorkOrderViewDto>> GetPaginated(int skip = 0, int take = 5) {
+    [HttpGet("get/paginated/{limit}/{offset}")]
+    public async Task<List<WorkOrderViewDto>> GetPaginated(int limit = 0, int offset = 5) {
         try
         {
-            return await _repo.GetPaginated(skip, take);
+            return await _repo.GetPaginated(limit, offset);
         } catch (Exception exc) {
              _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 

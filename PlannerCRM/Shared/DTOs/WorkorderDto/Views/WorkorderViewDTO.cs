@@ -1,5 +1,3 @@
-using PlannerCRM.Shared.DTOs.ActivityDto.Views;
-
 namespace PlannerCRM.Shared.DTOs.Workorder.Views;
 
 public class WorkOrderViewDto

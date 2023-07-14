@@ -1,6 +1,7 @@
 namespace PlannerCRM.Shared.Models;
 
-public enum Roles{
+public enum Roles
+{
     ACCOUNT_MANAGER = 0,
     OPERATION_MANAGER = 1,
     PROJECT_MANAGER = 2,

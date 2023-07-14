@@ -28,7 +28,6 @@ public partial class AccountManagerAddUserForm
 
     public EmployeeFormDto _Model = new();
     public EditContext _EditContext { get; set; }
-    public string _TypeField { get; set; } = InputType.PASSWORD.ToString().ToLower();
     public bool _IsError { get; set; }
     public string _Message { get; set; }
     public bool _IsCheckboxClicked { get; set; }
@@ -42,15 +41,7 @@ public partial class AccountManagerAddUserForm
         _CurrentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
     }
 
-    public void SwitchShowPassword() {
-        if (_IsCheckboxClicked) {
-            _IsCheckboxClicked = false;
-            _TypeField = InputType.TEXT.ToString().ToLower();
-        } else {
-            _IsCheckboxClicked = true;
-            _TypeField = InputType.PASSWORD.ToString().ToLower();
-        }
-    }
+    public void SwitchShowPassword() => _IsCheckboxClicked = !_IsCheckboxClicked;
 
     public void OnClickModalCancel() {
         NavManager.NavigateTo(_CurrentPage);

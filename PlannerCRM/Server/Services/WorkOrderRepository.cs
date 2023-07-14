@@ -126,11 +126,11 @@ public class WorkOrderRepository
 			.ToListAsync();
     }
 
-	public async Task<List<WorkOrderViewDto>> GetPaginated(int skip = 0, int take = 5) {
+	public async Task<List<WorkOrderViewDto>> GetPaginated(int limit = 0, int offset = 5) {
 		return await _db.WorkOrders
 			.OrderBy(wo => wo.Name)
-			.Skip(skip)
-			.Take(take)
+			.limit(limit)
+			.offset(offset)
 			.Select(wo => new WorkOrderViewDto {
 				Id = wo.Id,
 				Name = wo.Name,

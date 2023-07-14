@@ -239,11 +239,11 @@ public class EmployeeRepository
             .ToListAsync();
     }
 
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int skip, int take) {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit, int offset) {
         return await _db.Employees
             .OrderBy(em => em.Id)
-            .Skip(skip)
-            .Take(take)
+            .limit(limit)
+            .offset(offset)
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
                 FirstName = em.FirstName,

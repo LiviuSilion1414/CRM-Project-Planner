@@ -91,7 +91,7 @@
                 <div style="margin: 0 auto; margin: 10px 5px;">
                     <i class="bi bi-key-fill"></i>
                     <label for="Password">Password</label>
-                    <InputText Type="@_TypeField" class="form-control" @bind-Value="_Model.Password" Autocomplete="new-password"/>
+                    <InputText Type="@(_IsCheckboxClicked ? "text" : "password")" class="form-control" @bind-Value="_Model.Password" Autocomplete="new-password"/>
                     <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
                     <span style="margin: 10px 5px;">Vedi password</span>
                     <div style="margin: 20px;">

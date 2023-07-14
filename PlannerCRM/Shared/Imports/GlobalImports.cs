@@ -6,3 +6,7 @@ global using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 global using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 global using PlannerCRM.Shared.DTOs.Workorder.Forms;
 global using System.Reflection;
+global using PlannerCRM.Shared.Attributes;
+global using PlannerCRM.Shared.DTOs.ActivityDto.Views;
+global using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
+global using PlannerCRM.Shared.DTOs.Workorder.Views;

@@ -18,8 +18,8 @@ public partial class AccountManager
     private int _CollectionSize { get; set; }
     private int _TotalPageNumbers { get; set; }
     private int _PageNumber { get; set; } = ONE;
-    private int _Skip { get; set; } = ZERO;
-    private int _Take { get => PAGINATION_LIMIT; }
+    private int _Limit { get; set; } = ZERO;
+    private int _Offset { get => PAGINATION_LIMIT; }
 
     private bool _IsViewClicked { get; set; }
     private bool _IsAddClicked { get; set; }
@@ -31,31 +31,31 @@ public partial class AccountManager
     public List<EmployeeViewDto> _users { get; set; } = new();
 
     protected override async Task OnInitializedAsync() {
-        _users = await AccountManagerService.GetPaginatedEmployees(_Skip, _Take);
+        _users = await AccountManagerService.GetPaginatedEmployees(_Limit, _Offset);
         _CollectionSize = await AccountManagerService.GetEmployeesSize();
         _TotalPageNumbers = (_CollectionSize / PAGINATION_LIMIT);
     }
     
     public async Task Previous(int pageNumber) {
-        if (_Skip <= PAGINATION_LIMIT) {
-            _Skip = ZERO;
+        if (_Limit <= PAGINATION_LIMIT) {
+            _Limit = ZERO;
             _PageNumber = ONE;
         } else {
-            _Skip -= (_Skip - PAGINATION_LIMIT);
+            _Limit -= (_Limit - PAGINATION_LIMIT);
             _PageNumber--;
         }
-        _users = await AccountManagerService.GetPaginatedEmployees(_Skip, _Take);
+        _users = await AccountManagerService.GetPaginatedEmployees(_Limit, _Offset);
     }
 
     public async Task Next(int pageNumber) {
-        if (_Skip < _TotalPageNumbers + PAGINATION_LIMIT) {
-            _Skip += PAGINATION_LIMIT;
+        if (_Limit < _TotalPageNumbers + PAGINATION_LIMIT) {
+            _Limit += PAGINATION_LIMIT;
             _PageNumber++; 
         } else {
-            _Skip = _TotalPageNumbers;
+            _Limit = _TotalPageNumbers;
             _PageNumber = _TotalPageNumbers + ONE;
         }
-        _users = await AccountManagerService.GetPaginatedEmployees(_Skip, _Take);
+        _users = await AccountManagerService.GetPaginatedEmployees(_Limit, _Offset);
     }
 
     public void ShowDetails(int id) {

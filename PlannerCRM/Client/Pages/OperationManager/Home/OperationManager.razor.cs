@@ -30,8 +30,8 @@ public partial class OperationManager
     private int _CollectionSize { get; set; }
     private int _TotalPageNumbers { get; set; }
     private int _PageNumber { get; set; } = ONE;
-    private int _Skip { get; set; } = ZERO;
-    private int _Take { get => PAGINATION_LIMIT; }
+    private int _Limit { get; set; } = ZERO;
+    private int _Offset { get => PAGINATION_LIMIT; }
 
     protected override async Task OnInitializedAsync() {
         _WorkOrders = await OperationManagerService.GetCollectionPaginated();
@@ -42,25 +42,25 @@ public partial class OperationManager
     }
     
     public async Task Previous(int pageNumber) {
-        if (_Skip <= PAGINATION_LIMIT) {
-            _Skip = ZERO;
+        if (_Limit <= PAGINATION_LIMIT) {
+            _Limit = ZERO;
             _PageNumber = ONE;
         } else {
-            _Skip -= (_Skip - PAGINATION_LIMIT);
+            _Limit -= (_Limit - PAGINATION_LIMIT);
             _PageNumber--;
         }
-        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Skip, _Take);
+        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Limit, _Offset);
     }
 
     public async Task Next(int pageNumber) {
-        if (_Skip < (_TotalPageNumbers + PAGINATION_LIMIT)) {
-            _Skip += PAGINATION_LIMIT;
+        if (_Limit < (_TotalPageNumbers + PAGINATION_LIMIT)) {
+            _Limit += PAGINATION_LIMIT;
             _PageNumber++; 
         } else {
-            _Skip = _TotalPageNumbers;
+            _Limit = _TotalPageNumbers;
             _PageNumber = _TotalPageNumbers;
         }
-        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Skip, _Take);
+        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Limit, _Offset);
     }
     private void OnClickTableRow(int workorderId) {
         _TrIsClicked = !_TrIsClicked;

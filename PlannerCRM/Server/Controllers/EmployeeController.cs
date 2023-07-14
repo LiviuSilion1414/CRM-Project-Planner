@@ -144,10 +144,10 @@ public class EmployeeController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("get/paginated/{skip}/{take}")]
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int skip = 0, int take = 5) {
+    [HttpGet("get/paginated/{limit}/{offset}")]
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit = 0, int offset = 5) {
         try {
-            return await _repo.GetPaginatedEmployees(skip, take);
+            return await _repo.GetPaginatedEmployees(limit, offset);
         } catch (Exception exc) {
              _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 

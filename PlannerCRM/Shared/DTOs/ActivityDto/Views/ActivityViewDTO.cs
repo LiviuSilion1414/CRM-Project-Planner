@@ -1,5 +1,3 @@
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
-
 namespace PlannerCRM.Shared.DTOs.ActivityDto.Views;
 
 public class ActivityViewDto

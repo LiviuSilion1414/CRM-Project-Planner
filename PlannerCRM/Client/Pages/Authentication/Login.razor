@@ -9,7 +9,7 @@
 <h3>Entra nel tuo account gestionale.</h3>
 
 @if (_IsError) {
-    <Feedback Severity="@FatalityType.DANGER" Message="@_Message"></Feedback>
+    <Feedback Hidden="@true" Message="@_Message"/>
 }
 
 <h4>Login</h4>
@@ -24,7 +24,7 @@
         <div class="form-group">
             <label for="Password">Password:</label>
             <div style="margin: 0 auto; margin: 10px 5px;">
-                <InputText type="@_TypeField" class="form-control" @bind-Value="_Model.Password"/>
+                <InputText type="@(_IsCheckboxClicked ? "text" : "password")" class="form-control" @bind-Value="_Model.Password"/>
                 <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
                 <span style="margin: 10px 5px;">Vedi password</span>
             </div>

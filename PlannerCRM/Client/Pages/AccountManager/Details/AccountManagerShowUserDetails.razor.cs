@@ -13,7 +13,6 @@ public partial class AccountManagerShowUserDetails
     [Inject] AccountManagerCrudService AccountManagerService { get; set; }
 
     private EmployeeViewDto _Model = new();
-    private string _TypeField { get; set; } = InputType.PASSWORD.ToString().ToLower();
     private bool _IsCheckboxClicked { get; set; }
     public string _CurrentPage { get; set; }
     public bool _IsCancelClicked { get; set; }
@@ -32,13 +31,5 @@ public partial class AccountManagerShowUserDetails
         NavManager.NavigateTo(_CurrentPage);
     }
 
-    public void SwitchShowPassword() {
-        if (_IsCheckboxClicked) {
-            _IsCheckboxClicked = false;
-            _TypeField = InputType.TEXT.ToString().ToLower();
-        } else {
-            _IsCheckboxClicked = true;
-            _TypeField = InputType.PASSWORD.ToString().ToLower();
-        }
-    }
+    public void SwitchShowPassword() => _IsCheckboxClicked = !_IsCheckboxClicked;
 }

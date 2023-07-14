@@ -35,7 +35,4 @@ public static class ConstantValues
     public const int PASS_MAX_LENGTH = 16;
 
     public const int PAGINATION_LIMIT = 5;
-    
-    public const int ZERO = 0;
-    public const int ONE = 1;
 }

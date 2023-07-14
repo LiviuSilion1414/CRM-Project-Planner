@@ -2,6 +2,6 @@ namespace PlannerCRM.Shared.Models;
 
 public enum OperationType
 {
-    ADD,
-    EDIT
+    ADD = 0,
+    EDIT = 1
 }

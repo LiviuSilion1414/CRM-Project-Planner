@@ -1,5 +1,3 @@
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-
 namespace PlannerCRM.Shared.DTOs.WorkTimeDto.Form;
 
 public class WorkTimeRecordFormDto

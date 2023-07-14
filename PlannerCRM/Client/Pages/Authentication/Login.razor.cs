@@ -16,7 +16,6 @@ public partial class Login
 
     private EmployeeLoginDto _Model = new();   
     private CurrentEmployeeDto _CurrentEmployee { get; set; }
-    private string _TypeField { get; set; } = InputType.PASSWORD.ToString().ToLower();
     private bool _IsCheckboxClicked { get; set; } = false;
     private string _Message { get; set; }
     private bool _IsError { get; set; }
@@ -47,13 +46,5 @@ public partial class Login
         }
     }
 
-    public void SwitchShowPassword() {
-         if (_IsCheckboxClicked) {
-            _IsCheckboxClicked = false;
-            _TypeField = InputType.TEXT.ToString().ToLower();
-        } else {
-            _IsCheckboxClicked = true;
-            _TypeField = InputType.PASSWORD.ToString().ToLower();
-        }
-    }
+    public void SwitchShowPassword() => _IsCheckboxClicked = !_IsCheckboxClicked;
 }
