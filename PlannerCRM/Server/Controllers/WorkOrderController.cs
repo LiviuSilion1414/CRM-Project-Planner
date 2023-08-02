@@ -3,7 +3,8 @@ namespace PlannerCRM.Server.Controllers;
 [Authorize(Roles = $"""
     {nameof(Roles.OPERATION_MANAGER)}, 
     {nameof(Roles.SENIOR_DEVELOPER)}, 
-    {nameof(Roles.JUNIOR_DEVELOPER)}
+    {nameof(Roles.JUNIOR_DEVELOPER)},
+    {nameof(Roles.ACCOUNT_MANAGER)}
 """ )]
 [ApiController]
 [Route("[controller]")]
