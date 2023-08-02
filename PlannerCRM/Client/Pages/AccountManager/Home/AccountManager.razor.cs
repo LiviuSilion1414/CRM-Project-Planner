@@ -1,79 +1,58 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
-using PlannerCRM.Client.Services.Crud;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using PlannerCRM.Shared.Models;
-using static PlannerCRM.Shared.Constants.ConstantValues;
-
 namespace PlannerCRM.Client.Pages.AccountManager.Home;
 
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-public partial class AccountManager
+public partial class AccountManager : ComponentBase
 {
-    [Inject] private NavigationManager NavManager { get; set; }
-    [Inject] private AccountManagerCrudService AccountManagerService { get; set; }
+    [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
 
-    private bool _IsError { get; set; }
-    private string _Message { get; set; }
-    private int _CollectionSize { get; set; }
-    private int _TotalPageNumbers { get; set; }
-    private int _PageNumber { get; set; } = ONE;
-    private int _Limit { get; set; } = ZERO;
-    private int _Offset { get => PAGINATION_LIMIT; }
+    private int _userId;
 
-    private bool _IsViewClicked { get; set; }
-    private bool _IsAddClicked { get; set; }
-    private bool _IsEditClicked { get; set; }
-    private bool _IsDeleteClicked { get; set; }
+    private string _title;
+    private string _message;
 
-    private int _UserId { get; set; }
+    private bool _isViewClicked;
+    private bool _isAddClicked;
+    private bool _isEditClicked;
+    private bool _isDeleteClicked;
+    private bool _isRestoreClicked;
 
-    public List<EmployeeViewDto> _users { get; set; } = new();
+    private List<EmployeeViewDto> _users;
+    private int _collectionSize;
+
 
     protected override async Task OnInitializedAsync() {
-        _users = await AccountManagerService.GetPaginatedEmployees(_Limit, _Offset);
-        _CollectionSize = await AccountManagerService.GetEmployeesSize();
-        _TotalPageNumbers = (_CollectionSize / PAGINATION_LIMIT);
+        _users = await AccountManagerService.GetPaginatedEmployees();
+        _collectionSize = await AccountManagerService.GetEmployeesSize();
     }
+
+    protected override void OnInitialized() => _users = new();
+
+    private async Task HandlePaginate(int limit, int offset) =>
+        _users = await AccountManagerService.GetPaginatedEmployees(limit, offset);
     
-    public async Task Previous(int pageNumber) {
-        if (_Limit <= PAGINATION_LIMIT) {
-            _Limit = ZERO;
-            _PageNumber = ONE;
-        } else {
-            _Limit -= (_Limit - PAGINATION_LIMIT);
-            _PageNumber--;
-        }
-        _users = await AccountManagerService.GetPaginatedEmployees(_Limit, _Offset);
+    private void ShowDetails(int id) {
+        _isViewClicked = !_isViewClicked;
+        _userId = id;
     }
 
-    public async Task Next(int pageNumber) {
-        if (_Limit < _TotalPageNumbers + PAGINATION_LIMIT) {
-            _Limit += PAGINATION_LIMIT;
-            _PageNumber++; 
-        } else {
-            _Limit = _TotalPageNumbers;
-            _PageNumber = _TotalPageNumbers + ONE;
-        }
-        _users = await AccountManagerService.GetPaginatedEmployees(_Limit, _Offset);
+    private void OnClickAddUser() => _isAddClicked = !_isAddClicked;
+
+    private void OnClickEdit(int id) {
+        _isEditClicked = !_isEditClicked;
+        _userId = id;
     }
 
-    public void ShowDetails(int id) {
-        _IsViewClicked = !_IsViewClicked;
-        _UserId = id;
+    private void OnClickDelete(int id) {
+        _isDeleteClicked = !_isDeleteClicked;
+        _userId = id;
+        _message = "Vuoi davvero eliminare questo utente?";
+        _title = "Elimina utente";
     }
 
-    public void OnClickAddUser() {
-        _IsAddClicked = !_IsAddClicked;
-    }
-
-    public void OnClickEdit(int id) {
-        _IsEditClicked = !_IsEditClicked;
-        _UserId = id;
-    }
-
-    public void OnClickDelete(int id) {
-        _IsDeleteClicked = !_IsDeleteClicked;
-        _UserId = id;
+    private void OnClickRestore(int id) {
+        _isRestoreClicked = !_isRestoreClicked;
+        _userId = id;
+        _message = "Vuoi ripristinare questo utente?";
+        _title = "Ripristina utente";
     }
 }

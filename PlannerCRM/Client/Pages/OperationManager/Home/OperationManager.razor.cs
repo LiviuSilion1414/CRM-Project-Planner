@@ -1,87 +1,51 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
-using PlannerCRM.Client.Services.Crud;
-using PlannerCRM.Shared.Models;
-using PlannerCRM.Shared.DTOs.Workorder.Views;
-using static PlannerCRM.Shared.Constants.ConstantValues;
-
 namespace PlannerCRM.Client.Pages.OperationManager.Home;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-public partial class OperationManager
+public partial class OperationManager : ComponentBase
 {
-    [Inject] private NavigationManager NavManager { get; set; }
-    [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
+    [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
 
-    private List<WorkOrderViewDto> _WorkOrders = new();
-    private WorkOrderViewDto _CurrentWorkOrder { get; set; } = new();
-    private bool _TrIsClicked = false;
-    private int RowCounter { get; set; } = ONE;
-
-    public bool _IsCreateWorkOrderClicked { get; set; }
-    public bool _IsEditWorkOrderClicked { get; set; }
-    public bool _IsDeleteWorkOrderClicked { get; set; }
+    private List<WorkOrderViewDto> _workOrders = new();
+    private WorkOrderViewDto _currentWorkOrder = new();
     
-    public bool _IsCreateActivityClicked { get; set; }
+    private bool _trIsClicked;
 
-    public int _WorkOrderId { get; set; } 
-    public int _ActivityId { get; set; } 
+    private bool _isCreateWorkOrderClicked;
+    private bool _isEditWorkOrderClicked;
+    private bool _isDeleteWorkOrderClicked;
+    
+    private bool _isCreateActivityClicked;
 
-    private int _CollectionSize { get; set; }
-    private int _TotalPageNumbers { get; set; }
-    private int _PageNumber { get; set; } = ONE;
-    private int _Limit { get; set; } = ZERO;
-    private int _Offset { get => PAGINATION_LIMIT; }
+    private int _workOrderId; 
+
+    private int _collectionSize;
 
     protected override async Task OnInitializedAsync() {
-        _WorkOrders = await OperationManagerService.GetCollectionPaginated();
-        _CollectionSize = await OperationManagerService.GetCollectionSize();
-        _TotalPageNumbers = (_CollectionSize % PAGINATION_LIMIT) == ZERO
-            ? (_CollectionSize / PAGINATION_LIMIT)
-            : (_CollectionSize / PAGINATION_LIMIT) + ONE;
+        _workOrders = await OperationManagerService.GetCollectionPaginated();
+        _collectionSize = await OperationManagerService.GetCollectionSize();
     }
     
-    public async Task Previous(int pageNumber) {
-        if (_Limit <= PAGINATION_LIMIT) {
-            _Limit = ZERO;
-            _PageNumber = ONE;
-        } else {
-            _Limit -= (_Limit - PAGINATION_LIMIT);
-            _PageNumber--;
-        }
-        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Limit, _Offset);
-    }
+    public async Task HandlePaginate(int limit, int offset) =>
+        _workOrders = await OperationManagerService.GetCollectionPaginated(limit, offset);
 
-    public async Task Next(int pageNumber) {
-        if (_Limit < (_TotalPageNumbers + PAGINATION_LIMIT)) {
-            _Limit += PAGINATION_LIMIT;
-            _PageNumber++; 
-        } else {
-            _Limit = _TotalPageNumbers;
-            _PageNumber = _TotalPageNumbers;
-        }
-        _WorkOrders = await OperationManagerService.GetCollectionPaginated(_Limit, _Offset);
-    }
     private void OnClickTableRow(int workorderId) {
-        _TrIsClicked = !_TrIsClicked;
-        _CurrentWorkOrder = _WorkOrders.Find(wo => wo.Id == workorderId);
+        _trIsClicked = !_trIsClicked;
+        _currentWorkOrder = _workOrders.Find(wo => wo.Id == workorderId);
     }
 
-    private void OnClickAddWorkOrder() {
-       _IsCreateWorkOrderClicked = !_IsCreateWorkOrderClicked;
-    }
+    private void OnClickAddWorkOrder() =>
+       _isCreateWorkOrderClicked = !_isCreateWorkOrderClicked;
 
-    private void OnClickAddActivity() {
-       _IsCreateActivityClicked = !_IsCreateActivityClicked;
-    }
+    private void OnClickAddActivity() =>
+       _isCreateActivityClicked = !_isCreateActivityClicked;
 
     private void OnClickEdit(int id) {
-        _IsEditWorkOrderClicked = !_IsEditWorkOrderClicked;
-        _WorkOrderId = id;
+        _isEditWorkOrderClicked = !_isEditWorkOrderClicked;
+        _workOrderId = id;
     }
 
     public void OnClickDelete(int id) {
-        _IsDeleteWorkOrderClicked = !_IsDeleteWorkOrderClicked;
-        _WorkOrderId = id;
+        _isDeleteWorkOrderClicked = !_isDeleteWorkOrderClicked;
+        _workOrderId = id;
     }
 }

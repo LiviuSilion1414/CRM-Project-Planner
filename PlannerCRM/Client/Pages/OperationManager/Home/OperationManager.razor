@@ -11,7 +11,7 @@
         </button>
     </div>
     
-    @if (_WorkOrders.Any()) {
+    @if (_workOrders.Any()) {
         <div class="child">
             <button class="btn btn-primary" title="Aggiungi attività" @onclick="OnClickAddActivity">
                 <i class="bi bi-plus-circle-fill"></i>
@@ -32,7 +32,7 @@
         </tr>
     </thead>
     <tbody>
-            @foreach (var wo in _WorkOrders) {
+            @foreach (var wo in _workOrders) {
                 <tr>
                     <td>
                         @if (wo.IsCompleted) {  
@@ -44,7 +44,7 @@
                         }
                     </td>
                     <td>
-                        @if (_TrIsClicked && (wo.Id == _CurrentWorkOrder.Id)) {
+                        @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
                             <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" 
                                 @onclick="(() => OnClickTableRow(wo.Id))" title="Comprimi">
                             </i>
@@ -54,8 +54,8 @@
                         }
                         @wo.Name
                     </td>
-                    <td>@wo.StartDate.ToShortDateString()</td>
-                    <td>@wo.FinishDate.ToShortDateString()</td>
+                    <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
+                    <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
                     @if (!wo.IsDeleted) {
                         <td>
                                 <td style="padding-right: 10px;">
@@ -74,10 +74,10 @@
                     }
                 <td></td>
                 </tr>
-                @if (_TrIsClicked && (wo.Id == _CurrentWorkOrder.Id)) {
+                @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
                     <tr style="border: 1px solid blue;" title="Visualizza attività su questa commessa">
                         <td></td>
-                        <td style="width: 100%; height: 80%;"> <OperationManagerMasterDetails WorkOrderId="@_CurrentWorkOrder.Id"/> </td>
+                        <td style="width: 100%; height: 80%;"> <OperationManagerMasterDetails WorkOrderId="@_currentWorkOrder.Id" WorkOrder="@wo"/> </td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -87,30 +87,26 @@
     </tbody>
 </table>
 
-@if (_IsCreateWorkOrderClicked) { 
-    <OperationManagerAddWorkOrder></OperationManagerAddWorkOrder>
+@if (_isCreateWorkOrderClicked) { 
+    <ModalAddWorkOrder Title=@Titles.ADD_WORKORDER/>
 }
 
-@if (_IsEditWorkOrderClicked) {
-    <OperationManagerEditWorkOrder Id="@_WorkOrderId"></OperationManagerEditWorkOrder>
+@if (_isEditWorkOrderClicked) { 
+    <ModalEditWorkOrder 
+        Id="@_workOrderId" 
+        Title=@Titles.EDIT_WORKORDER/>
 }
 
-@if (_IsDeleteWorkOrderClicked) {
-    <OperationManagerDeleteWorkOrder Id="@_WorkOrderId"></OperationManagerDeleteWorkOrder>
+@if (_isDeleteWorkOrderClicked) {
+    <ModalDeleteWorkOrder 
+        Title=@Titles.DELETE_WORKORDER
+        Id="@_workOrderId"/>
 }
 
-@if (_IsCreateActivityClicked) { 
-    <OperationManagerAddActivity></OperationManagerAddActivity>
+@if (_isCreateActivityClicked) { 
+    <ModalAddActivity Title=@Titles.ADD_ACTIVITY/>
 }
 
-<div class="container" 
-    style="text-align: center; padding: 10px; position: relative;
-        padding-top: 0%;">   
-    <i id="previous" class="bi bi-arrow-left-square-fill" title="Indietro"
-        style="padding:10px; cursor: pointer;"
-        @onclick="@(() => Previous(_PageNumber))"></i>
-    <span style="padding: 10px;">@_PageNumber</span>
-    <i id="next" class="bi bi-arrow-right-square-fill" title="Avanti"
-        style="padding:10px; cursor: pointer;"
-        @onclick="@(() => Next(_PageNumber))"></i>
-</div>
+<Paginator
+    CollectionSize="@_collectionSize"
+    Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>

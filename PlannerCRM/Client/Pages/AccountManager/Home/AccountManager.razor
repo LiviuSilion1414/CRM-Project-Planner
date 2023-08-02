@@ -5,10 +5,6 @@
 
 <PageTitle>CRM - Account Manager</PageTitle>
 
-@if (_IsError) {
-    <Feedback Message="@_Message"></Feedback>
-}
-
 <div class="parent">
     <button type="button" class="btn btn-primary" title="Aggiungi utente" @onclick="OnClickAddUser">
         <i class="bi bi-person-add"></i>
@@ -35,10 +31,12 @@
         @foreach (var user in _users) {
             <tr>
                 <td>
-                    @if (!user.IsDeleted) {
-                        <strong style="color: green;">[Attivo]</strong>
-                    } else {
+                    @if (user.IsDeleted) {
                         <strong style="color: darkred;">[Eliminato]</strong>
+                    } else if (user.IsArchived) {
+                        <strong style="color: yellow;">[Archiviato]</strong>
+                    } else {
+                        <strong style="color: green;">[Attivo]</strong>
                     }
                 </td>
                 <td>
@@ -48,65 +46,70 @@
                     </span>
                 </td>
                 <td>@user.FullName</td>
-                <td>@user.BirthDay.ToShortDateString()</td>
-                <td>@user.StartDate.ToShortDateString()</td>
+                <td>@user.BirthDay.ToString("dd/MM/yyyy")</td>
+                <td>@user.StartDate.ToString("dd/MM/yyyy")</td>
                 <td>@user.Role</td>
                 <td>@user.CurrentHourlyRate</td>
-                @if (!user.IsDeleted) {
+                <td>
+                    <button type="button" class="btn btn-primary" title="Visualizza dettagli utente" 
+                        @onclick="@(() => ShowDetails(user.Id))">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </td>
+                @if (!user.IsDeleted && !user.IsArchived) {
                     <td>
-                        <button type="button" class="btn btn-primary" title="Visualizza dettagli utente" @onclick="@(() => ShowDetails(user.Id))">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-primary" title="Modifica utente" @onclick="@(() => OnClickEdit(user.Id))">
+                        <button type="button" class="btn btn-primary" title="Modifica utente" 
+                            @onclick="@(() => OnClickEdit(user.Id))">
                            <i class="bi bi-pencil-square"></i>
                         </button>                
                     </td> 
                     <td> 
-                        <button type="button" class="btn btn-danger" title="Elimina utente" @onclick="@(() => OnClickDelete(user.Id))">
+                        <button type="button" class="btn btn-danger" title="Elimina utente"
+                            @onclick="@(() => OnClickDelete(user.Id))">
                             <i class="bi bi-trash3"></i>
                         </button>
                     </td>
-                } else {
-                    <td>
-                        <button type="button" class="btn btn-primary" title="Visualizza dettagli utente" @onclick="@(() => ShowDetails(user.Id))">
-                            <i class="bi bi-eye"></i>
+                } else if (user.IsArchived) {
+                    <td> 
+                        <button type="button" class="btn btn-success" title="Ripristina utente"
+                            @onclick="@(() => OnClickRestore(user.Id))">
+                            <i class="bi bi-arrow-repeat"></i>
                         </button>
                     </td>
-                    <td></td>
-                    <td></td>
                 }
+                <td></td>
+                <td></td>
             </tr>
         }
     </tbody>
 </table>
 
-@if (_IsViewClicked) {
-    <AccountManagerShowUserDetails Id="@_UserId"/>
+@if (_isViewClicked) {
+    <ModalShowUserDetails Title="Vedi dettagli" Id="@_userId"/>
 }
 
-@if (_IsAddClicked) {
-    <AccountManagerAddUserForm/>
+@if (_isAddClicked) {
+    <ModalAddUser Title="Aggiungi utente"/>
 } 
 
-@if (_IsEditClicked) {
-   <AccountManagerEditUserForm Id="@_UserId"/> 
+@if (_isEditClicked) {
+   <ModalEditUser Title="Modifica utente" Id="@_userId"/> 
 }
 
-@if (_IsDeleteClicked) {
-    <AccountManagerDeleteUser Id="@_UserId"></AccountManagerDeleteUser>
+@if (_isDeleteClicked) {
+    <ModalDeleteUser 
+        Id=@_userId
+        Title=@_title
+        ConfirmationMessage=@_message/>
 }
 
-<div class="container" 
-    style="text-align: center; padding: 10px; position: relative;
-        border: 0.5px;
-        padding-top: 0%;">   
-    <i id="previous" class="bi bi-arrow-left-square-fill" title="Indietro"
-        style="padding:10px; pointer-events: all;"
-        @onclick="@(() => Previous(_PageNumber))"></i>
-    <span style="padding: 10px;">@_PageNumber</span>
-    <i id="next" class="bi bi-arrow-right-square-fill" title="Avanti"
-        style="padding:10px;"
-        @onclick="@(() => Next(_PageNumber))"></i>
-</div>
+@if (_isRestoreClicked) {
+    <ModalRestoreUser 
+        Id=@_userId
+        Title=@_title
+        Message=@_message/>
+}
+
+<Paginator
+    CollectionSize="@_collectionSize"
+    Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
