@@ -2,10 +2,10 @@ namespace PlannerCRM.Shared.Attributes;
 
 public class MinimumHourlyRateAttribute : ValidationAttribute
 {
-    private int _MinimumHourlyRate { get; set; }
+    private int MinimumHourlyRate { get; set; }
 
     public MinimumHourlyRateAttribute(int minimumHourlyRate) {
-        _MinimumHourlyRate = minimumHourlyRate;
+        MinimumHourlyRate = minimumHourlyRate;
     }
 
     public MinimumHourlyRateAttribute() 
@@ -17,7 +17,7 @@ public class MinimumHourlyRateAttribute : ValidationAttribute
         if (value.GetType() == typeof(decimal)) {
             var hourlyRate = (decimal)value;
 
-            return hourlyRate >= _MinimumHourlyRate;
+            return hourlyRate >= MinimumHourlyRate;
         } else {
             return false;
         }

@@ -2,13 +2,13 @@ namespace PlannerCRM.Shared.Attributes;
 
 public class StartDateRangeHourlyRateAttribute : ValidationAttribute
 {
-    private int _MinimumMonth { get; set; }
-    private int _MaximumMonth { get; set; }
+    private int MinimumMonth { get; set; }
+    private int MaximumMonth { get; set; }
 
     public StartDateRangeHourlyRateAttribute(int minimumMonth, int maximumMonth) 
     {
-       _MinimumMonth = minimumMonth;
-       _MaximumMonth = maximumMonth;
+       MinimumMonth = minimumMonth;
+       MaximumMonth = maximumMonth;
     }
     
     public StartDateRangeHourlyRateAttribute()
