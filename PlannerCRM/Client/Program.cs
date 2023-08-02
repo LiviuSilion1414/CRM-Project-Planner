@@ -1,3 +1,5 @@
+using PlannerCRM.Client;
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<App>("#app");
@@ -14,6 +16,7 @@ builder.Services.AddScoped<NavigationLockService>();
 builder.Services.AddScoped<OperationManagerCrudService>();
 builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
+builder.Services.AddScoped<CustomDataAnnotationsValidator>();
 
 builder.Services.AddScoped<Logger<AuthenticationStateService>>();
 builder.Services.AddScoped<Logger<LoginService>>();
@@ -21,6 +24,12 @@ builder.Services.AddScoped<Logger<CurrentUserInfoService>>();
 builder.Services.AddScoped<Logger<AccountManagerCrudService>>();
 builder.Services.AddScoped<Logger<OperationManagerCrudService>>();
 builder.Services.AddScoped<Logger<DeveloperService>>();
+
+builder.Services.AddScoped<Logger<EmployeeLoginDto>>();
+builder.Services.AddScoped<Logger<EmployeeFormDto>>();
+builder.Services.AddScoped<Logger<WorkOrderFormDto>>();
+builder.Services.AddScoped<Logger<ActivityFormDto>>();
+
 
 builder.Services.AddScoped(sp => 
     new HttpClient {
