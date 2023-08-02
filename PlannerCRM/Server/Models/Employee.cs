@@ -14,6 +14,7 @@ public class Employee
     public decimal CurrentHourlyRate { get; set; }
     public Roles Role { get; set; }
     public bool IsDeleted { get; set; }
+    public bool IsArchived { get; set; }
     public List<EmployeeSalary> Salaries { get; set; }
     public List<EmployeeActivity> EmployeeActivity { get; set; }
 }
