@@ -11,17 +11,17 @@ public class ApplicationUserRepository
         UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
         DtoValidatorService validator,
-        Logger<DtoValidatorService> logger) 
+        Logger<DtoValidatorService> Logger) 
     {
         _userManager = userManager;    
         _roleManager = roleManager;
         _validator = validator;
-        _logger = logger;
+        _logger = Logger;
     }
 
     public async Task AddAsync(EmployeeFormDto dto) {
         try {
-            _validator.ValidateEmployee(dto, OperationType.ADD, out var isValid);
+            var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);
 
             if (isValid) {
                 var user = new IdentityUser {
@@ -55,7 +55,7 @@ public class ApplicationUserRepository
 
     public async Task EditAsync(EmployeeFormDto dto) {
         try {
-            _validator.ValidateEmployee(dto, OperationType.EDIT, out var isValid);
+            var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.EDIT);
             
             if (isValid) {
                 var user = await _userManager.FindByEmailAsync(dto.OldEmail);
@@ -99,8 +99,10 @@ public class ApplicationUserRepository
     public async Task DeleteAsync(string email) {
         try {
             var user = await _validator.ValidateDeleteUserAsync(email);
-    
-            await _userManager.DeleteAsync(user);
+
+            if (user is not null) {
+                await _userManager.DeleteAsync(user);
+            }
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 

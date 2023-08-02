@@ -2,22 +2,22 @@ namespace PlannerCRM.Server.Services;
 
 public class WorkTimeRecordRepository
 {
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _dbContext;
     private readonly DtoValidatorService _validator;
 	private readonly Logger<DtoValidatorService> _logger;
 
     public WorkTimeRecordRepository(AppDbContext db, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
-		_db = db;
-		_validator = validator;
+	    _dbContext = db;
+	    _validator = validator;
 		_logger = logger;
 	}
 
     public async Task AddAsync(WorkTimeRecordFormDto dto) {
         try {
-            _validator.ValidateWorkTime(dto, out var isValid);
+            var isValid = _validator.ValidateWorkTime(dto);
 
             if (isValid) {
-                await _db.WorkTimeRecords.AddAsync(
+                await _dbContext.WorkTimeRecords.AddAsync(
                     new WorkTimeRecord {
                         Id = dto.Id,
                         Date = dto.Date,
@@ -25,17 +25,17 @@ public class WorkTimeRecordRepository
                         TotalPrice = dto.TotalPrice + dto.Hours,
                         ActivityId = dto.ActivityId,
                         EmployeeId = dto.EmployeeId,
-                        Employee = _db.Employees
-                            .Where(em => !em.IsDeleted)
+                        Employee = _dbContext.Employees
+                            .Where(em => !em.IsDeleted && !em.IsArchived)
                             .Single(e => e.Id == dto.EmployeeId),
-                        WorkOrderId = await _db.WorkOrders
+                        WorkOrderId = await _dbContext.WorkOrders
                             .AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
                                 ? dto.WorkOrderId
                                 : throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_ADD)
                     }
                 );
         
-				if (await _db.SaveChangesAsync() == 0) {
+				if (await _dbContext.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 				}
             } else {
@@ -49,23 +49,23 @@ public class WorkTimeRecordRepository
     }
 
     public async Task DeleteAsync(int id) {
-        var workTimeRecordDelete = await _db.WorkTimeRecords
+        var workTimeRecordDelete = await _dbContext.WorkTimeRecords
             .SingleOrDefaultAsync(wtr => wtr.Id == id)
                 ?? throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
         
-        _db.WorkTimeRecords.Remove(workTimeRecordDelete);
+        _dbContext.WorkTimeRecords.Remove(workTimeRecordDelete);
         
-        if (await _db.SaveChangesAsync() == 0) {
+        if (await _dbContext.SaveChangesAsync() == 0) {
             throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
         }
     }
     
     public async Task EditAsync(WorkTimeRecordFormDto dto) {
         try {
-            _validator.ValidateWorkTime(dto, out var isValid);
+            var isValid = _validator.ValidateWorkTime(dto);
             
             if (isValid) {
-                var model = await _db.WorkTimeRecords
+                var model = await _dbContext.WorkTimeRecords
                     .SingleOrDefaultAsync(wtr => wtr.Id == dto.Id);
         
                 model.Id = dto.Id;
@@ -75,13 +75,13 @@ public class WorkTimeRecordRepository
                 model.ActivityId = dto.ActivityId;
                 model.WorkOrderId = dto.WorkOrderId;
                 model.EmployeeId = dto.EmployeeId;
-                model.Employee = await _db.Employees
-                    .Where(em => !em.IsDeleted)
+                model.Employee = await _dbContext.Employees
+                    .Where(em => !em.IsDeleted && !em.IsArchived)
                     .SingleAsync(em => em.Id == dto.EmployeeId);
         
-                _db.Update(model);
+                _dbContext.Update(model);
         
-				if (await _db.SaveChangesAsync() == 0) {
+				if (await _dbContext.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 				}
             } else {
@@ -95,14 +95,14 @@ public class WorkTimeRecordRepository
     }
 
     public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, int employeeId) {
-        var hasElements = await _db.WorkTimeRecords
+        var hasElements = await _dbContext.WorkTimeRecords
             .AnyAsync(wtr => wtr.ActivityId == activityId && wtr.EmployeeId == employeeId);
         return hasElements 
-            ? await _db.WorkTimeRecords
+            ? await _dbContext.WorkTimeRecords
                 .Select(wtr => new WorkTimeRecordViewDto {
                     Id = wtr.Id,
                     Date = wtr.Date,
-                    Hours = _db.WorkTimeRecords
+                    Hours = _dbContext.WorkTimeRecords
                         .Where(wtr => wtr.WorkOrderId == workOrderId && wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
                         .Distinct()
                         .Sum(wtrSum => wtrSum.Hours),
@@ -117,7 +117,7 @@ public class WorkTimeRecordRepository
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {
-        return await _db.WorkTimeRecords
+        return await _dbContext.WorkTimeRecords
             .Select(wtr => new WorkTimeRecordViewDto {
                 Id = wtr.Id,
                 Date = wtr.Date,
@@ -130,12 +130,12 @@ public class WorkTimeRecordRepository
     }
 
     public async Task<WorkTimeRecordViewDto> GetByEmployeeIdAsync(int employeeId) {
-        return await _db.WorkTimeRecords
+        return await _dbContext.WorkTimeRecords
             .Select(wtr => 
                 new WorkTimeRecordViewDto {
                     Id = wtr.Id,
                     Date = wtr.Date,
-                    Hours = _db.WorkTimeRecords
+                    Hours = _dbContext.WorkTimeRecords
                         .Sum(wtrSum => wtrSum.Hours),
                     TotalPrice = wtr.TotalPrice,
                     ActivityId = wtr.ActivityId,
