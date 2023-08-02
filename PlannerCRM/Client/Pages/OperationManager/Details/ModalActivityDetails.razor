@@ -1,0 +1,68 @@
+<div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@Title</h5>
+            <i id="x-cancel" class="bi bi-x-circle" @onclick="@OnClickModalCancel"></i>
+        </div>
+        <div id="before-modal-body">
+        <EditForm Model="@Activity" OnSubmit="OnClickModalCancel">
+                <div class="form-group">
+                    <i class="bi bi-briefcase"></i>
+                    <label for="Nome commessa">Commessa</label>
+                    <InputText class="form-control" @bind-Value="WorkOrderName" disabled=@_isDisabled readonly=@_isDisabled/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-fonts"></i>
+                    <label for="Nome attività">Nome</label>
+                    <InputText class="form-control" @bind-Value="Activity.Name" disabled=@_isDisabled readonly=@_isDisabled/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-calendar3"></i>
+                    <label for="Data d'inizio">Data d'inizio</label>
+                    <InputDate class="form-control" @bind-Value="@Activity.StartDate" disabled=@_isDisabled readonly=@_isDisabled/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-calendar3"></i>
+                    <label for="Data di fine">Data di fine</label>
+                    <InputDate class="form-control" @bind-Value="@Activity.FinishDate" disabled=@_isDisabled readonly=@_isDisabled/>
+                </div>
+                <div class="container">
+                    <span>Dipendenti selezionati per questa attività: @Activity.EmployeeActivity.Count</span> <br>
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <th>Ruolo</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th></th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ea in Activity.EmployeeActivity) {
+                                        <tr>
+                                            <td>@(ea.Employee.Role.ToString().Replace('_', ' '))</td>
+                                            <td>@ea.Employee.FullName</td>
+                                            <td> 
+                                                <i class="bi bi-envelope-at"></i>
+                                                <span> @ea.Employee.Email </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <br>
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <div id="cancel">
+                    <span id="btn-link" class="btn btn-link" @onclick="@OnClickModalCancel">Annulla</span>
+                </div>
+                <div id="confirm">
+                </div>
+            </div>
+        </EditForm>
+        </div>
+        </div>
+    </div>
+</div>

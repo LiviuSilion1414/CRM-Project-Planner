@@ -1,0 +1,37 @@
+.modal {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
+}
+
+#x-cancel {
+    cursor: pointer;
+}
+
+div#wrapper-card.card {
+    height: fit-content;
+    overflow-y: scroll;
+    border-width: thin;
+}
+
+.card {
+    padding-left: 5px;
+    border-width: 0.5rem;
+}
+
+.modal-footer {
+    justify-content: space-between;
+}
+
+#cancel {
+    float: left;
+}
+
+#confirm {
+    float: right;
+}
+
+#btn-link {
+    color: blue;
+    cursor: pointer;
+}

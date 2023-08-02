@@ -1,0 +1,35 @@
+.modal {
+    display: block; 
+    background-color: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(15px);
+}
+
+#x-circle {
+    cursor: pointer;
+}
+
+.modal-footer {
+    justify-content: space-between;
+}
+
+#cancel {
+    float: left;
+}
+
+#restore {
+    float: right;
+}
+
+#btn-link {
+    text-decoration: none; 
+    color: blue; 
+    cursor: pointer;
+}
+
+#close-wrapper:hover {
+    cursor: pointer;
+}
+
+#btn-link {
+    text-decoration: none;
+}

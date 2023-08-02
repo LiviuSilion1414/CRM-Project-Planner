@@ -1,0 +1,57 @@
+.modal {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
+    width: 100%;
+    height: 100%;
+}
+
+#x-cancel {
+    cursor: pointer;
+}
+
+#before-modal-body {
+    width: 100%;
+    height: 100%;
+}
+
+.modal-body {
+    width: 100%;
+}
+
+#date-wrapper {
+    justify-content: space-between;
+}
+
+#start-date {
+    float: left;
+}
+
+#finish-date {
+    float: left;
+}
+
+#start-date,
+#finish-date {
+    width: auto;
+}
+
+.modal-footer {
+    justify-content: space-between;
+    padding: 10px 0;
+    width: 100%;
+}
+
+#btn-link {
+    text-decoration: none;
+    color: blue;
+    cursor: pointer;
+}
+
+#cancel {
+    float: left;
+}
+
+#confirm {
+    float: right;
+}

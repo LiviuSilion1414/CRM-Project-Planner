@@ -1,0 +1,59 @@
+@using PlannerCRM.Shared.Models
+
+<div class="modal" tabindex="-1" role="dialog"
+    hidden="@_isCancelClicked">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Aggiungi orario di lavoro</h5>
+            <i id="x-cancel"class="bi bi-x-circle" @onclick=@OnClickModalCancel></i>
+        </div>
+        @if (_isError) {
+            <Feedback Message="@_message" OnClickCancel=@OnClickHideBanner/>
+        }
+        <div id="before-modal-body">
+        <EditForm EditContext="@_editContext" OnValidSubmit="OnClickModalConfirm">
+            <CascadingValue Value="@_errors">
+                <CustomDataAnnotationsValidator @ref="CustomValidator"/>
+                <div class="form-group">
+                    <i class="bi bi-briefcase"></i>
+                    <label for="Nome commessa:">Nome commessa </label> 
+                    <InputText class="form-control" @bind-Value="_workOrder.Name" Disabled="@_disabled"/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-puzzle"></i>
+                    <label for="Nome attività">Nome attività </label>
+                    <InputText class="form-control" @bind-Value="_activity.Name" Disabled="@_disabled"/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-calendar3"></i>
+                    <label for="Data d'inizio">Data d'inizio </label>
+                    <InputDate class="form-control" @bind-Value="@_activity.StartDate" Disabled="@_disabled"/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-calendar3"></i>
+                    <label for="Data di fine">Data fine </label>
+                    <InputDate class="form-control" @bind-Value="@_activity.FinishDate" Disabled="@_disabled"/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-clock"></i>
+                    <label for="Orario di lavoro">Inserisci il tuo orario di lavoro</label>
+                    <InputNumber class="form-control" @bind-Value="@_model.Hours"/>
+                    <CustomValidationMessage FieldName="@nameof(_model.Hours)"/>
+                </div>
+                <div class="modal-footer">
+                    <div id="cancel">
+                        <span id="btn-link" @onclick=@OnClickModalCancel>Annulla</span>
+                    </div>
+                    <div id="confirm">
+                        <button type="submit" class="btn btn-primary">Conferma</button>
+                    </div>
+                </div>
+            </CascadingValue>
+            <NavigationLock ConfirmExternalNavigation="@NavigationLockService.ConfirmedExternalExit" 
+                OnBeforeInternalNavigation="@NavLockService.ConfirmInternalExit"/>
+        </EditForm>
+        </div>
+        </div>
+    </div>
+</div>

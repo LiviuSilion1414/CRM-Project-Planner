@@ -1,0 +1,24 @@
+<div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@Title</h5>
+             <i id="x-circle" class="bi bi-x-circle" @onclick=@OnClickModalCancel></i>
+        </div>
+        <div class="modal-body">
+            <p>@Message</p>
+            <p> <strong>Nome:</strong> @_employee.FullName</p>
+            <p> <strong>Email:</strong> @_employee.Email</p>
+            <p> <strong>Ruolo:</strong> @_employee.Role</p>
+        </div>
+        <div class="modal-footer">
+            <div id="cancel">
+                <span id="btn-link" @onclick=@OnClickModalCancel>Annulla</span>
+            </div>
+            <div id="restore">
+                <button type="button" class="btn btn-success" @onclick=@OnClickConfirm>Ripristina</button> 
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

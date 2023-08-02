@@ -1,0 +1,55 @@
+@if (_activities is null) {
+    <p><em>Non ti è stata ancora assegnata alcuna attività.</em></p>
+} else {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Commessa</th>
+                <th>Attività</th>
+                <th>Data d'inizio</th>
+                <th>Data di fine</th>
+                <th>Ore segnate</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ac in _activities) {
+                <tr>
+                    <td><i class="bi bi-briefcase"></i></td> 
+                    <td>
+                        @(WorkOrders
+                            .Distinct()
+                            .FirstOrDefault(wo => wo.Id == ac.WorkOrderId)
+                            .Name)
+                    </td>
+                    <td>@ac.Name</td>
+                    <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
+                    <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
+                    @if (WorkTimeRecords is null) {
+                        <td><em>Nessun orario.</em></td>
+                    } else {
+                        <td>
+                            @foreach (var wtr in WorkTimeRecords.Distinct()) {
+                                if (wtr.ActivityId == ac.Id) {
+                                    @wtr.Hours
+                                }
+                            }
+                        </td>
+                    }
+                    <td>
+                        <button type="button" class="btn btn-primary" 
+                            @onclick="@(() => OnClickAddWorkedHours(ac.Id))">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Aggiungi orario</span>
+                        </button> 
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (_isAddClicked) {
+    <ModalAddHours ActivityId="@_activityId" EmployeeId="@EmployeeId"/>
+}

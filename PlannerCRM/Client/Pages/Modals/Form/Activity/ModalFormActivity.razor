@@ -1,0 +1,140 @@
+@using PlannerCRM.Shared.Models
+
+<div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Modifica attivita</h5>
+            <i id="x-cancel" class="bi bi-x-circle" @onclick="@OnClickModalCancel"></i>
+        </div>
+        @if (_isError) {
+            <Feedback Message="@_message" OnClickCancel=@OnClickHideBanner/> 
+        }
+        <div id="before-modal-body">
+        <EditForm EditContext="@_editContext" OnValidSubmit="OnClickModalConfirm">
+            <CascadingValue Value="@_errors">
+                <CustomDataAnnotationsValidator @ref="CustomValidator"/>
+                <div class="form-group">
+                    <i class="bi bi-briefcase"></i>
+                    <label for="Nome commessa">Commessa</label>
+                    <InputText type="search" @bind-Value="Model.SelectedWorkorder" style="width: 100%;" class="form-control"/>
+                    <CustomValidationMessage FieldName="@nameof(Model.SelectedWorkorder)"/>
+                    <ul id="workorder-list" hidden="@_hideWorkOrdersList">
+                        @if (!_workOrdersHasElements) {
+                            <li @onclick="@ToggleWorkOrderListView">Nessuna commessa trovata.</li>
+                        } else {
+                            @foreach (var wo in _workOrders) {
+                                <li class="dropdown-item" value="@wo" 
+                                    @onclick="@(() => OnClickSetWorkOrder(wo))">@wo.Name</li>
+                            }
+                        }
+                    </ul> 
+                    <div class="right">
+                        <button type="button" class="btn btn-link" title="Cerca commessa"
+                            @onclick="@(() => OnClickSearchWorkOrder(Model.SelectedWorkorder))">
+                                <i class="bi bi-search"></i>
+                                Cerca
+                        </button>
+                    </div>
+                    <CustomValidationMessage FieldName="@nameof(Model.WorkOrderId)"/>
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-fonts"></i>
+                    <label for="Nome attività">Nome</label>
+                    <InputText class="form-control" @bind-Value="Model.Name"/>
+                    <CustomValidationMessage FieldName="@nameof(Model.Name)" />
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-calendar3"></i>
+                    <label for="Data d'inizio">Data d'inizio</label>
+                    <InputDate class="form-control" @bind-Value="@Model.StartDate"/>
+                    <CustomValidationMessage FieldName="@nameof(Model.StartDate)" />
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-calendar3"></i>
+                    <label for="Data di fine">Data di fine</label>
+                    <InputDate class="form-control" @bind-Value="@Model.FinishDate"/>
+                    <CustomValidationMessage FieldName="@nameof(Model.FinishDate)" />
+                </div>
+                <div class="form-group">
+                    <i class="bi bi-people"></i>
+                    <label for="Assegna dipendenti">Assegna a dipendenti</label>
+                    <InputText type="search" class="form-control" @bind-Value="Model.SelectedEmployee"/>
+                    @if (_employees.Any()) {
+                        <ul id="employees-list" hidden="@_hideEmployeesList">
+                            @if (!_employeeHasElements) {
+                                <li @onclick="@ToggleEmployeesListView">Nessun dipendente trovato.</li>
+                            } else {
+                                @foreach (var em in _employees) {
+                                    <li class="dropdown-item" value="@em" title="Aggiungi impiegato"
+                                        @onclick="@(() => OnClickAddAsSelected(em))"> 
+                                            @em.Email
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    }
+                    <div>
+                        <button type="button" class="btn btn-link"
+                            @onclick="@(() => OnClickSearchEmployee(Model.SelectedEmployee))">
+                            <i class="bi bi-search"></i>
+                            Cerca
+                        </button>
+                    </div>
+                </div>
+                <div class="container">
+                    <span>Dipendenti selezionati per questa attività: @Model.ViewEmployeeActivity.Count</span> <br>
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <th>Ruolo</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th></th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ViewEmployeeActivity.Any()) {
+                                        @foreach (var ea in Model.ViewEmployeeActivity) {
+                                            <tr>
+                                                <td>@(ea.Employee.Role.ToString().Replace('_', ' '))</td>
+                                                <td>@ea.Employee.FullName</td>
+                                                <td> 
+                                                    <i class="bi bi-envelope-at"></i>
+                                                    <span> @ea.Employee.Email </span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger" value="@ea.Employee" title="Rimuovi impiegato"
+                                                        @onclick="(() => OnClickRemoveAsSelected(ea.Employee))">Elimina</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    } else { 
+                                        <tr>
+                                            <td></td>
+                                            <td><strong>Nessun dipendente selezionato.</strong></td>
+                                            <td></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <br>
+                        </div>
+                </div>
+                <CustomValidationMessage FieldName="@nameof(Model.ViewEmployeeActivity)"/>
+            </CascadingValue>
+            <div class="modal-footer">
+                <div id="cancel">
+                    <span id="btn-link" class="btn btn-link" @onclick="@OnClickModalCancel">Annulla</span>
+                </div>
+                <div id="confirm">
+                    <button type="submit" class="btn btn-primary">Conferma</button>
+                </div>
+            </div>
+            <NavigationLock ConfirmExternalNavigation="@NavigationLockService.ConfirmedExternalExit" 
+                OnBeforeInternalNavigation="@NavLockService.ConfirmInternalExit"/>
+        </EditForm>
+        </div>
+        </div>
+    </div>
+</div>

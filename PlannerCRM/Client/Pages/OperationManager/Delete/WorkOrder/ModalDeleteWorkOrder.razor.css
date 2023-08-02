@@ -1,0 +1,22 @@
+.modal {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
+}
+
+#x-cancel {
+    cursor: pointer;
+}
+
+.modal-footer {
+    justify-content: space-between;
+}
+
+#cancel {
+    cursor: pointer;
+    float: left;
+}
+
+#confirm {
+    float: right;
+}
