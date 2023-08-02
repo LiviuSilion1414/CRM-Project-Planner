@@ -43,14 +43,15 @@ builder.Services.AddScoped<EmployeeRepository>();
 builder.Services.AddScoped<WorkOrderRepository>();
 builder.Services.AddScoped<ActivityRepository>();
 builder.Services.AddScoped<WorkTimeRecordRepository>();
+builder.Services.AddScoped<DtoValidatorService>();
 
 builder.Services.AddScoped<Logger<EmployeeRepository>>();
 builder.Services.AddScoped<Logger<WorkOrderRepository>>();
 builder.Services.AddScoped<Logger<ActivityRepository>>();
 builder.Services.AddScoped<Logger<WorkTimeRecordRepository>>();
 builder.Services.AddScoped<Logger<ApplicationUserRepository>>();
-
 builder.Services.AddScoped<Logger<DtoValidatorService>>();
+
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
