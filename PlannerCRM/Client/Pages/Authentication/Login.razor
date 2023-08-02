@@ -8,33 +8,34 @@
 
 <h3>Entra nel tuo account gestionale.</h3>
 
-@if (_IsError) {
-    <Feedback Hidden="@true" Message="@_Message"/>
+@if (_isError) {
+    <Feedback Message="@_message" OnClickCancel=@OnClickHideBanner/>
 }
 
 <h4>Login</h4>
 <div class="container-fluid">
-    <EditForm Model="@_Model" OnValidSubmit="LoginOnValidInput">
-        <DataAnnotationsValidator/>
-        <div class="form-group">
-            <label for="Email">Email:</label>
-            <InputText Type="email" class="form-control" @bind-Value="_Model.Email"/>
-            <ValidationMessage For="@(() => _Model.Email)"/>
-        </div>
-        <div class="form-group">
-            <label for="Password">Password:</label>
-            <div style="margin: 0 auto; margin: 10px 5px;">
-                <InputText type="@(_IsCheckboxClicked ? "text" : "password")" class="form-control" @bind-Value="_Model.Password"/>
-                <InputCheckbox style="float:left; margin-top: 5px;" @bind-Value="@_IsCheckboxClicked" @onclick="SwitchShowPassword"/>
-                <span style="margin: 10px 5px;">Vedi password</span>
+    <EditForm Model="@_model" OnValidSubmit="LoginOnValidInput">
+        <CascadingValue Value="@_errors">
+            <CustomDataAnnotationsValidator @ref="@CustomValidator"/>
+            <div class="form-group">
+                <label for="Email">Email:</label>
+                <InputText type="email" class="form-control" @bind-Value="_model.Email"/>
+                <CustomValidationMessage FieldName="@nameof(_model.Email)"/>
             </div>
-            <ValidationMessage For="@(() => _Model.Password)"/>
-        </div>
-        <div class="wrapper">
-            <button type="submit" id="submit" class="btn btn-primary">
-                <span>Accedi</span>
-                <i class="bi bi-box-arrow-in-right"></i>
-            </button>
-        </div>
+            <div class="form-group">
+                <label for="Password">Password:</label>
+                <div style="margin: 0 auto; margin: 10px 5px;">
+                    <InputText type="@_input" class="form-control" @bind-Value="_model.Password"/>
+                    <SwitchInputType Switch="@SwitchPassword"/>
+                </div>
+                <CustomValidationMessage FieldName="@nameof(_model.Password)"/>
+            </div>
+            <div class="wrapper">
+                <button type="submit" id="submit" class="btn btn-primary">
+                    <span>Accedi</span>
+                    <i class="bi bi-box-arrow-in-right"></i>
+                </button>
+            </div>
+        </CascadingValue>
     </EditForm>
 </div>

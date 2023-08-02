@@ -1,50 +1,67 @@
-using System.Net;
-using PlannerCRM.Shared.Models;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
-using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
-using Microsoft.AspNetCore.Components;
-using PlannerCRM.Client.Services;
-using static PlannerCRM.Shared.Constants.ConstantValues;
-
 namespace PlannerCRM.Client.Pages.Authentication;
 
-public partial class Login
+public partial class Login : ComponentBase
 {
-    [Inject] private CurrentUserInfoService CurrentUserInfoService { get; set; }
-    [Inject] private LoginService LoginService { get; set; } 
-    [Inject] private NavigationManager NavManager { get; set; }
+    [Inject] public CurrentUserInfoService CurrentUserInfoService { get; set; }
+    [Inject] public LoginService LoginService { get; set; } 
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }   
+    [Inject] public Logger<LoginService> Logger { get; set; }   
 
-    private EmployeeLoginDto _Model = new();   
-    private CurrentEmployeeDto _CurrentEmployee { get; set; }
-    private bool _IsCheckboxClicked { get; set; } = false;
-    private string _Message { get; set; }
-    private bool _IsError { get; set; }
+    private EmployeeLoginDto _model;
+    private CurrentEmployeeDto _currentEmployee;
+    private EditContext _editContext;
 
-    public async Task LoginOnValidInput() {
-        var response = await LoginService.LoginAsync(_Model);
+    private Dictionary<string, List<string>> _errors;
 
-        if (response.IsSuccessStatusCode && _Model.Email != ADMIN_EMAIL) {
-            _CurrentEmployee = await CurrentUserInfoService.GetCurrentEmployeeIdAsync(_Model.Email);
-        }
-        
-        if (response.IsSuccessStatusCode) {
-            var role =  await CurrentUserInfoService.GetCurrentUserRoleAsync();
+    private string _message;
+    private bool _isError;
+    private string _input;
 
-            foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                if (possibleRole.ToString() == role) {
-                    if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
-                        possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
-                        NavManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_CurrentEmployee.Id}", true);
-                    } else {
-                        NavManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
-                    }
+    protected override void OnInitialized() {
+        _model = new();
+        _editContext = new(_model);
+        _currentEmployee = new();
+    } 
+    private async Task LoginOnValidInput() {
+        try {
+            var isValid = ValidatorService.Validate(_model, out _errors);
+    
+            if (isValid) {
+                var response = await LoginService.LoginAsync(_model);
+    
+                if (response.IsSuccessStatusCode && _model.Email != ConstantValues.ADMIN_EMAIL) {
+                    _currentEmployee = await CurrentUserInfoService.GetCurrentEmployeeIdAsync(_model.Email);
                 }
+                
+                if (response.IsSuccessStatusCode) {
+                    var role =  await CurrentUserInfoService.GetCurrentUserRoleAsync();
+    
+                    foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
+                        var roleValue = possibleRole.ToString();
+                        if (possibleRole.ToString() == role) {
+                            if (roleValue == nameof(Roles.SENIOR_DEVELOPER) || roleValue == nameof(Roles.JUNIOR_DEVELOPER)) {
+                                NavigationManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
+                            } else {
+                                NavigationManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
+                            }
+                        }
+                    }
+                } else {
+                    _isError = true;
+                    _message = await response.Content.ReadAsStringAsync();
+                }
+            } else {
+                CustomValidator.DisplayErrors(_errors);
             }
-        } else {
-            _IsError = true;
-            _Message = await response.Content.ReadAsStringAsync();
+        } catch (Exception exc) {
+            _isError = true;
+            _message = exc.Message;
+            Logger.LogError("Error: { } Message: { }", exc.Message, exc.StackTrace); 
         }
     }
+    
+    private void OnClickHideBanner(bool hidden) => _isError = hidden;
 
-    public void SwitchShowPassword() => _IsCheckboxClicked = !_IsCheckboxClicked;
+    private void SwitchPassword(string type) => _input = type;
 }
