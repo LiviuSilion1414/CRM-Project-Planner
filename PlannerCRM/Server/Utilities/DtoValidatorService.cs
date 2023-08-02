@@ -10,78 +10,93 @@ public class DtoValidatorService
         _userManager = userManager;
     }
 
-    public void ValidateEmployee(EmployeeFormDto dto, OperationType operation, out bool isValid) {
-        CheckDtoHealth(dto, out isValid);
+    public async Task<bool> ValidateEmployeeAsync(EmployeeFormDto dto, OperationType operation) {
+        var isValid = CheckDtoHealth(dto);
 
-        if (dto.Role == ConstantValues.ADMIN_ROLE || dto.Email == ConstantValues.ADMIN_EMAIL) {
-            throw new DuplicateElementException(message: ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
-        }
-
-        var employeeIsAlreadyPresent = _context.Employees
-            .Any(em => 
-                EF.Functions.ILike(em.Email, $"%{dto.Email}%"));        
-        
-        var userIsAlreadyPresent = _userManager.Users
-            .Any(user => user.Email == dto.Email);
-
-        if (operation == OperationType.ADD) {
-            if (employeeIsAlreadyPresent || userIsAlreadyPresent) {
-                throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+        if (isValid) {
+            if (dto.Role == ConstantValues.ADMIN_ROLE || dto.Email == ConstantValues.ADMIN_EMAIL) {
+                throw new DuplicateElementException(message: ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
             }
-        } else {
-            if (!employeeIsAlreadyPresent && !userIsAlreadyPresent) {
-                throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+
+            var employeeIsAlreadyPresent = await _context.Employees
+                .AnyAsync(em => 
+                    EF.Functions.ILike(em.Email, $"%{dto.Email}%") && em.Id == dto.Id);        
+            
+            var userIsAlreadyPresent = await _userManager.Users
+                .AnyAsync(user => user.Email == dto.Email);
+
+            if (operation == OperationType.ADD) {
+                if (employeeIsAlreadyPresent && userIsAlreadyPresent) {
+                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                }
+            } 
+            
+            if (operation == OperationType.EDIT) {
+                if (!employeeIsAlreadyPresent && !userIsAlreadyPresent) {
+                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                }
             }
+
+            return true;
         }
         
-        isValid = true;
+        return false;
     }
 
-    public void ValidateWorkOrder(WorkOrderFormDto dto, OperationType operation, out bool isValid) {
-        CheckDtoHealth(dto, out isValid);
+    public async Task<bool> ValidateWorkOrderAsync(WorkOrderFormDto dto, OperationType operation) {
+        var isValid = CheckDtoHealth(dto);
         
-        var isAlreadyPresent = _context.WorkOrders
-            .Any(wo=> ((!wo.IsCompleted) || (!wo.IsDeleted)) && wo.Id == dto.Id);
+        if (isValid) {
+            var isAlreadyPresent = await _context.WorkOrders
+                .AnyAsync(wo=> ((!wo.IsCompleted) || (!wo.IsDeleted)) && wo.Id == dto.Id);
 
-        if (operation == OperationType.ADD) {
-            if (isAlreadyPresent) {
-                throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+            if (operation == OperationType.ADD) {
+                if (isAlreadyPresent) {
+                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                }
+            } 
+            if (operation == OperationType.EDIT) {
+                if (!isAlreadyPresent) {
+                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                }
             }
-        } else {
-            if (!isAlreadyPresent) {
-                throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
-            }
+
+            return true;
         }
 
-        isValid = true;
+        return false;
     }
 
-    public void ValidateActivity(ActivityFormDto dto, OperationType operation, out bool isValid) {
-        CheckDtoHealth(dto, out isValid);
+    public async Task<bool> ValidateActivityAsync(ActivityFormDto dto, OperationType operation) {
+        var isValid = CheckDtoHealth(dto);
 
-        var isAlreadyPresent = _context.Activities
-            .Any(ac => ac.Id == dto.Id);
+        if (isValid) {
+            var isAlreadyPresent = await _context.Activities
+                .AnyAsync(ac => ac.Id == dto.Id);
 
-        if (isAlreadyPresent) {
-            throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
-        }
-
-        if (operation == OperationType.ADD) {
-            if (isAlreadyPresent) {
-                throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+            if (operation == OperationType.ADD) {
+                if (isAlreadyPresent) {
+                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                }
+            } 
+            if (operation == OperationType.EDIT) {
+                if (!isAlreadyPresent) {
+                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                }
             }
-        } else {
-            if (!isAlreadyPresent) {
-                throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+
+            if (dto.ViewEmployeeActivity is null) {
+                throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
             }
+
+            return true;
         }
 
-        if (!dto.EmployeeActivity.Any()) {
-            throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-        }
+        return false;
     }
 
-    public void ValidateWorkTime(WorkTimeRecordFormDto dto, out bool isValid) => CheckDtoHealth(dto, out isValid);
+    public bool ValidateWorkTime(WorkTimeRecordFormDto dto) => 
+        CheckDtoHealth(dto);
 
     public async Task<Employee> ValidateDeleteEmployeeAsync(int id) {
         return await _context.Employees
@@ -114,34 +129,20 @@ public class DtoValidatorService
                 ?? throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
 
-    private static void CheckDtoHealth(object dto, out bool isValid) {
-        isValid = false;
-
+    private static bool CheckDtoHealth(object dto) {
         if (dto is null) {
-            throw new ArgumentNullException(paramName: nameof(dto), message: ExceptionsMessages.NULL_OBJECT); 
+            return false;   
         }
 
-        if (dto.GetType() != typeof(EmployeeFormDto)) {
-            throw new TypeMismatchException(message: ExceptionsMessages.TYPE_MISMATCH);
-        }
-        
-        var propertyName = string.Empty;
         var hasPropertiesNull = dto
             .GetType()
             .GetProperties()
-            .Any(prop => {
-                if (prop.GetValue(dto) is null) {
-                    propertyName = prop.Name;
-                    return true;
-                }
-
-                return false;
-            });
+            .Any(prop => prop.GetValue(dto) is null);
 
         if (hasPropertiesNull) {
-            throw new ArgumentNullException(paramName: propertyName, message: ExceptionsMessages.NULL_ARG);
+            return false;
         }
 
-        isValid = true;
+        return true;
     }
 }
