@@ -1,44 +1,54 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
-using PlannerCRM.Client.Services.Crud;
-using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
-using PlannerCRM.Shared.DTOs.Workorder.Views;
-using PlannerCRM.Shared.Models;
+using System.Globalization;
+using PlannerCRM.Client.Pages.OperationManager.Details;
 
 namespace PlannerCRM.Client.Pages.OperationManager.MasterDetail;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-public partial class OperationManagerMasterDetails
+public partial class OperationManagerMasterDetails : ComponentBase
 {
     [Parameter] public int WorkOrderId { get; set; }
+    [Parameter] public WorkOrderViewDto WorkOrder { get; set; }
 
-    [Inject] private NavigationManager NavManager { get; set; }
-    [Inject] private OperationManagerCrudService OperationManagerService { get; set; }
+    [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
 
-    private WorkOrderViewDto _WorkOrder = new();
-    private List<ActivityFormDto> _Activities = new();
-    public bool _IsEditActivityClicked { get; set; }
-    public bool _IsDeleteActivityClicked { get; set; }
-    public int _ActivityId { get; set; }
-    public bool _Loaded { get; set; } = false;
+    private WorkOrderViewDto _workOrder;
+    private List<ActivityViewDto> _activities;
+
+    private bool _isEditActivityClicked;
+    private bool _isDeleteActivityClicked;
+    private bool _isShowActivityClicked;
+    private int _activityId;
+    private ActivityViewDto _activityView;
 
     protected override async Task OnInitializedAsync() {
-        _WorkOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
-        _Activities = await OperationManagerService.GetActivityPerWorkOrderAsync(_WorkOrder.Id); 
+        _workOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
+        _activities = await OperationManagerService.GetActivityPerWorkOrderAsync(_workOrder.Id); 
     }
-    
-    void LoadSpinner() {
-        Task.Delay(1500);
-        _Loaded=true;
+
+    protected override void OnInitialized() {
+        _workOrder = new();
+        _activities = new();
     }
 
     private void OnClickEdit(int activityId) {
-        _IsEditActivityClicked = !_IsEditActivityClicked;
-        _ActivityId = activityId;
+        _isEditActivityClicked = !_isEditActivityClicked;
+        _activityId = activityId;
+    }
+
+    private void OnClickShowDetails(ActivityViewDto activity) {
+        _isShowActivityClicked = !_isShowActivityClicked;
+        _activityView = new() {
+            Id = activity.Id,
+            Name = activity.Name,
+            StartDate = activity.StartDate,
+            FinishDate = activity.FinishDate,
+            WorkOrderId = activity.WorkOrderId,
+            EmployeeActivity = activity.EmployeeActivity
+        };
     }
 
     private void OnClickDelete(int activityId) {
-        _IsDeleteActivityClicked = !_IsDeleteActivityClicked;
-        _ActivityId = activityId;
+        _isDeleteActivityClicked = !_isDeleteActivityClicked;
+        _activityId = activityId;
     }
 }

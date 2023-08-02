@@ -1,4 +1,4 @@
-@if (!_Activities.Any()) {
+@if (!_activities.Any()) {
     <p><strong>Nessun'attività assegnata.</strong></p>
 } else {
     <div class="master-detail">
@@ -17,12 +17,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var ac in _Activities) {
+                    @foreach (var ac in _activities) {
                         <tr>
                             <td><i class="bi bi-puzzle"></i></td>
                             <td>@ac.Name</td>
-                            <td>@ac.StartDate</td>
-                            <td>@ac.FinishDate</td>
+                            <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
+                            <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @foreach (var ea in ac.EmployeeActivity) {
                                     <tr>
@@ -33,17 +33,25 @@
                                 }
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary" title="Modifica attività"
-                                    @onclick="@(() => OnClickEdit(ac.Id))">
-                                    <i class="bi bi-pencil-square"></i>
+                                <button type="button" class="btn btn-primary" title="Visualizza attività"
+                                    @onclick="@(() => OnClickShowDetails(ac))">
+                                    <i class="bi bi-eye"></i>
                                 </button>                
-                            </td> 
-                            <td> 
-                                <button type="button" class="btn btn-danger" title="Elimina attività"
-                                    @onclick="@(() => OnClickDelete(ac.Id))">
-                                    <i class="bi bi-trash3"></i>
-                                </button>
                             </td>
+                            @if (!WorkOrder.IsDeleted) {
+                                <td>
+                                    <button type="button" class="btn btn-primary" title="Modifica attività"
+                                        @onclick="@(() => OnClickEdit(ac.Id))">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>                
+                                </td> 
+                                <td> 
+                                    <button type="button" class="btn btn-danger" title="Elimina attività"
+                                        @onclick="@(() => OnClickDelete(ac.Id))">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -51,18 +59,23 @@
         </div>
     </div>
 }
-@if (_IsEditActivityClicked) { 
-    <CascadingValue Value="@_ActivityId" Name="ActivityId">
-        <CascadingValue Value="@WorkOrderId" Name="WorkOrderId">
-            <OperationManagerEditActivity></OperationManagerEditActivity> 
-        </CascadingValue>
-    </CascadingValue>
+@if (_isEditActivityClicked) { 
+    <ModalEditActivity 
+        Title=@Titles.EDIT_ACTIVITY
+        ActivityId=@_activityId 
+        WorkOrderId=@WorkOrderId/> 
 }
 
-@if (_IsDeleteActivityClicked) {
-    <CascadingValue Value="@_ActivityId" Name="ActivityId">
-        <CascadingValue Value="@WorkOrderId" Name="WorkOrderId">
-            <OperationManagerDeleteActivity></OperationManagerDeleteActivity> 
-        </CascadingValue>
-    </CascadingValue>
+@if (_isDeleteActivityClicked) {
+    <ModalDeleteActivity 
+        Title=@Titles.DELETE_ACTIVITY
+        ActivityId=@_activityId 
+        WorkOrderId=@WorkOrderId/> 
+}
+
+@if (_isShowActivityClicked) {
+    <ModalActivityDetails 
+        Title=@Titles.DETAILS_ACTIVITY
+        Activity=@_activityView 
+        WorkOrderName=@WorkOrder.Name/>
 }

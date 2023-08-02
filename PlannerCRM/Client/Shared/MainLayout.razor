@@ -9,10 +9,10 @@
                     <div class="parent">
                         <div class="child">
                             <span class="user-info">Ciao, @context.User.Identity.Name!</span> <br>
-                            <span class="user-info">Ruolo: @UserRole</span>
+                            <span class="user-info">Ruolo: @_userRole</span>
                         </div>
                         <div class="child">
-                            <span style="cursor: pointer;" @onclick="OnClickLogout">
+                            <span style="cursor: pointer;" @onclick="OnClickLogout" title="Disconettiti">
                                 <span style="color: red;">Esci</span>
                                <i class="bi bi-box-arrow-right" style="color: red;"></i>
                             </span>

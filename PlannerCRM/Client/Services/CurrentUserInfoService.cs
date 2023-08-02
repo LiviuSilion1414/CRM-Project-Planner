@@ -4,12 +4,12 @@ public class CurrentUserInfoService
 {
     private readonly HttpClient _http;
     private readonly Logger<CurrentUserInfoService> _logger;
-
+    
     public CurrentUserInfoService(HttpClient http, Logger<CurrentUserInfoService> logger) {
         _http = http;
         _logger = logger;
     }
-    
+
     public async Task<CurrentUser> GetCurrentUserInfoAsync() {
         try {
             var response = await _http.GetAsync("account/current/user/info");
@@ -18,7 +18,7 @@ public class CurrentUserInfoService
             return JsonConvert.DeserializeObject<CurrentUser>(jsonObject);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
+            
             return new();
         }
     }

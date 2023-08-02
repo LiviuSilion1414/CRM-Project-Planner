@@ -1,5 +1,7 @@
 namespace PlannerCRM.Client.Services.Crud;
 
+[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+[Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public class OperationManagerCrudService
 {
     private readonly HttpClient _http;
@@ -232,7 +234,8 @@ public class OperationManagerCrudService
             return new();
         }
     }
-
+    
+    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     public async Task<WorkOrderViewDto> GetWorkOrderForViewAsync(int workOrderId) {
         try {
             var response = await _http.GetAsync($"workorder/get/for/view/{workOrderId}");
@@ -272,12 +275,12 @@ public class OperationManagerCrudService
        }
     }
 
-    public async Task<List<ActivityFormDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
+    public async Task<List<ActivityViewDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
         try {
             var response = await _http.GetAsync($"activity/get/activity/per/workorder/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
-            return JsonConvert.DeserializeObject<List<ActivityFormDto>>(jsonObject);
+            return JsonConvert.DeserializeObject<List<ActivityViewDto>>(jsonObject);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 

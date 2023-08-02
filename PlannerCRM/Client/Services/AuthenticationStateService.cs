@@ -3,19 +3,18 @@ namespace PlannerCRM.Client.Services;
 public class AuthenticationStateService : AuthenticationStateProvider
 {
     private readonly CurrentUserInfoService _authInfoService;
-    private readonly Logger<AuthenticationStateService> _logger;
-    private CurrentUser _currentUser;
+    private CurrentUser _currentUser = new();
 
-    public AuthenticationStateService(CurrentUserInfoService authInfoService, Logger<AuthenticationStateService> logger) {
+    public AuthenticationStateService(CurrentUserInfoService authInfoService) {
         _authInfoService = authInfoService;
-        _logger = logger;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
-        var identity = new ClaimsIdentity();
         try {
-            var userInfo = await GetCurrentUserAsync();
-            if (userInfo.IsAuthenticated) {
+            var identity = new ClaimsIdentity();
+           
+            _currentUser = await GetCurrentUserAsync();
+            if (_currentUser.IsAuthenticated) {
                 var claims = new List<Claim> { 
                     new Claim(ClaimTypes.Name, _currentUser.UserName) 
                 }
@@ -23,10 +22,14 @@ public class AuthenticationStateService : AuthenticationStateProvider
                 .Select(c => new Claim(c.Key, c.Value)));
                
                 identity = new ClaimsIdentity(claims, "Server authentication");
+
+                return new AuthenticationState(new ClaimsPrincipal(identity));
             } else {
                 identity = new ClaimsIdentity(new List<Claim> {
                     new Claim(ClaimTypes.Name, "Anonymous")
                 });
+
+                return new AuthenticationState(new ClaimsPrincipal(identity));
             }
         } catch (HttpRequestException ex) {
             Console.WriteLine("Request failed:" + ex.ToString());
@@ -34,8 +37,22 @@ public class AuthenticationStateService : AuthenticationStateProvider
             Console.WriteLine("Exception:" + exc.ToString());
         }
         
-        return new AuthenticationState(new ClaimsPrincipal(identity));
+        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }
 
-    public async Task<CurrentUser> GetCurrentUserAsync() => await _authInfoService.GetCurrentUserInfoAsync();
+    public async Task<CurrentUser> GetCurrentUserAsync() {
+        try {
+            _currentUser = await _authInfoService.GetCurrentUserInfoAsync();
+            
+            return _currentUser is not null ? _currentUser : new();
+        } catch (NullReferenceException exc) {
+            Console.WriteLine("Error: {0}", exc.StackTrace);
+            
+            return new();
+        } catch (Exception exc) {
+            Console.WriteLine($"Error {0}:", exc.StackTrace); 
+
+            return new();
+        }
+    }
 }

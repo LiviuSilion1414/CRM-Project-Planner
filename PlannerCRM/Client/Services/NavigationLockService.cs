@@ -7,11 +7,11 @@ public class NavigationLockService
 {
     private readonly IJSRuntime _js;
     public const bool ConfirmedExternalExit = true;
-    
+
     public NavigationLockService(IJSRuntime js) {
         _js = js;
     }
-
+    
     public async Task ConfirmInternalExit(LocationChangingContext context) {
         var confirmed = await _js.InvokeAsync<bool>("window.confirm", "Changes that you made may not be saved. Continue?");
 
