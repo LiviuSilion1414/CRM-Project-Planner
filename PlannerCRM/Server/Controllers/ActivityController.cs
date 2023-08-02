@@ -51,9 +51,11 @@ public class ActivityController : ControllerBase
     [HttpPut("edit")]
     public async Task<ActionResult> EditActivity(ActivityFormDto dto) {
         try {
-            await _repo.EditAsync(dto);
+            if (await _repo.EditAsync(dto)) {
+                return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
+            }
 
-            return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
+            return BadRequest(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
         } catch (NullReferenceException exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
@@ -111,7 +113,7 @@ public class ActivityController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new ActivityViewDto();
+            return new();
         }
     }
 
@@ -123,7 +125,7 @@ public class ActivityController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new ActivityFormDto();
+            return new();
         }
     }
 
@@ -135,7 +137,7 @@ public class ActivityController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new ActivityDeleteDto();
+            return new();
         }
     }
 
@@ -145,13 +147,13 @@ public class ActivityController : ControllerBase
         {nameof(Roles.JUNIOR_DEVELOPER)}
     """ )]
     [HttpGet("get/activity/per/workorder/{workOrderId}")]
-    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkorderAsync(int workOrderId) {
+    public async Task<List<ActivityViewDto>> GetActivitiesPerWorkorderAsync(int workOrderId) {
         try {
             return await _repo.GetActivitiesPerWorkOrderAsync(workOrderId);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new List<ActivityFormDto>();
+            return new();
         }
     }
 
@@ -167,7 +169,7 @@ public class ActivityController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new List<ActivityFormDto>();
+            return new();
         }
     }
     
@@ -183,7 +185,7 @@ public class ActivityController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new List<ActivityViewDto>();
+            return new();
         }
     }
 }
