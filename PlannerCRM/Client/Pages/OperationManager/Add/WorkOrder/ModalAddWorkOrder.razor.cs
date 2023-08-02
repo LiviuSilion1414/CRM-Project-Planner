@@ -17,7 +17,6 @@ public partial class ModalAddWorkOrder : ComponentBase
     }
 
     public async Task OnClickModalConfirm(WorkOrderFormDto returnedModel) {
-        Console.WriteLine("Arrived");
         await OperationManagerService.AddWorkOrderAsync(returnedModel);
 
         NavManager.NavigateTo(_currentPage, true);

@@ -19,8 +19,8 @@
                     @foreach (var ac in _model.EmployeeActivities) {
                         @foreach (var wo in _workOrders) {
                             <div class="container">
-                                <p><strong>Commessa: @wo.Name</strong></p>
                                 @if (ac.Activity.WorkOrderId == wo.Id) {
+                                    <p><strong>Commessa: @wo.Name</strong></p>
                                     <p><strong>Attivita: @ac.Activity.Name</strong></p>
                                 }
                             </div>

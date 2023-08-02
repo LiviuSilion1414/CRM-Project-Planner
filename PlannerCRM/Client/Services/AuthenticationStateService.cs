@@ -45,13 +45,7 @@ public class AuthenticationStateService : AuthenticationStateProvider
             _currentUser = await _authInfoService.GetCurrentUserInfoAsync();
             
             return _currentUser is not null ? _currentUser : new();
-        } catch (NullReferenceException exc) {
-            Console.WriteLine("Error: {0}", exc.StackTrace);
-            
-            return new();
-        } catch (Exception exc) {
-            Console.WriteLine($"Error {0}:", exc.StackTrace); 
-
+        } catch {
             return new();
         }
     }

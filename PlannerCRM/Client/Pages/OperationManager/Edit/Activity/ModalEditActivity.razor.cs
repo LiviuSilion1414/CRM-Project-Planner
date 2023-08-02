@@ -15,7 +15,6 @@ public partial class ModalEditActivity : ComponentBase
     private string _currentPage;
 
     protected override async Task OnInitializedAsync() {
-        Console.WriteLine(ActivityId);
         _model = await OperationManagerService.GetActivityForEditAsync(ActivityId);
         _currentWorkOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
         _model.SelectedWorkorder = _currentWorkOrder.Name;

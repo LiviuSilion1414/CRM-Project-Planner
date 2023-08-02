@@ -34,7 +34,6 @@ public partial class ModalDeleteUser : ComponentBase
         _model = new() { EmployeeActivities = new() };
         _workOrders = new();
         _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
-        Console.WriteLine("Has values: {0}", _model.EmployeeActivities.Any());
     }   
     
     private void OnClickModalCancel() {
