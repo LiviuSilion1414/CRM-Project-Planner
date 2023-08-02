@@ -37,7 +37,7 @@ public partial class ModalFormWorkOrder : ComponentBase
 
     private void OnClickInvalidSubmit() {
         _isError = true;
-        _errorMessage = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
+        _errorMessage = ExceptionsMessages.EMPTY_FIELDS;
     }
 
     private async Task OnClickModalConfirm() {

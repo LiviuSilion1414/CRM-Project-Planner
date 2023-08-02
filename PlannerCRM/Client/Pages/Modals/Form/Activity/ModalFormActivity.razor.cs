@@ -153,7 +153,7 @@ public partial class ModalFormActivity : ComponentBase
 
     private void OnClickInvalidSubmit() {
         _isError = true;
-        _message = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
+        _message = ExceptionsMessages.EMPTY_FIELDS;
     }
 
     private async Task OnClickModalConfirm() {

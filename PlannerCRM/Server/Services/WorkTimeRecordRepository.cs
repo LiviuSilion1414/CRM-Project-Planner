@@ -21,8 +21,8 @@ public class WorkTimeRecordRepository
                     new WorkTimeRecord {
                         Id = dto.Id,
                         Date = dto.Date,
-                        Hours = dto.Hours,
-                        TotalPrice = dto.TotalPrice + dto.Hours,
+                        Hours = dto.Hours ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
+                        TotalPrice = dto.TotalPrice + dto.Hours  ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
                         ActivityId = dto.ActivityId,
                         EmployeeId = dto.EmployeeId,
                         Employee = _dbContext.Employees
@@ -70,7 +70,7 @@ public class WorkTimeRecordRepository
         
                 model.Id = dto.Id;
                 model.Date = dto.Date;
-                model.Hours = dto.Hours;
+                model.Hours = dto.Hours ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG);
                 model.TotalPrice = dto.TotalPrice;
                 model.ActivityId = dto.ActivityId;
                 model.WorkOrderId = dto.WorkOrderId;

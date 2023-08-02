@@ -24,4 +24,5 @@ public static class ExceptionsMessages
     public const string IMPOSSIBLE_GOING_FORWARD = "Impossibile proseguire.";
 
     public const string TYPE_MISMATCH = "Type not supported.";
+    public const string EMPTY_FIELDS = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
 }

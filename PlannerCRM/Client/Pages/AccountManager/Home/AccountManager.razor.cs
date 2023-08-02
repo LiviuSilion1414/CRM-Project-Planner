@@ -9,6 +9,7 @@ public partial class AccountManager : ComponentBase
 
     private string _title;
     private string _message;
+    private string _confirmationMessage;
 
     private bool _isViewClicked;
     private bool _isAddClicked;
@@ -45,14 +46,14 @@ public partial class AccountManager : ComponentBase
     private void OnClickDelete(int id) {
         _isDeleteClicked = !_isDeleteClicked;
         _userId = id;
-        _message = "Vuoi davvero eliminare questo utente?";
-        _title = "Elimina utente";
+        _confirmationMessage = Titles.CONFIRM_DELETE_USER;
+        _title = Titles.DELETE_USER;
     }
 
     private void OnClickRestore(int id) {
         _isRestoreClicked = !_isRestoreClicked;
         _userId = id;
-        _message = "Vuoi ripristinare questo utente?";
-        _title = "Ripristina utente";
+        _confirmationMessage = Titles.CONFIRM_RESTORE_USER;
+        _title = Titles.RESTORE_USER;
     }
 }

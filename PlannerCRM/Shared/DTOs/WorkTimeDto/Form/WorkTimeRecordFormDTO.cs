@@ -9,7 +9,7 @@ public class WorkTimeRecordFormDto
     public DateTime Date { get; set; }
 
     [Required(ErrorMessage = """ Campo "Tariffa oraria" richiesto. """)]
-    public int Hours { get; set; }
+    public int? Hours { get; set; }
 
     [Required(ErrorMessage = """ Campo "Prezzo totale" richiesto.""")]
     public decimal TotalPrice { get; set; }

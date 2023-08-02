@@ -45,7 +45,10 @@ public partial class ModalAddHours : ComponentBase
     }
     
     protected override void OnInitialized() {
+        _model = new();
+        _workOrder = new();
         _activity = new();
+        _errors = new();
         _editContext = new(_model);
         _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
     }
@@ -76,7 +79,7 @@ public partial class ModalAddHours : ComponentBase
             var isValid = ValidatorService.Validate(_model, out _errors);
 
             if (isValid) {
-
+                Console.WriteLine("isValid");
                 _model.Date = DateTime.Now;
                 _model.ActivityId = _activity.Id;
                 _model.EmployeeId = EmployeeId;
@@ -93,8 +96,8 @@ public partial class ModalAddHours : ComponentBase
                 }
             } else {
                 CustomValidator.DisplayErrors(_errors);
-                Toggle();
-                NavigationManager.NavigateTo(_currentPage);
+                _isError = true;
+                _message = ExceptionsMessages.EMPTY_FIELDS;
             }
         } catch (Exception exc) {
             _isError = true;

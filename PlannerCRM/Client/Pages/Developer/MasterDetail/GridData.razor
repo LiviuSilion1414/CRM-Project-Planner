@@ -18,19 +18,21 @@
                 <tr>
                     <td><i class="bi bi-briefcase"></i></td> 
                     <td>
-                        @(WorkOrders
-                            .Distinct()
-                            .FirstOrDefault(wo => wo.Id == ac.WorkOrderId)
-                            .Name)
+                        @foreach (var wo in _workOrders) {
+                            if (wo.Id == ac.WorkOrderId) {
+                                @wo.Name
+                            }
+                        }
+
                     </td>
                     <td>@ac.Name</td>
                     <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
                     <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
-                    @if (WorkTimeRecords is null) {
+                    @if (_workTimeRecords is null) {
                         <td><em>Nessun orario.</em></td>
                     } else {
                         <td>
-                            @foreach (var wtr in WorkTimeRecords.Distinct()) {
+                            @foreach (var wtr in _workTimeRecords.Distinct()) {
                                 if (wtr.ActivityId == ac.Id) {
                                     @wtr.Hours
                                 }

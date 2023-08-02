@@ -6,6 +6,10 @@ public class Titles
     public const string EDIT_USER = "Modifica utente";
     public const string DELETE_USER = "Elimina utente";
     public const string DETAILS_USER = "Informazioni utente";
+    public const string RESTORE_USER = "Ripristina utente";
+
+    public const string CONFIRM_DELETE_USER = "Vuoi davvero eliminare questo utente?";
+    public const string CONFIRM_RESTORE_USER = "Vuoi davvero eliminare questo utente?";
         
     public const string ADD_WORKORDER = "Aggiungi commessa";
     public const string EDIT_WORKORDER = "Modifica commessa";

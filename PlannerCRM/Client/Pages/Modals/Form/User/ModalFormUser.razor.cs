@@ -21,7 +21,6 @@ public partial class ModalFormUser : ComponentBase
     private string _errorMessage;
     private bool _isError;
     private bool _isCancelClicked;
-    private bool _isBannerHidden;
     private string _input;
 
     protected override void OnInitialized() {
@@ -43,7 +42,7 @@ public partial class ModalFormUser : ComponentBase
 
     public void OnClickInvalidSubmit() {
         _isError = true;
-        _errorMessage = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
+        _errorMessage = ExceptionsMessages.EMPTY_FIELDS;
     }
 
     private async Task OnClickModalConfirm() {

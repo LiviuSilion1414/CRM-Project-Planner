@@ -8,8 +8,8 @@ public partial class GridData : ComponentBase
 
     [Inject] public DeveloperService DeveloperService { get; set; }
 
-    private List<WorkTimeRecordViewDto> WorkTimeRecords { get; set;}
-    private List<WorkOrderViewDto> WorkOrders { get; set;}
+    private List<WorkTimeRecordViewDto> _workTimeRecords;
+    private List<WorkOrderViewDto> _workOrders;
 
     
     private List<ActivityViewDto> _activities;
@@ -17,17 +17,20 @@ public partial class GridData : ComponentBase
     private int _activityId;
 
     protected override async Task OnInitializedAsync() {
+        _workOrders = new();
+        _workTimeRecords = new();
+
         _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId);
         
         foreach(var ac in _activities) {
             var workorder = await DeveloperService.GetWorkOrderByIdAsync(ac.WorkOrderId);
-            WorkOrders.Add(workorder);
+            _workOrders.Add(workorder);
         }
 
         foreach (var activity in _activities) {
             var workTime = await DeveloperService.GetWorkTimeRecords(activity.WorkOrderId ,activity.Id, EmployeeId);
             if (workTime is not null) {
-                WorkTimeRecords.Add(workTime);
+                _workTimeRecords.Add(workTime);
             }
         }
     }
