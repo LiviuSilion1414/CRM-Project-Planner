@@ -1,0 +1,9 @@
+@foreach(var err in Errors) {
+    @if (err.Key == FieldName) {
+        @foreach(var message in err.Value) {
+            <div class="validation-message">
+                @message
+            </div>
+        }
+    }
+}
