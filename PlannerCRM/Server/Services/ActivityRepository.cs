@@ -2,27 +2,27 @@ namespace PlannerCRM.Server.Services;
 
 public class ActivityRepository
 {
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _dbContext;
     private readonly DtoValidatorService _validator;
     private readonly Logger<DtoValidatorService> _logger;
 
-    public ActivityRepository(AppDbContext db, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
-		_db = db;
+    public ActivityRepository(AppDbContext dbContext, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
+		_dbContext = dbContext;
 		_validator = validator;
 		_logger = logger;
 	}
 
     public async Task AddAsync(ActivityFormDto dto) {
         try {
-            _validator.ValidateActivity(dto, OperationType.ADD, out var isValid);
+            var isValid = await _validator.ValidateActivityAsync(dto, OperationType.ADD);
 
             if (isValid) {
                 var entity = new Activity {
                     Id = dto.Id,
                     Name = dto.Name,
-                    StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-                    FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
-                    WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP),
+                    StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                    FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                    WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
                     EmployeeActivity = dto.EmployeeActivity
                         .Select(ea => new EmployeeActivity {
                             Id = ea.Id,
@@ -31,15 +31,15 @@ public class ActivityRepository
                         }).ToHashSet(),
                 };
         
-                await _db.Activities.AddAsync(entity);
+                await _dbContext.Activities.AddAsync(entity);
         
-                var workOrder = await _db.WorkOrders
+                var workOrder = await _dbContext.WorkOrders
                     .SingleAsync(wo => wo.Id == dto.WorkOrderId);
                 workOrder.Activities.Add(entity);    
         
-                _db.Update(workOrder);
+                _dbContext.Update(workOrder);
                 
-                var rowsAffected = await _db.SaveChangesAsync();
+                var rowsAffected = await _dbContext.SaveChangesAsync();
                 if (rowsAffected == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
                 }
@@ -57,16 +57,16 @@ public class ActivityRepository
         try {
             var activityDelete = await _validator.ValidateDeleteActivityAsync(id);
 
-            await _db.EmployeeActivity
+            await _dbContext.EmployeeActivity
                 .Where(ea => ea.ActivityId == activityDelete.Id)
                 .ForEachAsync(ea => 
-                    _db.EmployeeActivity
+                    _dbContext.EmployeeActivity
                         .Remove(ea)
                 );
     
-            _db.Activities.Remove(activityDelete);
+            _dbContext.Activities.Remove(activityDelete);
     
-            if (await _db.SaveChangesAsync() == 0) {
+            if (await _dbContext.SaveChangesAsync() == 0) {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
         } catch (Exception exc) {
@@ -76,37 +76,51 @@ public class ActivityRepository
         }
     }
 
-    public async Task EditAsync(ActivityFormDto dto) {
+    public async Task<bool> EditAsync(ActivityFormDto dto) {
         try {
-            _validator.ValidateActivity(dto, OperationType.EDIT, out var isValid);
+            var isValid = await _validator.ValidateActivityAsync(dto, OperationType.EDIT);
 
             if (isValid) {
-                var model = await _db.Activities
+                var model = await _dbContext.Activities
                     .SingleAsync(ac => ac.Id == dto.Id);
 
                 model.Id = dto.Id;
                 model.Name = dto.Name;
-                model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-                model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-                model.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+                model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+                model.WorkOrderId = dto.WorkOrderId  ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
                 model.EmployeeActivity = dto.EmployeeActivity
-                    .Where(eaDto => _db.EmployeeActivity
-                        .Any(ea => eaDto.EmployeeId != ea.EmployeeId))
                     .Select(ea => new EmployeeActivity {
                         EmployeeId = ea.EmployeeId,     
                         ActivityId = ea.ActivityId,
                     })
                     .ToHashSet();
+                
+                var employeesToRemove = dto.DeleteEmployeeActivity
+                    .Where(eaDto => _dbContext.EmployeeActivity
+                        .Any(ea => eaDto.EmployeeId == ea.EmployeeId))
+                    .Select(e => 
+                        new EmployeeActivity() {
+                            Id = e.Id,
+                            EmployeeId = e.EmployeeId,
+                            ActivityId = dto.Id
+                        }
+                    )
+                    .ToList();
+                
+                foreach (var item in employeesToRemove) {
+                    _dbContext.EmployeeActivity.Remove(item);
+                }
 
-                var workOrder = await _db.WorkOrders
+                var workOrder = await _dbContext.WorkOrders
                     .SingleAsync(wo => wo.Id == dto.WorkOrderId);
                 
                 var activity = workOrder.Activities.Find(ac => ac.Id == dto.Id);
                 activity.Id = dto.Id;
                 activity.Name = dto.Name;
-                activity.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-                activity.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
-                activity.WorkOrderId = dto.WorkOrderId ?? throw new NullReferenceException(ExceptionsMessages.NULL_PROP);
+                activity.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+                activity.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+                activity.WorkOrderId = dto.WorkOrderId  ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
                 activity.EmployeeActivity = dto.EmployeeActivity
                     .Select(ea => new EmployeeActivity {
                         Id = ea.Id,
@@ -114,13 +128,17 @@ public class ActivityRepository
                         ActivityId = ea.ActivityId,
                     }).ToHashSet();
 
-                _db.Update(model);
-                _db.Update(workOrder);
+                _dbContext.Update(model);
+                _dbContext.Update(workOrder);
 
-                if (await _db.SaveChangesAsync() == 0) {
+                if (await _dbContext.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
                 }
+
+                return true;
             }
+
+            return false;
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
@@ -129,7 +147,7 @@ public class ActivityRepository
     }
 
     public async Task<ActivityViewDto> GetForViewAsync(int id) {
-        return await _db.Activities
+        return await _dbContext.Activities
             .Select(ac => new ActivityViewDto {
                 Id = ac.Id,
                 Name = ac.Name,
@@ -140,7 +158,7 @@ public class ActivityRepository
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
-                        Employee = _db.Employees
+                        Employee = _dbContext.Employees
                             .Select(em => new EmployeeSelectDto {
                                 Id = ea.EmployeeId,
                                 Email = ea.Employee.Email,
@@ -160,7 +178,7 @@ public class ActivityRepository
                             })
                             .Single(em => em.Id == ea.EmployeeId), 
                         ActivityId = ea.ActivityId,
-                        Activity = _db.Activities
+                        Activity = _dbContext.Activities
                             .Select(a => new ActivitySelectDto {
                                 Id = ea.ActivityId,
                                 Name = ea.Activity.Name,
@@ -175,7 +193,8 @@ public class ActivityRepository
     }
 
     public async Task<ActivityFormDto> GetForEditAsync(int activityId) {
-        return await _db.Activities
+        return await _dbContext.Activities
+            .Where(ac => ac.Id == activityId)
             .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
@@ -187,7 +206,7 @@ public class ActivityRepository
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
-                        Employee = _db.Employees
+                        Employee = _dbContext.Employees
                             .Select(em => new EmployeeSelectDto {
                                 Id = ea.EmployeeId,
                                 Email = ea.Employee.Email,
@@ -207,7 +226,7 @@ public class ActivityRepository
                             })
                             .Single(em => em.Id == ea.EmployeeId), 
                         ActivityId = ea.ActivityId,
-                        Activity = _db.Activities
+                        Activity = _dbContext.Activities
                             .Select(a => new ActivitySelectDto {
                                 Id = ea.ActivityId,
                                 Name = ea.Activity.Name,
@@ -219,18 +238,18 @@ public class ActivityRepository
                     })
                     .ToHashSet()
             })
-            .SingleAsync(ac => ac.Id == activityId);
+            .FirstAsync(ac => ac.Id == activityId);
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteAsync(int id) {
-        return await _db.Activities
+        return await _dbContext.Activities
             .Select(ac => new ActivityDeleteDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
-                Employees = _db.EmployeeActivity
+                Employees = _dbContext.EmployeeActivity
                     .Where(ea => ea.ActivityId == id)
                     .Select(ea => new EmployeeSelectDto() {
                         Id = ea.EmployeeId,
@@ -252,7 +271,7 @@ public class ActivityRepository
                             .Select(ea => new EmployeeActivityDto {
                                 Id = ea.Id,
                                 EmployeeId = ea.EmployeeId,
-                                Employee = _db.Employees
+                                Employee = _dbContext.Employees
                                     .Select(em => new EmployeeSelectDto {
                                         Id = ea.EmployeeId,
                                         Email = ea.Employee.Email,
@@ -272,7 +291,7 @@ public class ActivityRepository
                                     })
                                     .Single(em => em.Id == ea.EmployeeId),  
                                 ActivityId = ea.ActivityId,
-                                Activity = _db.Activities
+                                Activity = _dbContext.Activities
                                     .Select(a => new ActivitySelectDto {
                                         Id = ea.ActivityId,
                                         Name = ea.Activity.Name,
@@ -289,7 +308,7 @@ public class ActivityRepository
     }
 
     public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId) {
-         return await _db.Activities
+         return await _dbContext.Activities
             .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
@@ -300,7 +319,7 @@ public class ActivityRepository
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
-                        Employee = _db.Employees
+                        Employee = _dbContext.Employees
                             .Select(em => new EmployeeSelectDto {
                                 Id = ea.EmployeeId,
                                 Email = ea.Employee.Email,
@@ -320,7 +339,7 @@ public class ActivityRepository
                             })
                             .Single(em => em.Id == ea.EmployeeId), 
                         ActivityId = ea.ActivityId,
-                        Activity = _db.Activities
+                        Activity = _dbContext.Activities
                             .Select(a => new ActivitySelectDto {
                                 Id = ea.ActivityId,
                                 Name = ea.Activity.Name,
@@ -331,15 +350,15 @@ public class ActivityRepository
                             .Single(ac => ac.Id == ea.ActivityId)
                     }).ToHashSet()   
             })
-            .Where(ac => _db.EmployeeActivity
+            .Where(ac => _dbContext.EmployeeActivity
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
             .ToListAsync();
     }
 
-    public async Task<List<ActivityFormDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
-        return await _db.Activities
+    public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
+        return await _dbContext.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
-            .Select(ac => new ActivityFormDto {
+            .Select(ac => new ActivityViewDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
@@ -349,7 +368,7 @@ public class ActivityRepository
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
                         EmployeeId = ea.EmployeeId,
-                        Employee = _db.Employees
+                        Employee = _dbContext.Employees
                             .Select(em => new EmployeeSelectDto {
                                 Id = ea.EmployeeId,
                                 Email = ea.Employee.Email,
@@ -369,7 +388,7 @@ public class ActivityRepository
                             })
                             .Single(em => em.Id == ea.EmployeeId),
                         ActivityId = ea.ActivityId,
-                        Activity = _db.Activities
+                        Activity = _dbContext.Activities
                             .Select(a => new ActivitySelectDto {
                                 Id = ea.ActivityId,
                                 Name = ea.Activity.Name,
@@ -384,7 +403,7 @@ public class ActivityRepository
     }
 
     public async Task<List<ActivityViewDto>> GetAllAsync() {
-        return await _db.Activities
+        return await _dbContext.Activities
             .Select(ac => new ActivityViewDto {
                 Id = ac.Id,
                 Name = ac.Name,
