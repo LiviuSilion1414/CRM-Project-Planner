@@ -95,6 +95,62 @@ public class EmployeeController : ControllerBase
         }
     }
 
+    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
+    [HttpGet("archive/{employeeId}")]
+    public async Task<ActionResult> ArchiveUser(int employeeId) {
+        try {
+            await _repo.ArchiveAsync(employeeId);
+
+            return Ok(SuccessfulCrudFeedBack.USER_ARCHIVE);
+        } catch (InvalidOperationException exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            return BadRequest(exc.Message);
+        } catch (DbUpdateException exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            return BadRequest(exc.Message);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+    }
+    
+    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
+    [HttpGet("restore/{employeeId}")]
+    public async Task<ActionResult> RestoreUser(int employeeId) {
+        try {
+            await _repo.RestoreAsync(employeeId);
+
+            return Ok(SuccessfulCrudFeedBack.USER_ARCHIVE);
+        } catch (InvalidOperationException exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            return BadRequest(exc.Message);
+        } catch (DbUpdateException exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            return BadRequest(exc.Message);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+    }
+
+    [Authorize]
+    [HttpGet("get/for/restore/{employeeId}")]
+    public async Task<EmployeeSelectDto> GetForRestoreById(int employeeId) {
+        try {
+            return await _repo.GetForRestoreAsync(employeeId);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+
+            return new();
+        }
+    }
+
     [Authorize]
     [HttpGet("get/for/view/{employeeId}")]
     public async Task<EmployeeViewDto> GetForViewById(int employeeId) {
@@ -127,7 +183,7 @@ public class EmployeeController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new EmployeeDeleteDto();
+            return new();
         }
     }
 
@@ -139,7 +195,7 @@ public class EmployeeController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new List<EmployeeSelectDto>();
+            return new();
         }
     }
 
@@ -151,7 +207,7 @@ public class EmployeeController : ControllerBase
         } catch (Exception exc) {
              _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new List<EmployeeViewDto>();
+            return new();
         }
     }
 
@@ -163,7 +219,7 @@ public class EmployeeController : ControllerBase
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
 
-            return new CurrentEmployeeDto();
+            return new();
         }
     }
 
