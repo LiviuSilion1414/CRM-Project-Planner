@@ -42,7 +42,7 @@ namespace PlannerCRM.Server.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTime_Offset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -233,9 +233,9 @@ namespace PlannerCRM.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Activities", x => x.Id);
+                    table.PrimaryKey("PKActivities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Activities_WorkOrders_WorkOrderId",
+                        name: "FKActivities_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
                         principalTable: "WorkOrders",
                         principalColumn: "Id",
@@ -285,7 +285,7 @@ namespace PlannerCRM.Server.Migrations
                 {
                     table.PrimaryKey("PK_EmployeeActivity", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeeActivity_Activities_ActivityId",
+                        name: "FK_EmployeeActivityActivities_ActivityId",
                         column: x => x.ActivityId,
                         principalTable: "Activities",
                         principalColumn: "Id",
@@ -299,7 +299,7 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Activities_WorkOrderId",
+                name: "IXActivities_WorkOrderId",
                 table: "Activities",
                 column: "WorkOrderId");
 

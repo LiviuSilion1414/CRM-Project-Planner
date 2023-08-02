@@ -95,7 +95,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime_Offset?>("LockoutEnd")
+                    b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
@@ -270,6 +270,9 @@ namespace PlannerCRM.Server.Migrations
 
                     b.Property<string>("FullName")
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
