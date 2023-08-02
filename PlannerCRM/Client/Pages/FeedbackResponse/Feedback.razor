@@ -1,16 +1,4 @@
-@using PlannerCRM.Shared.Models
-
-<div class="alert alert-danger"
-    style="width: 100%;
-        position: relative; 
-        margin: 0 auto; 
-        height: 30px;
-        padding: 5px; 
-        text-align: center; 
-        overflow: hidden;"
-    hidden="@Hidden">
-    
+<div id="alert" class="alert alert-danger">
     <span> @Message </span>
-    <i style="cursor: pointer; float:right;" class="bi bi-x-circle"
-        @onclick="@(() => SwitchShowAlert())"></i>
+    <i id="x-circle" class="bi bi-x-circle" @onclick=@SwitchShowAlert></i>
 </div>

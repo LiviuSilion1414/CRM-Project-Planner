@@ -1,0 +1,14 @@
+#alert {
+    width: 100%;
+    position: relative; 
+    margin: 0 auto; 
+    height: 30px;
+    padding: 5px; 
+    text-align: center; 
+    overflow: hidden;
+}
+
+#x-circle {
+    cursor: pointer; 
+    float:right;
+}
