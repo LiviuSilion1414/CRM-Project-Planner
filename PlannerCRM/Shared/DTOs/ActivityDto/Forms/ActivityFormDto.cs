@@ -13,11 +13,17 @@ public partial class ActivityFormDto
     [Required(ErrorMessage = """ Campo "Data di fine" richiesto. """)]
     public DateTime? FinishDate { get; set; }
 
-    [Required(ErrorMessage = """ Campo "Commessa" richiesto. """)]
     public int? WorkOrderId { get; set; }
 
     public HashSet<EmployeeActivityDto> EmployeeActivity { get; set; }
     
     [CannotBeEmpty(ErrorMessage = """ Campo "Dipendenti selezionati" richiesto. """)]
     public HashSet<EmployeeActivityDto> ViewEmployeeActivity { get; set; }
+
+    public HashSet<EmployeeActivityDto> DeleteEmployeeActivity { get; set; }
+
+    [Required(ErrorMessage = """ Campo "Commessa" richiesto. """)]
+    public string SelectedWorkorder { get; set; }
+
+    public string SelectedEmployee { get; set; }
 } 

@@ -14,6 +14,7 @@ public class EmployeeViewDto
     public DateTime StartDateHourlyRate { get; set; }
     public DateTime FinishDateHourlyRate { get; set; }
     public bool IsDeleted { get; init; }
+    public bool IsArchived { get; init; }
     public DateTime BirthDay { get; set; }
     public DateTime StartDate { get; set; }
     public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
