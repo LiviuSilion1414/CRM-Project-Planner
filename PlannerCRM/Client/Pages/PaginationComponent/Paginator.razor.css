@@ -1,0 +1,20 @@
+.footer {
+    text-align: center;
+    position: sticky;
+}
+
+#previous {
+    padding:10px;
+}
+
+#page-number {
+    padding: 10px;
+}
+
+#next {
+    padding:10px;
+}
+
+#previous, #next {
+    cursor: pointer;
+}
