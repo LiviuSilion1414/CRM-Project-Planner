@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace PlannerCRM.Client.Services;
 
 public class CurrentUserInfoService
@@ -24,7 +26,7 @@ public class CurrentUserInfoService
     public async Task<string> GetCurrentUserRoleAsync() {
         try {
             return await _http
-                .GetFromJsonAsync<string>("api/account/user/role");
+                .GetStringAsync("api/account/user/role");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
