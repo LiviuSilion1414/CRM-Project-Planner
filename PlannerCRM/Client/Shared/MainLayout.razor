@@ -3,7 +3,7 @@
 <div class="page">
     <main>
         <div class="navbar">
-            <a class="nav-link" @onclick="NavigateBasedOnRole" title="Homepage">CRM - Gestionale Commesse</a>
+            <a class="nav-link" @onclick=@NavigateBasedOnRole title="Homepage">CRM - Gestionale Commesse</a>
             <AuthorizeView >
                 <Authorized>
                     <div class="parent">
@@ -12,9 +12,9 @@
                             <span class="user-info">Ruolo: @_userRole</span>
                         </div>
                         <div class="child">
-                            <span style="cursor: pointer;" @onclick="OnClickLogout" title="Disconettiti">
-                                <span style="color: red;">Esci</span>
-                               <i class="bi bi-box-arrow-right" style="color: red;"></i>
+                            <span id="logout-user" @onclick=@OnClickLogout title="Disconettiti">
+                                <span id="logout-user-text">Esci</span>
+                               <i class="bi bi-box-arrow-right"></i>
                             </span>
                         </div>
                     </div>

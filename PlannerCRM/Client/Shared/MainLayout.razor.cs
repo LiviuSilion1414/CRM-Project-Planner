@@ -9,72 +9,52 @@ public partial class MainLayout
     [Inject] public NavigationManager NavigationManager { get; set; }
     [Inject] public LoginService LoginService { get; set; }
     
+    private readonly string _userRole;
+    private readonly CurrentUser _currentUser;
     private CurrentEmployeeDto _currentEmployee;
-    private CurrentUser _currentUser;
     private bool _isAuthenticated;
-    private string _userRole;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+        => await HandleAuthenticationAndNavigation();
+
+    public async Task NavigateBasedOnRole()
+        => await HandleAuthenticationAndNavigation();
+
+    private async Task HandleAuthenticationAndNavigation() {
         var authState = await AuthStateService.GetAuthenticationStateAsync();
         _isAuthenticated = authState.User.Identity.IsAuthenticated;
-        
+
         if (_isAuthenticated) {
-            _userRole = (await CurrentUserInfoService.GetCurrentUserRoleAsync())
+            var result = await CurrentUserInfoService.GetCurrentUserRoleAsync();
+            var role = result
                 .ToUpper()
                 .Replace('_', ' ');
-        }
-        var currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
-        if (currentPage == "/login" || currentPage == "/") {
-            var state = await AuthStateService.GetAuthenticationStateAsync();
-            var loggedInUserID = new CurrentEmployeeDto();
-            if (state.User.Identity.IsAuthenticated) {
-                var loggedInUserRole = await CurrentUserInfoService.GetCurrentUserRoleAsync();
-                if (state.User.Identity.Name != ADMIN_EMAIL) {
-                    loggedInUserID = await CurrentUserInfoService.GetCurrentEmployeeIdAsync(state.User.Identity.Name);
-                }
-                foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                    if (possibleRole.ToString() == loggedInUserRole) {
-                        if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
-                            possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
-
-                            NavigationManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}/{loggedInUserID.Id}");
-                        } else {
-                            NavigationManager.NavigateTo($"{loggedInUserRole.ToLower().Replace('_', '-')}");
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public async Task NavigateBasedOnRole() {
-        if (_isAuthenticated) {
-            var role = await CurrentUserInfoService.GetCurrentUserRoleAsync();
-            _currentUser = await CurrentUserInfoService.GetCurrentUserInfoAsync();
 
             if (_currentUser.UserName != ADMIN_EMAIL) {
                 _currentEmployee = await CurrentUserInfoService.GetCurrentEmployeeIdAsync(_currentUser.UserName);
             }
 
-            foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                if (possibleRole.ToString() == role) {
-                    if (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) ||
-                        possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER)) {
-                        NavigationManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
-                    } else {
-                        NavigationManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
-                    }
-                }
+            if (Enum.TryParse(role, out Roles parsedRole)) {
+                string navigationUrl = BuildNavigationUrl(parsedRole);
+                NavigationManager.NavigateTo(navigationUrl, true);
             }
         } else {
-            NavigationManager.NavigateTo("/", true);
+            NavigationManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG, true);
         }
+    }
+
+    private string BuildNavigationUrl(Roles role) {
+        string url = $"{role.ToString().ToLower().Replace('_', '-')}";
+        
+        if (role == Roles.SENIOR_DEVELOPER || role == Roles.JUNIOR_DEVELOPER) {
+            url += $"/{_currentEmployee.Id}";
+        }
+        
+        return url;
     }
 
     public async Task OnClickLogout() {
         await LoginService.LogoutAsync();
-
-        NavigationManager.NavigateTo("/login", true);
+        NavigationManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG, true);
     }
-
 }

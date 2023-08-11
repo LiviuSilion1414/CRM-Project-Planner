@@ -17,3 +17,11 @@
     cursor: pointer;
     background-color:unset;
 }
+
+#logout-user {
+    cursor: pointer;
+}
+
+#logout-user-text span, #logout-user-text i {
+    color: red;
+}
