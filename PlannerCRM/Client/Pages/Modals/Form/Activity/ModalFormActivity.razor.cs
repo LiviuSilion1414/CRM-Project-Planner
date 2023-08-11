@@ -121,11 +121,11 @@ public partial class ModalFormActivity : ComponentBase
             }
             ToggleEmployeesListView();
         } catch (NullReferenceException exc) {
-            Logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            Logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
             _message = exc.Message;
             _isError = true;
         } catch (Exception exc) {
-            Logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            Logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
             _message = exc.Message;
             _isError = true;
         }

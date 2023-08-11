@@ -6,11 +6,11 @@ namespace PlannerCRM.Server.Controllers;
     {nameof(Roles.JUNIOR_DEVELOPER)}
 """ )]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class ActivityController : ControllerBase
 {
     private readonly ActivityRepository _repo;
-    private readonly Logger<ActivityRepository> _logger;
+    private readonly ILogger<ActivityRepository> _logger;
 
     public ActivityController(ActivityRepository repo, Logger<ActivityRepository> logger) {
         _repo = repo;
@@ -19,29 +19,29 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddActivity(ActivityFormDto dto) {
+    public async Task<IActionResult> AddActivity(ActivityFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.ACTIVITY_ADD);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -49,7 +49,7 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditActivity(ActivityFormDto dto) {
+    public async Task<IActionResult> EditActivity(ActivityFormDto dto) {
         try {
             if (await _repo.EditAsync(dto)) {
                 return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
@@ -57,23 +57,23 @@ public class ActivityController : ControllerBase
 
             return BadRequest(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (KeyNotFoundException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         }
@@ -81,21 +81,21 @@ public class ActivityController : ControllerBase
     
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{activityId}")]
-    public async Task<ActionResult> DeleteActivity(int activityId) {
+    public async Task<IActionResult> DeleteActivity(int activityId) {
         try {
             await _repo.DeleteAsync(activityId);
 
             return Ok(SuccessfulCrudFeedBack.ACTIVITY_DELETE);
         } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -111,7 +111,7 @@ public class ActivityController : ControllerBase
         try {
             return await _repo.GetForViewAsync(activityId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -123,7 +123,7 @@ public class ActivityController : ControllerBase
         try {
             return await _repo.GetForEditAsync(activityId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -135,7 +135,7 @@ public class ActivityController : ControllerBase
         try {
             return await _repo.GetForDeleteAsync(activityId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -151,7 +151,7 @@ public class ActivityController : ControllerBase
         try {
             return await _repo.GetActivitiesPerWorkOrderAsync(workOrderId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -167,7 +167,7 @@ public class ActivityController : ControllerBase
         try {
             return await _repo.GetActivityByEmployeeId(employeeId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -183,7 +183,7 @@ public class ActivityController : ControllerBase
         try {
             return await _repo.GetAllAsync();
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }

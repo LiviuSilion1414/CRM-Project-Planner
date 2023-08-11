@@ -2,11 +2,11 @@ namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class WorkTimeRecordController : ControllerBase
 {
     private readonly WorkTimeRecordRepository _repo;
-    private readonly Logger<WorkTimeRecordRepository> _logger;
+    private readonly ILogger<WorkTimeRecordRepository> _logger;
 
     public WorkTimeRecordController(WorkTimeRecordRepository repo, Logger<WorkTimeRecordRepository> logger) {
         _repo = repo;
@@ -15,25 +15,25 @@ public class WorkTimeRecordController : ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public async Task<ActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto dto) {
+    public async Task<IActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.WORKTIMERECORD_ADD);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (Exception exc) {
@@ -43,29 +43,29 @@ public class WorkTimeRecordController : ControllerBase
     
     [Authorize]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto dto) {
+    public async Task<IActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto dto) {
         try {
             await _repo.EditAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.WORKTIMERECORD_EDIT);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (KeyNotFoundException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (Exception exc) {
@@ -79,7 +79,7 @@ public class WorkTimeRecordController : ControllerBase
         try {
             return await _repo.GetAsync(workOrderId, activityId, employeeId);
         } catch (KeyNotFoundException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -91,7 +91,7 @@ public class WorkTimeRecordController : ControllerBase
         try {
             return await _repo.GetAllAsync();
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -103,7 +103,7 @@ public class WorkTimeRecordController : ControllerBase
         try {
             return await _repo.GetByEmployeeIdAsync(employeeId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }

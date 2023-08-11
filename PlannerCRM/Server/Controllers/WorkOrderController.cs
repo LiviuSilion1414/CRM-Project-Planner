@@ -7,11 +7,11 @@ namespace PlannerCRM.Server.Controllers;
     {nameof(Roles.ACCOUNT_MANAGER)}
 """ )]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class WorkOrderController : ControllerBase
 {
     private readonly WorkOrderRepository _repo;
-    private readonly Logger<WorkOrderRepository> _logger;
+    private readonly ILogger<WorkOrderRepository> _logger;
 
     public WorkOrderController( WorkOrderRepository repo, Logger<WorkOrderRepository> logger) {
         _repo = repo;
@@ -20,29 +20,29 @@ public class WorkOrderController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddWorkorder(WorkOrderFormDto dto) {
+    public async Task<IActionResult> AddWorkorder(WorkOrderFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_ADD);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -50,29 +50,29 @@ public class WorkOrderController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditWorkorder(WorkOrderFormDto dto) {
+    public async Task<IActionResult> EditWorkorder(WorkOrderFormDto dto) {
         try {
             await _repo.EditAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_EDIT);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         }
@@ -80,21 +80,21 @@ public class WorkOrderController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{workOrderId}")]
-    public async Task<ActionResult> DeleteWorkorder(int workOrderId) {
+    public async Task<IActionResult> DeleteWorkorder(int workOrderId) {
         try {
             await _repo.DeleteAsync(workOrderId);
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_DELETE);
         } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         }
@@ -106,7 +106,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.SearchWorkOrderAsync(workOrder);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -118,7 +118,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.GetForEditAsync(workOrderId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -130,7 +130,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.GetForViewAsync(workOrderId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -142,7 +142,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.GetForDeleteAsync(workOrderId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -155,7 +155,7 @@ public class WorkOrderController : ControllerBase
         {
             return await _repo.GetSize();
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return default;
         }
@@ -168,7 +168,7 @@ public class WorkOrderController : ControllerBase
         {
             return await _repo.GetPaginated(limit, offset);
         } catch (Exception exc) {
-             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }

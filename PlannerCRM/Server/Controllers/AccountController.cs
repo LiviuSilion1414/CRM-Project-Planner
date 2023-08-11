@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -13,7 +13,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDto dto) 
+    public async Task<IActionResult> Login(EmployeeLoginDto dto) 
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
 

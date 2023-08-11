@@ -4,7 +4,7 @@ public class WorkOrderRepository
 {
 	private readonly AppDbContext _dbContext;
 	private readonly DtoValidatorService _validator;
-	private readonly Logger<DtoValidatorService> _logger;
+	private readonly ILogger<DtoValidatorService> _logger;
 
 	public WorkOrderRepository(AppDbContext dbContext, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
 		_dbContext = dbContext;
@@ -33,7 +33,7 @@ public class WorkOrderRepository
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
 			}
 		} catch (Exception exc) {
-			_logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+			_logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
 			throw;
 		}
@@ -49,7 +49,7 @@ public class WorkOrderRepository
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}
 		} catch (Exception exc) {
-			_logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+			_logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
 			throw;
 		}
@@ -75,7 +75,7 @@ public class WorkOrderRepository
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}
 		} catch (Exception exc) {
-			_logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+			_logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
 			throw;
 		}

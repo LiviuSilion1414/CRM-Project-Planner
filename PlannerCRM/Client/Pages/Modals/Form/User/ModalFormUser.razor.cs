@@ -69,7 +69,7 @@ public partial class ModalFormUser : ComponentBase
                 OnClickInvalidSubmit();
             }
         } catch (NullReferenceException exc) {
-            Logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            Logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
             _errorMessage = exc.Message;
             _isError = true;
         } catch (Exception exc) {

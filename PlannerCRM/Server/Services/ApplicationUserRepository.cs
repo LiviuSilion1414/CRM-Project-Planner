@@ -5,7 +5,7 @@ public class ApplicationUserRepository
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly DtoValidatorService _validator;
-    private readonly Logger<DtoValidatorService> _logger;
+    private readonly ILogger<DtoValidatorService> _logger;
 
     public ApplicationUserRepository(
         UserManager<IdentityUser> userManager,
@@ -47,7 +47,7 @@ public class ApplicationUserRepository
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             throw;
         }
@@ -90,7 +90,7 @@ public class ApplicationUserRepository
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             throw;
         }
@@ -104,7 +104,7 @@ public class ApplicationUserRepository
                 await _userManager.DeleteAsync(user);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             throw;
         }

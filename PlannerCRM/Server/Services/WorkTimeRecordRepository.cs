@@ -4,7 +4,7 @@ public class WorkTimeRecordRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly DtoValidatorService _validator;
-	private readonly Logger<DtoValidatorService> _logger;
+	private readonly ILogger<DtoValidatorService> _logger;
 
     public WorkTimeRecordRepository(AppDbContext db, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
 	    _dbContext = db;
@@ -42,7 +42,7 @@ public class WorkTimeRecordRepository
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
             
             throw;
         }
@@ -88,7 +88,7 @@ public class WorkTimeRecordRepository
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
             
             throw;
         }

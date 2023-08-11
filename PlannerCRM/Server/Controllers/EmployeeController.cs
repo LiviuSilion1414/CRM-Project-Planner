@@ -2,11 +2,11 @@ namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class EmployeeController : ControllerBase
 {
     private readonly EmployeeRepository _repo;
-    private readonly Logger<EmployeeRepository> _logger;
+    private readonly ILogger<EmployeeRepository> _logger;
 
     public EmployeeController(EmployeeRepository repo, Logger<EmployeeRepository> logger) {
         _repo = repo;
@@ -15,29 +15,29 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add")]
-    public async Task<ActionResult> AddUser(EmployeeFormDto dto) {
+    public async Task<IActionResult> AddUser(EmployeeFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.USER_ADD);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -45,29 +45,29 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit")]
-    public async Task<ActionResult> EditUser(EmployeeFormDto dto) {
+    public async Task<IActionResult> EditUser(EmployeeFormDto dto) {
         try {
             await _repo.EditAsync(dto);
 
             return Ok(SuccessfulCrudFeedBack.USER_EDIT);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (KeyNotFoundException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status500InternalServerError);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -75,21 +75,21 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/{employeeId}")]
-    public async Task<ActionResult> DeleteUser(int employeeId) {
+    public async Task<IActionResult> DeleteUser(int employeeId) {
         try {
             await _repo.DeleteAsync(employeeId);
 
             return Ok(SuccessfulCrudFeedBack.USER_DELETE);
         } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -97,21 +97,21 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("archive/{employeeId}")]
-    public async Task<ActionResult> ArchiveUser(int employeeId) {
+    public async Task<IActionResult> ArchiveUser(int employeeId) {
         try {
             await _repo.ArchiveAsync(employeeId);
 
             return Ok(SuccessfulCrudFeedBack.USER_ARCHIVE);
         } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -119,21 +119,21 @@ public class EmployeeController : ControllerBase
     
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("restore/{employeeId}")]
-    public async Task<ActionResult> RestoreUser(int employeeId) {
+    public async Task<IActionResult> RestoreUser(int employeeId) {
         try {
             await _repo.RestoreAsync(employeeId);
 
             return Ok(SuccessfulCrudFeedBack.USER_ARCHIVE);
         } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -145,7 +145,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.GetForRestoreAsync(employeeId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -157,7 +157,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.GetForViewAsync(employeeId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -169,7 +169,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.GetForEditAsync(employeeId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -181,7 +181,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.GetForDeleteAsync(employeeId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -193,7 +193,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.SearchEmployeeAsync(email);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -205,7 +205,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.GetPaginatedEmployees(limit, offset);
         } catch (Exception exc) {
-             _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -217,7 +217,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.GetUserIdAsync(email);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -230,7 +230,7 @@ public class EmployeeController : ControllerBase
             var currentEmployee = await _repo.GetUserIdAsync(email);
             return currentEmployee.Id;
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return default;
         }
@@ -242,7 +242,7 @@ public class EmployeeController : ControllerBase
         try {
             return await _repo.GetEmployeesSize();
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return default;
         }
