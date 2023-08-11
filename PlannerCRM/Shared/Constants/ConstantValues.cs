@@ -35,4 +35,7 @@ public static class ConstantValues
     public const int PASS_MAX_LENGTH = 16;
 
     public const int PAGINATION_LIMIT = 5;
+
+    public const string LOGIN_PAGE_SHORT = "/";
+    public const string LOGIN_PAGE_LONG = "/LOGIN";
 }
