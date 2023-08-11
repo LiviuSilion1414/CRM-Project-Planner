@@ -18,18 +18,17 @@ builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
 builder.Services.AddScoped<CustomDataAnnotationsValidator>();
 
-builder.Services.AddScoped<Logger<AuthenticationStateService>>();
-builder.Services.AddScoped<Logger<LoginService>>();
-builder.Services.AddScoped<Logger<CurrentUserInfoService>>();
-builder.Services.AddScoped<Logger<AccountManagerCrudService>>();
-builder.Services.AddScoped<Logger<OperationManagerCrudService>>();
-builder.Services.AddScoped<Logger<DeveloperService>>();
+builder.Services.AddScoped<ILogger<AuthenticationStateService>>();
+builder.Services.AddScoped<ILogger<CurrentUserInfoService>>();
+builder.Services.AddScoped<ILogger<AccountManagerCrudService>>();
+builder.Services.AddScoped<ILogger<OperationManagerCrudService>>();
 
-builder.Services.AddScoped<Logger<EmployeeLoginDto>>();
-builder.Services.AddScoped<Logger<EmployeeFormDto>>();
-builder.Services.AddScoped<Logger<WorkOrderFormDto>>();
-builder.Services.AddScoped<Logger<ActivityFormDto>>();
-
+builder.Services.AddScoped<ILogger<LoginService>>();
+builder.Services.AddScoped<ILogger<DeveloperService>>();
+builder.Services.AddScoped<ILogger<EmployeeLoginDto>>();
+builder.Services.AddScoped<ILogger<EmployeeFormDto>>();
+builder.Services.AddScoped<ILogger<WorkOrderFormDto>>();
+builder.Services.AddScoped<ILogger<ActivityFormDto>>();
 
 builder.Services.AddScoped(sp => 
     new HttpClient {
