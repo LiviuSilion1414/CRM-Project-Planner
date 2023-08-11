@@ -22,6 +22,6 @@
     cursor: pointer;
 }
 
-#logout-user-text span, #logout-user-text i {
+#logout-user-icon, #logout-user-text {
     color: red;
 }
