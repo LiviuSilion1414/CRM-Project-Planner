@@ -3,7 +3,7 @@ namespace PlannerCRM.Client.Services;
 public class CurrentUserInfoService
 {
     private readonly HttpClient _http;
-    private readonly Logger<CurrentUserInfoService> _logger;
+    private readonly ILogger<CurrentUserInfoService> _logger;
     
     public CurrentUserInfoService(HttpClient http, Logger<CurrentUserInfoService> logger) {
         _http = http;
@@ -12,12 +12,10 @@ public class CurrentUserInfoService
 
     public async Task<CurrentUser> GetCurrentUserInfoAsync() {
         try {
-            var response = await _http.GetAsync("account/current/user/info");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<CurrentUser>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<CurrentUser>("api/account/current/user/info");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
             
             return new();
         }
@@ -25,11 +23,10 @@ public class CurrentUserInfoService
 
     public async Task<string> GetCurrentUserRoleAsync() {
         try {
-            var response = await _http.GetAsync("account/user/role");
-    
-            return await response.Content.ReadAsStringAsync();
+            return await _http
+                .GetFromJsonAsync<string>("api/account/user/role");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return string.Empty;
         }
@@ -37,12 +34,10 @@ public class CurrentUserInfoService
 
     public async Task<CurrentEmployeeDto> GetCurrentEmployeeIdAsync(string email) {
         try {
-            var response = await _http.GetAsync($"employee/get/id/{email}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<CurrentEmployeeDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<CurrentEmployeeDto>($"api/employee/get/id/{email}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }

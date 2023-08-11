@@ -3,10 +3,13 @@ namespace PlannerCRM.Client.Services;
 public class AuthenticationStateService : AuthenticationStateProvider
 {
     private readonly CurrentUserInfoService _authInfoService;
-    private CurrentUser _currentUser = new();
+    private readonly ILogger<AuthenticationStateService> _logger;
+    private CurrentUser _currentUser;
 
-    public AuthenticationStateService(CurrentUserInfoService authInfoService) {
+    public AuthenticationStateService(CurrentUserInfoService authInfoService, ILogger<AuthenticationStateService> logger) {
         _authInfoService = authInfoService;
+        _logger = logger;
+        _currentUser = new();
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
@@ -15,11 +18,10 @@ public class AuthenticationStateService : AuthenticationStateProvider
            
             _currentUser = await GetCurrentUserAsync();
             if (_currentUser.IsAuthenticated) {
-                var claims = new List<Claim> { 
-                    new Claim(ClaimTypes.Name, _currentUser.UserName) 
-                }
-                .Concat(_currentUser.Claims
-                .Select(c => new Claim(c.Key, c.Value)));
+                var claims = new List<Claim> { new Claim(ClaimTypes.Name, _currentUser.UserName) }
+                    .Concat(_currentUser.Claims
+                        .Select(c => new Claim(c.Key, c.Value))
+                    );
                
                 identity = new ClaimsIdentity(claims, "Server authentication");
 
@@ -31,13 +33,11 @@ public class AuthenticationStateService : AuthenticationStateProvider
 
                 return new AuthenticationState(new ClaimsPrincipal(identity));
             }
-        } catch (HttpRequestException ex) {
-            Console.WriteLine("Request failed:" + ex.ToString());
         } catch (Exception exc) {
-            Console.WriteLine("Exception:" + exc.ToString());
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
-        
-        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }
 
     public async Task<CurrentUser> GetCurrentUserAsync() {

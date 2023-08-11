@@ -5,7 +5,7 @@ namespace PlannerCRM.Client.Services.Crud;
 public class OperationManagerCrudService
 {
     private readonly HttpClient _http;
-    private readonly Logger<OperationManagerCrudService> _logger;
+    private readonly ILogger<OperationManagerCrudService> _logger;
 
     public OperationManagerCrudService(HttpClient http, Logger<OperationManagerCrudService> logger) {
         _http = http;
@@ -14,38 +14,21 @@ public class OperationManagerCrudService
 
     public async Task<int> GetCollectionSize() {
         try {
-            var response = await _http.GetAsync("http://localhost:5032/workorder/get/size/");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-            
-            return JsonConvert.DeserializeObject<int>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<int>("api/workorder/get/size/");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return default;
+            return new();
         }
     }
 
     public async Task<List<WorkOrderViewDto>> GetCollectionPaginated(int limit = 0, int offset = 5) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/workorder/get/paginated/{limit}/{offset}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-            
-            return JsonConvert.DeserializeObject<List<WorkOrderViewDto>>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/workorder/get/paginated/{limit}/{offset}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new();
-        }
-    }
-   
-    public async Task<List<WorkOrderViewDto>> GetAllWorkOrdersAsync() {
-        try {
-            var response = await _http.GetAsync("workorder/get/all");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<List<WorkOrderViewDto>>(jsonObject);
-        } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -53,12 +36,10 @@ public class OperationManagerCrudService
 
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {
        try {    
-            var response = await _http.GetAsync($"workorder/search/{workOrder}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
- 
-            return JsonConvert.DeserializeObject<List<WorkOrderSelectDto>>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<List<WorkOrderSelectDto>>($"api/workorder/search/{workOrder}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -66,12 +47,10 @@ public class OperationManagerCrudService
 
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string employee) {
         try {
-            var response = await _http.GetAsync($"employee/search/{employee}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<List<EmployeeSelectDto>>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<List<EmployeeSelectDto>>($"api/employee/search/{employee}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -79,144 +58,76 @@ public class OperationManagerCrudService
 
     public async Task<HttpResponseMessage> AddWorkOrderAsync(WorkOrderFormDto dto) {
         try {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost:5032/workorder/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });   
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.MultipleChoices);
+            return await _http
+                .PostAsJsonAsync("api/workorder/add", dto);   
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> EditWorkOrderAsync(WorkOrderFormDto dto) {
         try {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri("http://localhost:5032/workorder/edit"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.MultipleChoices);
+            return await _http
+                .PutAsJsonAsync("api/workorder/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> AddActivityAsync(ActivityFormDto dto) {
         try { 
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost:5032/activity/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
-        }  catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.MultipleChoices);
+            return await _http
+                .PutAsJsonAsync("api/activity/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> EditActivityAsync(ActivityFormDto dto) {
         try  {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri("http://localhost:5032/activity/edit"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.MultipleChoices);
+            return await _http
+                .PutAsJsonAsync("api/activity/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> DeleteActivityAsync(int activityId) {
         try {
-            return await _http.DeleteAsync($"http://localhost:5032/activity/delete/{activityId}");
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.NotImplemented);
+            return await _http
+                .DeleteAsync($"api/activity/delete/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> DeleteWorkOrderAsync(int workOrderId) {
         try {
-            return await _http.DeleteAsync($"http://localhost:5032/workorder/delete/{workOrderId}");
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.NotImplemented);
+            return await _http
+                .DeleteAsync($"api/workorder/delete/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
     
     public async Task<ActivityFormDto> GetActivityForEditAsync(int activityId) {
         try {
-            var response = await _http.GetAsync($"activity/get/for/edit/{activityId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<ActivityFormDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<ActivityFormDto>($"api/activity/get/for/edit/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -224,12 +135,10 @@ public class OperationManagerCrudService
 
     public async Task<ActivityDeleteDto> GetActivityForDeleteAsync(int activityId) {
         try {
-            var response = await _http.GetAsync($"activity/get/for/delete/{activityId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<ActivityDeleteDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<ActivityDeleteDto>($"api/activity/get/for/delete/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -238,12 +147,10 @@ public class OperationManagerCrudService
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     public async Task<WorkOrderViewDto> GetWorkOrderForViewAsync(int workOrderId) {
         try {
-            var response = await _http.GetAsync($"workorder/get/for/view/{workOrderId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<WorkOrderViewDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<WorkOrderViewDto>($"api/workorder/get/for/view/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -251,12 +158,12 @@ public class OperationManagerCrudService
 
     public async Task<WorkOrderFormDto> GetWorkOrderForEditAsync(int workOrderId) {
         try {
-            var response = await _http.GetAsync($"workorder/get/for/edit/{workOrderId}");
+            var response = await _http.GetAsync($"api/workorder/get/for/edit/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
     
             return JsonConvert.DeserializeObject<WorkOrderFormDto>(jsonObject);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -264,12 +171,10 @@ public class OperationManagerCrudService
 
     public async Task<WorkOrderDeleteDto> GetWorkOrderForDeleteAsync(int workOrderId) {
        try {
-         var response = await _http.GetAsync($"workorder/get/for/delete/{workOrderId}");
-         var jsonObject = await response.Content.ReadAsStringAsync();
- 
-         return JsonConvert.DeserializeObject<WorkOrderDeleteDto>(jsonObject);     
+            return await _http
+                .GetFromJsonAsync<WorkOrderDeleteDto>($"api/workorder/get/for/delete/{workOrderId}");
        } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new(); 
        }
@@ -277,12 +182,9 @@ public class OperationManagerCrudService
 
     public async Task<List<ActivityViewDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
         try {
-            var response = await _http.GetAsync($"activity/get/activity/per/workorder/{workOrderId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<List<ActivityViewDto>>(jsonObject);
+            return await _http.GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/workorder/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }

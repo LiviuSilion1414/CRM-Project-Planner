@@ -3,7 +3,7 @@ namespace PlannerCRM.Client.Services.Crud;
 public class AccountManagerCrudService
 {
     private readonly HttpClient _http;
-    private readonly Logger<AccountManagerCrudService> _logger;
+    private readonly ILogger<AccountManagerCrudService> _logger;
 
     public AccountManagerCrudService(HttpClient http, Logger<AccountManagerCrudService> logger) {
         _http = http;
@@ -12,38 +12,21 @@ public class AccountManagerCrudService
 
     public async Task<int> GetEmployeesSize() {
         try {
-            var response = await _http.GetAsync("employee/get/size/");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-            
-            return JsonConvert.DeserializeObject<int>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<int>("api/employee/get/size/");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return default;
-        }
-    }
-
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit = 0, int offset = 5) {
-        try {
-            var response = await _http.GetAsync($"http://localhost:5032/employee/get/paginated/{limit}/{offset}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-            
-            return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);
-        } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
     }
 
-    public async Task<List<EmployeeViewDto>> GetAllEmployeesAsync() {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit = 0, int offset = 5) {
         try {
-            var response = await _http.GetAsync("employee/get/all");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-            
-            return JsonConvert.DeserializeObject<List<EmployeeViewDto>>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<List<EmployeeViewDto>>($"api/employee/get/paginated/{limit}/{offset}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -51,117 +34,54 @@ public class AccountManagerCrudService
 
     public async Task<HttpResponseMessage> AddEmployeeAsync(EmployeeFormDto dto) {
         try {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost:5032/employee/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.NotFound);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.MultipleChoices);
+            return await _http
+                .PostAsJsonAsync("api/employee/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> AddUserAsync(EmployeeFormDto dto) {
         try {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost:5032/applicationuser/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.MultipleChoices);
+            return await _http
+                .PostAsJsonAsync("api/applicationuser/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     } 
 
     public async Task<HttpResponseMessage> UpdateEmployeeAsync(EmployeeFormDto dto) {
         try {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri("http://localhost:5032/employee/edit"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (KeyNotFoundException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.NotFound);
+            return await _http
+                .PutAsJsonAsync("api/employee/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> UpdateUserAsync(EmployeeFormDto dto) {
         try {
-            return await _http.PutAsync("http://localhost:5032/applicationuser/edit", 
-                new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json"));
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.NotFound);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (KeyNotFoundException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.NotFound);
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
+            return await _http
+                .PutAsJsonAsync("api/applicationuser/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     } 
 
     public async Task<EmployeeDeleteDto> GetEmployeeForDeleteAsync(int employeeId) {
         try {
-            var response = await _http.GetAsync($"employee/get/for/delete/{employeeId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<EmployeeDeleteDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<EmployeeDeleteDto>($"api/employee/get/for/delete/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -169,12 +89,10 @@ public class AccountManagerCrudService
 
     public async Task<EmployeeFormDto> GetEmployeeForEditAsync(int employeeId) {
         try {
-            var response = await _http.GetAsync($"employee/get/for/edit/{employeeId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<EmployeeFormDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<EmployeeFormDto>($"api/employee/get/for/edit/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -182,12 +100,10 @@ public class AccountManagerCrudService
 
     public async Task<EmployeeViewDto> GetEmployeeForViewAsync(int employeeId) {
         try {
-            var response = await _http.GetAsync($"employee/get/for/view/{employeeId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<EmployeeViewDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<EmployeeViewDto>($"api/employee/get/for/view/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -195,12 +111,10 @@ public class AccountManagerCrudService
     
     public async Task<EmployeeSelectDto> GetEmployeeForRestoreAsync(int employeeId) {
         try {
-            var response = await _http.GetAsync($"employee/get/for/restore/{employeeId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<EmployeeSelectDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<EmployeeSelectDto>($"api/employee/get/for/restore/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -208,60 +122,45 @@ public class AccountManagerCrudService
 
     public async Task<HttpResponseMessage> DeleteUserAsync(string currentEmail) {
         try {
-            return await _http.DeleteAsync($"http://localhost:5032/applicationuser/delete/{currentEmail}");
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
+            return await _http
+                .DeleteAsync($"api/applicationuser/delete/{currentEmail}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> DeleteEmployeeAsync(int employeeId) {
         try {
-            return await _http.DeleteAsync($"http://localhost:5032/employee/delete/{employeeId}");
-
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
+            return await _http
+                .DeleteAsync($"api/employee/delete/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> ArchiveEmployeeAsync(int employeeId) {
         try {
-            return await _http.GetAsync($"http://localhost:5032/employee/archive/{employeeId}");
-
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
+            return await _http
+                .GetAsync($"api/employee/archive/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
     public async Task<HttpResponseMessage> RestoreEmployeeAsync(int employeeId) {
         try {
-            return await _http.GetAsync($"http://localhost:5032/employee/restore/{employeeId}");
-
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
+            return await _http
+                .GetAsync("api/employee/restore/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.ServiceUnavailable);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 }

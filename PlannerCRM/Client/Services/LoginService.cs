@@ -3,7 +3,7 @@ namespace PlannerCRM.Client.Services;
 public class LoginService
 {
     private readonly HttpClient _http;
-    private readonly Logger<LoginService> _logger;
+    private readonly ILogger<LoginService> _logger;
 
     public LoginService(HttpClient http, Logger<LoginService> logger) {
         _http = http;
@@ -12,17 +12,14 @@ public class LoginService
 
     public async Task<HttpResponseMessage> LoginAsync(EmployeeLoginDto dto) {
         try {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                RequestUri = new Uri("http://localhost:5032/account/login"),
-                Method = HttpMethod.Post,
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
+            return await _http
+                .PostAsJsonAsync("api/account/login", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.BadRequest);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
-    public async Task LogoutAsync() => await _http.GetAsync("account/logout");
+    public async Task LogoutAsync() => await _http.GetAsync("api/account/logout");
 }

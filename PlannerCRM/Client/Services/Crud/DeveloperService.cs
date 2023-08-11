@@ -5,7 +5,7 @@ namespace PlannerCRM.Client.Services.Crud;
 public class DeveloperService
 {
     private readonly HttpClient _http;
-    private readonly Logger<DeveloperService> _logger;
+    private readonly ILogger<DeveloperService> _logger;
 
     public DeveloperService(HttpClient http, Logger<DeveloperService> logger) {
         _http = http;
@@ -14,38 +14,21 @@ public class DeveloperService
 
     public async Task<HttpResponseMessage> AddWorkedHoursAsync(WorkTimeRecordFormDto dto) {
         try {
-            return await _http.SendAsync(new HttpRequestMessage() {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost:5032/worktimerecord/add"),
-                Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
-            });
-        } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.NotFound);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.BadRequest);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
-
-            return new(HttpStatusCode.MultipleChoices);
+            return await _http
+                .PostAsJsonAsync("api/worktimerecord/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
-            return new(HttpStatusCode.ServiceUnavailable);
+            return new() { ReasonPhrase = exc.StackTrace };
         }
     } 
 
     public async Task<ActivityViewDto> GetActivityByIdAsync(int activityId) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/activity/get/{activityId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<ActivityViewDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<ActivityViewDto>($"api/activity/get/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -53,12 +36,10 @@ public class DeveloperService
 
     public async Task<WorkOrderViewDto> GetWorkOrderByIdAsync(int workOrderId) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/workorder/get/for/view/{workOrderId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<WorkOrderViewDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<WorkOrderViewDto>($"api/workorder/get/for/view/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -66,12 +47,10 @@ public class DeveloperService
 
     public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/activity/get/activity/per/employee/{employeeId}"); 
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<List<ActivityViewDto>>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/employee/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -79,12 +58,10 @@ public class DeveloperService
 
     public async Task<int> GetWorkTimesSizeByEmployeeIdAsync(int employeeId) {
         try {
-            var response = await _http.GetAsync($"worktimerecord/get/size/by/employee/{employeeId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<int>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<int>($"api/worktimerecord/get/size/by/employee/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return default;
         }
@@ -92,12 +69,10 @@ public class DeveloperService
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByEmployeeId(int employeeId) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/by/employee/{employeeId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<List<WorkTimeRecordViewDto>>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<List<WorkTimeRecordViewDto>>($"api/worktimerecord/get/by/employee/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -105,12 +80,10 @@ public class DeveloperService
     
     public async Task<WorkTimeRecordViewDto> GetWorkTimeRecords(int workOrderId, int activityId, int employeeId) {
         try {
-            var response = await _http.GetAsync($"http://localhost:5032/worktimerecord/get/{workOrderId}/{activityId}/{employeeId}");
-            var jsonObject = await response.Content.ReadAsStringAsync();
-    
-            return JsonConvert.DeserializeObject<WorkTimeRecordViewDto>(jsonObject);
+            return await _http
+                .GetFromJsonAsync<WorkTimeRecordViewDto>($"api/worktimerecord/get/{workOrderId}/{activityId}/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.Source, exc.Message);
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
