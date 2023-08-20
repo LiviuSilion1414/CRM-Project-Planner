@@ -1,12 +1,12 @@
-namespace PlannerCRM.Server.Services;
+namespace PlannerCRM.Server.Repositories;
 
 public class WorkOrderRepository
 {
 	private readonly AppDbContext _dbContext;
-	private readonly DtoValidatorService _validator;
-	private readonly ILogger<DtoValidatorService> _logger;
+	private readonly DtoValidatorUtillity _validator;
+	private readonly ILogger<DtoValidatorUtillity> _logger;
 
-	public WorkOrderRepository(AppDbContext dbContext, DtoValidatorService validator, Logger<DtoValidatorService> logger) {
+	public WorkOrderRepository(AppDbContext dbContext, DtoValidatorUtillity validator, Logger<DtoValidatorUtillity> logger) {
 		_dbContext = dbContext;
 		_validator = validator;
 		_logger = logger;

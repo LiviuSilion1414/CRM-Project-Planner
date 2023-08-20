@@ -1,17 +1,17 @@
-namespace PlannerCRM.Server.Services;
+namespace PlannerCRM.Server.Repositories;
 
 public class ApplicationUserRepository
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly DtoValidatorService _validator;
-    private readonly ILogger<DtoValidatorService> _logger;
+    private readonly DtoValidatorUtillity _validator;
+    private readonly ILogger<DtoValidatorUtillity> _logger;
 
     public ApplicationUserRepository(
         UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
-        DtoValidatorService validator,
-        Logger<DtoValidatorService> Logger) 
+        DtoValidatorUtillity validator,
+        Logger<DtoValidatorUtillity> Logger) 
     {
         _userManager = userManager;    
         _roleManager = roleManager;
