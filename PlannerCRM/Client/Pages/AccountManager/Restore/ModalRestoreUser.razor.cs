@@ -8,6 +8,7 @@ public partial class ModalRestoreUser : ComponentBase
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
 
     private EmployeeSelectDto _employee;
 
@@ -20,7 +21,7 @@ public partial class ModalRestoreUser : ComponentBase
 
     protected override void OnInitialized() {
         _employee = new();
-        _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
+        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     private void OnClickModalCancel() {

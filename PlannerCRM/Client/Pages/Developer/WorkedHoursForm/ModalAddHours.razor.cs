@@ -10,7 +10,7 @@ public partial class ModalAddHours : ComponentBase
     [Inject] public CurrentUserInfoService CurrentUserInfoService  { get; set; }
     [Inject] public DeveloperService DeveloperService { get; set; }
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
-    [Inject] public NavigationLockService NavLockService { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
     
@@ -50,7 +50,7 @@ public partial class ModalAddHours : ComponentBase
         _activity = new();
         _errors = new();
         _editContext = new(_model);
-        _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
+        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     public void RedirectToPage() {

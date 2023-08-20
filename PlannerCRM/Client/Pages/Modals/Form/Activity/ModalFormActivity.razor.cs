@@ -9,7 +9,7 @@ public partial class ModalFormActivity : ComponentBase
     [Inject] public Logger<ActivityFormDto> Logger { get; set; }
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
-    [Inject] public NavigationLockService NavLockService { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
 
     private Dictionary<string, List<string>> _errors;

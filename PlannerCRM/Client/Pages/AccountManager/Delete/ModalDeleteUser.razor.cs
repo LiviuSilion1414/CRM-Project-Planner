@@ -8,6 +8,7 @@ public partial class ModalDeleteUser : ComponentBase
     [Parameter] public string ConfirmationMessage { get; set; }
     
     [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] OperationManagerCrudService OperationManagerService { get; set; }
     
@@ -33,7 +34,7 @@ public partial class ModalDeleteUser : ComponentBase
     protected override void OnInitialized() {
         _model = new() { EmployeeActivities = new() };
         _workOrders = new();
-        _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
+        _currentPage = NavigationUtil.GetCurrentPage();
     }   
     
     private void OnClickModalCancel() {

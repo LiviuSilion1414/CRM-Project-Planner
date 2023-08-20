@@ -9,6 +9,7 @@ public partial class ModalDeleteActivity : ComponentBase
 
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }    
     [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     
     private WorkOrderViewDto _currentWorkOrder;
     private ActivityDeleteDto _currentActivity;
@@ -25,7 +26,7 @@ public partial class ModalDeleteActivity : ComponentBase
     }
 
     protected override void OnInitialized() {
-        _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
+        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
         _currentWorkOrder = new();
         _currentActivity = new() {
             Employees = new()

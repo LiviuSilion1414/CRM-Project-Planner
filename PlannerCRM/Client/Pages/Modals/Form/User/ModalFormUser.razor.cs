@@ -9,7 +9,7 @@ public partial class ModalFormUser : ComponentBase
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
-    [Inject] public NavigationLockService NavLockService { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
     [Inject] public ILogger<EmployeeFormDto> Logger { get; set; }
 
@@ -28,7 +28,7 @@ public partial class ModalFormUser : ComponentBase
         _editContext = new(Model);
         CustomValidator = new();
         _isCancelClicked = false;
-        _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
+        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     private void SwitchPassword(string type) => _input = type;

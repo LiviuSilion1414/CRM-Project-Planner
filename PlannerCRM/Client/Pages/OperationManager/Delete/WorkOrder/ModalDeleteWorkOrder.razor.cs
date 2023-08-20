@@ -8,6 +8,7 @@ public partial class ModalDeleteWorkOrder : ComponentBase
 
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     
     private bool _isCancelClicked;
     private string _message;
@@ -22,7 +23,7 @@ public partial class ModalDeleteWorkOrder : ComponentBase
 
     protected override void OnInitialized() {
         _model = new();
-        _currentPage = NavigationManager.Uri.Replace(NavigationManager.BaseUri, "/");
+        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     public void OnClickModalCancel() {
