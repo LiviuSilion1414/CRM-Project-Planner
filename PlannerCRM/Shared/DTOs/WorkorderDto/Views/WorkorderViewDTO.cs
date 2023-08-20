@@ -8,5 +8,4 @@ public class WorkOrderViewDto
     public DateTime FinishDate { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsCompleted { get; set; }
-
 }
