@@ -6,10 +6,13 @@ namespace PlannerCRM.Client.Services;
 public class NavigationLockService
 {
     private readonly IJSRuntime _js;
+    private NavigationManager _navigationManager;
+
     public const bool ConfirmedExternalExit = true;
 
-    public NavigationLockService(IJSRuntime js) {
+    public NavigationLockService(IJSRuntime js, NavigationManager navigationManager) {
         _js = js;
+        _navigationManager = navigationManager;
     }
     
     public async Task ConfirmInternalExit(LocationChangingContext context) {
@@ -18,5 +21,9 @@ public class NavigationLockService
         if (!confirmed) {
             context.PreventNavigation();
         }
+    }
+
+    public string GetCurrentPage() {
+        return _navigationManager.Uri.Replace(_navigationManager.BaseUri, "/");
     }
 }
