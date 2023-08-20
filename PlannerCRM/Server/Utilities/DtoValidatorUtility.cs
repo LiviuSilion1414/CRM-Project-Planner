@@ -1,11 +1,11 @@
 namespace PlannerCRM.Server.Utilities;
 
-public class DtoValidatorService
+public class DtoValidatorUtillity
 {
     private readonly AppDbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public DtoValidatorService(AppDbContext context, UserManager<IdentityUser> userManager) {
+    public DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser> userManager) {
         _context = context;
         _userManager = userManager;
     }
