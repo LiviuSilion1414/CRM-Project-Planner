@@ -10,6 +10,7 @@ public class Titles
 
     public const string CONFIRM_DELETE_USER = "Vuoi davvero eliminare questo utente?";
     public const string CONFIRM_RESTORE_USER = "Vuoi davvero eliminare questo utente?";
+    public const string CONFIRM_DELETE_CLIENT = "Vuoi davvero eliminare questo cliente?";
         
     public const string ADD_WORKORDER = "Aggiungi commessa";
     public const string EDIT_WORKORDER = "Modifica commessa";
