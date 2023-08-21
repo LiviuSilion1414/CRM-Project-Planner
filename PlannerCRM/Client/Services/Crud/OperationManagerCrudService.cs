@@ -1,4 +1,3 @@
-
 namespace PlannerCRM.Client.Services.Crud;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
@@ -68,7 +67,7 @@ public class OperationManagerCrudService
     public async Task<ClientDeleteDto> GetClientForDeleteAsync(int clientId) {
         try {
             return await _http
-                .GetFromJsonAsync<ClientFormDto>($"api/client/get/for/delete/{clientId}");
+                .GetFromJsonAsync<ClientDeleteDto>($"api/client/get/for/delete/{clientId}");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
