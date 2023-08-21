@@ -65,7 +65,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<List<ClientViewDto>> GetClientsPaginated(int limit, int offset) {
+    public async Task<List<ClientViewDto>> GetClientsPaginated(int limit = 5, int offset = 0) {
         try {
             return await _http
                 .GetFromJsonAsync<List<ClientViewDto>>($"api/workorder/get/paginated/{limit}/{offset}");
