@@ -1,7 +1,7 @@
 namespace PlannerCRM.Client.Pages.OperationManager.Edit.FirmClient;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-public partial class ModalAddClient : ComponentBase
+public partial class ModalEditClient : ComponentBase
 {
     [Parameter] public string Title { get; set; }
     [Parameter] public int Id { get; set; }
