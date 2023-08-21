@@ -9,6 +9,7 @@ public partial class ModalEditActivity : ComponentBase
     
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
 
     private ActivityFormDto _model;
     private WorkOrderViewDto _currentWorkOrder;
@@ -28,7 +29,7 @@ public partial class ModalEditActivity : ComponentBase
             EmployeeActivity = new(),
         };
 
-        _currentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
+        _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     private async Task OnClickModalConfirm(ActivityFormDto returnedModel) {

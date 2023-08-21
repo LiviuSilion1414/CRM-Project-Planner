@@ -6,6 +6,7 @@ public partial class ModalAddActivity : ComponentBase
     [Parameter] public string Title { get; set; }
     
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
     
     private ActivityFormDto _model;
@@ -17,7 +18,7 @@ public partial class ModalAddActivity : ComponentBase
             ViewEmployeeActivity = new()
         };
 
-        _currentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
+        _currentPage = NavigationUtil.GetCurrentPage();
     } 
 
     private async Task OnClickModalConfirm(ActivityFormDto returnedModel) {

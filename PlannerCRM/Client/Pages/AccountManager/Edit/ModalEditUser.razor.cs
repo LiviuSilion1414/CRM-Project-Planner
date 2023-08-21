@@ -8,6 +8,7 @@ public partial class ModalEditUser : ComponentBase
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
 
     private EmployeeFormDto _model;
     private string _currentPage;
@@ -17,7 +18,7 @@ public partial class ModalEditUser : ComponentBase
 
     protected override void OnInitialized() {
         _model = new();
-        _currentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
+        _currentPage = NavigationUtil.GetCurrentPage();
     } 
     
     private async Task OnClickModalConfirm(EmployeeFormDto returnedModel) {

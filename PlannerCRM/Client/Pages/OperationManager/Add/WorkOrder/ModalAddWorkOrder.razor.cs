@@ -7,13 +7,14 @@ public partial class ModalAddWorkOrder : ComponentBase
 
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
 
     private WorkOrderFormDto _model;
     private string _currentPage;
     
     protected override void OnInitialized() {
         _model = new();
-        _currentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
+        _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     public async Task OnClickModalConfirm(WorkOrderFormDto returnedModel) {

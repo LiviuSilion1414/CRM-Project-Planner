@@ -7,7 +7,8 @@ public partial class ModalEditWorkOrder : ComponentBase
     [Parameter] public string Title { get; set; }
     
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
-    [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; } 
+    [Inject] public NavigationLockService NavigationUtil { get; set; } 
 
     private WorkOrderFormDto _model;
     private string _currentPage;
@@ -18,7 +19,7 @@ public partial class ModalEditWorkOrder : ComponentBase
 
     protected override void OnInitialized() {
         _model = new();
-        _currentPage = NavManager.Uri.Replace(NavManager.BaseUri, "/");
+        _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     private async Task OnClickModalConfirm(WorkOrderFormDto returnedModel) {
