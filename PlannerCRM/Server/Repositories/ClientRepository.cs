@@ -1,3 +1,5 @@
+using PlannerCRM.Shared.DTOs.ClientDto;
+
 namespace PlannerCRM.Server.Repositories;
 
 public class ClientRepository
@@ -100,6 +102,19 @@ public class ClientRepository
         return await _dbContext.Clients
             .Select(client => 
                 new ClientFormDto {
+                    Id = client.Id,
+                    Name = client.Name,
+                    VatNumber = client.VatNumber,
+                    WorkOrderId = client.WorkOrderId
+                }
+            )
+            .SingleAsync(cl => cl.Id == id);
+    }
+
+    public async Task<ClientDeleteDto> GetClientForDeleteAsync(int id) {
+        return await _dbContext.Clients
+            .Select(client => 
+                new ClientDeleteDto {
                     Id = client.Id,
                     Name = client.Name,
                     VatNumber = client.VatNumber,

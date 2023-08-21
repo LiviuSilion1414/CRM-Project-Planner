@@ -1,3 +1,5 @@
+using PlannerCRM.Shared.DTOs.ClientDto;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
@@ -107,6 +109,17 @@ public class ClientController : ControllerBase
     public async Task<ClientFormDto> GetForEditById(int clientId) {
         try {
             return await _repo.GetClientForEditAsync(clientId);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+    [HttpGet("get/for/delete/{clientId}")]
+    public async Task<ClientDeleteDto> GetForDeleteById(int clientId) {
+        try {
+            return await _repo.GetClientForDeleteAsync(clientId);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
