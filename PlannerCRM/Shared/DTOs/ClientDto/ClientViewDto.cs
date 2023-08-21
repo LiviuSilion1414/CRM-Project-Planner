@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.Dtos.ClientDto;
+namespace PlannerCRM.Shared.DTOs.ClientDto;
 
 public class ClientViewDto
 {
