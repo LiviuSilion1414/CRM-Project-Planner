@@ -1,0 +1,43 @@
+<div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@Title</h5>
+            <i id="cancel" class="bi bi-x-circle" @onclick=@OnClickModalCancel></i>
+        </div>
+        <div class="content">
+        @if (_isError) {
+            <Feedback Message="@_errorMessage" OnClickCancel=@OnClickHideBanner/>
+        }
+        <EditForm EditContext="@_editContext" OnValidSubmit="@OnClickModalConfirm">
+            <CascadingValue Value="@_errors">
+                <CustomDataAnnotationsValidator @ref="CustomValidator"/>
+                    <div class="form-group">
+                        <i class="bi bi-person-circle"></i>
+                        <label for="Nome">Nome</label>
+                        <InputText class="form-control" @bind-Value="Model.Name"/>
+                        <CustomValidationMessage FieldName="@nameof(Model.Name)"/>
+                    </div>
+                    <div class="form-group">
+                        <i class="bi bi-person-circle"></i>
+                        <label for="Cognome">Cognome</label>
+                        <InputText class="form-control" @bind-Value="Model.VatNumber"/>
+                        <CustomValidationMessage FieldName="@nameof(Model.VatNumber)"/>
+                    </div>
+                    
+            </CascadingValue>
+            <div class="modal-footer">
+                <div id="btn-cancel">
+                    <span id="btn-link" @onclick=@OnClickModalCancel>Annulla</span>
+                </div>
+                <div id="btn-confirm">
+                    <button type="submit" class="btn btn-primary">Conferma</button>
+                </div>
+            </div>
+            <NavigationLock ConfirmExternalNavigation="@NavigationLockService.ConfirmedExternalExit" 
+                OnBeforeInternalNavigation="@NavigationUtil.ConfirmInternalExit"/>
+        </EditForm>
+        </div>
+        </div>
+    </div>
+</div>
