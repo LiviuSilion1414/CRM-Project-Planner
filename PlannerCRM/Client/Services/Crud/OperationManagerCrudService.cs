@@ -54,6 +54,16 @@ public class OperationManagerCrudService
             return new();
         }
     }
+    public async Task<ClientFormDto> GetClientForEditAsync(int clientId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<ClientFormDto>($"api/client/get/for/edit/{clientId}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
 
     public async Task<List<ClientViewDto>> GetClientsPaginated(int limit, int offset) {
         try {
