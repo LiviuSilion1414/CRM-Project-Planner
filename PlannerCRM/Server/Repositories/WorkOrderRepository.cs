@@ -102,7 +102,7 @@ public class WorkOrderRepository
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted
 			})
-			.SingleAsync(wo => wo.Id == id);
+			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
 	
 	public async Task<WorkOrderFormDto> GetForEditAsync(int id) {
