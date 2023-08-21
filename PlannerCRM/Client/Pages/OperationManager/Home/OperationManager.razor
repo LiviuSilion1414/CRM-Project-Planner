@@ -5,6 +5,13 @@
 
 <div class="parent">
     <div class="child">
+        <button class="btn btn-primary" title="Aggiungi cliente" @onclick="OnClickAddClient">
+            <i class="bi bi-person-add"></i>
+            Aggiungi cliente
+        </button>
+    </div>
+    
+    <div class="child">
         <button class="btn btn-primary" title="Aggiungi commessa" @onclick="OnClickAddWorkOrder">
             <i class="bi bi-plus-circle-fill"></i>
             Aggiungi commessa
@@ -18,6 +25,15 @@
                 Aggiungi attività
             </button>
         </div>
+    }
+    <div class="child">
+        <button class="btn btn-primary" title="Visualizza clienti" @onclick=@OnClickShowClients>
+            <i class="bi bi-card-list"></i>
+            Visualizza clienti
+        </button>
+    </div>
+    @if (_isShowClientsClicked) { 
+        <ClientsList Title=@Titles.SHOW_ALL_CLIENTS/>
     }
 </div>
 
@@ -87,71 +103,9 @@
     </tbody>
 </table>
 
-@if (!_isShowClientsClicked) {
-    <span class="show-clients" @onclick=@OnClickShowClients>
-        Visualizza i clienti
-    </span>
-} else {
-    <span class="show-clients" @onclick=@OnClickShowClients>
-        <i class="bi bi-arrow-down"></i>
-        Comprimi
-    </span>
-}
-
-@if (_isShowClientsClicked) {
-
-<div class="container-fluid">
-    <table class="table table-sm">
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Partita IVA</th>
-            <th scope="col">Commessa</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-        </tr>
-        <tbody>
-            @foreach(var cl in _clients) {
-                <tr>
-                    <td>@cl.Name</td>
-                    <td>@cl.VatNumber</td>
-                    @foreach (var wo in _workOrders) {
-                        @if (wo.Id == cl.WorkOrderId) {
-                            <td>@wo.Name</td>
-                        } else {
-                            <td>Nessuna commessa.</td>
-                        }
-                    }
-                    <td>
-                        <i class="bi bi-pencil-fill" @onclick=@(() => OnClickEditClient(cl.Id))></i>    
-                    </td>
-                    <td>
-                        <i class="bi bi-person-dash" @onclick=@(() => OnClickDeleteClient(cl.Id))></i>    
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-}
-
 @if (_isCreateClientClicked) {
     <ModalAddClient
         Title=@Titles.ADD_CLIENT
-    />
-}
-
-@if (_isEditClientClicked) {
-    <ModalEditClient
-        Id=@_clientId
-        Title=@Titles.EDIT_CLIENT
-    />
-} 
-
-@if (_isDeleteClientClicked) {
-    <ModalDeleteClient
-        Id=@_clientId
-        Title=@Titles.DELETE_CLIENT
-        ConfirmationMessage=@Titles.CONFIRM_DELETE_CLIENT
     />
 }
 
