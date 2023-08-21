@@ -263,4 +263,15 @@ public class OperationManagerCrudService
             return new();
         }
     }
+
+    public async Task<int> GetCollectionSizeAsync() {
+        try {
+            return await _http
+                .GetFromJsonAsync<int>("api/client/get/size/");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
 }

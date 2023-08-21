@@ -17,15 +17,21 @@ public partial class ClientsList : ComponentBase
     private bool _isCancelClicked;
 
     private int _clientId;
+    private int _collectionSize;
 
     protected override async Task OnInitializedAsync() {
+        _collectionSize = await OperationManagerService.GetCollectionSizeAsync();
         _clients = await OperationManagerService.GetClientsPaginated(0, 5);
         foreach (var client in _clients) {
             var workOrder = await OperationManagerService.GetWorkOrderForViewAsync(client.Id);
 
             _workOrders.Add(workOrder);
         }
-    } 
+    }
+
+    public async Task HandlePaginate(int limit, int offset) =>
+        _clients = await OperationManagerService.GetClientsPaginated(limit, offset);
+
 
     private void OnClickModalCancel() => _isCancelClicked = !_isCancelClicked;
 

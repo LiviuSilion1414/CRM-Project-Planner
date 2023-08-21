@@ -139,4 +139,9 @@ public class ClientRepository
             )
             .ToListAsync();
     }
+
+    public async Task<int> GetCollectionSizeAsync() {
+        return await _dbContext.Clients
+            .CountAsync();
+    }
 }

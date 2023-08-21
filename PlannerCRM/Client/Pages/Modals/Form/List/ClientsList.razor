@@ -1,15 +1,12 @@
 <div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">@Title</h5>
-        <i id="x-cancel" class="bi bi-x-circle" @onclick="@OnClickModalCancel"></i>
-      </div>
-      <div class="modal-body">
-            <div class="container-fluid">
-                @if (!_clients.Any()) {
-                    <p>Nessun cliente trovato.</p>
-                } else {
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <i id="x-cancel" class="bi bi-x-circle" @onclick="@OnClickModalCancel"></i>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
                     <table class="table table-sm">
                         <tr>
                             <th scope="col">Name</th>
@@ -46,15 +43,21 @@
                             }
                         </tbody>
                     </table>
-                }
-            
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="btn-link" class="btn btn-link" @onclick=@OnClickModalCancel>Chiudi</button>
-      </div>
+                    @if (_clients.Any()) {
+                        <Paginator
+                            CollectionSize=@_collectionSize
+                            Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
+                    } else {
+                        <p class="text-center">@Titles.NOT_AVAILABLE_CLIENTS</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-link" class="btn btn-link" 
+                        @onclick=@OnClickModalCancel>Chiudi</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 </div>
 
 @if (_isCreateClientClicked) {

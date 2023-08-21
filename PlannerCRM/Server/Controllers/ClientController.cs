@@ -137,4 +137,15 @@ public class ClientController : ControllerBase
             return new();
         }
     }
+
+    [HttpGet("get/size")]
+    public async Task<int> GetCollectionSize() {
+        try {
+            return await _repo.GetCollectionSizeAsync();
+        } catch (Exception exc) {
+             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
 }
