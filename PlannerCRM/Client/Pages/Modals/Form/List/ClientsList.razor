@@ -1,0 +1,79 @@
+<div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">@Title</h5>
+        <i id="x-cancel" class="bi bi-x-circle" @onclick="@OnClickModalCancel"></i>
+      </div>
+      <div class="modal-body">
+            <div class="container-fluid">
+                @if (!_clients.Any()) {
+                    <p>Nessun cliente trovato.</p>
+                } else {
+                    <table class="table table-sm">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Partita IVA</th>
+                            <th scope="col">Commessa</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                        <tbody>
+                            @foreach(var cl in _clients) {
+                                <tr>
+                                    <td>@cl.Name</td>
+                                    <td>@cl.VatNumber</td>
+                                    @foreach (var wo in _workOrders) {
+                                        @if (wo.Id == cl.WorkOrderId) {
+                                            <td>@wo.Name</td>
+                                        } else {
+                                            <td>Nessuna commessa.</td>
+                                        }
+                                    }
+                                    <td>
+                                        <button class="btn btn-primary" 
+                                            @onclick=@(() => OnClickEditClient(cl.Id))>
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger" 
+                                            @onclick=@(() => OnClickDeleteClient(cl.Id))>
+                                            <i class="bi bi-person-dash" ></i>    
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-link" class="btn btn-link" @onclick=@OnClickModalCancel>Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+@if (_isCreateClientClicked) {
+    <ModalAddClient
+        Title=@Titles.ADD_CLIENT
+    />
+}
+
+@if (_isEditClientClicked) {
+    <ModalEditClient
+        Id=@_clientId
+        Title=@Titles.EDIT_CLIENT
+    />
+} 
+
+@if (_isDeleteClientClicked) {
+    <ModalDeleteClient
+        Id=@_clientId
+        Title=@Titles.DELETE_CLIENT
+        ConfirmationMessage=@Titles.CONFIRM_DELETE_CLIENT
+    />
+}
