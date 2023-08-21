@@ -65,6 +65,17 @@ public class OperationManagerCrudService
         }
     }
 
+    public async Task<ClientDeleteDto> GetClientForDeleteAsync(int clientId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<ClientFormDto>($"api/client/get/for/delete/{clientId}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
     public async Task<List<ClientViewDto>> GetClientsPaginated(int limit = 5, int offset = 0) {
         try {
             return await _http
