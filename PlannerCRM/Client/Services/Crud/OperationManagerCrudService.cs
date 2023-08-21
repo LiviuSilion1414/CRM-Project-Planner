@@ -1,3 +1,4 @@
+
 namespace PlannerCRM.Client.Services.Crud;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
@@ -10,6 +11,59 @@ public class OperationManagerCrudService
     public OperationManagerCrudService(HttpClient http, Logger<OperationManagerCrudService> logger) {
         _http = http;
         _logger = logger;
+    }
+
+
+    public async Task<HttpResponseMessage> AddClientAsync(ClientFormDto dto) {
+        try {
+            return await _http.PostAsJsonAsync("api/client/add", dto);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new() { ReasonPhrase = exc.StackTrace };
+        }
+    }
+
+    public async Task<HttpResponseMessage> EditClientAsync(ClientFormDto dto) {
+        try {
+            return await _http.PutAsJsonAsync("api/client/edit", dto);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new() { ReasonPhrase = exc.StackTrace };
+        }
+    }
+
+    public async Task<HttpResponseMessage> DeleteClientAsync(int clientId) {
+        try {
+            return await _http.DeleteAsync($"api/client/delete/{clientId}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new() { ReasonPhrase = exc.StackTrace };
+        }
+    }
+
+    public async Task<ClientViewDto> GetClientForViewAsync(int clientId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<ClientViewDto>($"api/client/get/for/view/{clientId}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+    public async Task<List<ClientViewDto>> GetClientsPaginated(int limit, int offset) {
+        try {
+            return await _http
+                .GetFromJsonAsync<List<ClientViewDto>>($"api/workorder/get/paginated/{limit}/{offset}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
     }
 
     public async Task<int> GetCollectionSize() {
