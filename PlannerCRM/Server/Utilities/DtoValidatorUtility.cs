@@ -43,6 +43,31 @@ public class DtoValidatorUtillity
         return false;
     }
 
+    public async Task<bool> ValidateClientAsync(ClientFormDto dto, OperationType operation) {
+        var isValid = CheckDtoHealth(dto);
+
+        if (isValid) {
+            var clientIsAlreadyPresent = await _context.Clients
+                .AnyAsync(em => em.Id == dto.Id);        
+            
+            if (operation == OperationType.ADD) {
+                if (clientIsAlreadyPresent) {
+                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                }
+            } 
+            
+            if (operation == OperationType.EDIT) {
+                if (!clientIsAlreadyPresent) {
+                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                }
+            }
+
+            return true;
+        }
+        
+        return false;
+    }
+
     public async Task<bool> ValidateWorkOrderAsync(WorkOrderFormDto dto, OperationType operation) {
         var isValid = CheckDtoHealth(dto);
         
