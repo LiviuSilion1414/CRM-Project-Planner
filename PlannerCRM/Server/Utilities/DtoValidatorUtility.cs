@@ -129,6 +129,12 @@ public class DtoValidatorUtillity
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
 
+    public async Task<FirmClient> ValidateDeleteClientAsync(int id) {
+        return await _context.Clients
+            .SingleOrDefaultAsync(cl => cl.Id == id) ??
+                throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
+    }
+
     public async Task<IdentityUser> ValidateDeleteUserAsync(string email) {
         if (string.IsNullOrEmpty(email)) {
             throw new ArgumentNullException(email, ExceptionsMessages.NULL_OBJECT);
