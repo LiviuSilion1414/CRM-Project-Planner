@@ -6,7 +6,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using PlannerCRM.Shared.DTOs.CostDto;
-global using PlannerCRM.Shared.Dtos.ClientDto;
+global using PlannerCRM.Shared.DTOs.ClientDto;
 global using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 global using PlannerCRM.Shared.DTOs.ActivityDto.Forms;
 global using PlannerCRM.Shared.DTOs.ActivityDto.Views;
