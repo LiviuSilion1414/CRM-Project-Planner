@@ -21,7 +21,7 @@ public partial class ModalEditClient : ComponentBase
         _currentPage = NavigationUtil.GetCurrentPage();
     }
 
-    private async Task OnClickModalConfirm(ClientFormDto returnedModel) {
+    public async Task OnClickModalConfirm(ClientFormDto returnedModel) {
         await OperationManagerService.AddClientAsync(returnedModel);
 
         NavManager.NavigateTo(_currentPage, true);
