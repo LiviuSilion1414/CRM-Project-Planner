@@ -126,6 +126,7 @@ public class ClientRepository
 
     public async Task<List<ClientViewDto>> GetPaginatedAsync(int limit, int offset) {
         return await _dbContext.Clients
+            .OrderBy(client => client.Id)
             .Skip(limit)
             .Take(offset)
             .Select(client => 
