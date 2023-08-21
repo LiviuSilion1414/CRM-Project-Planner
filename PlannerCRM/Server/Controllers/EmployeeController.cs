@@ -201,7 +201,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit = 0, int offset = 5) {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit, int offset) {
         try {
             return await _repo.GetPaginatedEmployees(limit, offset);
         } catch (Exception exc) {
