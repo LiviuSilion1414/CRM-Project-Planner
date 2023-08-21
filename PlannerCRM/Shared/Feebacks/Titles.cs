@@ -27,4 +27,6 @@ public class Titles
     public const string ADD_CLIENT = "Aggiungi cliente";
     public const string EDIT_CLIENT = "Modifica cliente";
     public const string DELETE_CLIENT = "Elimina cliente";
+
+    public const string SHOW_ALL_CLIENTS = "Visualizza tutti i clienti.";
 }
