@@ -96,6 +96,19 @@ public class ClientRepository
             .SingleAsync(cl => cl.Id == id);
     }
 
+    public async Task<ClientFormDto> GetClientForEditAsync(int id) {
+        return await _dbContext.Clients
+            .Select(client => 
+                new ClientFormDto {
+                    Id = client.Id,
+                    Name = client.Name,
+                    VatNumber = client.VatNumber,
+                    WorkOrderId = client.WorkOrderId
+                }
+            )
+            .SingleAsync(cl => cl.Id == id);
+    }
+
     public async Task<List<ClientViewDto>> GetPaginatedAsync(int limit, int offset) {
         return await _dbContext.Clients
             .Skip(limit)

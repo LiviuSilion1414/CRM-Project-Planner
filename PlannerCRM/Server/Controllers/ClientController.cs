@@ -103,6 +103,17 @@ public class ClientController : ControllerBase
         }
     }
 
+    [HttpGet("get/for/edit/{clientId}")]
+    public async Task<ClientFormDto> GetForEditById(int clientId) {
+        try {
+            return await _repo.GetClientForEditAsync(clientId);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<ClientViewDto>> GetPaginatedClients(int limit, int offset) {
         try {
