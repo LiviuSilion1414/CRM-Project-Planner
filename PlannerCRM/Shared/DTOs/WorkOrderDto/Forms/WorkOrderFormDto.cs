@@ -15,4 +15,7 @@ public partial class WorkOrderFormDto
     [WorkOrderFinishDateRange(MIN_WORKORDER_MONTH_CONTRACT, MAX_WORKORDER_MONTH_CONTRACT, 
         ErrorMessage = "Il periodo contrattuale dev'essere tra 3 e 24 mesi.")]
     public DateTime? FinishDate { get; set; }
+
+    [Required(ErrorMessage = """ Campo "Cliente" richiesto """)]
+    public int ClientId { get; set; }
 }

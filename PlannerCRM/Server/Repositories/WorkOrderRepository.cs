@@ -23,7 +23,8 @@ public class WorkOrderRepository
 					StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
 					FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
 					IsDeleted = false,
-					IsCompleted = false
+					IsCompleted = false,
+					ClientId = dto.ClientId,
 				});
 
 				if (await _dbContext.SaveChangesAsync() == 0) {
@@ -61,13 +62,13 @@ public class WorkOrderRepository
 
 			if (isValid) {
 				var model = await _dbContext.WorkOrders
-							.SingleAsync(wo => ((!wo.IsDeleted) && (!wo.IsCompleted)) && wo.Id == dto.Id);
+											.SingleAsync(wo => (!wo.IsDeleted) && (!wo.IsCompleted) && wo.Id == dto.Id);
 				
 				model.Id = dto.Id;
 				model.Name = dto.Name;
 				model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
 				model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-		
+
 				if (await _dbContext.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 				}
