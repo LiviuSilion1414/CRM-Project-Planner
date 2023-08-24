@@ -148,4 +148,26 @@ public class ClientController : ControllerBase
             return new();
         }
     }
+
+    [HttpGet("search/{clientName}/")]
+    public async Task<List<ClientViewDto>> SearchClient(string clientName) {
+        try {
+            return await _repo.SearchClientAsync(clientName);
+        } catch (Exception exc) {
+             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+    [HttpGet("search/by/id/{clientId}")]
+    public async Task<List<ClientViewDto>> SearchClient(int clientId) {
+        try {
+            return await _repo.SearchClientAsync(clientId);
+        } catch (Exception exc) {
+             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
 }

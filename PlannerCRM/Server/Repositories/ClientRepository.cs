@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using PlannerCRM.Shared.DTOs.ClientDto;
 
 namespace PlannerCRM.Server.Repositories;
@@ -143,5 +144,29 @@ public class ClientRepository
     public async Task<int> GetCollectionSizeAsync() {
         return await _dbContext.Clients
             .CountAsync();
+    }
+
+    public async Task<List<ClientViewDto>> SearchClientAsync(string clientName) {
+        return await _dbContext.Clients
+            .Select(cl => new ClientViewDto {
+                    Id = cl.Id,
+                    Name = cl.Name,
+                    VatNumber = cl.VatNumber,
+                }
+            )
+            .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
+            .ToListAsync();
+    }
+
+    public async Task<List<ClientViewDto>> SearchClientAsync(int clientId) {
+        return await _dbContext.Clients
+            .Select(cl => new ClientViewDto {
+                    Id = cl.Id,
+                    Name = cl.Name,
+                    VatNumber = cl.VatNumber,
+                }
+            )
+            .Where(cl => cl.Id == clientId)
+            .ToListAsync();
     }
 }

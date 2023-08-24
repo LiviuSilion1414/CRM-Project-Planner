@@ -155,9 +155,9 @@ public class OperationManagerCrudService
     public async Task<HttpResponseMessage> AddActivityAsync(ActivityFormDto dto) {
         try { 
             return await _http
-                .PutAsJsonAsync("api/activity/add", dto);
+                .PostAsJsonAsync("api/activity/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -256,7 +256,8 @@ public class OperationManagerCrudService
 
     public async Task<List<ActivityViewDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
         try {
-            return await _http.GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/workorder/{workOrderId}");
+            return await _http
+                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/workorder/{workOrderId}");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
@@ -268,6 +269,28 @@ public class OperationManagerCrudService
         try {
             return await _http
                 .GetFromJsonAsync<int>("api/client/get/size/");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+    public async Task<List<ClientViewDto>> SearchClientAsync(string clientName) {
+        try {    
+            return await _http
+                .GetFromJsonAsync<List<ClientViewDto>>($"api/client/search/{clientName}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+    public async Task<List<ClientViewDto>> SearchClientAsync(int clientId) {
+        try {    
+            return await _http
+                .GetFromJsonAsync<List<ClientViewDto>>($"api/client/search/by/id/{clientId}");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
