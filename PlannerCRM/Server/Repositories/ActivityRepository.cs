@@ -307,8 +307,10 @@ public class ActivityRepository
             .SingleAsync(ac => ac.Id == id);
     }
 
-    public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId) {
-         return await _dbContext.Activities
+    public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId, int limit = 0, int offset = 5) {
+        return await _dbContext.Activities
+            .Skip(limit)
+            .Take(offset)
             .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,
@@ -442,5 +444,10 @@ public class ActivityRepository
                     }).ToHashSet()   
             })
             .ToListAsync();
+    }
+
+    public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) {
+        return (await GetActivityByEmployeeId(employeeId))
+            .Count;
     }
 }

@@ -45,10 +45,10 @@ public class DeveloperService
         }
     }
 
-    public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId) {
+    public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId, int limit = 0, int offset = 5) {
         try {
             return await _http
-                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/employee/{employeeId}");
+                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/employee/{employeeId}/{limit}/{offset}");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
@@ -82,6 +82,17 @@ public class DeveloperService
         try {
             return await _http
                 .GetFromJsonAsync<WorkTimeRecordViewDto>($"api/worktimerecord/get/{workOrderId}/{activityId}/{employeeId}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+    
+    public async Task<int> GetCollectionSizeByEmployeeId(int employeeId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<int>($"api/activity/get/size/by/employee/id/{employeeId}");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 

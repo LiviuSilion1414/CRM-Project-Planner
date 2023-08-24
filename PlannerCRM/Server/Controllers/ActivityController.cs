@@ -162,10 +162,10 @@ public class ActivityController : ControllerBase
         {nameof(Roles.SENIOR_DEVELOPER)}, 
         {nameof(Roles.JUNIOR_DEVELOPER)}
     """ )]
-    [HttpGet("get/activity/per/employee/{employeeId}")]
-    public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId) {
+    [HttpGet("get/activity/per/employee/{employeeId}/{limit}/{offset}")]
+    public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId, int limit, int offset) {
         try {
-            return await _repo.GetActivityByEmployeeId(employeeId);
+            return await _repo.GetActivityByEmployeeId(employeeId, limit, offset);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
@@ -178,14 +178,16 @@ public class ActivityController : ControllerBase
         {nameof(Roles.SENIOR_DEVELOPER)}, 
         {nameof(Roles.JUNIOR_DEVELOPER)}
     """ )]
-    [HttpGet("get/all")]
-    public async Task<List<ActivityViewDto>> GetAll() {
+    [HttpGet("get/size/by/employee/id/{employeeId}")]
+    public async Task<int> GetCollectionSizeByEmployeeId(int employeeId) {
         try {
-            return await _repo.GetAllAsync();
+            return await _repo.GetCollectionSizeByEmployeeIdAsync(employeeId);
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
             return new();
         }
     }
+
+
 }
