@@ -34,4 +34,6 @@ public class Titles
     public const string NOT_AVAILABLE_ACTIVITIES = "Nessun attività disponibile.";
     public const string NOT_AVAILABLE_USERS = "Nessun utente disponibile.";
     public const string NOT_AVAILABLE_CLIENTS = "Nessun cliente disponibile.";
+
+    public const string NO_MORE_RESOURCES = "Non ci sono altri elementi.";
 }

@@ -111,7 +111,7 @@
     </tbody>
 </table>
 
-@if (!_workOrders.Any()) {
+@if (!_workOrders.Any() && !_hasMoreWorkOrders) {
     <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
 }
 
@@ -141,8 +141,10 @@
     <ModalAddActivity Title=@Titles.ADD_ACTIVITY/>
 }
 
-@if (_workOrders.Any()) {
-    <Paginator
-        CollectionSize="@_collectionSize"
-        Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
+@if (!_hasMoreWorkOrders) {
+    <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
 }
+
+<Paginator
+    CollectionSize="@_collectionSize"
+    Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>

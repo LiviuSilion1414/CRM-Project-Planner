@@ -14,6 +14,7 @@ public partial class GridData : ComponentBase
     
     private List<ActivityViewDto> _activities;
     private bool _isAddClicked = false;
+    private bool _hasMoreActivities = true;
     private int _activityId;
     private int _collectionSize;
 
@@ -46,6 +47,8 @@ public partial class GridData : ComponentBase
         _activityId = activityId;
     }
 
-    private async Task HandlePaginate(int limit, int offset)
-        => await FetchData(limit, offset);
+    private async Task HandlePaginate(int limit, int offset) {
+        await FetchData(limit, offset);
+        _hasMoreActivities = _activities.Any();
+    }
 }

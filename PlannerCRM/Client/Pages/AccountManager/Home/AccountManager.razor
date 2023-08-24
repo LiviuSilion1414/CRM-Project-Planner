@@ -84,20 +84,20 @@
     </tbody>
 </table>
 
-@if (!_users.Any()) {
+@if (!_users.Any() && _hasMoreUsers) {
     <p class="text-center">@Titles.NOT_AVAILABLE_USERS</p>
 }
 
 @if (_isViewClicked) {
-    <ModalShowUserDetails Title="Vedi dettagli" Id="@_userId"/>
+    <ModalShowUserDetails Title=@Titles.DETAILS_USER Id="@_userId"/>
 }
 
 @if (_isAddClicked) {
-    <ModalAddUser Title="Aggiungi utente"/>
+    <ModalAddUser Title=@Titles.ADD_USER/>
 } 
 
 @if (_isEditClicked) {
-   <ModalEditUser Title="Modifica utente" Id="@_userId"/> 
+   <ModalEditUser Title=@Titles.EDIT_USER Id="@_userId"/> 
 }
 
 @if (_isDeleteClicked) {
@@ -114,8 +114,10 @@
         Message=@_message/>
 }
 
-@if (_users.Any()) {
-    <Paginator
-        CollectionSize="@_collectionSize"
-        Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
+@if (!_hasMoreUsers) {
+    <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
 }
+
+<Paginator
+    CollectionSize="@_collectionSize"
+    Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>

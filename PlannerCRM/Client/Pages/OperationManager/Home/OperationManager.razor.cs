@@ -22,6 +22,8 @@ public partial class OperationManager : ComponentBase
     private bool _isCreateActivityClicked;
     private bool _isShowClientsClicked;
 
+    private bool _hasMoreWorkOrders;
+
     private int _workOrderId; 
     private int _clientId; 
 
@@ -40,8 +42,10 @@ public partial class OperationManager : ComponentBase
         }
     }
     
-    public async Task HandlePaginate(int limit, int offset) =>
+    public async Task HandlePaginate(int limit, int offset) {
         _workOrders = await OperationManagerService.GetCollectionPaginated(limit, offset);
+        _hasMoreWorkOrders = _workOrders.Any();
+    }
 
     public async Task OnClickShowClients() {
         _isShowClientsClicked = !_isShowClientsClicked;

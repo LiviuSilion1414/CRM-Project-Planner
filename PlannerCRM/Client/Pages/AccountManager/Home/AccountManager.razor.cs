@@ -17,19 +17,26 @@ public partial class AccountManager : ComponentBase
     private bool _isDeleteClicked;
     private bool _isRestoreClicked;
 
+    private bool _hasMoreUsers = true;
+
     private List<EmployeeViewDto> _users;
     private int _collectionSize;
 
 
     protected override async Task OnInitializedAsync() {
-        _users = await AccountManagerService.GetPaginatedEmployees();
+        await FetchData();
         _collectionSize = await AccountManagerService.GetEmployeesSize();
     }
 
     protected override void OnInitialized() => _users = new();
+    
+    private async Task FetchData(int limit = 0, int offset = 5) 
+        => _users = await AccountManagerService.GetPaginatedEmployees();
 
-    private async Task HandlePaginate(int limit, int offset) =>
-        _users = await AccountManagerService.GetPaginatedEmployees(limit, offset);
+    private async Task HandlePaginate(int limit, int offset) {
+        await FetchData(limit, offset);
+        _hasMoreUsers = _users.Any();
+    }
     
     private void ShowDetails(int id) {
         _isViewClicked = !_isViewClicked;
