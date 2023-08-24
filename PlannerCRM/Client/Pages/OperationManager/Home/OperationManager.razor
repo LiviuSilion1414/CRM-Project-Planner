@@ -41,6 +41,7 @@
     <thead>
         <tr>
             <th scope="col">Stato</th>
+            <th scope="col">Cliente</th>
             <th scope="col">Nome</th>
             <th scope="col">Data d'inizio</th>
             <th scope="col">Data fine</th>
@@ -57,6 +58,13 @@
                             <strong style="color: darkred;">[Eliminato]</strong>
                         } else {
                             <strong style="color: green;">[Attivo]</strong>
+                        }
+                    </td>
+                    <td>
+                        @foreach (var client in _clients) {
+                            @if (client.Id == wo.Client.Id) {
+                                @client.Name
+                            }
                         }
                     </td>
                     <td>
@@ -103,6 +111,10 @@
     </tbody>
 </table>
 
+@if (!_workOrders.Any()) {
+    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+}
+
 @if (_isCreateClientClicked) {
     <ModalAddClient
         Title=@Titles.ADD_CLIENT
@@ -133,6 +145,4 @@
     <Paginator
         CollectionSize="@_collectionSize"
         Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
-} else {
-    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
 }
