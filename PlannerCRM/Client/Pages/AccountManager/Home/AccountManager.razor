@@ -84,6 +84,10 @@
     </tbody>
 </table>
 
+@if (!_users.Any()) {
+    <p class="text-center">@Titles.NOT_AVAILABLE_USERS</p>
+}
+
 @if (_isViewClicked) {
     <ModalShowUserDetails Title="Vedi dettagli" Id="@_userId"/>
 }
@@ -114,6 +118,4 @@
     <Paginator
         CollectionSize="@_collectionSize"
         Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
-} else {
-    <p class="text-center">@Titles.NOT_AVAILABLE_USERS</p>
 }
