@@ -8,10 +8,13 @@ public partial class ModalFormWorkOrder : ComponentBase
     [Parameter] public EventCallback<WorkOrderFormDto> GetValidatedModel { get; set; }
 
     [Inject] public NavigationLockService NavigationUtil { get; set; }
+    [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
     [Inject] public Logger<WorkOrderFormDto> Logger { get; set; }
-    
+
+    private List<ClientViewDto> _clients;
+
     private Dictionary<string, List<string>> _errors;
     private EditContext _editContext;
 
@@ -19,10 +22,14 @@ public partial class ModalFormWorkOrder : ComponentBase
     private string _errorMessage;
     private bool _isError;
     private bool _isCancelClicked;
+    private bool _isClientSelected;
+
+    private bool _hideclientsList;
 
     protected override void OnInitialized() {
         Model = new();
         _editContext = new(Model);
+        _clients = new();
         CustomValidator = new();
         _isCancelClicked = false;
         _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
@@ -35,9 +42,24 @@ public partial class ModalFormWorkOrder : ComponentBase
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
 
+    private async Task OnClickSearchClient() {
+        if (string.IsNullOrEmpty(Model.ClientName) || string.IsNullOrWhiteSpace(Model.ClientName)) {
+            OnClickInvalidSubmit();
+        } else {
+            _clients = await OperationManagerService.SearchClientAsync(Model.ClientName);
+        }
+    }
+
     private void OnClickInvalidSubmit() {
         _isError = true;
         _errorMessage = ExceptionsMessages.EMPTY_FIELDS;
+    }
+
+    private void OnClickSetAsClient(ClientViewDto client) {
+        _isClientSelected = !_isClientSelected;
+        Model.ClientId = client.Id; 
+        Model.ClientName = client.Name;
+        _hideclientsList = !_hideclientsList;
     }
 
     private async Task OnClickModalConfirm() {

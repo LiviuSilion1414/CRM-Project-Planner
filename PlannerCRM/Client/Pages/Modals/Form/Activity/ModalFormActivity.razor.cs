@@ -19,6 +19,8 @@ public partial class ModalFormActivity : ComponentBase
     private List<WorkOrderSelectDto> _workOrders;
     private List<EmployeeSelectDto> _employees;
 
+    private readonly bool _isDisabled = true;
+
     private bool _isError;
     private string _message;
     private bool _isCancelClicked;
@@ -28,6 +30,8 @@ public partial class ModalFormActivity : ComponentBase
 
     private bool _employeeHasElements; 
     private bool _hideEmployeesList;
+
+    private bool _workOrderHasBeenSet;
 
     protected override void OnInitialized() {
         Model = new() {
@@ -58,6 +62,8 @@ public partial class ModalFormActivity : ComponentBase
     private void OnClickSetWorkOrder(WorkOrderSelectDto workOrderSelect) {
         Model.WorkOrderId = workOrderSelect.Id;
         Model.SelectedWorkorder = workOrderSelect.Name;
+        Model.ClientName = workOrderSelect.ClientName;
+        _workOrderHasBeenSet = !_workOrderHasBeenSet;
         ToggleWorkOrderListView();
     }
     
@@ -81,8 +87,8 @@ public partial class ModalFormActivity : ComponentBase
     private void OnClickAddAsSelected(EmployeeSelectDto employee) {
         try { 
             var contains = Model.EmployeeActivity
-                .Any(ea => ea.Employee.Email == employee.Email);
-            
+                .Any(ea => ea.Employee.Id == employee.Id);
+
             if (!contains) {
                 var activity = 
                     new EmployeeActivityDto {
@@ -105,7 +111,7 @@ public partial class ModalFormActivity : ComponentBase
                         Activity = new ActivitySelectDto {
                             Id = Model.Id,
                             Name = Model.Name,
-                            StartDate = Model.StartDate 
+                            StartDate = Model?.StartDate 
                                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
                             FinishDate = Model.FinishDate
                                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
