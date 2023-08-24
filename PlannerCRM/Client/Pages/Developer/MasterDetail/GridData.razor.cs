@@ -15,14 +15,20 @@ public partial class GridData : ComponentBase
     private List<ActivityViewDto> _activities;
     private bool _isAddClicked = false;
     private int _activityId;
+    private int _collectionSize;
 
     protected override async Task OnInitializedAsync() {
         _workOrders = new();
         _workTimeRecords = new();
 
+        _collectionSize = await DeveloperService.GetCollectionSizeByEmployeeId(EmployeeId);
+        await FetchData();
+    }
+
+    private async Task FetchData(int limit = 0, int offset= 5) {
         _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId);
         
-        foreach(var ac in _activities) {
+        foreach (var ac in _activities) {
             var workorder = await DeveloperService.GetWorkOrderByIdAsync(ac.WorkOrderId);
             _workOrders.Add(workorder);
         }
@@ -39,4 +45,7 @@ public partial class GridData : ComponentBase
         _isAddClicked = !_isAddClicked;
         _activityId = activityId;
     }
+
+    private async Task HandlePaginate(int limit, int offset)
+        => await FetchData(limit, offset);
 }
