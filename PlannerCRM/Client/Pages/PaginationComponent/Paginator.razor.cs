@@ -18,7 +18,7 @@ public partial class Paginator : ComponentBase
             _limit = 0;
             _pageNumber = 1;
         } else {
-            _limit -= _limit - _offset;
+            _limit -= _offset;
             _pageNumber--;
         }
        await InvokeCallbackAsync(Paginate, _limit, _offset);
@@ -28,9 +28,6 @@ public partial class Paginator : ComponentBase
         if (_limit < _totalPageNumbers + _offset) {
             _limit += _offset;
             _pageNumber++; 
-        } else {
-            _limit = _totalPageNumbers;
-            _pageNumber = _totalPageNumbers + 1;
         }
        
        await InvokeCallbackAsync(Paginate, _limit, _offset);
