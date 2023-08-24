@@ -28,8 +28,16 @@ public partial class OperationManager : ComponentBase
     private int _collectionSize;
 
     protected override async Task OnInitializedAsync() {
-        _workOrders = await OperationManagerService.GetCollectionPaginated();
         _collectionSize = await OperationManagerService.GetCollectionSize();
+        _workOrders = await OperationManagerService.GetCollectionPaginated();
+        foreach (var wo in _workOrders) {
+            var clients = await OperationManagerService.SearchClientAsync(wo.Client.Id);
+            foreach (var client in clients) {
+                if (!_clients.Contains(client)) {
+                    _clients.Add(client);
+                }
+            }
+        }
     }
     
     public async Task HandlePaginate(int limit, int offset) =>
