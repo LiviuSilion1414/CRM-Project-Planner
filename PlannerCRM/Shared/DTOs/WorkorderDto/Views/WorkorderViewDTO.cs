@@ -1,3 +1,5 @@
+using PlannerCRM.Shared.DTOs.ClientDto;
+
 namespace PlannerCRM.Shared.DTOs.Workorder.Views;
 
 public class WorkOrderViewDto
@@ -8,4 +10,5 @@ public class WorkOrderViewDto
     public DateTime FinishDate { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsCompleted { get; set; }
+    public ClientViewDto Client { get; set; }
 }

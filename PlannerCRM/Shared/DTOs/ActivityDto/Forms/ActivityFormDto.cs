@@ -26,4 +26,6 @@ public partial class ActivityFormDto
     public string SelectedWorkorder { get; set; }
 
     public string SelectedEmployee { get; set; }
+
+    public string ClientName { get; set; }
 } 
