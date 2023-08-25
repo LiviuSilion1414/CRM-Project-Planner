@@ -23,7 +23,8 @@ public partial class ClientsList : ComponentBase
         _collectionSize = await OperationManagerService.GetCollectionSizeAsync();
         _clients = await OperationManagerService.GetClientsPaginated(0, 5);
         foreach (var client in _clients) {
-            var workOrder = await OperationManagerService.GetWorkOrderForViewAsync(client.Id);
+            var workOrder = await OperationManagerService.GetWorkOrderForViewAsync(client.WorkOrderId);
+            workOrder.Client = new();
 
             _workOrders.Add(workOrder);
         }
