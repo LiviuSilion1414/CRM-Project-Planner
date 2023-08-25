@@ -22,7 +22,7 @@ public partial class ModalEditClient : ComponentBase
     }
 
     public async Task OnClickModalConfirm(ClientFormDto returnedModel) {
-        await OperationManagerService.AddClientAsync(returnedModel);
+        await OperationManagerService.EditClientAsync(returnedModel);
 
         NavManager.NavigateTo(_currentPage, true);
     }
