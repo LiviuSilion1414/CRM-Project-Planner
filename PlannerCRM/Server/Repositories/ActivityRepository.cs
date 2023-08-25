@@ -201,6 +201,9 @@ public class ActivityRepository
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
+                ClientName = _dbContext.Clients
+                    .Single(cl => cl.WorkOrderId == ac.WorkOrderId)
+                    .Name,
                 EmployeeActivity = new(),
                 ViewEmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
