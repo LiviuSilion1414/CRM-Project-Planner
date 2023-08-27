@@ -26,7 +26,7 @@ public class CalculatorController : ControllerBase
         }
     } 
 
-    [HttpGet("get/invoice/{workOrderId}")]
+    [HttpPost("get/invoice")]
     public async Task<Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>> GetInvoice(int workOrderId) {
         try {
             return await _calculator.IssueInvoiceAsync(workOrderId);
