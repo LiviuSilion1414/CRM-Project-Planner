@@ -130,7 +130,17 @@ public class WorkOrderRepository
 				StartDate = wo.StartDate,
 				FinishDate = wo.FinishDate,
 				IsCompleted = wo.IsCompleted,
-				IsDeleted = wo.IsDeleted
+				IsDeleted = wo.IsDeleted,
+				Client = _dbContext.Clients
+					.Select(cl => 
+						new ClientViewDto() {
+							Id = cl.Id,
+							Name = cl.Name,
+							VatNumber = cl.VatNumber,
+							WorkOrderId = cl.WorkOrderId
+						}
+					)
+					.Single(cl => cl.WorkOrderId == wo.Id)
 			})
 			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
