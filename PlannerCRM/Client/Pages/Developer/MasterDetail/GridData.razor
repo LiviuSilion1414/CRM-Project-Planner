@@ -15,7 +15,7 @@
             <tr>
                 <td><i class="bi bi-briefcase"></i></td> 
                 <td>
-                    @foreach (var wo in _workOrders) {
+                    @foreach (var wo in _workOrders.DistinctBy(wo => wo.Id)) {
                         if (wo.Id == ac.WorkOrderId) {
                             @wo.Name
                         }

@@ -8,11 +8,11 @@ public partial class GridData : ComponentBase
 
     [Inject] public DeveloperService DeveloperService { get; set; }
 
-    private List<WorkTimeRecordViewDto> _workTimeRecords;
-    private List<WorkOrderViewDto> _workOrders;
+    private List<WorkTimeRecordViewDto> _workTimeRecords = new();
+    private List<WorkOrderViewDto> _workOrders = new();
 
     
-    private List<ActivityViewDto> _activities;
+    private List<ActivityViewDto> _activities = new();
     private bool _isAddClicked = false;
     private bool _hasMoreActivities = true;
     private int _activityId;
@@ -31,6 +31,8 @@ public partial class GridData : ComponentBase
         
         foreach (var ac in _activities) {
             var workorder = await DeveloperService.GetWorkOrderByIdAsync(ac.WorkOrderId);
+            workorder.Client = new();
+            
             _workOrders.Add(workorder);
         }
 
