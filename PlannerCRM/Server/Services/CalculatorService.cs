@@ -14,7 +14,7 @@ public class CalculatorService
         => await _dbContext.WorkTimeRecords
             .CountAsync();
 
-    public async Task<decimal> IssueInvoiceAsync(int workOrderId) {
+    public async Task<WorkOrderInvoiceDto> IssueInvoiceAsync(int workOrderId) {
         throw new NotImplementedException();
     }
 
