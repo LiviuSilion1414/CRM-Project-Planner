@@ -12,4 +12,5 @@ public class WorkOrderCostDto
     public List<ActivityViewDto> Activities { get; init; }
     public List<EmployeeViewDto> Employees { get; init; }
     public List<ActivityCostDto> MonthlyActivityCosts { get; init; }
+    public int ClientId { get; init; }
 }
