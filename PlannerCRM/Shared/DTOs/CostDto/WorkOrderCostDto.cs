@@ -7,7 +7,7 @@ public class WorkOrderCostDto
     public int TotalHours { get; init; }
     public int TotalEmployees { get; init; }
     public int TotalActivities { get; init; }
-    public Tuple<int, Months, decimal> CostPerMonth { get; init; }
+    public decimal CostPerMonth { get; init; }
     public decimal TotalCost { get; init; }
     public List<ActivityViewDto> Activities { get; init; }
     public List<EmployeeViewDto> Employees { get; init; }

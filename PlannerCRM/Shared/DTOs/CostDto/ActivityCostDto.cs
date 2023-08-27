@@ -4,8 +4,8 @@ public class ActivityCostDto
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public string StartDate { get; set; }
-    public decimal FinishDate { get; set; }
-    public List<EmployeeSelectDto> Employees { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime FinishDate { get; set; }
+    public List<EmployeeViewDto> Employees { get; set; }
     public decimal MonthlyCost { get; set; }
 }
