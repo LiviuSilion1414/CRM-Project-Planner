@@ -14,10 +14,80 @@ public class CalculatorService
         => await _dbContext.WorkTimeRecords
             .CountAsync();
 
-    public async Task<WorkOrderInvoiceDto> IssueInvoiceAsync(int workOrderId) {
-        throw new NotImplementedException();
+    public async Task<Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>> IssueInvoiceAsync(int workOrderId) {
+        try {
+            var exists = await _dbContext.WorkOrders
+                .AnyAsync(wo => wo.Id == workOrderId);
+
+            if (!exists) {
+                throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
+            }
+
+            var invoiceInfo = new Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>();
+
+            var workOrderCost = new WorkOrderCostDto {
+                Id = workOrderId,
+                ClientId = _dbContext.Clients
+                        .Single(cl => cl.WorkOrderId == workOrderId)
+                        .Id,
+                WorkOrderId = workOrderId,
+                Employees = await GetAllRelatedEmployeesAsync(workOrderId),
+                Activities = await GetAllRelatedActivitiesAsync(workOrderId),
+                MonthlyActivityCosts = await CalculateMonthlyCostAsync(workOrderId),
+                TotalEmployees = await GetRelatedEmployeesSizeAsync(workOrderId),
+                TotalActivities = await GetRelatedActivitiesSizeAsync(workOrderId),
+                TotalHours = await CalculateTotalHoursAsync(workOrderId),
+                TotalCost = (await CalculateMonthlyCostAsync(workOrderId))
+                                    .Sum(cost => cost.MonthlyCost),
+                CostPerMonth = (await CalculateMonthlyCostAsync(workOrderId))
+                                .Sum(cost => cost.MonthlyCost) / (await GetRelatedActivitiesSizeAsync(workOrderId)),
+            };
+
+            var workOrderInvoice = new WorkOrderInvoice {
+                IssuedDate = DateTime.Now,
+                ClientId = workOrderCost.ClientId,
+                WorkOrderId = workOrderCost.Id,
+                TotalAmount = workOrderCost.TotalCost
+            };
+
+            await _dbContext.Invoices.AddAsync(
+                new WorkOrderInvoice {
+                    IssuedDate = DateTime.Now,
+                    ClientId = workOrderCost.ClientId,
+                    WorkOrderId = workOrderCost.Id,
+                    TotalAmount = workOrderCost.TotalCost
+                }
+            );
+
+            if (await _dbContext.SaveChangesAsync() == 0) {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            }
+
+            var invoice = await GetInvoiceInfoAsync(workOrderId);
+
+            invoiceInfo.Add(invoice, workOrderCost);
+
+            return invoiceInfo;
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            throw;
+        } 
     }
 
+    private async Task<WorkOrderInvoiceDto> GetInvoiceInfoAsync(int workOrderId) {
+        return await _dbContext.Invoices
+            .Select(inv => 
+                new WorkOrderInvoiceDto {
+                    Id = inv.Id,
+                    ClientId = inv.ClientId,
+                    IssuedDate = inv.IssuedDate,
+                    TotalAmount = inv.TotalAmount,
+                    WorkOrderId = inv.WorkOrderId
+                })
+            .SingleAsync(inv => inv.WorkOrderId == workOrderId);
+    }
+    
     public async Task<List<WorkOrderCostDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset) {
         var paginatedWorkOrders = new List<WorkOrderCostDto>();
 
@@ -29,6 +99,9 @@ public class CalculatorService
                     paginatedWorkOrders
                         .Add(new WorkOrderCostDto {
                             Id = wo.Id,
+                            ClientId = _dbContext.Clients
+                                .Single(cl => cl.WorkOrderId == wo.Id)
+                                .Id,
                             WorkOrderId = wo.Id,
                             Employees = await GetAllRelatedEmployeesAsync(wo.Id),
                             Activities = await GetAllRelatedActivitiesAsync(wo.Id),
