@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
@@ -15,16 +17,34 @@ public class CalculatorController : ControllerBase
 
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<WorkOrderCostDto>> GetPaginatedAsync(int limit, int offset) {
-        throw new NotImplementedException();
+        try {
+            return await _calculator.GetPaginatedWorkOrdersCostsAsync(limit, offset);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
     } 
 
     [HttpGet("get/invoice/{workOrderId}")]
-    public async Task<WorkOrderCostDto> GetInvoice(int workOrderId) {
-        throw new NotImplementedException();
+    public async Task<WorkOrderInvoiceDto> GetInvoice(int workOrderId) {
+        try {
+            return await _calculator.IssueInvoiceAsync(workOrderId);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
     }
 
     [HttpGet("get/size")]
     public async Task<int> GetCollectionSize() {
-        throw new NotImplementedException();
+        try {
+            return await _calculator.GetCollectionSizeAsync();
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
     }
 }
