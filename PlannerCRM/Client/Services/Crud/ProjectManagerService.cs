@@ -35,7 +35,8 @@ public class ProjectManagerService
 
     public async Task<int> GetCollectionSize() {
         try {
-            return await _http.GetFromJsonAsync<int>("api/calculator/get/size");
+            return await _http
+                .GetFromJsonAsync<int>("api/calculator/get/size");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
