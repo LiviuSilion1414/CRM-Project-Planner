@@ -113,7 +113,7 @@ public class WorkTimeRecordRepository
                 })
                 .OrderByDescending(wtr => wtr.Hours)
                 .FirstAsync(wtr => wtr.WorkOrderId == workOrderId && wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
-            : null;
+            : new();
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {
