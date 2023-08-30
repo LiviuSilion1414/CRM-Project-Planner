@@ -13,6 +13,7 @@ builder.Services.AddScoped<AuthenticationStateService>();
 builder.Services.AddScoped<CurrentUserInfoService>();
 builder.Services.AddScoped<NavigationLockService>();
 
+builder.Services.AddScoped<ProjectManagerService>();
 builder.Services.AddScoped<OperationManagerCrudService>();
 builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
@@ -22,6 +23,7 @@ builder.Services.AddScoped<Logger<AuthenticationStateService>>();
 builder.Services.AddScoped<Logger<CurrentUserInfoService>>();
 builder.Services.AddScoped<Logger<AccountManagerCrudService>>();
 builder.Services.AddScoped<Logger<OperationManagerCrudService>>();
+builder.Services.AddScoped<Logger<ProjectManagerService>>();
 
 builder.Services.AddScoped<Logger<LoginService>>();
 builder.Services.AddScoped<Logger<DeveloperService>>();
@@ -30,7 +32,7 @@ builder.Services.AddScoped<Logger<EmployeeFormDto>>();
 builder.Services.AddScoped<Logger<WorkOrderFormDto>>();
 builder.Services.AddScoped<Logger<ActivityFormDto>>();
 
-builder.Services.AddScoped(sp => 
+builder.Services.AddScoped(_ => 
     new HttpClient {
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) 
     }
