@@ -17,4 +17,6 @@ public class SuccessfulCrudFeedBack
 
     public const string WORKTIMERECORD_ADD = "Orario di lavoro aggiunto con successo!";
     public const string WORKTIMERECORD_EDIT = "Orario di lavoro modificato con successo!";
+
+    public const string REPORT_CREATED = "Report creato con successo!";
 }

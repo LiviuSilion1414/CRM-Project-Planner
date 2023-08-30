@@ -30,6 +30,8 @@ public class Titles
 
     public const string SHOW_ALL_CLIENTS = "Visualizza tutti i clienti.";
 
+    public const string REPORT_DETAILS = "Visualizza dati report.";
+
     public const string NOT_AVAILABLE_WORKORDERS = "Nessuna commessa disponibile.";
     public const string NOT_AVAILABLE_ACTIVITIES = "Nessun attività disponibile.";
     public const string NOT_AVAILABLE_USERS = "Nessun utente disponibile.";
