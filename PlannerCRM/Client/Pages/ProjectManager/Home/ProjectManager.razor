@@ -1,2 +1,49 @@
 @page "/project-manager"
+@layout MainLayout
 
+<table class="table table-striped">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Cliente</th>
+        <th scope="col">Commessa</th>
+        <th scope="col">Data inizio</th>
+        <th scope="col">Data fine</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tbody>
+        @foreach (var workOrder in _workOrders) {
+            @foreach (var client in _clients) {
+                @if (client.Id == workOrder.ClientId) {
+                    <tr>
+                        <td></td>
+                        <td>@client.Name</td>
+                        <td>@workOrder.Name</td>
+                        <td>@workOrder.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td>@workOrder.FinishDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <button type="button" class="btn btn-success" @onclick=@(() => ViewReport(workOrder.Id))>
+                                <i class="bi bi-receipt"></i>
+                                Visualizza report
+                            </button>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@if (!_workOrders.Any()) {
+    <p>@Titles.NOT_AVAILABLE_WORKORDERS</p>
+}
+
+@if (_isInvoiceClicked) {
+    <ModalWorkOrderCostPreview
+        Title=@Titles.REPORT_DETAILS
+        WorkOrderId=@_workOrderId
+    />
+}
