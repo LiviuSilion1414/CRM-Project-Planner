@@ -36,6 +36,8 @@ public partial class MainLayout
                 var navigationUrl = BuildNavigationUrl(parsedRole);
                 NavigationManager.NavigateTo(navigationUrl);
             }
+        } else {
+            NavigationManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG);
         }
     }
 
