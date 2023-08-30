@@ -17,7 +17,7 @@ public class CalculatorService
     public async Task AddInvoiceAsync(int workOrderId) {
         try {
             var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => wo.Id == workOrderId)
+                .SingleAsync(wo => wo.Id == workOrderId && !wo.IsInvoiceCreated)
                     ?? throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
     
             var isAnyInvoice = await _dbContext.WorkOrderCosts
@@ -54,6 +54,8 @@ public class CalculatorService
                     FinishDate = wo.FinishDate,
                     IsCompleted = wo.IsDeleted,
                     IsDeleted = wo.IsDeleted,
+                    IsInvoiceCreated = _dbContext.WorkOrderCosts
+                        .Any(workCost => workCost.WorkOrderId == wo.Id),
                     ClientId = wo.ClientId,
                     //Client = new ClientViewDto {
                     //    Id = wo.Client.Id,
@@ -105,14 +107,12 @@ public class CalculatorService
             .Sum(cost => cost.MonthlyCost) / (await GetRelatedActivitiesSizeAsync(workOrder.Id));
 
         return new WorkOrderCost {
-            Id = workOrder.Id,
             WorkOrderId = workOrder.Id,
             Name = workOrder.Name,
             StartDate = workOrder.StartDate,
             FinishDate = workOrder.FinishDate,
             TotalTime = workOrder.FinishDate - workOrder.StartDate,
-            IsCompleted = workOrder.IsCompleted,
-            IsDeleted = workOrder.IsDeleted,
+            IsCreated = true,
             IssuedDate = DateTime.Now,
             ClientId = workOrder.ClientId,
             //Employees = employees,

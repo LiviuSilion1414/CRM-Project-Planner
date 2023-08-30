@@ -192,6 +192,7 @@ public class WorkOrderRepository
 				FinishDate = wo.FinishDate,
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted,
+				ClientId = wo.ClientId
 				//Client = _dbContext.Clients
 				//	.Select(cl => new ClientViewDto() {
 				//		Id = cl.Id,
