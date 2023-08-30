@@ -33,7 +33,7 @@ public partial class OperationManager : ComponentBase
         _collectionSize = await OperationManagerService.GetCollectionSize();
         _workOrders = await OperationManagerService.GetCollectionPaginated();
         foreach (var wo in _workOrders) {
-            var clients = await OperationManagerService.SearchClientAsync(wo.Client.Id);
+            var clients = await OperationManagerService.SearchClientAsync(wo.ClientId);
             foreach (var client in clients) {
                 if (!_clients.Contains(client)) {
                     _clients.Add(client);

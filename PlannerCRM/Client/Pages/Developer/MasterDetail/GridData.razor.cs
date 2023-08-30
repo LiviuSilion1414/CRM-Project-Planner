@@ -23,15 +23,14 @@ public partial class GridData : ComponentBase
         _workTimeRecords = new();
 
         _collectionSize = await DeveloperService.GetCollectionSizeByEmployeeId(EmployeeId);
-        await FetchData();
+        await FetchDataAsync();
     }
 
-    private async Task FetchData(int limit = 0, int offset= 5) {
+    private async Task FetchDataAsync(int limit = 0, int offset= 5) {
         _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId);
         
         foreach (var ac in _activities) {
             var workorder = await DeveloperService.GetWorkOrderByIdAsync(ac.WorkOrderId);
-            workorder.Client = new();
             
             _workOrders.Add(workorder);
         }
@@ -50,7 +49,7 @@ public partial class GridData : ComponentBase
     }
 
     private async Task HandlePaginate(int limit, int offset) {
-        await FetchData(limit, offset);
+        await FetchDataAsync(limit, offset);
         _hasMoreActivities = _activities.Any();
     }
 }

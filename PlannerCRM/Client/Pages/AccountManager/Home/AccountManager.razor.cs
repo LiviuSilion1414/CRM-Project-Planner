@@ -24,17 +24,17 @@ public partial class AccountManager : ComponentBase
 
 
     protected override async Task OnInitializedAsync() {
-        await FetchData();
+        await FetchDataAsync();
         _collectionSize = await AccountManagerService.GetEmployeesSize();
     }
 
     protected override void OnInitialized() => _users = new();
     
-    private async Task FetchData(int limit = 0, int offset = 5) 
+    private async Task FetchDataAsync(int limit = 0, int offset = 5) 
         => _users = await AccountManagerService.GetPaginatedEmployees();
 
     private async Task HandlePaginate(int limit, int offset) {
-        await FetchData(limit, offset);
+        await FetchDataAsync(limit, offset);
         _hasMoreUsers = _users.Any();
     }
     

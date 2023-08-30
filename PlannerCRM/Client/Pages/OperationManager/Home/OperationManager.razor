@@ -62,7 +62,7 @@
                     </td>
                     <td>
                         @foreach (var client in _clients) {
-                            @if (client.Id == wo.Client.Id) {
+                            @if (client.Id == wo.ClientId) {
                                 @client.Name
                             }
                         }
