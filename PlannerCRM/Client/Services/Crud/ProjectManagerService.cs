@@ -11,10 +11,10 @@ public class ProjectManagerService
         _logger = logger;       
     }
 
-    public async Task<List<WorkOrderCostDto>> GetPaginatedAsync(int limit, int offset) {
+    public async Task<List<WorkOrderViewDto>> GetPaginatedAsync(int limit = 0, int offset = 5) {
         try {
             return await _http
-                .GetFromJsonAsync<List<WorkOrderCostDto>>($"api/calculator/get/paginated/{limit}/{offset}");
+                .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/calculator/get/paginated/{limit}/{offset}");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
@@ -22,10 +22,32 @@ public class ProjectManagerService
         }
     } 
 
-    public async Task<Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>> GetInvoice(int workOrderId) {
+    public async Task<WorkOrderCostDto> GetInvoiceAsync(int workOrderId) {
         try {
             return await _http
-                .GetFromJsonAsync<Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>>($"api/calculator/get/invoice/{workOrderId}");
+                .GetFromJsonAsync<WorkOrderCostDto>($"api/calculator/get/invoice/{workOrderId}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+    public async Task<HttpResponseMessage> AddInvoiceAsync(int workOrderId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<HttpResponseMessage>($"api/calculator/generate/{workOrderId}");
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+    public async Task<ClientViewDto> GetClientForViewAsync(int clientId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<ClientViewDto>($"api/client/get/for/view/{clientId}");
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
