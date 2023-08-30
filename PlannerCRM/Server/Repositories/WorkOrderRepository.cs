@@ -131,16 +131,16 @@ public class WorkOrderRepository
 				FinishDate = wo.FinishDate,
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted,
-				Client = _dbContext.Clients
-					.Select(cl => 
-						new ClientViewDto() {
-							Id = cl.Id,
-							Name = cl.Name,
-							VatNumber = cl.VatNumber,
-							WorkOrderId = cl.WorkOrderId
-						}
-					)
-					.Single(cl => cl.WorkOrderId == wo.Id)
+				//Client = _dbContext.Clients
+				//	.Select(cl => 
+				//		new ClientViewDto() {
+				//			Id = cl.Id,
+				//			Name = cl.Name,
+				//			VatNumber = cl.VatNumber,
+				//			WorkOrderId = cl.WorkOrderId
+				//		}
+				//	)
+				//	.Single(cl => cl.WorkOrderId == wo.Id)
 			})
 			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
@@ -192,14 +192,14 @@ public class WorkOrderRepository
 				FinishDate = wo.FinishDate,
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted,
-				Client = _dbContext.Clients
-					.Select(cl => new ClientViewDto() {
-						Id = cl.Id,
-						Name = cl.Name,
-						VatNumber = cl.VatNumber,
-						WorkOrderId = wo.Id
-					})
-					.Single(cl => cl.Id == wo.ClientId)
+				//Client = _dbContext.Clients
+				//	.Select(cl => new ClientViewDto() {
+				//		Id = cl.Id,
+				//		Name = cl.Name,
+				//		VatNumber = cl.VatNumber,
+				//		WorkOrderId = wo.Id
+				//	})
+				//	.Single(cl => cl.Id == wo.ClientId)
 			})
 			.ToListAsync();
 	}

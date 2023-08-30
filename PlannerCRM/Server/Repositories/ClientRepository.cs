@@ -86,17 +86,19 @@ public class ClientRepository
         }
     }
 
-    public async Task<ClientViewDto> GetClientForViewAsync(int id) {
+    public async Task<ClientViewDto> GetClientForViewAsync(int clientId) {
         return await _dbContext.Clients
-            .Select(client => 
-                new ClientViewDto {
+            .Where(cl => cl.Id == clientId)
+            .Select(client =>
+                new ClientViewDto
+                {
                     Id = client.Id,
                     Name = client.Name,
                     VatNumber = client.VatNumber,
                     WorkOrderId = client.WorkOrderId
                 }
             )
-            .SingleAsync(cl => cl.Id == id);
+            .SingleOrDefaultAsync();
     }
 
     public async Task<ClientFormDto> GetClientForEditAsync(int id) {
