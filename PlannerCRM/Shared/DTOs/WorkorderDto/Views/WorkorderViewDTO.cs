@@ -10,5 +10,6 @@ public class WorkOrderViewDto
     public DateTime FinishDate { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsCompleted { get; set; }
+    public bool IsInvoiceCreated { get; init; }
     public int ClientId { get; set; }
 }

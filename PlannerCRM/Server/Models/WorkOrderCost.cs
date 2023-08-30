@@ -8,8 +8,7 @@ public class WorkOrderCost
     public DateTime StartDate { get; set; } 
     public DateTime FinishDate { get; set; }
     public DateTime IssuedDate { get; set; }
-    public bool IsCompleted { get; set; }
-    public bool IsDeleted { get; set; }
+    public bool IsCreated { get; init; }
     public int TotalHours { get; set; }
     public int TotalEmployees { get; set; }
     public int TotalActivities { get; set; }
