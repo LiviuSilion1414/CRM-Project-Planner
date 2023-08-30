@@ -14,111 +14,117 @@ public class CalculatorService
         => await _dbContext.WorkTimeRecords
             .CountAsync();
 
-    public async Task<Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>> IssueInvoiceAsync(int workOrderId) {
+    public async Task AddInvoiceAsync(int workOrderId) {
         try {
-            var exists = await _dbContext.WorkOrders
-                .AnyAsync(wo => wo.Id == workOrderId);
-
-            if (!exists) {
+            var workOrder = await _dbContext.WorkOrders
+                .SingleAsync(wo => wo.Id == workOrderId)
+                    ?? throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
+    
+            var isAnyInvoice = await _dbContext.WorkOrderCosts
+                .AnyAsync(inv => inv.WorkOrderId == workOrderId);
+    
+            if (isAnyInvoice && workOrder is null) {
                 throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
             }
 
-            var invoiceInfo = new Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>();
+            var workOrderCost = await ExecuteCalculationsAsync(workOrder);
 
-            var workOrderCost = new WorkOrderCostDto {
-                Id = workOrderId,
-                ClientId = _dbContext.Clients
-                        .Single(cl => cl.WorkOrderId == workOrderId)
-                        .Id,
-                WorkOrderId = workOrderId,
-                Employees = await GetAllRelatedEmployeesAsync(workOrderId),
-                Activities = await GetAllRelatedActivitiesAsync(workOrderId),
-                MonthlyActivityCosts = await CalculateMonthlyCostAsync(workOrderId),
-                TotalEmployees = await GetRelatedEmployeesSizeAsync(workOrderId),
-                TotalActivities = await GetRelatedActivitiesSizeAsync(workOrderId),
-                TotalHours = await CalculateTotalHoursAsync(workOrderId),
-                TotalCost = (await CalculateMonthlyCostAsync(workOrderId))
-                                    .Sum(cost => cost.MonthlyCost),
-                CostPerMonth = (await CalculateMonthlyCostAsync(workOrderId))
-                                .Sum(cost => cost.MonthlyCost) / (await GetRelatedActivitiesSizeAsync(workOrderId)),
-            };
-
-            var workOrderInvoice = new WorkOrderInvoice {
-                IssuedDate = DateTime.Now,
-                ClientId = workOrderCost.ClientId,
-                WorkOrderId = workOrderCost.Id,
-                TotalAmount = workOrderCost.TotalCost
-            };
-
-            await _dbContext.Invoices.AddAsync(
-                new WorkOrderInvoice {
-                    IssuedDate = DateTime.Now,
-                    ClientId = workOrderCost.ClientId,
-                    WorkOrderId = workOrderCost.Id,
-                    TotalAmount = workOrderCost.TotalCost
-                }
-            );
-
+            await _dbContext.WorkOrderCosts.AddAsync(workOrderCost);
+    
             if (await _dbContext.SaveChangesAsync() == 0) {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
-
-            var invoice = await GetInvoiceInfoAsync(workOrderId);
-
-            invoiceInfo.Add(invoice, workOrderCost);
-
-            return invoiceInfo;
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
-
+    
             throw;
         } 
     }
 
-    private async Task<WorkOrderInvoiceDto> GetInvoiceInfoAsync(int workOrderId) {
-        return await _dbContext.Invoices
-            .Select(inv => 
-                new WorkOrderInvoiceDto {
-                    Id = inv.Id,
-                    ClientId = inv.ClientId,
-                    IssuedDate = inv.IssuedDate,
-                    TotalAmount = inv.TotalAmount,
-                    WorkOrderId = inv.WorkOrderId
-                })
-            .SingleAsync(inv => inv.WorkOrderId == workOrderId);
-    }
-    
-    public async Task<List<WorkOrderCostDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset) {
-        var paginatedWorkOrders = new List<WorkOrderCostDto>();
-
-        await _dbContext.WorkOrders
+    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset) {
+        return await _dbContext.WorkOrders
+            .OrderBy(wo => wo.Id)
             .Skip(limit)
             .Take(offset)
-            .ForEachAsync(async wo => 
-                {
-                    paginatedWorkOrders
-                        .Add(new WorkOrderCostDto {
-                            Id = wo.Id,
-                            ClientId = _dbContext.Clients
-                                .Single(cl => cl.WorkOrderId == wo.Id)
-                                .Id,
-                            WorkOrderId = wo.Id,
-                            Employees = await GetAllRelatedEmployeesAsync(wo.Id),
-                            Activities = await GetAllRelatedActivitiesAsync(wo.Id),
-                            MonthlyActivityCosts = await CalculateMonthlyCostAsync(wo.Id),
-                            TotalEmployees = await GetRelatedEmployeesSizeAsync(wo.Id),
-                            TotalActivities = await GetRelatedActivitiesSizeAsync(wo.Id),
-                            TotalHours = await CalculateTotalHoursAsync(wo.Id),
-                            TotalCost = (await CalculateMonthlyCostAsync(wo.Id))
-                                .Sum(cost => cost.MonthlyCost),
-                            CostPerMonth = (await CalculateMonthlyCostAsync(wo.Id))
-                                .Sum(cost => cost.MonthlyCost) / (await GetRelatedActivitiesSizeAsync(wo.Id)),
-                        });
+            .Select(wo => 
+                new WorkOrderViewDto {
+                    Id = wo.Id,
+                    Name = wo.Name,
+                    StartDate = wo.StartDate,
+                    FinishDate = wo.FinishDate,
+                    IsCompleted = wo.IsDeleted,
+                    IsDeleted = wo.IsDeleted,
+                    ClientId = wo.ClientId,
+                    //Client = new ClientViewDto {
+                    //    Id = wo.Client.Id,
+                    //    Name = wo.Client.Name,
+                    //    VatNumber = wo.Client.VatNumber,
+                    //    WorkOrderId = wo.Client.WorkOrderId, 
+                    //}
                 }
-            );
-        
-        return paginatedWorkOrders;
-    } 
+            )
+            .ToListAsync();
+    }
+
+    public async Task<WorkOrderCostDto> GetWorkOrderCosts(int workOrderId) {
+        return await _dbContext.WorkOrderCosts
+            .OrderBy(wo => wo.Id)
+            .Where(wo => wo.Id == workOrderId)
+            .Select(inv => 
+                new WorkOrderCostDto {
+                    Id = inv.Id,
+                    WorkOrderId = inv.Id,
+                    Name = inv.Name,
+                    StartDate = inv.StartDate,
+                    FinishDate = inv.FinishDate,
+                    TotalTime = inv.FinishDate - inv.StartDate,
+                    ClientId = inv.ClientId,
+                    Employees = inv.Employees,
+                    Activities = inv.Activities,
+                    MonthlyActivityCosts = inv.MonthlyActivityCosts,
+                    TotalEmployees = inv.TotalEmployees,
+                    TotalActivities = inv.TotalActivities,
+                    TotalHours = inv.TotalHours,
+                    TotalCost = inv.TotalCost,
+                    CostPerMonth = inv.CostPerMonth
+                }
+            )
+            .SingleOrDefaultAsync();
+    }
+
+    private async Task<WorkOrderCost> ExecuteCalculationsAsync(WorkOrder workOrder) {
+        var employees = await GetAllRelatedEmployeesAsync(workOrder.Id);
+        var activities = await GetAllRelatedActivitiesAsync(workOrder.Id);
+        var monthlyActivityCosts = await CalculateMonthlyCostAsync(workOrder.Id);
+        var totalEmployees = await GetRelatedEmployeesSizeAsync(workOrder.Id);
+        var totalActivities = await GetRelatedActivitiesSizeAsync(workOrder.Id);
+        var totalHours = await CalculateTotalHoursAsync(workOrder.Id);
+        var totalCost = (await CalculateMonthlyCostAsync(workOrder.Id))
+            .Sum(cost => cost.MonthlyCost);
+        var costPerMonth = (await CalculateMonthlyCostAsync(workOrder.Id))
+            .Sum(cost => cost.MonthlyCost) / (await GetRelatedActivitiesSizeAsync(workOrder.Id));
+
+        return new WorkOrderCost {
+            Id = workOrder.Id,
+            WorkOrderId = workOrder.Id,
+            Name = workOrder.Name,
+            StartDate = workOrder.StartDate,
+            FinishDate = workOrder.FinishDate,
+            TotalTime = workOrder.FinishDate - workOrder.StartDate,
+            IsCompleted = workOrder.IsCompleted,
+            IsDeleted = workOrder.IsDeleted,
+            IssuedDate = DateTime.Now,
+            ClientId = workOrder.ClientId,
+            Employees = employees,
+            Activities = activities,
+            MonthlyActivityCosts = monthlyActivityCosts,
+            TotalEmployees = totalEmployees,
+            TotalActivities = totalActivities,
+            TotalHours = totalHours,
+            TotalCost = totalCost,
+            CostPerMonth = costPerMonth
+        };
+    }
 
     private async Task<int> CalculateTotalHoursAsync(int workOrderId) {
         return await _dbContext.WorkTimeRecords
@@ -142,6 +148,7 @@ public class CalculatorService
 
     private async Task<List<EmployeeViewDto>> GetAllRelatedEmployeesAsync(int workOrderId) {
         return await _dbContext.Employees
+            .AsNoTracking()
             .Where(em => _dbContext.EmployeeActivity
                 .Any(ea => em.Id == ea.EmployeeId))
             .Select(em =>
@@ -174,7 +181,6 @@ public class CalculatorService
                             new EmployeeActivityDto {
                                 EmployeeId = ea.Id,
                                 Employee = new EmployeeSelectDto {
-                                    Id = ea.Employee.Id,
                                     Email = ea.Employee.Email,
                                     FirstName = ea.Employee.FirstName,
                                     LastName = ea.Employee.LastName,
@@ -197,52 +203,14 @@ public class CalculatorService
 
     private async Task<List<ActivityViewDto>> GetAllRelatedActivitiesAsync(int workOrderId) {
         return await _dbContext.Activities
+            .AsNoTracking()
             .Where(ac => _dbContext.EmployeeActivity
                 .Any(ea => ac.Id == ea.ActivityId))
             .Select(ac => new ActivityViewDto {
-                Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId,
-                EmployeeActivity = ac.EmployeeActivity
-                    .Select(ea => 
-                        new EmployeeActivityDto {
-                            Id = ea.Id,
-                            EmployeeId = ea.EmployeeId,
-                            Employee = _dbContext.Employees
-                                .Select(em => new EmployeeSelectDto {
-                                    Id = ea.EmployeeId,
-                                    Email = ea.Employee.Email,
-                                    FirstName = ea.Employee.FirstName,
-                                    LastName = ea.Employee.LastName,
-                                    FullName = ea.Employee.FullName,
-                                    Role = ea.Employee.Role,
-                                    CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                    EmployeeSalaries = ea.Employee.Salaries
-                                        .Select(sal => new EmployeeSalaryDto {
-                                            Id = sal.Id,
-                                            EmployeeId = ea.EmployeeId,
-                                            StartDate = sal.StartDate,
-                                            FinishDate = sal.FinishDate,
-                                            Salary = sal.Salary,
-                                        }).ToList()
-                        }
-                    )
-                    .Single(em => em.Id == ea.EmployeeId), 
-                        ActivityId = ea.ActivityId,
-                        Activity = _dbContext.Activities
-                            .Select(a => 
-                                new ActivitySelectDto {
-                                    Id = ea.ActivityId,
-                                    Name = ea.Activity.Name,
-                                    StartDate = ea.Activity.StartDate,
-                                    FinishDate = ea.Activity.FinishDate,
-                                    WorkOrderId = ea.Activity.WorkOrderId
-                                }
-                            )
-                            .Single(ac => ac.Id == ea.ActivityId) 
-                    }).ToHashSet()
+                WorkOrderId = ac.WorkOrderId
             })
             .ToListAsync();
     }
@@ -258,10 +226,9 @@ public class CalculatorService
 
         var salaries = await _dbContext.Employees
             .Where(em => em.Salaries
-                .Any(sal => workTimeRecords
-                    .Any(wtr => wtr.EmployeeId == sal.EmployeeId)
-                )
-            )
+                .Any(sal => sal.EmployeeId == em.Id) &&
+                _dbContext.WorkTimeRecords
+                    .Any(wtr => wtr.EmployeeId == em.Id))
             .Select(em => 
                 new EmployeeSalary {
                     Id = em.Id,
@@ -312,37 +279,7 @@ public class CalculatorService
                                 IsDeleted = em.IsDeleted,
                                 IsArchived = em.IsArchived,
                                 Role = em.Role, 
-                                CurrentHourlyRate = em.CurrentHourlyRate,
-                                EmployeeSalaries = em.Salaries
-                                    .Select( ems => new EmployeeSalaryDto {
-                                        Id = ems.Id,
-                                        EmployeeId = ems.Id,
-                                        StartDate = ems.StartDate,
-                                        FinishDate = ems.StartDate,
-                                        Salary = ems.Salary})
-                                    .ToList(),
-                                EmployeeActivities = em.EmployeeActivity
-                                    .Select( ea =>
-                                        new EmployeeActivityDto {
-                                            EmployeeId = ea.Id,
-                                            Employee = new EmployeeSelectDto {
-                                                Id = ea.Employee.Id,
-                                                Email = ea.Employee.Email,
-                                                FirstName = ea.Employee.FirstName,
-                                                LastName = ea.Employee.LastName,
-                                                Role = ea.Employee.Role,
-                                                CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                            },
-                                            ActivityId = ea.ActivityId,
-                                            Activity = new ActivitySelectDto {
-                                                Id = ea.Activity.Id,
-                                                Name = ea.Activity.Name,
-                                                StartDate = ea.Activity.StartDate,
-                                                FinishDate = ea.Activity.FinishDate,
-                                                WorkOrderId = ea.Activity.WorkOrderId
-                                            }
-                                        })
-                                    .ToList()
+                                CurrentHourlyRate = em.CurrentHourlyRate
                             })
                         .ToList(),
                     MonthlyCost = salaries
