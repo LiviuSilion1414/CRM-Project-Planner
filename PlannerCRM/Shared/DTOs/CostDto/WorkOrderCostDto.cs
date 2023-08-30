@@ -2,15 +2,19 @@ namespace PlannerCRM.Shared.DTOs.CostDto;
 
 public class WorkOrderCostDto 
 {
-    public int Id { get; init; }
-    public int WorkOrderId { get; init; }
-    public int TotalHours { get; init; }
-    public int TotalEmployees { get; init; }
-    public int TotalActivities { get; init; }
-    public decimal CostPerMonth { get; init; }
-    public decimal TotalCost { get; init; }
-    public List<ActivityViewDto> Activities { get; init; }
-    public List<EmployeeViewDto> Employees { get; init; }
-    public List<ActivityCostDto> MonthlyActivityCosts { get; init; }
-    public int ClientId { get; init; }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int WorkOrderId { get; set; }
+    public DateTime StartDate { get; set; } 
+    public DateTime FinishDate { get; set; }
+    public int TotalHours { get; set; }
+    public int TotalEmployees { get; set; }
+    public int TotalActivities { get; set; }
+    public decimal CostPerMonth { get; set; }
+    public decimal TotalCost { get; set; }
+    public TimeSpan TotalTime { get; set; }
+    public List<ActivityViewDto> Activities { get; set; }
+    public List<EmployeeViewDto> Employees { get; set; }
+    public List<ActivityCostDto> MonthlyActivityCosts { get; set; }
+    public int ClientId { get; set; }
 }
