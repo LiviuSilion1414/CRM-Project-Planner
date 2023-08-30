@@ -2,7 +2,11 @@ using PlannerCRM.Shared.DTOs.ClientDto;
 
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+[Authorize(Roles = $"""
+        {nameof(Roles.OPERATION_MANAGER)}, 
+        {nameof(Roles.PROJECT_MANAGER)}
+    """
+)]
 [ApiController]
 [Route("api/[controller]")]
 public class ClientController : ControllerBase 

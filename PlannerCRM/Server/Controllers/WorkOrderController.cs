@@ -5,6 +5,7 @@ namespace PlannerCRM.Server.Controllers;
     {nameof(Roles.SENIOR_DEVELOPER)}, 
     {nameof(Roles.JUNIOR_DEVELOPER)},
     {nameof(Roles.ACCOUNT_MANAGER)}
+    {nameof(Roles.PROJECT_MANAGER)}
 """ )]
 [ApiController]
 [Route("api/[controller]")]

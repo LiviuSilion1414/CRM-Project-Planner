@@ -16,7 +16,7 @@ public class CalculatorController : ControllerBase
     }    
 
     [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<WorkOrderCostDto>> GetPaginatedAsync(int limit, int offset) {
+    public async Task<List<WorkOrderViewDto>> GetPaginatedAsync(int limit, int offset) {
         try {
             return await _calculator.GetPaginatedWorkOrdersCostsAsync(limit, offset);
         } catch (Exception exc) {
@@ -26,10 +26,23 @@ public class CalculatorController : ControllerBase
         }
     } 
 
-    [HttpGet("get/invoice/{workOrderId}")]
-    public async Task<Dictionary<WorkOrderInvoiceDto, WorkOrderCostDto>> GetInvoice(int workOrderId) {
+    [HttpGet("generate/{workOrderId}")]
+    public async Task<ActionResult> AddInvoice(int workOrderId) {
         try {
-            return await _calculator.IssueInvoiceAsync(workOrderId);
+            await _calculator.AddInvoiceAsync(workOrderId);
+
+            return Ok(SuccessfulCrudFeedBack.REPORT_CREATED);
+        } catch (Exception exc) {
+            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("get/invoice/{workOrderId}")]
+    public async Task<WorkOrderCostDto> GetInvoice(int workOrderId) {
+        try {
+            return await _calculator.GetWorkOrderCosts(workOrderId); 
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
