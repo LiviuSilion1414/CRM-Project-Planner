@@ -26,5 +26,5 @@ public class AppDbContext: IdentityDbContext
     public DbSet<FirmClient> Clients { get; set; }
     public DbSet<EmployeeActivity> EmployeeActivity { get; set; }
     public DbSet<WorkTimeRecord> WorkTimeRecords { get; set; }
-    public DbSet<WorkOrderInvoice> Invoices { get; set; }
+    public DbSet<WorkOrderCost> WorkOrderCosts { get; set; }
 }
