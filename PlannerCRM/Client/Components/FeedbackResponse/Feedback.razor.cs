@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Pages.FeedbackResponse;
+namespace PlannerCRM.Client.Components.FeedbackResponse;
 
 public partial class Feedback : ComponentBase
 {

@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Pages.PaginationComponent;
+namespace PlannerCRM.Client.Components.PaginationComponent;
 
 public partial class Paginator : ComponentBase 
 {

@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Pages.ToggleView;
+namespace PlannerCRM.Client.Components.ToggleView;
 
 public partial class SwitchInputType : ComponentBase
 {

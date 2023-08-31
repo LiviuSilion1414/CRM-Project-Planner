@@ -11,7 +11,7 @@ global using PlannerCRM.Shared.Models;
 global using System.Security.Claims;
 global using PlannerCRM.Shared.Feedbacks;
 global using PlannerCRM.Shared.Constants;
-global using PlannerCRM.Client.Pages.ValidatorComponent.DataAnnotationsValidatorComponent;
+global using PlannerCRM.Client.Components.ValidatorComponent.DataAnnotationsValidatorComponent;
 global using PlannerCRM.Shared.DTOs.CostDto;
 global using PlannerCRM.Shared.DTOs.ClientDto;
 global using PlannerCRM.Shared.DTOs.EmployeeDto.Views;
