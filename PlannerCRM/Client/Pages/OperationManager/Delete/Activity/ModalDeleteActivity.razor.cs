@@ -8,7 +8,7 @@ public partial class ModalDeleteActivity : ComponentBase
     [Parameter] public int ActivityId { get; set; }
 
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }    
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     
     private WorkOrderViewDto _currentWorkOrder;
@@ -35,7 +35,7 @@ public partial class ModalDeleteActivity : ComponentBase
 
     public void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage);
+        NavManager.NavigateTo(_currentPage);
     }
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
@@ -49,7 +49,7 @@ public partial class ModalDeleteActivity : ComponentBase
                 _isError = true;
             } else {
                 _isCancelClicked = !_isCancelClicked;
-                NavigationManager.NavigateTo(_currentPage, true);
+                NavManager.NavigateTo(_currentPage, true);
             }
         } catch (Exception exc) {
             _isError = true;

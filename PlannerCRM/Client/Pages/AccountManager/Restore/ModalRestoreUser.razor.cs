@@ -7,7 +7,7 @@ public partial class ModalRestoreUser : ComponentBase
     [Parameter] public string Message { get; set; }
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
 
     private EmployeeSelectDto _employee;
@@ -26,11 +26,11 @@ public partial class ModalRestoreUser : ComponentBase
 
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage);
+        NavManager.NavigateTo(_currentPage);
     }
 
     private async Task OnClickConfirm() {
         await AccountManagerService.RestoreEmployeeAsync(Id);
-        NavigationManager.NavigateTo(_currentPage, true);
+        NavManager.NavigateTo(_currentPage, true);
     }
 }

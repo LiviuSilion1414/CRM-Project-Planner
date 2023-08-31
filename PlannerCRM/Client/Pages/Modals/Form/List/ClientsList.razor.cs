@@ -19,8 +19,9 @@ public partial class ClientsList : ComponentBase
     private int _collectionSize;
 
     protected override async Task OnInitializedAsync() {
-        _collectionSize = await OperationManagerService.GetCollectionSizeAsync();
-        _clients = await OperationManagerService.GetClientsPaginated();
+        _collectionSize = await OperationManagerService.GetClientsCollectionSizeAsync();
+        _clients = await OperationManagerService.GetClientsPaginatedAsync();
+
         foreach (var client in _clients) {
             var workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(client.WorkOrderId);
 
@@ -29,7 +30,7 @@ public partial class ClientsList : ComponentBase
     }
 
     public async Task HandlePaginate(int limit, int offset) =>
-        _clients = await OperationManagerService.GetClientsPaginated(limit, offset);
+        _clients = await OperationManagerService.GetClientsPaginatedAsync(limit, offset);
 
 
     private void OnClickModalCancel() => _isCancelClicked = !_isCancelClicked;

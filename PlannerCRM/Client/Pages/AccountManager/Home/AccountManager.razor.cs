@@ -7,10 +7,6 @@ public partial class AccountManager : ComponentBase
 
     private int _userId;
 
-    private string _title;
-    private string _message;
-    private string _confirmationMessage;
-
     private bool _isViewClicked;
     private bool _isAddClicked;
     private bool _isEditClicked;
@@ -25,13 +21,13 @@ public partial class AccountManager : ComponentBase
 
     protected override async Task OnInitializedAsync() {
         await FetchDataAsync();
-        _collectionSize = await AccountManagerService.GetEmployeesSize();
+        _collectionSize = await AccountManagerService.GetEmployeesSizeAsync();
     }
 
     protected override void OnInitialized() => _users = new();
     
     private async Task FetchDataAsync(int limit = 0, int offset = 5) 
-        => _users = await AccountManagerService.GetPaginatedEmployees();
+        => _users = await AccountManagerService.GetPaginatedEmployeesAsync();
 
     private async Task HandlePaginate(int limit, int offset) {
         await FetchDataAsync(limit, offset);
@@ -53,14 +49,10 @@ public partial class AccountManager : ComponentBase
     private void OnClickDelete(int id) {
         _isDeleteClicked = !_isDeleteClicked;
         _userId = id;
-        _confirmationMessage = Titles.CONFIRM_DELETE_USER;
-        _title = Titles.DELETE_USER;
     }
 
     private void OnClickRestore(int id) {
         _isRestoreClicked = !_isRestoreClicked;
         _userId = id;
-        _confirmationMessage = Titles.CONFIRM_RESTORE_USER;
-        _title = Titles.RESTORE_USER;
     }
 }

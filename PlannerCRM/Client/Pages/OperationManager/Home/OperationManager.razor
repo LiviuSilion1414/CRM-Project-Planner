@@ -85,13 +85,13 @@
                         <td>
                                 <td style="padding-right: 10px;">
                                     <button type="button" class="btn btn-primary" title="Modifica commessa"
-                                        @onclick="@(() => OnClickEdit(wo.Id))">
+                                        @onclick="@(() => OnClickEditWorkOrder(wo.Id))">
                                             <i class="bi bi-pencil-square"></i>
                                     </button>                
                                 </td> 
                                 <td> 
                                     <button type="button" class="btn btn-danger" title="Elimina commessa" 
-                                        @onclick="@(() => OnClickDelete(wo.Id))">
+                                        @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))">
                                             <i class="bi bi-trash3"></i>
                                     </button>
                                 </td>

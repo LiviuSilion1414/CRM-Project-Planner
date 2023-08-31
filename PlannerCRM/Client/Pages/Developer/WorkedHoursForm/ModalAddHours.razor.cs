@@ -11,7 +11,7 @@ public partial class ModalAddHours : ComponentBase
     [Inject] public DeveloperService DeveloperService { get; set; }
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
     
     private readonly bool _disabled = true;
@@ -58,12 +58,12 @@ public partial class ModalAddHours : ComponentBase
             if ((possibleRole as string == _employeeRole) && (possibleRole as string == _employeeRole) && 
                 (possibleRole as string == nameof(Roles.SENIOR_DEVELOPER))) {
                 
-                NavigationManager.NavigateTo($"/senior-developer/{EmployeeId}");
+                NavManager.NavigateTo($"/senior-developer/{EmployeeId}");
             }
             if ((possibleRole as string == _employeeRole) && (possibleRole as string == _employeeRole) && 
                 (possibleRole as string == nameof(Roles.JUNIOR_DEVELOPER))) {
                 
-                NavigationManager.NavigateTo($"/junior-developer/{EmployeeId}");
+                NavManager.NavigateTo($"/junior-developer/{EmployeeId}");
             }
         }
     }
@@ -92,7 +92,7 @@ public partial class ModalAddHours : ComponentBase
                     _message = await response.Content.ReadAsStringAsync();
                 } else {
                     Toggle();
-                    NavigationManager.NavigateTo(_currentPage, true);
+                    NavManager.NavigateTo(_currentPage, true);
                 }
             } else {
                 CustomValidator.DisplayErrors(_errors);

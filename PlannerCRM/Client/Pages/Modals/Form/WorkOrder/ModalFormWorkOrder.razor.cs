@@ -10,7 +10,7 @@ public partial class ModalFormWorkOrder : ComponentBase
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public Logger<WorkOrderFormDto> Logger { get; set; }
 
     private List<ClientViewDto> _clients;
@@ -37,7 +37,7 @@ public partial class ModalFormWorkOrder : ComponentBase
 
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage);
+        NavManager.NavigateTo(_currentPage);
     }
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;

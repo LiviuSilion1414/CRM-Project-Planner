@@ -7,7 +7,7 @@ public partial class ModalDeleteClient : ComponentBase
     [Parameter] public string Title { get; set; }
     [Parameter] public string ConfirmationMessage { get; set; }
     
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     
@@ -29,7 +29,7 @@ public partial class ModalDeleteClient : ComponentBase
 
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage);
+        NavManager.NavigateTo(_currentPage);
     }
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
@@ -43,6 +43,6 @@ public partial class ModalDeleteClient : ComponentBase
         } 
         
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage, true);
+        NavManager.NavigateTo(_currentPage, true);
     }
 }

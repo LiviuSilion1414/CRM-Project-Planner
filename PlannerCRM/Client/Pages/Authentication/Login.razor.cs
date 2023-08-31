@@ -4,7 +4,7 @@ public partial class Login : ComponentBase
 {
     [Inject] public CurrentUserInfoService CurrentUserInfoService { get; set; }
     [Inject] public LoginService LoginService { get; set; } 
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }   
     [Inject] public Logger<LoginService> Logger { get; set; }   
 
@@ -41,9 +41,9 @@ public partial class Login : ComponentBase
                         var roleValue = possibleRole as string;
                         if (possibleRole as string == role) {
                             if (roleValue == nameof(Roles.SENIOR_DEVELOPER) || roleValue == nameof(Roles.JUNIOR_DEVELOPER)) {
-                                NavigationManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
+                                NavManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
                             } else {
-                                NavigationManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
+                                NavManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
                             }
                         }
                     }

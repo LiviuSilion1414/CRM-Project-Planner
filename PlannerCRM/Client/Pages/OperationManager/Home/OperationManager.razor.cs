@@ -16,7 +16,6 @@ public partial class OperationManager : ComponentBase
     private bool _isDeleteWorkOrderClicked;
 
     private bool _isCreateClientClicked;
-    private bool _isEditClientClicked;
     private bool _isDeleteClientClicked;
     
     private bool _isCreateActivityClicked;
@@ -30,8 +29,8 @@ public partial class OperationManager : ComponentBase
     private int _collectionSize;
 
     protected override async Task OnInitializedAsync() {
-        _collectionSize = await OperationManagerService.GetCollectionSize();
-        _workOrders = await OperationManagerService.GetCollectionPaginated();
+        _collectionSize = await OperationManagerService.GetWorkOrdersCollectionSizeAsync();
+        _workOrders = await OperationManagerService.GetPaginatedWorkOrdersAsync();
 
         foreach (var wo in _workOrders) {
             var clients = await OperationManagerService.SearchClientAsync(wo.ClientId);
@@ -44,13 +43,13 @@ public partial class OperationManager : ComponentBase
     }
     
     public async Task HandlePaginate(int limit, int offset) {
-        _workOrders = await OperationManagerService.GetCollectionPaginated(limit, offset);
+        _workOrders = await OperationManagerService.GetPaginatedWorkOrdersAsync(limit, offset);
         _hasMoreWorkOrders = _workOrders.Any();
     }
 
     public async Task OnClickShowClients() {
         _isShowClientsClicked = !_isShowClientsClicked;
-        _clients = await OperationManagerService.GetClientsPaginated();
+        _clients = await OperationManagerService.GetClientsPaginatedAsync();
     }
 
     private void OnClickTableRow(int workOrderId) {
@@ -64,23 +63,18 @@ public partial class OperationManager : ComponentBase
     private void OnClickAddActivity() =>
        _isCreateActivityClicked = !_isCreateActivityClicked;
 
-    private void OnClickEdit(int id) {
+    private void OnClickEditWorkOrder(int id) {
         _isEditWorkOrderClicked = !_isEditWorkOrderClicked;
         _workOrderId = id;
     }
 
-    public void OnClickDelete(int id) {
+    public void OnClickDeleteWorkOrder(int id) {
         _isDeleteWorkOrderClicked = !_isDeleteWorkOrderClicked;
         _workOrderId = id;
     }
 
     private void OnClickAddClient() =>
        _isCreateClientClicked = !_isCreateClientClicked;
-
-    private void OnClickEditClient(int id) {
-        _isEditWorkOrderClicked = !_isEditWorkOrderClicked;
-        _clientId = id;
-    }
 
     public void OnClickDeleteClient(int id) {
         _isDeleteClientClicked = !_isDeleteClientClicked;

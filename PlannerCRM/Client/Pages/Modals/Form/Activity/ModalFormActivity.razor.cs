@@ -8,7 +8,7 @@ public partial class ModalFormActivity : ComponentBase
 
     [Inject] public Logger<ActivityFormDto> Logger { get; set; }
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
 

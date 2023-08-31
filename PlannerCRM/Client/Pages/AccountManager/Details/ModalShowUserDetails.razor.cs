@@ -5,7 +5,7 @@ public partial class ModalShowUserDetails : ComponentBase
     [Parameter] public int Id { get; set; }
     [Parameter] public string Title { get; set; }
 
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
 
@@ -28,7 +28,7 @@ public partial class ModalShowUserDetails : ComponentBase
 
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage);
+        NavManager.NavigateTo(_currentPage);
     }
 
     private void SwitchPassword(string type) => _input = type;

@@ -8,26 +8,22 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
     [Inject] public ProjectManagerService ProjectManagerService { get; set; }
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
 
     private WorkOrderCostDto _invoice = new() { 
         Activities = new(),
         Employees = new(), 
         MonthlyActivityCosts = new() 
     };
-    private WorkOrderViewDto _workOrder = new();
+
     private ClientViewDto _client = new();
     private bool _isCancelClicked = false;
     private bool _isInvoiceClicked = false; 
     private string _currentPage;
-    private int _collectionSize;
-
-    private readonly bool _isDisabled = true;
 
     protected override async Task OnInitializedAsync() {
         _invoice = await ProjectManagerService.GetInvoiceAsync(WorkOrderId);
         _client = await OperationManagerService.GetClientForViewByIdAsync(_invoice.ClientId);
-        _workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(WorkOrderId);
     }
 
     protected override void OnInitialized()
@@ -35,7 +31,7 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
 
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage);
+        NavManager.NavigateTo(_currentPage);
     }
 
     private void OnClickIssueInvoice() {

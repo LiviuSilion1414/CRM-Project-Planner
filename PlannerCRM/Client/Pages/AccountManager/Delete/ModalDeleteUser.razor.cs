@@ -7,10 +7,10 @@ public partial class ModalDeleteUser : ComponentBase
     [Parameter] public string Title { get; set; }
     [Parameter] public string ConfirmationMessage { get; set; }
     
-    [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
-    [Inject] AccountManagerCrudService AccountManagerService { get; set; }
-    [Inject] OperationManagerCrudService OperationManagerService { get; set; }
+    [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
+    [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     
     private List<WorkOrderViewDto> _workOrders;
     private EmployeeDeleteDto _model;
@@ -39,7 +39,7 @@ public partial class ModalDeleteUser : ComponentBase
     
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage);
+        NavManager.NavigateTo(_currentPage);
     }
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
@@ -54,7 +54,7 @@ public partial class ModalDeleteUser : ComponentBase
         } 
         
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage, true);
+        NavManager.NavigateTo(_currentPage, true);
     }
 
     private async Task OnClickArchive() {
@@ -66,6 +66,6 @@ public partial class ModalDeleteUser : ComponentBase
         } 
         
         _isCancelClicked = !_isCancelClicked;
-        NavigationManager.NavigateTo(_currentPage, true);
+        NavManager.NavigateTo(_currentPage, true);
     }
 }

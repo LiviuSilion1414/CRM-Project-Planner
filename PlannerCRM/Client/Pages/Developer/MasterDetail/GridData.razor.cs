@@ -22,7 +22,7 @@ public partial class GridData : ComponentBase
         _workOrders = new();
         _workTimeRecords = new();
 
-        _collectionSize = await DeveloperService.GetCollectionSizeByEmployeeId(EmployeeId);
+        _collectionSize = await DeveloperService.GetCollectionSizeByEmployeeIdAsync(EmployeeId);
         await FetchDataAsync();
     }
 
@@ -36,7 +36,7 @@ public partial class GridData : ComponentBase
         }
 
         foreach (var activity in _activities) {
-            var workTime = await DeveloperService.GetWorkTimeRecords(activity.WorkOrderId ,activity.Id, EmployeeId);
+            var workTime = await DeveloperService.GetWorkTimeRecordsAsync(activity.WorkOrderId ,activity.Id, EmployeeId);
             if (workTime is not null) {
                 _workTimeRecords.Add(workTime);
             }

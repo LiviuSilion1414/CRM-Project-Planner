@@ -103,15 +103,15 @@
 @if (_isDeleteClicked) {
     <ModalDeleteUser 
         Id=@_userId
-        Title=@_title
-        ConfirmationMessage=@_message/>
+        Title=@Titles.DELETE_USER
+        ConfirmationMessage=@Titles.CONFIRM_RESTORE_USER/>
 }
 
 @if (_isRestoreClicked) {
     <ModalRestoreUser 
         Id=@_userId
-        Title=@_title
-        Message=@_message/>
+        Title=@Titles.RESTORE_USER
+        Message=@Titles.CONFIRM_RESTORE_USER/>
 }
 
 @if (!_hasMoreUsers) {
