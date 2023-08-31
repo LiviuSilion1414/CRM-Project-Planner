@@ -29,7 +29,7 @@
                     }
                 </div>
             } else {
-                <p><em>Nessun attività assegnata.</em></p>
+                <p><em>@Titles.NOT_AVAILABLE_ACTIVITIES</em></p>
             }
         </div>
         <div class="modal-footer">
@@ -37,10 +37,10 @@
                 <span id="btn-link" @onclick=@OnClickModalCancel>Annulla</span>
             </div>
             <div id="">
-                <button type="button" class="btn btn-warning" @onclick=@OnClickArchive>Archivia</button>
+                <button type="button" class="btn btn-warning" @onclick=@OnClickArchiveAsync>Archivia</button>
             </div>
             <div id="delete">
-                <button type="button" class="btn btn-danger" @onclick=@OnClickDelete>Elimina</button>
+                <button type="button" class="btn btn-danger" @onclick=@OnClickDeleteAsync>Elimina</button>
             </div>
         </div>
         </div>

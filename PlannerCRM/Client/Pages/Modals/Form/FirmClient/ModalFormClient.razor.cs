@@ -31,8 +31,6 @@ public partial class ModalFormClient : ComponentBase
         _currentPage = NavigationUtil.GetCurrentPage();
     }
 
-    private void SwitchPassword(string type) => _input = type;
-
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
         NavManager.NavigateTo(_currentPage);

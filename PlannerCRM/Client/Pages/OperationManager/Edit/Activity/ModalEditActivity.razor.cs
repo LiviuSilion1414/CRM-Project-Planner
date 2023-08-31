@@ -27,6 +27,7 @@ public partial class ModalEditActivity : ComponentBase
         _model = new() {
             ViewEmployeeActivity = new(),
             EmployeeActivity = new(),
+            DeleteEmployeeActivity = new()
         };
 
         _currentPage = NavigationUtil.GetCurrentPage();

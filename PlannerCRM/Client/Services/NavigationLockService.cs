@@ -26,4 +26,21 @@ public class NavigationLockService
     public string GetCurrentPage() {
         return _navigationManager.Uri.Replace(_navigationManager.BaseUri, "/");
     }
+
+    public string BuildNavigationUrl(string role, int employeeId) {
+        if (!string.IsNullOrEmpty(role) && Enum.TryParse(role, out Roles parsedRole)) {
+            var url = parsedRole
+                .ToString()
+                .ToLower()
+                .Replace('_', '-');
+
+            if (parsedRole == Roles.SENIOR_DEVELOPER || parsedRole == Roles.JUNIOR_DEVELOPER) {
+                url += $"/{employeeId}";
+            }
+
+            return url;
+        }
+
+        return string.Empty;
+    }
 }

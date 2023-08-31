@@ -17,7 +17,7 @@ public partial class ModalAddUser : ComponentBase
         _currentPage = NavigationUtil.GetCurrentPage();
     }
 
-    private async Task OnClickModalConfirm(EmployeeFormDto returnedModel) {
+    private async Task OnClickAddAsync(EmployeeFormDto returnedModel) {
         await AccountManagerService.AddUserAsync(returnedModel);
         await AccountManagerService.AddEmployeeAsync(returnedModel);
 

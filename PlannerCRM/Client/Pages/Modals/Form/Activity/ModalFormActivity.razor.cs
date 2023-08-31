@@ -38,7 +38,7 @@ public partial class ModalFormActivity : ComponentBase
             EmployeeActivity = new(),
             ViewEmployeeActivity = new(),
             DeleteEmployeeActivity = new(),
-            SelectedEmployee = ""
+            SelectedEmployee = string.Empty,
         };
         _editContext = new(Model);
         _workOrders = new();
@@ -67,11 +67,14 @@ public partial class ModalFormActivity : ComponentBase
         ToggleWorkOrderListView();
     }
     
-    private void OnClickModalCancel() => _isCancelClicked = !_isCancelClicked;
+    private void OnClickModalCancel() => 
+        _isCancelClicked = !_isCancelClicked;
 
-    private void ToggleWorkOrderListView() => _hideWorkOrdersList = !_hideWorkOrdersList;
+    private void ToggleWorkOrderListView() => 
+        _hideWorkOrdersList = !_hideWorkOrdersList;
     
-    private void ToggleEmployeesListView() => _hideEmployeesList = !_hideEmployeesList;
+    private void ToggleEmployeesListView() => 
+        _hideEmployeesList = !_hideEmployeesList;
 
     private async Task OnClickSearchEmployee(string employee) {
         _employees = await OperationManagerService.SearchEmployeeAsync(employee);
@@ -100,7 +103,7 @@ public partial class ModalFormActivity : ComponentBase
                             LastName = employee.LastName,
                             FullName = employee.FullName,
                             Role = employee.Role,
-                            EmployeeActivities = new List<EmployeeActivityDto>() {
+                            EmployeeActivities = new() {
                                 new EmployeeActivityDto() {
                                     EmployeeId = employee.Id,
                                     ActivityId = Model.Id,
@@ -123,7 +126,6 @@ public partial class ModalFormActivity : ComponentBase
 
                 Model.EmployeeActivity.Add(activity);
                 Model.ViewEmployeeActivity.Add(activity);
-                Model.DeleteEmployeeActivity = new();
             }
             ToggleEmployeesListView();
         } catch (NullReferenceException exc) {

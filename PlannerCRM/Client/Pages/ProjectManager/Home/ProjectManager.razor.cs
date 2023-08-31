@@ -6,8 +6,9 @@ public partial class ProjectManager : ComponentBase
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
 
-    private List<WorkOrderViewDto> _workOrders = new();
-    private List<ClientViewDto> _clients = new();
+    private List<WorkOrderViewDto> _workOrders;
+    private List<ClientViewDto> _clients;
+
     private bool _isViewInvoiceClicked; 
     private string _currentPage;
     private int _workOrderId;
@@ -15,30 +16,32 @@ public partial class ProjectManager : ComponentBase
     private bool _isError;
     private string _message;
     
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() =>
        await FetchDataAsync();
+
+    protected override void OnInitialized() {
+        _currentPage = NavigationUtil.GetCurrentPage();
+        _workOrders = new();
+        _clients = new();
     }
 
     private async Task FetchDataAsync(int limit = 0, int offset = 5) {
         _workOrders = await ProjectManagerService.GetWorkOrdersCostsPaginatedAsync(limit, offset);
 
         foreach (var wo in _workOrders) {
-            var client = await ProjectManagerService.GetClientForViewByIdAsync(wo.ClientId);
-            _clients.Add(client);
+            _clients.Add(await ProjectManagerService.GetClientForViewByIdAsync(wo.ClientId));
         }
-    }
-
-    protected override void OnInitialized() {
-        _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     private async Task CreateReport(int workOrderId) {
         var response = await ProjectManagerService.AddInvoiceAsync(workOrderId);
         _isError = !response.IsSuccessStatusCode;
-        _message = await response.Content.ReadAsStringAsync();
 
         if(!_isError) {
-            NavManager.NavigateTo(_currentPage);//, forceload: true
+            NavManager.NavigateTo(_currentPage, true);
+        } else {
+            _isError = true;
+            _message = await response.Content.ReadAsStringAsync();
         }
     }
 
@@ -47,11 +50,9 @@ public partial class ProjectManager : ComponentBase
         _workOrderId = workOrderId;
     }
 
-    private async Task HandlePaginate(int limit, int offset) {
+    private async Task HandlePaginate(int limit, int offset) =>
        await FetchDataAsync(limit, offset);
-    }
     
-    private void HandleFeedbackCancel(bool value) {
-        _isError = value;
-    }        
+    private void HandleFeedbackCancel(bool value) =>
+        _isError = value;     
 }

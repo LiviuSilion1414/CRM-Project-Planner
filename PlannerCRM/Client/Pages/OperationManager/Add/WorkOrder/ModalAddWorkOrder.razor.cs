@@ -13,8 +13,8 @@ public partial class ModalAddWorkOrder : ComponentBase
     private string _currentPage;
     
     protected override void OnInitialized() {
-        _model = new();
         _currentPage = NavigationUtil.GetCurrentPage();
+        _model = new();
     }
 
     public async Task OnClickModalConfirm(WorkOrderFormDto returnedModel) {

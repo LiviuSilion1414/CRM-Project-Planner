@@ -11,10 +11,11 @@ public partial class ModalDeleteClient : ComponentBase
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     
-    private WorkOrderViewDto _workOrder = new();
-    private ClientDeleteDto _model = new();
+    private WorkOrderViewDto _workOrder;
+    private ClientDeleteDto _model;
+    
     private string _currentPage;
-    private bool _isCancelClicked = false;
+    private bool _isCancelClicked;
     
     private string _message; 
     private bool _isError;
@@ -24,8 +25,11 @@ public partial class ModalDeleteClient : ComponentBase
         _workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(_model.WorkOrderId);
     }
 
-    protected override void OnInitialized()
-        => _currentPage = NavigationUtil.GetCurrentPage();
+    protected override void OnInitialized() {
+        _currentPage = NavigationUtil.GetCurrentPage();
+        _workOrder = new();
+        _model = new();
+    } 
 
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;

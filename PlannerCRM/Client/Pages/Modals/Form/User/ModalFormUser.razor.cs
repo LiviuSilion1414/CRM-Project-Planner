@@ -38,7 +38,8 @@ public partial class ModalFormUser : ComponentBase
         NavManager.NavigateTo(_currentPage);
     }
 
-    private void OnClickHideBanner(bool hidden) => _isError = hidden;
+    private void OnClickHideBanner(bool hidden) => 
+        _isError = hidden;
 
     public void OnClickInvalidSubmit() {
         _isError = true;

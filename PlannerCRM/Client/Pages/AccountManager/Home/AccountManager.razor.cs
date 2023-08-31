@@ -18,7 +18,6 @@ public partial class AccountManager : ComponentBase
     private List<EmployeeViewDto> _users;
     private int _collectionSize;
 
-
     protected override async Task OnInitializedAsync() {
         await FetchDataAsync();
         _collectionSize = await AccountManagerService.GetEmployeesSizeAsync();

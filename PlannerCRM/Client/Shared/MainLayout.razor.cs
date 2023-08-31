@@ -7,6 +7,7 @@ public partial class MainLayout
     [Inject] public CurrentUserInfoService CurrentUserInfoService { get; set; }
     [Inject] public AuthenticationStateService AuthStateService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public LoginService LoginService { get; set; }
     
     private string _userRole;
@@ -32,23 +33,11 @@ public partial class MainLayout
                 _currentEmployee = await CurrentUserInfoService.GetCurrentEmployeeIdAsync(_currentUser.UserName);
             }
 
-            if (Enum.TryParse(_userRole, out Roles parsedRole)) {
-                var navigationUrl = BuildNavigationUrl(parsedRole);
-                NavManager.NavigateTo(navigationUrl);
-            }
+            var navigationUrl = NavigationUtil.BuildNavigationUrl(_userRole, _currentEmployee.Id);
+            NavManager.NavigateTo(navigationUrl);
         } else {
             NavManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG);
         }
-    }
-
-    private string BuildNavigationUrl(Roles role) {
-        var url = $"{role.ToString().ToLower().Replace('_', '-')}";
-        
-        if (role == Roles.SENIOR_DEVELOPER || role == Roles.JUNIOR_DEVELOPER) {
-            url += $"/{_currentEmployee.Id}";
-        }
-        
-        return url;
     }
 
     public async Task OnClickLogout() {

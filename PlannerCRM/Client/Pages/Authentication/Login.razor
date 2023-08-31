@@ -26,7 +26,7 @@
                 <label for="Password">Password:</label>
                 <div style="margin: 0 auto; margin: 10px 5px;">
                     <InputText type="@_input" class="form-control" @bind-Value="_model.Password"/>
-                    <SwitchInputType Switch="@SwitchPassword"/>
+                    <SwitchInputType Switch=@SwitchPassword/>
                 </div>
                 <CustomValidationMessage FieldName="@nameof(_model.Password)"/>
             </div>

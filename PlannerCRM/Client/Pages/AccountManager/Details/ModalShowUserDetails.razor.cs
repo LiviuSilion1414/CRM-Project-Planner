@@ -9,7 +9,6 @@ public partial class ModalShowUserDetails : ComponentBase
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
 
-    
     private readonly bool _isDisabled = true;
     
     private EmployeeViewDto _model;
@@ -23,7 +22,7 @@ public partial class ModalShowUserDetails : ComponentBase
     
     protected override void OnInitialized() {
         _model = new();
-        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
+        _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     private void OnClickModalCancel() {

@@ -13,12 +13,12 @@ public partial class ModalAddActivity : ComponentBase
     private string _currentPage;
     
     protected override void OnInitialized() {
+        _currentPage = NavigationUtil.GetCurrentPage();
         _model = new() {
             EmployeeActivity = new(),
-            ViewEmployeeActivity = new()
+            ViewEmployeeActivity = new(),
+            DeleteEmployeeActivity = new()
         };
-
-        _currentPage = NavigationUtil.GetCurrentPage();
     } 
 
     private async Task OnClickModalConfirm(ActivityFormDto returnedModel) {

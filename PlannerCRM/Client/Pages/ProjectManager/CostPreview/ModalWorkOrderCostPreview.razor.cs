@@ -10,13 +10,8 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
 
-    private WorkOrderCostDto _invoice = new() { 
-        Activities = new(),
-        Employees = new(), 
-        MonthlyActivityCosts = new() 
-    };
-
-    private ClientViewDto _client = new();
+    private WorkOrderCostDto _invoice;
+    private ClientViewDto _client;
     private bool _isCancelClicked = false;
     private bool _isInvoiceClicked = false; 
     private string _currentPage;
@@ -26,15 +21,21 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
         _client = await OperationManagerService.GetClientForViewByIdAsync(_invoice.ClientId);
     }
 
-    protected override void OnInitialized()
-        => _currentPage = NavigationUtil.GetCurrentPage();
+    protected override void OnInitialized() {
+        _currentPage = NavigationUtil.GetCurrentPage();
+        _client = new();
+        _invoice = new() { 
+            Activities = new(),
+            Employees = new(), 
+            MonthlyActivityCosts = new() 
+        };
+    } 
 
     private void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
         NavManager.NavigateTo(_currentPage);
     }
 
-    private void OnClickIssueInvoice() {
+    private void OnClickIssueInvoice() =>
         _isInvoiceClicked = !_isInvoiceClicked;
-    }
 }

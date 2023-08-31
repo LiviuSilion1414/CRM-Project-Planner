@@ -13,8 +13,8 @@ public partial class ModalAddClient : ComponentBase
     private string _currentPage;
     
     protected override void OnInitialized() {
-        _model = new();
         _currentPage = NavigationUtil.GetCurrentPage();
+        _model = new();
     }
 
     private async Task OnClickModalConfirm(ClientFormDto returnedModel) {

@@ -13,13 +13,12 @@ public partial class ModalEditWorkOrder : ComponentBase
     private WorkOrderFormDto _model;
     private string _currentPage;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() =>
         _model = await OperationManagerService.GetWorkOrderForEditByIdAsync(Id);
-    }
 
     protected override void OnInitialized() {
-        _model = new();
         _currentPage = NavigationUtil.GetCurrentPage();
+        _model = new();
     }
 
     private async Task OnClickModalConfirm(WorkOrderFormDto returnedModel) {

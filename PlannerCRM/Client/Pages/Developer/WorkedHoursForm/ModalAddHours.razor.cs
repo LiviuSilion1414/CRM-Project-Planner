@@ -7,7 +7,6 @@ public partial class ModalAddHours : ComponentBase
     [Parameter] public int EmployeeId { get; set; }
     [Parameter] public int ActivityId { get; set; }
     
-    [Inject] public CurrentUserInfoService CurrentUserInfoService  { get; set; }
     [Inject] public DeveloperService DeveloperService { get; set; }
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
@@ -23,8 +22,6 @@ public partial class ModalAddHours : ComponentBase
     private EditContext _editContext;
     private ActivityViewDto _activity;
 
-    private string _employeeRole;
-
     private bool _isError;
     private string _message;
 
@@ -32,20 +29,15 @@ public partial class ModalAddHours : ComponentBase
     private string _currentPage;
 
     protected override async Task OnInitializedAsync() {
-        _employeeRole = await CurrentUserInfoService.GetCurrentUserRoleAsync();
-        foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-            if ((possibleRole as string == nameof(Roles.SENIOR_DEVELOPER) && possibleRole as string == _employeeRole) || 
-                (possibleRole as string == nameof(Roles.JUNIOR_DEVELOPER) && possibleRole as string == _employeeRole)) {
-                _employeeRole = possibleRole as string;
-            }
-        }
         _model.Employee = await AccountManagerService.GetEmployeeForViewByIdAsync(EmployeeId);
         _activity = await DeveloperService.GetActivityByIdAsync(ActivityId);
         _workOrder = await DeveloperService.GetWorkOrderByIdAsync(_activity.WorkOrderId);
     }
     
     protected override void OnInitialized() {
-        _model = new();
+        _model = new() {
+            Employee = new()
+        };
         _workOrder = new();
         _activity = new();
         _errors = new();
@@ -53,33 +45,16 @@ public partial class ModalAddHours : ComponentBase
         _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
     }
 
-    public void RedirectToPage() {
-        foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-            if ((possibleRole as string == _employeeRole) && (possibleRole as string == _employeeRole) && 
-                (possibleRole as string == nameof(Roles.SENIOR_DEVELOPER))) {
-                
-                NavManager.NavigateTo($"/senior-developer/{EmployeeId}");
-            }
-            if ((possibleRole as string == _employeeRole) && (possibleRole as string == _employeeRole) && 
-                (possibleRole as string == nameof(Roles.JUNIOR_DEVELOPER))) {
-                
-                NavManager.NavigateTo($"/junior-developer/{EmployeeId}");
-            }
-        }
-    }
-
     private void Toggle() =>  _isCancelClicked = !_isCancelClicked;
     
-    public void OnClickModalCancel() {
+    public void OnClickModalCancel() =>
        Toggle();
-    }
 
     public async Task OnClickModalConfirm() {
         try {
             var isValid = ValidatorService.Validate(_model, out _errors);
 
             if (isValid) {
-                Console.WriteLine("isValid");
                 _model.Date = DateTime.Now;
                 _model.ActivityId = _activity.Id;
                 _model.EmployeeId = EmployeeId;

@@ -8,38 +8,33 @@ public partial class GridData : ComponentBase
 
     [Inject] public DeveloperService DeveloperService { get; set; }
 
-    private List<WorkTimeRecordViewDto> _workTimeRecords = new();
-    private List<WorkOrderViewDto> _workOrders = new();
+    private List<WorkTimeRecordViewDto> _workTimeRecords;
+    private List<WorkOrderViewDto> _workOrders;
 
-    
-    private List<ActivityViewDto> _activities = new();
-    private bool _isAddClicked = false;
-    private bool _hasMoreActivities = true;
+    private List<ActivityViewDto> _activities;
+    private bool _isAddClicked;
+    private bool _hasMoreActivities;
     private int _activityId;
     private int _collectionSize;
 
     protected override async Task OnInitializedAsync() {
-        _workOrders = new();
-        _workTimeRecords = new();
-
         _collectionSize = await DeveloperService.GetCollectionSizeByEmployeeIdAsync(EmployeeId);
+
         await FetchDataAsync();
     }
 
+    protected override void OnInitialized() {
+        _workTimeRecords = new();
+        _workOrders = new();
+        _activities = new();
+    }
+
     private async Task FetchDataAsync(int limit = 0, int offset= 5) {
-        _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId);
+        _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId, limit, offset);
         
         foreach (var ac in _activities) {
-            var workorder = await DeveloperService.GetWorkOrderByIdAsync(ac.WorkOrderId);
-            
-            _workOrders.Add(workorder);
-        }
-
-        foreach (var activity in _activities) {
-            var workTime = await DeveloperService.GetWorkTimeRecordsAsync(activity.WorkOrderId ,activity.Id, EmployeeId);
-            if (workTime is not null) {
-                _workTimeRecords.Add(workTime);
-            }
+            _workOrders.Add(await DeveloperService.GetWorkOrderByIdAsync(ac.WorkOrderId));
+            _workTimeRecords.Add(await DeveloperService.GetWorkTimeRecordsAsync(ac.WorkOrderId ,ac.Id, EmployeeId));
         }
     }
 
@@ -50,6 +45,7 @@ public partial class GridData : ComponentBase
 
     private async Task HandlePaginate(int limit, int offset) {
         await FetchDataAsync(limit, offset);
+        
         _hasMoreActivities = _activities.Any();
     }
 }

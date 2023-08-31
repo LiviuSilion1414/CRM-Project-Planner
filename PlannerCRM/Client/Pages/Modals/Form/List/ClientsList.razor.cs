@@ -6,8 +6,8 @@ public partial class ClientsList : ComponentBase
 
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
 
-    private List<ClientViewDto> _clients = new();
-    private List<WorkOrderViewDto> _workOrders = new();
+    private List<ClientViewDto> _clients;
+    private List<WorkOrderViewDto> _workOrders;
 
     private bool _isCreateClientClicked;
     private bool _isEditClientClicked;
@@ -23,19 +23,22 @@ public partial class ClientsList : ComponentBase
         _clients = await OperationManagerService.GetClientsPaginatedAsync();
 
         foreach (var client in _clients) {
-            var workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(client.WorkOrderId);
-
-            _workOrders.Add(workOrder);
+            _workOrders.Add(await OperationManagerService.GetWorkOrderForViewByIdAsync(client.WorkOrderId));
         }
+    }
+
+    protected override void OnInitialized() {
+        _clients = new();
+        _workOrders = new();
     }
 
     public async Task HandlePaginate(int limit, int offset) =>
         _clients = await OperationManagerService.GetClientsPaginatedAsync(limit, offset);
 
+    private void OnClickModalCancel() =>
+         _isCancelClicked = !_isCancelClicked;
 
-    private void OnClickModalCancel() => _isCancelClicked = !_isCancelClicked;
-
-        private void OnClickAddClient() =>
+    private void OnClickAddClient() =>
        _isCreateClientClicked = !_isCreateClientClicked;
 
     private void OnClickEditClient(int id) {

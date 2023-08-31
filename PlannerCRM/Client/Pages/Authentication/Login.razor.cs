@@ -5,6 +5,7 @@ public partial class Login : ComponentBase
     [Inject] public CurrentUserInfoService CurrentUserInfoService { get; set; }
     [Inject] public LoginService LoginService { get; set; } 
     [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }   
     [Inject] public Logger<LoginService> Logger { get; set; }   
 
@@ -23,6 +24,7 @@ public partial class Login : ComponentBase
         _editContext = new(_model);
         _currentEmployee = new();
     } 
+
     private async Task LoginOnValidInput() {
         try {
             var isValid = ValidatorService.Validate(_model, out _errors);
@@ -35,18 +37,11 @@ public partial class Login : ComponentBase
                 }
                 
                 if (response.IsSuccessStatusCode) {
+
                     var role =  await CurrentUserInfoService.GetCurrentUserRoleAsync();
-    
-                    foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                        var roleValue = possibleRole as string;
-                        if (possibleRole as string == role) {
-                            if (roleValue == nameof(Roles.SENIOR_DEVELOPER) || roleValue == nameof(Roles.JUNIOR_DEVELOPER)) {
-                                NavManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
-                            } else {
-                                NavManager.NavigateTo($"{role.ToLower().Replace('_', '-')}", true);
-                            }
-                        }
-                    }
+                    var navigationUrl = NavigationUtil.BuildNavigationUrl(role, _currentEmployee.Id);
+                
+                    NavManager.NavigateTo(navigationUrl);
                 } else {
                     _isError = true;
                     _message = await response.Content.ReadAsStringAsync();

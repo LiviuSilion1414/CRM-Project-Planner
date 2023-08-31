@@ -10,28 +10,30 @@ public partial class ModalDeleteWorkOrder : ComponentBase
     [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     
+    private WorkOrderDeleteDto _model;
+    
     private bool _isCancelClicked;
     private string _message;
 
     private string _currentPage;
     private bool _isError;
 
-    private WorkOrderDeleteDto _model;
-
     protected override async Task OnInitializedAsync() =>
         _model = await OperationManagerService.GetWorkOrderForDeleteByIdAsync(Id);
 
     protected override void OnInitialized() {
         _model = new();
-        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
+        _currentPage = NavigationUtil.GetCurrentPage();
     }
 
     public void OnClickModalCancel() {
         _isCancelClicked = !_isCancelClicked;
+
         NavManager.NavigateTo(_currentPage);
     }
 
-    private void OnClickHideBanner(bool hidden) => _isError = hidden;
+    private void OnClickHideBanner(bool hidden) 
+        => _isError = hidden;
 
     private async Task OnClickModalConfirm() {
         try {

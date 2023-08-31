@@ -15,7 +15,7 @@ public partial class ModalDeleteUser : ComponentBase
     private List<WorkOrderViewDto> _workOrders;
     private EmployeeDeleteDto _model;
     private string _currentPage;
-    private bool _isCancelClicked = false;
+    private bool _isCancelClicked;
     
     private string _message; 
     private bool _isError;
@@ -32,6 +32,7 @@ public partial class ModalDeleteUser : ComponentBase
     }
 
     protected override void OnInitialized() {
+        _isCancelClicked = false;
         _model = new() { EmployeeActivities = new() };
         _workOrders = new();
         _currentPage = NavigationUtil.GetCurrentPage();
@@ -44,7 +45,7 @@ public partial class ModalDeleteUser : ComponentBase
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
 
-    private async Task OnClickDelete() {
+    private async Task OnClickDeleteAsync() {
         var responseEmployee = await AccountManagerService.DeleteEmployeeAsync(Id);
         var responseUser = await AccountManagerService.DeleteUserAsync(_model.Email);
         
@@ -57,7 +58,7 @@ public partial class ModalDeleteUser : ComponentBase
         NavManager.NavigateTo(_currentPage, true);
     }
 
-    private async Task OnClickArchive() {
+    private async Task OnClickArchiveAsync() {
         var responseEmployee = await AccountManagerService.ArchiveEmployeeAsync(Id);
         
         if (!responseEmployee.IsSuccessStatusCode) {

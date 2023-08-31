@@ -15,9 +15,8 @@ public partial class ModalRestoreUser : ComponentBase
     private bool _isCancelClicked;
     private string _currentPage;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() => 
         _employee = await AccountManagerService.GetEmployeeForRestoreAsync(Id);
-    }
 
     protected override void OnInitialized() {
         _employee = new();

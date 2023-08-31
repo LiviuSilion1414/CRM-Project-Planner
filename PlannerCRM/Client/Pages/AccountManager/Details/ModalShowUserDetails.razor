@@ -40,16 +40,7 @@
                     <div class="form-group">
                         <i class="bi bi-star-fill"></i>
                         <label for="Ruolo">Ruolo</label>
-                        <div class="form-control">
-                            <InputSelect class="dropdown-item" @bind-Value="_model.Role">
-                                <option disabled selected>-- Scegliere ruolo --</option>
-                                @foreach (var role in Enum.GetValues(typeof(Roles))) {
-                                    if ((Roles)role != Roles.ACCOUNT_MANAGER) {
-                                        <option value="@role">@role</option>
-                                    }
-                                }
-                            </InputSelect>
-                        </div>
+                        <input type="text" class="form-control" @bind="_model.Role" disabled="@_isDisabled" readonly="@_isDisabled"/>
                     </div>
                     <div class="form-group">
                         <i class="bi bi-euro"></i>
