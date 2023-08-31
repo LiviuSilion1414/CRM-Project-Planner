@@ -21,7 +21,6 @@ public partial class ModalFormClient : ComponentBase
     private string _errorMessage;
     private bool _isError;
     private bool _isCancelClicked;
-    private string _input;
 
     protected override void OnInitialized() {
         Model = new();
