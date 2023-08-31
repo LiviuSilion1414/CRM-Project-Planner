@@ -109,7 +109,7 @@ public class WorkTimeRecordRepository
                     TotalPrice = wtr.TotalPrice,
                     ActivityId = wtr.ActivityId,
                     WorkOrderId = wtr.WorkOrderId,
-                    EmployeeId = wtr.EmployeeId,
+                    EmployeeId = wtr.EmployeeId
                 })
                 .OrderByDescending(wtr => wtr.Hours)
                 .FirstAsync(wtr => wtr.WorkOrderId == workOrderId && wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)

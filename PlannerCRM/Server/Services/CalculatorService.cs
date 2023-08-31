@@ -22,8 +22,12 @@ public class CalculatorService
             var isAnyInvoice = await _dbContext.WorkOrderCosts
                 .AnyAsync(inv => inv.WorkOrderId == workOrderId);
     
-            if (isAnyInvoice || !isAnyWorkOrder) {
-                throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
+            if (!isAnyWorkOrder) {
+                throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
+            }
+
+            if (isAnyInvoice) {
+                throw new DuplicateElementException(ExceptionsMessages.DUPLICATE_OBJECT);
             }
 
             var workOrder = await _dbContext.WorkOrders
@@ -55,8 +59,7 @@ public class CalculatorService
                     FinishDate = wo.FinishDate,
                     IsCompleted = wo.IsDeleted,
                     IsDeleted = wo.IsDeleted,
-                    IsInvoiceCreated = _dbContext.WorkOrderCosts
-                        .Any(workCost => workCost.WorkOrderId == wo.Id),
+                    IsInvoiceCreated = wo.IsInvoiceCreated,
                     ClientId = wo.ClientId
                 }
             )
@@ -64,10 +67,31 @@ public class CalculatorService
     }
 
     public async Task<WorkOrderCostDto> GetWorkOrderCostForView(int workOrderId) {
+        var salaries = await _dbContext.Employees
+            .Where(em => em.Salaries
+                .Any(sal => sal.EmployeeId == em.Id) &&
+                _dbContext.WorkTimeRecords
+                    .Any(wtr => wtr.EmployeeId == em.Id))
+            .Select(em => 
+                new EmployeeSalary {
+                    EmployeeId = em.Id,
+                    StartDate = em.Salaries
+                        .Single(sal => sal.EmployeeId == em.Id)
+                        .StartDate,
+                    FinishDate = em.Salaries
+                        .Single(sal => sal.EmployeeId == em.Id)
+                        .FinishDate,
+                    Salary = em.Salaries
+                        .Single(sal => sal.EmployeeId == em.Id)
+                        .Salary
+                }
+            )
+            .ToListAsync();
+
         return await _dbContext.WorkOrderCosts
             .OrderBy(wo => wo.Id)
             .Where(wo => wo.Id == workOrderId)
-            .Select(inv => 
+            .Select(inv =>
                 new WorkOrderCostDto {
                     Id = inv.Id,
                     WorkOrderId = inv.Id,
@@ -112,6 +136,7 @@ public class CalculatorService
                                 Name = monthlyCost.Name,
                                 StartDate = monthlyCost.StartDate,
                                 FinishDate = monthlyCost.FinishDate,
+                                MonthlyCost = monthlyCost.MonthlyCost,
                                 Employees = monthlyCost.Employees
                                     .Select(em =>
                                         new EmployeeViewDto {
@@ -241,7 +266,7 @@ public class CalculatorService
                         .FinishDate,
                     Salary = em.Salaries
                         .Single(sal => sal.EmployeeId == em.Id)
-                        .Salary,
+                        .Salary
                 }
             )
             .ToListAsync();

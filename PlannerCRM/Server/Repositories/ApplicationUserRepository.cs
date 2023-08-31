@@ -27,7 +27,7 @@ public class ApplicationUserRepository
                 var user = new IdentityUser {
                     Email = dto.Email,
                     EmailConfirmed = true,
-                    UserName = dto.Email,
+                    UserName = dto.Email
                 };
                 
                 var foundUserRole = await _roleManager.Roles

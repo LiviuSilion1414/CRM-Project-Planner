@@ -27,8 +27,8 @@ public class ActivityRepository
                         .Select(ea => new EmployeeActivity {
                             Id = ea.Id,
                             EmployeeId = ea.EmployeeId,
-                            ActivityId = dto.Id,
-                        }).ToHashSet(),
+                            ActivityId = dto.Id
+                        }).ToHashSet()
                 };
         
                 await _dbContext.Activities.AddAsync(entity);

@@ -118,7 +118,7 @@ public class WorkOrderRepository
 				FinishDate = wo.FinishDate,
 				ClientName = _dbContext.Clients
 					.Single(cl => cl.Id == wo.ClientId)
-					.Name,})
+					.Name})
 			.SingleAsync(wo => wo.Id == id);
 	}
 
