@@ -42,7 +42,7 @@ public class CalculatorController : ControllerBase
     [HttpGet("get/invoice/{workOrderId}")]
     public async Task<WorkOrderCostDto> GetInvoice(int workOrderId) {
         try {
-            return await _calculator.GetWorkOrderCosts(workOrderId); 
+            return await _calculator.GetWorkOrderCostForView(workOrderId); 
         } catch (Exception exc) {
             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
 
