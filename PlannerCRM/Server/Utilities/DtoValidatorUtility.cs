@@ -2,11 +2,11 @@ namespace PlannerCRM.Server.Utilities;
 
 public class DtoValidatorUtillity
 {
-    private readonly AppDbContext _context;
+    private readonly AppDbContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
 
     public DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser> userManager) {
-        _context = context;
+        _dbContext = context;
         _userManager = userManager;
     }
 
@@ -18,7 +18,7 @@ public class DtoValidatorUtillity
                 throw new DuplicateElementException(message: ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
             }
 
-            var employeeIsAlreadyPresent = await _context.Employees
+            var employeeIsAlreadyPresent = await _dbContext.Employees
                 .AnyAsync(em => 
                     EF.Functions.ILike(em.Email, $"%{dto.Email}%") && em.Id == dto.Id);        
             
@@ -47,7 +47,7 @@ public class DtoValidatorUtillity
         var isValid = CheckDtoHealth(dto);
 
         if (isValid) {
-            var clientIsAlreadyPresent = await _context.Clients
+            var clientIsAlreadyPresent = await _dbContext.Clients
                 .AnyAsync(em => em.Id == dto.Id);        
             
             if (operation == OperationType.ADD) {
@@ -72,7 +72,7 @@ public class DtoValidatorUtillity
         var isValid = CheckDtoHealth(dto);
         
         if (isValid) {
-            var isAlreadyPresent = await _context.WorkOrders
+            var isAlreadyPresent = await _dbContext.WorkOrders
                 .AnyAsync(wo=> ((!wo.IsCompleted) || (!wo.IsDeleted)) && wo.Id == dto.Id);
 
             if (operation == OperationType.ADD) {
@@ -96,7 +96,7 @@ public class DtoValidatorUtillity
         var isValid = CheckDtoHealth(dto);
 
         if (isValid) {
-            var isAlreadyPresent = await _context.Activities
+            var isAlreadyPresent = await _dbContext.Activities
                 .AnyAsync(ac => ac.Id == dto.Id);
 
             if (operation == OperationType.ADD) {
@@ -124,13 +124,13 @@ public class DtoValidatorUtillity
         CheckDtoHealth(dto);
 
     public async Task<Employee> ValidateDeleteEmployeeAsync(int id) {
-        return await _context.Employees
+        return await _dbContext.Employees
             .SingleOrDefaultAsync(em => em.Id == id) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
 
     public async Task<FirmClient> ValidateDeleteClientAsync(int id) {
-        return await _context.Clients
+        return await _dbContext.Clients
             .SingleOrDefaultAsync(cl => cl.Id == id) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
@@ -145,10 +145,10 @@ public class DtoValidatorUtillity
     }
 
     public async Task<WorkOrder> ValidateDeleteWorkOrderAsync(int id) {
-        var hasRelationships = await _context.EmployeeActivity
+        var hasRelationships = await _dbContext.EmployeeActivity
 			.AnyAsync(ea  => ea.Activity.WorkOrderId == id);
 
-        return await _context.WorkOrders
+        return await _dbContext.WorkOrders
 			.SingleOrDefaultAsync(w => w.Id == id) 
                 ?? throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
                 
