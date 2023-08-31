@@ -15,7 +15,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetFromJsonAsync<int>("api/employee/get/size/");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -26,7 +26,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<EmployeeViewDto>>($"api/employee/get/paginated/{limit}/{offset}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -37,7 +37,7 @@ public class AccountManagerCrudService
             return await _http
                 .PostAsJsonAsync("api/employee/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -48,7 +48,7 @@ public class AccountManagerCrudService
             return await _http
                 .PostAsJsonAsync("api/applicationuser/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -59,7 +59,7 @@ public class AccountManagerCrudService
             return await _http
                 .PutAsJsonAsync("api/employee/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -70,7 +70,7 @@ public class AccountManagerCrudService
             return await _http
                 .PutAsJsonAsync("api/applicationuser/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -81,7 +81,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetFromJsonAsync<EmployeeDeleteDto>($"api/employee/get/for/delete/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -92,7 +92,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetFromJsonAsync<EmployeeFormDto>($"api/employee/get/for/edit/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -103,7 +103,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetFromJsonAsync<EmployeeViewDto>($"api/employee/get/for/view/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -114,7 +114,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetFromJsonAsync<EmployeeSelectDto>($"api/employee/get/for/restore/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -125,7 +125,7 @@ public class AccountManagerCrudService
             return await _http
                 .DeleteAsync($"api/applicationuser/delete/{currentEmail}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -136,7 +136,7 @@ public class AccountManagerCrudService
             return await _http
                 .DeleteAsync($"api/employee/delete/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -147,7 +147,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetAsync($"api/employee/archive/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -158,7 +158,7 @@ public class AccountManagerCrudService
             return await _http
                 .GetAsync("api/employee/restore/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
             
             return new() { ReasonPhrase = exc.StackTrace };
         }

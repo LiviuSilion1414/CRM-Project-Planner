@@ -17,7 +17,7 @@ public class DeveloperService
             return await _http
                 .PostAsJsonAsync("api/worktimerecord/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -28,7 +28,7 @@ public class DeveloperService
             return await _http
                 .GetFromJsonAsync<ActivityViewDto>($"api/activity/get/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -39,7 +39,7 @@ public class DeveloperService
             return await _http
                 .GetFromJsonAsync<WorkOrderViewDto>($"api/workorder/get/for/view/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -50,7 +50,7 @@ public class DeveloperService
             return await _http
                 .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/employee/{employeeId}/{limit}/{offset}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -61,7 +61,7 @@ public class DeveloperService
             return await _http
                 .GetFromJsonAsync<int>($"api/worktimerecord/get/size/by/employee/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return default;
         }
@@ -72,7 +72,7 @@ public class DeveloperService
             return await _http
                 .GetFromJsonAsync<List<WorkTimeRecordViewDto>>($"api/worktimerecord/get/by/employee/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -83,7 +83,7 @@ public class DeveloperService
             return await _http
                 .GetFromJsonAsync<WorkTimeRecordViewDto>($"api/worktimerecord/get/{workOrderId}/{activityId}/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -94,7 +94,7 @@ public class DeveloperService
             return await _http
                 .GetFromJsonAsync<int>($"api/activity/get/size/by/employee/id/{employeeId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }

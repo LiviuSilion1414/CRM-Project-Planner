@@ -20,7 +20,7 @@ public class OperationManagerCrudService
         try {
             return await _http.PostAsJsonAsync("api/client/add", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -30,7 +30,7 @@ public class OperationManagerCrudService
         try {
             return await _http.PutAsJsonAsync("api/client/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -40,7 +40,7 @@ public class OperationManagerCrudService
         try {
             return await _http.DeleteAsync($"api/client/delete/{clientId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -51,7 +51,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<ClientViewDto>($"api/client/get/for/view/{clientId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -62,7 +62,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<ClientFormDto>($"api/client/get/for/edit/{clientId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -73,7 +73,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<ClientDeleteDto>($"api/client/get/for/delete/{clientId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -84,7 +84,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<ClientViewDto>>($"api/client/get/paginated/{limit}/{offset}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -95,7 +95,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<int>("api/workorder/get/size/");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -106,7 +106,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/workorder/get/paginated/{limit}/{offset}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -117,7 +117,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<WorkOrderSelectDto>>($"api/workorder/search/{workOrder}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -128,7 +128,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<EmployeeSelectDto>>($"api/employee/search/{employee}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -139,7 +139,7 @@ public class OperationManagerCrudService
             return await _http
                 .PostAsJsonAsync("api/workorder/add", dto);   
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -150,7 +150,7 @@ public class OperationManagerCrudService
             return await _http
                 .PutAsJsonAsync("api/workorder/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -161,7 +161,7 @@ public class OperationManagerCrudService
             return await _http
                 .PostAsJsonAsync("api/activity/add", dto);
         } catch (Exception exc) {
-             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -172,7 +172,7 @@ public class OperationManagerCrudService
             return await _http
                 .PutAsJsonAsync("api/activity/edit", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -183,7 +183,7 @@ public class OperationManagerCrudService
             return await _http
                 .DeleteAsync($"api/activity/delete/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -194,7 +194,7 @@ public class OperationManagerCrudService
             return await _http
                 .DeleteAsync($"api/workorder/delete/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }
@@ -205,7 +205,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<ActivityFormDto>($"api/activity/get/for/edit/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -216,7 +216,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<ActivityDeleteDto>($"api/activity/get/for/delete/{activityId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -227,7 +227,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<WorkOrderViewDto>($"api/workorder/get/for/view/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -240,7 +240,7 @@ public class OperationManagerCrudService
     
             return JsonConvert.DeserializeObject<WorkOrderFormDto>(jsonObject);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -251,7 +251,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<WorkOrderDeleteDto>($"api/workorder/get/for/delete/{workOrderId}");
        } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new(); 
        }
@@ -262,7 +262,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/workorder/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -273,7 +273,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<int>("api/client/get/size/");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -284,7 +284,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<ClientViewDto>>($"api/client/search/{clientName}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -295,7 +295,7 @@ public class OperationManagerCrudService
             return await _http
                 .GetFromJsonAsync<List<ClientViewDto>>($"api/client/search/by/id/{clientId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }

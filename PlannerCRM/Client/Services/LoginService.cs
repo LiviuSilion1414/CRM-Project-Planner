@@ -15,7 +15,7 @@ public class LoginService
             return await _http
                 .PostAsJsonAsync("api/account/login", dto);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new() { ReasonPhrase = exc.StackTrace };
         }

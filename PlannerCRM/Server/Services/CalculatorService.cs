@@ -22,7 +22,7 @@ public class CalculatorService
             var isAnyInvoice = await _dbContext.WorkOrderCosts
                 .AnyAsync(inv => inv.WorkOrderId == workOrderId);
     
-            if (isAnyInvoice && !isAnyWorkOrder) {
+            if (isAnyInvoice || !isAnyWorkOrder) {
                 throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
             }
 
@@ -36,7 +36,7 @@ public class CalculatorService
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
     
             throw;
         } 
@@ -178,7 +178,7 @@ public class CalculatorService
                 CostPerMonth = costPerMonth
             };
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             throw;
         }

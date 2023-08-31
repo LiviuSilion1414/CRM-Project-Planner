@@ -21,23 +21,23 @@ public class WorkOrderController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_ADD);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
@@ -51,23 +51,23 @@ public class WorkOrderController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_EDIT);
         } catch (NullReferenceException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (ArgumentNullException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DuplicateElementException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         }
@@ -81,15 +81,15 @@ public class WorkOrderController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.WORKORDER_DELETE);
         } catch (InvalidOperationException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (DbUpdateException exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return NotFound(exc.Message);
         }
@@ -101,7 +101,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.SearchWorkOrderAsync(workOrder);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -113,7 +113,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.GetForEditAsync(workOrderId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -124,7 +124,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.GetForViewAsync(workOrderId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -136,7 +136,7 @@ public class WorkOrderController : ControllerBase
         try {
             return await _repo.GetForDeleteAsync(workOrderId);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -149,7 +149,7 @@ public class WorkOrderController : ControllerBase
         {
             return await _repo.GetSize();
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return default;
         }
@@ -162,7 +162,7 @@ public class WorkOrderController : ControllerBase
         {
             return await _repo.GetPaginated(limit, offset);
         } catch (Exception exc) {
-             _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }

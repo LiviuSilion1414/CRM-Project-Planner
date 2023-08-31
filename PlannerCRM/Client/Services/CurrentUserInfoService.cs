@@ -17,7 +17,7 @@ public class CurrentUserInfoService
             return await _http
                 .GetFromJsonAsync<CurrentUser>("api/account/current/user/info");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
             
             return new();
         }
@@ -28,7 +28,7 @@ public class CurrentUserInfoService
             return await _http
                 .GetStringAsync("api/account/user/role");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return string.Empty;
         }
@@ -39,7 +39,7 @@ public class CurrentUserInfoService
             return await _http
                 .GetFromJsonAsync<CurrentEmployeeDto>($"api/employee/get/id/{email}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }

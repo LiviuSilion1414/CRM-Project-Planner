@@ -20,7 +20,7 @@ public class CalculatorController : ControllerBase
         try {
             return await _calculator.GetPaginatedWorkOrdersCostsAsync(limit, offset);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -33,7 +33,7 @@ public class CalculatorController : ControllerBase
 
             return Ok(SuccessfulCrudFeedBack.REPORT_CREATED);
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return BadRequest();
         }
@@ -44,7 +44,7 @@ public class CalculatorController : ControllerBase
         try {
             return await _calculator.GetWorkOrderCostForView(workOrderId); 
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -55,7 +55,7 @@ public class CalculatorController : ControllerBase
         try {
             return await _calculator.GetCollectionSizeAsync();
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }

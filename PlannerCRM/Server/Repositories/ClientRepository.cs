@@ -35,7 +35,7 @@ public class ClientRepository
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             throw;
         }
@@ -62,7 +62,7 @@ public class ClientRepository
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
             
             throw;
         }
@@ -80,7 +80,7 @@ public class ClientRepository
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             throw;
         }

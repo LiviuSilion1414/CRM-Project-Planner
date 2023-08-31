@@ -34,7 +34,7 @@ public class AuthenticationStateService : AuthenticationStateProvider
                 return new AuthenticationState(new ClaimsPrincipal(identity));
             }
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
             
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }

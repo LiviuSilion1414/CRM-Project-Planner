@@ -16,7 +16,7 @@ public class ProjectManagerService
             return await _http
                 .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/calculator/get/paginated/{limit}/{offset}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -27,7 +27,7 @@ public class ProjectManagerService
             return await _http
                 .GetFromJsonAsync<WorkOrderCostDto>($"api/calculator/get/invoice/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -38,7 +38,7 @@ public class ProjectManagerService
             return await _http
                 .GetFromJsonAsync<HttpResponseMessage>($"api/calculator/generate/{workOrderId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -49,7 +49,7 @@ public class ProjectManagerService
             return await _http
                 .GetFromJsonAsync<ClientViewDto>($"api/client/get/for/view/{clientId}");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -60,7 +60,7 @@ public class ProjectManagerService
             return await _http
                 .GetFromJsonAsync<int>("api/calculator/get/size");
         } catch (Exception exc) {
-            _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
