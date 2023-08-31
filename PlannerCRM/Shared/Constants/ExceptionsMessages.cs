@@ -9,6 +9,7 @@ public static class ExceptionsMessages
     public const string NULL_PROP = "Proprietà di tipo null";
     public const string NULL_ARG = "Parametro null.";
 
+    public const string DUPLICATE_OBJECT = "Oggetto duplicato.";
     public const string OBJECT_ALREADY_PRESENT = "Oggetto già presente.";
     public const string OBJECT_NOT_FOUND = "Oggetto non trovato.";
     public const string WORKORDER_NOT_FOUND = "Nessuna commessa trovata.";
