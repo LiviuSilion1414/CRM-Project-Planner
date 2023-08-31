@@ -150,12 +150,11 @@ public class DtoValidatorUtillity
 
         return await _dbContext.WorkOrders
 			.SingleOrDefaultAsync(w => w.Id == id) 
-                ?? throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
-                
+                ?? throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);     
     }
 
     public async Task<Activity> ValidateDeleteActivityAsync(int id) {
-        return await _context.Activities
+        return await _dbContext.Activities
             .SingleOrDefaultAsync(ac => ac.Id == id)
                 ?? throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
