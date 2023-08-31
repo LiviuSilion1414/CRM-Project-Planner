@@ -44,7 +44,7 @@ public class ProjectManagerService
         }
     }
 
-    public async Task<ClientViewDto> GetClientForViewAsync(int clientId) {
+    public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
         try {
             return await _http
                 .GetFromJsonAsync<ClientViewDto>($"api/client/get/for/view/{clientId}");

@@ -6,7 +6,11 @@ public class WorkOrderRepository
 	private readonly DtoValidatorUtillity _validator;
 	private readonly ILogger<DtoValidatorUtillity> _logger;
 
-	public WorkOrderRepository(AppDbContext dbContext, DtoValidatorUtillity validator, Logger<DtoValidatorUtillity> logger) {
+	public WorkOrderRepository(
+		AppDbContext dbContext, 
+		DtoValidatorUtillity validator, 
+		Logger<DtoValidatorUtillity> logger) 
+	{
 		_dbContext = dbContext;
 		_validator = validator;
 		_logger = logger;
@@ -17,15 +21,19 @@ public class WorkOrderRepository
 			var isValid = await _validator.ValidateWorkOrderAsync(dto, OperationType.ADD);
 			
 			if (isValid) {
-				await _dbContext.WorkOrders.AddAsync(new WorkOrder {
-					Id = dto.Id,
-					Name = dto.Name,
-					StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-					FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-					IsDeleted = false,
-					IsCompleted = false,
-					ClientId = dto.ClientId,
-				});
+				await _dbContext.WorkOrders.AddAsync(
+					new WorkOrder {
+						Id = dto.Id,
+						Name = dto.Name,
+						StartDate = dto.StartDate 
+							?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+						FinishDate = dto.FinishDate 
+							?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+						IsDeleted = false,
+						IsCompleted = false,
+						ClientId = dto.ClientId,
+					}
+				);
 
 				if (await _dbContext.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
@@ -36,7 +44,7 @@ public class WorkOrderRepository
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
 			}
 		} catch (Exception exc) {
-			_logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+			_logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
 			throw;
 		}
@@ -45,7 +53,7 @@ public class WorkOrderRepository
 	private async Task SetForeignKeyToClientAsync(int clientId) {
 		try {
 			var workOrder = await _dbContext.WorkOrders
-				.SingleAsync(wo=> wo.ClientId == clientId);
+				.SingleAsync(wo => wo.ClientId == clientId);
 
 			var client = await _dbContext.Clients
 				.SingleAsync(cl => cl.Id == clientId);
@@ -58,7 +66,7 @@ public class WorkOrderRepository
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}
 		} catch(Exception exc) {
-			_logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+			_logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
 			throw;
 		}
@@ -68,13 +76,18 @@ public class WorkOrderRepository
 		try {
 			var workOrderDelete = await _validator.ValidateDeleteWorkOrderAsync(id);
 
-			workOrderDelete.IsDeleted = true;
-			
-			if (await _dbContext.SaveChangesAsync() == 0) {
-				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-			}
+			if (workOrderDelete is not null) {
+
+				workOrderDelete.IsDeleted = true;
+				
+				if (await _dbContext.SaveChangesAsync() == 0) {
+					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+				}
+			} else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
+            }
 		} catch (Exception exc) {
-			_logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+			_logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
 			throw;
 		}
@@ -86,12 +99,17 @@ public class WorkOrderRepository
 
 			if (isValid) {
 				var model = await _dbContext.WorkOrders
-											.SingleAsync(wo => (!wo.IsDeleted) && (!wo.IsCompleted) && wo.Id == dto.Id);
+					.SingleAsync(wo => 
+						!wo.IsDeleted && 
+						!wo.IsCompleted && 
+						wo.Id == dto.Id);
 				
 				model.Id = dto.Id;
 				model.Name = dto.Name;
-				model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-				model.FinishDate = dto.FinishDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+				model.StartDate = dto.StartDate 
+					?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+				model.FinishDate = dto.FinishDate 
+					?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
 
 				if (await _dbContext.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
@@ -102,13 +120,13 @@ public class WorkOrderRepository
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}
 		} catch (Exception exc) {
-			_logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+			_logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
 			throw;
 		}
 	}
 	
-	public async Task<WorkOrderDeleteDto> GetForDeleteAsync(int id) {
+	public async Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int id) {
 		return await _dbContext.WorkOrders
 			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
 			.Select(wo => new WorkOrderDeleteDto {
@@ -119,10 +137,10 @@ public class WorkOrderRepository
 				ClientName = _dbContext.Clients
 					.Single(cl => cl.Id == wo.ClientId)
 					.Name})
-			.SingleAsync(wo => wo.Id == id);
+			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
 
-	public async Task<WorkOrderViewDto> GetForViewAsync(int id) {
+	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int id) {
 		return await _dbContext.WorkOrders
 			.Select(wo => new WorkOrderViewDto {
 				Id = wo.Id,
@@ -130,22 +148,12 @@ public class WorkOrderRepository
 				StartDate = wo.StartDate,
 				FinishDate = wo.FinishDate,
 				IsCompleted = wo.IsCompleted,
-				IsDeleted = wo.IsDeleted,
-				//Client = _dbContext.Clients
-				//	.Select(cl => 
-				//		new ClientViewDto() {
-				//			Id = cl.Id,
-				//			Name = cl.Name,
-				//			VatNumber = cl.VatNumber,
-				//			WorkOrderId = cl.WorkOrderId
-				//		}
-				//	)
-				//	.Single(cl => cl.WorkOrderId == wo.Id)
+				IsDeleted = wo.IsDeleted
 			})
 			.SingleOrDefaultAsync(wo => wo.Id == id);
 	}
 	
-	public async Task<WorkOrderFormDto> GetForEditAsync(int id) {
+	public async Task<WorkOrderFormDto> GetForEditByIdAsync(int id) {
 		return await _dbContext.WorkOrders
 			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
 			.Select(wo => 
@@ -165,7 +173,8 @@ public class WorkOrderRepository
 
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {
         return await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
+			.Where(wo => !wo.IsDeleted && !wo.IsCompleted &&
+				EF.Functions.ILike(wo.Name, $"%{workOrder}%"))
 			.Select(wo => 
 				new WorkOrderSelectDto{
 					Id = wo.Id,
@@ -175,11 +184,10 @@ public class WorkOrderRepository
 						.Name
 				}
 			)
-			.Where(e => EF.Functions.ILike(e.Name , $"%{workOrder}%"))
 			.ToListAsync();
     }
 
-	public async Task<List<WorkOrderViewDto>> GetPaginated(int limit = 0, int offset = 5) {
+	public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5) {
 		return await _dbContext.WorkOrders
 			.OrderBy(wo => wo.Name)
 			.Skip(limit)
@@ -193,17 +201,11 @@ public class WorkOrderRepository
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted,
 				ClientId = wo.ClientId
-				//Client = _dbContext.Clients
-				//	.Select(cl => new ClientViewDto() {
-				//		Id = cl.Id,
-				//		Name = cl.Name,
-				//		VatNumber = cl.VatNumber,
-				//		WorkOrderId = wo.Id
-				//	})
-				//	.Single(cl => cl.Id == wo.ClientId)
 			})
 			.ToListAsync();
 	}
 
-	public async Task<int> GetSize() => await _dbContext.WorkOrders.CountAsync();
+	public async Task<int> GetWorkOrdersSizeAsync() => 
+		await _dbContext.WorkOrders
+			.CountAsync();
 }

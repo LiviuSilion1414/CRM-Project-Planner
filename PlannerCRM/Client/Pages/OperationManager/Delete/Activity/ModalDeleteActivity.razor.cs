@@ -21,8 +21,8 @@ public partial class ModalDeleteActivity : ComponentBase
     private bool _isError;
 
     protected override async Task OnInitializedAsync() {
-        _currentWorkOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
-        _currentActivity = await OperationManagerService.GetActivityForDeleteAsync(ActivityId);
+        _currentWorkOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(WorkOrderId);
+        _currentActivity = await OperationManagerService.GetActivityForDeleteByIdAsync(ActivityId);
     }
 
     protected override void OnInitialized() {

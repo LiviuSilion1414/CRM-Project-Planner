@@ -48,7 +48,7 @@ public class DeveloperService
     public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId, int limit = 0, int offset = 5) {
         try {
             return await _http
-                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/employee/{employeeId}/{limit}/{offset}");
+                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/by/employee/{employeeId}/{limit}/{offset}");
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 

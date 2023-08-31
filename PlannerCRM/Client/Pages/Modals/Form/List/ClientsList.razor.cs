@@ -12,7 +12,6 @@ public partial class ClientsList : ComponentBase
     private bool _isCreateClientClicked;
     private bool _isEditClientClicked;
     private bool _isDeleteClientClicked;
-    private bool _isShowClientsClicked;
 
     private bool _isCancelClicked;
 
@@ -23,7 +22,7 @@ public partial class ClientsList : ComponentBase
         _collectionSize = await OperationManagerService.GetCollectionSizeAsync();
         _clients = await OperationManagerService.GetClientsPaginated();
         foreach (var client in _clients) {
-            var workOrder = await OperationManagerService.GetWorkOrderForViewAsync(client.WorkOrderId);
+            var workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(client.WorkOrderId);
 
             _workOrders.Add(workOrder);
         }

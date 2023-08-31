@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace PlannerCRM.Server.Repositories;
 
 public class EmployeeRepository
@@ -8,7 +6,11 @@ public class EmployeeRepository
     private readonly DtoValidatorUtillity _validator;
     private readonly ILogger<DtoValidatorUtillity> _logger;
 
-    public EmployeeRepository(AppDbContext dbContext, DtoValidatorUtillity validator, Logger<DtoValidatorUtillity> logger) {
+    public EmployeeRepository(
+        AppDbContext dbContext, 
+        DtoValidatorUtillity validator, 
+        Logger<DtoValidatorUtillity> logger) 
+    {
         _dbContext = dbContext;
         _validator = validator;
         _logger = logger;
@@ -19,34 +21,40 @@ public class EmployeeRepository
             var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);
             
             if (isValid) {
-                await _dbContext.Employees.AddAsync(new Employee {
-                    Id = dto.Id,
-                    Email = dto.Email,
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    FullName = $"{dto.FirstName} {dto.LastName}",
-                    BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                    StartDate = dto.StartDate  ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                    Password = dto.Password,
-                    NumericCode = dto.NumericCode,
-                    Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                    CurrentHourlyRate = dto.CurrentHourlyRate,
-                    Salaries = dto.EmployeeSalaries
-                        .Select(ems =>
-                            new EmployeeSalary {
-                                EmployeeId = ems.EmployeeId,
-                                StartDate = ems.StartDate,
-                                FinishDate = ems.FinishDate,
-                                Salary = ems.Salary
-                            })
-                        .ToList()
-                });
+                await _dbContext.Employees.AddAsync(
+                    new Employee {
+                        Id = dto.Id,
+                        Email = dto.Email,
+                        FirstName = dto.FirstName,
+                        LastName = dto.LastName,
+                        FullName = $"{dto.FirstName} {dto.LastName}",
+                        BirthDay = dto.BirthDay 
+                            ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                        StartDate = dto.StartDate  
+                            ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                        Password = dto.Password,
+                        NumericCode = dto.NumericCode,
+                        Role = dto.Role 
+                            ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                        CurrentHourlyRate = dto.CurrentHourlyRate,
+                        Salaries = dto.EmployeeSalaries
+                            .Select(ems =>
+                                new EmployeeSalary {
+                                    EmployeeId = ems.EmployeeId,
+                                    StartDate = ems.StartDate,
+                                    FinishDate = ems.FinishDate,
+                                    Salary = ems.Salary
+                                }
+                            )
+                            .ToList()
+                    }
+                );
                 
                 if (await _dbContext.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
                 }
             } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_DELETE);
             }
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
@@ -59,12 +67,15 @@ public class EmployeeRepository
         try {
             var employee = await _validator.ValidateDeleteEmployeeAsync(id);
 
-            employee.IsArchived = true;
+            if (employee is not null) {
+                employee.IsArchived = true;
+                _dbContext.Update(employee);
 
-            _dbContext.Update(employee);
-
-            if (await _dbContext.SaveChangesAsync() == 0) {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                if (await _dbContext.SaveChangesAsync() == 0) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
             }
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
@@ -77,12 +88,16 @@ public class EmployeeRepository
         try {
             var employee = await _validator.ValidateDeleteEmployeeAsync(id);
 
-            employee.IsArchived = false;
+            if (employee is not null) {
+                employee.IsArchived = false;
 
-            _dbContext.Update(employee);
+                _dbContext.Update(employee);
 
-            if (await _dbContext.SaveChangesAsync() == 0) {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                if (await _dbContext.SaveChangesAsync() == 0) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
             }
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
@@ -91,17 +106,18 @@ public class EmployeeRepository
         }
     }
 
-
     public async Task DeleteAsync(int id) {
         try {
             var employeeDelete = await _validator.ValidateDeleteEmployeeAsync(id);
 
             if (employeeDelete is not null) {
                 _dbContext.Remove(employeeDelete);
-            }
-
-            if (await _dbContext.SaveChangesAsync() == 0) {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            
+                if (await _dbContext.SaveChangesAsync() == 0) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_DELETE);
             }
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
@@ -116,17 +132,19 @@ public class EmployeeRepository
             
             if (isValid) {
                 var model = await _dbContext.Employees
-                    .Where(em => !em.IsDeleted && !em.IsArchived)
-                    .SingleAsync(em => em.Id == dto.Id);
+                    .SingleAsync(em => !em.IsDeleted && !em.IsArchived && em.Id == dto.Id);
                 
                 model.Id = dto.Id;
                 model.FirstName = dto.FirstName;
                 model.LastName = dto.LastName;
                 model.FullName = $"{dto.FirstName + dto.LastName}";
-                model.BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-                model.StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+                model.BirthDay = dto.BirthDay 
+                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+                model.StartDate = dto.StartDate 
+                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
                 model.Email = dto.Email;
-                model.Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
+                model.Role = dto.Role 
+                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
                 model.NumericCode = dto.NumericCode;
                 model.CurrentHourlyRate = dto.CurrentHourlyRate;
                 
@@ -164,7 +182,7 @@ public class EmployeeRepository
         }
     }
 
-    public async Task<EmployeeViewDto> GetForViewAsync(int id) {
+    public async Task<EmployeeViewDto> GetForViewByIdAsync(int id) {
         return await _dbContext.Employees
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
@@ -183,7 +201,7 @@ public class EmployeeRepository
                 Role = em.Role, 
                 CurrentHourlyRate = em.CurrentHourlyRate,
                 EmployeeSalaries = em.Salaries
-                    .Select( ems => new EmployeeSalaryDto {
+                    .Select(ems => new EmployeeSalaryDto {
                         Id = ems.Id,
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
@@ -191,7 +209,7 @@ public class EmployeeRepository
                         Salary = ems.Salary})
                     .ToList(),
                 EmployeeActivities = em.EmployeeActivity
-                    .Select( ea =>
+                    .Select(ea =>
                         new EmployeeActivityDto {
                             EmployeeId = ea.Id,
                             Employee = new EmployeeSelectDto {
@@ -226,10 +244,10 @@ public class EmployeeRepository
                 FullName = em.FullName,
                 Role = em.Role
             })
-            .SingleAsync(em => em.Id == id);
+            .SingleOrDefaultAsync(em => em.Id == id);
     }
 
-    public async Task<EmployeeFormDto> GetForEditAsync(int id) { 
+    public async Task<EmployeeFormDto> GetForEditByIdAsync(int id) { 
         return await _dbContext.Employees
             .Where(em => !em.IsDeleted && !em.IsArchived)
             .Select(em => new EmployeeFormDto {
@@ -261,13 +279,14 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == id);
     }
 
-    private IQueryable<EmployeeActivity> CheckForActivities(int id) {
-        return _dbContext.EmployeeActivity
-            .Where(ea=> ea.EmployeeId == id);
+    private async Task<List<EmployeeActivity>> CheckForActivitiesAsync(int id) {
+        return await _dbContext.EmployeeActivity
+            .Where(ea=> ea.EmployeeId == id)
+            .ToListAsync();
     }
 
-    public async Task<EmployeeDeleteDto> GetForDeleteAsync(int id) {
-        var activities = CheckForActivities(id);
+    public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int id) {
+        var activities = await CheckForActivitiesAsync(id);
         
         return await _dbContext.Employees
             .Where(em => !em.IsDeleted && !em.IsArchived)
@@ -322,12 +341,11 @@ public class EmployeeRepository
             .ToListAsync();
     }
 
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit, int offset) {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset) {
         return await _dbContext.Employees
             .OrderBy(em => em.Id)
             .Skip(limit)
             .Take(offset)
-            .AsSplitQuery()
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
@@ -365,7 +383,7 @@ public class EmployeeRepository
                         .Single(ac => ac.Id == ea.ActivityId),
                     }).ToList(),
                 EmployeeSalaries = em.Salaries
-                    .Select( ems => new EmployeeSalaryDto {
+                    .Select(ems => new EmployeeSalaryDto {
                         Id = ems.Id,
                         EmployeeId = ems.Id,
                         StartDate = ems.StartDate,
@@ -376,7 +394,7 @@ public class EmployeeRepository
             .ToListAsync();
     }
 
-    public async Task<CurrentEmployeeDto> GetUserIdAsync(string email) {
+    public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email) {
         return await _dbContext.Employees
             .Where(em => !em.IsDeleted && !em.IsArchived)
             .Select(em => new CurrentEmployeeDto {
@@ -385,5 +403,7 @@ public class EmployeeRepository
             .FirstAsync(em => em.Email == email);
     }
 
-    public async Task<int> GetEmployeesSize() => await _dbContext.Employees.CountAsync();
+    public async Task<int> GetEmployeesSizeAsync() => 
+        await _dbContext.Employees
+            .CountAsync();
 }

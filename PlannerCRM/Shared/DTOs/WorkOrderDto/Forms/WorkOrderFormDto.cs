@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.DTOs.Workorder.Forms;
+namespace PlannerCRM.Shared.DTOs.WorkOrder.Forms;
 
 public partial class WorkOrderFormDto
 {

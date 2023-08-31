@@ -53,9 +53,9 @@ public partial class OperationManager : ComponentBase
         _clients = await OperationManagerService.GetClientsPaginated();
     }
 
-    private void OnClickTableRow(int workorderId) {
+    private void OnClickTableRow(int workOrderId) {
         _trIsClicked = !_trIsClicked;
-        _currentWorkOrder = _workOrders.Find(wo => wo.Id == workorderId);
+        _currentWorkOrder = _workOrders.Find(wo => wo.Id == workOrderId);
     }
 
     private void OnClickAddWorkOrder() =>

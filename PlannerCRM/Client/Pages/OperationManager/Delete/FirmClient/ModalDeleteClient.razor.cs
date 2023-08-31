@@ -20,8 +20,8 @@ public partial class ModalDeleteClient : ComponentBase
     private bool _isError;
 
     protected override async Task OnInitializedAsync() {
-        _model = await OperationManagerService.GetClientForDeleteAsync(Id);
-        _workOrder = await OperationManagerService.GetWorkOrderForViewAsync(_model.WorkOrderId);
+        _model = await OperationManagerService.GetClientForDeleteByIdAsync(Id);
+        _workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(_model.WorkOrderId);
     }
 
     protected override void OnInitialized()

@@ -1,10 +1,12 @@
 namespace PlannerCRM.Client.Services.Crud;
 
-[Authorize(Roles = $"""
-    {nameof(Roles.PROJECT_MANAGER)}
-    {nameof(Roles.OPERATION_MANAGER)}
-    {nameof(Roles.ACCOUNT_MANAGER)}
-""")]
+[Authorize(Roles = 
+    $"""
+        {nameof(Roles.PROJECT_MANAGER)}
+        {nameof(Roles.OPERATION_MANAGER)}
+        {nameof(Roles.ACCOUNT_MANAGER)}
+    """
+)]
 public class OperationManagerCrudService
 {
     private readonly HttpClient _http;
@@ -46,7 +48,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<ClientViewDto> GetClientForViewAsync(int clientId) {
+    public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
         try {
             return await _http
                 .GetFromJsonAsync<ClientViewDto>($"api/client/get/for/view/{clientId}");
@@ -57,7 +59,7 @@ public class OperationManagerCrudService
         }
     }
     
-    public async Task<ClientFormDto> GetClientForEditAsync(int clientId) {
+    public async Task<ClientFormDto> GetClientForEditByIdAsync(int clientId) {
         try {
             return await _http
                 .GetFromJsonAsync<ClientFormDto>($"api/client/get/for/edit/{clientId}");
@@ -68,7 +70,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<ClientDeleteDto> GetClientForDeleteAsync(int clientId) {
+    public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int clientId) {
         try {
             return await _http
                 .GetFromJsonAsync<ClientDeleteDto>($"api/client/get/for/delete/{clientId}");
@@ -200,7 +202,7 @@ public class OperationManagerCrudService
         }
     }
     
-    public async Task<ActivityFormDto> GetActivityForEditAsync(int activityId) {
+    public async Task<ActivityFormDto> GetActivityForEditByIdAsync(int activityId) {
         try {
             return await _http
                 .GetFromJsonAsync<ActivityFormDto>($"api/activity/get/for/edit/{activityId}");
@@ -211,7 +213,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<ActivityDeleteDto> GetActivityForDeleteAsync(int activityId) {
+    public async Task<ActivityDeleteDto> GetActivityForDeleteByIdAsync(int activityId) {
         try {
             return await _http
                 .GetFromJsonAsync<ActivityDeleteDto>($"api/activity/get/for/delete/{activityId}");
@@ -222,7 +224,7 @@ public class OperationManagerCrudService
         }
     }
     
-    public async Task<WorkOrderViewDto> GetWorkOrderForViewAsync(int workOrderId) {
+    public async Task<WorkOrderViewDto> GetWorkOrderForViewByIdAsync(int workOrderId) {
         try {
             return await _http
                 .GetFromJsonAsync<WorkOrderViewDto>($"api/workorder/get/for/view/{workOrderId}");
@@ -233,7 +235,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<WorkOrderFormDto> GetWorkOrderForEditAsync(int workOrderId) {
+    public async Task<WorkOrderFormDto> GetWorkOrderForEditByIdAsync(int workOrderId) {
         try {
             var response = await _http.GetAsync($"api/workorder/get/for/edit/{workOrderId}");
             var jsonObject = await response.Content.ReadAsStringAsync();
@@ -246,7 +248,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<WorkOrderDeleteDto> GetWorkOrderForDeleteAsync(int workOrderId) {
+    public async Task<WorkOrderDeleteDto> GetWorkOrderForDeleteByIdAsync(int workOrderId) {
        try {
             return await _http
                 .GetFromJsonAsync<WorkOrderDeleteDto>($"api/workorder/get/for/delete/{workOrderId}");
@@ -260,7 +262,7 @@ public class OperationManagerCrudService
     public async Task<List<ActivityViewDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
         try {
             return await _http
-                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/per/workorder/{workOrderId}");
+                .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/by/workorder/{workOrderId}");
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 

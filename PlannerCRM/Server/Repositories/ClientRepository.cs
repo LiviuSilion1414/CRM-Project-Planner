@@ -1,6 +1,3 @@
-using System.Security.Cryptography;
-using PlannerCRM.Shared.DTOs.ClientDto;
-
 namespace PlannerCRM.Server.Repositories;
 
 public class ClientRepository
@@ -9,7 +6,11 @@ public class ClientRepository
     private readonly DtoValidatorUtillity _validator;
     private readonly ILogger<DtoValidatorUtillity> _logger;
 
-    public ClientRepository(AppDbContext dbContext, DtoValidatorUtillity validator, Logger<DtoValidatorUtillity> logger) {
+    public ClientRepository(
+        AppDbContext dbContext, 
+        DtoValidatorUtillity validator, 
+        Logger<DtoValidatorUtillity> logger) 
+    {
 		_dbContext = dbContext;
 		_validator = validator;
 		_logger = logger;
@@ -74,10 +75,12 @@ public class ClientRepository
 
             if (clientDelete is not null) {
                 _dbContext.Remove(clientDelete);
-            }
-
-            if (await _dbContext.SaveChangesAsync() == 0) {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+            
+                if (await _dbContext.SaveChangesAsync() == 0) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
+            } else {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
             }
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
@@ -86,12 +89,11 @@ public class ClientRepository
         }
     }
 
-    public async Task<ClientViewDto> GetClientForViewAsync(int clientId) {
+    public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
         return await _dbContext.Clients
             .Where(cl => cl.Id == clientId)
             .Select(client =>
-                new ClientViewDto
-                {
+                new ClientViewDto {
                     Id = client.Id,
                     Name = client.Name,
                     VatNumber = client.VatNumber,
@@ -101,7 +103,7 @@ public class ClientRepository
             .SingleOrDefaultAsync();
     }
 
-    public async Task<ClientFormDto> GetClientForEditAsync(int id) {
+    public async Task<ClientFormDto> GetClientForEditByIdAsync(int id) {
         return await _dbContext.Clients
             .Select(client => 
                 new ClientFormDto {
@@ -114,7 +116,7 @@ public class ClientRepository
             .SingleAsync(cl => cl.Id == id);
     }
 
-    public async Task<ClientDeleteDto> GetClientForDeleteAsync(int id) {
+    public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int id) {
         return await _dbContext.Clients
             .Select(client => 
                 new ClientDeleteDto {
@@ -127,7 +129,7 @@ public class ClientRepository
             .SingleAsync(cl => cl.Id == id);
     }
 
-    public async Task<List<ClientViewDto>> GetPaginatedAsync(int limit, int offset) {
+    public async Task<List<ClientViewDto>> GetClientsPaginatedAsync(int limit, int offset) {
         return await _dbContext.Clients
             .OrderBy(client => client.Id)
             .Skip(limit)

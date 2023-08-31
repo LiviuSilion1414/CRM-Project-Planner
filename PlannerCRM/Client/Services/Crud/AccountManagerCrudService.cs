@@ -76,7 +76,7 @@ public class AccountManagerCrudService
         }
     } 
 
-    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteAsync(int employeeId) {
+    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<EmployeeDeleteDto>($"api/employee/get/for/delete/{employeeId}");
@@ -87,7 +87,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<EmployeeFormDto> GetEmployeeForEditAsync(int employeeId) {
+    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<EmployeeFormDto>($"api/employee/get/for/edit/{employeeId}");
@@ -98,7 +98,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<EmployeeViewDto> GetEmployeeForViewAsync(int employeeId) {
+    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<EmployeeViewDto>($"api/employee/get/for/view/{employeeId}");

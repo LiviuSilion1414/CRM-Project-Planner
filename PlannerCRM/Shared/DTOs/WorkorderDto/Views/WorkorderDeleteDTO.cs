@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.DTOs.Workorder.Views;
+namespace PlannerCRM.Shared.DTOs.WorkOrder.Views;
 
 public class WorkOrderDeleteDto
 {

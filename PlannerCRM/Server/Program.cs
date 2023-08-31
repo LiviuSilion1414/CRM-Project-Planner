@@ -100,6 +100,7 @@ if (app.Environment.IsDevelopment()) {
     var developerExceptionPageOptions = new DeveloperExceptionPageOptions {
         SourceCodeLineCount = 5
     };
+    
     app.UseDeveloperExceptionPage(developerExceptionPageOptions);
 } else {
     app.UseExceptionHandler("/Error");

@@ -8,14 +8,17 @@ public class WorkTimeRecordController : ControllerBase
     private readonly WorkTimeRecordRepository _repo;
     private readonly ILogger<WorkTimeRecordRepository> _logger;
 
-    public WorkTimeRecordController(WorkTimeRecordRepository repo, Logger<WorkTimeRecordRepository> logger) {
+    public WorkTimeRecordController(
+        WorkTimeRecordRepository repo, 
+        Logger<WorkTimeRecordRepository> logger) 
+    {
         _repo = repo;
         _logger = logger;
     }
 
     [Authorize]
     [HttpPost("add")]
-    public async Task<IActionResult> AddWorkTimeRecord(WorkTimeRecordFormDto dto) {
+    public async Task<IActionResult> AddWorkTimeRecordAsync(WorkTimeRecordFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
@@ -43,7 +46,7 @@ public class WorkTimeRecordController : ControllerBase
     
     [Authorize]
     [HttpPut("edit")]
-    public async Task<IActionResult> EditWorkTimeRecord(WorkTimeRecordFormDto dto) {
+    public async Task<IActionResult> EditWorkTimeRecordAsync(WorkTimeRecordFormDto dto) {
         try {
             await _repo.EditAsync(dto);
 
@@ -75,7 +78,7 @@ public class WorkTimeRecordController : ControllerBase
     
     [Authorize]
     [HttpGet("get/{workOrderId}/{activityId}/{employeeId}")]
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecord(int workOrderId, int activityId, int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordAsync(int workOrderId, int activityId, int employeeId) {
         try {
             return await _repo.GetAsync(workOrderId, activityId, employeeId);
         } catch (KeyNotFoundException exc) {
@@ -86,10 +89,10 @@ public class WorkTimeRecordController : ControllerBase
     }
     
     [Authorize]
-    [HttpGet("get/all")]
-    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecords() {
+    [HttpGet("get/paginated/{limit}/{offset}")]
+    public async Task<List<WorkTimeRecordViewDto>> GetPaginatedWorkTimeRecordsAsync(int limit, int offset) {
         try {
-            return await _repo.GetAllAsync();
+            return await _repo.GetPaginatedWorkTimeRecordsAsync(limit, offset);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -99,9 +102,9 @@ public class WorkTimeRecordController : ControllerBase
     
     [Authorize]
     [HttpGet("get/by/employee/{employeeId}")]
-    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByWorkOrder(int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
         try {
-            return await _repo.GetByEmployeeIdAsync(employeeId);
+            return await _repo.GetAllWorkTimeRecordsByEmployeeIdAsync(employeeId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 

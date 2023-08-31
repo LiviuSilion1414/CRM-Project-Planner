@@ -66,7 +66,7 @@ public class CalculatorService
             .ToListAsync();
     }
 
-    public async Task<WorkOrderCostDto> GetWorkOrderCostForView(int workOrderId) {
+    public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId) {
         var salaries = await _dbContext.Employees
             .Where(em => em.Salaries
                 .Any(sal => sal.EmployeeId == em.Id) &&

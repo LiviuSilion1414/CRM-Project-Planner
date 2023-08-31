@@ -1,10 +1,12 @@
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = $"""
-    {nameof(Roles.OPERATION_MANAGER)}, 
-    {nameof(Roles.SENIOR_DEVELOPER)}, 
-    {nameof(Roles.JUNIOR_DEVELOPER)}
-""" )]
+[Authorize(Roles = 
+    $"""
+        {nameof(Roles.OPERATION_MANAGER)}, 
+        {nameof(Roles.SENIOR_DEVELOPER)}, 
+        {nameof(Roles.JUNIOR_DEVELOPER)}
+    """ 
+)]
 [ApiController]
 [Route("api/[controller]")]
 public class ActivityController : ControllerBase
@@ -12,14 +14,17 @@ public class ActivityController : ControllerBase
     private readonly ActivityRepository _repo;
     private readonly ILogger<ActivityRepository> _logger;
 
-    public ActivityController(ActivityRepository repo, Logger<ActivityRepository> logger) {
+    public ActivityController(
+        ActivityRepository repo, 
+        Logger<ActivityRepository> logger) 
+    {
         _repo = repo;
         _logger = logger;
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
-    public async Task<IActionResult> AddActivity(ActivityFormDto dto) {
+    public async Task<IActionResult> AddActivityAsync(ActivityFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
@@ -49,13 +54,11 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
-    public async Task<IActionResult> EditActivity(ActivityFormDto dto) {
+    public async Task<IActionResult> EditActivityAsync(ActivityFormDto dto) {
         try {
-            if (await _repo.EditAsync(dto)) {
-                return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
-            }
-
-            return BadRequest(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
+            await _repo.EditAsync(dto);
+                
+            return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
         } catch (NullReferenceException exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -81,7 +84,7 @@ public class ActivityController : ControllerBase
     
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{activityId}")]
-    public async Task<IActionResult> DeleteActivity(int activityId) {
+    public async Task<IActionResult> DeleteActivityAsync(int activityId) {
         try {
             await _repo.DeleteAsync(activityId);
 
@@ -101,15 +104,16 @@ public class ActivityController : ControllerBase
         }
     }
 
-    [Authorize(Roles = $"""
-        {nameof(Roles.OPERATION_MANAGER)}, 
-        {nameof(Roles.SENIOR_DEVELOPER)}, 
-        {nameof(Roles.JUNIOR_DEVELOPER)}
-    """ )]
+    [Authorize(Roles = 
+        $"""
+            {nameof(Roles.OPERATION_MANAGER)}, 
+            {nameof(Roles.SENIOR_DEVELOPER)}, 
+            {nameof(Roles.JUNIOR_DEVELOPER)}
+        """ )]
     [HttpGet("get/{activityId}")]
-    public async Task<ActivityViewDto> GetForView(int activityId) {
+    public async Task<ActivityViewDto> GetActivityForViewByIdAsync(int activityId) {
         try {
-            return await _repo.GetForViewAsync(activityId);
+            return await _repo.GetForViewByIdAsync(activityId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -119,9 +123,9 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{activityId}")]
-    public async Task<ActivityFormDto> GetForEdit(int activityId) {
+    public async Task<ActivityFormDto> GetActivityForEditByIdAsync(int activityId) {
         try {
-            return await _repo.GetForEditAsync(activityId);
+            return await _repo.GetForEditByIdAsync(activityId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -131,9 +135,9 @@ public class ActivityController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{activityId}")]
-    public async Task<ActivityDeleteDto> GetForDelete(int activityId) {
+    public async Task<ActivityDeleteDto> GetActivityForDelete(int activityId) {
         try {
-            return await _repo.GetForDeleteAsync(activityId);
+            return await _repo.GetForDeleteByIdAsync(activityId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -141,13 +145,14 @@ public class ActivityController : ControllerBase
         }
     }
 
-    [Authorize(Roles = $"""
-        {nameof(Roles.OPERATION_MANAGER)}, 
-        {nameof(Roles.SENIOR_DEVELOPER)}, 
-        {nameof(Roles.JUNIOR_DEVELOPER)}
-    """ )]
-    [HttpGet("get/activity/per/workorder/{workOrderId}")]
-    public async Task<List<ActivityViewDto>> GetActivitiesPerWorkorderAsync(int workOrderId) {
+    [Authorize(Roles = 
+        $"""
+            {nameof(Roles.OPERATION_MANAGER)}, 
+            {nameof(Roles.SENIOR_DEVELOPER)}, 
+            {nameof(Roles.JUNIOR_DEVELOPER)}
+        """ )]
+    [HttpGet("get/activity/by/workorder/{workOrderId}")]
+    public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
         try {
             return await _repo.GetActivitiesPerWorkOrderAsync(workOrderId);
         } catch (Exception exc) {
@@ -157,13 +162,14 @@ public class ActivityController : ControllerBase
         }
     }
 
-    [Authorize(Roles = $"""
-        {nameof(Roles.OPERATION_MANAGER)}, 
-        {nameof(Roles.SENIOR_DEVELOPER)}, 
-        {nameof(Roles.JUNIOR_DEVELOPER)}
-    """ )]
-    [HttpGet("get/activity/per/employee/{employeeId}/{limit}/{offset}")]
-    public async Task<List<ActivityFormDto>> GetActivitiesPerEmployee(int employeeId, int limit, int offset) {
+    [Authorize(Roles = 
+        $"""
+            {nameof(Roles.OPERATION_MANAGER)}, 
+            {nameof(Roles.SENIOR_DEVELOPER)}, 
+            {nameof(Roles.JUNIOR_DEVELOPER)}
+        """ )]
+    [HttpGet("get/activity/by/employee/{employeeId}/{limit}/{offset}")]
+    public async Task<List<ActivityFormDto>> GetActivitiesPerEmployeeAsync(int employeeId, int limit, int offset) {
         try {
             return await _repo.GetActivityByEmployeeId(employeeId, limit, offset);
         } catch (Exception exc) {
@@ -173,13 +179,14 @@ public class ActivityController : ControllerBase
         }
     }
     
-    [Authorize(Roles = $"""
-        {nameof(Roles.OPERATION_MANAGER)}, 
-        {nameof(Roles.SENIOR_DEVELOPER)}, 
-        {nameof(Roles.JUNIOR_DEVELOPER)}
-    """ )]
+    [Authorize(Roles = 
+        $"""
+            {nameof(Roles.OPERATION_MANAGER)}, 
+            {nameof(Roles.SENIOR_DEVELOPER)}, 
+            {nameof(Roles.JUNIOR_DEVELOPER)}
+        """ )]
     [HttpGet("get/size/by/employee/id/{employeeId}")]
-    public async Task<int> GetCollectionSizeByEmployeeId(int employeeId) {
+    public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) {
         try {
             return await _repo.GetCollectionSizeByEmployeeIdAsync(employeeId);
         } catch (Exception exc) {
@@ -188,6 +195,4 @@ public class ActivityController : ControllerBase
             return new();
         }
     }
-
-
 }

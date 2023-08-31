@@ -25,7 +25,7 @@ public partial class ProjectManager : ComponentBase
         _workOrders = await ProjectManagerService.GetPaginatedAsync(limit, offset);
 
         foreach (var wo in _workOrders) {
-            var client = await ProjectManagerService.GetClientForViewAsync(wo.ClientId);
+            var client = await ProjectManagerService.GetClientForViewByIdAsync(wo.ClientId);
             _clients.Add(client);
         }
     }

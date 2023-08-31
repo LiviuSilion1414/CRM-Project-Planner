@@ -39,7 +39,7 @@ public partial class ModalAddHours : ComponentBase
                 _employeeRole = possibleRole as string;
             }
         }
-        _model.Employee = await AccountManagerService.GetEmployeeForViewAsync(EmployeeId);
+        _model.Employee = await AccountManagerService.GetEmployeeForViewByIdAsync(EmployeeId);
         _activity = await DeveloperService.GetActivityByIdAsync(ActivityId);
         _workOrder = await DeveloperService.GetWorkOrderByIdAsync(_activity.WorkOrderId);
     }

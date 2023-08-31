@@ -14,7 +14,7 @@ public partial class ModalEditUser : ComponentBase
     private string _currentPage;
 
     protected override async Task OnInitializedAsync() =>
-        _model = await AccountManagerService.GetEmployeeForEditAsync(Id);
+        _model = await AccountManagerService.GetEmployeeForEditByIdAsync(Id);
 
     protected override void OnInitialized() {
         _model = new();

@@ -2,7 +2,8 @@ using PlannerCRM.Shared.DTOs.ClientDto;
 
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = $"""
+[Authorize(Roles = 
+    $"""
         {nameof(Roles.OPERATION_MANAGER)}, 
         {nameof(Roles.PROJECT_MANAGER)}
     """
@@ -14,13 +15,16 @@ public class ClientController : ControllerBase
     private readonly ClientRepository _repo;
     private readonly ILogger<ClientRepository> _logger;
 
-    public ClientController(ClientRepository repo, Logger<ClientRepository> logger) {
+    public ClientController(
+        ClientRepository repo, 
+        Logger<ClientRepository> logger) 
+    {
         _repo = repo;
         _logger = logger;
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> AddUser(ClientFormDto dto) {
+    public async Task<IActionResult> AddClientAsync(ClientFormDto dto) {
         try {
             await _repo.AddClientAsync(dto);
 
@@ -49,7 +53,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpPut("edit")]
-    public async Task<IActionResult> EditUser(ClientFormDto dto) {
+    public async Task<IActionResult> EditClientAsync(ClientFormDto dto) {
         try {
             await _repo.EditClientAsync(dto);
 
@@ -78,7 +82,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpDelete("delete/{clientId}")]
-    public async Task<IActionResult> DeleteUser(int clientId) {
+    public async Task<IActionResult> DeleteClientAsync(int clientId) {
         try {
             await _repo.DeleteClientAsync(clientId);
 
@@ -99,9 +103,9 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet("get/for/view/{clientId}")]
-    public async Task<ClientViewDto> GetForViewById(int clientId) {
+    public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
         try {
-            return await _repo.GetClientForViewAsync(clientId);
+            return await _repo.GetClientForViewByIdAsync(clientId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -110,9 +114,9 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet("get/for/edit/{clientId}")]
-    public async Task<ClientFormDto> GetForEditById(int clientId) {
+    public async Task<ClientFormDto> GetClientForEditByIdAsync(int clientId) {
         try {
-            return await _repo.GetClientForEditAsync(clientId);
+            return await _repo.GetClientForEditByIdAsync(clientId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -121,9 +125,9 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet("get/for/delete/{clientId}")]
-    public async Task<ClientDeleteDto> GetForDeleteById(int clientId) {
+    public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int clientId) {
         try {
-            return await _repo.GetClientForDeleteAsync(clientId);
+            return await _repo.GetClientForDeleteByIdAsync(clientId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -132,9 +136,9 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<ClientViewDto>> GetPaginatedClients(int limit, int offset) {
+    public async Task<List<ClientViewDto>> GetPaginatedClientsAsync(int limit, int offset) {
         try {
-            return await _repo.GetPaginatedAsync(limit, offset);
+            return await _repo.GetClientsPaginatedAsync(limit, offset);
         } catch (Exception exc) {
              _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -143,7 +147,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet("get/size")]
-    public async Task<int> GetCollectionSize() {
+    public async Task<int> GetCollectionSizeAsync() {
         try {
             return await _repo.GetCollectionSizeAsync();
         } catch (Exception exc) {
@@ -154,7 +158,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet("search/{clientName}/")]
-    public async Task<List<ClientViewDto>> SearchClient(string clientName) {
+    public async Task<List<ClientViewDto>> SearchClientByNameAsync(string clientName) {
         try {
             return await _repo.SearchClientAsync(clientName);
         } catch (Exception exc) {
@@ -165,7 +169,7 @@ public class ClientController : ControllerBase
     }
 
     [HttpGet("search/by/id/{clientId}")]
-    public async Task<List<ClientViewDto>> SearchClient(int clientId) {
+    public async Task<List<ClientViewDto>> SearchClientByIdAsync(int clientId) {
         try {
             return await _repo.SearchClientAsync(clientId);
         } catch (Exception exc) {

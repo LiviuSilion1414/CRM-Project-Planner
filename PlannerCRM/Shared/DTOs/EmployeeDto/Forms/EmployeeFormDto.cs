@@ -28,7 +28,7 @@ public class EmployeeFormDto
     public DateTime? StartDate { get; set; }
 
     [BirthDayRange(MAJOR_AGE, MAX_AGE,  
-        ErrorMessage = $"""Il dipendente deve avere tra i 18 e i 55 anni.""")]
+        ErrorMessage = """Il dipendente deve avere tra i 18 e i 55 anni.""")]
     [Required(ErrorMessage = """ Campo "Data di nascita" richiesto. """)]
     public DateTime? BirthDay { get; set; }
 
@@ -44,7 +44,7 @@ public class EmployeeFormDto
     [Required(ErrorMessage = """ Campo "Tariffa oraria" richiesto.""")]
     public decimal CurrentHourlyRate { get; set; }
 
-    [StartDateRangeHourlyRate(MINIMUM_MONTH, MAXIMUM_MONTH, 
+    [StartDateRangeHourlyRate(
         ErrorMessage = """La data d'inizio non può essere oltre la data del giorno stesso.""")]
     [Required(ErrorMessage = """ Campo "Data d'inizio tariffa oraria" richiesto.""")]
     public DateTime? StartDateHourlyRate { get; set; }

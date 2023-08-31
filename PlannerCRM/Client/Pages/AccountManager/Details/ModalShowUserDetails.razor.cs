@@ -19,7 +19,7 @@ public partial class ModalShowUserDetails : ComponentBase
     private string _input;
 
     protected override async Task OnInitializedAsync() =>
-        _model = await AccountManagerService.GetEmployeeForViewAsync(Id);
+        _model = await AccountManagerService.GetEmployeeForViewByIdAsync(Id);
     
     protected override void OnInitialized() {
         _model = new();

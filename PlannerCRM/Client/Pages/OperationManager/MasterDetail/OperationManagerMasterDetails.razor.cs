@@ -21,7 +21,7 @@ public partial class OperationManagerMasterDetails : ComponentBase
     private ActivityViewDto _activityView;
 
     protected override async Task OnInitializedAsync() {
-        _workOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
+        _workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(WorkOrderId);
         _activities = await OperationManagerService.GetActivityPerWorkOrderAsync(_workOrder.Id); 
     }
 

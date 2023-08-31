@@ -72,7 +72,8 @@ public class ApplicationUserRepository
                 }
                 
                 var rolesList = await _userManager.GetRolesAsync(user);
-                var userRole = rolesList.Single();
+                var userRole = rolesList
+                    .Single();
 
                 var isInRole = await _userManager.IsInRoleAsync(user, userRole);
                 

@@ -8,14 +8,17 @@ public class ApplicationUserController : ControllerBase
     private readonly ApplicationUserRepository _repo;
     private readonly ILogger<ApplicationUserRepository> _logger;
 
-    public ApplicationUserController(ApplicationUserRepository repo, Logger<ApplicationUserRepository> logger) {
+    public ApplicationUserController(
+        ApplicationUserRepository repo, 
+        Logger<ApplicationUserRepository> logger) 
+    {
         _repo = repo;
         _logger = logger;
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add")]
-    public async Task<IActionResult> AddUser(EmployeeFormDto dto) {
+    public async Task<IActionResult> AddUserAsync(EmployeeFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
@@ -36,7 +39,8 @@ public class ApplicationUserController : ControllerBase
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
-        } catch (DbUpdateException exc) {    _logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+        } catch (DbUpdateException exc) {    
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return BadRequest(exc.Message);
         } catch (Exception exc) {
@@ -48,7 +52,7 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit")]
-    public async Task<IActionResult> EditUser(EmployeeFormDto dto) {
+    public async Task<IActionResult> EditUserAsync(EmployeeFormDto dto) {
         try {
             await _repo.EditAsync(dto);
 
@@ -78,7 +82,7 @@ public class ApplicationUserController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/{email}")]
-    public async Task<IActionResult> DeleteUser(string email) {
+    public async Task<IActionResult> DeleteUserAsync(string email) {
         try {
             await _repo.DeleteAsync(email);  
 

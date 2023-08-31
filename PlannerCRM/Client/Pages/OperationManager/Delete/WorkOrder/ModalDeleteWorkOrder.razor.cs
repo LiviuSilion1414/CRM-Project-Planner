@@ -19,7 +19,7 @@ public partial class ModalDeleteWorkOrder : ComponentBase
     private WorkOrderDeleteDto _model;
 
     protected override async Task OnInitializedAsync() =>
-        _model = await OperationManagerService.GetWorkOrderForDeleteAsync(Id);
+        _model = await OperationManagerService.GetWorkOrderForDeleteByIdAsync(Id);
 
     protected override void OnInitialized() {
         _model = new();

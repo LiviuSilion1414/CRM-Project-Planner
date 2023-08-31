@@ -21,10 +21,10 @@ public partial class ModalDeleteUser : ComponentBase
     private bool _isError;
 
     protected override async Task OnInitializedAsync() {
-        _model = await AccountManagerService.GetEmployeeForDeleteAsync(Id);
+        _model = await AccountManagerService.GetEmployeeForDeleteByIdAsync(Id);
         
         foreach (var ac in _model.EmployeeActivities) {
-            var workOrder =  await OperationManagerService.GetWorkOrderForViewAsync(ac.Activity.WorkOrderId);
+            var workOrder =  await OperationManagerService.GetWorkOrderForViewByIdAsync(ac.Activity.WorkOrderId);
             if (!_workOrders.Any(w => w.Id == workOrder.Id)) {
                 _workOrders.Add(workOrder);
             }

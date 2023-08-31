@@ -61,7 +61,7 @@ public partial class ModalFormActivity : ComponentBase
 
     private void OnClickSetWorkOrder(WorkOrderSelectDto workOrderSelect) {
         Model.WorkOrderId = workOrderSelect.Id;
-        Model.SelectedWorkorder = workOrderSelect.Name;
+        Model.SelectedWorkOrder = workOrderSelect.Name;
         Model.ClientName = workOrderSelect.ClientName;
         _workOrderHasBeenSet = !_workOrderHasBeenSet;
         ToggleWorkOrderListView();

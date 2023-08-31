@@ -26,8 +26,8 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
 
     protected override async Task OnInitializedAsync() {
         _invoice = await ProjectManagerService.GetInvoiceAsync(WorkOrderId);
-        _client = await OperationManagerService.GetClientForViewAsync(_invoice.ClientId);
-        _workOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);
+        _client = await OperationManagerService.GetClientForViewByIdAsync(_invoice.ClientId);
+        _workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(WorkOrderId);
     }
 
     protected override void OnInitialized()

@@ -6,7 +6,11 @@ public class WorkTimeRecordRepository
     private readonly DtoValidatorUtillity _validator;
 	private readonly ILogger<DtoValidatorUtillity> _logger;
 
-    public WorkTimeRecordRepository(AppDbContext db, DtoValidatorUtillity validator, Logger<DtoValidatorUtillity> logger) {
+    public WorkTimeRecordRepository(
+        AppDbContext db, 
+        DtoValidatorUtillity validator, 
+        Logger<DtoValidatorUtillity> logger) 
+    {
 	    _dbContext = db;
 	    _validator = validator;
 		_logger = logger;
@@ -21,8 +25,10 @@ public class WorkTimeRecordRepository
                     new WorkTimeRecord {
                         Id = dto.Id,
                         Date = dto.Date,
-                        Hours = dto.Hours ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
-                        TotalPrice = dto.TotalPrice + dto.Hours  ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
+                        Hours = dto.Hours 
+                            ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
+                        TotalPrice = dto.TotalPrice + dto.Hours  
+                            ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
                         ActivityId = dto.ActivityId,
                         EmployeeId = dto.EmployeeId,
                         Employee = _dbContext.Employees
@@ -70,15 +76,14 @@ public class WorkTimeRecordRepository
         
                 model.Id = dto.Id;
                 model.Date = dto.Date;
-                model.Hours = dto.Hours ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG);
+                model.Hours = dto.Hours 
+                    ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.IMPOSSIBLE_EDIT);
                 model.TotalPrice = dto.TotalPrice;
                 model.ActivityId = dto.ActivityId;
                 model.WorkOrderId = dto.WorkOrderId;
                 model.EmployeeId = dto.EmployeeId;
                 model.Employee = await _dbContext.Employees
-                    .Where(em => !em.IsDeleted && !em.IsArchived)
-                    .SingleAsync(em => em.Id == dto.EmployeeId);
-        
+                    .SingleAsync(em => !em.IsDeleted && !em.IsArchived && em.Id == dto.EmployeeId);
                 _dbContext.Update(model);
         
 				if (await _dbContext.SaveChangesAsync() == 0) {
@@ -96,14 +101,20 @@ public class WorkTimeRecordRepository
 
     public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, int employeeId) {
         var hasElements = await _dbContext.WorkTimeRecords
-            .AnyAsync(wtr => wtr.ActivityId == activityId && wtr.EmployeeId == employeeId);
+            .AnyAsync(wtr => 
+                wtr.ActivityId == activityId && 
+                wtr.EmployeeId == employeeId);
+                
         return hasElements 
             ? await _dbContext.WorkTimeRecords
                 .Select(wtr => new WorkTimeRecordViewDto {
                     Id = wtr.Id,
                     Date = wtr.Date,
                     Hours = _dbContext.WorkTimeRecords
-                        .Where(wtr => wtr.WorkOrderId == workOrderId && wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
+                        .Where(wtr => 
+                            wtr.WorkOrderId == workOrderId && 
+                            wtr.ActivityId == activityId && 
+                            wtr.EmployeeId == employeeId)
                         .Distinct()
                         .Sum(wtrSum => wtrSum.Hours),
                     TotalPrice = wtr.TotalPrice,
@@ -112,12 +123,18 @@ public class WorkTimeRecordRepository
                     EmployeeId = wtr.EmployeeId
                 })
                 .OrderByDescending(wtr => wtr.Hours)
-                .FirstAsync(wtr => wtr.WorkOrderId == workOrderId && wtr.ActivityId == activityId && wtr.EmployeeId == employeeId)
+                .SingleAsync(wtr => 
+                    wtr.WorkOrderId == workOrderId && 
+                    wtr.ActivityId == activityId && 
+                    wtr.EmployeeId == employeeId)
             : new();
     }
 
-    public async Task<List<WorkTimeRecordViewDto>> GetAllAsync() {
+    public async Task<List<WorkTimeRecordViewDto>> GetPaginatedWorkTimeRecordsAsync(int limit, int offset) {
         return await _dbContext.WorkTimeRecords
+            .OrderBy(wtr => wtr.Id)
+            .Skip(limit)
+            .Take(offset)
             .Select(wtr => new WorkTimeRecordViewDto {
                 Id = wtr.Id,
                 Date = wtr.Date,
@@ -129,7 +146,7 @@ public class WorkTimeRecordRepository
             .ToListAsync();
     }
 
-    public async Task<WorkTimeRecordViewDto> GetByEmployeeIdAsync(int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
         return await _dbContext.WorkTimeRecords
             .Select(wtr => 
                 new WorkTimeRecordViewDto {

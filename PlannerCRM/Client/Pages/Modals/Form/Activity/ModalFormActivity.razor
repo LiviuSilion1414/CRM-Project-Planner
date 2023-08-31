@@ -24,8 +24,8 @@
                 <div class="form-group">
                     <i class="bi bi-briefcase"></i>
                     <label for="Nome commessa">Commessa</label>
-                    <InputText type="search" @bind-Value="Model.SelectedWorkorder" class="form-control"/>
-                    <CustomValidationMessage FieldName="@nameof(Model.SelectedWorkorder)"/>
+                    <InputText type="search" @bind-Value="Model.SelectedWorkOrder" class="form-control"/>
+                    <CustomValidationMessage FieldName="@nameof(Model.SelectedWorkOrder)"/>
 
                     <ul id="workorder-list" hidden="@_hideWorkOrdersList">
                         @if (!_workOrdersHasElements) {
@@ -39,7 +39,7 @@
                     </ul> 
                     <div class="right">
                         <button type="button" class="btn btn-link" title="Cerca commessa"
-                            @onclick="@(() => OnClickSearchWorkOrder(Model.SelectedWorkorder))">
+                            @onclick="@(() => OnClickSearchWorkOrder(Model.SelectedWorkOrder))">
                                 <i class="bi bi-search"></i>
                                 Cerca
                         </button>

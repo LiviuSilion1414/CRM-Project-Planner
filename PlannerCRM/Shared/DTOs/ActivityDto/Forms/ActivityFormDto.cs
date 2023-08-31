@@ -23,7 +23,7 @@ public partial class ActivityFormDto
     public HashSet<EmployeeActivityDto> DeleteEmployeeActivity { get; set; }
 
     [Required(ErrorMessage = """ Campo "Commessa" richiesto. """)]
-    public string SelectedWorkorder { get; set; }
+    public string SelectedWorkOrder { get; set; }
 
     public string SelectedEmployee { get; set; }
 

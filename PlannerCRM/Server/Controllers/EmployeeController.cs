@@ -8,14 +8,17 @@ public class EmployeeController : ControllerBase
     private readonly EmployeeRepository _repo;
     private readonly ILogger<EmployeeRepository> _logger;
 
-    public EmployeeController(EmployeeRepository repo, Logger<EmployeeRepository> logger) {
+    public EmployeeController(
+        EmployeeRepository repo, 
+        Logger<EmployeeRepository> logger) 
+    {
         _repo = repo;
         _logger = logger;
     }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add")]
-    public async Task<IActionResult> AddUser(EmployeeFormDto dto) {
+    public async Task<IActionResult> AddEmployeeAsync(EmployeeFormDto dto) {
         try {
             await _repo.AddAsync(dto);
 
@@ -45,7 +48,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit")]
-    public async Task<IActionResult> EditUser(EmployeeFormDto dto) {
+    public async Task<IActionResult> EditEmployeeAsync(EmployeeFormDto dto) {
         try {
             await _repo.EditAsync(dto);
 
@@ -75,7 +78,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/{employeeId}")]
-    public async Task<IActionResult> DeleteUser(int employeeId) {
+    public async Task<IActionResult> DeleteEmployeeAsync(int employeeId) {
         try {
             await _repo.DeleteAsync(employeeId);
 
@@ -97,7 +100,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("archive/{employeeId}")]
-    public async Task<IActionResult> ArchiveUser(int employeeId) {
+    public async Task<IActionResult> ArchiveEmployeeAsync(int employeeId) {
         try {
             await _repo.ArchiveAsync(employeeId);
 
@@ -119,7 +122,7 @@ public class EmployeeController : ControllerBase
     
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("restore/{employeeId}")]
-    public async Task<IActionResult> RestoreUser(int employeeId) {
+    public async Task<IActionResult> RestoreEmployeeAsync(int employeeId) {
         try {
             await _repo.RestoreAsync(employeeId);
 
@@ -141,7 +144,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/for/restore/{employeeId}")]
-    public async Task<EmployeeSelectDto> GetForRestoreById(int employeeId) {
+    public async Task<EmployeeSelectDto> GetEmployeeForRestoreByIdAsync(int employeeId) {
         try {
             return await _repo.GetForRestoreAsync(employeeId);
         } catch (Exception exc) {
@@ -153,9 +156,9 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/for/view/{employeeId}")]
-    public async Task<EmployeeViewDto> GetForViewById(int employeeId) {
+    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(int employeeId) {
         try {
-            return await _repo.GetForViewAsync(employeeId);
+            return await _repo.GetForViewByIdAsync(employeeId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -165,9 +168,9 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/edit/{employeeId}")]
-    public async Task<EmployeeFormDto> GetForEditById(int employeeId) {
+    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) {
         try {
-            return await _repo.GetForEditAsync(employeeId);
+            return await _repo.GetForEditByIdAsync(employeeId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -177,9 +180,9 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/delete/{employeeId}")]
-    public async Task<EmployeeDeleteDto> GetForDeleteById(int employeeId) {
+    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(int employeeId) {
         try {
-            return await _repo.GetForDeleteAsync(employeeId);
+            return await _repo.GetForDeleteByIdAsync(employeeId);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -189,7 +192,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("search/{email}")]
-    public async Task<List<EmployeeSelectDto>> SearchEmployee(string email) {
+    public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
         try {
             return await _repo.SearchEmployeeAsync(email);
         } catch (Exception exc) {
@@ -201,11 +204,11 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit, int offset) {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset) {
         try {
-            return await _repo.GetPaginatedEmployees(limit, offset);
+            return await _repo.GetPaginatedEmployeesAsync(limit, offset);
         } catch (Exception exc) {
-             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
         }
@@ -213,9 +216,9 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/id/{email}")]
-    public async Task<CurrentEmployeeDto> GetUserId(string email) {
+    public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email) {
         try {
-            return await _repo.GetUserIdAsync(email);
+            return await _repo.GetEmployeeIdAsync(email);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -225,10 +228,9 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/id-check/{email}")]
-    public async Task<int> GetUserIdCheck(string email) {
+    public async Task<int> GetUserIdCheckAsync(string email) {
         try {
-            var currentEmployee = await _repo.GetUserIdAsync(email);
-            return currentEmployee.Id;
+            return (await _repo.GetEmployeeIdAsync(email)).Id;
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -238,9 +240,9 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/size")] 
-    public async Task<int> GetEmployeesSize() {
+    public async Task<int> GetEmployeesSizeAsync() {
         try {
-            return await _repo.GetEmployeesSize();
+            return await _repo.GetEmployeesSizeAsync();
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
