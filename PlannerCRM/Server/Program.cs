@@ -29,6 +29,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 builder.Services
     .Configure<IdentityOptions>(o =>
     {
+        o.User.RequireUniqueEmail = true;
         o.SignIn.RequireConfirmedEmail = false;
         o.Password.RequireNonAlphanumeric = false;
         o.Password.RequireDigit = false;
