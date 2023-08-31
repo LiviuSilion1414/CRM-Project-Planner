@@ -10,7 +10,11 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
 
-    private WorkOrderCostDto _invoice = new();
+    private WorkOrderCostDto _invoice = new() { 
+        Activities = new(),
+        Employees = new(), 
+        MonthlyActivityCosts = new() 
+    };
     private WorkOrderViewDto _workOrder = new();
     private ClientViewDto _client = new();
     private bool _isCancelClicked = false;
@@ -21,8 +25,6 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
     private readonly bool _isDisabled = true;
 
     protected override async Task OnInitializedAsync() {
-        await ProjectManagerService.AddInvoiceAsync(WorkOrderId);
-        
         _invoice = await ProjectManagerService.GetInvoiceAsync(WorkOrderId);
         _client = await OperationManagerService.GetClientForViewAsync(_invoice.ClientId);
         _workOrder = await OperationManagerService.GetWorkOrderForViewAsync(WorkOrderId);

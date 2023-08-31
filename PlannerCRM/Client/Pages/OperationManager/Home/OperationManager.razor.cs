@@ -32,6 +32,7 @@ public partial class OperationManager : ComponentBase
     protected override async Task OnInitializedAsync() {
         _collectionSize = await OperationManagerService.GetCollectionSize();
         _workOrders = await OperationManagerService.GetCollectionPaginated();
+
         foreach (var wo in _workOrders) {
             var clients = await OperationManagerService.SearchClientAsync(wo.ClientId);
             foreach (var client in clients) {

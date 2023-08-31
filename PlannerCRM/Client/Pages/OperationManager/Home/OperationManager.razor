@@ -10,30 +10,31 @@
             Aggiungi cliente
         </button>
     </div>
-    
-    <div class="child">
-        <button class="btn btn-primary" title="Aggiungi commessa" @onclick="OnClickAddWorkOrder">
-            <i class="bi bi-plus-circle-fill"></i>
-            Aggiungi commessa
-        </button>
-    </div>
-    
-    @if (_workOrders.Any()) {
+    @if (_clients.Any()) {
         <div class="child">
-            <button class="btn btn-primary" title="Aggiungi attività" @onclick="OnClickAddActivity">
+            <button class="btn btn-primary" title="Aggiungi commessa" @onclick="OnClickAddWorkOrder">
                 <i class="bi bi-plus-circle-fill"></i>
-                Aggiungi attività
+                Aggiungi commessa
             </button>
         </div>
-    }
-    <div class="child">
-        <button class="btn btn-primary" title="Visualizza clienti" @onclick=@OnClickShowClients>
-            <i class="bi bi-card-list"></i>
-            Visualizza clienti
-        </button>
-    </div>
-    @if (_isShowClientsClicked) { 
-        <ClientsList Title=@Titles.SHOW_ALL_CLIENTS/>
+        
+        @if (_workOrders.Any()) {
+            <div class="child">
+                <button class="btn btn-primary" title="Aggiungi attività" @onclick="OnClickAddActivity">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    Aggiungi attività
+                </button>
+            </div>
+        }
+        <div class="child">
+            <button class="btn btn-primary" title="Visualizza clienti" @onclick=@OnClickShowClients>
+                <i class="bi bi-card-list"></i>
+                Visualizza clienti
+            </button>
+        </div>
+        @if (_isShowClientsClicked) { 
+            <ClientsList Title=@Titles.SHOW_ALL_CLIENTS/>
+        }
     }
 </div>
 

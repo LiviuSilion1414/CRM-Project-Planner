@@ -21,7 +21,7 @@ public partial class ClientsList : ComponentBase
 
     protected override async Task OnInitializedAsync() {
         _collectionSize = await OperationManagerService.GetCollectionSizeAsync();
-        _clients = await OperationManagerService.GetClientsPaginated(0, 5);
+        _clients = await OperationManagerService.GetClientsPaginated();
         foreach (var client in _clients) {
             var workOrder = await OperationManagerService.GetWorkOrderForViewAsync(client.WorkOrderId);
 

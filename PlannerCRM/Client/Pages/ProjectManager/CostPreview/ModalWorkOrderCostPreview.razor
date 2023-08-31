@@ -10,12 +10,12 @@
             </div>
             <div class="container">
                 <div class="text-left">
-                    <label>Cliente</label>
-                    <input type="text" class="form-control" @bind=@_client.Name disabled=@_isDisabled readonly=@_isDisabled/>
+                    <label>Cliente: </label>
+                    <p> @_client.Name</p> 
                 </div>
                 <div class="text-right">
                     <label>Partitva IVA</label>
-                    <input type="text" class="form-control" @bind=@_client.VatNumber disabled=@_isDisabled readonly=@_isDisabled/>
+                    <p>@_client.VatNumber</p>
                 </div>
             </div>
             <div class="text-center">
@@ -25,29 +25,29 @@
                 <div class="container">
                     <div class="text-left">
                         <label>Nome</label>
-                        <input type="text" class="form-control" @bind=@_invoice.Name disabled=@_isDisabled readonly=@_isDisabled/>
+                        <p>@_invoice.Name </p>
                     </div>
                     <div class="text-left">
                         <label>Attività</label>
-                        <input type="text" class="form-control" @bind=@_invoice.TotalActivities disabled=@_isDisabled readonly=@_isDisabled/>
+                        <p>@_invoice.TotalActivities </p>
                     </div>
                     <div class="text-right">
                         <label>Dipendenti</label>
-                        <input type="text" class="form-control" @bind=@_invoice.TotalEmployees disabled=@_isDisabled readonly=@_isDisabled/>
+                        <p>@_invoice.TotalEmployees </p>
                     </div>
                 </div>
                 <div class="container">
                     <div class="text-right">
                         <label>Data inizio</label>
-                        <input type="text" class="form-control" @bind=@_invoice.StartDate disabled=@_isDisabled readonly=@_isDisabled/>
+                        <p>@_invoice.StartDate.ToString("dd/MM/yyyy") </p>
                     </div>
                     <div class="text-right">
                         <label>Data fine</label>
-                        <input type="text" class="form-control" @bind=@_invoice.TotalActivities disabled=@_isDisabled readonly=@_isDisabled/>
+                        <p>@_invoice.FinishDate.ToString("dd/MM/yyyy") </p>
                     </div>
                     <div class="text-right">
                         <label>Durata in giorni</label>
-                        <input type="text" class="form-control" @bind=@_invoice.TotalTime disabled=@_isDisabled readonly=@_isDisabled/>
+                        <p>@_invoice.TotalTime.Duration().Days </p>
                     </div>
                 </div>
             </div>
@@ -60,17 +60,18 @@
                         <th scope="col">Nome</th>
                         <th scope="col">Data inizio</th>
                         <th scope="col">Data fine</th>
-                        <th scope="col">Costo medio mensile</th>
                         <th scope="col">Costo totale attività</th>
                     </tr>
                     <tbody>
-                        <tr>
-                            <td>Lorem ipsum</td>
-                            <td>Lorem ipsum</td>
-                            <td>Lorem ipsum</td>
-                            <td>Lorem ipsum</td>
-                            <td>Lorem ipsum</td>
-                        </tr>
+                        @foreach (var ac in _invoice.Activities) {
+                            <tr>
+                                <td>@ac.Name</td>
+                                <td>@ac.StartDate</td>
+                                <td>@ac.FinishDate</td>
+                                <td>@_invoice.CostPerMonth</td> <!-- per ogni attività, calcolare il prezzo mensile -->
+                                <td>@ac.StartDate</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

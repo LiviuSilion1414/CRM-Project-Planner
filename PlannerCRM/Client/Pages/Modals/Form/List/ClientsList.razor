@@ -21,10 +21,11 @@
                                     <td>@cl.Name</td>
                                     <td>@cl.VatNumber</td>
                                     @foreach (var wo in _workOrders) {
-                                        @if (wo.Id == cl.WorkOrderId) {
+                                        @if (wo.Id == cl.WorkOrderId && cl.WorkOrderId > 0) {
                                             <td>@wo.Name</td>
-                                        } else {
-                                            <td>Nessuna commessa.</td>
+                                        }
+                                        else {
+                                            <td>@Titles.NOT_AVAILABLE_WORKORDERS</td>
                                         }
                                     }
                                     <td>

@@ -1,6 +1,13 @@
 @page "/project-manager"
 @layout MainLayout
 
+@if (_isError) {
+    <Feedback
+        Message=@_message
+        OnClickCancel=@HandleFeedbackCancel
+    />
+}
+
 <table class="table table-striped">
     <tr>
         <th scope="col">#</th>
@@ -8,7 +15,7 @@
         <th scope="col">Commessa</th>
         <th scope="col">Data inizio</th>
         <th scope="col">Data fine</th>
-        <th></th>
+        <th scope="col">Stato report</th>
         <th></th>
         <th></th>
     </tr>
@@ -23,7 +30,22 @@
                         <td>@workOrder.StartDate.ToString("dd/MM/yyyy")</td>
                         <td>@workOrder.FinishDate.ToString("dd/MM/yyyy")</td>
                         <td>
-                            <button type="button" class="btn btn-success" @onclick=@(() => ViewReport(workOrder.Id))>
+                            @if (workOrder.IsInvoiceCreated) {
+                                <span class="text-success">
+                                    <i class="bi bi-check2-circle"></i>
+                                    Creato.
+                                </span>
+                            } else {
+                                <button type="button" class="btn btn-primary" @onclick=@(() => CreateReport(workOrder.Id))>
+                                    @if (!workOrder.IsInvoiceCreated) {
+                                        <i class="bi bi-plus-circle"></i>
+                                    }
+                                    Genera report
+                                </button>
+                            }
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary" @onclick=@(() => ViewReport(workOrder.Id))>
                                 <i class="bi bi-receipt"></i>
                                 Visualizza report
                             </button>
@@ -41,7 +63,7 @@
     <p>@Titles.NOT_AVAILABLE_WORKORDERS</p>
 }
 
-@if (_isInvoiceClicked) {
+@if (_isViewInvoiceClicked) {
     <ModalWorkOrderCostPreview
         Title=@Titles.REPORT_DETAILS
         WorkOrderId=@_workOrderId

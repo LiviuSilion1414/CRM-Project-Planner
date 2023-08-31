@@ -222,7 +222,6 @@ public class OperationManagerCrudService
         }
     }
     
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     public async Task<WorkOrderViewDto> GetWorkOrderForViewAsync(int workOrderId) {
         try {
             return await _http
