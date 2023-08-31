@@ -1,5 +1,3 @@
-using PlannerCRM.Shared.DTOs.ClientDto;
-
 namespace PlannerCRM.Shared.DTOs.Workorder.Forms;
 
 public partial class WorkOrderFormDto
