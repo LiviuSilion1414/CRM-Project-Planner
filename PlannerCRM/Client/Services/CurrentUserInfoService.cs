@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace PlannerCRM.Client.Services;
 
 public class CurrentUserInfoService
@@ -7,7 +5,10 @@ public class CurrentUserInfoService
     private readonly HttpClient _http;
     private readonly ILogger<CurrentUserInfoService> _logger;
     
-    public CurrentUserInfoService(HttpClient http, Logger<CurrentUserInfoService> logger) {
+    public CurrentUserInfoService(
+        HttpClient http, 
+        Logger<CurrentUserInfoService> logger) 
+    {
         _http = http;
         _logger = logger;
     }

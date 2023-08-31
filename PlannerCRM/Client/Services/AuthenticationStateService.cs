@@ -6,7 +6,10 @@ public class AuthenticationStateService : AuthenticationStateProvider
     private readonly ILogger<AuthenticationStateService> _logger;
     private CurrentUser _currentUser;
 
-    public AuthenticationStateService(CurrentUserInfoService authInfoService, ILogger<AuthenticationStateService> logger) {
+    public AuthenticationStateService(
+        CurrentUserInfoService authInfoService, 
+        ILogger<AuthenticationStateService> logger) 
+    {
         _authInfoService = authInfoService;
         _logger = logger;
         _currentUser = new();
@@ -18,7 +21,7 @@ public class AuthenticationStateService : AuthenticationStateProvider
            
             _currentUser = await GetCurrentUserAsync();
             if (_currentUser.IsAuthenticated) {
-                var claims = new List<Claim> { new Claim(ClaimTypes.Name, _currentUser.UserName) }
+                var claims = new List<Claim> { new(ClaimTypes.Name, _currentUser.UserName) }
                     .Concat(_currentUser.Claims
                         .Select(c => new Claim(c.Key, c.Value))
                     );
@@ -28,7 +31,7 @@ public class AuthenticationStateService : AuthenticationStateProvider
                 return new AuthenticationState(new ClaimsPrincipal(identity));
             } else {
                 identity = new ClaimsIdentity(new List<Claim> {
-                    new Claim(ClaimTypes.Name, "Anonymous")
+                    new(ClaimTypes.Name, "Anonymous")
                 });
 
                 return new AuthenticationState(new ClaimsPrincipal(identity));
@@ -45,7 +48,9 @@ public class AuthenticationStateService : AuthenticationStateProvider
             _currentUser = await _authInfoService.GetCurrentUserInfoAsync();
             
             return _currentUser is not null ? _currentUser : new();
-        } catch {
+        } catch (Exception exc) {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
             return new();
         }
     }

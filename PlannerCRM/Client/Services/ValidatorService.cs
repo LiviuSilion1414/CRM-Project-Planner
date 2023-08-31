@@ -10,11 +10,11 @@ public static class ValidatorService
         var properties = model 
             .GetType()
             .GetProperties()
-            .Select(prop => prop)
             .ToList();
         
         foreach (var property in properties) {
             var validationAttributes = property.GetCustomAttributes<ValidationAttribute>();
+            
             foreach (var attribute in validationAttributes) {
                 var propertyValue = property.GetValue(model);
 

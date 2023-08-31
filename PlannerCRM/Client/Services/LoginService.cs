@@ -21,5 +21,6 @@ public class LoginService
         }
     }
 
-    public async Task LogoutAsync() => await _http.GetAsync("api/account/logout");
+    public async Task LogoutAsync() => 
+        await _http.GetAsync("api/account/logout");
 }

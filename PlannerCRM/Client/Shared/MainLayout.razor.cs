@@ -6,7 +6,7 @@ public partial class MainLayout
 {
     [Inject] public CurrentUserInfoService CurrentUserInfoService { get; set; }
     [Inject] public AuthenticationStateService AuthStateService { get; set; }
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public LoginService LoginService { get; set; }
     
     private string _userRole;
@@ -34,10 +34,10 @@ public partial class MainLayout
 
             if (Enum.TryParse(_userRole, out Roles parsedRole)) {
                 var navigationUrl = BuildNavigationUrl(parsedRole);
-                NavigationManager.NavigateTo(navigationUrl);
+                NavManager.NavigateTo(navigationUrl);
             }
         } else {
-            NavigationManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG);
+            NavManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG);
         }
     }
 
@@ -53,6 +53,6 @@ public partial class MainLayout
 
     public async Task OnClickLogout() {
         await LoginService.LogoutAsync();
-        NavigationManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG, true);
+        NavManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG, true);
     }
 }

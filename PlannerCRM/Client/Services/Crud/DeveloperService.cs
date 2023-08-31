@@ -7,7 +7,10 @@ public class DeveloperService
     private readonly HttpClient _http;
     private readonly ILogger<DeveloperService> _logger;
 
-    public DeveloperService(HttpClient http, Logger<DeveloperService> logger) {
+    public DeveloperService(
+        HttpClient http, 
+        Logger<DeveloperService> logger) 
+    {
         _http = http;
         _logger = logger;
     }
@@ -67,7 +70,7 @@ public class DeveloperService
         }
     }
 
-    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByEmployeeId(int employeeId) {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<List<WorkTimeRecordViewDto>>($"api/worktimerecord/get/by/employee/{employeeId}");
@@ -78,7 +81,7 @@ public class DeveloperService
         }
     }
     
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecords(int workOrderId, int activityId, int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordsAsync(int workOrderId, int activityId, int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<WorkTimeRecordViewDto>($"api/worktimerecord/get/{workOrderId}/{activityId}/{employeeId}");
@@ -89,7 +92,7 @@ public class DeveloperService
         }
     }
     
-    public async Task<int> GetCollectionSizeByEmployeeId(int employeeId) {
+    public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<int>($"api/activity/get/size/by/employee/id/{employeeId}");

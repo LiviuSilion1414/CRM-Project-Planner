@@ -12,7 +12,10 @@ public class OperationManagerCrudService
     private readonly HttpClient _http;
     private readonly ILogger<OperationManagerCrudService> _logger;
 
-    public OperationManagerCrudService(HttpClient http, Logger<OperationManagerCrudService> logger) {
+    public OperationManagerCrudService(
+        HttpClient http, 
+        Logger<OperationManagerCrudService> logger) 
+    {
         _http = http;
         _logger = logger;
     }
@@ -81,7 +84,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<List<ClientViewDto>> GetClientsPaginated(int limit = 0, int offset = 5) {
+    public async Task<List<ClientViewDto>> GetClientsPaginatedAsync(int limit = 0, int offset = 5) {
         try {
             return await _http
                 .GetFromJsonAsync<List<ClientViewDto>>($"api/client/get/paginated/{limit}/{offset}");
@@ -92,7 +95,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<int> GetCollectionSize() {
+    public async Task<int> GetWorkOrdersCollectionSizeAsync() {
         try {
             return await _http
                 .GetFromJsonAsync<int>("api/workorder/get/size/");
@@ -103,7 +106,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<List<WorkOrderViewDto>> GetCollectionPaginated(int limit = 0, int offset = 5) {
+    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5) {
         try {
             return await _http
                 .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/workorder/get/paginated/{limit}/{offset}");
@@ -270,7 +273,7 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<int> GetCollectionSizeAsync() {
+    public async Task<int> GetClientsCollectionSizeAsync() {
         try {
             return await _http
                 .GetFromJsonAsync<int>("api/client/get/size/");

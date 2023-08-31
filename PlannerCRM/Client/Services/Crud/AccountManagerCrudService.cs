@@ -5,12 +5,15 @@ public class AccountManagerCrudService
     private readonly HttpClient _http;
     private readonly ILogger<AccountManagerCrudService> _logger;
 
-    public AccountManagerCrudService(HttpClient http, Logger<AccountManagerCrudService> logger) {
+    public AccountManagerCrudService(
+        HttpClient http, 
+        Logger<AccountManagerCrudService> logger) 
+    {
         _http = http;
         _logger = logger;
     }
 
-    public async Task<int> GetEmployeesSize() {
+    public async Task<int> GetEmployeesSizeAsync() {
         try {
             return await _http
                 .GetFromJsonAsync<int>("api/employee/get/size/");
@@ -21,7 +24,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployees(int limit = 0, int offset = 5) {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit = 0, int offset = 5) {
         try {
             return await _http
                 .GetFromJsonAsync<List<EmployeeViewDto>>($"api/employee/get/paginated/{limit}/{offset}");

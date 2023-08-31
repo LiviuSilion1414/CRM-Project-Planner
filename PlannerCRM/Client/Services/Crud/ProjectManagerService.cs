@@ -11,7 +11,7 @@ public class ProjectManagerService
         _logger = logger;       
     }
 
-    public async Task<List<WorkOrderViewDto>> GetPaginatedAsync(int limit = 0, int offset = 5) {
+    public async Task<List<WorkOrderViewDto>> GetWorkOrdersCostsPaginatedAsync(int limit = 0, int offset = 5) {
         try {
             return await _http
                 .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/calculator/get/paginated/{limit}/{offset}");
@@ -55,7 +55,7 @@ public class ProjectManagerService
         }
     }
 
-    public async Task<int> GetCollectionSize() {
+    public async Task<int> GetWorkOrderCostsCollectionSizeAsync() {
         try {
             return await _http
                 .GetFromJsonAsync<int>("api/calculator/get/size");
