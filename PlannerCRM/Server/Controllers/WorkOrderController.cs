@@ -1,12 +1,6 @@
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = $"""
-    {nameof(Roles.OPERATION_MANAGER)}, 
-    {nameof(Roles.SENIOR_DEVELOPER)}, 
-    {nameof(Roles.JUNIOR_DEVELOPER)},
-    {nameof(Roles.ACCOUNT_MANAGER)}
-    {nameof(Roles.PROJECT_MANAGER)}
-""" )]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class WorkOrderController : ControllerBase
@@ -125,7 +119,6 @@ public class WorkOrderController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/for/view/{workOrderId}")]
     public async Task<WorkOrderViewDto> GetForViewId(int workOrderId) {
         try {
