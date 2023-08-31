@@ -38,8 +38,8 @@ public partial class Login : ComponentBase
                     var role =  await CurrentUserInfoService.GetCurrentUserRoleAsync();
     
                     foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-                        var roleValue = possibleRole.ToString();
-                        if (possibleRole.ToString() == role) {
+                        var roleValue = possibleRole as string;
+                        if (possibleRole as string == role) {
                             if (roleValue == nameof(Roles.SENIOR_DEVELOPER) || roleValue == nameof(Roles.JUNIOR_DEVELOPER)) {
                                 NavigationManager.NavigateTo($"{role.ToLower().Replace('_', '-')}/{_currentEmployee.Id}", true);
                             } else {

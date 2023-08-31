@@ -6,11 +6,9 @@ public class StartDateRangeAttribute : ValidationAttribute
         if (value is null) return false;
         
         if (value.GetType() == typeof(DateTime) ) {
-            var startDate = Convert.ToDateTime(value);
-            
-            return startDate <= CURRENT_DATE;
-        } else {
-            return false;
+            return (DateTime) value <= CURRENT_DATE;
         }
+            
+        return false;
     }
 }

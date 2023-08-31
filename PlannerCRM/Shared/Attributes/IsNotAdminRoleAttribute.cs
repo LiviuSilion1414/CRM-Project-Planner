@@ -2,10 +2,10 @@ namespace PlannerCRM.Shared.Attributes;
 
 public class IsNotAdminRoleAttribute : ValidationAttribute
 {
-    private Roles AdminRole { get; set; }
+    private readonly Roles _adminRole;
 
     public IsNotAdminRoleAttribute(Roles adminRole) {
-        AdminRole = adminRole;
+        _adminRole = adminRole;
     }
 
     public IsNotAdminRoleAttribute()
@@ -17,11 +17,11 @@ public class IsNotAdminRoleAttribute : ValidationAttribute
         if (value.GetType() == typeof(Roles)) {
             var isInAdminRole = value.GetType()
                 .GetProperties()
-                .Any(role => role.Name == nameof(AdminRole));
+                .Any(role => role.Name == nameof(_adminRole));
             
             return !isInAdminRole;
-        } else {
-            return false;
         }
+    
+        return false;
     }
 }

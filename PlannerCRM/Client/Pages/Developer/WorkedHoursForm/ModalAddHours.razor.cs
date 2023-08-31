@@ -34,9 +34,9 @@ public partial class ModalAddHours : ComponentBase
     protected override async Task OnInitializedAsync() {
         _employeeRole = await CurrentUserInfoService.GetCurrentUserRoleAsync();
         foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-            if ((possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER) && possibleRole.ToString() == _employeeRole) || 
-                (possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER) && possibleRole.ToString() == _employeeRole)) {
-                _employeeRole = possibleRole.ToString();
+            if ((possibleRole as string == nameof(Roles.SENIOR_DEVELOPER) && possibleRole as string == _employeeRole) || 
+                (possibleRole as string == nameof(Roles.JUNIOR_DEVELOPER) && possibleRole as string == _employeeRole)) {
+                _employeeRole = possibleRole as string;
             }
         }
         _model.Employee = await AccountManagerService.GetEmployeeForViewAsync(EmployeeId);
@@ -55,13 +55,13 @@ public partial class ModalAddHours : ComponentBase
 
     public void RedirectToPage() {
         foreach (var possibleRole in Enum.GetValues(typeof(Roles))) {
-            if ((possibleRole.ToString() == _employeeRole) && (possibleRole.ToString() == _employeeRole) && 
-                (possibleRole.ToString() == nameof(Roles.SENIOR_DEVELOPER))) {
+            if ((possibleRole as string == _employeeRole) && (possibleRole as string == _employeeRole) && 
+                (possibleRole as string == nameof(Roles.SENIOR_DEVELOPER))) {
                 
                 NavigationManager.NavigateTo($"/senior-developer/{EmployeeId}");
             }
-            if ((possibleRole.ToString() == _employeeRole) && (possibleRole.ToString() == _employeeRole) && 
-                (possibleRole.ToString() == nameof(Roles.JUNIOR_DEVELOPER))) {
+            if ((possibleRole as string == _employeeRole) && (possibleRole as string == _employeeRole) && 
+                (possibleRole as string == nameof(Roles.JUNIOR_DEVELOPER))) {
                 
                 NavigationManager.NavigateTo($"/junior-developer/{EmployeeId}");
             }

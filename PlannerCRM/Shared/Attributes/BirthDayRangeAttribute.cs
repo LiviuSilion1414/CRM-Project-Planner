@@ -2,12 +2,12 @@ namespace PlannerCRM.Shared.Attributes;
 
 public class BirthDayRangeAttribute : ValidationAttribute
 {
-    private int Minimum { get; set; }
-    private int Maximum { get; set; }
+    private readonly int _minimum;
+    private readonly int _maximum;
 
     public BirthDayRangeAttribute(int minimum, int maximum) {
-        Minimum = minimum;
-        Maximum = maximum;
+        _minimum = minimum;
+        _maximum = maximum;
     }
 
     public BirthDayRangeAttribute()
@@ -20,9 +20,9 @@ public class BirthDayRangeAttribute : ValidationAttribute
             var date = Convert.ToDateTime(value);
             var totalYears = CURRENT_DATE.Year - date.Year;
         
-            return (((totalYears >= Minimum) && (totalYears <= Maximum)) && (date <= CURRENT_DATE));
-        } else {
-            return false;
+            return (totalYears >= _minimum) && (totalYears <= _maximum) && (date <= CURRENT_DATE);
         }
+        
+        return false;
     }
 }

@@ -39,8 +39,7 @@ public class ActivityRepository
         
                 _dbContext.Update(workOrder);
                 
-                var rowsAffected = await _dbContext.SaveChangesAsync();
-                if (rowsAffected == 0) {
+                if (await _dbContext.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
                 }
             } else {

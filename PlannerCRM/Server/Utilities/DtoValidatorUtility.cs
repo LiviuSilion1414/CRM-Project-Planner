@@ -15,7 +15,7 @@ public class DtoValidatorUtillity
 
         if (isValid) {
             if (dto.Role == ConstantValues.ADMIN_ROLE || dto.Email == ConstantValues.ADMIN_EMAIL) {
-                throw new DuplicateElementException(message: ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
+                throw new DuplicateElementException(ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
             }
 
             var employeeIsAlreadyPresent = await _dbContext.Employees
@@ -27,13 +27,13 @@ public class DtoValidatorUtillity
 
             if (operation == OperationType.ADD) {
                 if (employeeIsAlreadyPresent && userIsAlreadyPresent) {
-                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                    throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }
             } 
             
             if (operation == OperationType.EDIT) {
                 if (!employeeIsAlreadyPresent && !userIsAlreadyPresent) {
-                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                    throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
                 }
             }
 
@@ -52,13 +52,13 @@ public class DtoValidatorUtillity
             
             if (operation == OperationType.ADD) {
                 if (clientIsAlreadyPresent) {
-                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                    throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }
             } 
             
             if (operation == OperationType.EDIT) {
                 if (!clientIsAlreadyPresent) {
-                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                    throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
                 }
             }
 
@@ -77,12 +77,13 @@ public class DtoValidatorUtillity
 
             if (operation == OperationType.ADD) {
                 if (isAlreadyPresent) {
-                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                    throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }
             } 
+
             if (operation == OperationType.EDIT) {
                 if (!isAlreadyPresent) {
-                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                    throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
                 }
             }
 
@@ -101,12 +102,13 @@ public class DtoValidatorUtillity
 
             if (operation == OperationType.ADD) {
                 if (isAlreadyPresent) {
-                    throw new DuplicateElementException(message: ExceptionsMessages.OBJECT_ALREADY_PRESENT);
+                    throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }
             } 
+            
             if (operation == OperationType.EDIT) {
                 if (!isAlreadyPresent) {
-                    throw new KeyNotFoundException(message: ExceptionsMessages.OBJECT_NOT_FOUND);
+                    throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
                 }
             }
 

@@ -7,13 +7,11 @@ public class WorkOrderStartDateRangeAttribute : ValidationAttribute
 
         if (value.GetType() == typeof(DateTime)) {
             var startDate = Convert.ToDateTime(value);
-            
-            return ((startDate.Month >= MIN_WORKORDER_MONTH_CONTRACT) 
-                || (startDate.Month <= MAX_WORKORDER_MONTH_CONTRACT)) 
-                ? true 
-                : false;
-        } else {
-            return false;
-        }
+
+            return (startDate.Month >= MIN_WORKORDER_MONTH_CONTRACT) || 
+                (startDate.Month <= MAX_WORKORDER_MONTH_CONTRACT);
+        } 
+        
+        return false;
     }
 }

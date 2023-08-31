@@ -2,12 +2,12 @@ namespace PlannerCRM.Shared.Attributes;
 
 public class WorkOrderFinishDateRangeAttribute : ValidationAttribute
 {
-    private int Minimum { get; set; }
-    private int Maximum { get; set; }
+    private readonly int _minimum;
+    private readonly int _maximum;
 
     public WorkOrderFinishDateRangeAttribute(int minimum, int maximum) {
-        Minimum = minimum;
-        Maximum = maximum;
+        _minimum = minimum;
+        _maximum = maximum;
     }
 
     public WorkOrderFinishDateRangeAttribute() 
@@ -19,16 +19,12 @@ public class WorkOrderFinishDateRangeAttribute : ValidationAttribute
         if (value.GetType() == typeof(DateTime)) {
             var date = Convert.ToDateTime(value);
             if (date > CURRENT_DATE) {
-                if ((date.Month >= Minimum) && (date.Month <= Maximum)) {
+                if ((date.Month >= _minimum) && (date.Month <= _maximum)) {
                     return true;
-                } else {
-                    return false;
                 }
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        
+        return false;
     }
 }
