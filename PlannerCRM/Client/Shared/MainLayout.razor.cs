@@ -21,6 +21,11 @@ public partial class MainLayout
     public async Task NavigateBasedOnRole()
         => await HandleAuthenticationAndNavigation();
 
+    protected override void OnInitialized() {
+        _currentEmployee = new();
+        _currentUser = new();
+    }
+
     private async Task HandleAuthenticationAndNavigation() {
         var authState = await AuthStateService.GetAuthenticationStateAsync();
         _currentUser = await AuthStateService.GetCurrentUserAsync();
