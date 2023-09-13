@@ -40,8 +40,6 @@ public partial class MainLayout
 
             var navigationUrl = NavigationUtil.BuildNavigationUrl(_userRole, _currentEmployee.Id);
             NavManager.NavigateTo(navigationUrl);
-        } else {
-            NavManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG);
         }
     }
 
