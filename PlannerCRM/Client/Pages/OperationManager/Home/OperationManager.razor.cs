@@ -19,10 +19,6 @@ public partial class OperationManager : ComponentBase
     private bool _isCreateActivityClicked;
     private bool _isShowClientsClicked;
 
-    private bool _hasMoreWorkOrders;
-
-    private int _clientId; 
-
     private int _collectionSize;
 
     protected override void OnInitialized() {
@@ -30,10 +26,11 @@ public partial class OperationManager : ComponentBase
         _filteredList = new();
         _clients = new();
         _actions = new() {
-            { "Tutti", OnClickAll },
-            { "Nome", OnClickFilterByName },
-            { "Dal più recente", OnClickFilterByLatest },
-            { "Dal meno recente", OnClickFilterByOldest },
+            { "Tutte", GetAll },
+            { "Attive", GetActive },
+            { "Archiviate", GetArchived },
+            { "Completate", GetCompleted },
+            { "Eliminate", GetDeleted },
         };
     }
 
@@ -62,39 +59,46 @@ public partial class OperationManager : ComponentBase
         StateHasChanged();
     } 
 
-    private void OnClickAll() {
+    private void GetAll() {
         _filteredList = new(_workOrders);
 
         StateHasChanged();
     }
 
-    private void OnClickFilterByName() {
+    private void GetArchived() {
         _filteredList = _workOrders
-            .OrderBy(wo => wo.Name)
+            .Where(wo => wo.IsArchived)
             .ToList();
 
         StateHasChanged();
     }
 
-    private void OnClickFilterByLatest() {
+    private void GetActive() {
         _filteredList = _workOrders
-            .OrderByDescending(wo => wo.Id)
+            .Where(wo => !wo.IsDeleted || !wo.IsCompleted || !wo.IsArchived)
             .ToList();
         
         StateHasChanged();
     }
 
-    private void OnClickFilterByOldest() {
+    private void GetCompleted() {
         _filteredList = _workOrders
-            .OrderBy(wo => wo.Id)
+            .Where(wo => wo.IsCompleted)
             .ToList();
 
         StateHasChanged();
     }
-    
+
+    private void GetDeleted() {
+        _filteredList = _workOrders
+            .Where(wo => wo.IsDeleted)
+            .ToList();
+
+        StateHasChanged();
+    }
+
     public async Task HandlePaginate(int limit, int offset) {
         _workOrders = await OperationManagerService.GetPaginatedWorkOrdersAsync(limit, offset);
-        _hasMoreWorkOrders = _workOrders.Any();
     }
 
     public async Task OnClickShowClients() {
@@ -113,6 +117,5 @@ public partial class OperationManager : ComponentBase
 
     public void OnClickDeleteClient(int id) {
         _isDeleteClientClicked = !_isDeleteClientClicked;
-        _clientId = id;
     }
 }

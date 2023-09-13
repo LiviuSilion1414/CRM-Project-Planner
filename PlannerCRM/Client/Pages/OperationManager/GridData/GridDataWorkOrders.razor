@@ -72,6 +72,10 @@
     </tbody>
 </table>
 
+@if (!WorkOrders.Any()) {
+    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+}
+
 @if (_isEditWorkOrderClicked) { 
     <ModalEditWorkOrder 
         Id="@_workOrderId" 

@@ -5,50 +5,27 @@ public partial class AccountManager : ComponentBase
 {
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
 
-    private Dictionary<string, Action> _actions = new();
-    private int _userId;
-
-    private bool _isViewClicked;
-    private bool _isAddClicked;
-    private bool _isEditClicked;
-    private bool _isDeleteClicked;
-    private bool _isRestoreClicked;
-
     private List<EmployeeViewDto> _users;
     private List<EmployeeViewDto> _filteredList;
-    private IEnumerable<IDtoComparer> _outcomingList;
-    private IEnumerable<IDtoComparer> _incomingList;
-    private List<string> _usersNames;
+    private Dictionary<string, Action> _actions = new();
+
+    private bool _isAddClicked;
     private int _collectionSize;
-    private string _input;
 
     protected override async Task OnInitializedAsync() {
-        await FetchDataAsync();
         _collectionSize = await AccountManagerService.GetEmployeesSizeAsync();
+
+        await FetchDataAsync();
     }
 
     protected override void OnInitialized() {
         _users = new();
-        _outcomingList = new List<EmployeeViewDto>();
-        _incomingList = new List<EmployeeViewDto>();
-        _filteredList = new(_users);
-        _usersNames = new();
+        _filteredList = new();
         _actions = new() {
             { "Tutti",  OnClickAll },
-            { "Nome",  OnClickFilterByName },
-            { "Dal più recente",  OnClickFilterByLatest },
-            { "Dal meno recente",  OnClickFilterByOldest }
+            { "Attivi",  OnClickFilterIfActive },
+            { "Archiviati",  OnClickFilterIfArchived },
         };
-        _outcomingList = _users
-            .Select(us => 
-                new EmployeeViewDto {
-                    Name = us.Name,
-                    Id = us.Id,
-                    FullName = us.FullName,
-                    IsDeleted = us.IsDeleted
-                }
-            )
-            .ToList();
     } 
 
     private void HandleSearchedElements(string query) {
@@ -66,25 +43,17 @@ public partial class AccountManager : ComponentBase
         StateHasChanged();
     }
 
-    private void OnClickFilterByName() {
+    private void OnClickFilterIfActive() {
         _filteredList = _users
-            .OrderBy(us => us.FullName)
+            .Where(us => !us.IsArchived)
             .ToList();
 
         StateHasChanged();
     }
 
-    private void OnClickFilterByLatest() {
+    private void OnClickFilterIfArchived() {
         _filteredList = _users
-            .OrderByDescending(us => us.Id)
-            .ToList();
-
-        StateHasChanged();
-    }
-
-    private void OnClickFilterByOldest() {
-        _filteredList = _users
-            .OrderBy(us => us.Id)
+            .Where(us => us.IsArchived)
             .ToList();
 
         StateHasChanged();

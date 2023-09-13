@@ -6,19 +6,17 @@
         Actions=@_actions/>
 </div>
 
-<div class="search-box">
-    <SearchBox
-        GetSearchedItems=@HandleSearchedElements/>
-</div>
+@if (_filteredList.Any()) {
+    <div class="search-box">
+        <SearchBox
+            GetSearchedItems=@HandleSearchedElements/>
+    </div>
+}
 
 <GridDataReport
     WorkOrders=@_filteredList
     Clients=@_clients
 />
-
-@if (!_workOrders.Any()) {
-    <p>@Titles.NOT_AVAILABLE_WORKORDERS</p>
-}
 
 @if (_filteredList.Any()) {
     <Paginator

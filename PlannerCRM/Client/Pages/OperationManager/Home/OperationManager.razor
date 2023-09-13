@@ -42,19 +42,17 @@
     <OptionsFilter
         Actions=@_actions/>
 </div>
-    
-<div class="search-box">
-    <SearchBox
-        GetSearchedItems="@HandleSearchedElements"/>
-</div>
+
+@if (_filteredList.Any()) {
+    <div class="search-box">
+        <SearchBox
+            GetSearchedItems="@HandleSearchedElements"/>
+    </div>
+}
 
 <GridDataWorkOrders
     WorkOrders=@_filteredList
     Clients=@_clients/>
-
-@if (!_filteredList.Any()) {
-    <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
-}
 
 @if (_isCreateClientClicked) {
     <ModalAddClient
@@ -70,6 +68,8 @@
     <ModalAddActivity Title=@Titles.ADD_ACTIVITY/>
 }
 
-<Paginator
-    CollectionSize="@_collectionSize"
-    Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
+@if (_filteredList.Any()) {
+    <Paginator
+        CollectionSize="@_collectionSize"
+        Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
+}
