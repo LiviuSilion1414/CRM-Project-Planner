@@ -5,34 +5,42 @@ public partial class Paginator : ComponentBase
     [Parameter] public int CollectionSize { get; set; }
     [Parameter] public EventCallback<(int, int)> Paginate { get; set; }
 
-    private readonly int _offset = 5;
-
+    private readonly int _elementsToTake = 5;
+    private int _elementsToSkip;
     private int _totalPageNumbers;
-    private int _pageNumber = 1;
-    private int _limit;
+    private int _pageNumber;
+    private double _result; 
     
-    protected override void OnInitialized() => _totalPageNumbers = CollectionSize / _offset;
+    protected override void OnInitialized() {
+        _elementsToSkip = 0;
+        _pageNumber = 1;
+        _result = CollectionSize % _elementsToTake;
+        _totalPageNumbers = _elementsToTake > CollectionSize
+            ? 1
+            : ((int) Math.Ceiling(_result));
+    }
 
     private async Task Previous() {
-        if (_limit <= _offset) {
-            _limit = 0;
+        if (_elementsToSkip <= _elementsToTake) {
+            _elementsToSkip = 0;
             _pageNumber = 1;
         } else {
-            _limit -= _offset;
+            _elementsToSkip -= _elementsToTake;
             _pageNumber--;
         }
-       await InvokeCallbackAsync(Paginate, _limit, _offset);
+
+        await InvokeCallbackAsync(Paginate, _elementsToSkip, _elementsToTake);
     }
 
     private async Task Next() {
-        if (_limit < _totalPageNumbers + _offset) {
-            _limit += _offset;
+        if (_elementsToSkip <= (_totalPageNumbers + _elementsToTake)) {
+            _elementsToSkip += _elementsToTake;
             _pageNumber++; 
         }
        
-       await InvokeCallbackAsync(Paginate, _limit, _offset);
+       await InvokeCallbackAsync(Paginate, _elementsToSkip, _elementsToTake);
     }
 
-    private static async Task InvokeCallbackAsync(EventCallback<(int, int)> callback, int limit, int offset) 
-        => await callback.InvokeAsync((limit, offset));
+    private static async Task InvokeCallbackAsync(EventCallback<(int, int)> callback, int skip, int take) 
+        => await callback.InvokeAsync((skip, take));
 }
