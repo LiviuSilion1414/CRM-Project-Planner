@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Components.Search;
+namespace PlannerCRM.Client.Components.FilterAndSearch.Search;
 
 public partial class SearchBox : ComponentBase
 {

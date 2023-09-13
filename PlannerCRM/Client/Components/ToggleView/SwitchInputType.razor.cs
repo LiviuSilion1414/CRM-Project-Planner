@@ -9,7 +9,7 @@ public partial class SwitchInputType : ComponentBase
 
     protected override async Task OnInitializedAsync() {
        _isSelected = false;
-       _input = Types.PASSWORD;
+       _input = Types.Password;
 
        await Switch.InvokeAsync(_input);
     }
@@ -17,13 +17,13 @@ public partial class SwitchInputType : ComponentBase
     private async Task Toggle() {
         _isSelected = !_isSelected;
 
-        _input = _isSelected ? Types.TEXT : Types.PASSWORD;
+        _input = _isSelected ? Types.Text : Types.Password;
 
         await Switch.InvokeAsync(_input);
     }
 
     internal class Types {
-        public const string TEXT = "text";
-        public const string PASSWORD = "password";
+        public const string Text = "text";
+        public const string Password = "password";
     }
 }

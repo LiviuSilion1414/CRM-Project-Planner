@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Components.Filter;
+namespace PlannerCRM.Client.Components.FilterAndSearch.Filter;
 
 public partial class OptionsFilter : ComponentBase
 {
