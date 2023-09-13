@@ -39,7 +39,7 @@ public class WorkOrderRepository
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 				}
 
-				await SetForeignKeyToClientAsync(dto.ClientId);
+				await SetForeignKeyToClientAsync(dto.ClientId, dto.Id);
 			} else {
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
 			}
@@ -50,10 +50,16 @@ public class WorkOrderRepository
 		}
 	}
 
-	private async Task SetForeignKeyToClientAsync(int clientId) {
+	private async Task SetForeignKeyToClientAsync(int clientId, int workOrderId = 0) {
 		try {
-			var workOrder = await _dbContext.WorkOrders
-				.SingleAsync(wo => wo.ClientId == clientId);
+			WorkOrder workOrder = new();
+			if (workOrderId is not 0) {
+				workOrder = await _dbContext.WorkOrders
+					.SingleAsync(wo => wo.ClientId == clientId && wo.Id == workOrderId);
+			} else {
+				workOrder = await _dbContext.WorkOrders
+					.SingleAsync(wo => wo.ClientId == clientId);
+			}
 
 			var client = await _dbContext.Clients
 				.SingleAsync(cl => cl.Id == clientId);
@@ -115,7 +121,7 @@ public class WorkOrderRepository
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 				}
 
-				await SetForeignKeyToClientAsync(dto.ClientId);
+				await SetForeignKeyToClientAsync(dto.ClientId, dto.Id);
 			} else {
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}
@@ -155,14 +161,15 @@ public class WorkOrderRepository
 	
 	public async Task<WorkOrderFormDto> GetForEditByIdAsync(int id) {
 		return await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
-			.Select(wo => 
+			.Where(wo => !wo.IsDeleted || !wo.IsCompleted)
+			.Select(wo =>
 				new WorkOrderFormDto {
 					Id = wo.Id,
 					Name = wo.Name,
 					StartDate = wo.StartDate,
 					FinishDate = wo.FinishDate,
 					ClientId = wo.ClientId,
+					IsOnEdit = true,
 					ClientName = _dbContext.Clients
 						.Single(cl => cl.Id == wo.ClientId)
 						.Name,
