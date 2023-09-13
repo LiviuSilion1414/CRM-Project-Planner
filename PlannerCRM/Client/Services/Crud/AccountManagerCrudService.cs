@@ -159,7 +159,7 @@ public class AccountManagerCrudService
     public async Task<HttpResponseMessage> RestoreEmployeeAsync(int employeeId) {
         try {
             return await _http
-                .GetAsync("api/employee/restore/{employeeId}");
+                .GetAsync($"api/employee/restore/{employeeId}");
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
             
