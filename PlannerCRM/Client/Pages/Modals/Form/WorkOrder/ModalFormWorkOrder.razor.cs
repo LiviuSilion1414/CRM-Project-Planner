@@ -64,7 +64,7 @@ public partial class ModalFormWorkOrder : ComponentBase
 
     private async Task OnClickModalConfirm() {
         try {
-            var isValid = ValidatorService.Validate(Model, out _errors);
+            var isValid = ValidatorService.Validate(Model, out _errors); 
             if (isValid) {
                 await GetValidatedModel.InvokeAsync(Model);
             } else {
