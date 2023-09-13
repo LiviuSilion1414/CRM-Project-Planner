@@ -10,7 +10,6 @@ public partial class ModalDeleteUser : ComponentBase
     [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
-    [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     
     private List<WorkOrderViewDto> _workOrders;
     private EmployeeDeleteDto _model;
@@ -24,7 +23,7 @@ public partial class ModalDeleteUser : ComponentBase
         _model = await AccountManagerService.GetEmployeeForDeleteByIdAsync(Id);
         
         foreach (var ac in _model.EmployeeActivities) {
-            var workOrder =  await OperationManagerService.GetWorkOrderForViewByIdAsync(ac.Activity.WorkOrderId);
+            var workOrder =  await AccountManagerService.GetWorkOrderForViewByIdAsync(ac.Activity.WorkOrderId);
             if (!_workOrders.Any(w => w.Id == workOrder.Id)) {
                 _workOrders.Add(workOrder);
             }

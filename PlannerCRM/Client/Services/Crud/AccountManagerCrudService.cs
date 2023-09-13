@@ -14,6 +14,17 @@ public class AccountManagerCrudService
         _logger = logger;
     }
 
+    public async Task<WorkOrderViewDto> GetWorkOrderForViewByIdAsync(int workOrderId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<WorkOrderViewDto>($"api/workorder/get/for/view/{workOrderId}");
+        } catch (Exception exc) {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
     public async Task<int> GetEmployeesSizeAsync() {
         try {
             return await _http
