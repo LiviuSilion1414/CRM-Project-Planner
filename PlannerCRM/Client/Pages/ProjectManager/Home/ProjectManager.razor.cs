@@ -2,6 +2,7 @@ using System.Drawing;
 
 namespace PlannerCRM.Client.Pages.ProjectManager.Home;
 
+[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
 public partial class ProjectManager : ComponentBase
 {
     [Inject] public ProjectManagerService ProjectManagerService { get; set; }
