@@ -1,5 +1,6 @@
-namespace PlannerCRM.Client.Services;
+namespace PlannerCRM.Client.Services.Utilities.Validation;
 
+[Authorize]
 public static class ValidatorService
 {
     public static bool Validate(object model, out Dictionary<string, List<string>> errors) {

@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Services;
+namespace PlannerCRM.Client.Services.Utilities.Validation;
 
 public class LoginService
 {
@@ -21,6 +21,7 @@ public class LoginService
         }
     }
 
+    [Authorize]
     public async Task LogoutAsync() => 
         await _http.GetAsync("api/account/logout");
 }

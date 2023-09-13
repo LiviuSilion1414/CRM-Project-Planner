@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Services;
+namespace PlannerCRM.Client.Services.Utilities.Validation;
 
 public class CurrentUserInfoService
 {
