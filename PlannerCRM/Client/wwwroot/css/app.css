@@ -78,3 +78,11 @@ a, .btn-link {
     background-size: 100%;
     animation-duration: 1000ms;
 }
+
+.filter-box {
+    float: left;
+}
+
+.search-box {
+    float: right;
+}
