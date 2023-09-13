@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Pages.OperationManager.GridData;
 
+[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 public partial class GridDataWorkOrders : ComponentBase
 {
     [Parameter] public List<WorkOrderViewDto> WorkOrders { get; set; }

@@ -1,5 +1,3 @@
-using System.Drawing;
-
 namespace PlannerCRM.Client.Pages.ProjectManager.Home;
 
 [Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]

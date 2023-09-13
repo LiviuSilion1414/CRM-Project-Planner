@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Pages.AccountManager.GridData;
 
+[Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public partial class GridDataUsers : ComponentBase
 {
     [Parameter] public List<EmployeeViewDto> Users { get; set;  }

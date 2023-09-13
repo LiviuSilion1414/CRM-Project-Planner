@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Pages.AccountManager.Restore;
 
+[Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public partial class ModalRestoreUser : ComponentBase 
 {
     [Parameter] public int Id { get; set; }

@@ -1,6 +1,3 @@
-using System.Globalization;
-using PlannerCRM.Client.Pages.OperationManager.Details;
-
 namespace PlannerCRM.Client.Pages.OperationManager.MasterDetail;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]

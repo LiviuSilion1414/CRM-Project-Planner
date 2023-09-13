@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Pages.ProjectManager.CostPreview;
 
+[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
 public partial class ModalWorkOrderCostPreview : ComponentBase
 {
     [Parameter] public int WorkOrderId { get; set; }

@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Pages.ProjectManager.Details;
 
+[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
 public partial class GridDataReport : ComponentBase
 {
     [Parameter] public List<WorkOrderViewDto> WorkOrders { get; set;}
