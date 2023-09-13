@@ -12,85 +12,18 @@
     </button>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Stato</th>
-            <th scope="col">Email</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Data di nascita</th>
-            <th scope="col">Data d'inizio</th>
-            <th scope="col">Ruolo</th>
-            <th scope="col">Tariffa oraria</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in _users) {
-            <tr>
-                <td>
-                    @if (user.IsDeleted) {
-                        <strong style="color: darkred;">[Eliminato]</strong>
-                    } else if (user.IsArchived) {
-                        <strong style="color: yellow;">[Archiviato]</strong>
-                    } else {
-                        <strong style="color: green;">[Attivo]</strong>
-                    }
-                </td>
-                <td>
-                    <span>
-                        <i class="bi bi-person-circle"></i>
-                        @user.Email
-                    </span>
-                </td>
-                <td>@user.FullName</td>
-                <td>@user.BirthDay.ToString("dd/MM/yyyy")</td>
-                <td>@user.StartDate.ToString("dd/MM/yyyy")</td>
-                <td>@user.Role</td>
-                <td>@user.CurrentHourlyRate</td>
-                <td>
-                    <button type="button" class="btn btn-primary" title="Visualizza dettagli utente" 
-                        @onclick="@(() => ShowDetails(user.Id))">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                </td>
-                @if (!user.IsDeleted && !user.IsArchived) {
-                    <td>
-                        <button type="button" class="btn btn-primary" title="Modifica utente" 
-                            @onclick="@(() => OnClickEdit(user.Id))">
-                           <i class="bi bi-pencil-square"></i>
-                        </button>                
-                    </td> 
-                    <td> 
-                        <button type="button" class="btn btn-danger" title="Elimina utente"
-                            @onclick="@(() => OnClickDelete(user.Id))">
-                            <i class="bi bi-trash3"></i>
-                        </button>
-                    </td>
-                } else if (user.IsArchived) {
-                    <td> 
-                        <button type="button" class="btn btn-success" title="Ripristina utente"
-                            @onclick="@(() => OnClickRestore(user.Id))">
-                            <i class="bi bi-arrow-repeat"></i>
-                        </button>
-                    </td>
-                }
-                <td></td>
-                <td></td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="filter-box">
+    <OptionsFilter
+        Actions=@_actions/>
+</div>
 
-@if (!_users.Any() && _hasMoreUsers) {
-    <p class="text-center">@Titles.NOT_AVAILABLE_USERS</p>
-}
+<div class="search-box">
+    <SearchBox
+        GetSearchedItems=@HandleSearchedElements/>
+</div>
 
-@if (_isViewClicked) {
-    <ModalShowUserDetails Title=@Titles.DETAILS_USER Id="@_userId"/>
-}
+<GridDataUsers
+    Users=@_filteredList/>
 
 @if (_isAddClicked) {
     <ModalAddUser Title=@Titles.ADD_USER/>
@@ -112,10 +45,6 @@
         Id=@_userId
         Title=@Titles.RESTORE_USER
         Message=@Titles.CONFIRM_RESTORE_USER/>
-}
-
-@if (!_hasMoreUsers) {
-    <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
 }
 
 <Paginator

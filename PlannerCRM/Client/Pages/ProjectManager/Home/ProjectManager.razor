@@ -1,71 +1,28 @@
 @page "/project-manager"
 @layout MainLayout
 
-@if (_isError) {
-    <Feedback
-        Message=@_message
-        OnClickCancel=@HandleFeedbackCancel
-    />
-}
+<div class="filter-box">
+    <OptionsFilter
+        Actions=@_actions/>
+</div>
 
-<table class="table table-striped">
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Cliente</th>
-        <th scope="col">Commessa</th>
-        <th scope="col">Data inizio</th>
-        <th scope="col">Data fine</th>
-        <th scope="col">Stato report</th>
-        <th></th>
-        <th></th>
-    </tr>
-    <tbody>
-        @foreach (var workOrder in _workOrders) {
-            @foreach (var client in _clients) {
-                @if (client.Id == workOrder.ClientId) {
-                    <tr>
-                        <td></td>
-                        <td>@client.Name</td>
-                        <td>@workOrder.Name</td>
-                        <td>@workOrder.StartDate.ToString("dd/MM/yyyy")</td>
-                        <td>@workOrder.FinishDate.ToString("dd/MM/yyyy")</td>
-                        <td>
-                            @if (workOrder.IsInvoiceCreated) {
-                                <span class="text-success">
-                                    <i class="bi bi-check2-circle"></i>
-                                    Creato.
-                                </span>
-                            } else {
-                                <button type="button" class="btn btn-primary" @onclick=@(() => CreateReport(workOrder.Id))>
-                                    @if (!workOrder.IsInvoiceCreated) {
-                                        <i class="bi bi-plus-circle"></i>
-                                    }
-                                    Genera report
-                                </button>
-                            }
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary" @onclick=@(() => ViewReport(workOrder.Id))>
-                                <i class="bi bi-receipt"></i>
-                                Visualizza report
-                            </button>
-                        </td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                }
-            }
-        }
-    </tbody>
-</table>
+<div class="search-box">
+    <SearchBox
+        GetSearchedItems=@HandleSearchedElements/>
+</div>
+
+<GridDataReport
+    WorkOrders=@_filteredList
+    Clients=@_clients
+/>
 
 @if (!_workOrders.Any()) {
     <p>@Titles.NOT_AVAILABLE_WORKORDERS</p>
 }
 
-@if (_isViewInvoiceClicked) {
-    <ModalWorkOrderCostPreview
-        Title=@Titles.REPORT_DETAILS
-        WorkOrderId=@_workOrderId
-    />
-}
+@if (_filteredList.Any()) {
+    <Paginator
+        CollectionSize=@_collectionSize
+        Paginate="(args) => HandlePaginate(args.Item1, args.Item2)"
+        />
+} 

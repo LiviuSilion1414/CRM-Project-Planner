@@ -1,58 +1,87 @@
+using System.Drawing;
+
 namespace PlannerCRM.Client.Pages.ProjectManager.Home;
 
-public partial class ProjectManager : ComponentBase 
+public partial class ProjectManager : ComponentBase
 {
     [Inject] public ProjectManagerService ProjectManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public ILogger<ProjectManager> Logger { get; set; }
 
     private List<WorkOrderViewDto> _workOrders;
+    private List<WorkOrderViewDto> _filteredList;
     private List<ClientViewDto> _clients;
 
-    private bool _isViewInvoiceClicked; 
-    private string _currentPage;
-    private int _workOrderId;
+    private Dictionary<string, Action> _actions => new() { 
+        { "Tutti", OnClickAll },
+        { "Creati", OnClickSortCreated },
+        { "Inesistenti", OnClickSortNotCreated }
+    };
 
-    private bool _isError;
-    private string _message;
-    
-    protected override async Task OnInitializedAsync() =>
-       await FetchDataAsync();
+    private int _collectionSize;
 
     protected override void OnInitialized() {
-        _currentPage = NavigationUtil.GetCurrentPage();
+        _filteredList = new();
         _workOrders = new();
         _clients = new();
     }
 
+    protected override async Task OnInitializedAsync()
+        => await FetchDataAsync();
+
     private async Task FetchDataAsync(int limit = 0, int offset = 5) {
+        _collectionSize = await ProjectManagerService.GetWorkOrderCostsCollectionSizeAsync();
         _workOrders = await ProjectManagerService.GetWorkOrdersCostsPaginatedAsync(limit, offset);
 
         foreach (var wo in _workOrders) {
-            _clients.Add(await ProjectManagerService.GetClientForViewByIdAsync(wo.ClientId));
+            if (!_clients.Any(cl => cl.Id == wo.ClientId)) {   
+                _clients.Add(await ProjectManagerService.GetClientForViewByIdAsync(wo.ClientId));
+            }
+        }
+
+        _filteredList = new(_workOrders);
+    }
+
+    private void OnClickAll() {
+        _filteredList = new(_workOrders);
+
+        StateHasChanged();
+    }
+
+    private void HandleSearchedElements(string query) {
+        _filteredList = _workOrders
+            .Where(wo => wo.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnClickSortCreated() {
+        try {
+            _filteredList = _workOrders
+                .Where(wo => wo.IsInvoiceCreated)
+                .ToList();
+
+            StateHasChanged();
+
+        } catch (Exception exc) {
+            Logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
         }
     }
 
-    private async Task CreateReport(int workOrderId) {
-        var response = await ProjectManagerService.AddInvoiceAsync(workOrderId);
-        _isError = !response.IsSuccessStatusCode;
+    private void OnClickSortNotCreated() {
+        try {
+            _filteredList = _workOrders
+                .Where(wo => !wo.IsInvoiceCreated)
+                .ToList();
 
-        if(!_isError) {
-            NavManager.NavigateTo(_currentPage, true);
-        } else {
-            _isError = true;
-            _message = await response.Content.ReadAsStringAsync();
+            StateHasChanged();
+        } catch (Exception exc) {
+            Logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
         }
-    }
-
-    private void ViewReport(int workOrderId) {
-        _isViewInvoiceClicked = !_isViewInvoiceClicked;
-        _workOrderId = workOrderId;
     }
 
     private async Task HandlePaginate(int limit, int offset) =>
        await FetchDataAsync(limit, offset);
-    
-    private void HandleFeedbackCancel(bool value) =>
-        _isError = value;     
 }

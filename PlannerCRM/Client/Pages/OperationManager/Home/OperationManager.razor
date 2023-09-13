@@ -18,7 +18,7 @@
             </button>
         </div>
         
-        @if (_workOrders.Any()) {
+        @if (_filteredList.Any()) {
             <div class="child">
                 <button class="btn btn-primary" title="Aggiungi attività" @onclick="OnClickAddActivity">
                     <i class="bi bi-plus-circle-fill"></i>
@@ -36,84 +36,24 @@
             <ClientsList Title=@Titles.SHOW_ALL_CLIENTS/>
         }
     }
+</div>  
+
+<div class="filter-box">
+    <OptionsFilter
+        Actions=@_actions/>
+</div>
+    
+<div class="search-box">
+    <SearchBox
+        GetSearchedItems="@HandleSearchedElements"/>
 </div>
 
-<table class="table table-lg">
-    <thead>
-        <tr>
-            <th scope="col">Stato</th>
-            <th scope="col">Cliente</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Data d'inizio</th>
-            <th scope="col">Data fine</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-            @foreach (var wo in _workOrders) {
-                <tr>
-                    <td>
-                        @if (wo.IsCompleted) {  
-                            <strong style="color: blue;">[Completato]</strong>
-                        } else if (wo.IsDeleted) {
-                            <strong style="color: darkred;">[Eliminato]</strong>
-                        } else {
-                            <strong style="color: green;">[Attivo]</strong>
-                        }
-                    </td>
-                    <td>
-                        @foreach (var client in _clients) {
-                            @if (client.Id == wo.ClientId) {
-                                @client.Name
-                            }
-                        }
-                    </td>
-                    <td>
-                        @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
-                            <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" 
-                                @onclick="(() => OnClickTableRow(wo.Id))" title="Comprimi">
-                            </i>
-                        } else {
-                            <i class="bi bi-arrow-down-square-fill" style="cursor: pointer; padding-right: 5px;" 
-                                @onclick="(() => OnClickTableRow(wo.Id))" title="Espandi"></i>
-                        }
-                        @wo.Name
-                    </td>
-                    <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
-                    <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
-                    @if (!wo.IsDeleted) {
-                        <td>
-                                <td style="padding-right: 10px;">
-                                    <button type="button" class="btn btn-primary" title="Modifica commessa"
-                                        @onclick="@(() => OnClickEditWorkOrder(wo.Id))">
-                                            <i class="bi bi-pencil-square"></i>
-                                    </button>                
-                                </td> 
-                                <td> 
-                                    <button type="button" class="btn btn-danger" title="Elimina commessa" 
-                                        @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))">
-                                            <i class="bi bi-trash3"></i>
-                                    </button>
-                                </td>
-                        </td>
-                    }
-                <td></td>
-                </tr>
-                @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
-                    <tr style="border: 1px solid blue;" title="Visualizza attività su questa commessa">
-                        <td></td>
-                        <td style="width: 100%; height: 80%;"> <OperationManagerMasterDetails WorkOrderId="@_currentWorkOrder.Id" WorkOrder="@wo"/> </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                }
-            }
-    </tbody>
-</table>
+<GridDataWorkOrders
+    WorkOrders=@_filteredList
+    Clients=@_clients/>
 
-@if (!_workOrders.Any() && !_hasMoreWorkOrders) {
-    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+@if (!_filteredList.Any()) {
+    <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
 }
 
 @if (_isCreateClientClicked) {
@@ -126,24 +66,8 @@
     <ModalAddWorkOrder Title=@Titles.ADD_WORKORDER/>
 }
 
-@if (_isEditWorkOrderClicked) { 
-    <ModalEditWorkOrder 
-        Id="@_workOrderId" 
-        Title=@Titles.EDIT_WORKORDER/>
-}
-
-@if (_isDeleteWorkOrderClicked) {
-    <ModalDeleteWorkOrder 
-        Title=@Titles.DELETE_WORKORDER
-        Id="@_workOrderId"/>
-}
-
 @if (_isCreateActivityClicked) { 
     <ModalAddActivity Title=@Titles.ADD_ACTIVITY/>
-}
-
-@if (!_hasMoreWorkOrders) {
-    <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
 }
 
 <Paginator

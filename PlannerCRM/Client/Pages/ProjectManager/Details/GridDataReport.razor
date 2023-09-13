@@ -1,0 +1,77 @@
+@if (_isError) {
+    <Feedback
+        Message=@_message
+        OnClickCancel=@HandleFeedbackCancel
+    />
+}
+
+<table class="table table-striped">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Cliente</th>
+        <th scope="col">Commessa</th>
+        <th scope="col">Data inizio</th>
+        <th scope="col">Data fine</th>
+        <th scope="col">Stato report</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tbody>
+        @foreach (var workOrder in WorkOrders) {
+            @foreach (var client in Clients) {
+                @if (client.Id == workOrder.ClientId) {
+                    <tr>  <!-- stampa più volte -->
+                        <td></td>
+                        <td>@client.Name</td>
+                        <td>@workOrder.Name</td>
+                        <td>@workOrder.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td>@workOrder.FinishDate.ToString("dd/MM/yyyy")</td>
+                        @if (workOrder.IsInvoiceCreated) {
+                            <td>
+                                <span class="text-success">
+                                    <i class="bi bi-check2-circle"></i>
+                                    Creato
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" @onclick=@(() => ViewReport(workOrder.Id))>
+                                    <i class="bi bi-receipt"></i>
+                                    Visualizza report
+                                </button>
+                            </td>
+                        } else {
+                            <td>
+                                <span class="text-warning">
+                                    <i class="bi bi-x-circle"></i>
+                                    Inesistente
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" @onclick=@(() => CreateReport(workOrder.Id))>
+                                    @if (!workOrder.IsInvoiceCreated) {
+                                        <i class="bi bi-plus-circle"></i>
+                                    }
+                                    Genera report
+                                </button>
+                            </td>
+                        }
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@if (!WorkOrders.Any()) {
+    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+}
+
+@if (_isViewInvoiceClicked) {
+    <ModalWorkOrderCostPreview
+        Title=@Titles.REPORT_DETAILS
+        WorkOrderId=@_workOrderId
+    />
+}

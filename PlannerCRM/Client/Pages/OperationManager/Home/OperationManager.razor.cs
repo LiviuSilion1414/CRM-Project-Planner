@@ -5,15 +5,13 @@ public partial class OperationManager : ComponentBase
 {
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
 
-    private List<WorkOrderViewDto> _workOrders = new();
-    private List<ClientViewDto> _clients = new();
-    private WorkOrderViewDto _currentWorkOrder = new();
-    
-    private bool _trIsClicked;
+    private List<WorkOrderViewDto> _workOrders;
+    private List<WorkOrderViewDto> _filteredList;
+    private List<ClientViewDto> _clients;
 
+    private Dictionary<string, Action> _actions;
+    
     private bool _isCreateWorkOrderClicked;
-    private bool _isEditWorkOrderClicked;
-    private bool _isDeleteWorkOrderClicked;
 
     private bool _isCreateClientClicked;
     private bool _isDeleteClientClicked;
@@ -23,10 +21,21 @@ public partial class OperationManager : ComponentBase
 
     private bool _hasMoreWorkOrders;
 
-    private int _workOrderId; 
     private int _clientId; 
 
     private int _collectionSize;
+
+    protected override void OnInitialized() {
+        _workOrders = new();
+        _filteredList = new();
+        _clients = new();
+        _actions = new() {
+            { "Tutti", OnClickAll },
+            { "Nome", OnClickFilterByName },
+            { "Dal più recente", OnClickFilterByLatest },
+            { "Dal meno recente", OnClickFilterByOldest },
+        };
+    }
 
     protected override async Task OnInitializedAsync() {
         _collectionSize = await OperationManagerService.GetWorkOrdersCollectionSizeAsync();
@@ -35,11 +44,52 @@ public partial class OperationManager : ComponentBase
         foreach (var wo in _workOrders) {
             var clients = await OperationManagerService.SearchClientAsync(wo.ClientId);
             foreach (var client in clients) {
-                if (!_clients.Contains(client)) {
+                if (!_clients.Any(cl => cl.Id == client.Id)) {
                     _clients.Add(client);
                 }
             }
         }
+
+        _filteredList = new(_workOrders);
+    }
+
+    private void HandleSearchedElements(string query) {
+        _filteredList = _workOrders
+            .Where(wo => wo.Name
+                .Contains(query, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        StateHasChanged();
+    } 
+
+    private void OnClickAll() {
+        _filteredList = new(_workOrders);
+
+        StateHasChanged();
+    }
+
+    private void OnClickFilterByName() {
+        _filteredList = _workOrders
+            .OrderBy(wo => wo.Name)
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnClickFilterByLatest() {
+        _filteredList = _workOrders
+            .OrderByDescending(wo => wo.Id)
+            .ToList();
+        
+        StateHasChanged();
+    }
+
+    private void OnClickFilterByOldest() {
+        _filteredList = _workOrders
+            .OrderBy(wo => wo.Id)
+            .ToList();
+
+        StateHasChanged();
     }
     
     public async Task HandlePaginate(int limit, int offset) {
@@ -52,26 +102,11 @@ public partial class OperationManager : ComponentBase
         _clients = await OperationManagerService.GetClientsPaginatedAsync();
     }
 
-    private void OnClickTableRow(int workOrderId) {
-        _trIsClicked = !_trIsClicked;
-        _currentWorkOrder = _workOrders.Find(wo => wo.Id == workOrderId);
-    }
-
     private void OnClickAddWorkOrder() =>
        _isCreateWorkOrderClicked = !_isCreateWorkOrderClicked;
 
     private void OnClickAddActivity() =>
        _isCreateActivityClicked = !_isCreateActivityClicked;
-
-    private void OnClickEditWorkOrder(int id) {
-        _isEditWorkOrderClicked = !_isEditWorkOrderClicked;
-        _workOrderId = id;
-    }
-
-    public void OnClickDeleteWorkOrder(int id) {
-        _isDeleteWorkOrderClicked = !_isDeleteWorkOrderClicked;
-        _workOrderId = id;
-    }
 
     private void OnClickAddClient() =>
        _isCreateClientClicked = !_isCreateClientClicked;
