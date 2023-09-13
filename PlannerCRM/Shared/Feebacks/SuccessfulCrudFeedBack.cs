@@ -6,6 +6,7 @@ public class SuccessfulCrudFeedBack
     public const string USER_EDIT = "Utente modificato con successo!";
     public const string USER_DELETE = "Utente eliminato con successo!";
     public const string USER_ARCHIVE = "Utente archiviato con successo!";
+    public const string USER_RESTORE = "Utente ripristinato con successo!";
 
     public const string WORKORDER_ADD = "Commessa aggiunta con successo!";
     public const string WORKORDER_EDIT = "Commessa modificata con successo!";
