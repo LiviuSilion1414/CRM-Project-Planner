@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.Models;
+namespace PlannerCRM.Server.Models;
 
 public enum OperationType
 {
