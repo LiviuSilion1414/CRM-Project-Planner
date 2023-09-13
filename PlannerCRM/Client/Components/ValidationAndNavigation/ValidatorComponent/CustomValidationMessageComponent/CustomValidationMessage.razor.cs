@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Components.ValidatorComponent.CustomValidationMessageComponent;
+namespace PlannerCRM.Client.Components.ValidationAndNavigation.ValidatorComponent.CustomValidationMessageComponent;
 
 public partial class CustomValidationMessage : ComponentBase
 {
