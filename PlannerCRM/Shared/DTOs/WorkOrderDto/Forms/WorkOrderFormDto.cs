@@ -16,9 +16,9 @@ public partial class WorkOrderFormDto
         ErrorMessage = "Il periodo contrattuale dev'essere tra 3 e 24 mesi.")]
     public DateTime? FinishDate { get; set; }
 
-    [IsNotZero(ErrorMessage = """ Cliente non riconosciuto. """)]
     [Required(ErrorMessage = """ Campo "Cliente" richiesto """)]
     public int ClientId { get; set; }
 
     public string ClientName { get; set; }
+    public bool IsOnEdit { get; init; }
 }
