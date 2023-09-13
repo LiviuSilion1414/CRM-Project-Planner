@@ -16,17 +16,22 @@ public partial class MainLayout
     private bool _isAuthenticated;
 
     protected override async Task OnInitializedAsync()
-        => await HandleAuthenticationAndNavigation();
+        => await HandleAuthenticationAndNavigationAsync();
 
-    public async Task NavigateBasedOnRole()
-        => await HandleAuthenticationAndNavigation();
+    public async Task NavigateBasedOnRole() {
+        if (!await HandleAuthenticationAndNavigationAsync()) {
+            NavManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG);
+        }
+
+    }
+    
 
     protected override void OnInitialized() {
         _currentEmployee = new();
         _currentUser = new();
     }
 
-    private async Task HandleAuthenticationAndNavigation() {
+    private async Task<bool> HandleAuthenticationAndNavigationAsync() {
         var authState = await AuthStateService.GetAuthenticationStateAsync();
         _currentUser = await AuthStateService.GetCurrentUserAsync();
         _isAuthenticated = authState.User.Identity.IsAuthenticated;
@@ -40,7 +45,11 @@ public partial class MainLayout
 
             var navigationUrl = NavigationUtil.BuildNavigationUrl(_userRole, _currentEmployee.Id);
             NavManager.NavigateTo(navigationUrl);
+
+            return true;
         }
+
+        return false;
     }
 
     public async Task OnClickLogout() {
