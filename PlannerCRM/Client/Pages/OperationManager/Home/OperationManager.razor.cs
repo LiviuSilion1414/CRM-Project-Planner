@@ -9,8 +9,7 @@ public partial class OperationManager : ComponentBase
     private List<WorkOrderViewDto> _filteredList;
     private List<ClientViewDto> _clients;
 
-    private Dictionary<string, Action> _actions;
-    
+    private Dictionary<string, Action> _filters;    
     private bool _isCreateWorkOrderClicked;
 
     private bool _isCreateClientClicked;
@@ -25,7 +24,7 @@ public partial class OperationManager : ComponentBase
         _workOrders = new();
         _filteredList = new();
         _clients = new();
-        _actions = new() {
+        _filters = new() {
             { "Tutte", GetAll },
             { "Attive", GetActive },
             { "Archiviate", GetArchived },
@@ -37,16 +36,6 @@ public partial class OperationManager : ComponentBase
     protected override async Task OnInitializedAsync() {
         _collectionSize = await OperationManagerService.GetWorkOrdersCollectionSizeAsync();
         _workOrders = await OperationManagerService.GetPaginatedWorkOrdersAsync();
-
-        foreach (var wo in _workOrders) {
-            var clients = await OperationManagerService.SearchClientAsync(wo.ClientId);
-            foreach (var client in clients) {
-                if (!_clients.Any(cl => cl.Id == client.Id)) {
-                    _clients.Add(client);
-                }
-            }
-        }
-
         _filteredList = new(_workOrders);
     }
 

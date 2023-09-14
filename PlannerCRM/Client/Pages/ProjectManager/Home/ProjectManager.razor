@@ -3,7 +3,7 @@
 
 <div class="filter-box">
     <OptionsFilter
-        Actions=@_actions/>
+        Actions=@_filters/>
 </div>
 
 @if (_filteredList.Any()) {
@@ -15,7 +15,6 @@
 
 <GridDataReport
     WorkOrders=@_filteredList
-    Clients=@_clients
 />
 
 @if (_filteredList.Any()) {

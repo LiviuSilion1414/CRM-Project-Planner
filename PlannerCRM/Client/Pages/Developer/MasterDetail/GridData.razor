@@ -1,17 +1,29 @@
 <table class="table">
     <thead>
         <tr>
-            <th>#</th>
-            <th>Commessa</th>
-            <th>Attività</th>
-            <th>Data d'inizio</th>
-            <th>Data di fine</th>
-            <th>Ore segnate</th>
-            <th></th>
+            <th scope="col">#</th>
+                @foreach (var action in _filters) {
+                    @if (action.Key == _orderKey) {
+                        <th scope="col" @onclick="@(() => HandleOrdering(action.Key))"
+                            style="color: blue;">
+                            <span>
+                                <i class="bi bi-arrow-down"></i>
+                                @action.Key
+                            </span>
+                        </th>
+                    } else {
+                        <th scope="col" @onclick="@(() => HandleOrdering(action.Key))">
+                            <span>
+                                @action.Key
+                            </span>
+                        </th>
+                    }
+                }
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var ac in _activities) {
+        @foreach (var ac in _filteredList) {
             <tr>
                 <td><i class="bi bi-briefcase"></i></td> 
                 <td>
@@ -37,18 +49,17 @@
                     </td>
                 }
                 <td>
-                    <button type="button" class="btn btn-primary" 
-                        @onclick="@(() => OnClickAddWorkedHours(ac.Id))">
-                        <i class="bi bi-clock-history"></i>
-                        <span>Aggiungi orario</span>
-                    </button> 
+                    <span class="info">
+                        <i class="bi bi-clock-history" @onclick="@(() => OnClickAddWorkedHours(ac.Id))"></i>
+                        Aggiungi orario
+                    </span>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-@if (!_workOrders.Any() && _hasMoreActivities) {
+@if (!_workOrders.Any()) {
     <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
 }
 
@@ -61,6 +72,8 @@
     <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
 }
 
-<Paginator
-    CollectionSize=@_collectionSize
-    Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
+@if (_workOrders.Any()) {
+    <Paginator
+        CollectionSize=@_collectionSize
+        Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>
+}

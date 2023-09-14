@@ -7,7 +7,7 @@ public partial class AccountManager : ComponentBase
 
     private List<EmployeeViewDto> _users;
     private List<EmployeeViewDto> _filteredList;
-    private Dictionary<string, Action> _actions = new();
+    private Dictionary<string, Action> _filters = new();
 
     private bool _isAddClicked;
     private int _collectionSize;
@@ -21,7 +21,7 @@ public partial class AccountManager : ComponentBase
     protected override void OnInitialized() {
         _users = new();
         _filteredList = new();
-        _actions = new() {
+        _filters = new() {
             { "Tutti",  OnClickAll },
             { "Attivi",  OnClickFilterIfActive },
             { "Archiviati",  OnClickFilterIfArchived },

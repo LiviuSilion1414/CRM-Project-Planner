@@ -40,7 +40,7 @@
 
 <div class="filter-box">
     <OptionsFilter
-        Actions=@_actions/>
+        Actions=@_filters/>
 </div>
 
 @if (_filteredList.Any()) {
@@ -51,8 +51,7 @@
 }
 
 <GridDataWorkOrders
-    WorkOrders=@_filteredList
-    Clients=@_clients/>
+    WorkOrders=@_filteredList/>
 
 @if (_isCreateClientClicked) {
     <ModalAddClient

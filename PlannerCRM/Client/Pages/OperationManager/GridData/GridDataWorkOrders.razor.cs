@@ -4,8 +4,8 @@ namespace PlannerCRM.Client.Pages.OperationManager.GridData;
 public partial class GridDataWorkOrders : ComponentBase
 {
     [Parameter] public List<WorkOrderViewDto> WorkOrders { get; set; }
-    [Parameter] public List<ClientViewDto> Clients { get; set; }
 
+    private Dictionary<string, Action> _orderTitles;
     private WorkOrderViewDto _currentWorkOrder;
 
     private bool _trIsClicked;
@@ -14,9 +14,65 @@ public partial class GridDataWorkOrders : ComponentBase
     private bool _isDeleteWorkOrderClicked;
     
     private int _workOrderId;
+    private string _orderKey;
 
-    protected override void OnInitialized()
-        => _currentWorkOrder = new();
+    protected override void OnInitialized() {
+        _currentWorkOrder = new();
+        _orderTitles = new() {
+            { "Stato", OnClickOrderByActive },
+            { "Cliente", OnClickOrderByClient },
+            { "Nome", OnClickOrderByName },
+            { "Data d'inizio", OnClickOrderByStartDate },
+            { "Data di fine", OnClickOrderByFinishDate }
+        };
+    }
+
+    private void HandleOrdering(string key) {
+        if (_orderTitles.ContainsKey(key)) {
+            _orderTitles[key].Invoke();
+            _orderKey = key;
+        }
+    }
+
+    private void OnClickOrderByActive() {
+        WorkOrders = WorkOrders
+            .OrderBy(wo => !wo.IsArchived || !wo.IsDeleted)
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnClickOrderByName() {
+        WorkOrders = WorkOrders
+            .OrderBy(wo => wo.Name)
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnClickOrderByClient() {
+        WorkOrders = WorkOrders
+            .OrderBy(wo => wo.ClientName)
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnClickOrderByStartDate() {
+        WorkOrders = WorkOrders
+            .OrderBy(wo => wo.StartDate)
+            .ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnClickOrderByFinishDate() {
+        WorkOrders = WorkOrders
+            .OrderBy(wo => wo.FinishDate)
+            .ToList();
+
+        StateHasChanged();
+    }
 
     private void OnClickEditWorkOrder(int id) {
         _isEditWorkOrderClicked = !_isEditWorkOrderClicked;

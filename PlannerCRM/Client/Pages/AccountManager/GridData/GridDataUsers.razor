@@ -1,13 +1,19 @@
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">Stato</th>
-            <th scope="col">Email</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Data di nascita</th>
-            <th scope="col">Data d'inizio</th>
-            <th scope="col">Ruolo</th>
-            <th scope="col">Tariffa oraria</th>
+            @foreach (var title in _orderTitles) {
+                @if (title.Key == _orderKey) {
+                    <th scope="col" @onclick="@(() => HandleOrdering(title.Key))"
+                        style="color: blue;">
+                        <span>
+                            <i class="bi bi-arrow-down"></i>
+                            @title.Key
+                        </span>
+                    </th> 
+                } else {
+                    <th scope="col" @onclick="@(() => HandleOrdering(title.Key))">@title.Key</th> 
+                }
+            }
             <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
@@ -35,30 +41,18 @@
                 <td>@user.Role</td>
                 <td>@user.CurrentHourlyRate</td>
                 <td>
-                    <button type="button" class="btn btn-primary" title="Visualizza dettagli utente" 
-                        @onclick="@(() => ShowDetails(user.Id))">
-                        <i class="bi bi-eye"></i>
-                    </button>
+                    <i class="bi bi-eye info" @onclick="@(() => ShowDetails(user.Id))"></i>
                 </td>
                 @if (!user.IsDeleted && !user.IsArchived) {
                     <td>
-                        <button type="button" class="btn btn-primary" title="Modifica utente" 
-                            @onclick="@(() => OnClickEdit(user.Id))">
-                        <i class="bi bi-pencil-square"></i>
-                        </button>                
+                        <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEdit(user.Id))"></i>
                     </td> 
                     <td> 
-                        <button type="button" class="btn btn-danger" title="Elimina utente"
-                            @onclick="@(() => OnClickDelete(user.Id))">
-                            <i class="bi bi-trash3"></i>
-                        </button>
+                        <i class="bi bi-trash3 danger" @onclick="@(() => OnClickDelete(user.Id))"></i>
                     </td>
                 } else if (user.IsArchived) {
                     <td> 
-                        <button type="button" class="btn btn-success" title="Ripristina utente"
-                            @onclick="@(() => OnClickRestore(user.Id))">
-                            <i class="bi bi-arrow-repeat"></i>
-                        </button>
+                        <i class="bi bi-arrow-repeat" @onclick="@(() => OnClickRestore(user.Id))"></i>
                     </td>
                 }
                 <td></td>

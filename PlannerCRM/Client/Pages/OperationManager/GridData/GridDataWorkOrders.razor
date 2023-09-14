@@ -1,11 +1,18 @@
 <table class="table table-lg">
     <thead>
         <tr>
-            <th scope="col">Stato</th>
-            <th scope="col">Cliente</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Data d'inizio</th>
-            <th scope="col">Data fine</th>
+            @foreach (var order in _orderTitles) {
+                @if (order.Key == _orderKey) {
+                    <th scope="col" @onclick="@(() => HandleOrdering(order.Key))"
+                        style="color: blue;">
+                        <i class="bi bi-arrow-down"></i>
+                        @order.Key</th>
+
+                } else {
+                    <th scope="col" @onclick="@(() => HandleOrdering(order.Key))">@order.Key</th>
+                }
+            }
+            
             <th scope="col"></th>
         </tr>
     </thead>
@@ -21,13 +28,7 @@
                             <strong style="color: green;">[Attivo]</strong>
                         }
                     </td>
-                    <td>
-                        @foreach (var client in Clients) {
-                            @if (client.Id == wo.ClientId) {
-                                @client.Name
-                            }
-                        }
-                    </td>
+                    <td> @wo.ClientName </td>
                     <td>
                         @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
                             <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" 
@@ -44,16 +45,10 @@
                     @if (!wo.IsDeleted) {
                         <td>
                                 <td style="padding-right: 10px;">
-                                    <button type="button" class="btn btn-primary" title="Modifica commessa"
-                                        @onclick="@(() => OnClickEditWorkOrder(wo.Id))">
-                                            <i class="bi bi-pencil-square"></i>
-                                    </button>                
+                                    <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEditWorkOrder(wo.Id))"></i>
                                 </td> 
                                 <td> 
-                                    <button type="button" class="btn btn-danger" title="Elimina commessa" 
-                                        @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))">
-                                            <i class="bi bi-trash3"></i>
-                                    </button>
+                                    <i class="bi bi-trash3 danger" @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))"></i>
                                 </td>
                         </td>
                     }
@@ -62,7 +57,9 @@
                 @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
                     <tr style="border: 1px solid blue;" title="Visualizza attività su questa commessa">
                         <td></td>
-                        <td style="width: 100%; height: 80%;"> <OperationManagerMasterDetails WorkOrderId="@_currentWorkOrder.Id" WorkOrder="@wo"/> </td>
+                        <td style="width: 100%; height: 80%;"> 
+                            <OperationManagerMasterDetails WorkOrderId="@_currentWorkOrder.Id" WorkOrder="@wo"/> 
+                        </td>
                         <td></td>
                         <td></td>
                         <td></td>

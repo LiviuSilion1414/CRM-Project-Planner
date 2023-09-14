@@ -10,9 +10,8 @@ public partial class ProjectManager : ComponentBase
 
     private List<WorkOrderViewDto> _workOrders;
     private List<WorkOrderViewDto> _filteredList;
-    private List<ClientViewDto> _clients;
 
-    private Dictionary<string, Action> _actions => new() { 
+    private Dictionary<string, Action> _filters => new() { 
         { "Tutti", OnClickAll },
         { "Creati", OnClickSortCreated },
         { "Inesistenti", OnClickSortNotCreated }
@@ -23,7 +22,6 @@ public partial class ProjectManager : ComponentBase
     protected override void OnInitialized() {
         _filteredList = new();
         _workOrders = new();
-        _clients = new();
     }
 
     protected override async Task OnInitializedAsync()
@@ -32,12 +30,6 @@ public partial class ProjectManager : ComponentBase
     private async Task FetchDataAsync(int limit = 0, int offset = 5) {
         _collectionSize = await ProjectManagerService.GetWorkOrderCostsCollectionSizeAsync();
         _workOrders = await ProjectManagerService.GetWorkOrdersCostsPaginatedAsync(limit, offset);
-
-        foreach (var wo in _workOrders) {
-            if (!_clients.Any(cl => cl.Id == wo.ClientId)) {   
-                _clients.Add(await ProjectManagerService.GetClientForViewByIdAsync(wo.ClientId));
-            }
-        }
 
         _filteredList = new(_workOrders);
     }

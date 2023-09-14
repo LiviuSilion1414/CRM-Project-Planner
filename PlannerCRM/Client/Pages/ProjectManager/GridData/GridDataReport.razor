@@ -1,0 +1,79 @@
+@if (_isError) {
+    <Feedback
+        Message=@_message
+        OnClickCancel=@HandleFeedbackCancel
+    />
+}
+
+<table class="table table-striped">
+    <tr>
+        <th scope="col">#</th>
+        @foreach (var order in _orderTitles) {
+            @if (order.Key == _orderKey) {
+                <th scope="col" @onclick="@(() => HandleOrdering(order.Key))"
+                    style="color: blue;">
+                    <i class="bi bi-arrow-down"></i>
+                    @order.Key
+                </th>
+            } else {
+                <th scope="col" @onclick="@(() => HandleOrdering(order.Key))">
+                    @order.Key
+                </th>
+            }
+        }
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tbody>
+        @foreach (var wo in WorkOrders) {
+            <tr>
+                <td></td>
+                <td>@wo.ClientName</td>
+                <td>@wo.Name</td>
+                <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
+                <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
+                @if (wo.IsInvoiceCreated) {
+                    <td>
+                        <span class="text-success">
+                            <i class="bi bi-check2-circle"></i>
+                            Creato
+                        </span>
+                    </td>
+                    <td>
+                        <span class="info" @onclick=@(() => ViewReport(wo.Id))>
+                            <i class="bi bi-receipt" ></i>
+                            Visualizza report
+                        </span>
+                    </td>
+                } else {
+                    <td>
+                        <span class="text-warning">
+                            <i class="bi bi-x-circle"></i>
+                            Inesistente
+                        </span>
+                    </td>
+                    <td>
+                        <span class="info" @onclick=@(() => CreateReport(wo.Id))>
+                            <i class="bi bi-plus-circle"></i>
+                            Genera report
+                        </span>
+                    </td>
+                }
+                <td></td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!WorkOrders.Any()) {
+    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+}
+
+@if (_isViewInvoiceClicked) {
+    <ModalWorkOrderCostPreview
+        Title=@Titles.REPORT_DETAILS
+        WorkOrderId=@_workOrderId
+    />
+}
