@@ -19,6 +19,6 @@ public class EmployeeViewDto : IDtoComparer
     public string FullName { get; set; }
     public string Name { get; set; }
     public bool IsCompleted { get; set; }
-    public bool IsDeleted { get; set; }
     public bool IsArchived { get; set; }
+    public bool IsDeleted { get; set; }
 }

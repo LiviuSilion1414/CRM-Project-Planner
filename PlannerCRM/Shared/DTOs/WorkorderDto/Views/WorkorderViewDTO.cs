@@ -6,6 +6,7 @@ public class WorkOrderViewDto : IDtoComparer
     public DateTime FinishDate { get; set; }
     public bool IsInvoiceCreated { get; init; }
     public int ClientId { get; set; }
+    public string ClientName { get; init; }
     public int Id { get; set; }
     public string FullName { get; set; }
     public string Name { get; set; }
