@@ -187,7 +187,7 @@ public class WorkOrderRepository
 					Id = wo.Id,
 					Name = wo.Name,
 					ClientName = _dbContext.Clients
-						.Single(cl => cl.WorkOrderId == wo.Id)
+						.Single(cl => cl.Id == wo.ClientId)
 						.Name
 				}
 			)
@@ -207,7 +207,10 @@ public class WorkOrderRepository
 				FinishDate = wo.FinishDate,
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted,
-				ClientId = wo.ClientId
+				ClientId = wo.ClientId,
+				ClientName = _dbContext.Clients
+					.Single(cl => cl.Id == wo.ClientId)
+					.Name
 			})
 			.ToListAsync();
 	}

@@ -60,7 +60,10 @@ public class CalculatorService
                     IsCompleted = wo.IsDeleted,
                     IsDeleted = wo.IsDeleted,
                     IsInvoiceCreated = wo.IsInvoiceCreated,
-                    ClientId = wo.ClientId
+                    ClientId = wo.ClientId,
+                    ClientName = _dbContext.Clients
+                        .Single(cl => cl.Id == wo.ClientId)
+                        .Name
                 }
             )
             .ToListAsync();
