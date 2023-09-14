@@ -1,0 +1,86 @@
+<table class="table table-lg">
+    <thead>
+        <tr>
+            @foreach (var order in _orderTitles) {
+                @if (order.Key == _orderKey) {
+                    <th scope="col" @onclick="@(() => HandleOrdering(order.Key))"
+                        style="color: blue;">
+                        <i class="bi bi-arrow-down"></i>
+                        @order.Key</th>
+
+                } else {
+                    <th scope="col" @onclick="@(() => HandleOrdering(order.Key))">@order.Key</th>
+                }
+            }
+            
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var wo in WorkOrders) {
+                <tr>
+                    <td>
+                        @if (wo.IsCompleted) {  
+                            <strong style="color: blue;">[Completato]</strong>
+                        } else if (wo.IsDeleted) {
+                            <strong style="color: darkred;">[Eliminato]</strong>
+                        } else {
+                            <strong style="color: green;">[Attivo]</strong>
+                        }
+                    </td>
+                    <td> @wo.ClientName </td>
+                    <td>
+                        @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
+                            <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" 
+                                @onclick="(() => OnClickTableRow(wo.Id))" title="Comprimi">
+                            </i>
+                        } else {
+                            <i class="bi bi-arrow-down-square-fill" style="cursor: pointer; padding-right: 5px;" 
+                                @onclick="(() => OnClickTableRow(wo.Id))" title="Espandi"></i>
+                        }
+                        @wo.Name
+                    </td>
+                    <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
+                    <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
+                    @if (!wo.IsDeleted) {
+                        <td>
+                                <td style="padding-right: 10px;">
+                                    <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEditWorkOrder(wo.Id))"></i>
+                                </td> 
+                                <td> 
+                                    <i class="bi bi-trash3 danger" @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))"></i>
+                                </td>
+                        </td>
+                    }
+                <td></td>
+                </tr>
+                @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
+                    <tr style="border: 1px solid blue;" title="Visualizza attività su questa commessa">
+                        <td></td>
+                        <td style="width: 100%; height: 80%;"> 
+                            <OperationManagerMasterDetails WorkOrderId="@_currentWorkOrder.Id" WorkOrder="@wo"/> 
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+            }
+    </tbody>
+</table>
+
+@if (!WorkOrders.Any()) {
+    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+}
+
+@if (_isEditWorkOrderClicked) { 
+    <ModalEditWorkOrder 
+        Id="@_workOrderId" 
+        Title=@Titles.EDIT_WORKORDER/>
+}
+
+@if (_isDeleteWorkOrderClicked) {
+    <ModalDeleteWorkOrder 
+        Title=@Titles.DELETE_WORKORDER
+        Id="@_workOrderId"/>
+}

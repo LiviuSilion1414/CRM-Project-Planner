@@ -18,17 +18,18 @@
                             <div class="form-group">
                                 <i class="bi bi-person"></i>
                                 <label>Cliente</label>
-                                <input type="search" class="form-control" @bind="Model.ClientName"/>
-                                <span class="btn btn-link"
-                                    @onclick=@OnClickSearchClient> 
-                                    <i class="bi bi-magnifying-glass"></i>
-                                    Cerca
-                                </span> 
-                                @foreach (var cl in _clients) {
-                                    <ul style="list-style: none;" hidden=@_hideclientsList> 
-                                        <li @onclick="@(() => OnClickSetAsClient(cl))">@cl.Name</li>
-                                    </ul> 
-                                }
+                                    <input type="search" class="form-control" @bind="Model.ClientName"/>
+                                    <span class="btn btn-link"
+                                        @onclick=@OnClickSearchClient> 
+                                        <i class="bi bi-magnifying-glass"></i>
+                                        Cerca
+                                    </span> 
+                                    @foreach (var cl in _clients) {
+                                        <ul style="list-style: none;" hidden=@_hideclientsList> 
+                                            <li @onclick="@(() => OnClickSetAsClient(cl))">@cl.Name</li>
+                                        </ul> 
+                                    }
+                                
                                 <CustomValidationMessage FieldName="@nameof(Model.ClientName)"/>
                                 <CustomValidationMessage FieldName="@nameof(Model.ClientId)"/>
                             </div>

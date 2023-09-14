@@ -41,7 +41,7 @@ public partial class Login : ComponentBase
                     var role =  await CurrentUserInfoService.GetCurrentUserRoleAsync();
                     var navigationUrl = NavigationUtil.BuildNavigationUrl(role, _currentEmployee.Id);
                 
-                    NavManager.NavigateTo(navigationUrl);
+                    NavManager.NavigateTo(navigationUrl, true);
                 } else {
                     _isError = true;
                     _message = await response.Content.ReadAsStringAsync();

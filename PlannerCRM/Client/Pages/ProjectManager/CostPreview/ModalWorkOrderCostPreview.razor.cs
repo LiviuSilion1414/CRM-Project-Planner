@@ -1,12 +1,12 @@
 namespace PlannerCRM.Client.Pages.ProjectManager.CostPreview;
 
+[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
 public partial class ModalWorkOrderCostPreview : ComponentBase
 {
     [Parameter] public int WorkOrderId { get; set; }
     [Parameter] public string Title { get; set; }
 
     [Inject] public ProjectManagerService ProjectManagerService { get; set; }
-    [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
 
@@ -18,7 +18,7 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
 
     protected override async Task OnInitializedAsync() {
         _invoice = await ProjectManagerService.GetInvoiceAsync(WorkOrderId);
-        _client = await OperationManagerService.GetClientForViewByIdAsync(_invoice.ClientId);
+        _client = await ProjectManagerService.GetClientForViewByIdAsync(_invoice.ClientId);
     }
 
     protected override void OnInitialized() {

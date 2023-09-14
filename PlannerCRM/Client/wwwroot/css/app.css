@@ -78,3 +78,29 @@ a, .btn-link {
     background-size: 100%;
     animation-duration: 1000ms;
 }
+
+.filter-box {
+    float: left;
+}
+
+.search-box {
+    float: right;
+}
+
+th:hover {
+    cursor: pointer;
+    color: blue;
+}
+
+i:hover {
+    cursor: pointer;
+}
+
+.info:hover {
+    color: blue;
+    cursor: pointer;
+}
+
+.danger {
+    color: red;
+}

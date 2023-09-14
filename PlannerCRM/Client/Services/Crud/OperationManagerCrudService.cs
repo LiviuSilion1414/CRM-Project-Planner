@@ -50,17 +50,6 @@ public class OperationManagerCrudService
             return new() { ReasonPhrase = exc.StackTrace };
         }
     }
-
-    public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
-        try {
-            return await _http
-                .GetFromJsonAsync<ClientViewDto>($"api/client/get/for/view/{clientId}");
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
-    }
     
     public async Task<ClientFormDto> GetClientForEditByIdAsync(int clientId) {
         try {
@@ -262,7 +251,7 @@ public class OperationManagerCrudService
        }
     }
 
-    public async Task<List<ActivityViewDto>> GetActivityPerWorkOrderAsync(int workOrderId) {
+    public async Task<List<ActivityViewDto>> GetActivityByWorkOrderAsync(int workOrderId) {
         try {
             return await _http
                 .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/by/workorder/{workOrderId}");

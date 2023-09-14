@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Pages.Modals.Form.List;
 
+[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 public partial class ClientsList : ComponentBase
 {
     [Parameter] public string Title { get; set; }

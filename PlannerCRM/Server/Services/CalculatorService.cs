@@ -32,7 +32,7 @@ public class CalculatorService
 
             var workOrder = await _dbContext.WorkOrders
                 .SingleAsync(wo => wo.Id == workOrderId);  
-            var workOrderCost = await ExecuteCalculationsAsync(workOrder);
+            var workOrderCost = await ExecuteCalculationsAsync(workOrder, true);
 
             await _dbContext.WorkOrderCosts.AddAsync(workOrderCost);
     
@@ -60,103 +60,96 @@ public class CalculatorService
                     IsCompleted = wo.IsDeleted,
                     IsDeleted = wo.IsDeleted,
                     IsInvoiceCreated = wo.IsInvoiceCreated,
-                    ClientId = wo.ClientId
+                    ClientId = wo.ClientId,
+                    ClientName = _dbContext.Clients
+                        .Single(cl => cl.Id == wo.ClientId)
+                        .Name
                 }
             )
             .ToListAsync();
     }
 
     public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId) {
-        var salaries = await _dbContext.Employees
-            .Where(em => em.Salaries
-                .Any(sal => sal.EmployeeId == em.Id) &&
-                _dbContext.WorkTimeRecords
-                    .Any(wtr => wtr.EmployeeId == em.Id))
-            .Select(em => 
-                new EmployeeSalary {
-                    EmployeeId = em.Id,
-                    StartDate = em.Salaries
-                        .Single(sal => sal.EmployeeId == em.Id)
-                        .StartDate,
-                    FinishDate = em.Salaries
-                        .Single(sal => sal.EmployeeId == em.Id)
-                        .FinishDate,
-                    Salary = em.Salaries
-                        .Single(sal => sal.EmployeeId == em.Id)
-                        .Salary
-                }
-            )
-            .ToListAsync();
+        try {
+            if (workOrderId == 0) {
+                throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
+            }
 
-        return await _dbContext.WorkOrderCosts
-            .OrderBy(wo => wo.Id)
-            .Where(wo => wo.Id == workOrderId)
-            .Select(inv =>
-                new WorkOrderCostDto {
-                    Id = inv.Id,
-                    WorkOrderId = inv.Id,
-                    Name = inv.Name,
-                    StartDate = inv.StartDate,
-                    FinishDate = inv.FinishDate,
-                    TotalTime = inv.FinishDate - inv.StartDate,
-                    ClientId = inv.ClientId,
-                    Employees = inv.Employees
-                        .Select(em => 
-                            new EmployeeViewDto {
-                                Id = em.Id,
-                                Email = em.Email,
-                                FullName = em.FullName,
-                                EmployeeSalaries = em.Salaries
-                                    .Select(s => 
-                                        new EmployeeSalaryDto {
-                                            EmployeeId = s.EmployeeId,
-                                            Salary = s.Salary,
-                                            StartDate = s.StartDate,
-                                            FinishDate = s.FinishDate
-                                        }
-                                    )
-                                    .ToList()
-                            }
-                        )
-                        .ToList(),
-                    Activities = inv.Activities
-                        .Select(ac => 
-                            new ActivityViewDto {
-                                Id = ac.Id,
-                                Name = ac.Name,
-                                StartDate = ac.StartDate,
-                                FinishDate = ac.FinishDate,
-                                WorkOrderId = ac.WorkOrderId
-                            }
-                        )
-                        .ToList(),
-                    MonthlyActivityCosts = inv.MonthlyActivityCosts
-                        .Select(monthlyCost => 
-                            new ActivityCostDto {
-                                Name = monthlyCost.Name,
-                                StartDate = monthlyCost.StartDate,
-                                FinishDate = monthlyCost.FinishDate,
-                                MonthlyCost = monthlyCost.MonthlyCost,
-                                Employees = monthlyCost.Employees
-                                    .Select(em =>
-                                        new EmployeeViewDto {
-                                            Id = em.Id,
-                                            Email = em.Email,
-                                            FullName = em.FullName
-                                        }
-                                    )
-                                    .ToList()
-                            }
-                        )
-                        .ToList(),
-                    TotalEmployees = inv.TotalEmployees,
-                    TotalActivities = inv.TotalActivities,
-                    TotalHours = inv.TotalHours,
-                    TotalCost = inv.TotalCost,
-                    CostPerMonth = inv.CostPerMonth
-                }
-            )
-            .SingleOrDefaultAsync();
+            var workOrder = await _dbContext.WorkOrders
+                .SingleAsync(wo => wo.Id == workOrderId);
+            var workOrderCost = await ExecuteCalculationsAsync(workOrder);
+
+            var employees = workOrderCost.Employees
+                    .Select(em =>
+                        new EmployeeViewDto {
+                            Id = em.Id,
+                            FirstName = em.FirstName,
+                            LastName = em.LastName,
+                            FullName = $"{em.FirstName} {em.LastName}",
+                            BirthDay = em.BirthDay,
+                            StartDate = em.StartDate,
+                            NumericCode = em.NumericCode,
+                            Password = em.Password,
+                            Email = em.Email,
+                            IsDeleted = em.IsDeleted,
+                            IsArchived = em.IsArchived,
+                            Role = em.Role,
+                            CurrentHourlyRate = em.CurrentHourlyRate,
+                            EmployeeSalaries = new(),
+                            EmployeeActivities = new()
+                        }
+                    )
+                    .ToList();
+
+            var activities = workOrderCost.Activities
+                    .Select(ac =>
+                        new ActivityViewDto {
+                            Id = ac.Id,
+                            Name = ac.Name,
+                            StartDate = ac.StartDate,
+                            FinishDate = ac.FinishDate,
+                            WorkOrderId = ac.WorkOrderId,
+                            EmployeeActivity = new()
+                        }
+                    )
+                    .ToList();
+
+            var monthlyActivityCosts = workOrderCost.MonthlyActivityCosts
+                    .Select(ac =>
+                        new ActivityCostDto {
+                            Id = ac.Id,
+                            Name = ac.Name,
+                            StartDate = ac.StartDate,
+                            FinishDate = ac.FinishDate,
+                            MonthlyCost = ac.MonthlyCost,
+                            Employees = employees
+                        }
+                    )
+                    .ToList();
+
+            return new WorkOrderCostDto {
+                Id = workOrderCost.Id,
+                WorkOrderId = workOrderCost.WorkOrderId,
+                Name = workOrderCost.Name,
+                StartDate = workOrderCost.StartDate,
+                FinishDate = workOrderCost.FinishDate,
+                TotalTime = workOrderCost.FinishDate - workOrderCost.StartDate,
+                ClientId = workOrderCost.ClientId,
+                IsInvoiceCreated = workOrderCost.IsCreated,
+                Employees = employees,
+                Activities = activities,
+                MonthlyActivityCosts = monthlyActivityCosts,
+                TotalEmployees = workOrderCost.TotalEmployees,
+                TotalActivities = workOrderCost.TotalActivities,
+                TotalHours = workOrderCost.TotalHours,
+                TotalCost = workOrderCost.TotalCost,
+                CostPerMonth = workOrderCost.CostPerMonth
+            };
+        } catch (Exception exc) {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            throw;
+        }
     }
 
     private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder) {
@@ -169,9 +162,11 @@ public class CalculatorService
         }
     }
 
-    private async Task<WorkOrderCost> ExecuteCalculationsAsync(WorkOrder workOrder) {
+    private async Task<WorkOrderCost> ExecuteCalculationsAsync(WorkOrder workOrder, bool onCreate = false) {
         try {
-            await SetInvoiceCreatedFlagAsync(workOrder);
+            if (onCreate) {
+                await SetInvoiceCreatedFlagAsync(workOrder);
+            }
             
             var employees = await GetAllRelatedEmployeesAsync(workOrder.Id);
             var activities = await GetAllRelatedActivitiesAsync(workOrder.Id);
@@ -181,8 +176,12 @@ public class CalculatorService
             var totalHours = await CalculateTotalHoursAsync(workOrder.Id);
             var totalCost = (await CalculateMonthlyCostAsync(workOrder.Id))
                 .Sum(cost => cost.MonthlyCost);
-            var costPerMonth = (await CalculateMonthlyCostAsync(workOrder.Id))
-                .Sum(cost => cost.MonthlyCost) / (await GetRelatedActivitiesSizeAsync(workOrder.Id));
+            var monthlyCost = (await CalculateMonthlyCostAsync(workOrder.Id))
+                .Sum(cost => cost.MonthlyCost);
+            var activitiesSize = await GetRelatedActivitiesSizeAsync(workOrder.Id);
+            var costPerMonth = activitiesSize == 0 
+                ? 0
+                : monthlyCost / activitiesSize;
 
             return new WorkOrderCost {
                 WorkOrderId = workOrder.Id,
@@ -271,7 +270,7 @@ public class CalculatorService
             )
             .ToListAsync();
 
-        return workTimeRecords
+        var output = workTimeRecords
             .Where(wtr => salaries
                 .Any(sal => sal.EmployeeId == wtr.EmployeeId))
             .Select(activityCost =>
@@ -295,5 +294,7 @@ public class CalculatorService
                 }
             )
             .ToList();
+
+        return output;
     }
 }

@@ -155,7 +155,8 @@ public class ClientRepository
             .Select(cl => new ClientViewDto {
                     Id = cl.Id,
                     Name = cl.Name,
-                    VatNumber = cl.VatNumber
+                    VatNumber = cl.VatNumber,
+                    WorkOrderId = cl.WorkOrderId
                 }
             )
             .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
@@ -167,7 +168,8 @@ public class ClientRepository
             .Select(cl => new ClientViewDto {
                     Id = cl.Id,
                     Name = cl.Name,
-                    VatNumber = cl.VatNumber
+                    VatNumber = cl.VatNumber,
+                    WorkOrderId = cl.WorkOrderId
                 }
             )
             .Where(cl => cl.Id == clientId)

@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Services.Crud;
 
+[Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public class AccountManagerCrudService
 {
     private readonly HttpClient _http;
@@ -11,6 +12,17 @@ public class AccountManagerCrudService
     {
         _http = http;
         _logger = logger;
+    }
+
+    public async Task<WorkOrderViewDto> GetWorkOrderForViewByIdAsync(int workOrderId) {
+        try {
+            return await _http
+                .GetFromJsonAsync<WorkOrderViewDto>($"api/workorder/get/for/view/{workOrderId}");
+        } catch (Exception exc) {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            return new();
+        }
     }
 
     public async Task<int> GetEmployeesSizeAsync() {
@@ -159,7 +171,7 @@ public class AccountManagerCrudService
     public async Task<HttpResponseMessage> RestoreEmployeeAsync(int employeeId) {
         try {
             return await _http
-                .GetAsync("api/employee/restore/{employeeId}");
+                .GetAsync($"api/employee/restore/{employeeId}");
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
             

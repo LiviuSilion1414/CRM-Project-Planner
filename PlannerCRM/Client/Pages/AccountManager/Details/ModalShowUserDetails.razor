@@ -61,15 +61,6 @@
                             <label for="Password">Password</label>
                             <InputText type="@_input" class="form-control" @bind-Value="_model.Password" autocomplete="new-password" disabled="@_isDisabled" readonly="@_isDisabled"/>
                             <SwitchInputType Switch="@SwitchPassword"/>
-                            <div style="margin: 20px;">
-                                <span class="strong">
-                                    <p>La password deve contenere almeno:</p>
-                                    <p>[8 - 16] - Lunghezza caratteri</p>
-                                    <p>[A-Z] - Una lettera maiuscola.</p>
-                                    <p>[a-z] - Una lettera minuscola.</p>
-                                    <p>[0-9] - Un numero</p>
-                                </span>
-                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

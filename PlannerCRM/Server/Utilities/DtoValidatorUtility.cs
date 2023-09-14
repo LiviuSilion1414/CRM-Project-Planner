@@ -161,17 +161,19 @@ public class DtoValidatorUtillity
                 ?? throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
 
+    private static bool CheckForNullProperties(object dto) {
+        return dto
+            .GetType()
+            .GetProperties()
+            .Any(prop => prop.GetValue(dto) is null);
+    }
+
     private static bool CheckDtoHealth(object dto) {
         if (dto is null) {
             return false;   
         }
-
-        var hasPropertiesNull = dto
-            .GetType()
-            .GetProperties()
-            .Any(prop => prop.GetValue(dto) is null);
-
-        if (hasPropertiesNull) {
+        
+        if (CheckForNullProperties(dto)) {
             return false;
         }
 

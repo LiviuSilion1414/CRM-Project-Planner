@@ -21,11 +21,12 @@
 @using PlannerCRM.Client.Pages.Modals.Form.User
 @using PlannerCRM.Client.Pages.Modals.Form.List
 @using PlannerCRM.Client.Pages.AccountManager
-@using PlannerCRM.Client.Components.PaginationComponent
-@using PlannerCRM.Client.Components.AuthorizationStates
-@using PlannerCRM.Client.Components.ValidatorComponent
-@using PlannerCRM.Client.Components.ValidatorComponent.ValidationMessageComponent
-@using PlannerCRM.Client.Components.ValidatorComponent.DataAnnotationsValidatorComponent
+@using PlannerCRM.Client.Components.Pagination
+@using PlannerCRM.Client.Components.FilterAndSearch.Filter
+@using PlannerCRM.Client.Components.FilterAndSearch.Search
+@using PlannerCRM.Client.Components.ValidationAndNavigation.AuthorizationStates
+@using PlannerCRM.Client.Components.ValidationAndNavigation.ValidatorComponent.CustomValidatorComponent
+@using PlannerCRM.Client.Components.ValidationAndNavigation.ValidatorComponent.CustomValidationMessageComponent
 @using PlannerCRM.Client.Components.FeedbackResponse
 @using PlannerCRM.Client.Components.ToggleView
 @using PlannerCRM.Client.Pages.AccountManager.Restore
@@ -34,11 +35,12 @@
 @using PlannerCRM.Client.Pages.AccountManager.Delete
 @using PlannerCRM.Client.Pages.AccountManager.Details
 @using PlannerCRM.Client.Pages.AccountManager.Home
+@using PlannerCRM.Client.Pages.AccountManager.GridData
 @using PlannerCRM.Client.Pages.Authentication
 @using PlannerCRM.Client.Pages.Developer.MasterDetail
 @using PlannerCRM.Client.Pages.Developer.WorkedHoursForm
 @using PlannerCRM.Client.Pages.ProjectManager.Home
-@using PlannerCRM.Client.Pages.ProjectManager.Details
+@using PlannerCRM.Client.Pages.ProjectManager.GridData
 @using PlannerCRM.Client.Pages.ProjectManager.CostPreview
 @using PlannerCRM.Client.Pages.OperationManager.MasterDetail
 @using PlannerCRM.Client.Pages.OperationManager.Home
@@ -55,3 +57,4 @@
 @using PlannerCRM.Client.Pages.OperationManager.Delete.WorkOrder 
 @using PlannerCRM.Client.Pages.OperationManager.Delete.Activity
 @using PlannerCRM.Client.Pages.OperationManager.Delete.FirmClient
+@using PlannerCRM.Client.Pages.OperationManager.GridData

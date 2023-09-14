@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 
-namespace PlannerCRM.Client.Services;
+namespace PlannerCRM.Client.Services.Utilities.Navigation;
 
 public class NavigationLockService
 {

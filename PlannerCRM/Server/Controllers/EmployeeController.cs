@@ -126,7 +126,7 @@ public class EmployeeController : ControllerBase
         try {
             await _repo.RestoreAsync(employeeId);
 
-            return Ok(SuccessfulCrudFeedBack.USER_ARCHIVE);
+            return Ok(SuccessfulCrudFeedBack.USER_RESTORE);
         } catch (InvalidOperationException exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 

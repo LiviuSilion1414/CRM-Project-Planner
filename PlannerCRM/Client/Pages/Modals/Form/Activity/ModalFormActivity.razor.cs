@@ -1,5 +1,6 @@
 namespace PlannerCRM.Client.Pages.Modals.Form.Activity;
 
+[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 public partial class ModalFormActivity : ComponentBase
 {
     [Parameter] public string Title { get; set; }

@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Components.ValidatorComponent.DataAnnotationsValidatorComponent;
+namespace PlannerCRM.Client.Components.ValidationAndNavigation.ValidatorComponent.CustomValidatorComponent;
 
 public partial class CustomDataAnnotationsValidator : ComponentBase
 {

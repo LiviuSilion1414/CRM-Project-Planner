@@ -1,6 +1,3 @@
-using System.Globalization;
-using PlannerCRM.Client.Pages.OperationManager.Details;
-
 namespace PlannerCRM.Client.Pages.OperationManager.MasterDetail;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
@@ -22,7 +19,7 @@ public partial class OperationManagerMasterDetails : ComponentBase
 
     protected override async Task OnInitializedAsync() {
         _workOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(WorkOrderId);
-        _activities = await OperationManagerService.GetActivityPerWorkOrderAsync(_workOrder.Id); 
+        _activities = await OperationManagerService.GetActivityByWorkOrderAsync(_workOrder.Id); 
     }
 
     protected override void OnInitialized() {
