@@ -10,7 +10,6 @@ public partial class GridDataUsers : ComponentBase
     private string _orderKey;
 
     private bool _isViewClicked;
-    private bool _isAddClicked;
     private bool _isEditClicked;
     private bool _isDeleteClicked;
     private bool _isRestoreClicked;
