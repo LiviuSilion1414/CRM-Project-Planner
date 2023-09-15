@@ -26,9 +26,3 @@ public partial class OptionsFilter : ComponentBase
             : CssClass.Empty;
     }
 }
-
-internal static class CssClass
-{
-    internal static string Selected = "selected";
-    internal static string Empty = string.Empty;
-}
