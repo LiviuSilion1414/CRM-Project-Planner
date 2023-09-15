@@ -6,10 +6,16 @@ public partial class SearchBox : ComponentBase
 
     private string _query;
 
+    protected override void OnInitialized() {
+        _query = string.Empty;
+    }
+
     private async Task Search() {
         if (IsValidQuery(_query)) {
             await GetSearchedItems.InvokeAsync(_query);
         }
+        
+        await GetSearchedItems.InvokeAsync(string.Empty);
     }
 
     private static bool IsValidQuery(string query) {
