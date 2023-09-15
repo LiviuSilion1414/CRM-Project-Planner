@@ -58,7 +58,7 @@
                         <th scope="col">Nome</th>
                         <th scope="col">Data inizio</th>
                         <th scope="col">Data fine</th>
-                       <!-- <th scope="col">Costo totale attività</th> -->
+                        <th scope="col">Costo totale attività</th>
                     </tr>
                     <tbody>
                         <tr>
@@ -66,7 +66,7 @@
                                 <td>@ac.Name</td>
                                 <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
                                 <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
-                                <!-- <td></td> --> <!-- per ogni attività, calcolare il prezzo mensile -->
+                                <td>@_invoice.CostPerMonth</td>
                             }
                         </tr>
                     </tbody>
