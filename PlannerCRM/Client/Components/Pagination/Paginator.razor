@@ -1,7 +1,21 @@
 <div class="text-center">
-    <i id="previous" class="bi bi-arrow-left-square-fill" title="Indietro"
-        @onclick=@Previous></i>
-    <span id="page-number">@_pageNumber</span>
-    <i id="next" class="bi bi-arrow-right-square-fill" title="Avanti"
-        @onclick=@Next></i>
+    <div class="pagination">
+        <div class="page-item">
+            <div class="page-link active" @onclick=@Previous>
+                <span>&laquo;</span>
+                <span>Precedente</span>
+            </div>
+        </div>
+        @foreach (var pageNumber in _pages) {
+            <div class="page-item">
+                <div class="page-link @SetClass(pageNumber)">@pageNumber</div>
+            </div>
+        }
+        <div class="page-item">
+            <div class="page-link active" @onclick=@Next>
+                <span>Prossimo</span>
+                <span>&raquo;</span>
+            </div>
+        </div>
+    </div>
 </div>

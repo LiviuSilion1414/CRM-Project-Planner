@@ -18,3 +18,7 @@
 #previous, #next {
     cursor: pointer;
 }
+
+.pagination {
+    margin: 0 auto;
+}
