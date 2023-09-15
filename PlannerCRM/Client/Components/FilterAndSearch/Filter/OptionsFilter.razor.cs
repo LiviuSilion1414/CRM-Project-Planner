@@ -7,7 +7,9 @@ public partial class OptionsFilter : ComponentBase
     private string _filterKey;
 
     protected override void OnInitialized() {
-        _filterKey = string.Empty;
+        _filterKey = Actions.Any() 
+            ? Actions.Keys.First() 
+            : string.Empty;
     }
 
     private void HandleFiltering(string key) {
@@ -17,10 +19,16 @@ public partial class OptionsFilter : ComponentBase
             _filterKey = key;
         }
     }
+
+    private string SetStyle(string key) {
+        return key == _filterKey
+            ? CssClass.Selected
+            : CssClass.Empty;
+    }
 }
 
-internal static class Colors 
+internal static class CssClass
 {
-    public static string BLUE = "blue";
-    public static string WHITE = "white";
+    internal static string Selected = "selected";
+    internal static string Empty = string.Empty;
 }

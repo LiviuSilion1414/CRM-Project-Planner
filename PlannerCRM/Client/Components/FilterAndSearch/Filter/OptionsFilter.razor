@@ -1,14 +1,7 @@
 <div class="filter">
     @foreach (var action in Actions) {
-        @if (_filterKey == action.Key) {
-            <div class="opt-filter" @onclick=@(() => HandleFiltering(action.Key)) 
-                style="color: @Colors.BLUE; text-decoration: underLine">
-                @action.Key
-            </div>
-        } else {
-            <div class="opt-filter" @onclick=@(() => HandleFiltering(action.Key))>
-                @action.Key
-            </div>
-        }
+        <div class="opt-filter @SetStyle(action.Key)" @onclick=@(() => HandleFiltering(action.Key))>
+            @action.Key
+        </div>
     }
 </div>
