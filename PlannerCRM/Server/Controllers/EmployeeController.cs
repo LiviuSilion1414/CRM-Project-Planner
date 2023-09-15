@@ -142,7 +142,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/restore/{employeeId}")]
     public async Task<EmployeeSelectDto> GetEmployeeForRestoreByIdAsync(int employeeId) {
         try {
@@ -154,7 +154,6 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/for/view/{employeeId}")]
     public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(int employeeId) {
         try {
@@ -190,7 +189,6 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("search/{email}")]
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
         try {
@@ -202,7 +200,6 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset) {
         try {
@@ -214,7 +211,6 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/id/{email}")]
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email) {
         try {
@@ -226,7 +222,6 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/id-check/{email}")]
     public async Task<int> GetUserIdCheckAsync(string email) {
         try {
@@ -238,7 +233,6 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/size")] 
     public async Task<int> GetEmployeesSizeAsync() {
         try {

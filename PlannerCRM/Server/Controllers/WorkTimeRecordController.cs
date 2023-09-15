@@ -16,7 +16,8 @@ public class WorkTimeRecordController : ControllerBase
         _logger = logger;
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
+    [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
     [HttpPost("add")]
     public async Task<IActionResult> AddWorkTimeRecordAsync(WorkTimeRecordFormDto dto) {
         try {
@@ -44,7 +45,8 @@ public class WorkTimeRecordController : ControllerBase
         }
     }
     
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
+    [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
     [HttpPut("edit")]
     public async Task<IActionResult> EditWorkTimeRecordAsync(WorkTimeRecordFormDto dto) {
         try {
@@ -76,7 +78,6 @@ public class WorkTimeRecordController : ControllerBase
         }
     }
     
-    [Authorize]
     [HttpGet("get/{workOrderId}/{activityId}/{employeeId}")]
     public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordAsync(int workOrderId, int activityId, int employeeId) {
         try {
@@ -88,7 +89,6 @@ public class WorkTimeRecordController : ControllerBase
         }
     }
     
-    [Authorize]
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<WorkTimeRecordViewDto>> GetPaginatedWorkTimeRecordsAsync(int limit, int offset) {
         try {
@@ -100,7 +100,6 @@ public class WorkTimeRecordController : ControllerBase
         }
     }
     
-    [Authorize]
     [HttpGet("get/by/employee/{employeeId}")]
     public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
         try {

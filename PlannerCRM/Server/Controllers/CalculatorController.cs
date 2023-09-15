@@ -1,8 +1,8 @@
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
 public class CalculatorController : ControllerBase
 {
     private readonly CalculatorService _calculator;

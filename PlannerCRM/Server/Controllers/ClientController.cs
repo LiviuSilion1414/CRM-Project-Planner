@@ -1,13 +1,8 @@
-using PlannerCRM.Shared.DTOs.ClientDto;
-
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = 
-    $"""
-        {nameof(Roles.OPERATION_MANAGER)}, 
-        {nameof(Roles.PROJECT_MANAGER)}
-    """
-)]
+[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
+
 [ApiController]
 [Route("api/[controller]")]
 public class ClientController : ControllerBase 
@@ -23,6 +18,7 @@ public class ClientController : ControllerBase
         _logger = logger;
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
     public async Task<IActionResult> AddClientAsync(ClientFormDto dto) {
         try {
@@ -52,6 +48,7 @@ public class ClientController : ControllerBase
         }
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
     public async Task<IActionResult> EditClientAsync(ClientFormDto dto) {
         try {
@@ -81,6 +78,7 @@ public class ClientController : ControllerBase
         }
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{clientId}")]
     public async Task<IActionResult> DeleteClientAsync(int clientId) {
         try {
@@ -113,6 +111,7 @@ public class ClientController : ControllerBase
         }
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{clientId}")]
     public async Task<ClientFormDto> GetClientForEditByIdAsync(int clientId) {
         try {
@@ -124,6 +123,7 @@ public class ClientController : ControllerBase
         }
     }
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{clientId}")]
     public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int clientId) {
         try {

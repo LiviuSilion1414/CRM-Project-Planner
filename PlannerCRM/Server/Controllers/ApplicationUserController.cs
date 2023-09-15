@@ -16,7 +16,6 @@ public class ApplicationUserController : ControllerBase
         _logger = logger;
     }
 
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add")]
     public async Task<IActionResult> AddUserAsync(EmployeeFormDto dto) {
         try {
@@ -50,7 +49,6 @@ public class ApplicationUserController : ControllerBase
         }
     }
 
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPut("edit")]
     public async Task<IActionResult> EditUserAsync(EmployeeFormDto dto) {
         try {
@@ -80,7 +78,6 @@ public class ApplicationUserController : ControllerBase
         }
     }
 
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/{email}")]
     public async Task<IActionResult> DeleteUserAsync(string email) {
         try {

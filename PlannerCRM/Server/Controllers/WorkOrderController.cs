@@ -98,7 +98,6 @@ public class WorkOrderController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("search/{workOrder}")]
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName) {
         try {
@@ -145,7 +144,6 @@ public class WorkOrderController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/size")] 
     public async Task<int> GetSizeAsync() {
         try {
@@ -157,7 +155,6 @@ public class WorkOrderController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5) {
         try {

@@ -1,12 +1,7 @@
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = 
-    $"""
-        {nameof(Roles.OPERATION_MANAGER)}, 
-        {nameof(Roles.SENIOR_DEVELOPER)}, 
-        {nameof(Roles.JUNIOR_DEVELOPER)}
-    """ 
-)]
+
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ActivityController : ControllerBase
@@ -104,12 +99,7 @@ public class ActivityController : ControllerBase
         }
     }
 
-    [Authorize(Roles = 
-        $"""
-            {nameof(Roles.OPERATION_MANAGER)}, 
-            {nameof(Roles.SENIOR_DEVELOPER)}, 
-            {nameof(Roles.JUNIOR_DEVELOPER)}
-        """ )]
+    [Authorize]
     [HttpGet("get/{activityId}")]
     public async Task<ActivityViewDto> GetActivityForViewByIdAsync(int activityId) {
         try {
@@ -145,12 +135,7 @@ public class ActivityController : ControllerBase
         }
     }
 
-    [Authorize(Roles = 
-        $"""
-            {nameof(Roles.OPERATION_MANAGER)}, 
-            {nameof(Roles.SENIOR_DEVELOPER)}, 
-            {nameof(Roles.JUNIOR_DEVELOPER)}
-        """ )]
+    [Authorize]
     [HttpGet("get/activity/by/workorder/{workOrderId}")]
     public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
         try {
@@ -162,12 +147,7 @@ public class ActivityController : ControllerBase
         }
     }
 
-    [Authorize(Roles = 
-        $"""
-            {nameof(Roles.OPERATION_MANAGER)}, 
-            {nameof(Roles.SENIOR_DEVELOPER)}, 
-            {nameof(Roles.JUNIOR_DEVELOPER)}
-        """ )]
+    [Authorize]
     [HttpGet("get/activity/by/employee/{employeeId}/{limit}/{offset}")]
     public async Task<List<ActivityFormDto>> GetActivitiesPerEmployeeAsync(int employeeId, int limit, int offset) {
         try {
@@ -179,12 +159,7 @@ public class ActivityController : ControllerBase
         }
     }
     
-    [Authorize(Roles = 
-        $"""
-            {nameof(Roles.OPERATION_MANAGER)}, 
-            {nameof(Roles.SENIOR_DEVELOPER)}, 
-            {nameof(Roles.JUNIOR_DEVELOPER)}
-        """ )]
+    [Authorize]
     [HttpGet("get/size/by/employee/id/{employeeId}")]
     public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) {
         try {
