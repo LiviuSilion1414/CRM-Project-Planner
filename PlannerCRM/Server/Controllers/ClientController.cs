@@ -1,8 +1,6 @@
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-[Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ClientController : ControllerBase 
@@ -135,6 +133,7 @@ public class ClientController : ControllerBase
         }
     }
 
+       
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<ClientViewDto>> GetPaginatedClientsAsync(int limit, int offset) {
         try {

@@ -149,7 +149,7 @@ public class ActivityController : ControllerBase
 
     [Authorize]
     [HttpGet("get/activity/by/employee/{employeeId}/{limit}/{offset}")]
-    public async Task<List<ActivityFormDto>> GetActivitiesPerEmployeeAsync(int employeeId, int limit, int offset) {
+    public async Task<List<ActivityViewDto>> GetActivitiesPerEmployeeAsync(int employeeId, int limit, int offset) {
         try {
             return await _repo.GetActivityByEmployeeId(employeeId, limit, offset);
         } catch (Exception exc) {
