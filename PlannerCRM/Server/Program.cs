@@ -1,5 +1,8 @@
+using Microsoft.Extensions.Localization;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddTransient<AbstractExceptionHandlerMiddleware, GlobalExceptionHandlerMiddleware>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -60,13 +63,9 @@ builder.Services.AddScoped<Logger<ClientRepository>>();
 builder.Services.AddScoped<Logger<DtoValidatorUtillity>>();
 builder.Services.AddScoped<Logger<CalculatorService>>();
 
-
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
-
-var accountManagerEmail = "account.manager@gmail.com";
-var accountManagerPassword = "Qwerty123";
 
 using (var scope = app.Services.CreateScope())
 {
@@ -76,6 +75,9 @@ using (var scope = app.Services.CreateScope())
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         
+        var accountManagerEmail = "account.manager@gmail.com";
+        var accountManagerPassword = "Qwerty123";
+
         var accountManager = new IdentityUser {
             Email = accountManagerEmail,
             EmailConfirmed = true,

@@ -12,6 +12,7 @@ public class WorkOrder
     public List<Activity> Activities { get; set; }
     public List<WorkTimeRecord> WorkTimeRecords { get; set; }
     public int ClientId { get; set; }
+    public FirmClient Client { get; set; }
 }
 
 

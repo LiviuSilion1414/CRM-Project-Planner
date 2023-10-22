@@ -20,10 +20,11 @@ public class DtoValidatorUtillity
 
             var employeeIsAlreadyPresent = await _dbContext.Employees
                 .AnyAsync(em => 
-                    EF.Functions.ILike(em.Email, $"%{dto.Email}%") && em.Id == dto.Id);        
+                    EF.Functions.ILike(em.Email, $"%{dto.OldEmail}%") && em.Id == dto.Id);        
             
             var userIsAlreadyPresent = await _userManager.Users
-                .AnyAsync(user => user.Email == dto.Email);
+                .AnyAsync(user => 
+                    EF.Functions.ILike(user.Email, $"%{dto.OldEmail}%"));
 
             if (operation == OperationType.ADD) {
                 if (employeeIsAlreadyPresent && userIsAlreadyPresent) {
@@ -72,10 +73,14 @@ public class DtoValidatorUtillity
         var isValid = CheckDtoHealth(dto);
         
         if (isValid) {
+
             var isAlreadyPresent = await _dbContext.WorkOrders
                 .AnyAsync(wo=> ((!wo.IsCompleted) || (!wo.IsDeleted)) && wo.Id == dto.Id);
 
             if (operation == OperationType.ADD) {
+                if (!await _dbContext.Clients.AnyAsync()) {
+                    throw new UpdateRowSourceException(ExceptionsMessages.IMPOSSIBLE_ADD);
+                }
                 if (isAlreadyPresent) {
                     throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }

@@ -213,9 +213,9 @@ public class ActivityRepository
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
-                ClientName = _dbContext.Clients
-                    .Single(cl => cl.WorkOrderId == ac.WorkOrderId)
-                    .Name,
+                //ClientName = _dbContext.Clients
+                //    .Single(cl => cl.WorkOrdersIds.Any(id => id == ac.WorkOrderId)
+                //    .Name,
                 EmployeeActivity = new(),
                 ViewEmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
@@ -322,16 +322,23 @@ public class ActivityRepository
             .SingleAsync(ac => ac.Id == id);
     }
 
-    public async Task<List<ActivityFormDto>> GetActivityByEmployeeId(int employeeId, int limit = 0, int offset = 5) {
+    public async Task<List<ActivityViewDto>> GetActivityByEmployeeId(int employeeId, int limit = 0, int offset = 5) {
         return await _dbContext.Activities
             .Skip(limit)
             .Take(offset)
-            .Select(ac => new ActivityFormDto {
+            .Select(ac => new ActivityViewDto {
                 Id = ac.Id,
                 Name = ac.Name,
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
+                WorkOrderName = _dbContext.WorkOrders
+                    .Single(wo => wo.Id == ac.WorkOrderId)
+                    .Name,
+                ClientName = _dbContext.Clients
+                    .Single(cl => _dbContext.WorkOrders
+                        .Any(wo => cl.Id == wo.ClientId))
+                    .Name,
                 EmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,
@@ -381,6 +388,10 @@ public class ActivityRepository
                 StartDate = ac.StartDate,
                 FinishDate = ac.FinishDate,
                 WorkOrderId = ac.WorkOrderId,
+                ClientName = _dbContext.Clients
+                    .Single(cl => _dbContext.WorkOrders
+                        .Any(wo => cl.Id == wo.ClientId))
+                    .Name,
                 EmployeeActivity = ac.EmployeeActivity
                     .Select(ea => new EmployeeActivityDto {
                         Id = ea.Id,

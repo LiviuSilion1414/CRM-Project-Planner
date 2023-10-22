@@ -28,4 +28,5 @@ public static class ExceptionsMessages
     public const string EMPTY_FIELDS = "Tutti i campi sono obbligatori, si prega di ricontrollare.";
 
     public const string IMPOSSIBLE_APPLY_FILTER = "Impossibile applicare il filtro di contenuti.";
+    public const string SOMETHING_WENT_WRONG = "Qualcosa è andato storto.";
 }

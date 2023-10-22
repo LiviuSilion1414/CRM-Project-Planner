@@ -97,7 +97,7 @@ public class ClientRepository
                     Id = client.Id,
                     Name = client.Name,
                     VatNumber = client.VatNumber,
-                    WorkOrderId = client.WorkOrderId
+                    //WorkOrderId = client.WorkOrderId
                 }
             )
             .SingleOrDefaultAsync();
@@ -110,7 +110,7 @@ public class ClientRepository
                     Id = client.Id,
                     Name = client.Name,
                     VatNumber = client.VatNumber,
-                    WorkOrderId = client.WorkOrderId
+                    //WorkOrderId = client.WorkOrderId
                 }
             )
             .SingleAsync(cl => cl.Id == id);
@@ -123,7 +123,7 @@ public class ClientRepository
                     Id = client.Id,
                     Name = client.Name,
                     VatNumber = client.VatNumber,
-                    WorkOrderId = client.WorkOrderId
+                   // WorkOrderId = client.WorkOrderId
                 }
             )
             .SingleAsync(cl => cl.Id == id);
@@ -139,7 +139,7 @@ public class ClientRepository
                     Id = client.Id,
                     Name = client.Name,
                     VatNumber = client.VatNumber,
-                    WorkOrderId = client.WorkOrderId
+                   // WorkOrderId = client.WorkOrderId
                 }
             )
             .ToListAsync();
@@ -156,7 +156,7 @@ public class ClientRepository
                     Id = cl.Id,
                     Name = cl.Name,
                     VatNumber = cl.VatNumber,
-                    WorkOrderId = cl.WorkOrderId
+                   // WorkOrderId = cl.WorkOrderId
                 }
             )
             .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
@@ -169,7 +169,7 @@ public class ClientRepository
                     Id = cl.Id,
                     Name = cl.Name,
                     VatNumber = cl.VatNumber,
-                    WorkOrderId = cl.WorkOrderId
+                   // WorkOrderId = cl.WorkOrderId
                 }
             )
             .Where(cl => cl.Id == clientId)

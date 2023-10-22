@@ -32,6 +32,8 @@ public class WorkOrderRepository
 						IsDeleted = false,
 						IsCompleted = false,
 						ClientId = dto.ClientId,
+						Client = _dbContext.Clients
+							.Single(cl => cl.Id == dto.ClientId)
 					}
 				);
 
@@ -39,7 +41,10 @@ public class WorkOrderRepository
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 				}
 
-				await SetForeignKeyToClientAsync(dto.ClientId, dto.Id);
+				var workOrder = await _dbContext.WorkOrders
+					.SingleAsync(wo => EF.Functions.ILike(wo.Name, dto.Name) && wo.ClientId == dto.ClientId);
+
+				await SetForeignKeyToClientAsync(workOrder, OperationType.ADD);
 			} else {
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
 			}
@@ -50,26 +55,29 @@ public class WorkOrderRepository
 		}
 	}
 
-	private async Task SetForeignKeyToClientAsync(int clientId, int workOrderId = 0) {
+	private async Task SetForeignKeyToClientAsync(WorkOrder workOrder, OperationType operationType) {
 		try {
-			WorkOrder workOrder = new();
-			if (workOrderId is not 0) {
-				workOrder = await _dbContext.WorkOrders
-					.SingleAsync(wo => wo.ClientId == clientId && wo.Id == workOrderId);
+			if (!string.IsNullOrEmpty(workOrder.Name) && await _dbContext.WorkOrders.AnyAsync(wo => wo.Id == workOrder.Id)) {
+				if (operationType == OperationType.ADD) {
+					await _dbContext.ClientWorkOrders
+						.AddAsync(
+							new ClientWorkOrder {
+								WorkOrderId = workOrder.Id,
+								ClientId = workOrder.ClientId,
+							}
+						);
+				} else {
+					var clientWorkOrder = await _dbContext.ClientWorkOrders
+						.SingleAsync(clwo => clwo.WorkOrderId == workOrder.Id);
+
+					clientWorkOrder.ClientId = workOrder.ClientId;
+				}
+
+				if (await _dbContext.SaveChangesAsync() == 0) {
+					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+				}
 			} else {
-				workOrder = await _dbContext.WorkOrders
-					.SingleAsync(wo => wo.ClientId == clientId);
-			}
-
-			var client = await _dbContext.Clients
-				.SingleAsync(cl => cl.Id == clientId);
-
-			client.WorkOrderId = workOrder.Id;
-
-			_dbContext.Update(client);
-
-			if (await _dbContext.SaveChangesAsync() == 0) {
-				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+				throw new UpdateRowSourceException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}
 		} catch(Exception exc) {
 			_logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
@@ -112,16 +120,18 @@ public class WorkOrderRepository
 				
 				model.Id = dto.Id;
 				model.Name = dto.Name;
+				model.ClientId = dto.ClientId;
 				model.StartDate = dto.StartDate 
 					?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
 				model.FinishDate = dto.FinishDate 
 					?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
 
+
 				if (await _dbContext.SaveChangesAsync() == 0) {
 					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 				}
-
-				await SetForeignKeyToClientAsync(dto.ClientId, dto.Id);
+				
+				await SetForeignKeyToClientAsync(model, OperationType.EDIT);
 			} else {
 				throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
 			}

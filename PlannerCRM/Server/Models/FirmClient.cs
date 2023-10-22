@@ -6,5 +6,5 @@ public class FirmClient
     public string Name { get; set; }
     public string VatNumber { get; set; }
 
-    public int WorkOrderId { get; set; }
+    public List<ClientWorkOrder> WorkOrders { get; set; }
 }
