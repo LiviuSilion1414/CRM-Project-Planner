@@ -1,0 +1,7 @@
+@typeparam T
+
+<div class="list-group">
+    @foreach (var item in Items) {
+        <div class="list-group-item" @onclick="@(() => SetAsSelected(item))">@GetPropertyName(item)</div>
+    }
+</div>
