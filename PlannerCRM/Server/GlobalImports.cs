@@ -24,3 +24,5 @@ global using PlannerCRM.Shared.Models;
 global using PlannerCRM.Server.Models;
 global using PlannerCRM.Server.DataAccess;
 global using PlannerCRM.Server.Utilities;
+global using PlannerCRM.Server.Middlewares;
+global using System.Net;
