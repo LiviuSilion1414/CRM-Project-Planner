@@ -1,23 +1,24 @@
+<div class="filter-box">
+    <OptionsFilter
+        Actions=@_filters/>
+</div>
+
+<div class="search-box">
+    <SearchBox
+        GetSearchedItems=@HandleSearchedElements/>
+</div>
+
 <table class="table">
     <thead>
         <tr>
             <th scope="col">#</th>
-                @foreach (var action in _filters) {
-                    @if (action.Key == _orderKey) {
-                        <th scope="col" @onclick="@(() => HandleOrdering(action.Key))"
-                            style="color: blue;">
-                            <span>
-                                <i class="bi bi-arrow-down"></i>
-                                @action.Key
-                            </span>
-                        </th>
-                    } else {
-                        <th scope="col" @onclick="@(() => HandleOrdering(action.Key))">
-                            <span>
-                                @action.Key
-                            </span>
-                        </th>
-                    }
+                @foreach (var order in _orderTitles) {
+                    <th scope="col" class="@SetStyle(order.Key)" @onclick="@(() => HandleOrdering(order.Key))">
+                        <span>
+                            <i class="bi bi-arrow-down"></i>
+                            @order.Key
+                        </span>
+                    </th>
                 }
             <th scope="col"></th>
         </tr>
@@ -26,14 +27,8 @@
         @foreach (var ac in _filteredList) {
             <tr>
                 <td><i class="bi bi-briefcase"></i></td> 
-                <td>
-                    @foreach (var wo in _workOrders.DistinctBy(wo => wo.Id)) {
-                        if (wo.Id == ac.WorkOrderId) {
-                            @wo.Name
-                        }
-                    }
-
-                </td>
+                <td>@ac.ClientName</td>
+                <td>@ac.WorkOrderName</td>
                 <td>@ac.Name</td>
                 <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
                 <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
@@ -59,20 +54,15 @@
     </tbody>
 </table>
 
-@if (!_workOrders.Any()) {
-    <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+@if (!_activities.Any()) {
+    <p class="text-center">@Titles.NOT_AVAILABLE_ACTIVITIES</p>
 }
-
 
 @if (_isAddClicked) {
     <ModalAddHours ActivityId="@_activityId" EmployeeId="@EmployeeId"/>
 }
 
-@if (!_hasMoreActivities) {
-    <p class="text-center">@Titles.NO_MORE_RESOURCES</p>
-}
-
-@if (_workOrders.Any()) {
+@if (_activities.Any()) {
     <Paginator
         CollectionSize=@_collectionSize
         Paginate="@((args) => HandlePaginate(args.Item1, args.Item2))"/>

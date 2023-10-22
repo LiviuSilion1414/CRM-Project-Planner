@@ -48,24 +48,32 @@ public partial class ModalFormActivity : ComponentBase
         _hideEmployeesList = true;
     } 
 
-    private async Task OnClickSearchWorkOrder(string workOrder) {
-        if (!string.IsNullOrEmpty(workOrder)) {
-            _workOrders = await OperationManagerService.SearchWorkOrderAsync(workOrder);
-            _workOrdersHasElements = _workOrders.Any();
-            if (!_workOrdersHasElements) {
-                _message = ExceptionsMessages.WORKORDER_NOT_FOUND;
-            }
-            ToggleWorkOrderListView();
+    private async Task HandleSearchedWorkOrders(string query) {
+        if (string.IsNullOrEmpty(query)) {
+            OnClickInvalidSubmit();
+        } else {
+            _workOrders = await OperationManagerService.SearchWorkOrderAsync(query);
         }
+
+        StateHasChanged();
+    }
+
+    private async Task HandleSearchedEmployees(string query) {
+        if (string.IsNullOrEmpty(query)) {
+            OnClickInvalidSubmit();
+        } else {
+            _employees = await OperationManagerService.SearchEmployeeAsync(query);
+        }
+
+        StateHasChanged();
     }
 
 
-    private void OnClickSetWorkOrder(WorkOrderSelectDto workOrderSelect) {
+    private void HandleChosenWorkOrder(WorkOrderSelectDto workOrderSelect) {
         Model.WorkOrderId = workOrderSelect.Id;
         Model.SelectedWorkOrder = workOrderSelect.Name;
         Model.ClientName = workOrderSelect.ClientName;
         _workOrderHasBeenSet = !_workOrderHasBeenSet;
-        ToggleWorkOrderListView();
     }
     
     private void OnClickModalCancel() => 
@@ -77,18 +85,9 @@ public partial class ModalFormActivity : ComponentBase
     private void ToggleEmployeesListView() => 
         _hideEmployeesList = !_hideEmployeesList;
 
-    private async Task OnClickSearchEmployee(string employee) {
-        _employees = await OperationManagerService.SearchEmployeeAsync(employee);
-        _employeeHasElements = _employees.Any();
-        if (!_employeeHasElements) {
-            _message = ExceptionsMessages.EMPLOYEE_NOT_FOUND;
-        } 
-        ToggleEmployeesListView();
-    }
-
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
 
-    private void OnClickAddAsSelected(EmployeeSelectDto employee) {
+    private void HandleChosenEmployee(EmployeeSelectDto employee) {
         try { 
             var contains = Model.EmployeeActivity
                 .Any(ea => ea.Employee.Id == employee.Id);

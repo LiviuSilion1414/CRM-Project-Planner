@@ -40,13 +40,23 @@ public partial class OperationManager : ComponentBase
     }
 
     private void HandleSearchedElements(string query) {
+        if (string.IsNullOrEmpty(query)) {
+            _filteredList = new(_workOrders);
+        }
+
         _filteredList = _workOrders
-            .Where(wo => wo.Name
-                .Contains(query, StringComparison.OrdinalIgnoreCase))
+            .Where(wo =>
+                {
+                    return
+                        wo.Name
+                            .Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        wo.ClientName
+                            .Contains(query, StringComparison.OrdinalIgnoreCase);
+                })
             .ToList();
 
         StateHasChanged();
-    } 
+    }
 
     private void GetAll() {
         _filteredList = new(_workOrders);
@@ -64,7 +74,7 @@ public partial class OperationManager : ComponentBase
 
     private void GetActive() {
         _filteredList = _workOrders
-            .Where(wo => !wo.IsDeleted || !wo.IsCompleted || !wo.IsArchived)
+            .Where(wo => !wo.IsDeleted && !wo.IsCompleted && !wo.IsArchived)
             .ToList();
         
         StateHasChanged();
@@ -88,6 +98,10 @@ public partial class OperationManager : ComponentBase
 
     public async Task HandlePaginate(int limit, int offset) {
         _workOrders = await OperationManagerService.GetPaginatedWorkOrdersAsync(limit, offset);
+
+        _filteredList = new(_workOrders);
+
+        StateHasChanged();
     }
 
     public async Task OnClickShowClients() {

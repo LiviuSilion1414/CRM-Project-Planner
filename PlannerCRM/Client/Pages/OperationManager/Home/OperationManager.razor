@@ -10,31 +10,27 @@
             Aggiungi cliente
         </button>
     </div>
-    @if (_clients.Any()) {
+
         <div class="child">
             <button class="btn btn-primary" title="Aggiungi commessa" @onclick="OnClickAddWorkOrder">
                 <i class="bi bi-plus-circle-fill"></i>
                 Aggiungi commessa
             </button>
+        </div>   
+        <div class="child">
+            <button class="btn btn-primary" title="Aggiungi attività" @onclick="OnClickAddActivity">
+                <i class="bi bi-plus-circle-fill"></i>
+                Aggiungi attività
+            </button>
         </div>
-        
-        @if (_filteredList.Any()) {
-            <div class="child">
-                <button class="btn btn-primary" title="Aggiungi attività" @onclick="OnClickAddActivity">
-                    <i class="bi bi-plus-circle-fill"></i>
-                    Aggiungi attività
-                </button>
-            </div>
-        }
         <div class="child">
             <button class="btn btn-primary" title="Visualizza clienti" @onclick=@OnClickShowClients>
                 <i class="bi bi-card-list"></i>
                 Visualizza clienti
             </button>
         </div>
-        @if (_isShowClientsClicked) { 
-            <ClientsList Title=@Titles.SHOW_ALL_CLIENTS/>
-        }
+    @if (_isShowClientsClicked) { 
+        <ClientsList Title=@Titles.SHOW_ALL_CLIENTS/>
     }
 </div>  
 
@@ -43,12 +39,10 @@
         Actions=@_filters/>
 </div>
 
-@if (_filteredList.Any()) {
-    <div class="search-box">
-        <SearchBox
-            GetSearchedItems="@HandleSearchedElements"/>
-    </div>
-}
+<div class="search-box">
+    <SearchBox
+        GetSearchedItems="@HandleSearchedElements"/>
+</div>
 
 <GridDataWorkOrders
     WorkOrders=@_filteredList/>

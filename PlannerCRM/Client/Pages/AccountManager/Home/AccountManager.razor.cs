@@ -29,6 +29,10 @@ public partial class AccountManager : ComponentBase
     } 
 
     private void HandleSearchedElements(string query) {
+        if (string.IsNullOrEmpty(query)) {
+            _filteredList = new(_users);
+        }
+
         _filteredList = _users
             .Where(us => us.FullName
                 .Contains(query, StringComparison.OrdinalIgnoreCase))

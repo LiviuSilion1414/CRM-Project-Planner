@@ -5,6 +5,7 @@ public partial class ModalFormUser : ComponentBase
 {
     [Parameter] public string Title { get; set; }
     [Parameter] public EmployeeFormDto Model { get; set; }
+    [Parameter] public OperationType OperationType { get; set; }
     [Parameter] public EventCallback<EmployeeFormDto> GetValidatedModel { get; set; }
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
@@ -51,7 +52,11 @@ public partial class ModalFormUser : ComponentBase
             var isValid = ValidatorService.Validate(Model, out _errors);
             
             if (isValid) {
-                Model.OldEmail = Model.Email;
+                
+                if (OperationType == OperationType.ADD) {
+                    Model.OldEmail = string.Empty;
+                }
+
                 Model.EmployeeSalaries = new() {
                     new() {
                         Id = Model.Id,

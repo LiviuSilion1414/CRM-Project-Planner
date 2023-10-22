@@ -105,11 +105,6 @@ i:hover {
     color: red;
 }
 
-.selected {
-    color: blue;
-    text-decoration: underline;
-}
-
 .active:hover {
     cursor: pointer;
 }

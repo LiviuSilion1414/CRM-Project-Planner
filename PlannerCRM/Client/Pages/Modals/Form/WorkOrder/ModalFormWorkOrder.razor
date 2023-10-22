@@ -18,12 +18,8 @@
                             <div class="form-group">
                                 <i class="bi bi-person"></i>
                                 <label>Cliente</label>
-                                    <input type="search" class="form-control" @bind="Model.ClientName"/>
-                                    <span class="btn btn-link"
-                                        @onclick=@OnClickSearchClient> 
-                                        <i class="bi bi-magnifying-glass"></i>
-                                        Cerca
-                                    </span> 
+                                    <SearchBox
+                                        GetSearchedItems="@HandleSearchedElements"/>
                                     @foreach (var cl in _clients) {
                                         <ul style="list-style: none;" hidden=@_hideclientsList> 
                                             <li @onclick="@(() => OnClickSetAsClient(cl))">@cl.Name</li>

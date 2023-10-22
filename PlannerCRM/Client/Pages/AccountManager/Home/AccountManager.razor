@@ -17,12 +17,10 @@
         Actions=@_filters/>
 </div>
 
-@if (_filteredList.Any()) {
-    <div class="search-box">
-        <SearchBox
-            GetSearchedItems=@HandleSearchedElements/>
-    </div>
-}
+<div class="search-box">
+    <SearchBox
+        GetSearchedItems=@HandleSearchedElements/>
+</div>
 
 <GridDataUsers
     Users=@_filteredList/>

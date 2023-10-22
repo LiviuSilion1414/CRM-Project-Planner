@@ -42,12 +42,14 @@ public partial class ModalFormWorkOrder : ComponentBase
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
 
-    private async Task OnClickSearchClient() {
-        if (string.IsNullOrEmpty(Model.ClientName)) {
+    private async Task HandleSearchedElements(string query) {
+        if (string.IsNullOrEmpty(query)) {
             OnClickInvalidSubmit();
         } else {
-            _clients = await OperationManagerService.SearchClientAsync(Model.ClientName);
+            _clients = await OperationManagerService.SearchClientAsync(query);
         }
+
+        StateHasChanged();
     }
 
     private void OnClickInvalidSubmit() {

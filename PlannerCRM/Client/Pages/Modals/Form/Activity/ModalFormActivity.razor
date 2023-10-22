@@ -24,26 +24,14 @@
                 <div class="form-group">
                     <i class="bi bi-briefcase"></i>
                     <label for="Nome commessa">Commessa</label>
-                    <InputText type="search" @bind-Value="Model.SelectedWorkOrder" class="form-control"/>
-                    <CustomValidationMessage FieldName="@nameof(Model.SelectedWorkOrder)"/>
+                    <SearchBox
+                        GetSearchedItems="@HandleSearchedWorkOrders"/>
 
-                    <ul id="workorder-list" hidden="@_hideWorkOrdersList">
-                        @if (!_workOrdersHasElements) {
-                            <li @onclick="@ToggleWorkOrderListView">Nessuna commessa trovata.</li>
-                        } else {
-                            @foreach (var wo in _workOrders) {
-                                <li class="dropdown-item" value="@wo" 
-                                    @onclick="@(() => OnClickSetWorkOrder(wo))">@wo.Name</li>
-                            }
-                        }
-                    </ul> 
-                    <div class="right">
-                        <button type="button" class="btn btn-link" title="Cerca commessa"
-                            @onclick="@(() => OnClickSearchWorkOrder(Model.SelectedWorkOrder))">
-                                <i class="bi bi-search"></i>
-                                Cerca
-                        </button>
-                    </div>
+                    <ItemsList
+                        T ="@WorkOrderSelectDto"
+                        Items="@_workOrders"
+                        PropertyKeys="@(new List<string>(){"Name"})"
+                        GetSelectedItem="@HandleChosenWorkOrder"/>
                     <CustomValidationMessage FieldName="@nameof(Model.WorkOrderId)"/>
                 </div>
                 <div class="form-group">
@@ -67,28 +55,14 @@
                 <div class="form-group">
                     <i class="bi bi-people"></i>
                     <label for="Assegna dipendenti">Assegna a dipendenti</label>
-                    <InputText type="search" class="form-control" @bind-Value="Model.SelectedEmployee"/>
-                    @if (_employees.Any()) {
-                        <ul id="employees-list" hidden="@_hideEmployeesList">
-                            @if (!_employeeHasElements) {
-                                <li @onclick="@ToggleEmployeesListView">Nessun dipendente trovato.</li>
-                            } else {
-                                @foreach (var em in _employees) {
-                                    <li class="dropdown-item" value="@em" title="Aggiungi impiegato"
-                                        @onclick="@(() => OnClickAddAsSelected(em))"> 
-                                            @em.Email
-                                    </li>
-                                }
-                            }
-                        </ul>
-                    }
-                    <div>
-                        <button type="button" class="btn btn-link"
-                            @onclick="@(() => OnClickSearchEmployee(Model.SelectedEmployee))">
-                            <i class="bi bi-search"></i>
-                            Cerca
-                        </button>
-                    </div>
+                    <SearchBox
+                        GetSearchedItems="@HandleSearchedEmployees"/>
+
+                    <ItemsList
+                        T ="@EmployeeSelectDto"
+                        Items="@_employees"
+                        PropertyKeys="@(new List<string>(){"FullName"})"
+                        GetSelectedItem="@HandleChosenEmployee"/>
                 </div>
                 <div class="container">
                     <span>Dipendenti selezionati per questa attività: @Model.ViewEmployeeActivity.Count</span> <br>

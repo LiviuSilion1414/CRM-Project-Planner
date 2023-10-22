@@ -1,12 +1,6 @@
 namespace PlannerCRM.Client.Services.Crud;
 
-[Authorize(Roles = 
-    $"""
-        {nameof(Roles.PROJECT_MANAGER)}
-        {nameof(Roles.OPERATION_MANAGER)}
-        {nameof(Roles.ACCOUNT_MANAGER)}
-    """
-)]
+[Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
 public class OperationManagerCrudService
 {
     private readonly HttpClient _http;
