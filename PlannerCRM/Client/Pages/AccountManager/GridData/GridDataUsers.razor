@@ -43,7 +43,7 @@
                 <td>
                     <i class="bi bi-eye info" @onclick="@(() => ShowDetails(user.Id))"></i>
                 </td>
-                @if (!user.IsDeleted && !user.IsArchived) {
+                @if (!user.IsDeleted || !user.IsArchived) {
                     <td>
                         <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEdit(user.Id))"></i>
                     </td> 
