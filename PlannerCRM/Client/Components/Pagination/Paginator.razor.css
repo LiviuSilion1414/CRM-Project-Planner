@@ -3,22 +3,14 @@
     position: sticky;
 }
 
-#previous {
-    padding:10px;
-}
-
-#page-number {
-    padding: 10px;
-}
-
-#next {
-    padding:10px;
-}
-
-#previous, #next {
+.previous, .next {
     cursor: pointer;
 }
 
 .pagination {
     margin: 0 auto;
+}
+
+.active {
+    background-color: rgb(141, 141, 238);
 }
