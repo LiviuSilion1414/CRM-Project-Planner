@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230830100724_Initial")]
-    partial class Initial
+    [Migration("20230919183958_Secundary")]
+    partial class Secundary
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -286,6 +286,33 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("ActivityCost");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.ClientWorkOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FirmClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WorkOrderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FirmClientId");
+
+                    b.HasIndex("WorkOrderId")
+                        .IsUnique();
+
+                    b.ToTable("ClientWorkOrders");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -409,9 +436,6 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("VatNumber")
                         .HasColumnType("text");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
@@ -437,6 +461,9 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsInvoiceCreated")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -444,6 +471,8 @@ namespace PlannerCRM.Server.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
 
                     b.ToTable("WorkOrders");
                 });
@@ -465,10 +494,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<DateTime>("FinishDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsCreated")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("IssuedDate")
@@ -609,6 +635,19 @@ namespace PlannerCRM.Server.Migrations
                         .HasForeignKey("WorkOrderCostId");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.ClientWorkOrder", b =>
+                {
+                    b.HasOne("PlannerCRM.Server.Models.FirmClient", null)
+                        .WithMany("WorkOrders")
+                        .HasForeignKey("FirmClientId");
+
+                    b.HasOne("PlannerCRM.Server.Models.WorkOrder", null)
+                        .WithOne("FK_Client")
+                        .HasForeignKey("PlannerCRM.Server.Models.ClientWorkOrder", "WorkOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.ActivityCost", null)
@@ -648,6 +687,17 @@ namespace PlannerCRM.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrder", b =>
+                {
+                    b.HasOne("PlannerCRM.Server.Models.FirmClient", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkTimeRecord", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Employee", "Employee")
@@ -682,9 +732,16 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Salaries");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.FirmClient", b =>
+                {
+                    b.Navigation("WorkOrders");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrder", b =>
                 {
                     b.Navigation("Activities");
+
+                    b.Navigation("FK_Client");
 
                     b.Navigation("WorkTimeRecords");
                 });

@@ -283,6 +283,33 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("ActivityCost");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.ClientWorkOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FirmClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WorkOrderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FirmClientId");
+
+                    b.HasIndex("WorkOrderId")
+                        .IsUnique();
+
+                    b.ToTable("ClientWorkOrders");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -406,9 +433,6 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("VatNumber")
                         .HasColumnType("text");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
@@ -444,6 +468,8 @@ namespace PlannerCRM.Server.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
 
                     b.ToTable("WorkOrders");
                 });
@@ -606,6 +632,19 @@ namespace PlannerCRM.Server.Migrations
                         .HasForeignKey("WorkOrderCostId");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.ClientWorkOrder", b =>
+                {
+                    b.HasOne("PlannerCRM.Server.Models.FirmClient", null)
+                        .WithMany("WorkOrders")
+                        .HasForeignKey("FirmClientId");
+
+                    b.HasOne("PlannerCRM.Server.Models.WorkOrder", null)
+                        .WithOne("FK_Client")
+                        .HasForeignKey("PlannerCRM.Server.Models.ClientWorkOrder", "WorkOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.ActivityCost", null)
@@ -645,6 +684,17 @@ namespace PlannerCRM.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrder", b =>
+                {
+                    b.HasOne("PlannerCRM.Server.Models.FirmClient", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkTimeRecord", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Employee", "Employee")
@@ -679,9 +729,16 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Salaries");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.FirmClient", b =>
+                {
+                    b.Navigation("WorkOrders");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrder", b =>
                 {
                     b.Navigation("Activities");
+
+                    b.Navigation("FK_Client");
 
                     b.Navigation("WorkTimeRecords");
                 });

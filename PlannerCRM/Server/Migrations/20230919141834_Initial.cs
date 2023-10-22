@@ -58,8 +58,7 @@ namespace PlannerCRM.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    VatNumber = table.Column<string>(type: "text", nullable: true),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
+                    VatNumber = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,8 +76,7 @@ namespace PlannerCRM.Server.Migrations
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     IssuedDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsCreated = table.Column<bool>(type: "boolean", nullable: false),
                     TotalHours = table.Column<int>(type: "integer", nullable: false),
                     TotalEmployees = table.Column<int>(type: "integer", nullable: false),
                     TotalActivities = table.Column<int>(type: "integer", nullable: false),
@@ -90,24 +88,6 @@ namespace PlannerCRM.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WorkOrderCosts", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WorkOrders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    ClientId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WorkOrders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,6 +192,51 @@ namespace PlannerCRM.Server.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientWorkOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientWorkOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientWorkOrders_Clients_WorkOrderId",
+                        column: x => x.WorkOrderId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    FinishDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    IsInvoiceCreated = table.Column<bool>(type: "boolean", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    ClientId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorkOrders_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -434,6 +459,11 @@ namespace PlannerCRM.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientWorkOrders_WorkOrderId",
+                table: "ClientWorkOrders",
+                column: "WorkOrderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmployeeActivity_ActivityId",
                 table: "EmployeeActivity",
                 column: "ActivityId");
@@ -457,6 +487,11 @@ namespace PlannerCRM.Server.Migrations
                 name: "IX_EmployeeSalary_EmployeeId",
                 table: "EmployeeSalary",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkOrders_ClientId",
+                table: "WorkOrders",
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkTimeRecords_EmployeeId",
@@ -488,7 +523,7 @@ namespace PlannerCRM.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "ClientWorkOrders");
 
             migrationBuilder.DropTable(
                 name: "EmployeeActivity");
@@ -516,6 +551,9 @@ namespace PlannerCRM.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "ActivityCost");
+
+            migrationBuilder.DropTable(
+                name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "WorkOrderCosts");
