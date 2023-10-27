@@ -50,10 +50,11 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("current/user/info")]
-    public CurrentUser GetCurrentUserInfo() {
+    public async Task<CurrentUser> GetCurrentUserInfo() {
         return new CurrentUser {
             IsAuthenticated = User.Identity.IsAuthenticated,
             UserName = User.Identity.Name,
+            Role = await GetUserRoleAsync(),
             Claims = User.Claims
                 .ToDictionary(c => c.Type, c => c.Value)
         };
