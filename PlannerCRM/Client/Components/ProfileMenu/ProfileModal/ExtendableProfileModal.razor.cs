@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace PlannerCRM.Client.Components.ProfileMenu.ProfileModal;
 
 public partial class ExtendableProfileModal : ComponentBase

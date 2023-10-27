@@ -1,3 +1,4 @@
+using PlannerCRM.Client;
 using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
