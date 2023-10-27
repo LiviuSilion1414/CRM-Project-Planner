@@ -1,3 +1,5 @@
+using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+
 namespace PlannerCRM.Client.Pages.Modals.Form.Activity;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
@@ -26,10 +28,8 @@ public partial class ModalFormActivity : ComponentBase
     private string _message;
     private bool _isCancelClicked;
     
-    private bool _workOrdersHasElements;
     private bool _hideWorkOrdersList;
 
-    private bool _employeeHasElements; 
     private bool _hideEmployeesList;
 
     private bool _workOrderHasBeenSet;

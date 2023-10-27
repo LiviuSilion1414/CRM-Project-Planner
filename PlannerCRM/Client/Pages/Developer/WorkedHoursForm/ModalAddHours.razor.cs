@@ -1,3 +1,5 @@
+using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+
 namespace PlannerCRM.Client.Pages.Developer.WorkedHoursForm;
 
 [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]

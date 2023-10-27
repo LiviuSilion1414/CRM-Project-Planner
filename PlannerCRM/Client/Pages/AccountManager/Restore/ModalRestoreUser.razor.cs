@@ -1,3 +1,5 @@
+using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+
 namespace PlannerCRM.Client.Pages.AccountManager.Restore;
 
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]

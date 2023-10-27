@@ -1,3 +1,5 @@
+using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+
 namespace PlannerCRM.Client.Pages.AccountManager.Add;
 
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]

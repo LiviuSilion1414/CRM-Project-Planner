@@ -12,6 +12,7 @@
 @using PlannerCRM.Client
 @using PlannerCRM.Client.Components
 @using PlannerCRM.Client.Services
+@using PlannerCRM.Client.Services.Utilities.Navigation.Lock
 @using PlannerCRM.Client.Services.Crud
 @using PlannerCRM.Client.Shared
 @using PlannerCRM.Client.Pages.Modals.Form
@@ -22,10 +23,15 @@
 @using PlannerCRM.Client.Pages.Modals.Form.List
 @using PlannerCRM.Client.Pages.AccountManager
 @using PlannerCRM.Client.Components.Pagination
-@using PlannerCRM.Client.Components.ListOfItems;
+@using PlannerCRM.Client.Components.ProfileMenu.ProfileModal
+@*using PlannerCRM.Client.Components.ProfileMenu.ProfileSettings
+@using PlannerCRM.Client.Services.Utilities.Navigation.HelperMethods
+@using PlannerCRM.Client.Components.ValidationAndNavigation.AuthorizationStates
+*@
+@using Microsoft.AspNetCore.Http
+@using PlannerCRM.Client.Components.ListOfItems
 @using PlannerCRM.Client.Components.FilterAndSearch.Filter
 @using PlannerCRM.Client.Components.FilterAndSearch.Search
-@using PlannerCRM.Client.Components.ValidationAndNavigation.AuthorizationStates
 @using PlannerCRM.Client.Components.ValidationAndNavigation.ValidatorComponent.CustomValidatorComponent
 @using PlannerCRM.Client.Components.ValidationAndNavigation.ValidatorComponent.CustomValidationMessageComponent
 @using PlannerCRM.Client.Components.FeedbackResponse

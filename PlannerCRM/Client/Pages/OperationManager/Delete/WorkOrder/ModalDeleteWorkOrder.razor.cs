@@ -1,3 +1,5 @@
+using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+
 namespace PlannerCRM.Client.Pages.OperationManager.Delete.WorkOrder;
 
 [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]

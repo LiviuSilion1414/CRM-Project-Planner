@@ -1,3 +1,5 @@
+using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+
 namespace PlannerCRM.Client.Pages.ProjectManager.CostPreview;
 
 [Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
