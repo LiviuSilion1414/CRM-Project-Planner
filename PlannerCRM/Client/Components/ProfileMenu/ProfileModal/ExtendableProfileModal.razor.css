@@ -1,0 +1,23 @@
+.profile-menu {
+    width: 130px;
+}
+
+.list-group {
+    z-index: 10;
+    position: absolute;
+}
+
+.list-group-item {
+    max-width:150px;
+}
+
+.hover-effect:hover {
+    background-color: grey;
+}
+.hover-effect:hover, .logout:hover {
+    cursor: pointer;
+}
+
+.logout {
+    color: red;
+}

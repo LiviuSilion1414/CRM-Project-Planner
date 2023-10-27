@@ -1,0 +1,11 @@
+<div class="profile-menu text-center" @onclick=@SwitchMenu>
+    <i class="bi bi-person"></i>
+    @if (_isMenuSwitched) {
+        <ul class="list-group" @onmouseleave=@SwitchMenu>
+            <li class="list-group-item hover-effect">Account</li>
+            <li class="list-group-item hover-effect">Preferenze</li>
+            <li class="list-group-item logout" @onclick=@OnClickLogout>Disconettiti</li>
+        </ul>
+    }
+</div>
+
