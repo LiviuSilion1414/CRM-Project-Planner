@@ -1,59 +1,18 @@
-using static PlannerCRM.Shared.Constants.ConstantValues;
+using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
 
 namespace PlannerCRM.Client.Shared;
 
-public partial class MainLayout
+public partial class MainLayout : LayoutComponentBase
 {
-    [Inject] public CurrentUserInfoService CurrentUserInfoService { get; set; }
-    [Inject] public AuthenticationStateService AuthStateService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
-    [Inject] public LoginService LoginService { get; set; }
-    
-    private string _userRole;
-    private CurrentEmployeeDto _currentEmployee;
-    private CurrentUser _currentUser;
-    private bool _isAuthenticated;
 
     protected override async Task OnInitializedAsync()
-        => await HandleAuthenticationAndNavigationAsync();
+        => await NavigationUtil.HandleAuthenticationAndNavigationAsync();
 
     public async Task NavigateBasedOnRole() {
-        if (!await HandleAuthenticationAndNavigationAsync()) {
+        if (!await NavigationUtil.IsUserAuthenticated()) {
             NavManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG);
         }
-
-    }
-    
-
-    protected override void OnInitialized() {
-        _currentEmployee = new();
-        _currentUser = new();
-    }
-
-    private async Task<bool> HandleAuthenticationAndNavigationAsync() {
-        var authState = await AuthStateService.GetAuthenticationStateAsync();
-        _currentUser = await AuthStateService.GetCurrentUserAsync();
-        _isAuthenticated = authState.User.Identity.IsAuthenticated;
-
-        if (_isAuthenticated) {
-            _userRole = await CurrentUserInfoService.GetCurrentUserRoleAsync();
-
-            if (_currentUser.UserName != ADMIN_EMAIL) {
-                _currentEmployee = await CurrentUserInfoService.GetCurrentEmployeeIdAsync(_currentUser.UserName);
-            }
-
-            var navigationUrl = NavigationUtil.BuildNavigationUrl(_userRole, _currentEmployee.Id);
-            NavManager.NavigateTo(navigationUrl);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public async Task OnClickLogout() {
-        await LoginService.LogoutAsync();
-        NavManager.NavigateTo(ConstantValues.LOGIN_PAGE_LONG, true);
     }
 }

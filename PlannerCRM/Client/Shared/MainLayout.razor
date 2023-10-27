@@ -4,27 +4,16 @@
     <main>
         <div class="navbar">
             <a class="nav-link" @onclick=@NavigateBasedOnRole title="Homepage">CRM - Gestionale Commesse</a>
-            <AuthorizeView >
-                <Authorized>
-                    <div class="parent">
-                        <div class="child">
-                            <span class="user-info">Ciao, @context.User.Identity.Name!</span> <br>
-                            <span class="user-info">Ruolo: @_userRole</span>
-                        </div>
-                        <div class="child">
-                            <span id="logout-user" @onclick=@OnClickLogout title="Disconettiti">
-                                <span id="logout-user-text">Esci</span>
-                               <i id="logout-user-icon" class="bi bi-box-arrow-right"></i>
-                            </span>
-                        </div>
-                    </div>
-                </Authorized>
-                <NotAuthorized>
-                    <div class="wrapper">
-                        <span>Accedi al tuo account!</span>
-                    </div>
-                </NotAuthorized>
-            </AuthorizeView>
+        <AuthorizeView>
+            <Authorized>
+                <ExtendableProfileModal/>
+            </Authorized>
+            <NotAuthorized>
+                <div class="wrapper">
+                    <span>Accedi al tuo account!</span>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
         </div>
         <article class="content px-4">
             @Body
