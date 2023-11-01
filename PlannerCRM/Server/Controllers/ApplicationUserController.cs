@@ -1,6 +1,6 @@
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ApplicationUserController : ControllerBase

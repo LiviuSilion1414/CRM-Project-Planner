@@ -46,7 +46,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
+    [Authorize]
     [HttpPut("edit")]
     public async Task<IActionResult> EditEmployeeAsync(EmployeeFormDto dto) {
         try {
@@ -165,7 +165,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
+    [Authorize]
     [HttpGet("get/for/edit/{employeeId}")]
     public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) {
         try {
