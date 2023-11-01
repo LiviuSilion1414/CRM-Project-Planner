@@ -36,4 +36,8 @@ public static class ConstantValues
 
     public const string LOGIN_PAGE_SHORT = "/";
     public const string LOGIN_PAGE_LONG = "/login";
+    public const string MODIFY = "Modifica";
+    public const string CANCEL= "Annulla";
+    public const string COLON= ":";
+
 }
