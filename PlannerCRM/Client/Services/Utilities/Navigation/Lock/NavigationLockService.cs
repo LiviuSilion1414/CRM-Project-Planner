@@ -47,7 +47,7 @@ public class NavigationLockService
     }
 
     public async Task<bool> IsUserAuthenticated()
-        => (await _authStateService.GetCurrentUserAsync()).IsAuthenticated;
+        => (await GetCurrentUserAsync()).IsAuthenticated;
 
     public string GetCurrentPage() {
         return _navigationManager.Uri.Replace(_navigationManager.BaseUri, "/");
