@@ -3,9 +3,9 @@ namespace PlannerCRM.Server.Utilities;
 public class DtoValidatorUtillity
 {
     private readonly AppDbContext _dbContext;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<Employee> _userManager;
 
-    public DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser> userManager) {
+    public DtoValidatorUtillity(AppDbContext context, UserManager<Employee> userManager) {
         _dbContext = context;
         _userManager = userManager;
     }
@@ -142,7 +142,7 @@ public class DtoValidatorUtillity
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
 
-    public async Task<IdentityUser> ValidateDeleteUserAsync(string email) {
+    public async Task<Employee> ValidateDeleteUserAsync(string email) {
         if (string.IsNullOrEmpty(email)) {
             throw new ArgumentNullException(email, ExceptionsMessages.NULL_OBJECT);
         }

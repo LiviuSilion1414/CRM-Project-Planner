@@ -2,14 +2,14 @@ namespace PlannerCRM.Server.Repositories;
 
 public class ApplicationUserRepository
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly UserManager<Employee> _userManager;
+    private readonly RoleManager<EmployeeRole> _roleManager;
     private readonly DtoValidatorUtillity _validator;
     private readonly ILogger<DtoValidatorUtillity> _logger;
 
     public ApplicationUserRepository(
-        UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager,
+        UserManager<Employee> userManager,
+        RoleManager<EmployeeRole> roleManager,
         DtoValidatorUtillity validator,
         Logger<DtoValidatorUtillity> Logger) 
     {
@@ -24,7 +24,7 @@ public class ApplicationUserRepository
             var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);
 
             if (isValid) {
-                var user = new IdentityUser {
+                var user = new Employee {
                     Email = dto.Email,
                     EmailConfirmed = true,
                     UserName = dto.Email
