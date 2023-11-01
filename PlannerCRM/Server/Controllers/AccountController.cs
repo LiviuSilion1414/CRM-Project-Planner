@@ -6,13 +6,16 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly AppDbContext _context;
 
     public AccountController(
         UserManager<IdentityUser> userManager, 
-        SignInManager<IdentityUser> signInManager) 
+        SignInManager<IdentityUser> signInManager,
+        AppDbContext context) 
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _context = context;
     }
 
     [HttpPost("login")]
@@ -49,14 +52,27 @@ public class AccountController : ControllerBase
         }
     }
 
+    private async Task<int> GetCurrentUserIdAsync() {
+        var employee = await _context.Employees
+            .SingleAsync(em =>
+                EF.Functions.ILike(em.Email, $"%{User.Identity.Name}%"));
+            
+        return employee.Id;
+    }
+
     [HttpGet("current/user/info")]
     public async Task<CurrentUser> GetCurrentUserInfo() {
-        return new CurrentUser {
-            IsAuthenticated = User.Identity.IsAuthenticated,
-            UserName = User.Identity.Name,
-            Role = await GetUserRoleAsync(),
-            Claims = User.Claims
-                .ToDictionary(c => c.Type, c => c.Value)
-        };
+        if (User.Identity.IsAuthenticated) {
+            return new CurrentUser {
+                Id = await GetCurrentUserIdAsync(),
+                IsAuthenticated = User.Identity.IsAuthenticated,
+                UserName = User.Identity.Name,
+                Role = await GetUserRoleAsync(),
+                Claims = User.Claims
+                    .ToDictionary(c => c.Type, c => c.Value)
+            };
+        }
+
+        return new();
     }
 }
