@@ -1,12 +1,13 @@
 namespace PlannerCRM.Server.Models;
 
-public class Employee
+public class Employee : IdentityUser
 {
-    public int Id { get; set; }
+    public new int Id { get; set; }
+    public new bool EmailConfirmed { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string FullName { get; set; }
-    public string Email { get; set; }
+    public new string Email { get; set; }
     public string Password { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime BirthDay { get; set; }
