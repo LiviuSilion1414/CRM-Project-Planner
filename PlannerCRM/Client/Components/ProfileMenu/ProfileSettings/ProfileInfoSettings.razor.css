@@ -1,0 +1,13 @@
+.container {
+    border-width: 10px;
+    width: 50%;
+}
+
+.span {
+    background-color: transparent;
+    border: none;
+}
+
+.spacing-items {
+    margin: 10px; 
+}
