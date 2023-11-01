@@ -2,9 +2,11 @@ namespace PlannerCRM.Client.Components.FeedbackResponse;
 
 public partial class Feedback : ComponentBase
 {
+    [Parameter] public string Severity { get; set; }
     [Parameter] public string Message { get; set; }
-    [Parameter] public EventCallback<bool> OnClickCancel { get; set; }
 
-    private void SwitchShowAlert() 
-        => OnClickCancel.InvokeAsync(false);
+    private bool _isHidden = false;
+
+    private void HideBanner()
+        => _isHidden = true;
 }
