@@ -2,7 +2,7 @@ namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
 public class EmployeeFormDto
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     [Required(ErrorMessage = """Campo "Nome" richiesto""")]
     public string FirstName { get; set; }

@@ -4,7 +4,7 @@ namespace PlannerCRM.Client.Pages.Developer.MasterDetail;
 [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 public partial class GridData : ComponentBase
 {
-    [Parameter] public int EmployeeId { get; set; }
+    [Parameter] public string EmployeeId { get; set; }
 
     [Inject] public DeveloperService DeveloperService { get; set; }
 

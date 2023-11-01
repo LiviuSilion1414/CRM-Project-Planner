@@ -130,7 +130,7 @@ public class DtoValidatorUtillity
     public bool ValidateWorkTime(WorkTimeRecordFormDto dto) => 
         CheckDtoHealth(dto);
 
-    public async Task<Employee> ValidateDeleteEmployeeAsync(int id) {
+    public async Task<Employee> ValidateDeleteEmployeeAsync(string id) {
         return await _dbContext.Employees
             .SingleOrDefaultAsync(em => em.Id == id) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);

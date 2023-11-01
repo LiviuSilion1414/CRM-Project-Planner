@@ -1,6 +1,6 @@
 namespace PlannerCRM.Shared.DTOs.CostDto;
 
-public class WorkOrderCostDto : IDtoComparer
+public class WorkOrderCostDto
 {
     public int WorkOrderId { get; set; }
     public DateTime StartDate { get; set; } 

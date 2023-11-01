@@ -1,8 +1,8 @@
-@page "/profile-settings/{id:int}"
+@page "/profile-settings/{id:string}"
 @layout MainLayout 
 
 @if (_operationDone) {
-    <Feedback Severity="@CssSeverity.SUCCESS" Message="Modifica eseguita."/>
+    <Feedback Severity="@CssSeverity.SUCCESS" Message="Modifica eseguita."/> <!-- use success message-->
 }
 
 <div class="container">

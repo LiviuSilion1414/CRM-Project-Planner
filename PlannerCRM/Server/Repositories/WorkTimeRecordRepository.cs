@@ -99,7 +99,7 @@ public class WorkTimeRecordRepository
         }
     }
 
-    public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, string employeeId) {
         var hasElements = await _dbContext.WorkTimeRecords
             .AnyAsync(wtr => 
                 wtr.ActivityId == activityId && 
@@ -146,7 +146,7 @@ public class WorkTimeRecordRepository
             .ToListAsync();
     }
 
-    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(string employeeId) {
         return await _dbContext.WorkTimeRecords
             .Select(wtr => 
                 new WorkTimeRecordViewDto {

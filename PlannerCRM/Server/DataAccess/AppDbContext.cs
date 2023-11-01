@@ -6,6 +6,9 @@ public class AppDbContext: IdentityDbContext
         : base(options)
     { }
 
+    public AppDbContext() 
+    { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 

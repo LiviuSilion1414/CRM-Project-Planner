@@ -48,7 +48,7 @@ public class DeveloperService
         }
     }
 
-    public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId, int limit = 0, int offset = 5) {
+    public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(string employeeId, int limit = 0, int offset = 5) {
         try {
             return await _http
                 .GetFromJsonAsync<List<ActivityViewDto>>($"api/activity/get/activity/by/employee/{employeeId}/{limit}/{offset}");
@@ -59,7 +59,7 @@ public class DeveloperService
         }
     }
 
-    public async Task<int> GetWorkTimesSizeByEmployeeIdAsync(int employeeId) {
+    public async Task<int> GetWorkTimesSizeByEmployeeIdAsync(string employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<int>($"api/worktimerecord/get/size/by/employee/{employeeId}");
@@ -70,7 +70,7 @@ public class DeveloperService
         }
     }
 
-    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
+    public async Task<List<WorkTimeRecordViewDto>> GetAllWorkTimeRecordsByEmployeeIdAsync(string employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<List<WorkTimeRecordViewDto>>($"api/worktimerecord/get/by/employee/{employeeId}");
@@ -81,7 +81,7 @@ public class DeveloperService
         }
     }
     
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordsAsync(int workOrderId, int activityId, int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordsAsync(int workOrderId, int activityId, string employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<WorkTimeRecordViewDto>($"api/worktimerecord/get/{workOrderId}/{activityId}/{employeeId}");
@@ -92,7 +92,7 @@ public class DeveloperService
         }
     }
     
-    public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) {
+    public async Task<int> GetCollectionSizeByEmployeeIdAsync(string employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<int>($"api/activity/get/size/by/employee/id/{employeeId}");

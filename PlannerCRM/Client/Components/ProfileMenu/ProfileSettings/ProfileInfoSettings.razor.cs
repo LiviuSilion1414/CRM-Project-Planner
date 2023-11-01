@@ -5,7 +5,7 @@ namespace PlannerCRM.Client.Components.ProfileMenu.ProfileSettings;
 
 public partial class ProfileInfoSettings : ComponentBase
 {
-    [Parameter] public int Id { get; set; }
+    [Parameter] public string Id { get; set; }
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
@@ -23,7 +23,7 @@ public partial class ProfileInfoSettings : ComponentBase
     {
         _model = new();
         _editContext = new(_model);
-        _model = await AccountManagerService.GetEmployeeForEditByIdAsync(2);
+        _model = await AccountManagerService.GetEmployeeForEditByIdAsync(Id);
     }
 
     private string AddEditCssClass() {

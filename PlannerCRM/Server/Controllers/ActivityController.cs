@@ -149,7 +149,7 @@ public class ActivityController : ControllerBase
 
     [Authorize]
     [HttpGet("get/activity/by/employee/{employeeId}/{limit}/{offset}")]
-    public async Task<List<ActivityViewDto>> GetActivitiesPerEmployeeAsync(int employeeId, int limit, int offset) {
+    public async Task<List<ActivityViewDto>> GetActivitiesPerEmployeeAsync(string employeeId, int limit, int offset) {
         try {
             return await _repo.GetActivityByEmployeeId(employeeId, limit, offset);
         } catch (Exception exc) {
@@ -161,7 +161,7 @@ public class ActivityController : ControllerBase
     
     [Authorize]
     [HttpGet("get/size/by/employee/id/{employeeId}")]
-    public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) {
+    public async Task<int> GetCollectionSizeByEmployeeIdAsync(string employeeId) {
         try {
             return await _repo.GetCollectionSizeByEmployeeIdAsync(employeeId);
         } catch (Exception exc) {

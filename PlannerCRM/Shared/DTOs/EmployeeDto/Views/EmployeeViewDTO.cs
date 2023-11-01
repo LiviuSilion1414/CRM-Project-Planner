@@ -1,7 +1,8 @@
 namespace PlannerCRM.Shared.DTOs.EmployeeDto.Views;
 
-public class EmployeeViewDto : IDtoComparer
+public class EmployeeViewDto
 { 
+    public string Id { get; set; }
     public string Email { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -15,7 +16,6 @@ public class EmployeeViewDto : IDtoComparer
     public DateTime StartDate { get; set; }
     public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
     public List<EmployeeActivityDto> EmployeeActivities { get; set; }
-    public int Id { get; set; }
     public string FullName { get; set; }
     public string Name { get; set; }
     public bool IsCompleted { get; set; }

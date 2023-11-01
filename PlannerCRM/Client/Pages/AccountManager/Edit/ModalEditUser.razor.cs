@@ -6,7 +6,7 @@ namespace PlannerCRM.Client.Pages.AccountManager.Edit;
 public partial class ModalEditUser : ComponentBase
 {
     [Parameter] public string Title { get; set; }
-    [Parameter] public int Id { get; set; }
+    [Parameter] public string Id { get; set; }
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }

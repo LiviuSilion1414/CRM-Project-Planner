@@ -78,7 +78,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpDelete("delete/{employeeId}")]
-    public async Task<IActionResult> DeleteEmployeeAsync(int employeeId) {
+    public async Task<IActionResult> DeleteEmployeeAsync(string employeeId) {
         try {
             await _repo.DeleteAsync(employeeId);
 
@@ -100,7 +100,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("archive/{employeeId}")]
-    public async Task<IActionResult> ArchiveEmployeeAsync(int employeeId) {
+    public async Task<IActionResult> ArchiveEmployeeAsync(string employeeId) {
         try {
             await _repo.ArchiveAsync(employeeId);
 
@@ -122,7 +122,7 @@ public class EmployeeController : ControllerBase
     
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("restore/{employeeId}")]
-    public async Task<IActionResult> RestoreEmployeeAsync(int employeeId) {
+    public async Task<IActionResult> RestoreEmployeeAsync(string employeeId) {
         try {
             await _repo.RestoreAsync(employeeId);
 
@@ -144,7 +144,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/restore/{employeeId}")]
-    public async Task<EmployeeSelectDto> GetEmployeeForRestoreByIdAsync(int employeeId) {
+    public async Task<EmployeeSelectDto> GetEmployeeForRestoreByIdAsync(string employeeId) {
         try {
             return await _repo.GetForRestoreAsync(employeeId);
         } catch (Exception exc) {
@@ -155,7 +155,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("get/for/view/{employeeId}")]
-    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(int employeeId) {
+    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(string employeeId) {
         try {
             return await _repo.GetForViewByIdAsync(employeeId);
         } catch (Exception exc) {
@@ -167,7 +167,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpGet("get/for/edit/{employeeId}")]
-    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) {
+    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(string employeeId) {
         try {
             return await _repo.GetForEditByIdAsync(employeeId);
         } catch (Exception exc) {
@@ -179,7 +179,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/delete/{employeeId}")]
-    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(int employeeId) {
+    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(string employeeId) {
         try {
             return await _repo.GetForDeleteByIdAsync(employeeId);
         } catch (Exception exc) {
@@ -223,7 +223,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("get/id-check/{email}")]
-    public async Task<int> GetUserIdCheckAsync(string email) {
+    public async Task<string> GetUserIdCheckAsync(string email) {
         try {
             return (await _repo.GetEmployeeIdAsync(email)).Id;
         } catch (Exception exc) {

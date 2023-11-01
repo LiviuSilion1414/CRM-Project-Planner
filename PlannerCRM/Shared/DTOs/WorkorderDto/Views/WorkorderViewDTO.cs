@@ -1,6 +1,6 @@
 namespace PlannerCRM.Shared.DTOs.WorkOrder.Views;
 
-public class WorkOrderViewDto : IDtoComparer
+public class WorkOrderViewDto
 {
     public DateTime StartDate { get; set; }
     public DateTime FinishDate { get; set; }

@@ -63,7 +63,7 @@ public class EmployeeRepository
         }
     }
 
-    public async Task ArchiveAsync(int employeeId) {
+    public async Task ArchiveAsync(string employeeId) {
         try {
             var employee = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
@@ -84,7 +84,7 @@ public class EmployeeRepository
         }
     }
     
-    public async Task RestoreAsync(int employeeId) {
+    public async Task RestoreAsync(string employeeId) {
         try {
             var employee = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
@@ -106,7 +106,7 @@ public class EmployeeRepository
         }
     }
 
-    public async Task DeleteAsync(int employeeId) {
+    public async Task DeleteAsync(string employeeId) {
         try {
             var employeeDelete = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
@@ -182,7 +182,7 @@ public class EmployeeRepository
         }
     }
 
-    public async Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId) {
+    public async Task<EmployeeViewDto> GetForViewByIdAsync(string employeeId) {
         return await _dbContext.Employees
             .Select(em => new EmployeeViewDto {
                 Id = em.Id,
@@ -211,7 +211,7 @@ public class EmployeeRepository
                 EmployeeActivities = em.EmployeeActivity
                     .Select(ea =>
                         new EmployeeActivityDto {
-                            EmployeeId = ea.Id,
+                            EmployeeId = ea.EmployeeId,
                             Employee = new EmployeeSelectDto {
                                 Id = ea.Employee.Id,
                                 Email = ea.Employee.Email,
@@ -234,7 +234,7 @@ public class EmployeeRepository
             .SingleAsync(em => em.Id == employeeId);
     }
 
-    public async Task<EmployeeSelectDto> GetForRestoreAsync(int employeeId) {
+    public async Task<EmployeeSelectDto> GetForRestoreAsync(string employeeId) {
         return await _dbContext.Employees
             .Select(em => new EmployeeSelectDto {
                 Id = em.Id,
@@ -247,7 +247,7 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == employeeId);
     }
 
-    public async Task<EmployeeFormDto> GetForEditByIdAsync(int employeeId) { 
+    public async Task<EmployeeFormDto> GetForEditByIdAsync(string employeeId) { 
         return await _dbContext.Employees
             .Where(em => !em.IsDeleted && !em.IsArchived)
             .Select(em => new EmployeeFormDto {
@@ -279,7 +279,7 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == employeeId);
     }
 
-    public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int employeeId) {
+    public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(string employeeId) {
         return await _dbContext.Employees
             .Where(em => (!em.IsDeleted || !em.IsArchived) && em.Id == employeeId)
             .Select(em => new EmployeeDeleteDto {

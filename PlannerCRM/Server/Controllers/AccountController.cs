@@ -52,7 +52,7 @@ public class AccountController : ControllerBase
         }
     }
 
-    private async Task<int> GetCurrentUserIdAsync() {
+    private async Task<string> GetCurrentUserIdAsync() {
         var employee = await _context.Employees
             .SingleAsync(em =>
                 EF.Functions.ILike(em.Email, $"%{User.Identity.Name}%"));

@@ -79,7 +79,7 @@ public class WorkTimeRecordController : ControllerBase
     }
     
     [HttpGet("get/{workOrderId}/{activityId}/{employeeId}")]
-    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordAsync(int workOrderId, int activityId, int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordAsync(int workOrderId, int activityId, string employeeId) {
         try {
             return await _repo.GetAsync(workOrderId, activityId, employeeId);
         } catch (KeyNotFoundException exc) {
@@ -101,7 +101,7 @@ public class WorkTimeRecordController : ControllerBase
     }
     
     [HttpGet("get/by/employee/{employeeId}")]
-    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(string employeeId) {
         try {
             return await _repo.GetAllWorkTimeRecordsByEmployeeIdAsync(employeeId);
         } catch (Exception exc) {

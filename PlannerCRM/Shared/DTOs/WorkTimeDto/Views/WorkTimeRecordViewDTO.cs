@@ -10,5 +10,5 @@ public class WorkTimeRecordViewDto
     public int ActivityId { get; set; }
     public int WorkOrderId { get; set; }
 
-    public int EmployeeId { get; set; }
+    public string EmployeeId { get; set; }
 }

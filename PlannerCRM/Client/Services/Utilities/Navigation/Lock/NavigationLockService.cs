@@ -53,7 +53,7 @@ public class NavigationLockService
         return _navigationManager.Uri.Replace(_navigationManager.BaseUri, "/");
     }
 
-    public string BuildNavigationUrl(string role, int employeeId) {
+    public string BuildNavigationUrl(string role, string employeeId) {
         if (!string.IsNullOrEmpty(role) && Enum.TryParse(role, out Roles parsedRole)) {
             var url = parsedRole
                 .ToString()

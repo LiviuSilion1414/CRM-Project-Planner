@@ -4,7 +4,7 @@ public class EmployeeActivityDto
 {
     public int Id { get; set; }
     
-    public int EmployeeId { get; set; }
+    public string EmployeeId { get; set; }
     public EmployeeSelectDto Employee { get; set; }
 
     public int ActivityId { get; set; }

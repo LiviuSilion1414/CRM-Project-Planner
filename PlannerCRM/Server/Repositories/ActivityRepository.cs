@@ -322,7 +322,7 @@ public class ActivityRepository
             .SingleAsync(ac => ac.Id == id);
     }
 
-    public async Task<List<ActivityViewDto>> GetActivityByEmployeeId(int employeeId, int limit = 0, int offset = 5) {
+    public async Task<List<ActivityViewDto>> GetActivityByEmployeeId(string employeeId, int limit = 0, int offset = 5) {
         return await _dbContext.Activities
             .Skip(limit)
             .Take(offset)
@@ -472,7 +472,7 @@ public class ActivityRepository
             .ToListAsync();
     }
 
-    public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) {
+    public async Task<int> GetCollectionSizeByEmployeeIdAsync(string employeeId) {
         return (await GetActivityByEmployeeId(employeeId))
             .Count();
     }
