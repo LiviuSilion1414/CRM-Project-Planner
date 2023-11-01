@@ -1,5 +1,9 @@
 .profile-menu {
-    width: 130px;
+    width: 300px;
+}
+
+.clickable:hover {
+    cursor: pointer;
 }
 
 .list-group {
@@ -8,7 +12,7 @@
 }
 
 .list-group-item {
-    max-width:150px;
+    width:280px;
 }
 
 .hover-effect:hover {

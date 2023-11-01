@@ -1,9 +1,13 @@
 <div class="profile-menu text-center" @onclick=@SwitchMenu>
-    <i class="bi bi-person"></i>
+    <span class="clickable"> 
+        <i class="bi bi-person"></i>
+        <span>@_currentUser.UserName</span>
+        <i class="bi bi-chevron-@SetMenuArrow()"></i> 
+    </span>
     @if (_isMenuSwitched) {
         <ul class="list-group" @onmouseleave=@SwitchMenu>
-            <li class="list-group-item hover-effect">Account</li>
-            <li class="list-group-item hover-effect">Preferenze</li>
+            <li class="list-group-item hover-effect" @onclick=@NavigateToProfileSettings >Account</li>
+            <li class="list-group-item hover-effect">Assistenza</li>
             <li class="list-group-item logout" @onclick=@OnClickLogout>Disconettiti</li>
         </ul>
     }
