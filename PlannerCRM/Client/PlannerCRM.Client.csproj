@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Shared\PlannerCRM.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\Bootstrap\" />
+  </ItemGroup>
+
 </Project>
