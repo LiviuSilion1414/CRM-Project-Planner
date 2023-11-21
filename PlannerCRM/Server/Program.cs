@@ -10,13 +10,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             .GetConnectionString("ConnString")
                 ?? throw new InvalidOperationException("ConnString not found!"))
 );
-
+ 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddHttpClient();
 
 builder.Services
-    .AddIdentity<Employee, EmployeeRole>()
+    .AddIdentity<Employee, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddUserManager<UserManager<Employee>>()
     .AddDefaultTokenProviders();
@@ -71,24 +71,37 @@ using (var scope = app.Services.CreateScope())
     
     if (!await db.Users.AnyAsync()) {
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Employee>>();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<EmployeeRole>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         
         var accountManagerEmail = "account.manager@gmail.com";
         var accountManagerPassword = "Qwerty123";
+        var accountManagerFirstName = "Account";
+        var accountManagerLastName = "Manager";
+        var accountManagerFullName = "Account Manager";
+        var accountManagerBirthDay = new DateTime(1990, 1, 1);
+        var accountManagerStartDate = DateTime.Now;
+        var accountManagerNumericCode = "SAMPLEFISCALCODE";
 
         var accountManager = new Employee {
             Email = accountManagerEmail,
+            FirstName = accountManagerFirstName,
+            LastName = accountManagerLastName,
+            BirthDay = accountManagerBirthDay,
+            StartDate = accountManagerStartDate,
+            NumericCode = accountManagerNumericCode,
+            FullName = accountManagerFullName,
+            Password = accountManagerPassword,
             EmailConfirmed = true,
             UserName = accountManagerEmail
         };
 
         var accountManagerResult = await userManager.CreateAsync(accountManager, accountManagerPassword);
 
-        await roleManager.CreateAsync(new EmployeeRole { Name = nameof(Roles.ACCOUNT_MANAGER) });
-        await roleManager.CreateAsync(new EmployeeRole { Name = nameof(Roles.PROJECT_MANAGER) });
-        await roleManager.CreateAsync(new EmployeeRole { Name = nameof(Roles.OPERATION_MANAGER) });
-        await roleManager.CreateAsync(new EmployeeRole { Name = nameof(Roles.SENIOR_DEVELOPER) });
-        await roleManager.CreateAsync(new EmployeeRole { Name = nameof(Roles.JUNIOR_DEVELOPER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.ACCOUNT_MANAGER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.PROJECT_MANAGER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.OPERATION_MANAGER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.SENIOR_DEVELOPER) });
+        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.JUNIOR_DEVELOPER) });
 
         await userManager.AddToRoleAsync(accountManager, nameof(Roles.ACCOUNT_MANAGER));
     }
