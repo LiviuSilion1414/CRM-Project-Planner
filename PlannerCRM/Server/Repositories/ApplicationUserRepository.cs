@@ -3,13 +3,13 @@ namespace PlannerCRM.Server.Repositories;
 public class ApplicationUserRepository
 {
     private readonly UserManager<Employee> _userManager;
-    private readonly RoleManager<EmployeeRole> _roleManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly DtoValidatorUtillity _validator;
     private readonly ILogger<DtoValidatorUtillity> _logger;
 
     public ApplicationUserRepository(
         UserManager<Employee> userManager,
-        RoleManager<EmployeeRole> roleManager,
+        RoleManager<IdentityRole> roleManager,
         DtoValidatorUtillity validator,
         Logger<DtoValidatorUtillity> Logger) 
     {
