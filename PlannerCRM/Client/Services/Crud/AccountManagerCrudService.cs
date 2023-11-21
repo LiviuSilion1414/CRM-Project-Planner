@@ -58,17 +58,6 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> AddUserAsync(EmployeeFormDto dto) {
-        try {
-            return await _http
-                .PostAsJsonAsync("api/applicationuser/add", dto);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new() { ReasonPhrase = exc.StackTrace };
-        }
-    } 
-
     public async Task<HttpResponseMessage> UpdateEmployeeAsync(EmployeeFormDto dto) {
         try {
             return await _http
@@ -79,17 +68,6 @@ public class AccountManagerCrudService
             return new() { ReasonPhrase = exc.StackTrace };
         }
     }
-
-    public async Task<HttpResponseMessage> UpdateUserAsync(EmployeeFormDto dto) {
-        try {
-            return await _http
-                .PutAsJsonAsync("api/applicationuser/edit", dto);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new() { ReasonPhrase = exc.StackTrace };
-        }
-    } 
 
     public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(string employeeId) {
         try {
@@ -132,17 +110,6 @@ public class AccountManagerCrudService
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             return new();
-        }
-    }
-
-    public async Task<HttpResponseMessage> DeleteUserAsync(string currentEmail) {
-        try {
-            return await _http
-                .DeleteAsync($"api/applicationuser/delete/{currentEmail}");
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new() { ReasonPhrase = exc.StackTrace };
         }
     }
 
