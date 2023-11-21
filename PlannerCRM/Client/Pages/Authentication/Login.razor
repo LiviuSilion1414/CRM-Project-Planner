@@ -9,7 +9,7 @@
 <h3>Entra nel tuo account gestionale.</h3>
 
 @if (_isError) {
-    <Feedback Message="@_message" OnClickCancel=@OnClickHideBanner/>
+    <Feedback Severity="@CssSeverity.DANGER" Message="@_message" OnClickCancel=@OnClickHideBanner/>
 }
 
 <h4>Login</h4>
