@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231101144803_Initial")]
-    partial class Initial
+    [Migration("20231121130636_InitialDbSetup")]
+    partial class InitialDbSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
