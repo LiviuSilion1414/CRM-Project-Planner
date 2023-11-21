@@ -23,7 +23,6 @@ public class EmployeeRepository
             if (isValid) {
                 await _dbContext.Employees.AddAsync(
                     new Employee {
-                        Id = dto.Id,
                         Email = dto.Email,
                         FirstName = dto.FirstName,
                         LastName = dto.LastName,
@@ -40,7 +39,6 @@ public class EmployeeRepository
                         Salaries = dto.EmployeeSalaries
                             .Select(ems =>
                                 new EmployeeSalary {
-                                    EmployeeId = ems.EmployeeId,
                                     StartDate = ems.StartDate,
                                     FinishDate = ems.FinishDate,
                                     Salary = ems.Salary
@@ -54,7 +52,7 @@ public class EmployeeRepository
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
                 }
             } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_DELETE);
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
             }
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
