@@ -9,6 +9,16 @@ public class AppDbContext: IdentityDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder
+            .Entity<Employee>()
+            .Property(e => e.Id)
+            .ValueGeneratedOnAdd();
+        
+        modelBuilder
+            .Entity<EmployeeSalary>()
+            .Property(ems => ems.Id)
+            .ValueGeneratedOnAdd();
+
         modelBuilder.Entity<EmployeeActivity>()
             .HasOne(e => e.Employee)
             .WithMany(ea => ea.EmployeeActivity)
