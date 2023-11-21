@@ -54,7 +54,6 @@ builder.Services.AddScoped<Logger<EmployeeRepository>>();
 builder.Services.AddScoped<Logger<WorkOrderRepository>>();
 builder.Services.AddScoped<Logger<ActivityRepository>>();
 builder.Services.AddScoped<Logger<WorkTimeRecordRepository>>();
-builder.Services.AddScoped<Logger<ApplicationUserRepository>>();
 builder.Services.AddScoped<Logger<ClientRepository>>();
 
 builder.Services.AddScoped<Logger<DtoValidatorUtillity>>();
