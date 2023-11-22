@@ -6,16 +6,19 @@ public class EmployeeRepository
     private readonly DtoValidatorUtillity _validator;
     private readonly ILogger<DtoValidatorUtillity> _logger;
     private readonly UserManager<Employee> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public EmployeeRepository(
         AppDbContext dbContext, 
         DtoValidatorUtillity validator,
         UserManager<Employee> userManager,
+        RoleManager<IdentityRole> roleManager,
         Logger<DtoValidatorUtillity> logger) 
     {
         _dbContext = dbContext;
         _validator = validator;
         _userManager = userManager;
+        _roleManager = roleManager;
         _logger = logger;
     }
 
@@ -24,32 +27,47 @@ public class EmployeeRepository
             var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);
             
             if (isValid) {
-                await _dbContext.Employees.AddAsync(
-                    new Employee {
-                        Email = dto.Email,
-                        FirstName = dto.FirstName,
-                        LastName = dto.LastName,
-                        FullName = $"{dto.FirstName} {dto.LastName}",
-                        BirthDay = dto.BirthDay 
-                            ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                        StartDate = dto.StartDate  
-                            ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                        Password = dto.Password,
-                        NumericCode = dto.NumericCode,
-                        Role = dto.Role 
-                            ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                        CurrentHourlyRate = dto.CurrentHourlyRate,
-                        Salaries = dto.EmployeeSalaries
-                            .Select(ems =>
-                                new EmployeeSalary {
-                                    StartDate = ems.StartDate,
-                                    FinishDate = ems.FinishDate,
-                                    Salary = ems.Salary
-                                }
-                            )
-                            .ToList()
-                    }
-                );
+                var employee = new Employee
+                {
+                    Email = dto.Email,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    FullName = $"{dto.FirstName} {dto.LastName}",
+                    BirthDay = dto.BirthDay
+                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                    StartDate = dto.StartDate
+                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                    Password = dto.Password,
+                    NumericCode = dto.NumericCode,
+                    Role = dto.Role
+                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+                    CurrentHourlyRate = dto.CurrentHourlyRate,
+                    Salaries = dto.EmployeeSalaries
+                        .Select(ems =>
+                            new EmployeeSalary
+                            {
+                                StartDate = ems.StartDate,
+                                FinishDate = ems.FinishDate,
+                                Salary = ems.Salary
+                            }
+                        )
+                        .ToList()
+                };
+
+                var foundEmployeeRole = await _roleManager.Roles
+                    .SingleOrDefaultAsync(aspRole => aspRole.Name == dto.Role.ToString()) ??
+                        throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
+
+                var creationResult = await _userManager.CreateAsync(employee, dto.Password);
+                if (!creationResult.Succeeded) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
+
+                var assignmentResult = await _userManager.AddToRoleAsync(employee, foundEmployeeRole.Name);
+                
+                if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
                 
                 if (await _dbContext.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
@@ -112,11 +130,7 @@ public class EmployeeRepository
             var employeeDelete = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
             if (employeeDelete is not null) {
-                _dbContext.Remove(employeeDelete);
-            
-                if (await _dbContext.SaveChangesAsync() == 0) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
+                await _userManager.DeleteAsync(employeeDelete);
             } else {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_DELETE);
             }
@@ -132,9 +146,8 @@ public class EmployeeRepository
             var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.EDIT);
             
             if (isValid) {
-                var model = await _dbContext.Employees
-                    .SingleAsync(em => !em.IsDeleted && !em.IsArchived && em.Id == dto.Id);
-                
+                var model = await _userManager.FindByEmailAsync(dto.OldEmail);
+
                 model.Id = dto.Id;
                 model.FirstName = dto.FirstName;
                 model.LastName = dto.LastName;
@@ -149,6 +162,30 @@ public class EmployeeRepository
                 model.NumericCode = dto.NumericCode;
                 model.CurrentHourlyRate = dto.CurrentHourlyRate;
                 
+                var passChangeResult = await _userManager.RemovePasswordAsync(model);
+                var updateResult = await _userManager.AddPasswordAsync(model, dto.Password);
+
+                if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
+
+                var rolesList = await _userManager.GetRolesAsync(model);
+                var employeeRole = rolesList
+                    .SingleOrDefault() 
+                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
+
+                var isInRole = await _userManager.IsInRoleAsync(model, employeeRole);
+
+                if (isInRole)
+                {
+                    var deleteRoleResult = await _userManager.RemoveFromRoleAsync(model, employeeRole);
+                    var reassignmentRoleResult = await _userManager.AddToRoleAsync(model, dto.Role.ToString());
+
+                    if (!deleteRoleResult.Succeeded || !reassignmentRoleResult.Succeeded) {
+                        throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                    }
+                }
+
                 var isContainedModifiedHourlyRate = await _dbContext.Employees
                     .AnyAsync(em => em.Id != dto.Id && 
                         em.Salaries
