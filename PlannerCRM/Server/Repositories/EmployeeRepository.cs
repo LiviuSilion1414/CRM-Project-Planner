@@ -5,14 +5,17 @@ public class EmployeeRepository
     private readonly AppDbContext _dbContext;
     private readonly DtoValidatorUtillity _validator;
     private readonly ILogger<DtoValidatorUtillity> _logger;
+    private readonly UserManager<Employee> _userManager;
 
     public EmployeeRepository(
         AppDbContext dbContext, 
-        DtoValidatorUtillity validator, 
+        DtoValidatorUtillity validator,
+        UserManager<Employee> userManager,
         Logger<DtoValidatorUtillity> logger) 
     {
         _dbContext = dbContext;
         _validator = validator;
+        _userManager = userManager;
         _logger = logger;
     }
 
