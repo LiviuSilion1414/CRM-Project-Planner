@@ -18,22 +18,16 @@ public class DtoValidatorUtillity
                 throw new DuplicateElementException(ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
             }
 
-            var employeeIsAlreadyPresent = await _dbContext.Employees
-                .AnyAsync(em => 
-                    EF.Functions.ILike(em.Email, $"%{dto.OldEmail}%") && em.Id == dto.Id);        
-            
-            var userIsAlreadyPresent = await _userManager.Users
-                .AnyAsync(user => 
-                    EF.Functions.ILike(user.Email, $"%{dto.OldEmail}%"));
+           var isEmployeeAlreadyPresent = await _userManager.FindByEmailAsync(dto.OldEmail);
 
             if (operation == OperationType.ADD) {
-                if (employeeIsAlreadyPresent && userIsAlreadyPresent) {
+                if (isEmployeeAlreadyPresent is not null) {
                     throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }
             } 
             
             if (operation == OperationType.EDIT) {
-                if (!employeeIsAlreadyPresent && !userIsAlreadyPresent) {
+                if (isEmployeeAlreadyPresent is null) {
                     throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
                 }
             }
@@ -140,15 +134,6 @@ public class DtoValidatorUtillity
         return await _dbContext.Clients
             .SingleOrDefaultAsync(cl => cl.Id == id) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
-    }
-
-    public async Task<Employee> ValidateDeleteUserAsync(string email) {
-        if (string.IsNullOrEmpty(email)) {
-            throw new ArgumentNullException(email, ExceptionsMessages.NULL_OBJECT);
-        }
-
-        return await _userManager.FindByEmailAsync(email) 
-            ?? throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
     }
 
     public async Task<WorkOrder> ValidateDeleteWorkOrderAsync(int id) {
