@@ -25,7 +25,6 @@ public partial class ModalEditUser : ComponentBase
     
     private async Task OnClickModalConfirm(EmployeeFormDto returnedModel) {
         await AccountManagerService.UpdateEmployeeAsync(returnedModel);
-        await AccountManagerService.UpdateUserAsync(returnedModel);
 
         NavManager.NavigateTo(_currentPage, true);
     }

@@ -48,15 +48,14 @@ public partial class ModalDeleteUser : ComponentBase
 
     private async Task OnClickDeleteAsync() {
         var responseEmployee = await AccountManagerService.DeleteEmployeeAsync(Id);
-        var responseUser = await AccountManagerService.DeleteUserAsync(_model.Email);
         
-        if (!responseEmployee.IsSuccessStatusCode || !responseUser.IsSuccessStatusCode) {
+        if (!responseEmployee.IsSuccessStatusCode) {
             _message = await responseEmployee.Content.ReadAsStringAsync();
             _isError = true;
-        } 
-        
-        _isCancelClicked = !_isCancelClicked;
-        NavManager.NavigateTo(_currentPage, true);
+        } else {
+            _isCancelClicked = !_isCancelClicked;
+            NavManager.NavigateTo(_currentPage, true);
+        }
     }
 
     private async Task OnClickArchiveAsync() {

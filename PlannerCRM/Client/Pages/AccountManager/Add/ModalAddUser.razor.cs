@@ -20,7 +20,6 @@ public partial class ModalAddUser : ComponentBase
     }
 
     private async Task OnClickAddAsync(EmployeeFormDto returnedModel) {
-        await AccountManagerService.AddUserAsync(returnedModel);
         await AccountManagerService.AddEmployeeAsync(returnedModel);
 
         NavManager.NavigateTo(_currentPage, true);

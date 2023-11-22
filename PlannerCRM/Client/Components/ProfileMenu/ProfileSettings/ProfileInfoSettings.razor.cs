@@ -60,7 +60,6 @@ public partial class ProfileInfoSettings : ComponentBase
         var isValid = ValidatorService.Validate(_model, out _errors);
 
         if (isValid) {
-            await AccountManagerService.UpdateUserAsync(_model);
             await AccountManagerService.UpdateEmployeeAsync(_model);
 
             _operationDone = true;
