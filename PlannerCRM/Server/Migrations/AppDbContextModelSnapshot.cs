@@ -294,7 +294,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("FirmClientId")
+                    b.Property<int?>("ClientId")
                         .HasColumnType("integer");
 
                     b.Property<int>("WorkOrderId")
@@ -302,7 +302,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FirmClientId");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientWorkOrders");
                 });
@@ -310,10 +310,8 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
-
-                    b.Property<int?>("ActivityCostId")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("BirthDay")
                         .HasColumnType("timestamp without time zone");
@@ -354,14 +352,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("text");
 
-                    b.Property<int?>("WorkOrderCostId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ActivityCostId");
-
-                    b.HasIndex("WorkOrderCostId");
 
                     b.ToTable("Employees");
                 });
@@ -392,6 +383,7 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("EmployeeId")
@@ -630,18 +622,7 @@ namespace PlannerCRM.Server.Migrations
                 {
                     b.HasOne("PlannerCRM.Server.Models.FirmClient", null)
                         .WithMany("WorkOrders")
-                        .HasForeignKey("FirmClientId");
-                });
-
-            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
-                {
-                    b.HasOne("PlannerCRM.Server.Models.ActivityCost", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("ActivityCostId");
-
-                    b.HasOne("PlannerCRM.Server.Models.WorkOrderCost", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("WorkOrderCostId");
+                        .HasForeignKey("ClientId");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeActivity", b =>

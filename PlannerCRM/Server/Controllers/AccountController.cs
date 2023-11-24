@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
         var user = await _userManager.FindByEmailAsync(dto.Email);
         var employee = await _dbCcontext.Employees.SingleOrDefaultAsync(em => em.Email == dto.Email);
 
-        if (user is null || employee is null || employee.IsArchived || employee.IsDeleted) {
+        if (user is null || employee.IsArchived || employee.IsDeleted) {
             return NotFound(LoginFeedBack.USER_NOT_FOUND);
         }
 

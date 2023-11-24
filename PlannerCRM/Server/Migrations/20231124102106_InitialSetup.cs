@@ -203,15 +203,14 @@ namespace PlannerCRM.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ClientId = table.Column<int>(type: "integer", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false),
-                    FirmClientId = table.Column<int>(type: "integer", nullable: true)
+                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientWorkOrders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientWorkOrders_Clients_FirmClientId",
-                        column: x => x.FirmClientId,
+                        name: "FK_ClientWorkOrders_Clients_ClientId",
+                        column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id");
                 });
@@ -439,9 +438,9 @@ namespace PlannerCRM.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientWorkOrders_FirmClientId",
+                name: "IX_ClientWorkOrders_ClientId",
                 table: "ClientWorkOrders",
-                column: "FirmClientId");
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeActivity_ActivityId",
@@ -452,16 +451,6 @@ namespace PlannerCRM.Server.Migrations
                 name: "IX_EmployeeActivity_EmployeeId",
                 table: "EmployeeActivity",
                 column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_ActivityCostId",
-                table: "Employees",
-                column: "ActivityCostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_WorkOrderCostId",
-                table: "Employees",
-                column: "WorkOrderCostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeSalary_EmployeeId",
