@@ -16,9 +16,9 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddHttpClient();
 
 builder.Services
-    .AddIdentity<Employee, IdentityRole>()
+    .AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddUserManager<UserManager<Employee>>()
+    .AddUserManager<UserManager<IdentityUser>>()
     .AddDefaultTokenProviders();
 
 builder.Services.Configure<CookiePolicyOptions>(options => 
@@ -68,32 +68,21 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     
     if (!await db.Users.AnyAsync()) {
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Employee>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         
         var accountManagerEmail = "account.manager@gmail.com";
         var accountManagerPassword = "Qwerty123";
-        var accountManagerFirstName = "Account";
-        var accountManagerLastName = "Manager";
-        var accountManagerFullName = "Account Manager";
-        var accountManagerBirthDay = new DateTime(1990, 1, 1);
-        var accountManagerStartDate = DateTime.Now;
-        var accountManagerNumericCode = "SAMPLEFISCALCODE";
 
-        var accountManager = new Employee {
+        var accountManager = new IdentityUser
+        {
             Email = accountManagerEmail,
-            FirstName = accountManagerFirstName,
-            LastName = accountManagerLastName,
-            BirthDay = accountManagerBirthDay,
-            StartDate = accountManagerStartDate,
-            NumericCode = accountManagerNumericCode,
-            FullName = accountManagerFullName,
-            Password = accountManagerPassword,
             EmailConfirmed = true,
-            UserName = accountManagerEmail
+            UserName = accountManagerEmail,
+            NormalizedEmail = accountManagerEmail.ToUpper()
         };
 
-        var accountManagerResult = await userManager.CreateAsync(accountManager, accountManagerPassword);
+        var accountManagerResult = await userManager.CreateAsync(accountManager, accountManagerPassword); 
 
         await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.ACCOUNT_MANAGER) });
         await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.PROJECT_MANAGER) });

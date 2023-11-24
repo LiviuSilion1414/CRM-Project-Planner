@@ -4,26 +4,29 @@ namespace PlannerCRM.Server.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private readonly UserManager<Employee> _userManager;
-    private readonly SignInManager<Employee> _signInManager;
-    private readonly AppDbContext _context;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly AppDbContext _dbCcontext;
 
     public AccountController(
-        UserManager<Employee> userManager, 
-        SignInManager<Employee> signInManager,
-        AppDbContext context) 
+        UserManager<IdentityUser> userManager, 
+        SignInManager<IdentityUser> signInManager,
+        AppDbContext dbContext) 
     {
         _userManager = userManager;
         _signInManager = signInManager;
-        _context = context;
+        _dbCcontext = dbContext;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto) {
         var user = await _userManager.FindByEmailAsync(dto.Email);
+        var employee = await _dbCcontext.Employees.SingleOrDefaultAsync(em => em.Email == dto.Email);
 
-        if (user is null) return NotFound(LoginFeedBack.USER_NOT_FOUND);
-        
+        if (user is null || employee is null || employee.IsArchived || employee.IsDeleted) {
+            return NotFound(LoginFeedBack.USER_NOT_FOUND);
+        }
+
         var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
 
         if (!userPasswordIsCorrect) {
@@ -46,16 +49,14 @@ public class AccountController : ControllerBase
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
 
-            return roles.Single();
+            return roles.SingleOrDefault();
         } else {
             return string.Empty;
         }
     }
 
     private async Task<string> GetCurrentUserIdAsync() {
-        var employee = await _context.Employees
-            .SingleOrDefaultAsync(em =>
-                EF.Functions.ILike(em.Email, $"%{User.Identity.Name}%"));
+        var employee = await _userManager.FindByEmailAsync(User.Identity.Name);
             
         return employee.Id;
     }

@@ -3,9 +3,9 @@ namespace PlannerCRM.Server.Utilities;
 public class DtoValidatorUtillity
 {
     private readonly AppDbContext _dbContext;
-    private readonly UserManager<Employee> _userManager;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public DtoValidatorUtillity(AppDbContext context, UserManager<Employee> userManager) {
+    public DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser> userManager) {
         _dbContext = context;
         _userManager = userManager;
     }
@@ -18,16 +18,17 @@ public class DtoValidatorUtillity
                 throw new DuplicateElementException(ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
             }
 
-           var isEmployeeAlreadyPresent = await _userManager.FindByEmailAsync(dto.OldEmail);
+            var isEmployeeAlreadyPresent = await _userManager.FindByIdAsync(dto.Id);
+            var isUserAlreadyPresent = await _dbContext.Employees.AnyAsync(em => em.Id == dto.Id);
 
             if (operation == OperationType.ADD) {
-                if (isEmployeeAlreadyPresent is not null) {
+                if (isEmployeeAlreadyPresent is not null || isUserAlreadyPresent) {
                     throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }
             } 
             
             if (operation == OperationType.EDIT) {
-                if (isEmployeeAlreadyPresent is null) {
+                if (isEmployeeAlreadyPresent is null || !isUserAlreadyPresent) {
                     throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
                 }
             }
@@ -124,10 +125,15 @@ public class DtoValidatorUtillity
     public bool ValidateWorkTime(WorkTimeRecordFormDto dto) => 
         CheckDtoHealth(dto);
 
-    public async Task<Employee> ValidateDeleteEmployeeAsync(string id) {
-        return await _dbContext.Employees
-            .SingleOrDefaultAsync(em => em.Id == id) ??
+    public async Task<bool> ValidateDeleteEmployeeAsync(string userId) {
+        var employeeExists = await _dbContext.Employees
+            .SingleOrDefaultAsync(em => em.Id == userId) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
+
+        var userExists = await _userManager.FindByIdAsync(userId) 
+            ?? throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
+
+        return employeeExists is not null && userExists is not null;
     }
 
     public async Task<FirmClient> ValidateDeleteClientAsync(int id) {

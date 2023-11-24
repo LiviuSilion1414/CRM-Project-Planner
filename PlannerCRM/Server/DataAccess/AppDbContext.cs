@@ -1,6 +1,6 @@
 namespace PlannerCRM.Server.DataAccess;
 
-public class AppDbContext: IdentityDbContext
+public class AppDbContext: IdentityDbContext<IdentityUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
@@ -11,12 +11,12 @@ public class AppDbContext: IdentityDbContext
 
         modelBuilder
             .Entity<Employee>()
-            .Property(e => e.Id)
+            .Property(em => em.Id)
             .ValueGeneratedOnAdd();
-        
+
         modelBuilder
             .Entity<EmployeeSalary>()
-            .Property(ems => ems.Id)
+            .Property(em => em.Id)
             .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<EmployeeActivity>()
