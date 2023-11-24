@@ -34,6 +34,7 @@ public class EmployeeRepository
                         FirstName = dto.FirstName,
                         LastName = dto.LastName,
                         FullName = $"{dto.FirstName} {dto.LastName}",
+                        Username = dto.Email,
                         BirthDay = dto.BirthDay
                             ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
                         StartDate = dto.StartDate
@@ -174,6 +175,7 @@ public class EmployeeRepository
                 model.FirstName = dto.FirstName;
                 model.LastName = dto.LastName;
                 model.FullName = $"{dto.FirstName + dto.LastName}";
+                model.Username = dto.Email;
                 model.BirthDay = dto.BirthDay 
                     ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
                 model.StartDate = dto.StartDate 
