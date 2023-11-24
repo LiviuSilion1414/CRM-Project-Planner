@@ -315,9 +315,6 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<int?>("ActivityCostId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("BirthDay")
                         .HasColumnType("timestamp without time zone");
 
@@ -357,14 +354,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("text");
 
-                    b.Property<int?>("WorkOrderCostId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ActivityCostId");
-
-                    b.HasIndex("WorkOrderCostId");
 
                     b.ToTable("Employees");
                 });

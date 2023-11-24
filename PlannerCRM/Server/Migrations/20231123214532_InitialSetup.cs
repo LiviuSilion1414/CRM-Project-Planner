@@ -309,23 +309,7 @@ namespace PlannerCRM.Server.Migrations
                     CurrentHourlyRate = table.Column<decimal>(type: "numeric", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    IsArchived = table.Column<bool>(type: "boolean", nullable: false),
-                    ActivityCostId = table.Column<int>(type: "integer", nullable: true),
-                    WorkOrderCostId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employees_ActivityCost_ActivityCostId",
-                        column: x => x.ActivityCostId,
-                        principalTable: "ActivityCost",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Employees_WorkOrderCosts_WorkOrderCostId",
-                        column: x => x.WorkOrderCostId,
-                        principalTable: "WorkOrderCosts",
-                        principalColumn: "Id");
+                    IsArchived = table.Column<bool>(type: "boolean", nullable: false)
                 });
 
             migrationBuilder.CreateTable(
