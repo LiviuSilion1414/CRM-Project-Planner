@@ -76,7 +76,6 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
@@ -84,10 +83,6 @@ namespace PlannerCRM.Server.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -140,10 +135,6 @@ namespace PlannerCRM.Server.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -316,6 +307,65 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("ClientWorkOrders");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ActivityCostId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("BirthDay")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("CurrentHourlyRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NumericCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("WorkOrderCostId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityCostId");
+
+                    b.HasIndex("WorkOrderCostId");
+
+                    b.ToTable("Employees");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeActivity", b =>
                 {
                     b.Property<int>("Id")
@@ -342,7 +392,6 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("EmployeeId")
@@ -506,59 +555,6 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("WorkTimeRecords");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<int?>("ActivityCostId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("BirthDay")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<decimal>("CurrentHourlyRate")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("NumericCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("WorkOrderCostId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("ActivityCostId");
-
-                    b.HasIndex("WorkOrderCostId");
-
-                    b.HasDiscriminator().HasValue("Employee");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -637,6 +633,17 @@ namespace PlannerCRM.Server.Migrations
                         .HasForeignKey("FirmClientId");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
+                {
+                    b.HasOne("PlannerCRM.Server.Models.ActivityCost", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("ActivityCostId");
+
+                    b.HasOne("PlannerCRM.Server.Models.WorkOrderCost", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("WorkOrderCostId");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeActivity", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Activity", "Activity")
@@ -687,17 +694,6 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
-                {
-                    b.HasOne("PlannerCRM.Server.Models.ActivityCost", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("ActivityCostId");
-
-                    b.HasOne("PlannerCRM.Server.Models.WorkOrderCost", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("WorkOrderCostId");
-                });
-
             modelBuilder.Entity("PlannerCRM.Server.Models.Activity", b =>
                 {
                     b.Navigation("EmployeeActivity");
@@ -706,6 +702,13 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("PlannerCRM.Server.Models.ActivityCost", b =>
                 {
                     b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
+                {
+                    b.Navigation("EmployeeActivity");
+
+                    b.Navigation("Salaries");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.FirmClient", b =>
@@ -727,13 +730,6 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("MonthlyActivityCosts");
-                });
-
-            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
-                {
-                    b.Navigation("EmployeeActivity");
-
-                    b.Navigation("Salaries");
                 });
 #pragma warning restore 612, 618
         }
