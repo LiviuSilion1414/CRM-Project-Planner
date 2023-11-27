@@ -11,7 +11,7 @@ public class CalculatorService
     }
 
     public async Task<int> GetCollectionSizeAsync()
-        => await _dbContext.WorkTimeRecords
+        => await _dbContext.WorkOrderCosts
             .CountAsync();
 
     public async Task AddInvoiceAsync(int workOrderId) {
@@ -277,19 +277,19 @@ public class CalculatorService
                 new ActivityCost {
                     Id = activityCost.Id,
                     Name = activities
-                        .Single(ac => ac.WorkOrderId == activityCost.WorkOrderId)
+                        .FirstOrDefault(ac => ac.WorkOrderId == activityCost.WorkOrderId)
                         .Name,
                     StartDate = activities
-                        .Single(ac => ac.WorkOrderId == activityCost.WorkOrderId)
+                        .FirstOrDefault(ac => ac.WorkOrderId == activityCost.WorkOrderId)
                         .StartDate,
                     FinishDate = activities
-                        .Single(ac => ac.WorkOrderId == activityCost.WorkOrderId)
+                        .FirstOrDefault(ac => ac.WorkOrderId == activityCost.WorkOrderId)
                         .FinishDate,
                     Employees = _dbContext.Employees
                         .Where(em => em.Id == activityCost.EmployeeId)
                         .ToList(),
                     MonthlyCost = salaries
-                        .Single(ems => ems.EmployeeId == activityCost.EmployeeId)
+                        .FirstOrDefault(ems => ems.EmployeeId == activityCost.EmployeeId)
                         .Salary * activityCost.Hours
                 }
             )
