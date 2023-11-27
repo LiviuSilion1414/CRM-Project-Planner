@@ -203,14 +203,15 @@ namespace PlannerCRM.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ClientId = table.Column<int>(type: "integer", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
+                    WorkOrderId = table.Column<int>(type: "integer", nullable: false),
+                    FirmClientId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientWorkOrders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientWorkOrders_Clients_ClientId",
-                        column: x => x.ClientId,
+                        name: "FK_ClientWorkOrders_Clients_FirmClientId",
+                        column: x => x.FirmClientId,
                         principalTable: "Clients",
                         principalColumn: "Id");
                 });
@@ -308,7 +309,23 @@ namespace PlannerCRM.Server.Migrations
                     CurrentHourlyRate = table.Column<decimal>(type: "numeric", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    IsArchived = table.Column<bool>(type: "boolean", nullable: false)
+                    IsArchived = table.Column<bool>(type: "boolean", nullable: false),
+                    ActivityCostId = table.Column<int>(type: "integer", nullable: true),
+                    WorkOrderCostId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employees_ActivityCost_ActivityCostId",
+                        column: x => x.ActivityCostId,
+                        principalTable: "ActivityCost",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Employees_WorkOrderCosts_WorkOrderCostId",
+                        column: x => x.WorkOrderCostId,
+                        principalTable: "WorkOrderCosts",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -438,9 +455,9 @@ namespace PlannerCRM.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientWorkOrders_ClientId",
+                name: "IX_ClientWorkOrders_FirmClientId",
                 table: "ClientWorkOrders",
-                column: "ClientId");
+                column: "FirmClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeActivity_ActivityId",
@@ -451,6 +468,16 @@ namespace PlannerCRM.Server.Migrations
                 name: "IX_EmployeeActivity_EmployeeId",
                 table: "EmployeeActivity",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_ActivityCostId",
+                table: "Employees",
+                column: "ActivityCostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_WorkOrderCostId",
+                table: "Employees",
+                column: "WorkOrderCostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeSalary_EmployeeId",
