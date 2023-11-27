@@ -9,7 +9,7 @@
             <i id="x-cancel"class="bi bi-x-circle" @onclick=@OnClickModalCancel></i>
         </div>
         @if (_isError) {
-            <Feedback Message="@_message" OnClickCancel=@OnClickHideBanner/>
+            <Feedback Severity="@CssSeverity.DANGER" Message="@_message" OnClickCancel=@OnClickHideBanner/>
         }
         <div id="before-modal-body">
         <EditForm EditContext="@_editContext" OnValidSubmit="OnClickModalConfirm">

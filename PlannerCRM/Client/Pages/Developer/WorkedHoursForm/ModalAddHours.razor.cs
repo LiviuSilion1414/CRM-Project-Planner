@@ -32,14 +32,13 @@ public partial class ModalAddHours : ComponentBase
 
     protected override async Task OnInitializedAsync() {
         _model.Employee = await AccountManagerService.GetEmployeeForViewByIdAsync(EmployeeId);
+        _model.EmployeeId = _model.Employee.Id;
         _activity = await DeveloperService.GetActivityByIdAsync(ActivityId);
         _workOrder = await DeveloperService.GetWorkOrderByIdAsync(_activity.WorkOrderId);
     }
     
     protected override void OnInitialized() {
-        _model = new() {
-            Employee = new()
-        };
+        _model = new();
         _workOrder = new();
         _activity = new();
         _errors = new();
@@ -54,7 +53,7 @@ public partial class ModalAddHours : ComponentBase
 
     public async Task OnClickModalConfirm() {
         try {
-            var isValid = ValidatorService.Validate(_model, out _errors);
+            var isValid = ValidatorService.Validate(_model, out _errors);    
 
             if (isValid) {
                 _model.Date = DateTime.Now;
@@ -72,6 +71,13 @@ public partial class ModalAddHours : ComponentBase
                     NavManager.NavigateTo(_currentPage, true);
                 }
             } else {
+                foreach (var err in _errors)
+                {
+                    foreach (var item in err.Value)
+                    {
+                        Console.WriteLine($"Key: {err.Key} Error: {item}");
+                    }
+                }
                 CustomValidator.DisplayErrors(_errors);
                 _isError = true;
                 _message = ExceptionsMessages.EMPTY_FIELDS;

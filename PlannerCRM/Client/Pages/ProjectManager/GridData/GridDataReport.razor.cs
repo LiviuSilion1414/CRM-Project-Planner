@@ -19,6 +19,7 @@ public partial class GridDataReport : ComponentBase
     private string _message;
     private string _currentPage;
     private string _orderKey;
+    private bool _isViewReportInvoiceClicked;
 
     protected override void OnInitialized() {
         WorkOrders = new();
@@ -92,8 +93,10 @@ public partial class GridDataReport : ComponentBase
     }
 
     private void ViewReport(int workOrderId) {
-        _isViewInvoiceClicked = !_isViewInvoiceClicked;
+        //_isViewInvoiceClicked = !_isViewInvoiceClicked;
         _workOrderId = workOrderId;
+        _isViewReportInvoiceClicked = !_isViewReportInvoiceClicked;
+        NavManager.NavigateTo($"/invoices/{_workOrderId}");
     }
     
     private void HandleFeedbackCancel(bool value) =>

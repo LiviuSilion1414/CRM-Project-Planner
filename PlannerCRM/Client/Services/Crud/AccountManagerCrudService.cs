@@ -1,6 +1,6 @@
 namespace PlannerCRM.Client.Services.Crud;
 
-[Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
+[Authorize]
 public class AccountManagerCrudService
 {
     private readonly HttpClient _http;

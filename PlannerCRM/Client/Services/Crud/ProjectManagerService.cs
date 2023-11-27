@@ -1,3 +1,5 @@
+using PlannerCRM.Shared.DTOs;
+
 namespace PlannerCRM.Client.Services.Crud;
 
 [Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]

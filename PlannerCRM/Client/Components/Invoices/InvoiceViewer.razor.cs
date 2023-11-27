@@ -1,22 +1,18 @@
-using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+using Microsoft.JSInterop;
 
-namespace PlannerCRM.Client.Pages.ProjectManager.CostPreview;
+namespace PlannerCRM.Client.Components.Invoices;
 
 [Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
-public partial class ModalWorkOrderCostPreview : ComponentBase
+public partial class InvoiceViewer : ComponentBase
 {
     [Parameter] public int WorkOrderId { get; set; }
     [Parameter] public string Title { get; set; }
 
+    [Inject] public IJSRuntime JSRuntime { get; set; }
     [Inject] public ProjectManagerService ProjectManagerService { get; set; }
-    [Inject] public NavigationLockService NavigationUtil { get; set; }
-    [Inject] public NavigationManager NavManager { get; set; }
 
     private WorkOrderCostDto _invoice;
     private ClientViewDto _client;
-    private bool _isCancelClicked = false;
-    private bool _isInvoiceClicked = false;
-    private string _currentPage;
 
     protected override async Task OnInitializedAsync() {
         _invoice = await ProjectManagerService.GetInvoiceAsync(WorkOrderId);
@@ -24,7 +20,6 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
     }
 
     protected override void OnInitialized() {
-        _currentPage = NavigationUtil.GetCurrentPage();
         _client = new();
         _invoice = new() {
             Activities = new(),
@@ -33,15 +28,7 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
         };
     }
 
-    private void OnClickModalCancel() {
-        _isCancelClicked = !_isCancelClicked;
-        NavManager.NavigateTo(_currentPage);
-    }
-
-    private void OnClickIssueInvoice() =>
-        _isInvoiceClicked = !_isInvoiceClicked;
-
-    private void SaveAsPdf() {
-        
+    private async Task SaveAsPdfAsync() {
+        await JSRuntime.InvokeVoidAsync("printInvoice");
     }
 }

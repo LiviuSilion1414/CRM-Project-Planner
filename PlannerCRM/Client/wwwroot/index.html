@@ -30,3 +30,15 @@
 </body>
 
 </html>
+
+<script>
+    function printInvoice() {
+        var x = document.getElementById("print");
+        
+        x.style.display === "none" ? x.style.display = "block" : x.style.display = "none";
+
+        document.title = `WorkOrder_Invoice_${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
+
+        window.print();
+    }
+</script>

@@ -165,7 +165,6 @@ public class EmployeeController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("get/for/edit/{employeeId}")]
     public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(string employeeId) {
         try {

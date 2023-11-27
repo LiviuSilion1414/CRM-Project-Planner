@@ -123,7 +123,7 @@ public class WorkTimeRecordRepository
                     EmployeeId = wtr.EmployeeId
                 })
                 .OrderByDescending(wtr => wtr.Hours)
-                .SingleAsync(wtr => 
+                .FirstOrDefaultAsync(wtr => 
                     wtr.WorkOrderId == workOrderId && 
                     wtr.ActivityId == activityId && 
                     wtr.EmployeeId == employeeId)

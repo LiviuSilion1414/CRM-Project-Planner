@@ -1,0 +1,81 @@
+@page "/invoices/{workOrderId:int}"
+
+<div class="text-left">
+    <strong>PlannerCRM - @(DateTime.Now.ToString("dd/MM/yyyy"))</strong>
+</div>
+
+<div class="titles">
+    <strong>Dati cliente</strong>
+    </div>
+    <div class="client-info">
+        <div class="client-name">
+            <strong>Cliente:</strong> @_client.Name
+        </div>
+        <div class="client-vat">
+            <strong>Partitva IVA:</strong> @_client.VatNumber
+        </div>
+        <br>
+    </div>
+    <div class="titles">
+        <strong>Dati commessa</strong>
+    </div>
+    <div class="workorder-wrapper">
+        <div class="workorder-info">
+            <div>
+                <strong>Nome:</strong> @_invoice.Name
+            </div>
+            <br>  
+            <div>
+                <strong>Dipendenti:</strong> @_invoice.TotalEmployees
+            </div>
+            <br>
+        </div>
+        <div class="workorder-info-dates">
+            <div>
+                <strong>Data inizio:</strong> @_invoice.StartDate.ToString("dd/MM/yyyy")
+            </div> 
+            <br>
+            <div>
+                <strong>Data fine:</strong> @_invoice.FinishDate.ToString("dd/MM/yyyy")
+            </div>
+            <br>
+            <div>
+                <strong>Durata in giorni:</strong> @_invoice.TotalTime.Duration().Days
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="titles">
+        <strong>Attività:</strong> @_invoice.TotalActivities
+    </div>
+<div class="activity-info">
+    <table class="table table-striped">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Data inizio</th>
+            <th scope="col">Data fine</th>
+            <th scope="col">Costo totale attività</th>
+        </tr>
+        <tbody>
+            @foreach (var ac in _invoice.Activities) {
+                <tr>
+                    <td>@ac.Name</td>
+                    <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
+                    <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
+                    <td>@_invoice.CostPerMonth</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="invoice-cost">
+    Totale: <strong>@_invoice.TotalCost</strong> + <em>IVA</em> <br>
+</div>
+<div class="text-center">
+    <button type="button" id="print" class="btn btn-primary" @onclick="@SaveAsPdfAsync">Scarica PDF</button>
+</div>

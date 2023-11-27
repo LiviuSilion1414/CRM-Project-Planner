@@ -16,8 +16,6 @@ public class WorkTimeRecordController : ControllerBase
         _logger = logger;
     }
 
-    [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
-    [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
     [HttpPost("add")]
     public async Task<IActionResult> AddWorkTimeRecordAsync(WorkTimeRecordFormDto dto) {
         try {

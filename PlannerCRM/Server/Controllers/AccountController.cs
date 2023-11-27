@@ -21,10 +21,17 @@ public class AccountController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto) {
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        var employee = await _dbCcontext.Employees.SingleOrDefaultAsync(em => em.Email == dto.Email);
 
-        if (user is null || employee.IsArchived || employee.IsDeleted) {
+        if (user is null) {
             return NotFound(LoginFeedBack.USER_NOT_FOUND);
+        }
+
+        if (dto.Email != ConstantValues.ADMIN_EMAIL) {
+            var employee = await _dbCcontext.Employees.SingleOrDefaultAsync(em => em.Email == dto.Email);
+            
+            if (employee is null || employee.IsArchived || employee.IsDeleted) {
+                return NotFound(LoginFeedBack.USER_NOT_FOUND);
+            }
         }
 
         var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);

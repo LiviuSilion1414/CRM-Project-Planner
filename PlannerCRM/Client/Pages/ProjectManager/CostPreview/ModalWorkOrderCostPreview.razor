@@ -61,14 +61,14 @@
                         <th scope="col">Costo totale attività</th>
                     </tr>
                     <tbody>
-                        <tr>
-                            @foreach (var ac in _invoice.Activities) {
+                        @foreach (var ac in _invoice.Activities) {
+                            <tr>
                                 <td>@ac.Name</td>
                                 <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
                                 <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
                                 <td>@_invoice.CostPerMonth</td>
-                            }
-                        </tr>
+                            </tr>
+                        }
                     </tbody>
                 </table>
                 <div class="invoice-cost">
@@ -81,7 +81,7 @@
                     <span id="btn-link" class="btn btn-link" @onclick=@OnClickModalCancel>Annulla</span>
                 </div>
                 <div id="confirm">
-                    <button type="submit" class="btn btn-primary">Conferma</button>
+                    <button type="submit" class="btn btn-primary" onclick="window.print()">Conferma</button>
                 </div>
             </div>
         </div>

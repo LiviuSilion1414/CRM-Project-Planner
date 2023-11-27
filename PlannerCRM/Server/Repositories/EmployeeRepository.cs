@@ -68,15 +68,12 @@ public class EmployeeRepository
                     .SingleOrDefaultAsync(aspRole => aspRole.Name == dto.Role.ToString()) ??
                         throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
 
-                var creationResult = await _userManager.CreateAsync(user, dto.Password);
-                if (!creationResult.Succeeded) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
-
-                var assignmentResult = await _userManager.AddToRoleAsync(user, foundIdentityRole.Name);
-                
-                if (!creationResult.Succeeded || !assignmentResult.Succeeded) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                await _userManager.CreateAsync(user, dto.Password);
+                var res = await _userManager.AddToRoleAsync(user, dto.Role.ToString());
+                if (!res.Succeeded) {
+                    foreach (var err in res.Errors) {
+                        Console.WriteLine($"Error Code: {err.Code} Error Description: {err.Description}");
+                    }
                 }
                 
                 if (await _dbContext.SaveChangesAsync() == 0) {
@@ -314,7 +311,7 @@ public class EmployeeRepository
 
     public async Task<EmployeeFormDto> GetForEditByIdAsync(string employeeId) { 
         return await _dbContext.Employees
-            .Where(em => !em.IsDeleted && !em.IsArchived)
+            .Where(em => !em.IsDeleted || !em.IsArchived)
             .Select(em => new EmployeeFormDto {
                 Id = em.Id,
                 FirstName = em.FirstName,
