@@ -63,9 +63,10 @@ public class AccountController : ControllerBase
     }
 
     private async Task<string> GetCurrentUserIdAsync() {
-        var employee = await _userManager.FindByEmailAsync(User.Identity.Name);
-            
-        return employee.Id;
+        var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+        var employee = await _dbCcontext.Employees.SingleOrDefaultAsync(em => em.Username == User.Identity.Name);
+
+        return user is not null && employee is not null ? employee.Id : string.Empty;
     }
 
     [HttpGet("current/user/info")]

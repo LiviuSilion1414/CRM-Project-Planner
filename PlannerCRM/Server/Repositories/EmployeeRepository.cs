@@ -1,3 +1,5 @@
+using PlannerCRM.Shared.DTOs;
+
 namespace PlannerCRM.Server.Repositories;
 
 public class EmployeeRepository
@@ -168,10 +170,9 @@ public class EmployeeRepository
                 var user = await _userManager.FindByEmailAsync(dto.OldEmail);
                 var model = await _dbContext.Employees.SingleOrDefaultAsync(em => em.Id == dto.Id);
 
-                model.Id = dto.Id;
                 model.FirstName = dto.FirstName;
                 model.LastName = dto.LastName;
-                model.FullName = $"{dto.FirstName + dto.LastName}";
+                model.FullName = $"{dto.FirstName + dto.LastName + string.Empty}";
                 model.Username = dto.Email;
                 model.BirthDay = dto.BirthDay 
                     ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
@@ -309,7 +310,7 @@ public class EmployeeRepository
             .SingleOrDefaultAsync(em => em.Id == employeeId);
     }
 
-    public async Task<EmployeeFormDto> GetForEditByIdAsync(string employeeId) { 
+    public async Task<EmployeeFormDto> GetForEditByIdAsync(string employeeId) {
         return await _dbContext.Employees
             .Where(em => !em.IsDeleted || !em.IsArchived)
             .Select(em => new EmployeeFormDto {

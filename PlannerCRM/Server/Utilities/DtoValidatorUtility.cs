@@ -18,17 +18,17 @@ public class DtoValidatorUtillity
                 throw new DuplicateElementException(ExceptionsMessages.NOT_ASSEGNABLE_ROLE);
             }
 
-            var isEmployeeAlreadyPresent = await _userManager.FindByIdAsync(dto.Id);
-            var isUserAlreadyPresent = await _dbContext.Employees.AnyAsync(em => em.Id == dto.Id);
+            var isUserAlreadyPresent = await _userManager.FindByEmailAsync(dto.OldEmail);
+            var isEmployeeAlreadyPresent = await _dbContext.Employees.AnyAsync(em => em.Id == dto.Id);
 
             if (operation == OperationType.ADD) {
-                if (isEmployeeAlreadyPresent is not null || isUserAlreadyPresent) {
+                if (isUserAlreadyPresent is not null || isEmployeeAlreadyPresent) {
                     throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);
                 }
             } 
             
             if (operation == OperationType.EDIT) {
-                if (isEmployeeAlreadyPresent is null || !isUserAlreadyPresent) {
+                if (isUserAlreadyPresent is null || !isEmployeeAlreadyPresent) {
                     throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
                 }
             }

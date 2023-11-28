@@ -1,8 +1,8 @@
-
 using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
 
 namespace PlannerCRM.Client.Components.ProfileMenu.ProfileSettings;
 
+[Authorize]
 public partial class ProfileInfoSettings : ComponentBase
 {
     [Parameter] public string Id { get; set; }
@@ -47,8 +47,8 @@ public partial class ProfileInfoSettings : ComponentBase
             : string.Empty;
     }
 
-    private void SetBanner() {
-        _operationDone = true;
+    private void SetBanner(bool hidden) {
+        _operationDone = hidden;
     }
 
     public async Task AutoHideBanner() {

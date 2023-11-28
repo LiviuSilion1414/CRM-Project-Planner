@@ -2,7 +2,7 @@
 @layout MainLayout 
 
 @if (_operationDone) {
-    <Feedback Severity="@CssSeverity.SUCCESS" Message="Modifica eseguita."/> <!-- use success message-->
+    <Feedback Severity="@CssSeverity.SUCCESS" Message="Modifica eseguita." OnClickCancel="@SetBanner"/> <!-- use success message-->
 }
 
 <div class="container">
