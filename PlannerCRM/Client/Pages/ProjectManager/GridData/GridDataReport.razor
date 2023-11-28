@@ -36,16 +36,15 @@
                 @if (wo.IsInvoiceCreated) {
                     <td>
                         <span class="text-success">
-                            <i class="bi bi-check2-circle"></i>
-                            Creato
+                            <i class="bi bi-check2-circle">Creato</i>
                         </span>
                     </td>
                     <td>
                         <span class="info" @onclick=@(() => ViewReport(wo.Id))>
-                            <i class="bi bi-receipt" ></i>
-                            Visualizza report
+                            <i class="bi bi-receipt">Visualizza</i>
                         </span>
                     </td>
+                    <td><i class="bi bi-share" @onclick="@(() => ShareReportAsync(wo.Id))">Condividi</i></td>
                 } else {
                     <td>
                         <span class="text-warning">
@@ -55,8 +54,7 @@
                     </td>
                     <td>
                         <span class="info" @onclick=@(() => CreateReport(wo.Id))>
-                            <i class="bi bi-plus-circle"></i>
-                            Genera report
+                            <i class="bi bi-plus-circle">Genera</i>
                         </span>
                     </td>
                 }
