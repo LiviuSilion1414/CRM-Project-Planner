@@ -1,4 +1,3 @@
-using Append.Blazor.WebShare;
 using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
 
 namespace PlannerCRM.Client.Pages.ProjectManager.GridData;
@@ -8,7 +7,6 @@ public partial class GridDataReport : ComponentBase
 {
     [Parameter] public List<WorkOrderViewDto> WorkOrders { get; set;}
 
-    [Inject] IWebShareService WebShareService { get; set; }
     [Inject] public ProjectManagerService ProjectManagerService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
@@ -99,10 +97,6 @@ public partial class GridDataReport : ComponentBase
         _workOrderId = workOrderId;
         _isViewReportInvoiceClicked = !_isViewReportInvoiceClicked;
         NavManager.NavigateTo($"/invoices/{_workOrderId}");
-    }
-    
-    private async Task ShareReportAsync(int invoiceId) {
-        await WebShareService.ShareAsync(new ShareData(title: "La tua fattura.", text: "Nuova fattura", url: $"http://localhost:5432/invoices/{invoiceId}"));
     }
     
     private void HandleFeedbackCancel(bool value) =>

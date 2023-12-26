@@ -1,4 +1,3 @@
-using Append.Blazor.WebShare;
 using PlannerCRM.Client;
 using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
 
@@ -14,7 +13,6 @@ builder.Services.AddScoped<AuthenticationStateProvider>(s =>
     s.GetRequiredService<AuthenticationStateService>()
 );
 
-builder.Services.AddWebShare();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<AuthenticationStateService>();
 builder.Services.AddScoped<CurrentUserInfoService>();
