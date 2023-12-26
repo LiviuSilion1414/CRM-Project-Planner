@@ -8,9 +8,8 @@
         </div>
         <div id="before-modal-body">
             @if (_isError) {
-                <Feedback Message="@_errorMessage" OnClickCancel=@OnClickHideBanner/>
+                <Feedback Severity="@CssSeverity.DANGER" Message="@_errorMessage" OnClickCancel=@OnClickHideBanner/>
             }
-            
             <EditForm EditContext="@_editContext" OnSubmit="@OnClickModalConfirm">
                 <CascadingValue Value="@_errors">
                     <CustomDataAnnotationsValidator @ref="CustomValidator"/>

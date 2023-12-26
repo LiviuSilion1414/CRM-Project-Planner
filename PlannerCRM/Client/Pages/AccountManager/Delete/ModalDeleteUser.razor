@@ -7,7 +7,7 @@
         </div>
         <div class="modal-body">
             @if (_isError) {
-                <Feedback Message="@_message" OnClickCancel=@OnClickHideBanner/>
+                <Feedback Severity="@CssSeverity.DANGER" Message="@_message" OnClickCancel=@OnClickHideBanner/>
             }
             <p>@ConfirmationMessage</p>
             <p> <strong>Nome:</strong> @_model.FullName</p>
