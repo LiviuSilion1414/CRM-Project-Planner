@@ -38,4 +38,6 @@ public class Titles
     public const string NOT_AVAILABLE_CLIENTS = "Nessun cliente disponibile.";
 
     public const string NO_MORE_RESOURCES = "Non ci sono altri elementi.";
+
+    public const string DEFAULT_MODAL_TITLE = "Form modal";
 }
