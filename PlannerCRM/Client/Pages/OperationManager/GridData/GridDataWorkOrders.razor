@@ -42,14 +42,14 @@
                     </td>
                     <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
                     <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
-                    @if (!wo.IsDeleted) {
+                    @if (!wo.IsInvoiceCreated) {
                         <td>
-                                <td style="padding-right: 10px;">
-                                    <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEditWorkOrder(wo.Id))"></i>
-                                </td> 
-                                <td> 
-                                    <i class="bi bi-trash3 danger" @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))"></i>
-                                </td>
+                            <td style="padding-right: 10px;">
+                                <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEditWorkOrder(wo.Id))"></i>
+                            </td> 
+                            <td> 
+                                <i class="bi bi-trash3 danger" @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))"></i>
+                            </td>
                         </td>
                     }
                 <td></td>
