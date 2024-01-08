@@ -1,4 +1,5 @@
 using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+using PlannerCRM.Client.Components.ModalForm.Component;
 
 namespace PlannerCRM.Client.Pages.Modals.Form.Activity;
 
@@ -6,6 +7,7 @@ namespace PlannerCRM.Client.Pages.Modals.Form.Activity;
 public partial class ModalFormActivity : ComponentBase
 {
     [Parameter] public string Title { get; set; }
+    [Parameter] public string Size { get; set; }
     [Parameter] public ActivityFormDto Model { get; set; }
     [Parameter] public EventCallback<ActivityFormDto> GetValidatedModel { get; set; }
 
