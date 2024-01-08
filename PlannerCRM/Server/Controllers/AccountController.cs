@@ -52,7 +52,7 @@ public class AccountController : ControllerBase
     
     [HttpGet("user/role")]
     public async Task<string> GetUserRoleAsync() {
-        if (User.Identity.IsAuthenticated) {
+        if (User.Identity.IsAuthenticated && User is not null) {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
 
