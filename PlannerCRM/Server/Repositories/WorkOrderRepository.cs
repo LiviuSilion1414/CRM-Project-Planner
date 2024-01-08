@@ -215,6 +215,7 @@ public class WorkOrderRepository
 				Name = wo.Name,
 				StartDate = wo.StartDate,
 				FinishDate = wo.FinishDate,
+				IsInvoiceCreated = wo.IsInvoiceCreated,
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted,
 				ClientId = wo.ClientId,

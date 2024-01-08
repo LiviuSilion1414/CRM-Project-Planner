@@ -206,7 +206,9 @@ public class ActivityRepository
 
     public async Task<ActivityFormDto> GetForEditByIdAsync(int activityId) {
         return await _dbContext.Activities
-            .Where(ac => ac.Id == activityId)
+            .Where(ac => ac.Id == activityId && 
+                _dbContext.WorkOrders
+                    .Any(wo => wo.Id == ac.WorkOrderId && !wo.IsDeleted || !wo.IsInvoiceCreated))
             .Select(ac => new ActivityFormDto {
                 Id = ac.Id,
                 Name = ac.Name,

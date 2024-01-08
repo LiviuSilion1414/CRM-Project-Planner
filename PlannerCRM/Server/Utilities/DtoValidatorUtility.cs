@@ -100,6 +100,14 @@ public class DtoValidatorUtillity
             var isAlreadyPresent = await _dbContext.Activities
                 .AnyAsync(ac => ac.Id == dto.Id);
 
+            var isWorkOrderCompletedOrDeleted = await _dbContext.WorkOrders
+                .Where(wo => wo.Id == dto.WorkOrderId)
+                .AnyAsync(wo => wo.IsCompleted || wo.IsDeleted);
+
+            if (isWorkOrderCompletedOrDeleted) {
+                throw new UpdateRowSourceException(ExceptionsMessages.IMPOSSIBLE_EDIT);
+            }
+
             if (operation == OperationType.ADD) {
                 if (isAlreadyPresent) {
                     throw new DuplicateElementException(ExceptionsMessages.OBJECT_ALREADY_PRESENT);

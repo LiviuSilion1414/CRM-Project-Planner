@@ -31,7 +31,12 @@ public class CalculatorService
             }
 
             var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => wo.Id == workOrderId);  
+                .SingleAsync(wo => wo.Id == workOrderId);
+            
+            workOrder.IsCompleted = true;
+
+            _dbContext.Update(workOrder);
+
             var workOrderCost = await ExecuteCalculationsAsync(workOrder, true);
 
             await _dbContext.WorkOrderCosts.AddAsync(workOrderCost);
