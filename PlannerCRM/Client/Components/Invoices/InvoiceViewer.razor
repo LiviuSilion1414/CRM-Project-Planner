@@ -76,7 +76,3 @@
 <div class="invoice-cost">
     Totale: <strong>@(_invoice.TotalCost + _invoice.TotalCost * 22 / 100)</strong> + <em>IVA</em> <br>
 </div>
-
-<div class="text-center">
-    <button type="button" id="print" class="btn btn-primary" @onclick="@SaveAsPdfAsync">Scarica PDF</button>
-</div>

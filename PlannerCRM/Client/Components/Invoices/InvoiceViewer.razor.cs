@@ -27,8 +27,4 @@ public partial class InvoiceViewer : ComponentBase
             MonthlyActivityCosts = new()
         };
     }
-
-    private async Task SaveAsPdfAsync() {
-        await JSRuntime.InvokeVoidAsync("printInvoice");
-    }
 }
