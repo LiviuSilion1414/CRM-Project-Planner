@@ -93,7 +93,7 @@ public partial class GridDataReport : ComponentBase
     }
 
     private void ViewReport(int workOrderId) {
-        //_isViewInvoiceClicked = !_isViewInvoiceClicked;
+        _isViewInvoiceClicked = !_isViewInvoiceClicked;
         _workOrderId = workOrderId;
         _isViewReportInvoiceClicked = !_isViewReportInvoiceClicked;
         NavManager.NavigateTo($"/invoices/{_workOrderId}");
