@@ -4,6 +4,9 @@ public class EmployeeFormDto
 {
     public string Id { get; set; }
 
+    [Required(ErrorMessage = """Campo "Immagine profile" richiesto""")]
+    public ProfilePictureDto ProfilePicture { get; set; }
+
     [Required(ErrorMessage = """Campo "Nome" richiesto""")]
     public string FirstName { get; set; }
 
