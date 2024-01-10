@@ -4,7 +4,7 @@ namespace PlannerCRM.Client.Utilities.Converter;
 
 public class Base64Converter
 {
-    public static async Task<(string thumbnail, string imageType, string fileName)> ConvertImageAsync(InputFileChangeEventArgs args, long allowedSize) {
+    public async Task<(string thumbnail, string imageType, string fileName)> ConvertImageAsync(InputFileChangeEventArgs args) {
         var imgFile = args.File;
         var buffers = new byte[imgFile.Size];
 
