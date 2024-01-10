@@ -1,11 +1,5 @@
-<div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">@Title</h5>
-            <i id="cancel" class="bi bi-x-circle" @onclick=@OnClickModalCancel></i>
-        </div>
-        <div class="content">
+<Modal Size="@ModalSize.DEFAULT" Title="@Title">
+    <Body>
         @if (_isError) {
             <Feedback Severity="@CssSeverity.DANGER" Message="@_errorMessage" OnClickCancel=@OnClickHideBanner/>
         }
@@ -26,18 +20,13 @@
                     </div>
                     
             </CascadingValue>
-            <div class="modal-footer">
-                <div id="btn-cancel">
-                    <span id="btn-link" @onclick=@OnClickModalCancel>Annulla</span>
-                </div>
-                <div id="btn-confirm">
-                    <button type="submit" class="btn btn-primary">Conferma</button>
-                </div>
-            </div>
             <NavigationLock ConfirmExternalNavigation="@NavigationLockService.ConfirmedExternalExit" 
                 OnBeforeInternalNavigation="@NavigationUtil.ConfirmInternalExit"/>
         </EditForm>
+    </Body>
+    <Footer>
+        <div id="btn-confirm">
+            <button type="submit" class="btn btn-primary" @onclick=@OnClickModalConfirm>Conferma</button>
         </div>
-        </div>
-    </div>
-</div>
+    </Footer>
+</Modal>

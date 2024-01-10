@@ -4,11 +4,14 @@
             <div class="modal-header">
                 @Header
                 <h5 class="modal-title">@Title</h5>
-                <i id="cancel" class="bi bi-x-circle" @onclick=@CloseModal></i>
+                <i id="x-cancel" class="bi bi-x-circle" @onclick=@CloseModal></i>
             </div>
             <div class="content">
                 @Body
                 <div class="modal-footer">
+                    <div id="cancel">
+                        <span id="btn-link" class="btn btn-link" @onclick="@CloseModal">Annulla</span>
+                    </div>
                     @Footer
                 </div>
             </div>

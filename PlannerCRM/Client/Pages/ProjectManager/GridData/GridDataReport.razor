@@ -1,8 +1,5 @@
 @if (_isError) {
-    <Feedback
-        Message=@_message
-        OnClickCancel=@HandleFeedbackCancel
-    />
+    <Feedback Message=@_message OnClickCancel=@HandleFeedbackCancel/>
 }
 
 <table class="table table-striped">

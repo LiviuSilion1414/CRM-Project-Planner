@@ -4,7 +4,7 @@ namespace PlannerCRM.Client.Components.ListOfItems;
 
 public partial class ItemsList<T> : ComponentBase
 {
-    [Parameter] public List<T> Items { get; set; }
+    [Parameter] public IEnumerable<T> Items { get; set; }
     [Parameter] public List<string> PropertyKeys { get; set; }
     [Parameter] public EventCallback<T> GetSelectedItem { get; set; }
 

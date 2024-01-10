@@ -1,3 +1,4 @@
+
 <Modal Title="@Title" Size="@ModalSize.EXTRA_LARGE">
     <Body>
         @if (_isError) {
@@ -104,9 +105,6 @@
         </div>
     </Body>
     <Footer>
-        <div id="cancel">
-            <span id="btn-link" class="btn btn-link" @onclick="@OnClickModalCancel">Annulla</span>
-        </div>
         <div id="confirm">
             <button type="submit" class="btn btn-primary" @onclick=@OnClickModalConfirm>Conferma</button>
         </div>

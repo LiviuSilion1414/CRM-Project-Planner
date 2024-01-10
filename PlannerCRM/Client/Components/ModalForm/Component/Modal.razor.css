@@ -11,8 +11,12 @@
     padding: 10px;
 }
 
-#cancel {
+#x-cancel {
     cursor: pointer;
+}
+
+#cancel {
+    float: left;
 }
 
 .modal-footer {

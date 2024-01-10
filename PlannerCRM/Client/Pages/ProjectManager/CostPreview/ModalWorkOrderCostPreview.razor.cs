@@ -40,8 +40,4 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
 
     private void OnClickIssueInvoice() =>
         _isInvoiceClicked = !_isInvoiceClicked;
-
-    private void SaveAsPdf() {
-        
-    }
 }

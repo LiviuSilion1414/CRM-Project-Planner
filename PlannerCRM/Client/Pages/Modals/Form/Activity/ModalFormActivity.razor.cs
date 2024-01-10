@@ -1,5 +1,4 @@
 using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
-using PlannerCRM.Client.Components.ModalForm.Component;
 
 namespace PlannerCRM.Client.Pages.Modals.Form.Activity;
 
@@ -88,6 +87,21 @@ public partial class ModalFormActivity : ComponentBase
         _hideEmployeesList = !_hideEmployeesList;
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
+
+    //private void HandleRemoveEmployee(EmployeeActivityDto employeeActivity) {
+    //    try {
+    //        var isContained = Model.ViewEmployeeActivity
+    //            .Any(ea => ea.Employee.FullName == employeeActivity.Employee.FullName);
+    //
+    //        if (isContained) {
+    //            Model.ViewEmployeeActivity.Remove(employeeActivity);
+    //        }
+    //    } catch (Exception exc) {
+    //        Logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+    //        _message = exc.Message;
+    //        _isError = true;
+    //    }
+    //}
 
     private void HandleChosenEmployee(EmployeeSelectDto employee) {
         try { 
