@@ -390,6 +390,36 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("EmployeeActivity");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeProfilePicture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EmployeeInfoId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeInfoId");
+
+                    b.ToTable("ProfilePictures");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.Property<string>("Id")
@@ -661,6 +691,15 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Activity");
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeProfilePicture", b =>
+                {
+                    b.HasOne("PlannerCRM.Server.Models.Employee", "EmployeeInfo")
+                        .WithMany()
+                        .HasForeignKey("EmployeeInfoId");
+
+                    b.Navigation("EmployeeInfo");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
