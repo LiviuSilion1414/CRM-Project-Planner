@@ -1,5 +1,3 @@
-using PlannerCRM.Client.Utilities.Navigation;
-
 namespace PlannerCRM.Client.Pages.Modals.Form.User;
 
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
@@ -31,6 +29,9 @@ public partial class ModalFormUser : ComponentBase
         Model = new()
         {
             ProfilePicture = new()
+            {
+                EmployeeInfo = new()
+            }
         };
         _editContext = new(Model);
         CustomValidator = new();
@@ -71,6 +72,12 @@ public partial class ModalFormUser : ComponentBase
                     Model.Id = string.Empty;
                     Model.OldEmail = string.Empty;
                 }
+
+                Model.ProfilePicture.EmployeeInfo.FirstName = Model.FirstName;
+                Model.ProfilePicture.EmployeeInfo.LastName = Model.LastName;
+                Model.ProfilePicture.EmployeeInfo.FullName = $"{Model.FirstName} {Model.LastName}";
+                Model.ProfilePicture.EmployeeInfo.Email = Model.Email;
+                Model.ProfilePicture.EmployeeInfo.Role = Model.Role ?? throw new ArgumentNullException(ExceptionsMessages.NULL_ARG, nameof(Model.Role));
 
                 Model.EmployeeSalaries = new() {
                     new() {

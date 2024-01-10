@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PlannerCRM.Client.Utilities.Converter;
 
@@ -11,7 +12,7 @@ public class Base64Converter
         await imgFile.OpenReadStream().ReadAsync(buffers);
 
         var imageType = imgFile.ContentType;
-        var fileName = imgFile.Name;        
+        var fileName = imgFile.Name;
         var thumbnail = $"data:{imageType};base64,{Convert.ToBase64String(buffers)}";
 
         return (thumbnail, imageType, fileName);
