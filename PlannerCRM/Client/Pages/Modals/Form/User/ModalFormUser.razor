@@ -6,6 +6,9 @@
         <EditForm EditContext="@_editContext" OnValidSubmit="@OnClickModalConfirm">
             <CascadingValue Value="@_errors">
                 <CustomDataAnnotationsValidator @ref="CustomValidator"/>
+                    <div>
+                        <InputFile OnChange="@SaveImage"></InputFile>
+                    </div>
                     <div class="form-group">
                         <i class="bi bi-person-circle"></i>
                         <label for="Nome">Nome</label>

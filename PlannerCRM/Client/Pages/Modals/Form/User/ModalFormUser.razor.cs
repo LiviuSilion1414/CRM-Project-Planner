@@ -14,6 +14,7 @@ public partial class ModalFormUser : ComponentBase
     [Inject] public CustomDataAnnotationsValidator CustomValidator { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
+    [Inject] public Base64Converter Converter { get; set; }
     [Inject] public ILogger<EmployeeFormDto> Logger { get; set; }
 
     private Dictionary<string, List<string>> _errors;
@@ -27,7 +28,10 @@ public partial class ModalFormUser : ComponentBase
     private string _input;
 
     protected override void OnInitialized() {
-        Model = new();
+        Model = new()
+        {
+            ProfilePicture = new()
+        };
         _editContext = new(Model);
         CustomValidator = new();
         _isCancelClicked = false;
@@ -44,9 +48,17 @@ public partial class ModalFormUser : ComponentBase
     private void OnClickHideBanner(bool hidden) => 
         _isError = hidden;
 
-    public void OnClickInvalidSubmit() {
+    private void OnClickInvalidSubmit() {
         _isError = true;
         _errorMessage = ExceptionsMessages.EMPTY_FIELDS;
+    }
+
+    private async Task SaveImage(InputFileChangeEventArgs args) {
+        var (thumbnail, imageType, fileName) = await Converter.ConvertImageAsync(args);
+
+        Model.ProfilePicture.Thumbnail = thumbnail;
+        Model.ProfilePicture.ImageType = imageType;
+        Model.ProfilePicture.FileName = fileName;
     }
 
     private async Task OnClickModalConfirm() {
