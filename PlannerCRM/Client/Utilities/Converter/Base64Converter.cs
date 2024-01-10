@@ -1,8 +1,19 @@
-namespace PlannerCRM.Client.Utilities;
+using Microsoft.AspNetCore.Components.Forms;
+
+namespace PlannerCRM.Client.Utilities.Converter;
 
 public class Base64Converter
 {
-    public static void ConvertImage() {
+    public static async Task<(string, string)> ConvertImage(InputFileChangeEventArgs args, long allowedSize) {
+        var imgFile = args.File;
+        var buffers = new byte[imgFile.Size];
 
+        await imgFile.OpenReadStream().ReadAsync(buffers);
+
+        var imageType = imgFile.ContentType;
+        var fileName = imgFile.Name;        
+        var thumbnail = $"data:{imageType};base64,{Convert.ToBase64String(buffers)}";
+
+        return (thumbnail, imageType);
     }
 }
