@@ -33,6 +33,7 @@ public class AppDbContext: IdentityDbContext<IdentityUser>
     public DbSet<WorkOrder> WorkOrders { get; set; }
     public DbSet<Activity> Activities { get; set; }
     public DbSet<Employee> Employees { get; set; }
+    public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; }
     public DbSet<FirmClient> Clients { get; set; }
     public DbSet<EmployeeActivity> EmployeeActivity { get; set; }
     public DbSet<WorkTimeRecord> WorkTimeRecords { get; set; }
