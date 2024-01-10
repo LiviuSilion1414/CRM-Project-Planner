@@ -24,6 +24,8 @@ builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
 builder.Services.AddScoped<CustomDataAnnotationsValidator>();
 
+builder.Services.AddScoped<Base64Converter>();
+
 builder.Services.AddScoped<Logger<AuthenticationStateService>>();
 builder.Services.AddScoped<Logger<CurrentUserInfoService>>();
 builder.Services.AddScoped<Logger<AccountManagerCrudService>>();
