@@ -12,5 +12,5 @@ public class ProfilePictureDto
 
     public string? ImageUrl { get; set; }
 
-    public virtual Employee? EmployeeInfo { get; set; }
+    public virtual EmployeeSelectDto? EmployeeInfo { get; set; }
 }
