@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PlannerCRM.Server.DataAccess;
@@ -11,9 +12,11 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240110161217_FourthSetup")]
+    partial class FourthSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -411,8 +414,10 @@ namespace PlannerCRM.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EmployeeInfoId")
                         .HasColumnType("text");
 
                     b.Property<string>("ImageType")
@@ -424,7 +429,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("EmployeeInfoId");
 
                     b.ToTable("ProfilePictures");
                 });
@@ -714,9 +719,7 @@ namespace PlannerCRM.Server.Migrations
                 {
                     b.HasOne("PlannerCRM.Server.Models.Employee", "EmployeeInfo")
                         .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeInfoId");
 
                     b.Navigation("EmployeeInfo");
                 });
