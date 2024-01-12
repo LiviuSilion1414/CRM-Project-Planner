@@ -5,7 +5,6 @@
                 <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Partita IVA</th>
-                    <th scope="col">Commessa</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -14,16 +13,6 @@
                         <tr>
                             <td>@cl.Name</td>
                             <td>@cl.VatNumber</td>
-                            <td>
-                                @if (!_workOrders.Any(wo => wo.Id == cl.WorkOrderId)) {
-                                    @Titles.NOT_AVAILABLE_WORKORDERS    
-                                }
-                                @foreach (var wo in _workOrders) {
-                                    @if (wo.Id == cl.WorkOrderId) {
-                                        @wo.Name
-                                    }
-                                }
-                            </td>
                             <td>
                                 <button class="btn btn-primary" 
                                     @onclick=@(() => OnClickEditClient(cl.Id))>
