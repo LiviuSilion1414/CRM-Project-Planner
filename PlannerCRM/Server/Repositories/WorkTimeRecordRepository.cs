@@ -56,7 +56,7 @@ public class WorkTimeRecordRepository
 
     public async Task DeleteAsync(int id) {
         var workTimeRecordDelete = await _dbContext.WorkTimeRecords
-            .SingleOrDefaultAsync(wtr => wtr.Id == id)
+            .SingleAsync(wtr => wtr.Id == id)
                 ?? throw new KeyNotFoundException(ExceptionsMessages.OBJECT_NOT_FOUND);
         
         _dbContext.WorkTimeRecords.Remove(workTimeRecordDelete);
@@ -72,7 +72,7 @@ public class WorkTimeRecordRepository
             
             if (isValid) {
                 var model = await _dbContext.WorkTimeRecords
-                    .SingleOrDefaultAsync(wtr => wtr.Id == dto.Id);
+                    .SingleAsync(wtr => wtr.Id == dto.Id);
         
                 model.Id = dto.Id;
                 model.Date = dto.Date;
@@ -123,7 +123,7 @@ public class WorkTimeRecordRepository
                     EmployeeId = wtr.EmployeeId
                 })
                 .OrderByDescending(wtr => wtr.Hours)
-                .FirstOrDefaultAsync(wtr => 
+                .FirstAsync(wtr => 
                     wtr.WorkOrderId == workOrderId && 
                     wtr.ActivityId == activityId && 
                     wtr.EmployeeId == employeeId)

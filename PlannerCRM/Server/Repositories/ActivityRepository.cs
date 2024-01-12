@@ -201,7 +201,7 @@ public class ActivityRepository
                             .Single(ac => ac.Id == ea.ActivityId) 
                     }).ToHashSet()
             })
-            .SingleOrDefaultAsync(ac => ac.Id == id);
+            .SingleAsync(ac => ac.Id == id);
     }
 
     public async Task<ActivityFormDto> GetForEditByIdAsync(int activityId) {

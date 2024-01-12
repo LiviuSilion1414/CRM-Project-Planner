@@ -153,7 +153,7 @@ public class WorkOrderRepository
 				ClientName = _dbContext.Clients
 					.Single(cl => cl.Id == wo.ClientId)
 					.Name})
-			.SingleOrDefaultAsync(wo => wo.Id == id);
+			.SingleAsync(wo => wo.Id == id);
 	}
 
 	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int id) {
@@ -166,7 +166,7 @@ public class WorkOrderRepository
 				IsCompleted = wo.IsCompleted,
 				IsDeleted = wo.IsDeleted
 			})
-			.SingleOrDefaultAsync(wo => wo.Id == id);
+			.SingleAsync(wo => wo.Id == id);
 	}
 	
 	public async Task<WorkOrderFormDto> GetForEditByIdAsync(int id) {

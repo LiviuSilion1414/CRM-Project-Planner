@@ -1,4 +1,5 @@
 using PlannerCRM.Shared.DTOs;
+using PlannerCRM.Shared.DTOs.EmployeeProfilePictureDto;
 
 namespace PlannerCRM.Server.Repositories;
 
@@ -59,32 +60,107 @@ public class EmployeeRepository
                     }
                 );
 
-                var user = new IdentityUser
-                {
-                    Email = dto.Email,
-                    UserName = dto.Email,
-                    NormalizedEmail = dto.Email.ToUpper()
-                };
-
-                var foundIdentityRole = await _roleManager.Roles
-                    .SingleOrDefaultAsync(aspRole => aspRole.Name == dto.Role.ToString()) ??
-                        throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
-
-                await _userManager.CreateAsync(user, dto.Password);
-                var res = await _userManager.AddToRoleAsync(user, dto.Role.ToString());
-                if (!res.Succeeded) {
-                    foreach (var err in res.Errors) {
-                        Console.WriteLine($"Error Code: {err.Code} Error Description: {err.Description}");
-                    }
-                }
+                
+                //await _userManager.AddToRoleAsync(user, dto.Role.ToString() ?? throw new ArgumentNullException(nameof(dto.Role), ExceptionsMessages.NULL_ARG));
                 
                 if (await _dbContext.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
                 }
+
+                await AddUserAsync(dto);
+                await SetRoleAsync(dto.Email, dto.Role ?? throw new ArgumentNullException(nameof(dto.Role), ExceptionsMessages.NULL_ARG));
+                await SetProfilePictureAsync(dto);
+                await SetFKProfilePictureIdAsync(dto.Email);
             } else {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
             }
         } catch (Exception exc) {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            throw;
+        }
+    }
+
+    private async Task AddUserAsync(EmployeeFormDto dto) {
+        try
+        {
+            var user = new IdentityUser
+            {
+                Email = dto.Email,
+                UserName = dto.Email,
+                NormalizedEmail = dto.Email.ToUpper()
+            };
+            await _userManager.CreateAsync(user, dto.Password);
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            throw;
+        }
+    }
+
+    private async Task SetRoleAsync(string email, Roles role) {
+        try 
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is not null) {
+                await _userManager.AddToRoleAsync(user, role.ToString());
+            }
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            throw;
+        }
+    }
+
+    private async Task SetProfilePictureAsync(EmployeeFormDto dto)
+    {
+        try
+        {
+            var employee = await _dbContext.Employees
+                .SingleAsync(em => em.Email == dto.Email);
+
+            await _dbContext.ProfilePictures.AddAsync(
+                new EmployeeProfilePicture
+                {
+                    ImageType = dto.ProfilePicture.ImageType,
+                    Thumbnail = dto.ProfilePicture.Thumbnail,
+                    EmployeeId = employee.Id,
+                    EmployeeInfo = employee
+                }
+            );
+
+            await _dbContext.SaveChangesAsync();
+        } 
+        catch (Exception exc)
+        {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            throw;
+        }
+    }
+
+    private async Task SetFKProfilePictureIdAsync(string employeeEmail)
+    {
+        try
+        {
+            var employee = await _dbContext.Employees
+                .SingleAsync(em => em.Email == employeeEmail);
+        
+            var profilePic = await _dbContext.ProfilePictures
+                .SingleAsync(pic => pic.EmployeeInfo.Email == employeeEmail);
+
+            employee.ProfilePictureId = profilePic.Id;
+               
+            _dbContext.Update(employee);
+
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception exc)
+        {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
             throw;
@@ -97,7 +173,7 @@ public class EmployeeRepository
 
             if (isValid) {
                 var employee = await _dbContext.Employees
-                    .SingleOrDefaultAsync(em => em.Id == employeeId);
+                    .SingleAsync(em => em.Id == employeeId);
 
                 employee.IsArchived = true;
                 
@@ -122,7 +198,7 @@ public class EmployeeRepository
 
             if (isValid) {
                 var employee = await _dbContext.Employees
-                    .SingleOrDefaultAsync(em => em.Id == employeeId);
+                    .SingleAsync(em => em.Id == employeeId);
 
                 employee.IsArchived = false;
                 
@@ -147,7 +223,7 @@ public class EmployeeRepository
 
             if (isValid) {
                 var employee = await _dbContext.Employees
-                    .SingleOrDefaultAsync(em => em.Id == employeeId);
+                    .SingleAsync(em => em.Id == employeeId);
                 _dbContext.Employees.Remove(employee);
 
                 var user = await _userManager.FindByIdAsync(employeeId);
@@ -168,7 +244,7 @@ public class EmployeeRepository
             
             if (isValid) {
                 var user = await _userManager.FindByEmailAsync(dto.OldEmail);
-                var model = await _dbContext.Employees.SingleOrDefaultAsync(em => em.Id == dto.Id);
+                var model = await _dbContext.Employees.SingleAsync(em => em.Id == dto.Id);
 
                 model.FirstName = dto.FirstName;
                 model.LastName = dto.LastName;
@@ -217,7 +293,7 @@ public class EmployeeRepository
 
                 var rolesList = await _userManager.GetRolesAsync(user);
                 var userRole = rolesList
-                    .SingleOrDefault() 
+                    .Single() 
                         ?? throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
 
                 var isInRole = await _userManager.IsInRoleAsync(user, userRole);
@@ -235,6 +311,9 @@ public class EmployeeRepository
                 if (await _dbContext.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
                 }
+
+                await SetProfilePictureAsync(dto);
+                await SetFKProfilePictureIdAsync(dto.Email);
             } else {
                 throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
             }
@@ -263,6 +342,24 @@ public class EmployeeRepository
                 IsArchived = em.IsArchived,
                 Role = em.Role, 
                 CurrentHourlyRate = em.CurrentHourlyRate,
+                ProfilePicture = new ProfilePictureDto {
+                    Id = em.ProfilePictureId,
+                    EmployeeId = em.Id,
+                    EmployeeInfo = new EmployeeSelectDto {
+                        Email = em.Email,
+                        FirstName = em.FirstName,
+                        LastName = em.LastName,
+                        FullName = $"{em.FirstName} {em.LastName}",
+                        CurrentHourlyRate = em.CurrentHourlyRate,
+                        Role = em.Role
+                    },
+                    Thumbnail = _dbContext.ProfilePictures
+                        .Single(pp => pp.EmployeeId == em.Id)
+                        .Thumbnail,
+                    ImageType = _dbContext.ProfilePictures
+                        .Single(pp => pp.EmployeeId == em.Id)
+                        .ImageType
+                },
                 EmployeeSalaries = em.Salaries
                     .Select(ems => new EmployeeSalaryDto {
                         Id = ems.Id,
@@ -307,7 +404,7 @@ public class EmployeeRepository
                 FullName = em.FullName,
                 Role = em.Role
             })
-            .SingleOrDefaultAsync(em => em.Id == employeeId);
+            .SingleAsync(em => em.Id == employeeId);
     }
 
     public async Task<EmployeeFormDto> GetForEditByIdAsync(string employeeId) {
@@ -339,7 +436,7 @@ public class EmployeeRepository
                         Salary = ems.Salary})
                     .ToList()
                 })
-            .SingleOrDefaultAsync(em => em.Id == employeeId);
+            .SingleAsync(em => em.Id == employeeId);
     }
 
     public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(string employeeId) {
@@ -378,8 +475,7 @@ public class EmployeeRepository
                     .ToList()
                 
             })
-            .SingleOrDefaultAsync(em => em.Id == employeeId)
-                ?? new();
+            .SingleAsync(em => em.Id == employeeId);
     }
     
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {

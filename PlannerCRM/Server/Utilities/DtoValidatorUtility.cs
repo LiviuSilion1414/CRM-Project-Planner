@@ -135,7 +135,7 @@ public class DtoValidatorUtillity
 
     public async Task<bool> ValidateDeleteEmployeeAsync(string userId) {
         var employeeExists = await _dbContext.Employees
-            .SingleOrDefaultAsync(em => em.Id == userId) ??
+            .SingleAsync(em => em.Id == userId) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
 
         var userExists = await _userManager.FindByIdAsync(userId) 
@@ -146,7 +146,7 @@ public class DtoValidatorUtillity
 
     public async Task<FirmClient> ValidateDeleteClientAsync(int id) {
         return await _dbContext.Clients
-            .SingleOrDefaultAsync(cl => cl.Id == id) ??
+            .SingleAsync(cl => cl.Id == id) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
 
@@ -155,13 +155,13 @@ public class DtoValidatorUtillity
 			.AnyAsync(ea  => ea.Activity.WorkOrderId == id);
 
         return await _dbContext.WorkOrders
-			.SingleOrDefaultAsync(w => w.Id == id) 
+			.SingleAsync(w => w.Id == id) 
                 ?? throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);     
     }
 
     public async Task<Activity> ValidateDeleteActivityAsync(int id) {
         return await _dbContext.Activities
-            .SingleOrDefaultAsync(ac => ac.Id == id)
+            .SingleAsync(ac => ac.Id == id)
                 ?? throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_DELETE);
     }
 
