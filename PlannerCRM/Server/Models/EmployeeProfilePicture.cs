@@ -3,13 +3,11 @@ namespace PlannerCRM.Server.Models;
 public class EmployeeProfilePicture
 {
     public int Id { get; set; }
-    public string ImageType { get; set; }
+    public string ImageType { get; set; } = "image/*";
 
-    public string? Thumbnail { get; set; }
+    public string Thumbnail { get; set; } = string.Empty;
 
-    public string? ImageUrl { get; set; }
+    public Employee EmployeeInfo { get; set; }
 
-    public virtual Employee? EmployeeInfo { get; set; }
-
-    public int EmployeeId { get; set; }
+    public string EmployeeId { get; set; } = string.Empty;
 }
