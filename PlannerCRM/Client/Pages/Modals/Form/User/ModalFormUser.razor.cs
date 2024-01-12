@@ -31,6 +31,10 @@ public partial class ModalFormUser : ComponentBase
             ProfilePicture = new()
             {
                 EmployeeInfo = new()
+                {
+                    EmployeeActivities = new(),
+                    EmployeeSalaries = new()
+                }
             }
         };
         _editContext = new(Model);
@@ -55,11 +59,10 @@ public partial class ModalFormUser : ComponentBase
     }
 
     private async Task SaveImage(InputFileChangeEventArgs args) {
-        var (thumbnail, imageType, fileName) = await Converter.ConvertImageAsync(args);
+        var (thumbnail, imageType)= await Converter.ConvertImageAsync(args);
 
         Model.ProfilePicture.Thumbnail = thumbnail;
         Model.ProfilePicture.ImageType = imageType;
-        Model.ProfilePicture.FileName = fileName;
     }
 
     private async Task OnClickModalConfirm() {
@@ -77,6 +80,7 @@ public partial class ModalFormUser : ComponentBase
                 Model.ProfilePicture.EmployeeInfo.LastName = Model.LastName;
                 Model.ProfilePicture.EmployeeInfo.FullName = $"{Model.FirstName} {Model.LastName}";
                 Model.ProfilePicture.EmployeeInfo.Email = Model.Email;
+                Model.ProfilePicture.EmployeeInfo.Id = Model.Id;
                 Model.ProfilePicture.EmployeeInfo.Role = Model.Role ?? throw new ArgumentNullException(ExceptionsMessages.NULL_ARG, nameof(Model.Role));
 
                 Model.EmployeeSalaries = new() {
