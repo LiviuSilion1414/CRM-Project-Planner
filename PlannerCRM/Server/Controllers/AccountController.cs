@@ -74,8 +74,7 @@ public class AccountController : ControllerBase
 
     private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync()
     {
-        if (User.Identity.Name == ConstantValues.ADMIN_EMAIL)
-        {
+        if (User.Identity.Name == ConstantValues.ADMIN_EMAIL) {
             return new();
         }
 
@@ -91,12 +90,11 @@ public class AccountController : ControllerBase
 
     private async Task<string> GetCurrentUserFullName()
     {
+        if (User.Identity.Name == ConstantValues.ADMIN_EMAIL) {
+            return ConstantValues.ADMIN_EMAIL;
+        }
+
         if (User.Identity.IsAuthenticated) {
-            if (User.Identity.Name == ConstantValues.ADMIN_EMAIL)
-            {
-                return ConstantValues.ADMIN_EMAIL;
-            }
-    
             return (await _dbCcontext.Employees
                 .SingleAsync(em => em.Email == User.Identity.Name))
                 .FullName;
