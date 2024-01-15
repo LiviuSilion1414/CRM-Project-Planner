@@ -31,6 +31,10 @@ namespace PlannerCRM.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -45,7 +49,41 @@ namespace PlannerCRM.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("EmployeeRoles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmployeeRoleClaims", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRoleClaim<int>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -83,6 +121,10 @@ namespace PlannerCRM.Server.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -134,7 +176,11 @@ namespace PlannerCRM.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Employees", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -151,6 +197,10 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -159,7 +209,11 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("EmployeeClaims", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserClaim<string>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -168,6 +222,10 @@ namespace PlannerCRM.Server.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
@@ -181,7 +239,11 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("EmployeeLogins", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin<string>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -192,11 +254,19 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("text");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("EmployeeWithRoles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<string>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -210,12 +280,20 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Value")
                         .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("EmployeeTokens", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<string>");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Activity", b =>
@@ -307,69 +385,6 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("ClientWorkOrders");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ActivityCostId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("BirthDay")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<decimal>("CurrentHourlyRate")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("NumericCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("text");
-
-                    b.Property<int>("ProfilePictureId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("WorkOrderCostId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityCostId");
-
-                    b.HasIndex("WorkOrderCostId");
-
-                    b.ToTable("Employees");
-                });
-
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeActivity", b =>
                 {
                     b.Property<int>("Id")
@@ -420,7 +435,6 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("EmployeeId")
@@ -584,6 +598,104 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("WorkTimeRecords");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
+
+                    b.HasDiscriminator().HasValue("EmployeeRole");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeRoleClaim", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>");
+
+                    b.HasDiscriminator().HasValue("EmployeeRoleClaim");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<int?>("ActivityCostId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("BirthDay")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("CurrentHourlyRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NumericCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProfilePictureId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("WorkOrderCostId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("ActivityCostId");
+
+                    b.HasIndex("WorkOrderCostId");
+
+                    b.HasDiscriminator().HasValue("Employee");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeClaim", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>");
+
+                    b.HasDiscriminator().HasValue("EmployeeClaim");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeLogin", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>");
+
+                    b.HasDiscriminator().HasValue("EmployeeLogin");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeWithRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
+
+                    b.HasDiscriminator().HasValue("EmployeeWithRole");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeToken", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<string>");
+
+                    b.HasDiscriminator().HasValue("EmployeeToken");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -662,17 +774,6 @@ namespace PlannerCRM.Server.Migrations
                         .HasForeignKey("FirmClientId");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
-                {
-                    b.HasOne("PlannerCRM.Server.Models.ActivityCost", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("ActivityCostId");
-
-                    b.HasOne("PlannerCRM.Server.Models.WorkOrderCost", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("WorkOrderCostId");
-                });
-
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeActivity", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Activity", "Activity")
@@ -732,6 +833,17 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
+                {
+                    b.HasOne("PlannerCRM.Server.Models.ActivityCost", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("ActivityCostId");
+
+                    b.HasOne("PlannerCRM.Server.Models.WorkOrderCost", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("WorkOrderCostId");
+                });
+
             modelBuilder.Entity("PlannerCRM.Server.Models.Activity", b =>
                 {
                     b.Navigation("EmployeeActivity");
@@ -740,13 +852,6 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("PlannerCRM.Server.Models.ActivityCost", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
-                {
-                    b.Navigation("EmployeeActivity");
-
-                    b.Navigation("Salaries");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.FirmClient", b =>
@@ -768,6 +873,13 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("MonthlyActivityCosts");
+                });
+
+            modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
+                {
+                    b.Navigation("EmployeeActivity");
+
+                    b.Navigation("Salaries");
                 });
 #pragma warning restore 612, 618
         }
