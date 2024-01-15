@@ -36,8 +36,7 @@ public class AppDbContext: IdentityDbContext<IdentityUser>
     public DbSet<EmployeeLogin> EmployeeLogins { get; set; }
     public DbSet<EmployeeToken> EmployeeTokens { get; set; }
 
-    public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; 
-    }
+    public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; }
     public DbSet<FirmClient> Clients { get; set; }
     public DbSet<WorkOrder> WorkOrders { get; set; }
     public DbSet<Activity> Activities { get; set; }
