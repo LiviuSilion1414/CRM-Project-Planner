@@ -2,6 +2,10 @@
     width: 300px;
 }
 
+.clickable { 
+    width: 200px;
+}
+
 .clickable:hover {
     cursor: pointer;
 }
@@ -15,9 +19,16 @@
     width:280px;
 }
 
+img {
+    width: 25px;
+    height: 25px;
+    pointer-events: none;
+}
+
 .hover-effect:hover {
     background-color: grey;
 }
+
 .hover-effect:hover, .logout:hover {
     cursor: pointer;
 }

@@ -1,4 +1,4 @@
-using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+using PlannerCRM.Client.Utilities.Navigation;
 
 namespace PlannerCRM.Client.Pages.AccountManager.Details;
 
@@ -24,7 +24,11 @@ public partial class ModalShowUserDetails : ComponentBase
         _model = await AccountManagerService.GetEmployeeForViewByIdAsync(Id);
     
     protected override void OnInitialized() {
-        _model = new();
+        _model = new() {
+            ProfilePicture = new() {
+                EmployeeInfo = new()
+            }
+        };
         _currentPage = NavigationUtil.GetCurrentPage();
     }
 

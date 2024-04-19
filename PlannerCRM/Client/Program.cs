@@ -1,6 +1,5 @@
-using Append.Blazor.WebShare;
 using PlannerCRM.Client;
-using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+using PlannerCRM.Client.Utilities.Navigation;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -14,7 +13,6 @@ builder.Services.AddScoped<AuthenticationStateProvider>(s =>
     s.GetRequiredService<AuthenticationStateService>()
 );
 
-builder.Services.AddWebShare();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<AuthenticationStateService>();
 builder.Services.AddScoped<CurrentUserInfoService>();
@@ -25,6 +23,8 @@ builder.Services.AddScoped<OperationManagerCrudService>();
 builder.Services.AddScoped<AccountManagerCrudService>();
 builder.Services.AddScoped<DeveloperService>();
 builder.Services.AddScoped<CustomDataAnnotationsValidator>();
+
+builder.Services.AddScoped<Base64Converter>();
 
 builder.Services.AddScoped<Logger<AuthenticationStateService>>();
 builder.Services.AddScoped<Logger<CurrentUserInfoService>>();

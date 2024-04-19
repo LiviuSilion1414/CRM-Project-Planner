@@ -38,7 +38,7 @@
                                     <i class="bi bi-eye"></i>
                                 </button>                
                             </td>
-                            @if (!WorkOrder.IsDeleted) {
+                            @if (!WorkOrder.IsDeleted || !WorkOrder.IsCompleted) {
                                 <td>
                                     <button type="button" class="btn btn-primary" title="Modifica attività"
                                         @onclick="@(() => OnClickEdit(ac.Id))">

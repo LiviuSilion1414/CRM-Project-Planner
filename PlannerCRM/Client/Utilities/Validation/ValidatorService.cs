@@ -1,4 +1,4 @@
-namespace PlannerCRM.Client.Services.Utilities.Validation;
+namespace PlannerCRM.Client.Utilities.Validation;
 
 [Authorize]
 public static class ValidatorService

@@ -1,4 +1,4 @@
-using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+using PlannerCRM.Client.Utilities.Navigation;
 
 namespace PlannerCRM.Client.Pages.Modals.Form.Activity;
 
@@ -6,6 +6,7 @@ namespace PlannerCRM.Client.Pages.Modals.Form.Activity;
 public partial class ModalFormActivity : ComponentBase
 {
     [Parameter] public string Title { get; set; }
+    [Parameter] public string Size { get; set; }
     [Parameter] public ActivityFormDto Model { get; set; }
     [Parameter] public EventCallback<ActivityFormDto> GetValidatedModel { get; set; }
 
@@ -86,6 +87,21 @@ public partial class ModalFormActivity : ComponentBase
         _hideEmployeesList = !_hideEmployeesList;
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
+
+    //private void HandleRemoveEmployee(EmployeeActivityDto employeeActivity) {
+    //    try {
+    //        var isContained = Model.ViewEmployeeActivity
+    //            .Any(ea => ea.Employee.FullName == employeeActivity.Employee.FullName);
+    //
+    //        if (isContained) {
+    //            Model.ViewEmployeeActivity.Remove(employeeActivity);
+    //        }
+    //    } catch (Exception exc) {
+    //        Logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+    //        _message = exc.Message;
+    //        _isError = true;
+    //    }
+    //}
 
     private void HandleChosenEmployee(EmployeeSelectDto employee) {
         try { 

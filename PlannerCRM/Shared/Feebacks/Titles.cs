@@ -11,6 +11,9 @@ public class Titles
     public const string CONFIRM_DELETE_USER = "Vuoi davvero eliminare questo utente?.";
     public const string CONFIRM_RESTORE_USER = "Vuoi davvero eliminare questo utente?.";
     public const string CONFIRM_DELETE_CLIENT = "Vuoi davvero eliminare questo cliente?.";
+
+    public const string CONFIRM_ACTION = "Vuoi davvero proseguire?";
+
         
     public const string ADD_WORKORDER = "Aggiungi commessa.";
     public const string EDIT_WORKORDER = "Modifica commessa.";
@@ -38,4 +41,6 @@ public class Titles
     public const string NOT_AVAILABLE_CLIENTS = "Nessun cliente disponibile.";
 
     public const string NO_MORE_RESOURCES = "Non ci sono altri elementi.";
+
+    public const string DEFAULT_MODAL_TITLE = "Form modal";
 }

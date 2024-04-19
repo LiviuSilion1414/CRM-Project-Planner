@@ -1,4 +1,4 @@
-using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+using PlannerCRM.Client.Utilities.Navigation;
 
 namespace PlannerCRM.Client.Pages.ProjectManager.CostPreview;
 
@@ -40,8 +40,4 @@ public partial class ModalWorkOrderCostPreview : ComponentBase
 
     private void OnClickIssueInvoice() =>
         _isInvoiceClicked = !_isInvoiceClicked;
-
-    private void SaveAsPdf() {
-        
-    }
 }

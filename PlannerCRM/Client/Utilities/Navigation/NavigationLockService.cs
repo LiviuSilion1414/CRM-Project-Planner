@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using PlannerCRM.Shared.Constants;
 
-namespace PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+namespace PlannerCRM.Client.Utilities.Navigation;
 
 public class NavigationLockService
 {

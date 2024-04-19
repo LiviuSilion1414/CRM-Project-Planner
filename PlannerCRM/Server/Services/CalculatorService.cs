@@ -31,7 +31,12 @@ public class CalculatorService
             }
 
             var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => wo.Id == workOrderId);  
+                .SingleAsync(wo => wo.Id == workOrderId);
+            
+            workOrder.IsCompleted = true;
+
+            _dbContext.Update(workOrder);
+
             var workOrderCost = await ExecuteCalculationsAsync(workOrder, true);
 
             await _dbContext.WorkOrderCosts.AddAsync(workOrderCost);
@@ -277,19 +282,19 @@ public class CalculatorService
                 new ActivityCost {
                     Id = activityCost.Id,
                     Name = activities
-                        .FirstOrDefault(ac => ac.WorkOrderId == activityCost.WorkOrderId)
+                        .First(ac => ac.WorkOrderId == activityCost.WorkOrderId)
                         .Name,
                     StartDate = activities
-                        .FirstOrDefault(ac => ac.WorkOrderId == activityCost.WorkOrderId)
+                        .First(ac => ac.WorkOrderId == activityCost.WorkOrderId)
                         .StartDate,
                     FinishDate = activities
-                        .FirstOrDefault(ac => ac.WorkOrderId == activityCost.WorkOrderId)
+                        .First(ac => ac.WorkOrderId == activityCost.WorkOrderId)
                         .FinishDate,
                     Employees = _dbContext.Employees
                         .Where(em => em.Id == activityCost.EmployeeId)
                         .ToList(),
                     MonthlyCost = salaries
-                        .FirstOrDefault(ems => ems.EmployeeId == activityCost.EmployeeId)
+                        .First(ems => ems.EmployeeId == activityCost.EmployeeId)
                         .Salary * activityCost.Hours
                 }
             )

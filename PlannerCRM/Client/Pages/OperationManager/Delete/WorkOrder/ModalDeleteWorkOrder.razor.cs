@@ -1,4 +1,4 @@
-using PlannerCRM.Client.Services.Utilities.Navigation.Lock;
+using PlannerCRM.Client.Utilities.Navigation;
 
 namespace PlannerCRM.Client.Pages.OperationManager.Delete.WorkOrder;
 

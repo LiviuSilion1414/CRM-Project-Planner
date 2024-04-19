@@ -96,11 +96,10 @@ public class ClientRepository
                 new ClientViewDto {
                     Id = client.Id,
                     Name = client.Name,
-                    VatNumber = client.VatNumber,
-                    //WorkOrderId = client.WorkOrderId
+                    VatNumber = client.VatNumber
                 }
             )
-            .SingleOrDefaultAsync();
+            .SingleAsync();
     }
 
     public async Task<ClientFormDto> GetClientForEditByIdAsync(int id) {

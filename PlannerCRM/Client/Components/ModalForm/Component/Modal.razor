@@ -1,0 +1,24 @@
+@if (_isShowWarningModalClicked) {
+    <ConfirmationModal SendConfirmation="@HandleConfirmedAction"></ConfirmationModal>
+}
+
+<div class="modal" tabindex="-1" role="dialog" hidden="@_isCancelClicked" @attributes=@AdditionalAttributes>
+    <div class="@Size" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @Header
+                <h5 class="modal-title">@Title</h5>
+                <i id="x-cancel" class="bi bi-x-circle" @onclick=@ShowWarningModal></i>
+            </div>
+            <div class="content">
+                @Body
+                <div class="modal-footer">
+                    <div id="cancel">
+                        <span id="btn-link" class="btn btn-link" @onclick=@ShowWarningModal>Annulla</span>
+                    </div>
+                    @Footer
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
