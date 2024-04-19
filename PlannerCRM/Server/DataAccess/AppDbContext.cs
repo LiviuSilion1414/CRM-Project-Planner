@@ -1,13 +1,15 @@
 namespace PlannerCRM.Server.DataAccess;
 
-public class AppDbContext: IdentityDbContext<IdentityUser>
+public class AppDbContext : IdentityDbContext<IdentityUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     { }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        base.OnModelCreating(modelBuilder);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<IdentityUser>().ToTable(nameof(Employees));
+        modelBuilder.Entity<IdentityRole>().ToTable(nameof(EmployeeRoles));
 
         modelBuilder
             .Entity<Employee>()
@@ -28,11 +30,14 @@ public class AppDbContext: IdentityDbContext<IdentityUser>
             .HasOne(a => a.Activity)
             .WithMany(ea => ea.EmployeeActivity)
             .HasForeignKey(ai => ai.ActivityId);
+
+        base.OnModelCreating(modelBuilder);
     }
-    
+
     public DbSet<WorkOrder> WorkOrders { get; set; }
     public DbSet<Activity> Activities { get; set; }
     public DbSet<Employee> Employees { get; set; }
+    public DbSet<EmployeeRole> EmployeeRoles { get; set; }
     public DbSet<FirmClient> Clients { get; set; }
     public DbSet<EmployeeActivity> EmployeeActivity { get; set; }
     public DbSet<WorkTimeRecord> WorkTimeRecords { get; set; }
