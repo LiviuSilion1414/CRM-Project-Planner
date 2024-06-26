@@ -63,36 +63,7 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    
-    if (!await db.Users.AnyAsync()) {
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        
-        var accountManagerEmail = "account.manager@gmail.com";
-        var accountManagerPassword = "Qwerty123";
-
-        var accountManager = new IdentityUser
-        {
-            Email = accountManagerEmail,
-            EmailConfirmed = true,
-            UserName = accountManagerEmail,
-            NormalizedEmail = accountManagerEmail.ToUpper()
-        };
-
-        var accountManagerResult = await userManager.CreateAsync(accountManager, accountManagerPassword); 
-
-        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.ACCOUNT_MANAGER) });
-        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.PROJECT_MANAGER) });
-        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.OPERATION_MANAGER) });
-        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.SENIOR_DEVELOPER) });
-        await roleManager.CreateAsync(new IdentityRole { Name = nameof(Roles.JUNIOR_DEVELOPER) });
-
-        await userManager.AddToRoleAsync(accountManager, nameof(Roles.ACCOUNT_MANAGER));
-    }
-}
+await app.SeedDataAsync();
 
 if (app.Environment.IsDevelopment()) {
     app.UseWebAssemblyDebugging();
