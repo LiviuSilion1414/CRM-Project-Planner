@@ -8,18 +8,13 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<IdentityUser>().ToTable(nameof(Employees));
-        modelBuilder.Entity<IdentityRole>().ToTable(nameof(EmployeeRoles));
-
         modelBuilder
             .Entity<Employee>()
-            .Property(em => em.Id)
-            .ValueGeneratedOnAdd();
+            .Property(em => em.Id);
 
         modelBuilder
             .Entity<EmployeeSalary>()
-            .Property(em => em.Id)
-            .ValueGeneratedOnAdd();
+            .Property(em => em.Id);
 
         modelBuilder.Entity<EmployeeActivity>()
             .HasOne(e => e.Employee)
@@ -37,22 +32,13 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-    public DbSet<EmployeeWithRole> EmployeeWithRoles { get; set; }
-    public DbSet<EmployeeRoleClaim> EmployeeRoleClaims { get; set; }
-    public DbSet<EmployeeClaim> EmployeeClaims { get; set; }
-    public DbSet<EmployeeLogin> EmployeeLogins { get; set; }
-    public DbSet<EmployeeToken> EmployeeTokens { get; set; }
-
-    public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; }
-    public DbSet<FirmClient> Clients { get; set; }
-    public DbSet<WorkOrder> WorkOrders { get; set; }
-    public DbSet<Activity> Activities { get; set; }
-    public DbSet<Employee> Employees { get; set; }
-    public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-    public DbSet<FirmClient> Clients { get; set; }
     public DbSet<EmployeeActivity> EmployeeActivity { get; set; }
-    
+    public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; }
+
+    public DbSet<FirmClient> Clients { get; set; }
+    public DbSet<Activity> Activities { get; set; }
+    public DbSet<WorkOrder> WorkOrders { get; set; }
+    public DbSet<ClientWorkOrder> ClientWorkOrders { get; set; }
     public DbSet<WorkOrderCost> WorkOrderCosts { get; set; }
     public DbSet<WorkTimeRecord> WorkTimeRecords { get; set; }
-    public DbSet<ClientWorkOrder> ClientWorkOrders { get; set; }
 }
