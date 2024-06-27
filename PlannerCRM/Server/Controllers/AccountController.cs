@@ -6,13 +6,13 @@ namespace PlannerCRM.Server.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<Employee> _userManager;
+    private readonly SignInManager<Employee> _signInManager;
     private readonly AppDbContext _dbCcontext;
 
     public AccountController(
-        UserManager<IdentityUser> userManager, 
-        SignInManager<IdentityUser> signInManager,
+        UserManager<Employee> userManager, 
+        SignInManager<Employee> signInManager,
         AppDbContext dbContext) 
     {
         _userManager = userManager;
@@ -24,17 +24,8 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto) {
         var user = await _userManager.FindByEmailAsync(dto.Email);
 
-        if (user is null) {
+        if (user is null || user.IsArchived || user.IsDeleted) {
             return NotFound(LoginFeedBack.USER_NOT_FOUND);
-        }
-
-        if (dto.Email != ConstantValues.ADMIN_EMAIL) {
-            var employee = await _dbCcontext.Employees
-                .SingleAsync(em => em.Email == dto.Email);
-            
-            if (employee is null || employee.IsArchived || employee.IsDeleted) {
-                return NotFound(LoginFeedBack.USER_NOT_FOUND);
-            }
         }
 
         var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
