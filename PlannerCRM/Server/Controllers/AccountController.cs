@@ -75,15 +75,10 @@ public class AccountController : ControllerBase
 
     private async Task<string> GetCurrentUserFullName()
     {
-        if (User.Identity.Name == ConstantValues.ADMIN_EMAIL) {
-            return ConstantValues.ADMIN_EMAIL;
-        }
-
         if (User.Identity.IsAuthenticated) {
-            return (await _dbCcontext.Employees
-                .SingleAsync(em => em.Email == User.Identity.Name))
+            return (await _userManager.FindByEmailAsync(User.Identity.Name))
                 .FullName;
-            }
+        }
 
         return string.Empty;
     }
