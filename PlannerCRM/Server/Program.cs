@@ -1,6 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<AbstractExceptionHandlerMiddleware, GlobalExceptionHandlerMiddleware>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -10,8 +9,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             .GetConnectionString("ConnString")
                 ?? throw new InvalidOperationException("ConnString not found!"))
 );
- 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddHttpClient();
 
@@ -67,12 +64,6 @@ await app.SeedDataAsync();
 
 if (app.Environment.IsDevelopment()) {
     app.UseWebAssemblyDebugging();
-    
-    var developerExceptionPageOptions = new DeveloperExceptionPageOptions {
-        SourceCodeLineCount = 5
-    };
-    
-    app.UseDeveloperExceptionPage(developerExceptionPageOptions);
 } else {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
