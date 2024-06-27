@@ -63,10 +63,6 @@ public class AccountController : ControllerBase
 
     private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync()
     {
-        if (User.Identity.Name == ConstantValues.ADMIN_EMAIL) {
-            return new();
-        }
-
         var profilePic = await _dbCcontext.ProfilePictures
             .SingleAsync(pp => _dbCcontext.Employees
                 .Any(em => pp.EmployeeInfo.Email == em.Email && em.Email == User.Identity.Name)) ?? new();
