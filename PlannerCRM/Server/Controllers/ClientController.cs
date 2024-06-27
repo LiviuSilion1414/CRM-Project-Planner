@@ -19,162 +19,60 @@ public class ClientController : ControllerBase
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
     public async Task<IActionResult> AddClientAsync(ClientFormDto dto) {
-        try {
-            await _repo.AddClientAsync(dto);
+        await _repo.AddClientAsync(dto);
 
-            return Ok(SuccessfulCrudFeedBack.USER_ADD);
-        } catch (NullReferenceException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return BadRequest(exc.Message);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return BadRequest(exc.Message);
-        } catch (DuplicateElementException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return BadRequest(exc.Message);
-        } catch (DbUpdateException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok();
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
     public async Task<IActionResult> EditClientAsync(ClientFormDto dto) {
-        try {
-            await _repo.EditClientAsync(dto);
-
-            return Ok(SuccessfulCrudFeedBack.USER_EDIT);
-        } catch (NullReferenceException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return NotFound(exc.Message);
-        } catch (ArgumentNullException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return BadRequest(exc.Message);
-        } catch (KeyNotFoundException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return NotFound(exc.Message);
-        } catch (DbUpdateException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _repo.EditClientAsync(dto);
+        return Ok(); //todo: FIX THIS
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{clientId}")]
     public async Task<IActionResult> DeleteClientAsync(int clientId) {
-        try {
-            await _repo.DeleteClientAsync(clientId);
-
-            return Ok(SuccessfulCrudFeedBack.USER_DELETE);
-        } catch (InvalidOperationException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return BadRequest(exc.Message);
-        } catch (DbUpdateException exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return BadRequest(exc.Message);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _repo.DeleteClientAsync(clientId);
+        return Ok();
     }
 
     [HttpGet("get/for/view/{clientId}")]
     public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
-        try {
-            return await _repo.GetClientForViewByIdAsync(clientId);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _repo.GetClientForViewByIdAsync(clientId);
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{clientId}")]
     public async Task<ClientFormDto> GetClientForEditByIdAsync(int clientId) {
-        try {
-            return await _repo.GetClientForEditByIdAsync(clientId);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _repo.GetClientForEditByIdAsync(clientId);
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{clientId}")]
     public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int clientId) {
-        try {
-            return await _repo.GetClientForDeleteByIdAsync(clientId);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _repo.GetClientForDeleteByIdAsync(clientId);
     }
 
        
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<ClientViewDto>> GetPaginatedClientsAsync(int limit, int offset) {
-        try {
-            return await _repo.GetClientsPaginatedAsync(limit, offset);
-        } catch (Exception exc) {
-             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _repo.GetClientsPaginatedAsync(limit, offset);
     }
 
     [HttpGet("get/size")]
     public async Task<int> GetCollectionSizeAsync() {
-        try {
-            return await _repo.GetCollectionSizeAsync();
-        } catch (Exception exc) {
-             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _repo.GetCollectionSizeAsync();
     }
 
     [HttpGet("search/{clientName}/")]
     public async Task<List<ClientViewDto>> SearchClientByNameAsync(string clientName) {
-        try {
-            return await _repo.SearchClientAsync(clientName);
-        } catch (Exception exc) {
-             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _repo.SearchClientAsync(clientName);
     }
 
     [HttpGet("search/by/id/{clientId}")]
     public async Task<List<ClientViewDto>> SearchClientByIdAsync(int clientId) {
-        try {
-            return await _repo.SearchClientAsync(clientId);
-        } catch (Exception exc) {
-             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _repo.SearchClientAsync(clientId);
     }
 }
