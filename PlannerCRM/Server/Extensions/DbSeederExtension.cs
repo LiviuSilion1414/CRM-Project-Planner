@@ -1,7 +1,7 @@
 
-namespace PlannerCRM.Server.Middlewares;
+namespace PlannerCRM.Server.Extensions;
 
-public static class DbSeederMiddleware
+public static class DbSeederExtension
 {
     public static async Task SeedDataAsync(this IApplicationBuilder app)
     {
