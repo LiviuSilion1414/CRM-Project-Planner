@@ -1,3 +1,5 @@
+using PlannerCRM.Server.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -13,12 +15,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddHttpClient();
 
 builder.Services
-    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddIdentity<Employee, EmployeeRole>()
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddUserManager<UserManager<IdentityUser>>()
+    .AddUserManager<UserManager<Employee>>()
     .AddDefaultTokenProviders();
 
-builder.Services.Configure<CookiePolicyOptions>(options => 
+builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => true;
     options.MinimumSameSitePolicy = SameSiteMode.None;
@@ -62,9 +64,12 @@ var app = builder.Build();
 
 await app.SeedDataAsync();
 
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseWebAssemblyDebugging();
-} else {
+}
+else
+{
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
