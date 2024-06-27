@@ -57,9 +57,8 @@ public class AccountController : ControllerBase
 
     private async Task<string> GetCurrentUserIdAsync() {
         var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-        var employee = await _dbCcontext.Employees.SingleAsync(em => em.Username == User.Identity.Name);
 
-        return user is not null && employee is not null ? employee.Id : string.Empty;
+        return user.Id ?? string.Empty;
     }
 
     private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync()
