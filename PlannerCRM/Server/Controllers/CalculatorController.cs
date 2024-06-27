@@ -17,48 +17,24 @@ public class CalculatorController : ControllerBase
     }    
 
     [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrderCostsAsync(int limit, int offset) {
-        try {
-            return await _calculator.GetPaginatedWorkOrdersCostsAsync(limit, offset);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrderCostsAsync(int limit, int offset) {        
+        return await _calculator.GetPaginatedWorkOrdersCostsAsync(limit, offset);
     } 
 
     [HttpGet("generate/{workOrderId}")]
     public async Task<IActionResult> AddInvoiceAsync(int workOrderId) {
-        try {
-            await _calculator.AddInvoiceAsync(workOrderId);
+        await _calculator.AddInvoiceAsync(workOrderId);
 
-            return Ok(SuccessfulCrudFeedBack.REPORT_CREATED);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return BadRequest();
-        }
+        return Ok(SuccessfulCrudFeedBack.REPORT_CREATED);
     }
 
     [HttpGet("get/invoice/{workOrderId}")]
     public async Task<WorkOrderCostDto> GetInvoiceAsync(int workOrderId) {
-        try {
-            return await _calculator.GetWorkOrderCostForViewByIdAsync(workOrderId); 
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _calculator.GetWorkOrderCostForViewByIdAsync(workOrderId); 
     }
 
     [HttpGet("get/size")]
     public async Task<int> GetCollectionSizeAsync() {
-        try {
-            return await _calculator.GetCollectionSizeAsync();
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            return new();
-        }
+        return await _calculator.GetCollectionSizeAsync();
     }
 }
