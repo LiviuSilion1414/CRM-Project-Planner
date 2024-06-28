@@ -21,24 +21,7 @@ public class ActivityRepository
             var isValid = await _validator.ValidateActivityAsync(dto, OperationType.ADD);
 
             if (isValid) {
-                var model = new Activity {
-                    Id = dto.Id,
-                    Name = dto.Name,
-                    StartDate = dto.StartDate 
-                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                    FinishDate = dto.FinishDate 
-                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                    WorkOrderId = dto.WorkOrderId 
-                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-                    EmployeeActivity = dto.EmployeeActivity
-                        .Select(ea => new EmployeeActivity {
-                            Id = ea.Id,
-                            EmployeeId = ea.EmployeeId,
-                            ActivityId = dto.Id
-                        })
-                        .ToHashSet()
-                };
-        
+                var model = dto.MapToActivity();
                 await _dbContext.Activities.AddAsync(model);
         
                 var workOrder = await _dbContext.WorkOrders
@@ -92,31 +75,12 @@ public class ActivityRepository
                 var model = await _dbContext.Activities
                     .SingleAsync(ac => ac.Id == dto.Id);
 
-                model.Id = dto.Id;
-                model.Name = dto.Name;
-                model.StartDate = dto.StartDate 
-                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-                model.FinishDate = dto.FinishDate 
-                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-                model.WorkOrderId = dto.WorkOrderId  
-                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-                model.EmployeeActivity = dto.EmployeeActivity
-                    .Select(ea => new EmployeeActivity {
-                        EmployeeId = ea.EmployeeId,     
-                        ActivityId = ea.ActivityId,
-                    })
-                    .ToHashSet();
+                model = dto.MapToActivity();
                 
                 var employeesToRemove = dto.DeleteEmployeeActivity
                     .Where(eaDto => _dbContext.EmployeeActivity
                         .Any(ea => eaDto.EmployeeId == ea.EmployeeId))
-                    .Select(e => 
-                        new EmployeeActivity() {
-                            Id = e.Id,
-                            EmployeeId = e.EmployeeId,
-                            ActivityId = dto.Id
-                        }
-                    )
+                    .Select(e => e.MapToEmployeeActivity(dto.Id))
                     .ToList();
                 
                 employeesToRemove
@@ -124,25 +88,7 @@ public class ActivityRepository
 
                 var workOrder = await _dbContext.WorkOrders
                     .SingleAsync(wo => wo.Id == dto.WorkOrderId);
-                
-                var activity = workOrder.Activities
-                    .Single(ac => ac.Id == dto.Id);
-                
-                activity.Id = dto.Id;
-                activity.Name = dto.Name;
-                activity.StartDate = dto.StartDate 
-                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-                activity.FinishDate = dto.FinishDate 
-                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-                activity.WorkOrderId = dto.WorkOrderId  
-                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG);
-                activity.EmployeeActivity = dto.EmployeeActivity
-                    .Select(ea => new EmployeeActivity {
-                        Id = ea.Id,
-                        EmployeeId = ea.EmployeeId,
-                        ActivityId = ea.ActivityId,
-                    }).ToHashSet();
-
+            
                 _dbContext.Update(model);
                 _dbContext.Update(workOrder);
 
@@ -160,47 +106,7 @@ public class ActivityRepository
 
     public async Task<ActivityViewDto> GetForViewByIdAsync(int id) {
         return await _dbContext.Activities
-            .Select(ac => new ActivityViewDto {
-                Id = ac.Id,
-                Name = ac.Name,
-                StartDate = ac.StartDate,
-                FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId,
-                EmployeeActivity = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
-                        Id = ea.Id,
-                        EmployeeId = ea.EmployeeId,
-                        Employee = _dbContext.Employees
-                            .Select(em => new EmployeeSelectDto {
-                                Id = ea.EmployeeId,
-                                Email = ea.Employee.Email,
-                                FirstName = ea.Employee.FirstName,
-                                LastName = ea.Employee.LastName,
-                                FullName = ea.Employee.FullName,
-                                Role = ea.Employee.Role,
-                                CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                EmployeeSalaries = ea.Employee.Salaries
-                                    .Select(sal => new EmployeeSalaryDto {
-                                        Id = sal.Id,
-                                        EmployeeId = ea.EmployeeId,
-                                        StartDate = sal.StartDate,
-                                        FinishDate = sal.FinishDate,
-                                        Salary = sal.Salary,
-                                    }).ToList()
-                            })
-                            .Single(em => em.Id == ea.EmployeeId), 
-                        ActivityId = ea.ActivityId,
-                        Activity = _dbContext.Activities
-                            .Select(a => new ActivitySelectDto {
-                                Id = ea.ActivityId,
-                                Name = ea.Activity.Name,
-                                StartDate = ea.Activity.StartDate,
-                                FinishDate = ea.Activity.FinishDate,
-                                WorkOrderId = ea.Activity.WorkOrderId
-                            })
-                            .Single(ac => ac.Id == ea.ActivityId) 
-                    }).ToHashSet()
-            })
+            .Select(ac => ac.MapToActivityViewDto(_dbContext))
             .SingleAsync(ac => ac.Id == id);
     }
 
@@ -209,118 +115,13 @@ public class ActivityRepository
             .Where(ac => ac.Id == activityId && 
                 _dbContext.WorkOrders
                     .Any(wo => wo.Id == ac.WorkOrderId && !wo.IsDeleted || !wo.IsInvoiceCreated))
-            .Select(ac => new ActivityFormDto {
-                Id = ac.Id,
-                Name = ac.Name,
-                StartDate = ac.StartDate,
-                FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId,
-                //ClientName = _dbContext.Clients
-                //    .Single(cl => cl.WorkOrdersIds.Any(id => id == ac.WorkOrderId)
-                //    .Name,
-                EmployeeActivity = new(),
-                ViewEmployeeActivity = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
-                        Id = ea.Id,
-                        EmployeeId = ea.EmployeeId,
-                        Employee = _dbContext.Employees
-                            .Select(em => new EmployeeSelectDto {
-                                Id = ea.EmployeeId,
-                                Email = ea.Employee.Email,
-                                FirstName = ea.Employee.FirstName,
-                                LastName = ea.Employee.LastName,
-                                FullName = ea.Employee.FullName,
-                                Role = ea.Employee.Role,
-                                CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                EmployeeSalaries = ea.Employee.Salaries
-                                    .Select(sal => new EmployeeSalaryDto {
-                                        Id = sal.Id,
-                                        EmployeeId = ea.EmployeeId,
-                                        StartDate = sal.StartDate,
-                                        FinishDate = sal.FinishDate,
-                                        Salary = sal.Salary,
-                                    }).ToList()
-                            })
-                            .Single(em => em.Id == ea.EmployeeId), 
-                        ActivityId = ea.ActivityId,
-                        Activity = _dbContext.Activities
-                            .Select(a => new ActivitySelectDto {
-                                Id = ea.ActivityId,
-                                Name = ea.Activity.Name,
-                                StartDate = ea.Activity.StartDate,
-                                FinishDate = ea.Activity.FinishDate,
-                                WorkOrderId = ea.Activity.WorkOrderId
-                            })
-                            .Single(ac => ac.Id == ea.ActivityId)
-                    })
-                    .ToHashSet()
-            })
+            .Select(ac => ac.MapToActivityFormDto(_dbContext))
             .FirstAsync(ac => ac.Id == activityId);
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteByIdAsync(int id) {
         return await _dbContext.Activities
-            .Select(ac => new ActivityDeleteDto {
-                Id = ac.Id,
-                Name = ac.Name,
-                StartDate = ac.StartDate,
-                FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId,
-                Employees = _dbContext.EmployeeActivity
-                    .Where(ea => ea.ActivityId == id)
-                    .Select(ea => new EmployeeSelectDto() {
-                        Id = ea.EmployeeId,
-                        Email = ea.Employee.Email,
-                        FirstName = ea.Employee.FirstName,
-                        LastName = ea.Employee.LastName,
-                        FullName = ea.Employee.FullName,
-                        Role = ea.Employee.Role,
-                        CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                        EmployeeSalaries = ea.Employee.Salaries
-                            .Select(sal => new EmployeeSalaryDto {
-                                Id = sal.Id,
-                                EmployeeId = ea.EmployeeId,
-                                StartDate = sal.StartDate,
-                                FinishDate = sal.FinishDate,
-                                Salary = sal.Salary,
-                            }).ToList(),
-                        EmployeeActivities = ac.EmployeeActivity
-                            .Select(ea => new EmployeeActivityDto {
-                                Id = ea.Id,
-                                EmployeeId = ea.EmployeeId,
-                                Employee = _dbContext.Employees
-                                    .Select(em => new EmployeeSelectDto {
-                                        Id = ea.EmployeeId,
-                                        Email = ea.Employee.Email,
-                                        FirstName = ea.Employee.FirstName,
-                                        LastName = ea.Employee.LastName,
-                                        FullName = ea.Employee.FullName,
-                                        Role = ea.Employee.Role,
-                                        CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                        EmployeeSalaries = ea.Employee.Salaries
-                                            .Select(sal => new EmployeeSalaryDto {
-                                                Id = sal.Id,
-                                                EmployeeId = ea.EmployeeId,
-                                                StartDate = sal.StartDate,
-                                                FinishDate = sal.FinishDate,
-                                                Salary = sal.Salary,
-                                            }).ToList()
-                                    })
-                                    .Single(em => em.Id == ea.EmployeeId),  
-                                ActivityId = ea.ActivityId,
-                                Activity = _dbContext.Activities
-                                    .Select(a => new ActivitySelectDto {
-                                        Id = ea.ActivityId,
-                                        Name = ea.Activity.Name,
-                                        StartDate = ea.Activity.StartDate,
-                                        FinishDate = ea.Activity.FinishDate,
-                                        WorkOrderId = ea.Activity.WorkOrderId
-                                    })
-                                    .Single(ac => ac.Id == ea.ActivityId)
-                            }).ToList()
-                    })
-                    .ToHashSet()
-            })
+            .Select(ac => ac.MapToActivityDeleteDto(_dbContext, id))
             .SingleAsync(ac => ac.Id == id);
     }
 
@@ -328,54 +129,7 @@ public class ActivityRepository
         return await _dbContext.Activities
             .Skip(limit)
             .Take(offset)
-            .Select(ac => new ActivityViewDto {
-                Id = ac.Id,
-                Name = ac.Name,
-                StartDate = ac.StartDate,
-                FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId,
-                WorkOrderName = _dbContext.WorkOrders
-                    .Single(wo => wo.Id == ac.WorkOrderId)
-                    .Name,
-                ClientName = _dbContext.Clients
-                    .Single(cl => _dbContext.WorkOrders
-                        .Any(wo => cl.Id == wo.ClientId))
-                    .Name,
-                EmployeeActivity = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
-                        Id = ea.Id,
-                        EmployeeId = ea.EmployeeId,
-                        Employee = _dbContext.Employees
-                            .Select(em => new EmployeeSelectDto {
-                                Id = ea.EmployeeId,
-                                Email = ea.Employee.Email,
-                                FirstName = ea.Employee.FirstName,
-                                LastName = ea.Employee.LastName,
-                                FullName = ea.Employee.FullName,
-                                Role = ea.Employee.Role,
-                                CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                EmployeeSalaries = ea.Employee.Salaries
-                                    .Select(sal => new EmployeeSalaryDto {
-                                        Id = sal.Id,
-                                        EmployeeId = ea.EmployeeId,
-                                        StartDate = sal.StartDate,
-                                        FinishDate = sal.FinishDate,
-                                        Salary = sal.Salary,
-                                    }).ToList()
-                            })
-                            .Single(em => em.Id == ea.EmployeeId), 
-                        ActivityId = ea.ActivityId,
-                        Activity = _dbContext.Activities
-                            .Select(a => new ActivitySelectDto {
-                                Id = ea.ActivityId,
-                                Name = ea.Activity.Name,
-                                StartDate = ea.Activity.StartDate,
-                                FinishDate = ea.Activity.FinishDate,
-                                WorkOrderId = ea.Activity.WorkOrderId
-                            })
-                            .Single(ac => ac.Id == ea.ActivityId)
-                    }).ToHashSet()   
-            })
+            .Select(ac => ac.MapToActivityViewDto(_dbContext))
             .Where(ac => _dbContext.EmployeeActivity
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
             .ToListAsync();
@@ -384,98 +138,18 @@ public class ActivityRepository
     public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) {
         return await _dbContext.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
-            .Select(ac => new ActivityViewDto {
-                Id = ac.Id,
-                Name = ac.Name,
-                StartDate = ac.StartDate,
-                FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId,
-                ClientName = _dbContext.Clients
-                    .Single(cl => _dbContext.WorkOrders
-                        .Any(wo => cl.Id == wo.ClientId))
-                    .Name,
-                EmployeeActivity = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
-                        Id = ea.Id,
-                        EmployeeId = ea.EmployeeId,
-                        Employee = _dbContext.Employees
-                            .Select(em => new EmployeeSelectDto {
-                                Id = ea.EmployeeId,
-                                Email = ea.Employee.Email,
-                                FirstName = ea.Employee.FirstName,
-                                LastName = ea.Employee.LastName,
-                                FullName = ea.Employee.FullName,
-                                Role = ea.Employee.Role,
-                                CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                EmployeeSalaries = ea.Employee.Salaries
-                                    .Select(sal => new EmployeeSalaryDto {
-                                        Id = sal.Id,
-                                        EmployeeId = ea.EmployeeId,
-                                        StartDate = sal.StartDate,
-                                        FinishDate = sal.FinishDate,
-                                        Salary = sal.Salary,
-                                    }).ToList()
-                            })
-                            .Single(em => em.Id == ea.EmployeeId),
-                        ActivityId = ea.ActivityId,
-                        Activity = _dbContext.Activities
-                            .Select(a => new ActivitySelectDto {
-                                Id = ea.ActivityId,
-                                Name = ea.Activity.Name,
-                                StartDate = ea.Activity.StartDate,
-                                FinishDate = ea.Activity.FinishDate,
-                                WorkOrderId = ea.Activity.WorkOrderId
-                            })
-                            .Single(ac => ac.Id == ea.ActivityId) 
-                    }).ToHashSet()   
-            })
+            .Select(ac => ac.MapToActivityViewDto(_dbContext))
             .ToListAsync();
     }
 
     public async Task<List<ActivityViewDto>> GetAllAsync() {
         return await _dbContext.Activities
-            .Select(ac => new ActivityViewDto {
-                Id = ac.Id,
-                Name = ac.Name,
-                StartDate = ac.StartDate,
-                FinishDate = ac.FinishDate,
-                WorkOrderId = ac.WorkOrderId,
-                EmployeeActivity = ac.EmployeeActivity
-                    .Select(ea => new EmployeeActivityDto {
-                        Id = ea.Id,
-                        EmployeeId = ea.EmployeeId,
-                        Employee = new EmployeeSelectDto {
-                            Id = ea.EmployeeId,
-                            Email = ea.Employee.Email,
-                            FirstName = ea.Employee.FirstName,
-                            LastName = ea.Employee.LastName,
-                            FullName = ea.Employee.FullName,
-                            Role = ea.Employee.Role,
-                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                            EmployeeSalaries = ea.Employee.Salaries
-                                .Select(sal => new EmployeeSalaryDto {
-                                    Id = sal.Id,
-                                    EmployeeId = ea.EmployeeId,
-                                    StartDate = sal.StartDate,
-                                    FinishDate = sal.FinishDate,
-                                    Salary = sal.Salary,
-                                }).ToList()
-                        }, 
-                        ActivityId = ea.ActivityId,
-                        Activity =  new ActivitySelectDto {
-                            Id = ea.ActivityId,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        }
-                    }).ToHashSet()   
-            })
+            .Select(ac => ac.MapToActivityViewDto(_dbContext))
             .ToListAsync();
     }
 
     public async Task<int> GetCollectionSizeByEmployeeIdAsync(string employeeId) {
         return (await GetActivityByEmployeeId(employeeId))
-            .Count();
+            .Count;
     }
 }
