@@ -45,8 +45,8 @@ builder.Services.AddScoped<IRepository<ActivityFormDto, ActivityViewDto>, Activi
 builder.Services.AddScoped<IRepository<WorkTimeRecordFormDto, WorkTimeRecordViewDto>, WorkTimeRecordRepository>();
 builder.Services.AddScoped<IRepository<ClientFormDto, ClientViewDto>, ClientRepository>();
 
-builder.Services.AddScoped<IRepository<CalculatorService>, CalculatorService>();
-builder.Services.AddScoped<IRepository<DtoValidatorUtillity>, DtoValidatorUtillity>();
+builder.Services.AddScoped<IService<CalculatorService>, CalculatorService>();
+builder.Services.AddScoped<IService<DtoValidatorUtillity>, DtoValidatorUtillity>();
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
