@@ -41,13 +41,17 @@ builder.Services
 builder.Services.AddScoped<CalculatorService>();
 builder.Services.AddScoped<DtoValidatorUtillity>();
 
-builder.Services.AddScoped<IRepository<EmployeeFormDto, EmployeeViewDto>, EmployeeRepository>();
-builder.Services.AddScoped<IRepository<WorkOrderFormDto, WorkOrderViewDto>, WorkOrderRepository>();
-builder.Services.AddScoped<IRepository<ActivityFormDto, ActivityViewDto>, ActivityRepository>();
-builder.Services.AddScoped<IRepository<WorkTimeRecordFormDto, WorkTimeRecordViewDto>, WorkTimeRecordRepository>();
-builder.Services.AddScoped<IRepository<ClientFormDto, ClientViewDto>, ClientRepository>();
+builder.Services.AddScoped<IRepository<EmployeeFormDto>, EmployeeRepository>();
+builder.Services.AddScoped<IRepository<WorkOrderFormDto>, WorkOrderRepository>();
+builder.Services.AddScoped<IRepository<ActivityFormDto>, ActivityRepository>();
+builder.Services.AddScoped<IRepository<WorkTimeRecordFormDto>, WorkTimeRecordRepository>();
+builder.Services.AddScoped<IRepository<ClientFormDto>, ClientRepository>();
 
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
+builder.Services.AddScoped<IWorkTimeRecordRepository, WorkTimeRecordRepository>();
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
