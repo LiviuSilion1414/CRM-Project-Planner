@@ -1,6 +1,4 @@
-using PlannerCRM.Shared.DTOs.EmployeeProfilePictureDto;
-
-namespace PlannerCRM.Server.Utilities;
+namespace PlannerCRM.Server.Mappers;
 
 public static class EmployeeMapper
 {

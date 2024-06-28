@@ -1,4 +1,4 @@
-namespace PlannerCRM.Server.Utilities;
+namespace PlannerCRM.Server.Mappers;
 
 public static class CalculatorCostMapper
 {
