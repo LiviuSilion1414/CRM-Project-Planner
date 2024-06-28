@@ -3,12 +3,11 @@ namespace PlannerCRM.Server.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class WorkTimeRecordController(
-    WorkTimeRecordRepository repo,
-    Logger<WorkTimeRecordRepository> logger) : ControllerBase
+public class WorkTimeRecordController(IRepository<WorkTimeRecordFormDto> repo, IWorkTimeRecordRepository workTimeRecordRepository) 
+    : ControllerBase
 {
-    private readonly WorkTimeRecordRepository _repo = repo;
-    private readonly ILogger<WorkTimeRecordRepository> _logger = logger;
+    private readonly IRepository<WorkTimeRecordFormDto> _repo = repo;
+    private readonly IWorkTimeRecordRepository _workTimeRecordRepository = workTimeRecordRepository;
 
     [HttpPost("add")]
     public async Task<IActionResult> AddWorkTimeRecordAsync(WorkTimeRecordFormDto dto)
@@ -28,13 +27,13 @@ public class WorkTimeRecordController(
 
     [HttpGet("get/{workOrderId}/{activityId}/{employeeId}")]
     public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordAsync(int workOrderId, int activityId, int employeeId) =>
-        await _repo.GetForViewByIdAsync(workOrderId, activityId, employeeId);
+        await _workTimeRecordRepository.GetForViewByIdAsync(workOrderId, activityId, employeeId);
 
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<WorkTimeRecordViewDto>> GetPaginatedWorkTimeRecordsAsync(int limit, int offset) =>
-        await _repo.GetPaginatedWorkTimeRecordsAsync(limit, offset);
+        await _workTimeRecordRepository.GetPaginatedWorkTimeRecordsAsync(limit, offset);
 
     [HttpGet("get/by/employee/{employeeId}")]
     public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) =>
-        await _repo.GetAllWorkTimeRecordsByEmployeeIdAsync(employeeId);
+        await _workTimeRecordRepository.GetAllWorkTimeRecordsByEmployeeIdAsync(employeeId);
 }

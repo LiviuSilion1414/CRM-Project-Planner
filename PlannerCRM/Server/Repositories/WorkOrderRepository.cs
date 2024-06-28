@@ -3,7 +3,7 @@ namespace PlannerCRM.Server.Repositories;
 public class WorkOrderRepository(
     AppDbContext dbContext,
     DtoValidatorUtillity validator,
-    Logger<DtoValidatorUtillity> logger) : IRepository<WorkOrderFormDto, WorkOrderViewDto>
+    Logger<DtoValidatorUtillity> logger) : IRepository<WorkOrderFormDto>, IWorkOrderRepository
 {
 	private readonly AppDbContext _dbContext = dbContext;
 	private readonly DtoValidatorUtillity _validator = validator;
@@ -72,7 +72,7 @@ public class WorkOrderRepository(
 			.SingleAsync(wo => wo.Id == id);
 	}
 
-	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int id, int _1, int _2) {
+	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int id) {
 		return await _dbContext.WorkOrders
 			.Select(wo => wo.MapToWorkOrderViewDto(_dbContext))
 			.SingleAsync(wo => wo.Id == id);

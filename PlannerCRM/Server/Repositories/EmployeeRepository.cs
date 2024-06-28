@@ -5,7 +5,7 @@ public class EmployeeRepository(
     DtoValidatorUtillity validator,
     UserManager<Employee> userManager,
     RoleManager<EmployeeRole> roleManager,
-    Logger<DtoValidatorUtillity> logger) : IRepository<EmployeeFormDto, EmployeeViewDto>
+    Logger<DtoValidatorUtillity> logger) : IRepository<EmployeeFormDto>, IEmployeeRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly DtoValidatorUtillity _validator = validator;
@@ -166,7 +166,7 @@ public class EmployeeRepository(
         }
     }
 
-    public async Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId, int _1, int _2) {
+    public async Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId) {
         return await _dbContext.Employees
             .Select(em => em.MapToEmployeeViewDto(_dbContext))   
             .SingleAsync(em => em.Id == employeeId);

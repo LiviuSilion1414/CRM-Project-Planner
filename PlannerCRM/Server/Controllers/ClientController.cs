@@ -3,12 +3,10 @@ namespace PlannerCRM.Server.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class ClientController(
-    ClientRepository repo,
-    Logger<ClientRepository> logger) : ControllerBase 
+public class ClientController(IRepository<ClientFormDto> repo, IClientRepository clientRepository) : ControllerBase 
 {
-    private readonly ClientRepository _repo = repo;
-    private readonly ILogger<ClientRepository> _logger = logger;
+    private readonly IRepository<ClientFormDto> _repo = repo;
+    private readonly IClientRepository _clientRepository = clientRepository;
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
@@ -33,31 +31,31 @@ public class ClientController(
 
     [HttpGet("get/for/view/{clientId}")]
     public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) =>
-        await _repo.GetForViewByIdAsync(clientId, 0, 0);
+        await _clientRepository.GetForViewByIdAsync(clientId);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{clientId}")]
     public async Task<ClientFormDto> GetClientForEditByIdAsync(int clientId) =>
-        await _repo.GetClientForEditByIdAsync(clientId);
+        await _clientRepository.GetClientForEditByIdAsync(clientId);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{clientId}")]
     public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int clientId) =>
-        await _repo.GetClientForDeleteByIdAsync(clientId);
+        await _clientRepository.GetClientForDeleteByIdAsync(clientId);
        
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<ClientViewDto>> GetPaginatedClientsAsync(int limit, int offset) =>
-        await _repo.GetClientsPaginatedAsync(limit, offset);
+        await _clientRepository.GetClientsPaginatedAsync(limit, offset);
     
     [HttpGet("get/size")]
     public async Task<int> GetCollectionSizeAsync() =>
-        await _repo.GetCollectionSizeAsync();
+        await _clientRepository.GetCollectionSizeAsync();
 
     [HttpGet("search/{clientName}/")]
     public async Task<List<ClientViewDto>> SearchClientByNameAsync(string clientName) =>
-        await _repo.SearchClientAsync(clientName);
+        await _clientRepository.SearchClientAsync(clientName);
 
     [HttpGet("search/by/id/{clientId}")]
     public async Task<List<ClientViewDto>> SearchClientByIdAsync(int clientId) =>
-        await _repo.SearchClientAsync(clientId);
+        await _clientRepository.SearchClientAsync(clientId);
 }

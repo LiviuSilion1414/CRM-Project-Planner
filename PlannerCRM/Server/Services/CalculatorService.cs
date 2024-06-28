@@ -1,7 +1,6 @@
 namespace PlannerCRM.Server.Services;
 
 public class CalculatorService(AppDbContext dbContext, ILogger<CalculatorService> logger)
-    : IService<CalculatorService>
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly ILogger<CalculatorService> _logger = logger;

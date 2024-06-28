@@ -3,7 +3,7 @@ namespace PlannerCRM.Server.Repositories;
 public class ActivityRepository(
         AppDbContext dbContext,
         DtoValidatorUtillity validator,
-        Logger<DtoValidatorUtillity> logger) : IRepository<ActivityFormDto, ActivityViewDto>
+        Logger<DtoValidatorUtillity> logger) : IRepository<ActivityFormDto>, IActivityRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly DtoValidatorUtillity _validator = validator;
@@ -75,7 +75,7 @@ public class ActivityRepository(
         }
     }
 
-    public async Task<ActivityViewDto> GetForViewByIdAsync(int id, int _1, int _2)
+    public async Task<ActivityViewDto> GetForViewByIdAsync(int id)
     {
         return await _dbContext.Activities
             .Select(ac => ac.MapToActivityViewDto(_dbContext))

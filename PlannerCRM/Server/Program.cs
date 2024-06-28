@@ -38,6 +38,8 @@ builder.Services
         o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
         o.Lockout.MaxFailedAccessAttempts = 5;
     });
+builder.Services.AddScoped<CalculatorService>();
+builder.Services.AddScoped<DtoValidatorUtillity>();
 
 builder.Services.AddScoped<IRepository<EmployeeFormDto, EmployeeViewDto>, EmployeeRepository>();
 builder.Services.AddScoped<IRepository<WorkOrderFormDto, WorkOrderViewDto>, WorkOrderRepository>();
@@ -45,8 +47,7 @@ builder.Services.AddScoped<IRepository<ActivityFormDto, ActivityViewDto>, Activi
 builder.Services.AddScoped<IRepository<WorkTimeRecordFormDto, WorkTimeRecordViewDto>, WorkTimeRecordRepository>();
 builder.Services.AddScoped<IRepository<ClientFormDto, ClientViewDto>, ClientRepository>();
 
-builder.Services.AddScoped<IService<CalculatorService>, CalculatorService>();
-builder.Services.AddScoped<IService<DtoValidatorUtillity>, DtoValidatorUtillity>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));

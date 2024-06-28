@@ -3,12 +3,10 @@ namespace PlannerCRM.Server.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class WorkOrderController(
-    WorkOrderRepository repo,
-    Logger<WorkOrderRepository> logger) : ControllerBase
+public class WorkOrderController(IRepository<WorkOrderFormDto, WorkOrderViewDto> repo, IWorkOrderRepository workOrderRepository) : ControllerBase
 {
-    private readonly WorkOrderRepository _repo = repo;
-    private readonly ILogger<WorkOrderRepository> _logger = logger;
+    private readonly IRepository<WorkOrderFormDto, WorkOrderViewDto> _repo = repo;
+    private readonly IWorkOrderRepository _workOrderRepository = workOrderRepository;
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
@@ -31,14 +29,10 @@ public class WorkOrderController(
         return Ok();
     }
 
-    [HttpGet("search/{workOrder}")]
-    public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName) =>
-        await _repo.SearchWorkOrderAsync(workOrderName);
-
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{workOrderId}")]
     public async Task<WorkOrderFormDto> GetWorkOrderForEditByIdAsync(int workOrderId) =>
-        await _repo.GetForEditByIdAsync(workOrderId);
+        await _workOrderRepository.GetForEditByIdAsync(workOrderId);
 
     [HttpGet("get/for/view/{workOrderId}")]
     public async Task<WorkOrderViewDto> GetWorkOrderForViewByIdAsync(int workOrderId) =>
@@ -47,13 +41,17 @@ public class WorkOrderController(
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{workOrderId}")]
     public async Task<WorkOrderDeleteDto> GetWorkOrderForDeleteByIdAsync(int workOrderId) =>
-        await _repo.GetForDeleteByIdAsync(workOrderId);
+        await _workOrderRepository.GetForDeleteByIdAsync(workOrderId);
+    
+    [HttpGet("search/{workOrder}")]
+    public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName) =>
+        await _workOrderRepository.SearchWorkOrderAsync(workOrderName);
 
     [HttpGet("get/size")] 
     public async Task<int> GetSizeAsync() =>
-        await _repo.GetWorkOrdersSizeAsync();
+        await _workOrderRepository.GetWorkOrdersSizeAsync();
 
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5) =>
-        await _repo.GetPaginatedWorkOrdersAsync(limit, offset);
+        await _workOrderRepository.GetPaginatedWorkOrdersAsync(limit, offset);
 }
