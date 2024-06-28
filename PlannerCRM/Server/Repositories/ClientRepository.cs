@@ -21,13 +21,7 @@ public class ClientRepository
             var isValid = await _validator.ValidateClientAsync(dto, OperationType.ADD);
             
             if (isValid) {
-                await _dbContext.Clients.AddAsync(
-                    new FirmClient {
-                        Id = dto.Id,
-                        Name = dto.Name,
-                        VatNumber = dto.VatNumber
-                    }
-                );
+                await _dbContext.Clients.AddAsync(dto.MapToFirmClient());
                 
                 if (await _dbContext.SaveChangesAsync() == 0) {
                     throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
@@ -50,9 +44,7 @@ public class ClientRepository
                 var model = await _dbContext.Clients
                     .SingleAsync(cl => cl.Id == dto.Id);
                 
-                model.Id = dto.Id;
-                model.Name = dto.Name;
-                model.VatNumber = dto.VatNumber;
+                model = dto.MapToFirmClient();
                 
                 _dbContext.Clients.Update(model);
                 
@@ -92,39 +84,19 @@ public class ClientRepository
     public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
         return await _dbContext.Clients
             .Where(cl => cl.Id == clientId)
-            .Select(client =>
-                new ClientViewDto {
-                    Id = client.Id,
-                    Name = client.Name,
-                    VatNumber = client.VatNumber
-                }
-            )
+            .Select(client => client.MapToClientViewDto())
             .SingleAsync();
     }
 
     public async Task<ClientFormDto> GetClientForEditByIdAsync(int id) {
         return await _dbContext.Clients
-            .Select(client => 
-                new ClientFormDto {
-                    Id = client.Id,
-                    Name = client.Name,
-                    VatNumber = client.VatNumber,
-                    //WorkOrderId = client.WorkOrderId
-                }
-            )
+            .Select(client => client.MapToClientFormDto())
             .SingleAsync(cl => cl.Id == id);
     }
 
     public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int id) {
         return await _dbContext.Clients
-            .Select(client => 
-                new ClientDeleteDto {
-                    Id = client.Id,
-                    Name = client.Name,
-                    VatNumber = client.VatNumber,
-                   // WorkOrderId = client.WorkOrderId
-                }
-            )
+            .Select(client => client.MapToClientDeleteDto())
             .SingleAsync(cl => cl.Id == id);
     }
 
@@ -133,44 +105,24 @@ public class ClientRepository
             .OrderBy(client => client.Id)
             .Skip(limit)
             .Take(offset)
-            .Select(client => 
-                new ClientViewDto {
-                    Id = client.Id,
-                    Name = client.Name,
-                    VatNumber = client.VatNumber,
-                   // WorkOrderId = client.WorkOrderId
-                }
-            )
+            .Select(client => client.MapToClientViewDto())
             .ToListAsync();
     }
 
     public async Task<int> GetCollectionSizeAsync() {
-        return await _dbContext.Clients
-            .CountAsync();
+        return await _dbContext.Clients.CountAsync();
     }
 
     public async Task<List<ClientViewDto>> SearchClientAsync(string clientName) {
         return await _dbContext.Clients
-            .Select(cl => new ClientViewDto {
-                    Id = cl.Id,
-                    Name = cl.Name,
-                    VatNumber = cl.VatNumber,
-                   // WorkOrderId = cl.WorkOrderId
-                }
-            )
+            .Select(cl => cl.MapToClientViewDto())
             .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
             .ToListAsync();
     }
 
     public async Task<List<ClientViewDto>> SearchClientAsync(int clientId) {
         return await _dbContext.Clients
-            .Select(cl => new ClientViewDto {
-                    Id = cl.Id,
-                    Name = cl.Name,
-                    VatNumber = cl.VatNumber,
-                   // WorkOrderId = cl.WorkOrderId
-                }
-            )
+            .Select(cl => cl.MapToClientViewDto())
             .Where(cl => cl.Id == clientId)
             .ToListAsync();
     }
