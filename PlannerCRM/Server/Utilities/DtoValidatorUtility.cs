@@ -1,6 +1,6 @@
 namespace PlannerCRM.Server.Utilities;
 
-public class DtoValidatorUtillity(AppDbContext context, UserManager<Employee> userManager) 
+public class DtoValidatorUtillity(AppDbContext context, UserManager<Employee> userManager) : IService<DtoValidatorUtillity>
 {
     private readonly AppDbContext _dbContext = context;
     private readonly UserManager<Employee> _userManager = userManager;
@@ -133,10 +133,7 @@ public class DtoValidatorUtillity(AppDbContext context, UserManager<Employee> us
             .SingleAsync(em => em.Id == userId) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
 
-        var userExists = await _userManager.FindByIdAsync(userId) 
-            ?? throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
-
-        return employeeExists is not null && userExists is not null;
+        return employeeExists is not null;
     }
 
     public async Task<FirmClient> ValidateDeleteClientAsync(int id) {
