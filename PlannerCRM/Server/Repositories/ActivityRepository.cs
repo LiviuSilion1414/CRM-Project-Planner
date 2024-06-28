@@ -17,90 +17,63 @@ public class ActivityRepository
 	}
 
     public async Task AddAsync(ActivityFormDto dto) {
-        try {
-            var isValid = await _validator.ValidateActivityAsync(dto, OperationType.ADD);
+        var isValid = await _validator.ValidateActivityAsync(dto, OperationType.ADD);
 
-            if (isValid) {
-                var model = dto.MapToActivity();
-                await _dbContext.Activities.AddAsync(model);
-        
-                var workOrder = await _dbContext.WorkOrders
-                    .SingleAsync(wo => wo.Id == dto.WorkOrderId);
+        if (isValid) {
+            var model = dto.MapToActivity();
+            await _dbContext.Activities.AddAsync(model);
+    
+            var workOrder = await _dbContext.WorkOrders
+                .SingleAsync(wo => wo.Id == dto.WorkOrderId);
 
-                workOrder.Activities.Add(model);    
-        
-                _dbContext.Update(workOrder);
-                
-                if (await _dbContext.SaveChangesAsync() == 0) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+            workOrder.Activities.Add(model);    
+    
+            _dbContext.Update(workOrder);
+            
+            await _dbContext.SaveChangesAsync();
         }
     }
 
     public async Task DeleteAsync(int id) {
-        try {
-            var activityDelete = await _validator.ValidateDeleteActivityAsync(id);
+        var activityDelete = await _validator.ValidateDeleteActivityAsync(id);
 
-            await _dbContext.EmployeeActivity
-                .Where(ea => ea.ActivityId == activityDelete.Id)
-                .ForEachAsync(ea => 
-                    _dbContext.EmployeeActivity
-                        .Remove(ea)
-                );
-    
-            _dbContext.Activities.Remove(activityDelete);
-    
-            if (await _dbContext.SaveChangesAsync() == 0) {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+        await _dbContext.EmployeeActivity
+            .Where(ea => ea.ActivityId == activityDelete.Id)
+            .ForEachAsync(ea => 
+                _dbContext.EmployeeActivity
+                    .Remove(ea)
+            );
 
-            throw;
-        }
+        _dbContext.Activities.Remove(activityDelete);
+
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task EditAsync(ActivityFormDto dto) {
-        try {
-            var isValid = await _validator.ValidateActivityAsync(dto, OperationType.EDIT);
+        var isValid = await _validator.ValidateActivityAsync(dto, OperationType.EDIT);
 
-            if (isValid) {
-                var model = await _dbContext.Activities
-                    .SingleAsync(ac => ac.Id == dto.Id);
+        if (isValid) {
+            var model = await _dbContext.Activities
+                .SingleAsync(ac => ac.Id == dto.Id);
 
-                model = dto.MapToActivity();
-                
-                var employeesToRemove = dto.DeleteEmployeeActivity
-                    .Where(eaDto => _dbContext.EmployeeActivity
-                        .Any(ea => eaDto.EmployeeId == ea.EmployeeId))
-                    .Select(e => e.MapToEmployeeActivity(dto.Id))
-                    .ToList();
-                
-                employeesToRemove
-                    .ForEach(item => _dbContext.EmployeeActivity.Remove(item));
-
-                var workOrder = await _dbContext.WorkOrders
-                    .SingleAsync(wo => wo.Id == dto.WorkOrderId);
+            model = dto.MapToActivity();
             
-                _dbContext.Update(model);
-                _dbContext.Update(workOrder);
+            var employeesToRemove = dto.DeleteEmployeeActivity
+                .Where(eaDto => _dbContext.EmployeeActivity
+                    .Any(ea => eaDto.EmployeeId == ea.EmployeeId))
+                .Select(e => e.MapToEmployeeActivity(dto.Id))
+                .ToList();
+            
+            employeesToRemove
+                .ForEach(item => _dbContext.EmployeeActivity.Remove(item));
 
-                if (await _dbContext.SaveChangesAsync() == 0) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
+            var workOrder = await _dbContext.WorkOrders
+                .SingleAsync(wo => wo.Id == dto.WorkOrderId);
+        
+            _dbContext.Update(model);
+            _dbContext.Update(workOrder);
 
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+            await _dbContext.SaveChangesAsync();
         }
     }
 

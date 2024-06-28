@@ -1,6 +1,3 @@
-using PlannerCRM.Shared.DTOs;
-using PlannerCRM.Shared.DTOs.EmployeeProfilePictureDto;
-
 namespace PlannerCRM.Server.Repositories;
 
 public class EmployeeRepository
@@ -26,246 +23,158 @@ public class EmployeeRepository
     }
 
     public async Task AddAsync(EmployeeFormDto dto) {
-        try {
-            var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);
+        var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);
+        
+        if (isValid) {
+            await _dbContext.Employees.AddAsync(dto.MapToEmployee());
             
-            if (isValid) {
-                await _dbContext.Employees.AddAsync(dto.MapToEmployee());
-                
-                if (await _dbContext.SaveChangesAsync() == 0) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
+            await _dbContext.SaveChangesAsync();
 
-                await AddUserAsync(dto);
-                await SetRoleAsync(dto.Email, dto.Role ?? throw new ArgumentNullException(nameof(dto.Role), ExceptionsMessages.NULL_ARG));
-                await SetProfilePictureAsync(dto);
-                await SetFKProfilePictureIdAsync(dto.Email);
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_ADD);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+            await AddUserAsync(dto);
+            await SetRoleAsync(dto.Email, dto.Role ?? throw new ArgumentNullException(nameof(dto.Role), ExceptionsMessages.NULL_ARG));
+            await SetProfilePictureAsync(dto);
+            await SetFKProfilePictureIdAsync(dto.Email);
         }
     }
 
     private async Task AddUserAsync(EmployeeFormDto dto) {
-        try
-        {
-            var user = new IdentityUser
-            {
-                Email = dto.Email,
-                UserName = dto.Email,
-                NormalizedEmail = dto.Email.ToUpper()
-            };
-            await _userManager.CreateAsync(user, dto.Password);
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
-        }
+        var user = new IdentityUser {
+            Email = dto.Email,
+            UserName = dto.Email,
+            NormalizedEmail = dto.Email.ToUpper()
+        };
+            
+        await _userManager.CreateAsync(user, dto.Password);
     }
 
     private async Task SetRoleAsync(string email, Roles role) {
-        try 
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user is not null) {
-                await _userManager.AddToRoleAsync(user, role.ToString());
-            }
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is not null) {
+            await _userManager.AddToRoleAsync(user, role.ToString());
         }
     }
 
-    private async Task SetProfilePictureAsync(EmployeeFormDto dto)
-    {
-        try
-        {
-            var employee = await _dbContext.Employees
-                .SingleAsync(em => em.Email == dto.Email);
+    private async Task SetProfilePictureAsync(EmployeeFormDto dto) {
+        var employee = await _dbContext.Employees
+            .SingleAsync(em => em.Email == dto.Email);
 
-            await _dbContext.ProfilePictures.AddAsync(
-                dto.MapToEmployeeProfilePicture(employee)
-            );
+        await _dbContext.ProfilePictures.AddAsync(dto.MapToEmployeeProfilePicture(employee));
 
-            await _dbContext.SaveChangesAsync();
-        } 
-        catch (Exception exc)
-        {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+        await _dbContext.SaveChangesAsync();
+}
 
-            throw;
-        }
+    private async Task SetFKProfilePictureIdAsync(string employeeEmail) {
+        var employee = await _dbContext.Employees
+            .SingleAsync(em => em.Email == employeeEmail);
+    
+        var profilePic = await _dbContext.ProfilePictures
+            .SingleAsync(pic => pic.EmployeeInfo.Email == employeeEmail);
+
+        employee.ProfilePictureId = profilePic.Id;
+            
+        _dbContext.Update(employee);
+
+        await _dbContext.SaveChangesAsync();
     }
 
-    private async Task SetFKProfilePictureIdAsync(string employeeEmail)
-    {
-        try
-        {
-            var employee = await _dbContext.Employees
-                .SingleAsync(em => em.Email == employeeEmail);
-        
-            var profilePic = await _dbContext.ProfilePictures
-                .SingleAsync(pic => pic.EmployeeInfo.Email == employeeEmail);
+    public async Task ArchiveAsync(string employeeId) {
+        var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
-            employee.ProfilePictureId = profilePic.Id;
-               
+        if (isValid) {
+            var employee = await _dbContext.Employees
+                .SingleAsync(em => em.Id == employeeId);
+
+            employee.IsArchived = true;
+            
             _dbContext.Update(employee);
 
             await _dbContext.SaveChangesAsync();
         }
-        catch (Exception exc)
-        {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
-        }
-    }
-
-    public async Task ArchiveAsync(string employeeId) {
-        try {
-            var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
-
-            if (isValid) {
-                var employee = await _dbContext.Employees
-                    .SingleAsync(em => em.Id == employeeId);
-
-                employee.IsArchived = true;
-                
-                _dbContext.Update(employee);
-
-                if (await _dbContext.SaveChangesAsync() == 0) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
-        }
     }
     
     public async Task RestoreAsync(string employeeId) {
-        try {
-            var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
+        var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
-            if (isValid) {
-                var employee = await _dbContext.Employees
-                    .SingleAsync(em => em.Id == employeeId);
+        if (isValid) {
+            var employee = await _dbContext.Employees
+                .SingleAsync(em => em.Id == employeeId);
 
-                employee.IsArchived = false;
-                
-                _dbContext.Update(employee);
+            employee.IsArchived = false;
+            
+            _dbContext.Update(employee);
 
-                if (await _dbContext.SaveChangesAsync() == 0) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_GOING_FORWARD);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+            await _dbContext.SaveChangesAsync();
         }
     }
 
     public async Task DeleteAsync(string employeeId) {
-        try {
-            var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
+        var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
-            if (isValid) {
-                var employee = await _dbContext.Employees
-                    .SingleAsync(em => em.Id == employeeId);
-                _dbContext.Employees.Remove(employee);
+        if (isValid) {
+            var employee = await _dbContext.Employees
+                .SingleAsync(em => em.Id == employeeId);
+            _dbContext.Employees.Remove(employee);
 
-                var user = await _userManager.FindByIdAsync(employeeId);
-                await _userManager.DeleteAsync(user);
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_DELETE);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+            var user = await _userManager.FindByIdAsync(employeeId);
+            await _userManager.DeleteAsync(user);
         }
     }
 
     public async Task EditAsync(EmployeeFormDto dto) {
-        try {
-            var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.EDIT);
+        var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.EDIT);
+        
+        if (isValid) {
+            var user = await _userManager.FindByEmailAsync(dto.OldEmail);
+            var model = await _dbContext.Employees.SingleAsync(em => em.Id == dto.Id);
+
+            model = dto.MapToEmployee();
+
+            var isContainedModifiedHourlyRate = await _dbContext.Employees
+                .AnyAsync(em => em.Salaries
+                    .Any(s => s.Salary != dto.CurrentHourlyRate));
             
-            if (isValid) {
-                var user = await _userManager.FindByEmailAsync(dto.OldEmail);
-                var model = await _dbContext.Employees.SingleAsync(em => em.Id == dto.Id);
+            if (!isContainedModifiedHourlyRate) {
+                model.Salaries = dto.EmployeeSalaries
+                    .Where(ems => _dbContext.Employees
+                        .Any(em => em.Id == ems.EmployeeId))
+                    .Select(ems => ems.MapToEmployeeSalary(dto))
+                    .ToList();
+            }    
+            
+            _dbContext.Employees.Update(model);
 
-                model = dto.MapToEmployee();
+            user.Email = dto.Email;
+            user.NormalizedEmail = dto.Email.ToUpper();
+            user.UserName = dto.Email;
 
-                var isContainedModifiedHourlyRate = await _dbContext.Employees
-                    .AnyAsync(em => em.Salaries
-                        .Any(s => s.Salary != dto.CurrentHourlyRate));
-                
-                if (!isContainedModifiedHourlyRate) {
-                    model.Salaries = dto.EmployeeSalaries
-                        .Where(ems => _dbContext.Employees
-                            .Any(em => em.Id == ems.EmployeeId))
-                        .Select(ems => ems.MapToEmployeeSalary(dto))
-                        .ToList();
-                }    
-                
-                _dbContext.Employees.Update(model);
+            var passChangeResult = await _userManager.RemovePasswordAsync(user);
+            var updateResult = await _userManager.AddPasswordAsync(user, dto.Password);
 
-                user.Email = dto.Email;
-                user.NormalizedEmail = dto.Email.ToUpper();
-                user.UserName = dto.Email;
-
-                var passChangeResult = await _userManager.RemovePasswordAsync(user);
-                var updateResult = await _userManager.AddPasswordAsync(user, dto.Password);
-
-                if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
-
-                var rolesList = await _userManager.GetRolesAsync(user);
-                var userRole = rolesList
-                    .Single() 
-                        ?? throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
-
-                var isInRole = await _userManager.IsInRoleAsync(user, userRole);
-
-                if (isInRole)
-                {
-                    var deleteRoleResult = await _userManager.RemoveFromRoleAsync(user, userRole);
-                    var reassignmentRoleResult = await _userManager.AddToRoleAsync(user, dto.Role.ToString());
-
-                    if (!deleteRoleResult.Succeeded || !reassignmentRoleResult.Succeeded) {
-                        throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                    }
-                }
-
-                if (await _dbContext.SaveChangesAsync() == 0) {
-                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-                }
-
-                await SetProfilePictureAsync(dto);
-                await SetFKProfilePictureIdAsync(dto.Email);
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_EDIT);
+            if (!passChangeResult.Succeeded || !updateResult.Succeeded) {
+                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
             }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            var rolesList = await _userManager.GetRolesAsync(user);
+            var userRole = rolesList
+                .Single() 
+                    ?? throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
+
+            var isInRole = await _userManager.IsInRoleAsync(user, userRole);
+
+            if (isInRole)
+            {
+                var deleteRoleResult = await _userManager.RemoveFromRoleAsync(user, userRole);
+                var reassignmentRoleResult = await _userManager.AddToRoleAsync(user, dto.Role.ToString());
+
+                if (!deleteRoleResult.Succeeded || !reassignmentRoleResult.Succeeded) {
+                    throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
             
-            throw;
+            await SetProfilePictureAsync(dto);
+            await SetFKProfilePictureIdAsync(dto.Email);
         }
     }
 
@@ -320,6 +229,5 @@ public class EmployeeRepository
             .FirstAsync(em => em.Email == email);
     }
 
-    public async Task<int> GetEmployeesSizeAsync() => 
-        await _dbContext.Employees.CountAsync();
+    public async Task<int> GetEmployeesSizeAsync() => await _dbContext.Employees.CountAsync();
 }

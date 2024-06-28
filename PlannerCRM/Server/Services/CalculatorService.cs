@@ -5,50 +5,43 @@ public class CalculatorService
     private readonly AppDbContext _dbContext;
     private readonly ILogger<CalculatorService> _logger;
 
-    public CalculatorService(AppDbContext dbContext, ILogger<CalculatorService> logger) {
+    public CalculatorService(AppDbContext dbContext, ILogger<CalculatorService> logger)
+    {
         _dbContext = dbContext;
         _logger = logger;
     }
 
-    public async Task<int> GetCollectionSizeAsync()
-        => await _dbContext.WorkOrderCosts
-            .CountAsync();
+    public async Task<int> GetCollectionSizeAsync() => await _dbContext.WorkOrderCosts.CountAsync();
 
     public async Task AddInvoiceAsync(int workOrderId) {
-        try {
-            var isAnyWorkOrder = await _dbContext.WorkOrders
-                .AnyAsync(wo => wo.Id == workOrderId);
-    
-            var isAnyInvoice = await _dbContext.WorkOrderCosts
-                .AnyAsync(inv => inv.WorkOrderId == workOrderId);
-    
-            if (!isAnyWorkOrder) {
-                throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
-            }
+        var isAnyWorkOrder = await _dbContext.WorkOrders
+            .AnyAsync(wo => wo.Id == workOrderId);
 
-            if (isAnyInvoice) {
-                throw new DuplicateElementException(ExceptionsMessages.DUPLICATE_OBJECT);
-            }
+        var isAnyInvoice = await _dbContext.WorkOrderCosts
+            .AnyAsync(inv => inv.WorkOrderId == workOrderId);
 
-            var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => wo.Id == workOrderId);
-            
-            workOrder.IsCompleted = true;
+        if (!isAnyWorkOrder)
+        {
+            throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
+        }
 
-            _dbContext.Update(workOrder);
+        if (isAnyInvoice)
+        {
+            throw new DuplicateElementException(ExceptionsMessages.DUPLICATE_OBJECT);
+        }
 
-            var workOrderCost = await ExecuteCalculationsAsync(workOrder, true);
+        var workOrder = await _dbContext.WorkOrders
+            .SingleAsync(wo => wo.Id == workOrderId);
 
-            await _dbContext.WorkOrderCosts.AddAsync(workOrderCost);
-    
-            if (await _dbContext.SaveChangesAsync() == 0) {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-    
-            throw;
-        } 
+        workOrder.IsCompleted = true;
+
+        _dbContext.Update(workOrder);
+
+        var workOrderCost = await ExecuteCalculationsAsync(workOrder, true);
+
+        await _dbContext.WorkOrderCosts.AddAsync(workOrderCost);
+
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset) {
@@ -61,81 +54,69 @@ public class CalculatorService
     }
 
     public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId) {
-        try {
-            if (workOrderId == 0) {
-                throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
-            }
-
-            var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => wo.Id == workOrderId);
-            var workOrderCost = await ExecuteCalculationsAsync(workOrder);
-
-            var employees = workOrderCost.Employees
-                .Select(em => em.MapToEmployeeViewDto(_dbContext))
-                .ToList();
-
-            var activities = workOrderCost.Activities
-                .Select(ac => ac.MapToActivityViewDto(_dbContext))
-                .ToList();
-
-            var monthlyActivityCosts = workOrderCost.MonthlyActivityCosts
-                .Select(ac => ac.MapToActivityCostDto(employees))
-                .ToList();
-
-            return workOrderCost.MapToWorkOrderCostDto(employees, activities, monthlyActivityCosts);
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+        if (workOrderId == 0)
+        {
+            throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
         }
+
+        var workOrder = await _dbContext.WorkOrders
+            .SingleAsync(wo => wo.Id == workOrderId);
+        var workOrderCost = await ExecuteCalculationsAsync(workOrder);
+
+        var employees = workOrderCost.Employees
+            .Select(em => em.MapToEmployeeViewDto(_dbContext))
+            .ToList();
+
+        var activities = workOrderCost.Activities
+            .Select(ac => ac.MapToActivityViewDto(_dbContext))
+            .ToList();
+
+        var monthlyActivityCosts = workOrderCost.MonthlyActivityCosts
+            .Select(ac => ac.MapToActivityCostDto(employees))
+            .ToList();
+
+        return workOrderCost.MapToWorkOrderCostDto(employees, activities, monthlyActivityCosts);
     }
 
-    private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder) {
+    private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder)
+    {
         workOrder.IsInvoiceCreated = true;
 
         _dbContext.Update(workOrder);
 
-        if (await _dbContext.SaveChangesAsync() == 0) {
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-        }
+        await _dbContext.SaveChangesAsync();
     }
 
     private async Task<WorkOrderCost> ExecuteCalculationsAsync(WorkOrder workOrder, bool onCreate = false) {
-        try {
-            if (onCreate) {
-                await SetInvoiceCreatedFlagAsync(workOrder);
-            }
-            
-            var employees = await GetAllRelatedEmployeesAsync(workOrder.Id);
-            var activities = await GetAllRelatedActivitiesAsync(workOrder.Id);
-            var monthlyActivityCosts = await CalculateMonthlyCostAsync(workOrder.Id);
-            var totalEmployees = await GetRelatedEmployeesSizeAsync(workOrder.Id);
-            var totalActivities = await GetRelatedActivitiesSizeAsync(workOrder.Id);
-            var totalHours = await CalculateTotalHoursAsync(workOrder.Id);
-            var totalCost = (await CalculateMonthlyCostAsync(workOrder.Id))
-                .Sum(cost => cost.MonthlyCost);
-            var monthlyCost = (await CalculateMonthlyCostAsync(workOrder.Id))
-                .Sum(cost => cost.MonthlyCost);
-            var activitiesSize = await GetRelatedActivitiesSizeAsync(workOrder.Id);
-            var costPerMonth = activitiesSize == 0 
-                ? 0
-                : monthlyCost / activitiesSize;
-
-            return workOrder.MapToWorkOrderCost(
-                employees, 
-                activities, 
-                monthlyActivityCosts, 
-                totalEmployees,
-                totalActivities,
-                totalHours,
-                totalCost,
-                costPerMonth
-            );
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-
-            throw;
+        if (onCreate) {
+            await SetInvoiceCreatedFlagAsync(workOrder);
         }
+
+        var employees = await GetAllRelatedEmployeesAsync(workOrder.Id);
+        var activities = await GetAllRelatedActivitiesAsync(workOrder.Id);
+        var monthlyActivityCosts = await CalculateMonthlyCostAsync(workOrder.Id);
+        var totalEmployees = await GetRelatedEmployeesSizeAsync(workOrder.Id);
+        var totalActivities = await GetRelatedActivitiesSizeAsync(workOrder.Id);
+        var totalHours = await CalculateTotalHoursAsync(workOrder.Id);
+        var totalCost = (await CalculateMonthlyCostAsync(workOrder.Id))
+            .Sum(cost => cost.MonthlyCost);
+        var monthlyCost = (await CalculateMonthlyCostAsync(workOrder.Id))
+            .Sum(cost => cost.MonthlyCost);
+        var activitiesSize = await GetRelatedActivitiesSizeAsync(workOrder.Id);
+        var costPerMonth = activitiesSize == 0
+            ? 0
+            : monthlyCost / activitiesSize;
+
+        return workOrder.MapToWorkOrderCost(
+            employees,
+            activities,
+            monthlyActivityCosts,
+            totalEmployees,
+            totalActivities,
+            totalHours,
+            totalCost,
+            costPerMonth
+        );
     }
 
     private async Task<int> CalculateTotalHoursAsync(int workOrderId) {
@@ -182,17 +163,15 @@ public class CalculatorService
         var salaries = await _dbContext.Employees
             .Where(em => em.Salaries
                 .Any(sal => sal.EmployeeId == em.Id) &&
-                _dbContext.WorkTimeRecords
-                    .Any(wtr => wtr.EmployeeId == em.Id))
+                    _dbContext.WorkTimeRecords
+                        .Any(wtr => wtr.EmployeeId == em.Id))
             .Select(em => em.MapToEmployeeSalary())
             .ToListAsync();
 
-        var output = workTimeRecords
+        return workTimeRecords
             .Where(wtr => salaries
                 .Any(sal => sal.EmployeeId == wtr.EmployeeId))
             .Select(wtr => wtr.MapToActivityCost(_dbContext, activities, salaries))
             .ToList();
-
-        return output;
     }
 }

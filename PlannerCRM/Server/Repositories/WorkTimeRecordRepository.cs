@@ -17,22 +17,12 @@ public class WorkTimeRecordRepository
 	}
 
     public async Task AddAsync(WorkTimeRecordFormDto dto) {
-        try {
-            var isValid = _validator.ValidateWorkTime(dto);
+        var isValid = _validator.ValidateWorkTime(dto);
 
-            if (isValid) {
-                await _dbContext.WorkTimeRecords.AddAsync(await dto.MapToWorkTimeRecord(_dbContext));
-        
-				if (await _dbContext.SaveChangesAsync() == 0) {
-					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-				}
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-            
-            throw;
+        if (isValid) {
+            await _dbContext.WorkTimeRecords.AddAsync(await dto.MapToWorkTimeRecord(_dbContext));
+    
+            await _dbContext.SaveChangesAsync();
         }
     }
 
@@ -43,50 +33,31 @@ public class WorkTimeRecordRepository
         
         _dbContext.WorkTimeRecords.Remove(workTimeRecordDelete);
         
-        if (await _dbContext.SaveChangesAsync() == 0) {
-            throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-        }
+        await _dbContext.SaveChangesAsync();
     }
     
     public async Task EditAsync(WorkTimeRecordFormDto dto) {
-        try {
-            var isValid = _validator.ValidateWorkTime(dto);
-            
-            if (isValid) {
-                var model = await _dbContext.WorkTimeRecords
-                    .SingleAsync(wtr => wtr.Id == dto.Id);
+        var isValid = _validator.ValidateWorkTime(dto);
         
-                model = await dto.MapToWorkTimeRecord(_dbContext);
-                _dbContext.Update(model);
-        
-				if (await _dbContext.SaveChangesAsync() == 0) {
-					throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-				}
-            } else {
-                throw new DbUpdateException(ExceptionsMessages.IMPOSSIBLE_SAVE_CHANGES);
-            }
-        } catch (Exception exc) {
-            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
-            
-            throw;
+        if (isValid) {
+            var model = await _dbContext.WorkTimeRecords
+                .SingleAsync(wtr => wtr.Id == dto.Id);
+    
+            model = await dto.MapToWorkTimeRecord(_dbContext);
+            _dbContext.Update(model);
+    
+            await _dbContext.SaveChangesAsync();
         }
     }
 
-    public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, string employeeId) {
-        var hasElements = await _dbContext.WorkTimeRecords
-            .AnyAsync(wtr => 
+    public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, string employeeId) {              
+        return await _dbContext.WorkTimeRecords
+            .Select(wtr => wtr.MapToWorkTimeRecordViewDto(_dbContext, workOrderId, activityId, employeeId))
+            .OrderByDescending(wtr => wtr.Hours)
+            .FirstOrDefaultAsync(wtr => 
+                wtr.WorkOrderId == workOrderId && 
                 wtr.ActivityId == activityId && 
                 wtr.EmployeeId == employeeId);
-                
-        return hasElements 
-            ? await _dbContext.WorkTimeRecords
-                .Select(wtr => wtr.MapToWorkTimeRecordViewDto(_dbContext, workOrderId, activityId, employeeId))
-                .OrderByDescending(wtr => wtr.Hours)
-                .FirstAsync(wtr => 
-                    wtr.WorkOrderId == workOrderId && 
-                    wtr.ActivityId == activityId && 
-                    wtr.EmployeeId == employeeId)
-            : new();
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetPaginatedWorkTimeRecordsAsync(int limit, int offset) {
