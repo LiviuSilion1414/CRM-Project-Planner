@@ -42,7 +42,7 @@ public class WorkOrderController(
 
     [HttpGet("get/for/view/{workOrderId}")]
     public async Task<WorkOrderViewDto> GetWorkOrderForViewByIdAsync(int workOrderId) =>
-        await _repo.GetForViewByIdAsync(workOrderId);
+        await _repo.GetForViewByIdAsync(workOrderId, 0, 0);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{workOrderId}")]

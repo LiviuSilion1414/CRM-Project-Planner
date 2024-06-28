@@ -75,7 +75,7 @@ public class ActivityRepository(
         }
     }
 
-    public async Task<ActivityViewDto> GetForViewByIdAsync(int id_, int _1, int _2)
+    public async Task<ActivityViewDto> GetForViewByIdAsync(int id, int _1, int _2)
     {
         return await _dbContext.Activities
             .Select(ac => ac.MapToActivityViewDto(_dbContext))

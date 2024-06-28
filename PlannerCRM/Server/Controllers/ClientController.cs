@@ -13,27 +13,27 @@ public class ClientController(
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPost("add")]
     public async Task<IActionResult> AddClientAsync(ClientFormDto dto) {
-        await _repo.AddClientAsync(dto);
+        await _repo.AddAsync(dto);
         return Ok();
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpPut("edit")]
     public async Task<IActionResult> EditClientAsync(ClientFormDto dto) {
-        await _repo.EditClientAsync(dto);
+        await _repo.EditAsync(dto);
         return Ok();
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpDelete("delete/{clientId}")]
     public async Task<IActionResult> DeleteClientAsync(int clientId) {
-        await _repo.DeleteClientAsync(clientId);
+        await _repo.DeleteAsync(clientId);
         return Ok();
     }
 
     [HttpGet("get/for/view/{clientId}")]
     public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) =>
-        await _repo.GetClientForViewByIdAsync(clientId);
+        await _repo.GetForViewByIdAsync(clientId, 0, 0);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{clientId}")]

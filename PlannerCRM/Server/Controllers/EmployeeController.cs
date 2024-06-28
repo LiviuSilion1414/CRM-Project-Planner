@@ -59,7 +59,7 @@ public class EmployeeController(
 
     [HttpGet("get/for/view/{employeeId}")]
     public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(int employeeId) =>
-        await _repo.GetForViewByIdAsync(employeeId);
+        await _repo.GetForViewByIdAsync(employeeId, 0, 0);
 
     [HttpGet("get/for/edit/{employeeId}")]
     public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) =>
@@ -83,7 +83,7 @@ public class EmployeeController(
         await _repo.GetEmployeeIdAsync(email);
 
     [HttpGet("get/id-check/{email}")]
-    public async Task<string> GetUserIdCheckAsync(string email) =>
+    public async Task<int> GetUserIdCheckAsync(string email) =>
         (await _repo.GetEmployeeIdAsync(email)).Id;
 
     [HttpGet("get/size")]

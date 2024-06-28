@@ -28,7 +28,7 @@ public class WorkTimeRecordController(
 
     [HttpGet("get/{workOrderId}/{activityId}/{employeeId}")]
     public async Task<WorkTimeRecordViewDto> GetWorkTimeRecordAsync(int workOrderId, int activityId, int employeeId) =>
-        await _repo.GetAsync(workOrderId, activityId, employeeId);
+        await _repo.GetForViewByIdAsync(workOrderId, activityId, employeeId);
 
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<WorkTimeRecordViewDto>> GetPaginatedWorkTimeRecordsAsync(int limit, int offset) =>

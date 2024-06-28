@@ -37,7 +37,7 @@ public class ActivityController(
     [Authorize]
     [HttpGet("get/{activityId}")]
     public async Task<ActivityViewDto> GetActivityForViewByIdAsync(int activityId) =>
-        await _repo.GetForViewByIdAsync(activityId);
+        await _repo.GetForViewByIdAsync(activityId, 0, 0);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{activityId}")]
