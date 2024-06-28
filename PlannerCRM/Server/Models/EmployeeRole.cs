@@ -1,4 +1,6 @@
 namespace PlannerCRM.Server.Models;
 
-public class EmployeeRole : IdentityRole<int>
-{ }
+public class EmployeeRole : IdentityRole
+{ 
+    public new int Id { get; set; }
+}
