@@ -2,12 +2,10 @@ namespace PlannerCRM.Server.Repositories;
 
 public class ActivityRepository(
         AppDbContext dbContext,
-        DtoValidatorUtillity validator,
-        Logger<DtoValidatorUtillity> logger) : IRepository<ActivityFormDto>, IActivityRepository
+        DtoValidatorUtillity validator) : IRepository<ActivityFormDto>, IActivityRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly DtoValidatorUtillity _validator = validator;
-    private readonly ILogger<DtoValidatorUtillity> _logger = logger;
 
     public async Task AddAsync(ActivityFormDto dto)
     {

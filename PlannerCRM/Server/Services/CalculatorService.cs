@@ -1,9 +1,8 @@
 namespace PlannerCRM.Server.Services;
 
-public class CalculatorService(AppDbContext dbContext, ILogger<CalculatorService> logger)
+public class CalculatorService(AppDbContext dbContext)
 {
     private readonly AppDbContext _dbContext = dbContext;
-    private readonly ILogger<CalculatorService> _logger = logger;
 
     public async Task<int> GetCollectionSizeAsync() => await _dbContext.WorkOrderCosts.CountAsync();
 

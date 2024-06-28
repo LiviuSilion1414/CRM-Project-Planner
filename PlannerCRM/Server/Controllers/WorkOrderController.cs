@@ -3,9 +3,9 @@ namespace PlannerCRM.Server.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class WorkOrderController(IRepository<WorkOrderFormDto, WorkOrderViewDto> repo, IWorkOrderRepository workOrderRepository) : ControllerBase
+public class WorkOrderController(IRepository<WorkOrderFormDto> repo, IWorkOrderRepository workOrderRepository) : ControllerBase
 {
-    private readonly IRepository<WorkOrderFormDto, WorkOrderViewDto> _repo = repo;
+    private readonly IRepository<WorkOrderFormDto> _repo = repo;
     private readonly IWorkOrderRepository _workOrderRepository = workOrderRepository;
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
@@ -36,7 +36,7 @@ public class WorkOrderController(IRepository<WorkOrderFormDto, WorkOrderViewDto>
 
     [HttpGet("get/for/view/{workOrderId}")]
     public async Task<WorkOrderViewDto> GetWorkOrderForViewByIdAsync(int workOrderId) =>
-        await _repo.GetForViewByIdAsync(workOrderId, 0, 0);
+        await _workOrderRepository.GetForViewByIdAsync(workOrderId);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/delete/{workOrderId}")]

@@ -3,12 +3,9 @@ namespace PlannerCRM.Server.Controllers;
 [Authorize(Roles = nameof(Roles.PROJECT_MANAGER))]
 [ApiController]
 [Route("api/[controller]")]
-public class CalculatorController(
-    CalculatorService calculator,
-    ILogger<CalculatorService> logger) : ControllerBase
+public class CalculatorController(CalculatorService calculator) : ControllerBase
 {
     private readonly CalculatorService _calculator = calculator;
-    private readonly ILogger<CalculatorService> _logger = logger;
 
     [HttpGet("get/paginated/{limit}/{offset}")]
     public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrderCostsAsync(int limit, int offset) =>     

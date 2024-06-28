@@ -2,12 +2,10 @@ namespace PlannerCRM.Server.Repositories;
 
 public class ClientRepository(
     AppDbContext dbContext,
-    DtoValidatorUtillity validator,
-    Logger<DtoValidatorUtillity> logger) : IRepository<ClientFormDto>, IClientRepository
+    DtoValidatorUtillity validator) : IRepository<ClientFormDto>, IClientRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly DtoValidatorUtillity _validator = validator;
-    private readonly ILogger<DtoValidatorUtillity> _logger = logger;
 
     public async Task AddAsync(ClientFormDto dto) {
         var isValid = await _validator.ValidateClientAsync(dto, OperationType.ADD);

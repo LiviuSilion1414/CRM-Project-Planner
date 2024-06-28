@@ -4,12 +4,10 @@ public class EmployeeRepository(
     AppDbContext dbContext,
     DtoValidatorUtillity validator,
     UserManager<Employee> userManager,
-    RoleManager<EmployeeRole> roleManager,
-    Logger<DtoValidatorUtillity> logger) : IRepository<EmployeeFormDto>, IEmployeeRepository
+    RoleManager<EmployeeRole> roleManager) : IRepository<EmployeeFormDto>, IEmployeeRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly DtoValidatorUtillity _validator = validator;
-    private readonly ILogger<DtoValidatorUtillity> _logger = logger;
     private readonly UserManager<Employee> _userManager = userManager;
     private readonly RoleManager<EmployeeRole> _roleManager = roleManager;
 
