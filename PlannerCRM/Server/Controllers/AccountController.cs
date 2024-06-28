@@ -43,8 +43,8 @@ public class AccountController(
         return string.Empty;    
     }
 
-    private async Task<string> GetCurrentUserIdAsync() =>
-        (await _userManager.FindByEmailAsync(User.Identity.Name)).Id ?? string.Empty;
+    private async Task<int> GetCurrentUserIdAsync() =>
+        (await _userManager.FindByEmailAsync(User.Identity.Name)).Id;
 
     private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync() {
         var profilePic = await _dbCcontext.ProfilePictures
