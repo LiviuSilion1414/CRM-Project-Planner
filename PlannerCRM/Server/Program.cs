@@ -62,14 +62,16 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
 
-await app.SeedDataAsync();
+using var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseWebAssemblyDebugging();
+if (!await context.Users.AnyAsync()) {
+    await app.SeedDataAsync();
 }
-else
-{
+
+if (app.Environment.IsDevelopment()) {
+    app.UseWebAssemblyDebugging();
+} else {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
