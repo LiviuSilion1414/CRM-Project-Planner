@@ -1,13 +1,9 @@
 namespace PlannerCRM.Server.DataAccess;
 
-public class AppDbContext : IdentityDbContext<IdentityUser>
+public class AppDbContext(DbContextOptions<AppDbContext> options) : 
+    IdentityDbContext<IdentityUser>(options), IdentityDbContext<IdentityUser>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options)
-    { }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder
             .Entity<Employee>()
             .Property(em => em.Id);
@@ -29,7 +25,6 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         base.OnModelCreating(modelBuilder);
     }
 
-    
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
     public DbSet<EmployeeActivity> EmployeeActivity { get; set; }

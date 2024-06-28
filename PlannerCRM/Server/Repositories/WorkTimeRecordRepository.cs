@@ -1,20 +1,13 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class WorkTimeRecordRepository
+public class WorkTimeRecordRepository(
+    AppDbContext db,
+    DtoValidatorUtillity validator,
+    Logger<DtoValidatorUtillity> logger)
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DtoValidatorUtillity _validator;
-	private readonly ILogger<DtoValidatorUtillity> _logger;
-
-    public WorkTimeRecordRepository(
-        AppDbContext db, 
-        DtoValidatorUtillity validator, 
-        Logger<DtoValidatorUtillity> logger) 
-    {
-	    _dbContext = db;
-	    _validator = validator;
-		_logger = logger;
-	}
+    private readonly AppDbContext _dbContext = db;
+    private readonly DtoValidatorUtillity _validator = validator;
+	private readonly ILogger<DtoValidatorUtillity> _logger = logger;
 
     public async Task AddAsync(WorkTimeRecordFormDto dto) {
         var isValid = _validator.ValidateWorkTime(dto);

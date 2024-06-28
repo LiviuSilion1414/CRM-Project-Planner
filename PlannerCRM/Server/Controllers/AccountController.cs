@@ -4,82 +4,63 @@ namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController : ControllerBase
+public class AccountController(
+    UserManager<Employee> userManager,
+    SignInManager<Employee> signInManager,
+    AppDbContext dbContext) : ControllerBase
 {
-    private readonly UserManager<Employee> _userManager;
-    private readonly SignInManager<Employee> _signInManager;
-    private readonly AppDbContext _dbCcontext;
-
-    public AccountController(
-        UserManager<Employee> userManager, 
-        SignInManager<Employee> signInManager,
-        AppDbContext dbContext) 
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _dbCcontext = dbContext;
-    }
+    private readonly UserManager<Employee> _userManager = userManager;
+    private readonly SignInManager<Employee> _signInManager = signInManager;
+    private readonly AppDbContext _dbCcontext = dbContext;
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto) {
         var user = await _userManager.FindByEmailAsync(dto.Email);
-
         if (user is null || user.IsArchived || user.IsDeleted) {
             return NotFound(LoginFeedBack.USER_NOT_FOUND);
         }
-
+        
         var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
-
         if (!userPasswordIsCorrect) {
             return BadRequest(LoginFeedBack.WRONG_PASSWORD);
         }
-        
-        await _signInManager.SignInAsync(user, false);
 
+        await _signInManager.SignInAsync(user, false);
         return Ok(LoginFeedBack.CONNECTED);
     }
 
     [Authorize]
     [HttpGet("logout")]
-    public async Task LogoutAsync() => 
-        await _signInManager.SignOutAsync();
+    public async Task LogoutAsync() => await _signInManager.SignOutAsync();
     
     [HttpGet("user/role")]
     public async Task<string> GetUserRoleAsync() {
         if (User is not null && User.Identity.IsAuthenticated) {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
-
             return roles.Single();
         }
         return string.Empty;    
     }
 
-    private async Task<string> GetCurrentUserIdAsync() {
-        var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+    private async Task<string> GetCurrentUserIdAsync() =>
+        (await _userManager.FindByEmailAsync(User.Identity.Name)).Id ?? string.Empty;
 
-        return user.Id ?? string.Empty;
-    }
-
-    private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync()
-    {
+    private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync() {
         var profilePic = await _dbCcontext.ProfilePictures
             .SingleAsync(pp => _dbCcontext.Employees
                 .Any(em => pp.EmployeeInfo.Email == em.Email && em.Email == User.Identity.Name)) ?? new();
-
         return new ProfilePictureDto() {
             ImageType = profilePic.ImageType,
             Thumbnail = profilePic.Thumbnail
         };
     }
 
-    private async Task<string> GetCurrentUserFullName()
-    {
+    private async Task<string> GetCurrentUserFullName() {
         if (User.Identity.IsAuthenticated) {
             return (await _userManager.FindByEmailAsync(User.Identity.Name))
                 .FullName;
         }
-
         return string.Empty;
     }
 
@@ -97,7 +78,6 @@ public class AccountController : ControllerBase
                     .ToDictionary(c => c.Type, c => c.Value)
             };
         }
-
         return new();
     }
 }

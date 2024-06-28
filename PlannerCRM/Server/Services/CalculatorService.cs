@@ -1,15 +1,9 @@
 namespace PlannerCRM.Server.Services;
 
-public class CalculatorService
+public class CalculatorService(AppDbContext dbContext, ILogger<CalculatorService> logger)
 {
-    private readonly AppDbContext _dbContext;
-    private readonly ILogger<CalculatorService> _logger;
-
-    public CalculatorService(AppDbContext dbContext, ILogger<CalculatorService> logger)
-    {
-        _dbContext = dbContext;
-        _logger = logger;
-    }
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly ILogger<CalculatorService> _logger = logger;
 
     public async Task<int> GetCollectionSizeAsync() => await _dbContext.WorkOrderCosts.CountAsync();
 
@@ -20,13 +14,11 @@ public class CalculatorService
         var isAnyInvoice = await _dbContext.WorkOrderCosts
             .AnyAsync(inv => inv.WorkOrderId == workOrderId);
 
-        if (!isAnyWorkOrder)
-        {
+        if (!isAnyWorkOrder) {
             throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
         }
 
-        if (isAnyInvoice)
-        {
+        if (isAnyInvoice) {
             throw new DuplicateElementException(ExceptionsMessages.DUPLICATE_OBJECT);
         }
 
@@ -54,8 +46,7 @@ public class CalculatorService
     }
 
     public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId) {
-        if (workOrderId == 0)
-        {
+        if (workOrderId == 0) {
             throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
         }
 
@@ -78,8 +69,7 @@ public class CalculatorService
         return workOrderCost.MapToWorkOrderCostDto(employees, activities, monthlyActivityCosts);
     }
 
-    private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder)
-    {
+    private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder) {
         workOrder.IsInvoiceCreated = true;
 
         _dbContext.Update(workOrder);

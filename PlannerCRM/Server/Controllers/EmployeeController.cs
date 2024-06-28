@@ -3,26 +3,18 @@ namespace PlannerCRM.Server.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class EmployeeController : ControllerBase
+public class EmployeeController(
+    EmployeeRepository repo,
+    Logger<EmployeeRepository> logger,
+    UserManager<IdentityUser> userManager) : ControllerBase
 {
-    private readonly EmployeeRepository _repo;
-    private readonly ILogger<EmployeeRepository> _logger;
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public EmployeeController(
-        EmployeeRepository repo, 
-        Logger<EmployeeRepository> logger,
-        UserManager<IdentityUser> userManager) 
-    {
-        _repo = repo;
-        _logger = logger;
-        _userManager = userManager;
-    }
+    private readonly EmployeeRepository _repo = repo;
+    private readonly ILogger<EmployeeRepository> _logger = logger;
+    private readonly UserManager<IdentityUser> _userManager = userManager;
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpPost("add")]
     public async Task<IActionResult> AddEmployeeAsync(EmployeeFormDto dto) {
-
         await _repo.AddAsync(dto);
         return Ok(SuccessfulCrudFeedBack.USER_ADD);
     }
@@ -30,6 +22,7 @@ public class EmployeeController : ControllerBase
     [Authorize]
     [HttpPut("edit")]
     public async Task<IActionResult> EditEmployeeAsync(EmployeeFormDto dto) {
+        await _repo.EditAsync(dto);
         return Ok(SuccessfulCrudFeedBack.USER_EDIT);
     }
 
@@ -46,7 +39,7 @@ public class EmployeeController : ControllerBase
         await _repo.ArchiveAsync(employeeId);
         return Ok();
     }
-    
+
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("restore/{employeeId}")]
     public async Task<IActionResult> RestoreEmployeeAsync(string employeeId) {
@@ -56,48 +49,39 @@ public class EmployeeController : ControllerBase
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/restore/{employeeId}")]
-    public async Task<EmployeeSelectDto> GetEmployeeForRestoreByIdAsync(string employeeId) {
-        return await _repo.GetForRestoreAsync(employeeId);
-    }
+    public async Task<EmployeeSelectDto> GetEmployeeForRestoreByIdAsync(string employeeId) =>
+        await _repo.GetForRestoreAsync(employeeId);
 
     [HttpGet("get/for/view/{employeeId}")]
-    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(string employeeId) {
-        return await _repo.GetForViewByIdAsync(employeeId);
-    }
+    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(string employeeId) =>
+        await _repo.GetForViewByIdAsync(employeeId);
 
-    [HttpGet("get/for/edit/{employeeId}")] 
-    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(string employeeId)  {
-        return await _repo.GetForEditByIdAsync(employeeId);
-    }
+    [HttpGet("get/for/edit/{employeeId}")]
+    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(string employeeId) =>
+        await _repo.GetForEditByIdAsync(employeeId);
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/delete/{employeeId}")]
-    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(string employeeId) {
-        return await _repo.GetForDeleteByIdAsync(employeeId);
-    }
+    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(string employeeId) =>
+        await _repo.GetForDeleteByIdAsync(employeeId);
 
     [HttpGet("search/{email}")]
-    public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) {
-        return await _repo.SearchEmployeeAsync(email);
-    }
-
+    public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) =>
+        await _repo.SearchEmployeeAsync(email);
+    
     [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset) {
-        return await _repo.GetPaginatedEmployeesAsync(limit, offset);
-    }
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset) =>
+        await _repo.GetPaginatedEmployeesAsync(limit, offset);
 
     [HttpGet("get/id/{email}")]
-    public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email) {
-        return await _repo.GetEmployeeIdAsync(email);
-    }
+    public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email) =>
+        await _repo.GetEmployeeIdAsync(email);
 
     [HttpGet("get/id-check/{email}")]
-    public async Task<string> GetUserIdCheckAsync(string email) {
-        return (await _repo.GetEmployeeIdAsync(email)).Id;
-    }
+    public async Task<string> GetUserIdCheckAsync(string email) =>
+        (await _repo.GetEmployeeIdAsync(email)).Id;
 
-    [HttpGet("get/size")] 
-    public async Task<int> GetEmployeesSizeAsync() {
-        return await _repo.GetEmployeesSizeAsync();
-    }
+    [HttpGet("get/size")]
+    public async Task<int> GetEmployeesSizeAsync() =>
+        await _repo.GetEmployeesSizeAsync();
 }

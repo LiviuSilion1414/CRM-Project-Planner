@@ -1,14 +1,9 @@
 namespace PlannerCRM.Server.Utilities;
 
-public class DtoValidatorUtillity
+public class DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser> userManager)
 {
-    private readonly AppDbContext _dbContext;
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser> userManager) {
-        _dbContext = context;
-        _userManager = userManager;
-    }
+    private readonly AppDbContext _dbContext = context;
+    private readonly UserManager<IdentityUser> _userManager = userManager;
 
     public async Task<bool> ValidateEmployeeAsync(EmployeeFormDto dto, OperationType operation) {
         var isValid = CheckDtoHealth(dto);

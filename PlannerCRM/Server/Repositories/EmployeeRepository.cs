@@ -1,26 +1,17 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class EmployeeRepository
+public class EmployeeRepository(
+    AppDbContext dbContext,
+    DtoValidatorUtillity validator,
+    UserManager<IdentityUser> userManager,
+    RoleManager<IdentityRole> roleManager,
+    Logger<DtoValidatorUtillity> logger)
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DtoValidatorUtillity _validator;
-    private readonly ILogger<DtoValidatorUtillity> _logger;
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-
-    public EmployeeRepository(
-        AppDbContext dbContext, 
-        DtoValidatorUtillity validator,
-        UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager,
-        Logger<DtoValidatorUtillity> logger) 
-    {
-        _dbContext = dbContext;
-        _validator = validator;
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _logger = logger;
-    }
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly DtoValidatorUtillity _validator = validator;
+    private readonly ILogger<DtoValidatorUtillity> _logger = logger;
+    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
     public async Task AddAsync(EmployeeFormDto dto) {
         var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);

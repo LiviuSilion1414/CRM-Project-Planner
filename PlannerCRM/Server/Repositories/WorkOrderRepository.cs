@@ -1,22 +1,15 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class WorkOrderRepository
+public class WorkOrderRepository(
+    AppDbContext dbContext,
+    DtoValidatorUtillity validator,
+    Logger<DtoValidatorUtillity> logger)
 {
-	private readonly AppDbContext _dbContext;
-	private readonly DtoValidatorUtillity _validator;
-	private readonly ILogger<DtoValidatorUtillity> _logger;
+	private readonly AppDbContext _dbContext = dbContext;
+	private readonly DtoValidatorUtillity _validator = validator;
+	private readonly ILogger<DtoValidatorUtillity> _logger = logger;
 
-	public WorkOrderRepository(
-		AppDbContext dbContext, 
-		DtoValidatorUtillity validator, 
-		Logger<DtoValidatorUtillity> logger) 
-	{
-		_dbContext = dbContext;
-		_validator = validator;
-		_logger = logger;
-	}
-
-	public async Task AddAsync(WorkOrderFormDto dto) {
+    public async Task AddAsync(WorkOrderFormDto dto) {
 		var isValid = await _validator.ValidateWorkOrderAsync(dto, OperationType.ADD);
 		
 		if (isValid) {

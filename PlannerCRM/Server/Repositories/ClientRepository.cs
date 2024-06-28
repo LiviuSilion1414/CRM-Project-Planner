@@ -1,27 +1,19 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class ClientRepository
+public class ClientRepository(
+    AppDbContext dbContext,
+    DtoValidatorUtillity validator,
+    Logger<DtoValidatorUtillity> logger)
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DtoValidatorUtillity _validator;
-    private readonly ILogger<DtoValidatorUtillity> _logger;
-
-    public ClientRepository(
-        AppDbContext dbContext, 
-        DtoValidatorUtillity validator, 
-        Logger<DtoValidatorUtillity> logger) 
-    {
-		_dbContext = dbContext;
-		_validator = validator;
-		_logger = logger;
-	}
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly DtoValidatorUtillity _validator = validator;
+    private readonly ILogger<DtoValidatorUtillity> _logger = logger;
 
     public async Task AddClientAsync(ClientFormDto dto) {
         var isValid = await _validator.ValidateClientAsync(dto, OperationType.ADD);
         
         if (isValid) {
             await _dbContext.Clients.AddAsync(dto.MapToFirmClient());
-            
             await _dbContext.SaveChangesAsync();
         }        
     }
@@ -36,7 +28,6 @@ public class ClientRepository
             model = dto.MapToFirmClient();
             
             _dbContext.Clients.Update(model);
-            
             await _dbContext.SaveChangesAsync();
         }
     }
@@ -46,7 +37,6 @@ public class ClientRepository
 
         if (clientDelete is not null) {
             _dbContext.Remove(clientDelete);
-        
             await _dbContext.SaveChangesAsync();
         }
     }
@@ -79,9 +69,8 @@ public class ClientRepository
             .ToListAsync();
     }
 
-    public async Task<int> GetCollectionSizeAsync() {
-        return await _dbContext.Clients.CountAsync();
-    }
+    public async Task<int> GetCollectionSizeAsync() =>
+        await _dbContext.Clients.CountAsync();
 
     public async Task<List<ClientViewDto>> SearchClientAsync(string clientName) {
         return await _dbContext.Clients

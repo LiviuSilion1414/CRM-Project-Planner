@@ -3,8 +3,9 @@ namespace PlannerCRM.Server.Extensions;
 
 public static class DbSeederExtension
 {
-    public static async Task SeedDataAsync(this IApplicationBuilder app)
-    {
+    public static async Task SeedDataAsync(this IApplicationBuilder app) {
+        ArgumentNullException.ThrowIfNull(app, nameof(app));
+
         using var scope = app.ApplicationServices.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
@@ -15,18 +16,14 @@ public static class DbSeederExtension
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Employee>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<EmployeeRole>>();
 
-        ArgumentNullException.ThrowIfNull(app, nameof(app));
-
         await AddRolesAsync(roleManager);
         await AddAccountManagerAsync(userManager);
 
         await context.SaveChangesAsync();
     }
 
-    private static async Task AddAccountManagerAsync(UserManager<Employee> userManager)
-    {
-        var accountManager = new Employee
-        {
+    private static async Task AddAccountManagerAsync(UserManager<Employee> userManager) {
+        var accountManager = new Employee {
             Id = AccountManagerData.GUID,
             Email = AccountManagerData.EMAIL,
             EmailConfirmed = true,
@@ -42,11 +39,9 @@ public static class DbSeederExtension
         await userManager.AddToRoleAsync(accountManager, nameof(Roles.ACCOUNT_MANAGER));
     }
 
-    private static async Task AddRolesAsync(RoleManager<EmployeeRole> roleManager)
-    {
+    private static async Task AddRolesAsync(RoleManager<EmployeeRole> roleManager) {
         await roleManager.CreateAsync(
-            new EmployeeRole
-            {
+            new EmployeeRole {
                 Name = nameof(Roles.ACCOUNT_MANAGER)
             }
         );
@@ -54,8 +49,7 @@ public static class DbSeederExtension
         foreach (var role in Enum.GetValues(typeof(Roles)))
         {
             await roleManager.CreateAsync(
-                new EmployeeRole
-                {
+                new EmployeeRole {
                     Name = role.ToString()
                 }
             );

@@ -1,20 +1,13 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class ActivityRepository
+public class ActivityRepository(
+        AppDbContext dbContext,
+        DtoValidatorUtillity validator,
+        Logger<DtoValidatorUtillity> logger)
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DtoValidatorUtillity _validator;
-    private readonly ILogger<DtoValidatorUtillity> _logger;
-
-    public ActivityRepository(
-            AppDbContext dbContext, 
-            DtoValidatorUtillity validator, 
-            Logger<DtoValidatorUtillity> logger) 
-    {
-		_dbContext = dbContext;
-		_validator = validator;
-		_logger = logger;
-	}
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly DtoValidatorUtillity _validator = validator;
+    private readonly ILogger<DtoValidatorUtillity> _logger = logger;
 
     public async Task AddAsync(ActivityFormDto dto) {
         var isValid = await _validator.ValidateActivityAsync(dto, OperationType.ADD);
@@ -121,8 +114,6 @@ public class ActivityRepository
             .ToListAsync();
     }
 
-    public async Task<int> GetCollectionSizeByEmployeeIdAsync(string employeeId) {
-        return (await GetActivityByEmployeeId(employeeId))
-            .Count;
-    }
+    public async Task<int> GetCollectionSizeByEmployeeIdAsync(string employeeId) =>
+        (await GetActivityByEmployeeId(employeeId)).Count;
 }
