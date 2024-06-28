@@ -1,4 +1,3 @@
-
 namespace PlannerCRM.Server.Middlewares;
 
 public class CustomExceptionHandlerMiddleware : IMiddleware
