@@ -56,21 +56,7 @@ public class CalculatorService
             .OrderBy(wo => wo.Id)
             .Skip(limit)
             .Take(offset)
-            .Select(wo => 
-                new WorkOrderViewDto {
-                    Id = wo.Id,
-                    Name = wo.Name,
-                    StartDate = wo.StartDate,
-                    FinishDate = wo.FinishDate,
-                    IsCompleted = wo.IsDeleted,
-                    IsDeleted = wo.IsDeleted,
-                    IsInvoiceCreated = wo.IsInvoiceCreated,
-                    ClientId = wo.ClientId,
-                    ClientName = _dbContext.Clients
-                        .Single(cl => cl.Id == wo.ClientId)
-                        .Name
-                }
-            )
+            .Select(wo => wo.MapToWorkOrderViewDto(_dbContext))
             .ToListAsync();
     }
 
@@ -85,71 +71,18 @@ public class CalculatorService
             var workOrderCost = await ExecuteCalculationsAsync(workOrder);
 
             var employees = workOrderCost.Employees
-                    .Select(em =>
-                        new EmployeeViewDto {
-                            Id = em.Id,
-                            FirstName = em.FirstName,
-                            LastName = em.LastName,
-                            FullName = $"{em.FirstName} {em.LastName}",
-                            BirthDay = em.BirthDay,
-                            StartDate = em.StartDate,
-                            NumericCode = em.NumericCode,
-                            Password = em.Password,
-                            Email = em.Email,
-                            IsDeleted = em.IsDeleted,
-                            IsArchived = em.IsArchived,
-                            Role = em.Role,
-                            CurrentHourlyRate = em.CurrentHourlyRate,
-                            EmployeeSalaries = new(),
-                            EmployeeActivities = new()
-                        }
-                    )
-                    .ToList();
+                .Select(em => em.MapToEmployeeViewDto(_dbContext))
+                .ToList();
 
             var activities = workOrderCost.Activities
-                    .Select(ac =>
-                        new ActivityViewDto {
-                            Id = ac.Id,
-                            Name = ac.Name,
-                            StartDate = ac.StartDate,
-                            FinishDate = ac.FinishDate,
-                            WorkOrderId = ac.WorkOrderId,
-                            EmployeeActivity = new()
-                        }
-                    )
-                    .ToList();
+                .Select(ac => ac.MapToActivityViewDto(_dbContext))
+                .ToList();
 
             var monthlyActivityCosts = workOrderCost.MonthlyActivityCosts
-                    .Select(ac =>
-                        new ActivityCostDto {
-                            Id = ac.Id,
-                            Name = ac.Name,
-                            StartDate = ac.StartDate,
-                            FinishDate = ac.FinishDate,
-                            MonthlyCost = ac.MonthlyCost,
-                            Employees = employees
-                        }
-                    )
-                    .ToList();
+                .Select(ac => ac.MapToActivityCostDto(employees))
+                .ToList();
 
-            return new WorkOrderCostDto {
-                Id = workOrderCost.Id,
-                WorkOrderId = workOrderCost.WorkOrderId,
-                Name = workOrderCost.Name,
-                StartDate = workOrderCost.StartDate,
-                FinishDate = workOrderCost.FinishDate,
-                TotalTime = workOrderCost.FinishDate - workOrderCost.StartDate,
-                ClientId = workOrderCost.ClientId,
-                IsInvoiceCreated = workOrderCost.IsCreated,
-                Employees = employees,
-                Activities = activities,
-                MonthlyActivityCosts = monthlyActivityCosts,
-                TotalEmployees = workOrderCost.TotalEmployees,
-                TotalActivities = workOrderCost.TotalActivities,
-                TotalHours = workOrderCost.TotalHours,
-                TotalCost = workOrderCost.TotalCost,
-                CostPerMonth = workOrderCost.CostPerMonth
-            };
+            return workOrderCost.MapToWorkOrderCostDto(employees, activities, monthlyActivityCosts);
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -188,24 +121,16 @@ public class CalculatorService
                 ? 0
                 : monthlyCost / activitiesSize;
 
-            return new WorkOrderCost {
-                WorkOrderId = workOrder.Id,
-                Name = workOrder.Name,
-                StartDate = workOrder.StartDate,
-                FinishDate = workOrder.FinishDate,
-                TotalTime = workOrder.FinishDate - workOrder.StartDate,
-                IsCreated = true,
-                IssuedDate = DateTime.Now,
-                ClientId = workOrder.ClientId,
-                Employees = employees,
-                Activities = activities,
-                MonthlyActivityCosts = monthlyActivityCosts,
-                TotalEmployees = totalEmployees,
-                TotalActivities = totalActivities,
-                TotalHours = totalHours,
-                TotalCost = totalCost,
-                CostPerMonth = costPerMonth
-            };
+            return workOrder.MapToWorkOrderCost(
+                employees, 
+                activities, 
+                monthlyActivityCosts, 
+                totalEmployees,
+                totalActivities,
+                totalHours,
+                totalCost,
+                costPerMonth
+            );
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -259,45 +184,13 @@ public class CalculatorService
                 .Any(sal => sal.EmployeeId == em.Id) &&
                 _dbContext.WorkTimeRecords
                     .Any(wtr => wtr.EmployeeId == em.Id))
-            .Select(em => 
-                new EmployeeSalary {
-                    EmployeeId = em.Id,
-                    StartDate = em.Salaries
-                        .Single(sal => sal.EmployeeId == em.Id)
-                        .StartDate,
-                    FinishDate = em.Salaries
-                        .Single(sal => sal.EmployeeId == em.Id)
-                        .FinishDate,
-                    Salary = em.Salaries
-                        .Single(sal => sal.EmployeeId == em.Id)
-                        .Salary
-                }
-            )
+            .Select(em => em.MapToEmployeeSalary())
             .ToListAsync();
 
         var output = workTimeRecords
             .Where(wtr => salaries
                 .Any(sal => sal.EmployeeId == wtr.EmployeeId))
-            .Select(activityCost =>
-                new ActivityCost {
-                    Id = activityCost.Id,
-                    Name = activities
-                        .First(ac => ac.WorkOrderId == activityCost.WorkOrderId)
-                        .Name,
-                    StartDate = activities
-                        .First(ac => ac.WorkOrderId == activityCost.WorkOrderId)
-                        .StartDate,
-                    FinishDate = activities
-                        .First(ac => ac.WorkOrderId == activityCost.WorkOrderId)
-                        .FinishDate,
-                    Employees = _dbContext.Employees
-                        .Where(em => em.Id == activityCost.EmployeeId)
-                        .ToList(),
-                    MonthlyCost = salaries
-                        .First(ems => ems.EmployeeId == activityCost.EmployeeId)
-                        .Salary * activityCost.Hours
-                }
-            )
+            .Select(wtr => wtr.MapToActivityCost(_dbContext, activities, salaries))
             .ToList();
 
         return output;
