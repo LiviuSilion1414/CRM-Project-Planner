@@ -5,7 +5,7 @@ namespace PlannerCRM.Client.Components.ProfileMenu.ProfileSettings;
 [Authorize]
 public partial class ProfileInfoSettings : ComponentBase
 {
-    [Parameter] public string Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
     [Inject] public AccountManagerCrudService AccountManagerService { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }

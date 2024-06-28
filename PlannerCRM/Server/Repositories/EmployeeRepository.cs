@@ -3,15 +3,15 @@ namespace PlannerCRM.Server.Repositories;
 public class EmployeeRepository(
     AppDbContext dbContext,
     DtoValidatorUtillity validator,
-    UserManager<IdentityUser> userManager,
-    RoleManager<IdentityRole> roleManager,
-    Logger<DtoValidatorUtillity> logger)
+    UserManager<Employee> userManager,
+    RoleManager<EmployeeRole> roleManager,
+    Logger<DtoValidatorUtillity> logger) : IRepository<EmployeeFormDto, EmployeeViewDto>
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly DtoValidatorUtillity _validator = validator;
     private readonly ILogger<DtoValidatorUtillity> _logger = logger;
-    private readonly UserManager<IdentityUser> _userManager = userManager;
-    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+    private readonly UserManager<Employee> _userManager = userManager;
+    private readonly RoleManager<EmployeeRole> _roleManager = roleManager;
 
     public async Task AddAsync(EmployeeFormDto dto) {
         var isValid = await _validator.ValidateEmployeeAsync(dto, OperationType.ADD);
@@ -29,7 +29,7 @@ public class EmployeeRepository(
     }
 
     private async Task AddUserAsync(EmployeeFormDto dto) {
-        var user = new IdentityUser {
+        var user = new Employee {
             Email = dto.Email,
             UserName = dto.Email,
             NormalizedEmail = dto.Email.ToUpper()
@@ -68,7 +68,7 @@ public class EmployeeRepository(
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task ArchiveAsync(string employeeId) {
+    public async Task ArchiveAsync(int employeeId) {
         var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
         if (isValid) {
@@ -83,7 +83,7 @@ public class EmployeeRepository(
         }
     }
     
-    public async Task RestoreAsync(string employeeId) {
+    public async Task RestoreAsync(int employeeId) {
         var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
         if (isValid) {
@@ -98,16 +98,13 @@ public class EmployeeRepository(
         }
     }
 
-    public async Task DeleteAsync(string employeeId) {
+    public async Task DeleteAsync(int employeeId) {
         var isValid = await _validator.ValidateDeleteEmployeeAsync(employeeId);
 
         if (isValid) {
             var employee = await _dbContext.Employees
                 .SingleAsync(em => em.Id == employeeId);
             _dbContext.Employees.Remove(employee);
-
-            var user = await _userManager.FindByIdAsync(employeeId);
-            await _userManager.DeleteAsync(user);
         }
     }
 
@@ -169,26 +166,26 @@ public class EmployeeRepository(
         }
     }
 
-    public async Task<EmployeeViewDto> GetForViewByIdAsync(string employeeId) {
+    public async Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId, int _1, int _2) {
         return await _dbContext.Employees
             .Select(em => em.MapToEmployeeViewDto(_dbContext))   
             .SingleAsync(em => em.Id == employeeId);
     }
 
-    public async Task<EmployeeSelectDto> GetForRestoreAsync(string employeeId) {
+    public async Task<EmployeeSelectDto> GetForRestoreAsync(int employeeId) {
         return await _dbContext.Employees
             .Select(em => em.MapToEmployeeSelectDto())
             .SingleAsync(em => em.Id == employeeId);
     }
 
-    public async Task<EmployeeFormDto> GetForEditByIdAsync(string employeeId) {
+    public async Task<EmployeeFormDto> GetForEditByIdAsync(int employeeId) {
         return await _dbContext.Employees
             .Where(em => !em.IsDeleted || !em.IsArchived)
             .Select(em => em.MapToEmployeeFormDto(_dbContext))
             .SingleAsync(em => em.Id == employeeId);
     }
 
-    public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(string employeeId) {
+    public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int employeeId) {
         return await _dbContext.Employees
             .Where(em => (!em.IsDeleted || !em.IsArchived) && em.Id == employeeId)
             .Select(em => em.MapToEmployeeDeleteDto(employeeId, _dbContext))

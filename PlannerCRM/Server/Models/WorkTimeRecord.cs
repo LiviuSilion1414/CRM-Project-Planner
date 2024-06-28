@@ -10,6 +10,6 @@ public class WorkTimeRecord
     public int ActivityId { get; set; }
     public int WorkOrderId { get; set; }
 
-    public string EmployeeId { get; set; }
+    public int EmployeeId { get; set; }
     public Employee Employee { get; set; }
 }

@@ -6,7 +6,7 @@ namespace PlannerCRM.Client.Pages.Developer.WorkedHoursForm;
 [Authorize(Roles = nameof(Roles.SENIOR_DEVELOPER))]
 public partial class ModalAddHours : ComponentBase
 {
-    [Parameter] public string EmployeeId { get; set; }
+    [Parameter] public int EmployeeId { get; set; }
     [Parameter] public int ActivityId { get; set; }
     
     [Inject] public DeveloperService DeveloperService { get; set; }

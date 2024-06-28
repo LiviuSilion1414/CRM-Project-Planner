@@ -21,7 +21,7 @@ public class WorkTimeRecordFormDto
     public int WorkOrderId { get; set; }
 
     [Required(ErrorMessage = """ Campo "Impiegato" richiesto. """)]
-    public string EmployeeId { get; set; }
+    public int EmployeeId { get; set; }
 
     [Required(ErrorMessage = """ Campo "Impiegato" richiesto. """)]
     public EmployeeViewDto Employee { get; set; }

@@ -72,7 +72,7 @@ public partial class ModalFormUser : ComponentBase
             if (isValid) {
                 
                 if (OperationType == OperationType.ADD) {
-                    Model.Id = string.Empty;
+                    Model.Id = 0;
                     Model.OldEmail = string.Empty;
                 }
 
@@ -85,8 +85,8 @@ public partial class ModalFormUser : ComponentBase
 
                 Model.EmployeeSalaries = new() {
                     new() {
-                        Id = string.Empty,
-                        EmployeeId = string.Empty,
+                        Id = 0,
+                        EmployeeId = 0,
                         Salary = Model.CurrentHourlyRate,
                         StartDate = Model.StartDateHourlyRate
                             ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG), 

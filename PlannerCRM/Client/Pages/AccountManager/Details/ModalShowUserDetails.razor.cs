@@ -5,7 +5,7 @@ namespace PlannerCRM.Client.Pages.AccountManager.Details;
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public partial class ModalShowUserDetails : ComponentBase
 {
-    [Parameter] public string Id { get; set; }
+    [Parameter] public int Id { get; set; }
     [Parameter] public string Title { get; set; }
 
     [Inject] public NavigationManager NavManager { get; set; }

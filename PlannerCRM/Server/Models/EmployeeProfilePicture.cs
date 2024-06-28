@@ -9,5 +9,5 @@ public class EmployeeProfilePicture
 
     public Employee EmployeeInfo { get; set; }
 
-    public string EmployeeId { get; set; } = string.Empty;
+    public int EmployeeId { get; set; }
 }

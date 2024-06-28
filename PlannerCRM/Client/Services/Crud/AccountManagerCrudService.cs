@@ -69,7 +69,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(string employeeId) {
+    public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<EmployeeDeleteDto>($"api/employee/get/for/delete/{employeeId}");
@@ -80,7 +80,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(string employeeId) {
+    public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<EmployeeFormDto>($"api/employee/get/for/edit/{employeeId}");
@@ -91,7 +91,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(string employeeId) {
+    public async Task<EmployeeViewDto> GetEmployeeForViewByIdAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<EmployeeViewDto>($"api/employee/get/for/view/{employeeId}");
@@ -102,7 +102,7 @@ public class AccountManagerCrudService
         }
     }
     
-    public async Task<EmployeeSelectDto> GetEmployeeForRestoreAsync(string employeeId) {
+    public async Task<EmployeeSelectDto> GetEmployeeForRestoreAsync(int employeeId) {
         try {
             return await _http
                 .GetFromJsonAsync<EmployeeSelectDto>($"api/employee/get/for/restore/{employeeId}");
@@ -113,7 +113,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> DeleteEmployeeAsync(string employeeId) {
+    public async Task<HttpResponseMessage> DeleteEmployeeAsync(int employeeId) {
         try {
             return await _http
                 .DeleteAsync($"api/employee/delete/{employeeId}");
@@ -124,7 +124,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> ArchiveEmployeeAsync(string employeeId) {
+    public async Task<HttpResponseMessage> ArchiveEmployeeAsync(int employeeId) {
         try {
             return await _http
                 .GetAsync($"api/employee/archive/{employeeId}");
@@ -135,7 +135,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<HttpResponseMessage> RestoreEmployeeAsync(string employeeId) {
+    public async Task<HttpResponseMessage> RestoreEmployeeAsync(int employeeId) {
         try {
             return await _http
                 .GetAsync($"api/employee/restore/{employeeId}");

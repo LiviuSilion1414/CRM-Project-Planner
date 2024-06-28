@@ -4,13 +4,13 @@ namespace PlannerCRM.Client.Pages.Developer.MasterDetail;
 [Authorize(Roles = nameof(Roles.JUNIOR_DEVELOPER))]
 public partial class GridData : ComponentBase
 {
-    [Parameter] public string EmployeeId { get; set; }
+    [Parameter] public int EmployeeId { get; set; }
 
     [Inject] public DeveloperService DeveloperService { get; set; }
 
     private Dictionary<string, Action> _filters;
     private Dictionary<string, Action> _orderTitles;
-    
+
     private List<WorkTimeRecordViewDto> _workTimeRecords;
     private List<WorkOrderViewDto> _workOrders;
 
@@ -22,13 +22,15 @@ public partial class GridData : ComponentBase
     private int _collectionSize;
     private string _orderKey;
 
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync()
+    {
         _collectionSize = await DeveloperService.GetCollectionSizeByEmployeeIdAsync(EmployeeId);
 
         await FetchDataAsync();
     }
 
-    protected override void OnInitialized() {
+    protected override void OnInitialized()
+    {
         _workTimeRecords = new();
         _workOrders = new();
         _filteredList = new();
@@ -48,7 +50,8 @@ public partial class GridData : ComponentBase
         };
     }
 
-    private void OnClickOrderByClient() {
+    private void OnClickOrderByClient()
+    {
         _filteredList = _activities
             .OrderBy(cl => cl.Name)
             .ToList();
@@ -56,26 +59,31 @@ public partial class GridData : ComponentBase
         StateHasChanged();
     }
 
-    private void HandleOrdering(string key) {
-        if (_filters.ContainsKey(key)) {
+    private void HandleOrdering(string key)
+    {
+        if (_filters.ContainsKey(key))
+        {
             _filters[key].Invoke();
             _orderKey = key;
         }
     }
 
-    private string SetStyle(string key) {
+    private string SetStyle(string key)
+    {
         return key == _orderKey
             ? CssClass.Active
             : CssClass.Empty;
     }
 
-    private void HandleSearchedElements(string query) {
-        if (string.IsNullOrEmpty(query)) {
+    private void HandleSearchedElements(string query)
+    {
+        if (string.IsNullOrEmpty(query))
+        {
             _filteredList = new(_activities);
         }
 
         _filteredList = _activities
-            .Where(ac => 
+            .Where(ac =>
                 ac.Name
                     .Contains(query, StringComparison.OrdinalIgnoreCase) ||
                 ac.WorkOrderName
@@ -86,36 +94,42 @@ public partial class GridData : ComponentBase
             .ToList();
 
         StateHasChanged();
-    } 
+    }
 
-    private async Task FetchDataAsync(int limit = 0, int offset= 5) {
+    private async Task FetchDataAsync(int limit = 0, int offset = 5)
+    {
         _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId, limit, offset);
-        
-        foreach (var ac in _activities) {
+
+        foreach (var ac in _activities)
+        {
             _workTimeRecords.Add(await DeveloperService.GetWorkTimeRecordsAsync(ac.WorkOrderId, ac.Id, EmployeeId));
         }
 
         _filteredList = new(_activities);
     }
 
-    public void OnClickAddWorkedHours(int activityId) {
+    public void OnClickAddWorkedHours(int activityId)
+    {
         _isAddClicked = !_isAddClicked;
         _activityId = activityId;
     }
 
-    private async Task HandlePaginate(int limit, int offset) {
+    private async Task HandlePaginate(int limit, int offset)
+    {
         await FetchDataAsync(limit, offset);
     }
 
-    private void OnClickOrderByName() {
+    private void OnClickOrderByName()
+    {
         _filteredList = _activities
             .OrderBy(ac => ac.Name)
             .ToList();
 
         StateHasChanged();
     }
-    
-    private void OnClickOrderByStartDate() {
+
+    private void OnClickOrderByStartDate()
+    {
         _filteredList = _activities
             .OrderBy(ac => ac.StartDate)
             .ToList();
@@ -123,7 +137,8 @@ public partial class GridData : ComponentBase
         StateHasChanged();
     }
 
-    private void OnClickOrderByFinishDate() {
+    private void OnClickOrderByFinishDate()
+    {
         _filteredList = _activities
             .OrderBy(ac => ac.FinishDate)
             .ToList();
@@ -131,7 +146,8 @@ public partial class GridData : ComponentBase
         StateHasChanged();
     }
 
-    private void OnClickOrderByWorkOrder() {
+    private void OnClickOrderByWorkOrder()
+    {
         _filteredList = _activities
             .OrderBy(ac => ac.WorkOrderName)
             .ToList();
@@ -139,7 +155,8 @@ public partial class GridData : ComponentBase
         StateHasChanged();
     }
 
-    private void OnClickOrderByWorkedHours() {
+    private void OnClickOrderByWorkedHours()
+    {
         _filteredList = _activities
             .Where(ac => _workTimeRecords
                 .OrderBy(wtr => wtr.Hours)

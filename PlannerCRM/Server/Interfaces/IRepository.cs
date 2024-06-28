@@ -7,8 +7,5 @@ public interface IRepository<TInput, TOutput>
     public Task AddAsync(TInput dto);
     public Task EditAsync(TInput dto);
     public Task DeleteAsync(int id);
-    public Task<TOutput> GetForViewByIdAsync(int id);
-    public Task<TOutput> GetForEditByIdAsync(int id);
-    public Task<TOutput> GetForDeleteByIdAsync(int id);
-    public Task<List<TOutput>> GetPaginatedDataAsync(int limit, int offset);
+    public Task<TOutput> GetForViewByIdAsync(int id, int id2 = 0, int id3 = 0);
 }

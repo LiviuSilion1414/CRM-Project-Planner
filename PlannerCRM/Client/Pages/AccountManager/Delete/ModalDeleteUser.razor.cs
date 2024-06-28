@@ -5,7 +5,7 @@ namespace PlannerCRM.Client.Pages.AccountManager.Delete;
 [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
 public partial class ModalDeleteUser : ComponentBase
 {
-    [Parameter] public string Id { get; set; }
+    [Parameter] public int Id { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public string ConfirmationMessage { get; set; }
     

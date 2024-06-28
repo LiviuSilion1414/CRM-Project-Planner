@@ -1,6 +1,6 @@
 namespace PlannerCRM.Server.Models;
 
-public class Employee : IdentityUser
+public class Employee : IdentityUser<int>
 {
     public int ProfilePictureId { get; set; } 
     public string FirstName { get; set; }

@@ -28,7 +28,7 @@ public static class WorkTimeRecordMapper
         AppDbContext context,
         int workOrderId, 
         int activityId, 
-        string employeeId) 
+        int employeeId) 
     {
         return new WorkTimeRecordViewDto
         {

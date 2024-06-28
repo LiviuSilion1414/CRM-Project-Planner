@@ -3,7 +3,7 @@ namespace PlannerCRM.Server.Repositories;
 public class WorkTimeRecordRepository(
     AppDbContext db,
     DtoValidatorUtillity validator,
-    Logger<DtoValidatorUtillity> logger)
+    Logger<DtoValidatorUtillity> logger) : IRepository<WorkTimeRecordFormDto, WorkTimeRecordViewDto>
 {
     private readonly AppDbContext _dbContext = db;
     private readonly DtoValidatorUtillity _validator = validator;
@@ -43,7 +43,7 @@ public class WorkTimeRecordRepository(
         }
     }
 
-    public async Task<WorkTimeRecordViewDto> GetAsync(int workOrderId, int activityId, string employeeId) {              
+    public async Task<WorkTimeRecordViewDto> GetForViewByIdAsync(int workOrderId, int activityId, int employeeId) {              
         return await _dbContext.WorkTimeRecords
             .Select(wtr => wtr.MapToWorkTimeRecordViewDto(_dbContext, workOrderId, activityId, employeeId))
             .OrderByDescending(wtr => wtr.Hours)
@@ -62,7 +62,7 @@ public class WorkTimeRecordRepository(
             .ToListAsync();
     }
 
-    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(string employeeId) {
+    public async Task<WorkTimeRecordViewDto> GetAllWorkTimeRecordsByEmployeeIdAsync(int employeeId) {
         return await _dbContext.WorkTimeRecords
             .Select(wtr => wtr.MapToWorkTimeRecordViewDto())
             .SingleAsync(wtr => wtr.EmployeeId == employeeId);

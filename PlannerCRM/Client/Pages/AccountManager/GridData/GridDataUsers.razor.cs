@@ -6,7 +6,7 @@ public partial class GridDataUsers : ComponentBase
     [Parameter] public List<EmployeeViewDto> Users { get; set;  }
     private Dictionary<string, Action> _orderTitles;
     
-    private string _userId;
+    private int _userId;
     private string _orderKey;
 
     private bool _isViewClicked;
@@ -33,22 +33,22 @@ public partial class GridDataUsers : ComponentBase
         }
     }
 
-    private void ShowDetails(string id) {
+    private void ShowDetails(int id) {
         _isViewClicked = !_isViewClicked;
         _userId = id;
     }
 
-    private void OnClickEdit(string id) {
+    private void OnClickEdit(int id) {
         _isEditClicked = !_isEditClicked;
         _userId = id;
     }
 
-    private void OnClickDelete(string id) {
+    private void OnClickDelete(int id) {
         _isDeleteClicked = !_isDeleteClicked;
         _userId = id;
     }
 
-    private void OnClickRestore(string id) {
+    private void OnClickRestore(int id) {
         _isRestoreClicked = !_isRestoreClicked;
         _userId = id;
     }

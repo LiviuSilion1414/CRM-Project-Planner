@@ -2,7 +2,7 @@ namespace PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
 
 public class EmployeeFormDto
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [Required(ErrorMessage = """Campo "Immagine profile" richiesto""")]
     public ProfilePictureDto ProfilePicture { get; set; }

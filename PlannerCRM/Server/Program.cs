@@ -39,15 +39,13 @@ builder.Services
         o.Lockout.MaxFailedAccessAttempts = 5;
     });
 
-builder.Services.AddScoped<EmployeeRepository>();
-builder.Services.AddScoped<WorkOrderRepository>();
-builder.Services.AddScoped<ActivityRepository>();
-builder.Services.AddScoped<WorkTimeRecordRepository>();
-builder.Services.AddScoped<ClientRepository>();
-
-builder.Services.AddScoped<CalculatorService>();
-
-builder.Services.AddScoped<DtoValidatorUtillity>();
+builder.Services.AddScoped<IRepository<EmployeeRepository>, EmployeeRepository>();
+builder.Services.AddScoped<IRepository<WorkOrderRepository>, WorkOrderRepository>();
+builder.Services.AddScoped<IRepository<ActivityRepository>, ActivityRepository>();
+builder.Services.AddScoped<IRepository<WorkTimeRecordRepository>, WorkTimeRecordRepository>();
+builder.Services.AddScoped<IRepository<ClientRepository>, ClientRepository>();
+builder.Services.AddScoped<IRepository<CalculatorService>, CalculatorService>();
+builder.Services.AddScoped<IRepository<DtoValidatorUtillity>, DtoValidatorUtillity>();
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));

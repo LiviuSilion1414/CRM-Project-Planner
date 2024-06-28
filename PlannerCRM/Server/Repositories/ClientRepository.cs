@@ -3,13 +3,13 @@ namespace PlannerCRM.Server.Repositories;
 public class ClientRepository(
     AppDbContext dbContext,
     DtoValidatorUtillity validator,
-    Logger<DtoValidatorUtillity> logger)
+    Logger<DtoValidatorUtillity> logger) : IRepository<ClientFormDto, ClientViewDto>
 {
     private readonly AppDbContext _dbContext = dbContext;
     private readonly DtoValidatorUtillity _validator = validator;
     private readonly ILogger<DtoValidatorUtillity> _logger = logger;
 
-    public async Task AddClientAsync(ClientFormDto dto) {
+    public async Task AddAsync(ClientFormDto dto) {
         var isValid = await _validator.ValidateClientAsync(dto, OperationType.ADD);
         
         if (isValid) {
@@ -18,7 +18,7 @@ public class ClientRepository(
         }        
     }
 
-    public async Task EditClientAsync(ClientFormDto dto) {
+    public async Task EditAsync(ClientFormDto dto) {
         var isValid = await _validator.ValidateClientAsync(dto, OperationType.EDIT);
         
         if (isValid) {
@@ -32,7 +32,7 @@ public class ClientRepository(
         }
     }
 
-    public async Task DeleteClientAsync(int id) {
+    public async Task DeleteAsync(int id) {
         var clientDelete = await _validator.ValidateDeleteClientAsync(id);
 
         if (clientDelete is not null) {
@@ -41,7 +41,7 @@ public class ClientRepository(
         }
     }
 
-    public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) {
+    public async Task<ClientViewDto> GetForViewByIdAsync(int clientId, int _1, int _2) {
         return await _dbContext.Clients
             .Where(cl => cl.Id == clientId)
             .Select(client => client.MapToClientViewDto())

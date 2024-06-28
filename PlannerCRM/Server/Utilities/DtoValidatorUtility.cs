@@ -1,9 +1,9 @@
 namespace PlannerCRM.Server.Utilities;
 
-public class DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser> userManager)
+public class DtoValidatorUtillity(AppDbContext context, UserManager<Employee> userManager) 
 {
     private readonly AppDbContext _dbContext = context;
-    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly UserManager<Employee> _userManager = userManager;
 
     public async Task<bool> ValidateEmployeeAsync(EmployeeFormDto dto, OperationType operation) {
         var isValid = CheckDtoHealth(dto);
@@ -128,7 +128,7 @@ public class DtoValidatorUtillity(AppDbContext context, UserManager<IdentityUser
     public bool ValidateWorkTime(WorkTimeRecordFormDto dto) => 
         CheckDtoHealth(dto);
 
-    public async Task<bool> ValidateDeleteEmployeeAsync(string userId) {
+    public async Task<bool> ValidateDeleteEmployeeAsync(int userId) {
         var employeeExists = await _dbContext.Employees
             .SingleAsync(em => em.Id == userId) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);

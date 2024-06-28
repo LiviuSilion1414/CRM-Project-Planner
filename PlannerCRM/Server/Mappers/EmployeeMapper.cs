@@ -42,7 +42,7 @@ public static class EmployeeMapper
         };
     }
 
-    public static EmployeeDeleteDto MapToEmployeeDeleteDto(this Employee employee, string employeeId, AppDbContext context) {
+    public static EmployeeDeleteDto MapToEmployeeDeleteDto(this Employee employee, int employeeId, AppDbContext context) {
         return new EmployeeDeleteDto
         {
             Id = employee.Id,

@@ -111,7 +111,7 @@ public partial class ModalFormActivity : ComponentBase
             if (!contains) {
                 var activity = 
                     new EmployeeActivityDto {
-                        EmployeeId = employee.Id,
+                        EmployeeId = 0,
                         Employee = new EmployeeSelectDto {
                             Id = employee.Id,
                             Email = employee.Email,

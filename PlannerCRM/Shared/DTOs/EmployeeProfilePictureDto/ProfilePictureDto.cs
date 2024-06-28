@@ -4,7 +4,7 @@ public class ProfilePictureDto
 {
     public int Id { get; set; }
 
-    public string EmployeeId { get; set; }
+    public int EmployeeId { get; set; }
 
     public string ImageType { get; set; }
 
