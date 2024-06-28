@@ -49,15 +49,6 @@ builder.Services.AddScoped<CalculatorService>();
 
 builder.Services.AddScoped<DtoValidatorUtillity>();
 
-builder.Services.AddScoped<Logger<EmployeeRepository>>();
-builder.Services.AddScoped<Logger<WorkOrderRepository>>();
-builder.Services.AddScoped<Logger<ActivityRepository>>();
-builder.Services.AddScoped<Logger<WorkTimeRecordRepository>>();
-builder.Services.AddScoped<Logger<ClientRepository>>();
-
-builder.Services.AddScoped<Logger<DtoValidatorUtillity>>();
-builder.Services.AddScoped<Logger<CalculatorService>>();
-
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
