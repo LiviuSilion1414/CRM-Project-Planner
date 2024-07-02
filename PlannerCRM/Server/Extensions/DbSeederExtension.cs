@@ -24,7 +24,7 @@ public static class DbSeederExtension
 
     private static async Task AddAccountManagerAsync(UserManager<Employee> userManager) {
         var accountManager = new Employee {
-            Id = AccountManagerData.Id,
+            Id = 1,
             Email = AccountManagerData.EMAIL,
             EmailConfirmed = true,
             UserName = AccountManagerData.EMAIL,
@@ -59,7 +59,7 @@ public static class DbSeederExtension
 
 class AccountManagerData
 {
-    public const int Id = 1;
+    public static readonly string GUID = Guid.NewGuid().ToString();
     public const string EMAIL = "account.manager@gmail.com";
     public const string PASSWORD = "Qwerty123";
     public const string FULL_NAME = "Account Manager";
