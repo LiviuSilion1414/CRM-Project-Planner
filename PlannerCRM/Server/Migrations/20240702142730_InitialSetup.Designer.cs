@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240702141151_ChangePrimaryKeyType")]
-    partial class ChangePrimaryKeyType
+    [Migration("20240702142730_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -720,7 +720,7 @@ namespace PlannerCRM.Server.Migrations
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkTimeRecord", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Employee", "Employee")
-                        .WithMany()
+                        .WithMany("WorkTimeRecords")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -749,6 +749,8 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("EmployeeActivity");
 
                     b.Navigation("Salaries");
+
+                    b.Navigation("WorkTimeRecords");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.FirmClient", b =>
