@@ -4,13 +4,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
     IdentityDbContext<Employee, EmployeeRole, int>(options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        modelBuilder
-            .Entity<Employee>()
-            .Property(em => em.Id);
+        modelBuilder.Entity<IdentityRole<int>>().ToTable("EmployeeRoles");
 
-        modelBuilder
-            .Entity<EmployeeSalary>()
-            .Property(em => em.Id);
+        modelBuilder.Entity<IdentityUser<int>>().ToTable("Employees");
+
+        modelBuilder.Entity<IdentityUserRole<int>>().ToTable("EmployeeUserRole");
+
+        modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("EmployeeClaim");
+
+        modelBuilder.Entity<IdentityUserLogin<int>>().ToTable("EmployeeLogin");
+
+        modelBuilder.Entity<IdentityRoleClaim<int>>().ToTable("EmployeeRoleClaim");
+
+        modelBuilder.Entity<IdentityUserToken<int>>().ToTable("EmployeeToken");
 
         modelBuilder.Entity<EmployeeActivity>()
             .HasOne(e => e.Employee)
