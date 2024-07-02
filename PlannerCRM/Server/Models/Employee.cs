@@ -15,6 +15,7 @@ public class Employee : IdentityUser<int>
     public Roles Role { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsArchived { get; set; }
+    public List<WorkTimeRecord> WorkTimeRecords { get; set; }
     public List<EmployeeSalary> Salaries { get; set; }
     public List<EmployeeActivity> EmployeeActivity { get; set; }
 }

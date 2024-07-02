@@ -22,6 +22,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
             .WithMany(ea => ea.EmployeeActivity)
             .HasForeignKey(ai => ai.ActivityId);
 
+        modelBuilder.Entity<WorkTimeRecord>()
+            .HasOne(wtr => wtr.Employee)
+            .WithMany(em => em.WorkTimeRecords)
+            .HasForeignKey(wtr => wtr.EmployeeId);
+
         base.OnModelCreating(modelBuilder);
     }
 
