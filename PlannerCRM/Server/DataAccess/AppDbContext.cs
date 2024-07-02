@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.DataAccess;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : 
-    IdentityDbContext<Employee>(options)
+    IdentityDbContext<Employee, EmployeeRole, int>(options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder
