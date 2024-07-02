@@ -4,9 +4,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
     IdentityDbContext<Employee, EmployeeRole, int>(options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        modelBuilder.Entity<IdentityRole<int>>().ToTable("EmployeeRoles");
+        modelBuilder.Entity<IdentityUser>().ToTable("Employees");
 
-        modelBuilder.Entity<IdentityUser<int>>().ToTable("Employees");
+        modelBuilder.Entity<IdentityRole>().ToTable("EmployeeRoles");
 
         modelBuilder.Entity<IdentityUserRole<int>>().ToTable("EmployeeUserRole");
 
