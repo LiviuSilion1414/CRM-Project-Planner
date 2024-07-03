@@ -81,13 +81,13 @@ public static class CalculatorCostMapper
         {
             EmployeeId = employee.Id,
             StartDate = employee.Salaries
-                .Single(sal => sal.EmployeeId == employee.Id)
+                .SingleOrDefault(sal => sal.EmployeeId == employee.Id)
                 .StartDate,
             FinishDate = employee.Salaries
-                .Single(sal => sal.EmployeeId == employee.Id)
+                .SingleOrDefault(sal => sal.EmployeeId == employee.Id)
                 .FinishDate,
             Salary = employee.Salaries
-                .Single(sal => sal.EmployeeId == employee.Id)
+                .SingleOrDefault(sal => sal.EmployeeId == employee.Id)
                 .Salary
         };
     }

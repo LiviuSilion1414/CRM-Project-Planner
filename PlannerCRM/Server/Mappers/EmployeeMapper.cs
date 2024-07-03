@@ -25,8 +25,8 @@ public static class EmployeeMapper
             Password = employee.Password,
             CurrentHourlyRate = employee.CurrentHourlyRate,
             IsDeleted = employee.IsDeleted,
-            StartDateHourlyRate = employee.Salaries.Single().StartDate,
-            FinishDateHourlyRate = employee.Salaries.Single().FinishDate,
+            StartDateHourlyRate = employee.Salaries.SingleOrDefault().StartDate,
+            FinishDateHourlyRate = employee.Salaries.SingleOrDefault().FinishDate,
             EmployeeSalaries = employee.Salaries
                     .Where(ems => context.Users
                         .Any(employee => employee.Id == ems.EmployeeId))
@@ -65,7 +65,7 @@ public static class EmployeeMapper
                             Email = ea.Employee.Email,
                             FullName = ea.Employee.FullName,
                         })
-                        .Single(),
+                        .SingleOrDefault(),
                     ActivityId = ea.ActivityId,
                     Activity = context.Activities
                         .Where(ac => ac.Id == ea.ActivityId)
@@ -75,7 +75,7 @@ public static class EmployeeMapper
                             Name = ea.Activity.Name,
                             WorkOrderId = ea.Activity.WorkOrderId,
                         })
-                        .Single()
+                        .SingleOrDefault()
                 })
                 .ToList()
 
@@ -122,7 +122,7 @@ public static class EmployeeMapper
                             LastName = employee.LastName,
                             Role = employee.Role
                         })
-                        .Single(employee => employee.Id == ea.EmployeeId),
+                        .SingleOrDefault(employee => employee.Id == ea.EmployeeId),
                     ActivityId = ea.ActivityId,
                     Activity = context.Activities
                         .Select(ac => new ActivitySelectDto
@@ -133,7 +133,7 @@ public static class EmployeeMapper
                             FinishDate = ac.FinishDate,
                             WorkOrderId = ac.WorkOrderId
                         })
-                    .Single(ac => ac.Id == ea.ActivityId),
+                    .SingleOrDefault(ac => ac.Id == ea.ActivityId),
                 }).ToList(),
             EmployeeSalaries = employee.Salaries
                 .Select(ems => new EmployeeSalaryDto

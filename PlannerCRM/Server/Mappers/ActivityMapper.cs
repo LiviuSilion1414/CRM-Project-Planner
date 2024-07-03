@@ -2,16 +2,17 @@ namespace PlannerCRM.Server.Mappers;
 
 public static class ActivityMapper
 {
-    public static Activity MapToActivity(this ActivityFormDto dto) {
+    public static Activity MapToActivity(this ActivityFormDto dto)
+    {
         return new Activity
         {
             Id = dto.Id,
             Name = dto.Name,
-            StartDate = dto.StartDate 
+            StartDate = dto.StartDate
                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-            FinishDate = dto.FinishDate 
+            FinishDate = dto.FinishDate
                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-            WorkOrderId = dto.WorkOrderId 
+            WorkOrderId = dto.WorkOrderId
                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             EmployeeActivity = dto.EmployeeActivity
                 .Select(ea => new EmployeeActivity
@@ -24,15 +25,17 @@ public static class ActivityMapper
         };
     }
 
-    public static ActivityFormDto MapToActivityFormDto(this Activity activity, AppDbContext context) {
-        return new ActivityFormDto {
+    public static ActivityFormDto MapToActivityFormDto(this Activity activity, AppDbContext context)
+    {
+        return new ActivityFormDto
+        {
             Id = activity.Id,
             Name = activity.Name,
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
             //ClientName = context.Clients
-            //    .Single(cl => cl.WorkOrdersIds.Any(id => id == activity.WorkOrderId)
+            //    .SingleOrDefault(cl => cl.WorkOrdersIds.Any(id => id == activity.WorkOrderId)
             //    .Name,
             EmployeeActivity = new(),
             ViewEmployeeActivity = activity.EmployeeActivity
@@ -60,7 +63,7 @@ public static class ActivityMapper
                                     Salary = sal.Salary,
                                 }).ToList()
                         })
-                        .Single(em => em.Id == ea.EmployeeId),
+                        .SingleOrDefault(em => em.Id == ea.EmployeeId),
                     ActivityId = ea.ActivityId,
                     Activity = context.Activities
                         .Select(a => new ActivitySelectDto
@@ -71,13 +74,14 @@ public static class ActivityMapper
                             FinishDate = ea.Activity.FinishDate,
                             WorkOrderId = ea.Activity.WorkOrderId
                         })
-                        .Single(activity => activity.Id == ea.ActivityId)
+                        .SingleOrDefault(activity => activity.Id == ea.ActivityId)
                 })
                 .ToHashSet()
         };
     }
 
-    public static EmployeeActivity MapToEmployeeActivity(this EmployeeActivityDto dto, int activityId) {
+    public static EmployeeActivity MapToEmployeeActivity(this EmployeeActivityDto dto, int activityId)
+    {
         return new EmployeeActivity
         {
             Id = dto.Id,
@@ -86,7 +90,8 @@ public static class ActivityMapper
         };
     }
 
-    public static ActivityViewDto MapToActivityViewDto(this Activity activity, AppDbContext context) {
+    public static ActivityViewDto MapToActivityViewDto(this Activity activity, AppDbContext context)
+    {
         return new ActivityViewDto
         {
             Id = activity.Id,
@@ -119,7 +124,7 @@ public static class ActivityMapper
                                     Salary = sal.Salary,
                                 }).ToList()
                         })
-                        .Single(em => em.Id == ea.EmployeeId),
+                        .SingleOrDefault(em => em.Id == ea.EmployeeId),
                     ActivityId = ea.ActivityId,
                     Activity = context.Activities
                         .Select(a => new ActivitySelectDto
@@ -130,12 +135,13 @@ public static class ActivityMapper
                             FinishDate = ea.Activity.FinishDate,
                             WorkOrderId = ea.Activity.WorkOrderId
                         })
-                        .Single(activity => activity.Id == ea.ActivityId)
+                        .SingleOrDefault(activity => activity.Id == ea.ActivityId)
                 }).ToHashSet()
         };
     }
 
-    public static ActivityDeleteDto MapToActivityDeleteDto(this Activity activity, AppDbContext context, int activityId) {
+    public static ActivityDeleteDto MapToActivityDeleteDto(this Activity activity, AppDbContext context, int activityId)
+    {
         return new ActivityDeleteDto
         {
             Id = activity.Id,
@@ -188,7 +194,7 @@ public static class ActivityMapper
                                                 Salary = sal.Salary,
                                             }).ToList()
                                     })
-                                    .Single(em => em.Id == ea.EmployeeId),
+                                    .SingleOrDefault(em => em.Id == ea.EmployeeId),
                                 ActivityId = ea.ActivityId,
                                 Activity = context.Activities
                                     .Select(a => new ActivitySelectDto
@@ -199,7 +205,7 @@ public static class ActivityMapper
                                         FinishDate = ea.Activity.FinishDate,
                                         WorkOrderId = ea.Activity.WorkOrderId
                                     })
-                                    .Single(activity => activity.Id == ea.ActivityId)
+                                    .SingleOrDefault(activity => activity.Id == ea.ActivityId)
                             }).ToList()
                     })
                     .ToHashSet()

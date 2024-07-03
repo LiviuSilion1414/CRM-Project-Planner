@@ -2,7 +2,8 @@ namespace PlannerCRM.Server.Mappers;
 
 public static class WorkTimeRecordMapper
 {
-    public async static Task<WorkTimeRecord> MapToWorkTimeRecord(this WorkTimeRecordFormDto dto, AppDbContext context) {
+    public async static Task<WorkTimeRecord> MapToWorkTimeRecord(this WorkTimeRecordFormDto dto, AppDbContext context)
+    {
         return new WorkTimeRecord
         {
             Id = dto.Id,
@@ -15,7 +16,7 @@ public static class WorkTimeRecordMapper
             EmployeeId = dto.EmployeeId,
             Employee = context.Users
                 .Where(em => !em.IsDeleted && !em.IsArchived)
-                .Single(e => e.Id == dto.EmployeeId),
+                .SingleOrDefault(e => e.Id == dto.EmployeeId),
             WorkOrderId = await context.WorkOrders
                 .AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
                     ? dto.WorkOrderId
@@ -24,11 +25,11 @@ public static class WorkTimeRecordMapper
     }
 
     public static WorkTimeRecordViewDto MapToWorkTimeRecordViewDto(
-        this WorkTimeRecord workTimeRecord, 
+        this WorkTimeRecord workTimeRecord,
         AppDbContext context,
-        int workOrderId, 
-        int activityId, 
-        int employeeId) 
+        int workOrderId,
+        int activityId,
+        int employeeId)
     {
         return new WorkTimeRecordViewDto
         {
@@ -47,7 +48,7 @@ public static class WorkTimeRecordMapper
             EmployeeId = workTimeRecord.EmployeeId
         };
     }
-    
+
     public static WorkTimeRecordViewDto MapToWorkTimeRecordViewDto(this WorkTimeRecord workTimeRecord)
     {
         return new WorkTimeRecordViewDto

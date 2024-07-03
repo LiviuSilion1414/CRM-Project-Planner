@@ -160,7 +160,7 @@ public class EmployeeRepository(
 
             var rolesList = await _userManager.GetRolesAsync(user);
             var userRole = rolesList
-                .Single()
+                .SingleOrDefault()
                     ?? throw new NullReferenceException(ExceptionsMessages.NULL_PARAM);
 
             var isInRole = await _userManager.IsInRoleAsync(user, userRole);

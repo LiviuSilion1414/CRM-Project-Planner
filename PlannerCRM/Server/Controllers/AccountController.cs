@@ -43,7 +43,7 @@ public class AccountController(
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
-            return roles.Single();
+            return roles.SingleOrDefault();
         }
         return string.Empty;
     }
@@ -65,7 +65,8 @@ public class AccountController(
 
     private async Task<string> GetCurrentUserFullName()
     {
-        if (User.Identity.IsAuthenticated) {
+        if (User.Identity.IsAuthenticated)
+        {
             return (await _userManager.FindByEmailAsync(User.Identity.Name))
                 .FullName;
         }
