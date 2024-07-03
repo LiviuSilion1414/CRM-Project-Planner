@@ -24,7 +24,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
 
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-    public DbSet<EmployeeActivity> EmployeeActivity { get; set; }
+    public DbSet<EmployeeUserClaim> EmployeeClaims { get; set; }
+    public DbSet<EmployeeRoleClaim> EmployeeRoleClaims { get; set; }
+    public DbSet<EmployeeUserLogin> EmployeeUserLogins { get; set; }
+    public DbSet<EmployeeUserToken> EmployeeUserTokens { get; set; }
+    public DbSet<EmployeeUserRole> EmployeeUserRoles { get; set; }
+    public DbSet<EmployeeActivity> EmployeeActivities { get; set; }
     public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; }
 
     public DbSet<FirmClient> Clients { get; set; }
