@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PlannerCRM.Server.DataAccess;
@@ -11,13 +12,14 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240703120704_RenameIdentityTables")]
+    partial class RenameIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("public")
                 .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -55,7 +57,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("WorkOrderId");
 
-                    b.ToTable("Activities", "public");
+                    b.ToTable("Activities");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.ActivityCost", b =>
@@ -85,7 +87,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("WorkOrderCostId");
 
-                    b.ToTable("ActivityCost", "public");
+                    b.ToTable("ActivityCost");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.ClientWorkOrder", b =>
@@ -109,7 +111,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("FirmClientId");
 
-                    b.ToTable("ClientWorkOrders", "public");
+                    b.ToTable("ClientWorkOrders");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Employee", b =>
@@ -225,7 +227,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("WorkOrderCostId");
 
-                    b.ToTable("AspNetUsers", "public");
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeActivity", b =>
@@ -248,7 +250,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeActivities", "public");
+                    b.ToTable("EmployeeActivities");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeProfilePicture", b =>
@@ -272,7 +274,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("ProfilePictures", "public");
+                    b.ToTable("ProfilePictures");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeRole", b =>
@@ -301,7 +303,7 @@ namespace PlannerCRM.Server.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", "public");
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeRoleClaim", b =>
@@ -325,7 +327,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", "public");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeSalary", b =>
@@ -352,7 +354,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeSalary", "public");
+                    b.ToTable("EmployeeSalary");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeUserClaim", b =>
@@ -376,7 +378,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", "public");
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeUserLogin", b =>
@@ -397,7 +399,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", "public");
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeUserRole", b =>
@@ -412,7 +414,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", "public");
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.EmployeeUserToken", b =>
@@ -431,7 +433,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", "public");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.FirmClient", b =>
@@ -450,7 +452,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients", "public");
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrder", b =>
@@ -486,7 +488,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("WorkOrders", "public");
+                    b.ToTable("WorkOrders");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkOrderCost", b =>
@@ -538,7 +540,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WorkOrderCosts", "public");
+                    b.ToTable("WorkOrderCosts");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.WorkTimeRecord", b =>
@@ -573,7 +575,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasIndex("WorkOrderId");
 
-                    b.ToTable("WorkTimeRecords", "public");
+                    b.ToTable("WorkTimeRecords");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Activity", b =>
