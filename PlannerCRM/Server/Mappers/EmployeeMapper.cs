@@ -51,7 +51,7 @@ public static class EmployeeMapper
             Role = employee.Role
                 .ToString()
                 .Replace('_', ' '),
-            EmployeeActivities = context.EmployeeActivity
+            EmployeeActivities = context.EmployeeActivities
                 .Where(ea => ea.EmployeeId == employeeId)
                 .Select(ea => new EmployeeActivityDto
                 {

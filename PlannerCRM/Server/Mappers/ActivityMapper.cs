@@ -143,7 +143,7 @@ public static class ActivityMapper
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
-            Employees = context.EmployeeActivity
+            Employees = context.EmployeeActivities
                     .Where(ea => ea.ActivityId == activityId)
                     .Select(ea => new EmployeeSelectDto()
                     {

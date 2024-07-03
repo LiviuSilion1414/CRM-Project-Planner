@@ -31,10 +31,10 @@ public class ActivityRepository(
     {
         var activityDelete = await _validator.ValidateDeleteActivityAsync(id);
 
-        await _dbContext.EmployeeActivity
+        await _dbContext.EmployeeActivities
             .Where(ea => ea.ActivityId == activityDelete.Id)
             .ForEachAsync(ea =>
-                _dbContext.EmployeeActivity
+                _dbContext.EmployeeActivities
                     .Remove(ea)
             );
 
@@ -55,13 +55,13 @@ public class ActivityRepository(
             model = dto.MapToActivity();
 
             var employeesToRemove = dto.DeleteEmployeeActivity
-                .Where(eaDto => _dbContext.EmployeeActivity
+                .Where(eaDto => _dbContext.EmployeeActivities
                     .Any(ea => eaDto.EmployeeId == ea.EmployeeId))
                 .Select(e => e.MapToEmployeeActivity(dto.Id))
                 .ToList();
 
             employeesToRemove
-                .ForEach(item => _dbContext.EmployeeActivity.Remove(item));
+                .ForEach(item => _dbContext.EmployeeActivities.Remove(item));
 
             var workOrder = await _dbContext.WorkOrders
                 .SingleAsync(wo => wo.Id == dto.WorkOrderId);
@@ -103,7 +103,7 @@ public class ActivityRepository(
             .Skip(limit)
             .Take(offset)
             .Select(ac => ac.MapToActivityViewDto(_dbContext))
-            .Where(ac => _dbContext.EmployeeActivity
+            .Where(ac => _dbContext.EmployeeActivities
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
             .ToListAsync();
     }

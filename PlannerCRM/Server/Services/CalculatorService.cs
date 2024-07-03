@@ -129,7 +129,7 @@ public class CalculatorService(AppDbContext dbContext)
 
     private async Task<List<Employee>> GetAllRelatedEmployeesAsync(int workOrderId) {
         return await _dbContext.Employees
-            .Where(em => _dbContext.EmployeeActivity
+            .Where(em => _dbContext.EmployeeActivities
                 .Any(ea => em.Id == ea.EmployeeId))
             .ToListAsync();
     }
