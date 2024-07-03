@@ -1,3 +1,5 @@
+using PlannerCRM.Server.Extensions;
+
 namespace PlannerCRM.Server.DataAccess;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : 
@@ -9,6 +11,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ConvertToUtcDateTime();
 
         modelBuilder.HasDefaultSchema("public");
 
