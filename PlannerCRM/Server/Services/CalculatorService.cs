@@ -115,7 +115,7 @@ public class CalculatorService(AppDbContext dbContext)
     }
 
     private async Task<int> GetRelatedEmployeesSizeAsync(int workOrderId) {
-        return await _dbContext.Employees
+        return await _dbContext.Users
             .Where(em => _dbContext.WorkTimeRecords
                 .Any(wtr => wtr.EmployeeId == em.Id && wtr.WorkOrderId == workOrderId))
             .CountAsync();
@@ -128,7 +128,7 @@ public class CalculatorService(AppDbContext dbContext)
     }
 
     private async Task<List<Employee>> GetAllRelatedEmployeesAsync(int workOrderId) {
-        return await _dbContext.Employees
+        return await _dbContext.Users
             .Where(em => _dbContext.EmployeeActivities
                 .Any(ea => em.Id == ea.EmployeeId))
             .ToListAsync();
@@ -149,7 +149,7 @@ public class CalculatorService(AppDbContext dbContext)
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
 
-        var salaries = await _dbContext.Employees
+        var salaries = await _dbContext.Users
             .Where(em => em.Salaries
                 .Any(sal => sal.EmployeeId == em.Id) &&
                     _dbContext.WorkTimeRecords

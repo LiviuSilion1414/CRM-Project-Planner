@@ -1,9 +1,43 @@
 namespace PlannerCRM.Server.DataAccess;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : 
-    IdentityDbContext<Employee, EmployeeRole, int>(options)
+    IdentityDbContext<
+        Employee, EmployeeRole, int, 
+        EmployeeUserClaim, EmployeeUserRole, EmployeeUserLogin, 
+        EmployeeRoleClaim, EmployeeUserToken>
+    (options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        modelBuilder.Entity<Employee>(entity =>
+        {
+            entity.ToTable("Employees");
+        });
+
+        modelBuilder.Entity<EmployeeRole>(entity =>
+        {
+            entity.ToTable("Roles");
+        });
+        modelBuilder.Entity<EmployeeUserRole>(entity =>
+        {
+            entity.ToTable("EmployeeRoles");
+        });
+        modelBuilder.Entity<EmployeeUserClaim>(entity =>
+        {
+            entity.ToTable("EmployeeClaims");
+        });
+        modelBuilder.Entity<EmployeeUserLogin>(entity =>
+        {
+            entity.ToTable("EmployeeLogins");
+        });
+        modelBuilder.Entity<EmployeeRoleClaim>(entity =>
+        {
+            entity.ToTable("RoleClaims");
+        });
+        modelBuilder.Entity<EmployeeUserToken>(entity =>
+        {
+            entity.ToTable("EmployeeTokens");
+        });
+
         modelBuilder.Entity<EmployeeActivity>()
             .HasOne(e => e.Employee)
             .WithMany(ea => ea.EmployeeActivity)
@@ -22,6 +56,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
         base.OnModelCreating(modelBuilder);
     }
 
+/*
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
     public DbSet<EmployeeUserClaim> EmployeeClaims { get; set; }
@@ -29,6 +64,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
     public DbSet<EmployeeUserLogin> EmployeeUserLogins { get; set; }
     public DbSet<EmployeeUserToken> EmployeeUserTokens { get; set; }
     public DbSet<EmployeeUserRole> EmployeeUserRoles { get; set; }
+*/
     public DbSet<EmployeeActivity> EmployeeActivities { get; set; }
     public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; }
 

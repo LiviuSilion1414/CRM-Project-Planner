@@ -2,7 +2,8 @@ namespace PlannerCRM.Server.Mappers;
 
 public static class CalculatorCostMapper
 {
-    public static ActivityCostDto MapToActivityCostDto(this ActivityCost activityCost, List<EmployeeViewDto> involvedEmployees) {
+    public static ActivityCostDto MapToActivityCostDto(this ActivityCost activityCost, List<EmployeeViewDto> involvedEmployees)
+    {
         return new ActivityCostDto
         {
             Id = activityCost.Id,
@@ -15,10 +16,10 @@ public static class CalculatorCostMapper
     }
 
     public static WorkOrderCostDto MapToWorkOrderCostDto(
-        this WorkOrderCost workOrderCost, 
+        this WorkOrderCost workOrderCost,
         List<EmployeeViewDto> involvedEmployees,
         List<ActivityViewDto> activities,
-        List<ActivityCostDto> monthlyActivityCosts) 
+        List<ActivityCostDto> monthlyActivityCosts)
     {
         return new WorkOrderCostDto
         {
@@ -51,7 +52,7 @@ public static class CalculatorCostMapper
         int totalHours,
         decimal totalCost,
         decimal costPerMonth
-        ) 
+        )
     {
         return new WorkOrderCost
         {
@@ -74,7 +75,8 @@ public static class CalculatorCostMapper
         };
     }
 
-    public static EmployeeSalary MapToEmployeeSalary(this Employee employee) {
+    public static EmployeeSalary MapToEmployeeSalary(this Employee employee)
+    {
         return new EmployeeSalary
         {
             EmployeeId = employee.Id,
@@ -91,10 +93,10 @@ public static class CalculatorCostMapper
     }
 
     public static ActivityCost MapToActivityCost(
-        this WorkTimeRecord workTimeRecord, 
+        this WorkTimeRecord workTimeRecord,
         AppDbContext context,
         List<Activity> activities,
-        List<EmployeeSalary> salaries) 
+        List<EmployeeSalary> salaries)
     {
         return new ActivityCost
         {
@@ -108,7 +110,7 @@ public static class CalculatorCostMapper
             FinishDate = activities
                 .First(ac => ac.WorkOrderId == workTimeRecord.WorkOrderId)
                 .FinishDate,
-            Employees = context.Employees
+            Employees = context.Users
                 .Where(em => em.Id == workTimeRecord.EmployeeId)
                 .ToList(),
             MonthlyCost = salaries

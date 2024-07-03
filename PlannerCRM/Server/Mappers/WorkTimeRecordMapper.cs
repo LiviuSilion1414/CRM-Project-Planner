@@ -13,7 +13,7 @@ public static class WorkTimeRecordMapper
                 ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
             ActivityId = dto.ActivityId,
             EmployeeId = dto.EmployeeId,
-            Employee = context.Employees
+            Employee = context.Users
                 .Where(em => !em.IsDeleted && !em.IsArchived)
                 .Single(e => e.Id == dto.EmployeeId),
             WorkOrderId = await context.WorkOrders

@@ -17,7 +17,7 @@ public class DtoValidatorUtillity(AppDbContext context, UserManager<Employee> us
             }
 
             var isUserAlreadyPresent = await _userManager.FindByEmailAsync(dto.OldEmail);
-            var isEmployeeAlreadyPresent = await _dbContext.Employees.AnyAsync(em => em.Id == dto.Id);
+            var isEmployeeAlreadyPresent = await _dbContext.Users.AnyAsync(em => em.Id == dto.Id);
 
             if (operation == OperationType.ADD)
             {
@@ -158,7 +158,7 @@ public class DtoValidatorUtillity(AppDbContext context, UserManager<Employee> us
 
     public async Task<bool> ValidateDeleteEmployeeAsync(int userId)
     {
-        var employeeExists = await _dbContext.Employees
+        var employeeExists = await _dbContext.Users
             .SingleAsync(em => em.Id == userId) ??
                 throw new KeyNotFoundException(ExceptionsMessages.IMPOSSIBLE_DELETE);
 

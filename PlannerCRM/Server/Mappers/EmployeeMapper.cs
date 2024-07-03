@@ -28,7 +28,7 @@ public static class EmployeeMapper
             StartDateHourlyRate = employee.Salaries.Single().StartDate,
             FinishDateHourlyRate = employee.Salaries.Single().FinishDate,
             EmployeeSalaries = employee.Salaries
-                    .Where(ems => context.Employees
+                    .Where(ems => context.Users
                         .Any(employee => employee.Id == ems.EmployeeId))
                     .Select(ems => new EmployeeSalaryDto
                     {
@@ -57,7 +57,7 @@ public static class EmployeeMapper
                 {
                     Id = ea.Id,
                     EmployeeId = ea.EmployeeId,
-                    Employee = context.Employees
+                    Employee = context.Users
                         .Where(e => e.Id == ea.EmployeeId)
                         .Select(_ => new EmployeeSelectDto
                         {
@@ -113,7 +113,7 @@ public static class EmployeeMapper
                 {
                     Id = ea.ActivityId,
                     EmployeeId = employee.Id,
-                    Employee = context.Employees
+                    Employee = context.Users
                         .Select(employee => new EmployeeSelectDto
                         {
                             Id = employee.Id,

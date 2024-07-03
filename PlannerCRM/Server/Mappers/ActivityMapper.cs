@@ -40,7 +40,7 @@ public static class ActivityMapper
                 {
                     Id = ea.Id,
                     EmployeeId = ea.EmployeeId,
-                    Employee = context.Employees
+                    Employee = context.Users
                         .Select(em => new EmployeeSelectDto
                         {
                             Id = ea.EmployeeId,
@@ -99,7 +99,7 @@ public static class ActivityMapper
                 {
                     Id = ea.Id,
                     EmployeeId = ea.EmployeeId,
-                    Employee = context.Employees
+                    Employee = context.Users
                         .Select(em => new EmployeeSelectDto
                         {
                             Id = ea.EmployeeId,
@@ -168,7 +168,7 @@ public static class ActivityMapper
                             {
                                 Id = ea.Id,
                                 EmployeeId = ea.EmployeeId,
-                                Employee = context.Employees
+                                Employee = context.Users
                                     .Select(em => new EmployeeSelectDto
                                     {
                                         Id = ea.EmployeeId,

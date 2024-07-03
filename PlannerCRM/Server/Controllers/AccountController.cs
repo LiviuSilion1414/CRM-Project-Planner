@@ -14,14 +14,17 @@ public class AccountController(
     private readonly AppDbContext _dbCcontext = dbContext;
 
     [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto) {
+    public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto)
+    {
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user is null || user.IsArchived || user.IsDeleted) {
+        if (user is null || user.IsArchived || user.IsDeleted)
+        {
             return NotFound(LoginFeedBack.USER_NOT_FOUND);
         }
-        
+
         var userPasswordIsCorrect = await _userManager.CheckPasswordAsync(user, dto.Password);
-        if (!userPasswordIsCorrect) {
+        if (!userPasswordIsCorrect)
+        {
             return BadRequest(LoginFeedBack.WRONG_PASSWORD);
         }
 
@@ -32,32 +35,38 @@ public class AccountController(
     [Authorize]
     [HttpGet("logout")]
     public async Task LogoutAsync() => await _signInManager.SignOutAsync();
-    
+
     [HttpGet("user/role")]
-    public async Task<string> GetUserRoleAsync() {
-        if (User is not null && User.Identity.IsAuthenticated) {
+    public async Task<string> GetUserRoleAsync()
+    {
+        if (User is not null && User.Identity.IsAuthenticated)
+        {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var roles = await _userManager.GetRolesAsync(user);
             return roles.Single();
         }
-        return string.Empty;    
+        return string.Empty;
     }
 
     private async Task<int> GetCurrentUserIdAsync() =>
         (await _userManager.FindByEmailAsync(User.Identity.Name)).Id;
 
-    private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync() {
+    private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync()
+    {
         var profilePic = await _dbCcontext.ProfilePictures
-            .SingleAsync(pp => _dbCcontext.Employees
+            .SingleAsync(pp => _dbCcontext.Users
                 .Any(em => pp.EmployeeInfo.Email == em.Email && em.Email == User.Identity.Name)) ?? new();
-        return new ProfilePictureDto() {
+        return new ProfilePictureDto()
+        {
             ImageType = profilePic.ImageType,
             Thumbnail = profilePic.Thumbnail
         };
     }
 
-    private async Task<string> GetCurrentUserFullName() {
-        if (User.Identity.IsAuthenticated) {
+    private async Task<string> GetCurrentUserFullName()
+    {
+        if (User.Identity.IsAuthenticated)
+        {
             return (await _userManager.FindByEmailAsync(User.Identity.Name))
                 .FullName;
         }
@@ -65,9 +74,12 @@ public class AccountController(
     }
 
     [HttpGet("current/user/info")]
-    public async Task<CurrentUser> GetCurrentUserInfo() {
-        if (User.Identity.IsAuthenticated) {
-            return new CurrentUser {
+    public async Task<CurrentUser> GetCurrentUserInfo()
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            return new CurrentUser
+            {
                 Id = await GetCurrentUserIdAsync(),
                 IsAuthenticated = User.Identity.IsAuthenticated,
                 UserName = User.Identity.Name,
