@@ -54,7 +54,7 @@ public class AccountController(
     private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync()
     {
         var profilePic = await _dbCcontext.ProfilePictures
-            .SingleAsync(pp => _dbCcontext.Users
+            .SingleOrDefaultAsync(pp => _dbCcontext.Users
                 .Any(em => pp.EmployeeInfo.Email == em.Email && em.Email == User.Identity.Name)) ?? new();
         return new ProfilePictureDto()
         {
@@ -65,8 +65,7 @@ public class AccountController(
 
     private async Task<string> GetCurrentUserFullName()
     {
-        if (User.Identity.IsAuthenticated)
-        {
+        if (User.Identity.IsAuthenticated) {
             return (await _userManager.FindByEmailAsync(User.Identity.Name))
                 .FullName;
         }
