@@ -228,7 +228,7 @@ public class EmployeeRepository(
         return await _dbContext.Users
             .OrderBy(em => em.Id)
             .Skip(offset)
-            .Take(limit )
+            .Take(limit)
             .Select(em => em.MapToEmployeeViewDto(_dbContext))
             .ToListAsync();
     }
