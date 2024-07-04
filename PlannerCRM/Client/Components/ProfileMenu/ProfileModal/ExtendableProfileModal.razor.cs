@@ -14,8 +14,7 @@ public partial class ExtendableProfileModal : ComponentBase
 
     protected override void OnInitialized() {
         _currentUser= new() {
-            ProfilePicture = new(),
-            Claims = new()
+            Claims = []
         };
     }
 

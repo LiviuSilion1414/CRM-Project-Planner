@@ -1,5 +1,3 @@
-using PlannerCRM.Shared.DTOs.EmployeeProfilePictureDto;
-
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
@@ -51,18 +49,6 @@ public class AccountController(
     private async Task<int> GetCurrentUserIdAsync() =>
         (await _userManager.FindByEmailAsync(User.Identity.Name)).Id;
 
-    private async Task<ProfilePictureDto> GetCurrentUserProfilePicAsync()
-    {
-        var profilePic = await _dbCcontext.ProfilePictures
-            .SingleOrDefaultAsync(pp => _dbCcontext.Users
-                .Any(em => pp.EmployeeInfo.Email == em.Email && em.Email == User.Identity.Name)) ?? new();
-        return new ProfilePictureDto()
-        {
-            ImageType = profilePic.ImageType,
-            Thumbnail = profilePic.Thumbnail
-        };
-    }
-
     private async Task<string> GetCurrentUserFullName()
     {
         if (User.Identity.IsAuthenticated)
@@ -85,7 +71,6 @@ public class AccountController(
                 UserName = User.Identity.Name,
                 FullName = await GetCurrentUserFullName(),
                 Role = await GetUserRoleAsync(),
-                ProfilePicture = await GetCurrentUserProfilePicAsync(),
                 Claims = User.Claims
                     .ToDictionary(c => c.Type, c => c.Value)
             };

@@ -5,7 +5,6 @@ global using System;
 global using PlannerCRM.Client.Services.Crud;
 global using PlannerCRM.Client.Utilities.Navigation;
 global using PlannerCRM.Client.Utilities.Validation;
-global using PlannerCRM.Client.Utilities.Converter;
 global using System.ComponentModel.DataAnnotations;
 global using System.Reflection;
 global using Newtonsoft.Json;

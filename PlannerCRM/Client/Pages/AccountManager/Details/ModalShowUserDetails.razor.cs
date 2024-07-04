@@ -24,11 +24,7 @@ public partial class ModalShowUserDetails : ComponentBase
         _model = await AccountManagerService.GetEmployeeForViewByIdAsync(Id);
     
     protected override void OnInitialized() {
-        _model = new() {
-            ProfilePicture = new() {
-                EmployeeInfo = new()
-            }
-        };
+        _model = new();
         _currentPage = NavigationUtil.GetCurrentPage();
     }
 

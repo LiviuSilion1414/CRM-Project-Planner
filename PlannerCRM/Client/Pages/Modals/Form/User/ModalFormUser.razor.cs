@@ -26,17 +26,7 @@ public partial class ModalFormUser : ComponentBase
 
     protected override void OnInitialized()
     {
-        Model = new()
-        {
-            ProfilePicture = new()
-            {
-                EmployeeInfo = new()
-                {
-                    EmployeeActivities = new(),
-                    EmployeeSalaries = new()
-                }
-            }
-        };
+        Model = new();
         _editContext = new(Model);
         CustomValidator = new();
         _isCancelClicked = false;
@@ -60,14 +50,6 @@ public partial class ModalFormUser : ComponentBase
         _errorMessage = ExceptionsMessages.EMPTY_FIELDS;
     }
 
-    private async Task SaveImage(InputFileChangeEventArgs args)
-    {
-        var (thumbnail, imageType) = await Base64Converter.ConvertImageAsync(args);
-
-        Model.ProfilePicture.Thumbnail = thumbnail;
-        Model.ProfilePicture.ImageType = imageType;
-    }
-
     private async Task OnClickModalConfirm()
     {
         try
@@ -82,13 +64,6 @@ public partial class ModalFormUser : ComponentBase
                     Model.Id = 0;
                     Model.OldEmail = string.Empty;
                 }
-
-                Model.ProfilePicture.EmployeeInfo.FirstName = Model.FirstName;
-                Model.ProfilePicture.EmployeeInfo.LastName = Model.LastName;
-                Model.ProfilePicture.EmployeeInfo.FullName = $"{Model.FirstName} {Model.LastName}";
-                Model.ProfilePicture.EmployeeInfo.Email = Model.Email;
-                Model.ProfilePicture.EmployeeInfo.Id = Model.Id;
-                Model.ProfilePicture.EmployeeInfo.Role = Model.Role ?? throw new ArgumentNullException(ExceptionsMessages.NULL_ARG, nameof(Model.Role));
 
                 Model.EmployeeSalaries = new() {
                     new() {

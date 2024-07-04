@@ -16,9 +16,6 @@ public partial class ModalAddUser : ComponentBase
     
     protected override void OnInitialized() {
         _model = new() {
-            ProfilePicture = new() {
-
-            },
             EmployeeSalaries = []
         };
         _currentPage = NavigationUtil.GetCurrentPage();

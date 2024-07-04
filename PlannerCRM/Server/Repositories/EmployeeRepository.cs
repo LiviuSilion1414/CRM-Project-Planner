@@ -23,8 +23,6 @@ public class EmployeeRepository(
 
             await AddUserAsync(dto);
             await SetRoleAsync(dto.Email, dto.Role ?? throw new ArgumentNullException(nameof(dto.Role), ExceptionsMessages.NULL_ARG));
-            await SetProfilePictureAsync(dto);
-            await SetFKProfilePictureIdAsync(dto.Email);
         }
     }
 
@@ -47,31 +45,6 @@ public class EmployeeRepository(
         {
             await _userManager.AddToRoleAsync(user, role.ToString());
         }
-    }
-
-    private async Task SetProfilePictureAsync(EmployeeFormDto dto)
-    {
-        var employee = await _dbContext.Users
-            .SingleAsync(em => em.Email == dto.Email);
-
-        await _dbContext.ProfilePictures.AddAsync(dto.MapToEmployeeProfilePicture(employee));
-
-        await _dbContext.SaveChangesAsync();
-    }
-
-    private async Task SetFKProfilePictureIdAsync(string employeeEmail)
-    {
-        var employee = await _dbContext.Users
-            .SingleAsync(em => em.Email == employeeEmail);
-
-        var profilePic = await _dbContext.ProfilePictures
-            .SingleAsync(pic => pic.EmployeeInfo.Email == employeeEmail);
-
-        employee.ProfilePictureId = profilePic.Id;
-
-        _dbContext.Update(employee);
-
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task ArchiveAsync(int employeeId)
@@ -177,9 +150,6 @@ public class EmployeeRepository(
             }
 
             await _dbContext.SaveChangesAsync();
-
-            await SetProfilePictureAsync(dto);
-            await SetFKProfilePictureIdAsync(dto.Email);
         }
     }
 

@@ -52,7 +52,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
     public DbSet<EmployeeUserRole> EmployeeUserRoles { get; set; }
 */
     public DbSet<EmployeeActivity> EmployeeActivities { get; set; }
-    public DbSet<EmployeeProfilePicture> ProfilePictures { get; set; }
 
     public DbSet<FirmClient> Clients { get; set; }
     public DbSet<Activity> Activities { get; set; }

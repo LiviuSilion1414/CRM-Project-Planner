@@ -7,6 +7,5 @@ public class CurrentUser
     public string FullName { get; set; }
     public string Role { get; set; }
     public bool IsAuthenticated { get; set; }
-    public ProfilePictureDto ProfilePicture { get; set; }
     public Dictionary<string, string> Claims { get; set; }
 }

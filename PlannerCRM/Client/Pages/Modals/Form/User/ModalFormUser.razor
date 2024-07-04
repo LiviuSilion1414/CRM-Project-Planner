@@ -6,18 +6,6 @@
         <EditForm EditContext="@_editContext" OnValidSubmit="@OnClickModalConfirm">
             <CascadingValue Value="@_errors">
                 <CustomDataAnnotationsValidator @ref="CustomValidator"/>
-                    <div class="form-group text-center">
-                        <div class="form-group">
-                            <label>Immagine di profilo</label>
-                            <br/>
-                            <img src="@Model.ProfilePicture.Thumbnail" width="150" height="150" class="rounded-circle"/>
-                        </div>
-                        <div class="form-group">
-                            <i class="bi bi-image"></i>
-                            <InputFile OnChange="@SaveImage"></InputFile>
-                        </div>
-                    </div>
-
                     <div class="form-group">
                         <i class="bi bi-person-circle"></i>
                         <label for="Nome">Nome</label>

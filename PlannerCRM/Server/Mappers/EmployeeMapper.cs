@@ -175,16 +175,6 @@ public static class EmployeeMapper
         };
     }
 
-    public static EmployeeProfilePicture MapToEmployeeProfilePicture(this EmployeeFormDto dto, Employee existingEmployee) {
-        return new EmployeeProfilePicture
-        {
-            ImageType = dto.ProfilePicture.ImageType,
-            Thumbnail = dto.ProfilePicture.Thumbnail,
-            EmployeeId = existingEmployee.Id,
-            EmployeeInfo = existingEmployee
-        };
-    }
-
     public static EmployeeSalary MapToEmployeeSalary(this EmployeeSalaryDto employeeSalaryDto, EmployeeFormDto dto) {
         return new EmployeeSalary
         {
