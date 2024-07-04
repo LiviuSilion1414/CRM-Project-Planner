@@ -9,9 +9,15 @@ public class WorkOrder
     public bool IsInvoiceCreated { get; set; }
     public bool IsCompleted { get; set; }
     public bool IsDeleted { get; set; }
-    public List<Activity> Activities { get; set; }
-    public List<WorkTimeRecord> WorkTimeRecords { get; set; }
     public int ClientId { get; set; }
+    
+    [NotMapped]
+    public List<Activity> Activities { get; set; }
+
+    [NotMapped]
+    public List<WorkTimeRecord> WorkTimeRecords { get; set; }
+
+    [NotMapped]
     public FirmClient Client { get; set; }
 }
 

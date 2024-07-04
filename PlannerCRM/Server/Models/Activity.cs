@@ -8,6 +8,7 @@ public class Activity
     public DateTime FinishDate { get; set; }
     public bool IsDeleted { get; set; }
     
+    [NotMapped]
     public HashSet<EmployeeActivity> EmployeeActivity { get; set; }
     public int WorkOrderId { get; set; }
 }

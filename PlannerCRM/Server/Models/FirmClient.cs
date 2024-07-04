@@ -6,5 +6,6 @@ public class FirmClient
     public string Name { get; set; }
     public string VatNumber { get; set; }
 
+    [NotMapped]
     public List<ClientWorkOrder> WorkOrders { get; set; }
 }

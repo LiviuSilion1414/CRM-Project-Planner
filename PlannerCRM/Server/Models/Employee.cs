@@ -15,7 +15,13 @@ public class Employee : IdentityUser<int>
     public Roles Role { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsArchived { get; set; }
+
+    [NotMapped]
     public List<WorkTimeRecord> WorkTimeRecords { get; set; }
+
+    [NotMapped]
     public List<EmployeeSalary> Salaries { get; set; }
+
+    [NotMapped]
     public List<EmployeeActivity> EmployeeActivity { get; set; }
 }

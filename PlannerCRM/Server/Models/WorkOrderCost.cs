@@ -15,8 +15,14 @@ public class WorkOrderCost
     public decimal CostPerMonth { get; set; }
     public decimal TotalCost { get; set; }
     public TimeSpan TotalTime { get; set; }
-    public List<Activity> Activities { get; set; }
-    public List<Employee> Employees { get; set; }
-    public List<ActivityCost> MonthlyActivityCosts { get; set; }
     public int ClientId { get; set; }
+    
+    [NotMapped]
+    public List<Activity> Activities { get; set; }
+
+    [NotMapped]
+    public List<Employee> Employees { get; set; }
+
+    [NotMapped]
+    public List<ActivityCost> MonthlyActivityCosts { get; set; }
 }

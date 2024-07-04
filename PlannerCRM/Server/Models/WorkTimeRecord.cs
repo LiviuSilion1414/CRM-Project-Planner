@@ -11,5 +11,7 @@ public class WorkTimeRecord
     public int WorkOrderId { get; set; }
 
     public int EmployeeId { get; set; }
+
+    [NotMapped]
     public Employee Employee { get; set; }
 }
