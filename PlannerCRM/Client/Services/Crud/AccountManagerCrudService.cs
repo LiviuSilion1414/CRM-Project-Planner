@@ -36,7 +36,7 @@ public class AccountManagerCrudService
         }
     }
 
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit = 0, int offset = 5) {
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit = 5, int offset = 0) {
         try {
             return await _http
                 .GetFromJsonAsync<List<EmployeeViewDto>>($"api/employee/get/paginated/{limit}/{offset}");

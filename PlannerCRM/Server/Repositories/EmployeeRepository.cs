@@ -226,9 +226,9 @@ public class EmployeeRepository(
     public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset)
     {
         return await _dbContext.Users
-            .OrderBy(em => em.Id)
             .Skip(offset)
             .Take(limit)
+            .OrderBy(em => em.Id)
             .Select(em => em.MapToEmployeeViewDto(_dbContext))
             .ToListAsync();
     }
@@ -238,7 +238,7 @@ public class EmployeeRepository(
         return await _dbContext.Users
             .Where(em => !em.IsDeleted && !em.IsArchived)
             .Select(em => em.MapToCurrentEmployeeDto())
-            .FirstAsync(em => em.Email == email);
+            .SingleAsync(em => em.Email == email);
     }
 
     public async Task<int> GetEmployeesSizeAsync() => await _dbContext.Users.CountAsync();

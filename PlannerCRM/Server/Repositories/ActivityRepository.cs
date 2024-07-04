@@ -87,7 +87,7 @@ public class ActivityRepository(
                 _dbContext.WorkOrders
                     .Any(wo => wo.Id == ac.WorkOrderId && !wo.IsDeleted || !wo.IsInvoiceCreated))
             .Select(ac => ac.MapToActivityFormDto(_dbContext))
-            .FirstAsync(ac => ac.Id == activityId);
+            .SingleAsync(ac => ac.Id == activityId);
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteByIdAsync(int id)
