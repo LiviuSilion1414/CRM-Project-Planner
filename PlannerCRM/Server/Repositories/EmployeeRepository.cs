@@ -195,12 +195,62 @@ public class EmployeeRepository(
 
     public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset)
     {
-        return await _dbContext.Users
-            .Skip(offset)
-            .Take(limit)
+        var users = await _userManager.Users
+            //.Skip(offset)
+            //.Take(limit)
             .OrderBy(em => em.Id)
-            .Select(em => em.MapToEmployeeViewDto(_dbContext))
+            .Select(employee => new EmployeeViewDto{
+                Id = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                FullName = $"{employee.FirstName} {employee.LastName}",
+                BirthDay = employee.BirthDay,
+                StartDate = employee.StartDate,
+                Email = employee.Email,
+                Role = employee.Role,
+                CurrentHourlyRate = employee.CurrentHourlyRate,
+                IsDeleted = employee.IsDeleted,
+                IsArchived = employee.IsArchived,
+                EmployeeActivities = employee.EmployeeActivity
+                    .Select(ea => new EmployeeActivityDto
+                    {
+                        Id = ea.ActivityId,
+                        EmployeeId = employee.Id,
+                        Employee = _dbContext.Users
+                            .Select(employee => new EmployeeSelectDto
+                            {
+                                Id = employee.Id,
+                                Email = employee.Email,
+                                FirstName = employee.FirstName,
+                                LastName = employee.LastName,
+                                Role = employee.Role
+                            })
+                            .SingleOrDefault(employee => employee.Id == ea.EmployeeId),
+                        ActivityId = ea.ActivityId,
+                        Activity = _dbContext.Activities
+                            .Select(ac => new ActivitySelectDto
+                            {
+                                Id = ac.Id,
+                                Name = ac.Name,
+                                StartDate = ac.StartDate,
+                                FinishDate = ac.FinishDate,
+                                WorkOrderId = ac.WorkOrderId
+                            })
+                        .SingleOrDefault(ac => ac.Id == ea.ActivityId),
+                    }).ToList(),
+                EmployeeSalaries = employee.Salaries
+                    .Select(ems => new EmployeeSalaryDto
+                    {
+                        Id = ems.Id,
+                        EmployeeId = ems.Id,
+                        StartDate = ems.StartDate,
+                        FinishDate = ems.StartDate,
+                        Salary = ems.Salary
+                    })
+                    .ToList()})
             .ToListAsync();
+
+        return users;
     }
 
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email)

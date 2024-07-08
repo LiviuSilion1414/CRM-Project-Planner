@@ -2,7 +2,6 @@ namespace PlannerCRM.Server.Models;
 
 public class Employee : IdentityUser<int>
 {
-    public int ProfilePictureId { get; set; } 
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string FullName { get; set; }

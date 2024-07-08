@@ -95,6 +95,8 @@ public static class EmployeeMapper
     }
 
     public static EmployeeViewDto MapToEmployeeViewDto(this Employee employee, AppDbContext context) {
+        if (employee == null) System.Console.WriteLine("Employee IS NULL");
+        if (context == null) System.Console.WriteLine("Context IS NULL");
         return new EmployeeViewDto
         {
             Id = employee.Id,
