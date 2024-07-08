@@ -156,6 +156,8 @@ public static class EmployeeMapper
             Email = dto.Email,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
+            UserName = dto.Email,
+            NormalizedEmail = dto.Email.ToUpper(),
             FullName = $"{dto.FirstName} {dto.LastName}",
             Username = dto.Email,
             BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
