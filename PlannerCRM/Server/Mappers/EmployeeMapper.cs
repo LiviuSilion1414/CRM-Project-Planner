@@ -95,8 +95,6 @@ public static class EmployeeMapper
     }
 
     public static EmployeeViewDto MapToEmployeeViewDto(this Employee employee, AppDbContext context) {
-        if (employee == null) System.Console.WriteLine("Employee IS NULL");
-        if (context == null) System.Console.WriteLine("Context IS NULL");
         return new EmployeeViewDto
         {
             Id = employee.Id,
@@ -159,7 +157,6 @@ public static class EmployeeMapper
             UserName = dto.Email,
             NormalizedEmail = dto.Email.ToUpper(),
             FullName = $"{dto.FirstName} {dto.LastName}",
-            Username = dto.Email,
             BirthDay = dto.BirthDay ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             StartDate = dto.StartDate ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             Password = dto.Password,

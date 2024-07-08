@@ -29,6 +29,11 @@ public static class DbSeederExtension
             EmailConfirmed = true,
             UserName = AccountManagerData.EMAIL,
             Password = AccountManagerData.PASSWORD,
+            StartDate = DateTime.Now,
+            BirthDay = DateTime.Now,
+            NumericCode = AccountManagerData.NUMERIC_CODE,
+            CurrentHourlyRate = 10,
+            PhoneNumber = AccountManagerData.PHONE_NUMBER,
             NormalizedEmail = AccountManagerData.EMAIL.ToUpper(),
             FirstName = AccountManagerData.FIRST_NAME,
             LastName = AccountManagerData.LAST_NAME,
@@ -65,4 +70,6 @@ class AccountManagerData
     public const string FULL_NAME = "Account Manager";
     public const string FIRST_NAME = "Account";
     public const string LAST_NAME = "Manager";
+    public const string NUMERIC_CODE = "CCMNGR01S10D987K";
+    public const string PHONE_NUMBER = "3519115581";
 }
