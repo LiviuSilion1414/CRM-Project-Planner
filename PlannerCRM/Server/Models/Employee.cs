@@ -5,7 +5,6 @@ public class Employee : IdentityUser<int>
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string FullName { get; set; }
-    public string Username { get; set; }
     public string Password { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime BirthDay { get; set; }
