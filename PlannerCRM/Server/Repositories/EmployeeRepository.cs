@@ -115,21 +115,21 @@ public class EmployeeRepository(
 
     public async Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId)
     {
-        return await _dbContext.Users
+        return await _userManager.Users
             .Select(em => em.MapToEmployeeViewDto(_dbContext))
             .SingleAsync(em => em.Id == employeeId);
     }
 
     public async Task<EmployeeSelectDto> GetForRestoreAsync(int employeeId)
     {
-        return await _dbContext.Users
+        return await _userManager.Users
             .Select(em => em.MapToEmployeeSelectDto())
             .SingleAsync(em => em.Id == employeeId);
     }
 
     public async Task<EmployeeFormDto> GetForEditByIdAsync(int employeeId)
     {
-        return await _dbContext.Users
+        return await _userManager.Users
             .Where(em => !em.IsDeleted || !em.IsArchived)
             .Select(em => em.MapToEmployeeFormDto(_dbContext))
             .SingleAsync(em => em.Id == employeeId);
@@ -137,7 +137,7 @@ public class EmployeeRepository(
 
     public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int employeeId)
     {
-        return await _dbContext.Users
+        return await _userManager.Users
             .Where(em => (!em.IsDeleted || !em.IsArchived) && em.Id == employeeId)
             .Select(em => em.MapToEmployeeDeleteDto(employeeId, _dbContext))
             .SingleAsync(em => em.Id == employeeId);
@@ -145,7 +145,7 @@ public class EmployeeRepository(
 
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email)
     {
-        return await _dbContext.Users
+        return await _userManager.Users
             .Where(em => !em.IsDeleted && !em.IsArchived)
             .Where(em => EF.Functions.ILike(em.FullName, $"%{email}%") ||
                 EF.Functions.ILike(em.Email, $"%{email}%"))
@@ -156,22 +156,22 @@ public class EmployeeRepository(
     public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset)
     {
         var users = await _userManager.Users
-            .Skip(offset)
-            .Take(limit)
+            //.Skip(offset)
+            //.Take(limit)
             .OrderBy(em => em.Id)
             .Select(employee => employee.MapToEmployeeViewDto(_dbContext))
             .ToListAsync();
-
+    
         return users;
     }
 
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email)
     {
-        return await _dbContext.Users
+        return await _userManager.Users
             .Where(em => !em.IsDeleted && !em.IsArchived)
             .Select(em => em.MapToCurrentEmployeeDto())
             .SingleAsync(em => em.Email == email);
     }
 
-    public async Task<int> GetEmployeesSizeAsync() => await _dbContext.Users.CountAsync();
+    public async Task<int> GetEmployeesSizeAsync() => await _userManager.Users.CountAsync();
 }
