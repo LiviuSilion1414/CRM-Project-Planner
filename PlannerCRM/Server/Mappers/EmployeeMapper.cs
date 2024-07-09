@@ -2,7 +2,15 @@ namespace PlannerCRM.Server.Mappers;
 
 public static class EmployeeMapper
 {
-    public static CurrentEmployeeDto MapToCurrentEmployeeDto(this Employee employee) {
+    private static AppDbContext _dbContext;
+
+    public static void Configure(AppDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public static CurrentEmployeeDto MapToCurrentEmployeeDto(this Employee employee)
+    {
         return new CurrentEmployeeDto
         {
             Id = employee.Id,
@@ -10,7 +18,8 @@ public static class EmployeeMapper
         };
     }
 
-    public static EmployeeFormDto MapToEmployeeFormDto(this Employee employee, AppDbContext context) {
+    public static EmployeeFormDto MapToEmployeeFormDto(this Employee employee)
+    {
         return new EmployeeFormDto
         {
             Id = employee.Id,
@@ -25,24 +34,14 @@ public static class EmployeeMapper
             Password = employee.Password,
             CurrentHourlyRate = employee.CurrentHourlyRate,
             IsDeleted = employee.IsDeleted,
-            StartDateHourlyRate = employee.Salaries.SingleOrDefault().StartDate,
-            FinishDateHourlyRate = employee.Salaries.SingleOrDefault().FinishDate,
-            EmployeeSalaries = employee.Salaries
-                    .Where(ems => context.Users
-                        .Any(employee => employee.Id == ems.EmployeeId))
-                    .Select(ems => new EmployeeSalaryDto
-                    {
-                        Id = ems.Id,
-                        EmployeeId = employee.Id,
-                        StartDate = ems.StartDate,
-                        FinishDate = ems.StartDate,
-                        Salary = ems.Salary
-                    })
-                    .ToList()
+            StartDateHourlyRate = default,
+            FinishDateHourlyRate = default,
+            EmployeeSalaries = []
         };
     }
 
-    public static EmployeeDeleteDto MapToEmployeeDeleteDto(this Employee employee, int employeeId, AppDbContext context) {
+    public static EmployeeDeleteDto MapToEmployeeDeleteDto(this Employee employee, int employeeId)
+    {
         return new EmployeeDeleteDto
         {
             Id = employee.Id,
@@ -51,13 +50,13 @@ public static class EmployeeMapper
             Role = employee.Role
                 .ToString()
                 .Replace('_', ' '),
-            EmployeeActivities = context.EmployeeActivities
+            EmployeeActivities = _dbContext.EmployeeActivities
                 .Where(ea => ea.EmployeeId == employeeId)
                 .Select(ea => new EmployeeActivityDto
                 {
                     Id = ea.Id,
                     EmployeeId = ea.EmployeeId,
-                    Employee = context.Users
+                    Employee = _dbContext.Users
                         .Where(e => e.Id == ea.EmployeeId)
                         .Select(_ => new EmployeeSelectDto
                         {
@@ -67,7 +66,7 @@ public static class EmployeeMapper
                         })
                         .SingleOrDefault(),
                     ActivityId = ea.ActivityId,
-                    Activity = context.Activities
+                    Activity = _dbContext.Activities
                         .Where(ac => ac.Id == ea.ActivityId)
                         .Select(_ => new ActivitySelectDto
                         {
@@ -82,7 +81,8 @@ public static class EmployeeMapper
         };
     }
 
-    public static EmployeeSelectDto MapToEmployeeSelectDto(this Employee employee) {
+    public static EmployeeSelectDto MapToEmployeeSelectDto(this Employee employee)
+    {
         return new EmployeeSelectDto
         {
             Id = employee.Id,
@@ -94,7 +94,8 @@ public static class EmployeeMapper
         };
     }
 
-    public static EmployeeViewDto MapToEmployeeViewDto(this Employee employee, AppDbContext context) {
+    public static EmployeeViewDto MapToEmployeeViewDto(this Employee employee)
+    {
         return new EmployeeViewDto
         {
             Id = employee.Id,
@@ -103,52 +104,19 @@ public static class EmployeeMapper
             FullName = $"{employee.FirstName} {employee.LastName}",
             BirthDay = employee.BirthDay,
             StartDate = employee.StartDate,
+            Name = $"{employee.FirstName} {employee.LastName}",
             Email = employee.Email,
             Role = employee.Role,
             CurrentHourlyRate = employee.CurrentHourlyRate,
             IsDeleted = employee.IsDeleted,
             IsArchived = employee.IsArchived,
-            EmployeeActivities = employee.EmployeeActivity
-                .Select(ea => new EmployeeActivityDto
-                {
-                    Id = ea.ActivityId,
-                    EmployeeId = employee.Id,
-                    Employee = context.Users
-                        .Select(employee => new EmployeeSelectDto
-                        {
-                            Id = employee.Id,
-                            Email = employee.Email,
-                            FirstName = employee.FirstName,
-                            LastName = employee.LastName,
-                            Role = employee.Role
-                        })
-                        .SingleOrDefault(employee => employee.Id == ea.EmployeeId),
-                    ActivityId = ea.ActivityId,
-                    Activity = context.Activities
-                        .Select(ac => new ActivitySelectDto
-                        {
-                            Id = ac.Id,
-                            Name = ac.Name,
-                            StartDate = ac.StartDate,
-                            FinishDate = ac.FinishDate,
-                            WorkOrderId = ac.WorkOrderId
-                        })
-                    .SingleOrDefault(ac => ac.Id == ea.ActivityId),
-                }).ToList(),
-            EmployeeSalaries = employee.Salaries
-                .Select(ems => new EmployeeSalaryDto
-                {
-                    Id = ems.Id,
-                    EmployeeId = ems.Id,
-                    StartDate = ems.StartDate,
-                    FinishDate = ems.StartDate,
-                    Salary = ems.Salary
-                })
-                .ToList(),
+            EmployeeActivities = [], //todo: need to refactor queries
+            EmployeeSalaries = []
         };
     }
 
-    public static Employee MapToEmployee(this EmployeeFormDto dto) {
+    public static Employee MapToEmployee(this EmployeeFormDto dto)
+    {
         return new Employee
         {
             Email = dto.Email,
@@ -176,7 +144,8 @@ public static class EmployeeMapper
         };
     }
 
-    public static EmployeeSalary MapToEmployeeSalary(this EmployeeSalaryDto employeeSalaryDto, EmployeeFormDto dto) {
+    public static EmployeeSalary MapToEmployeeSalary(this EmployeeSalaryDto employeeSalaryDto, EmployeeFormDto dto)
+    {
         return new EmployeeSalary
         {
             EmployeeId = dto.Id,
