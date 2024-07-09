@@ -54,7 +54,7 @@ public class CalculatorService(AppDbContext dbContext)
         var workOrderCost = await ExecuteCalculationsAsync(workOrder);
 
         var employees = workOrderCost.Employees
-            .Select(em => em.MapToEmployeeViewDto(_dbContext))
+            .Select(em => em.MapToEmployeeViewDto())
             .ToList();
 
         var activities = workOrderCost.Activities

@@ -1,15 +1,24 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class EmployeeRepository(
-    AppDbContext dbContext,
-    DtoValidatorUtillity validator,
-    UserManager<Employee> userManager,
-    RoleManager<EmployeeRole> roleManager) : IRepository<EmployeeFormDto>, IEmployeeRepository
+public class EmployeeRepository : IRepository<EmployeeFormDto>, IEmployeeRepository
 {
-    private readonly AppDbContext _dbContext = dbContext;
-    private readonly DtoValidatorUtillity _validator = validator;
-    private readonly UserManager<Employee> _userManager = userManager;
-    private readonly RoleManager<EmployeeRole> _roleManager = roleManager;
+    private readonly AppDbContext _dbContext;
+    private readonly DtoValidatorUtillity _validator;
+    private readonly UserManager<Employee> _userManager;
+    private readonly RoleManager<EmployeeRole> _roleManager;
+
+    public EmployeeRepository(AppDbContext dbContext,
+                              DtoValidatorUtillity validator,
+                              UserManager<Employee> userManager,
+                              RoleManager<EmployeeRole> roleManager)
+    {
+        _dbContext = dbContext;
+        _validator = validator;
+        _userManager = userManager;
+        _roleManager = roleManager;
+
+        EmployeeMapper.Configure(_dbContext);
+    }
 
     public async Task AddAsync(EmployeeFormDto dto)
     {
@@ -116,31 +125,33 @@ public class EmployeeRepository(
     public async Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId)
     {
         return await _userManager.Users
-            .Select(em => em.MapToEmployeeViewDto(_dbContext))
-            .SingleAsync(em => em.Id == employeeId);
+            .Where(em => em.Id == employeeId)
+            .Select(em => em.MapToEmployeeViewDto())
+            .SingleAsync();
     }
 
     public async Task<EmployeeSelectDto> GetForRestoreAsync(int employeeId)
     {
         return await _userManager.Users
+            .Where(em => em.Id == employeeId)
             .Select(em => em.MapToEmployeeSelectDto())
-            .SingleAsync(em => em.Id == employeeId);
+            .SingleAsync();
     }
 
     public async Task<EmployeeFormDto> GetForEditByIdAsync(int employeeId)
     {
         return await _userManager.Users
-            .Where(em => !em.IsDeleted || !em.IsArchived)
-            .Select(em => em.MapToEmployeeFormDto(_dbContext))
-            .SingleAsync(em => em.Id == employeeId);
+            .Where(em => /*!em.IsDeleted || !em.IsArchived && */em.Id == employeeId)
+            .Select(em => em.MapToEmployeeFormDto())
+            .SingleAsync();
     }
 
     public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int employeeId)
     {
         return await _userManager.Users
-            .Where(em => (!em.IsDeleted || !em.IsArchived) && em.Id == employeeId)
-            .Select(em => em.MapToEmployeeDeleteDto(employeeId, _dbContext))
-            .SingleAsync(em => em.Id == employeeId);
+            .Where(em => !em.IsDeleted || !em.IsArchived && em.Id == employeeId)
+            .Select(em => em.MapToEmployeeDeleteDto(employeeId))
+            .SingleAsync();
     }
 
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email)
@@ -153,24 +164,22 @@ public class EmployeeRepository(
             .ToListAsync();
     }
 
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset)
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int offset, int limit)
     {
-        var users = await _userManager.Users
-            //.Skip(offset)
-            //.Take(limit)
+        return await _userManager.Users
+            .Skip(offset)
+            .Take(limit)
             .OrderBy(em => em.Id)
-            .Select(employee => employee.MapToEmployeeViewDto(_dbContext))
-            .ToListAsync();
-    
-        return users;
+            .Select(employee => employee.MapToEmployeeViewDto())
+            .ToListAsync();    
     }
 
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email)
     {
         return await _userManager.Users
-            .Where(em => !em.IsDeleted && !em.IsArchived)
+            .Where(em => !em.IsDeleted && !em.IsArchived && em.Email == email)
             .Select(em => em.MapToCurrentEmployeeDto())
-            .SingleAsync(em => em.Email == email);
+            .SingleAsync();
     }
 
     public async Task<int> GetEmployeesSizeAsync() => await _userManager.Users.CountAsync();
