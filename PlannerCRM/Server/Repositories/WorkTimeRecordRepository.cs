@@ -11,7 +11,7 @@ public class WorkTimeRecordRepository(
         var isValid = _validator.ValidateWorkTime(dto);
 
         if (isValid) {
-            await _dbContext.WorkTimeRecords.AddAsync(await dto.MapToWorkTimeRecord(_dbContext));
+            await _dbContext.WorkTimeRecords.AddAsync(await dto.MapToWorkTimeRecord());
     
             await _dbContext.SaveChangesAsync();
         }
@@ -34,7 +34,11 @@ public class WorkTimeRecordRepository(
             var model = await _dbContext.WorkTimeRecords
                 .SingleAsync(wtr => wtr.Id == dto.Id);
     
-            model = await dto.MapToWorkTimeRecord(_dbContext);
+            model = await dto.MapToWorkTimeRecord();
+            model.Employee = await _dbContext.Users
+                .Where(em => !em.IsDeleted || !em.IsArchived && em.Id == dto.EmployeeId)
+                .SingleAsync();
+
             _dbContext.Update(model);
     
             await _dbContext.SaveChangesAsync();
@@ -43,7 +47,7 @@ public class WorkTimeRecordRepository(
 
     public async Task<WorkTimeRecordViewDto> GetForViewByIdAsync(int workOrderId, int activityId, int employeeId) {              
         return await _dbContext.WorkTimeRecords
-            .Select(wtr => wtr.MapToWorkTimeRecordViewDto(_dbContext, workOrderId, activityId, employeeId))
+            .Select(wtr => wtr.MapToWorkTimeRecordViewDto())
             .OrderByDescending(wtr => wtr.Hours)
             .FirstOrDefaultAsync(wtr => 
                 wtr.WorkOrderId == workOrderId && 

@@ -1,31 +1,26 @@
 namespace PlannerCRM.Server.Mappers;
 
 public static class ActivityMapper
-{
+{    
     public static Activity MapToActivity(this ActivityFormDto dto)
     {
         return new Activity
         {
             Id = dto.Id,
             Name = dto.Name,
-            StartDate = dto.StartDate
+            StartDate = dto?.StartDate
                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             FinishDate = dto.FinishDate
                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             WorkOrderId = dto.WorkOrderId
                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             EmployeeActivity = dto.EmployeeActivity
-                .Select(ea => new EmployeeActivity
-                {
-                    Id = ea.Id,
-                    EmployeeId = ea.EmployeeId,
-                    ActivityId = dto.Id
-                })
+                .Select(ea => ea.MapToEmployeeActivity(dto.Id))
                 .ToHashSet()
         };
     }
 
-    public static ActivityFormDto MapToActivityFormDto(this Activity activity, AppDbContext context)
+    public static ActivityFormDto MapToActivityFormDto(this Activity activity)
     {
         return new ActivityFormDto
         {
@@ -34,48 +29,10 @@ public static class ActivityMapper
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
-            //ClientName = context.Clients
-            //    .SingleOrDefault(cl => cl.WorkOrdersIds.Any(id => id == activity.WorkOrderId)
-            //    .Name,
-            EmployeeActivity = new(),
+            ClientName = string.Empty,
+            EmployeeActivity = [],
             ViewEmployeeActivity = activity.EmployeeActivity
-                .Select(ea => new EmployeeActivityDto
-                {
-                    Id = ea.Id,
-                    EmployeeId = ea.EmployeeId,
-                    Employee = context.Users
-                        .Select(em => new EmployeeSelectDto
-                        {
-                            Id = ea.EmployeeId,
-                            Email = ea.Employee.Email,
-                            FirstName = ea.Employee.FirstName,
-                            LastName = ea.Employee.LastName,
-                            FullName = ea.Employee.FullName,
-                            Role = ea.Employee.Role,
-                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                            EmployeeSalaries = ea.Employee.Salaries
-                                .Select(sal => new EmployeeSalaryDto
-                                {
-                                    Id = sal.Id,
-                                    EmployeeId = ea.EmployeeId,
-                                    StartDate = sal.StartDate,
-                                    FinishDate = sal.FinishDate,
-                                    Salary = sal.Salary,
-                                }).ToList()
-                        })
-                        .SingleOrDefault(em => em.Id == ea.EmployeeId),
-                    ActivityId = ea.ActivityId,
-                    Activity = context.Activities
-                        .Select(a => new ActivitySelectDto
-                        {
-                            Id = ea.ActivityId,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        })
-                        .SingleOrDefault(activity => activity.Id == ea.ActivityId)
-                })
+                .Select(ea => ea.MapToEmployeeActivityDto())
                 .ToHashSet()
         };
     }
@@ -86,7 +43,7 @@ public static class ActivityMapper
         {
             Id = dto.Id,
             EmployeeId = dto.EmployeeId,
-            ActivityId = activityId
+            ActivityId = activityId,
         };
     }
 
@@ -102,7 +59,7 @@ public static class ActivityMapper
         };
     }
 
-    public static ActivityViewDto MapToActivityViewDto(this Activity activity, AppDbContext context)
+    public static ActivityViewDto MapToActivityViewDto(this Activity activity)
     {
         return new ActivityViewDto
         {
@@ -112,47 +69,12 @@ public static class ActivityMapper
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
             EmployeeActivity = activity.EmployeeActivity
-                .Select(ea => new EmployeeActivityDto
-                {
-                    Id = ea.Id,
-                    EmployeeId = ea.EmployeeId,
-                    Employee = context.Users
-                        .Select(em => new EmployeeSelectDto
-                        {
-                            Id = ea.EmployeeId,
-                            Email = ea.Employee.Email,
-                            FirstName = ea.Employee.FirstName,
-                            LastName = ea.Employee.LastName,
-                            FullName = ea.Employee.FullName,
-                            Role = ea.Employee.Role,
-                            CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                            EmployeeSalaries = ea.Employee.Salaries
-                                .Select(sal => new EmployeeSalaryDto
-                                {
-                                    Id = sal.Id,
-                                    EmployeeId = ea.EmployeeId,
-                                    StartDate = sal.StartDate,
-                                    FinishDate = sal.FinishDate,
-                                    Salary = sal.Salary,
-                                }).ToList()
-                        })
-                        .SingleOrDefault(em => em.Id == ea.EmployeeId),
-                    ActivityId = ea.ActivityId,
-                    Activity = context.Activities
-                        .Select(a => new ActivitySelectDto
-                        {
-                            Id = ea.ActivityId,
-                            Name = ea.Activity.Name,
-                            StartDate = ea.Activity.StartDate,
-                            FinishDate = ea.Activity.FinishDate,
-                            WorkOrderId = ea.Activity.WorkOrderId
-                        })
-                        .SingleOrDefault(activity => activity.Id == ea.ActivityId)
-                }).ToHashSet()
+                .Select(ea => ea.MapToEmployeeActivityDto())
+                .ToHashSet()
         };
     }
 
-    public static ActivityDeleteDto MapToActivityDeleteDto(this Activity activity, AppDbContext context, int activityId)
+    public static ActivityDeleteDto MapToActivityDeleteDto(this Activity activity)
     {
         return new ActivityDeleteDto
         {
@@ -161,66 +83,7 @@ public static class ActivityMapper
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
-            Employees = context.EmployeeActivities
-                    .Where(ea => ea.ActivityId == activityId)
-                    .Select(ea => new EmployeeSelectDto()
-                    {
-                        Id = ea.EmployeeId,
-                        Email = ea.Employee.Email,
-                        FirstName = ea.Employee.FirstName,
-                        LastName = ea.Employee.LastName,
-                        FullName = ea.Employee.FullName,
-                        Role = ea.Employee.Role,
-                        CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                        EmployeeSalaries = ea.Employee.Salaries
-                            .Select(sal => new EmployeeSalaryDto
-                            {
-                                Id = sal.Id,
-                                EmployeeId = ea.EmployeeId,
-                                StartDate = sal.StartDate,
-                                FinishDate = sal.FinishDate,
-                                Salary = sal.Salary,
-                            }).ToList(),
-                        EmployeeActivities = activity.EmployeeActivity
-                            .Select(ea => new EmployeeActivityDto
-                            {
-                                Id = ea.Id,
-                                EmployeeId = ea.EmployeeId,
-                                Employee = context.Users
-                                    .Select(em => new EmployeeSelectDto
-                                    {
-                                        Id = ea.EmployeeId,
-                                        Email = ea.Employee.Email,
-                                        FirstName = ea.Employee.FirstName,
-                                        LastName = ea.Employee.LastName,
-                                        FullName = ea.Employee.FullName,
-                                        Role = ea.Employee.Role,
-                                        CurrentHourlyRate = ea.Employee.CurrentHourlyRate,
-                                        EmployeeSalaries = ea.Employee.Salaries
-                                            .Select(sal => new EmployeeSalaryDto
-                                            {
-                                                Id = sal.Id,
-                                                EmployeeId = ea.EmployeeId,
-                                                StartDate = sal.StartDate,
-                                                FinishDate = sal.FinishDate,
-                                                Salary = sal.Salary,
-                                            }).ToList()
-                                    })
-                                    .SingleOrDefault(em => em.Id == ea.EmployeeId),
-                                ActivityId = ea.ActivityId,
-                                Activity = context.Activities
-                                    .Select(a => new ActivitySelectDto
-                                    {
-                                        Id = ea.ActivityId,
-                                        Name = ea.Activity.Name,
-                                        StartDate = ea.Activity.StartDate,
-                                        FinishDate = ea.Activity.FinishDate,
-                                        WorkOrderId = ea.Activity.WorkOrderId
-                                    })
-                                    .SingleOrDefault(activity => activity.Id == ea.ActivityId)
-                            }).ToList()
-                    })
-                    .ToHashSet()
+            Employees = []
         };
     }
 

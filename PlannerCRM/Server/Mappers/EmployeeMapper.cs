@@ -2,13 +2,6 @@ namespace PlannerCRM.Server.Mappers;
 
 public static class EmployeeMapper
 {
-    private static AppDbContext _dbContext;
-
-    public static void Configure(AppDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public static CurrentEmployeeDto MapToCurrentEmployeeDto(this Employee employee)
     {
         return new CurrentEmployeeDto
@@ -104,7 +97,7 @@ public static class EmployeeMapper
             CurrentHourlyRate = employee.CurrentHourlyRate,
             IsDeleted = employee.IsDeleted,
             IsArchived = employee.IsArchived,
-            EmployeeActivities = [], //todo: need to refactor queries
+            EmployeeActivities = [],
             EmployeeSalaries = []
         };
     }

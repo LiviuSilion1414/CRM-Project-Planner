@@ -11,7 +11,7 @@ public class WorkOrderRepository(
 		var isValid = await _validator.ValidateWorkOrderAsync(dto, OperationType.ADD);
 		
 		if (isValid) {
-			await _dbContext.WorkOrders.AddAsync(dto.MapToWorkOrder(_dbContext));
+			await _dbContext.WorkOrders.AddAsync(dto.MapToWorkOrder());
 
 			await _dbContext.SaveChangesAsync();
 
@@ -55,39 +55,49 @@ public class WorkOrderRepository(
 			var model = await _dbContext.WorkOrders
 				.SingleAsync(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == dto.Id);
 			
-			model = dto.MapToWorkOrder(_dbContext);
+			model = dto.MapToWorkOrder();
+			model.Client = await GetClientByWorkOrderId(dto.ClientId);
 
 			await _dbContext.SaveChangesAsync();
 			
 			await SetForeignKeyToClientAsync(model, OperationType.EDIT);
 		}
 	}
+
+	public async Task<FirmClient> GetClientByWorkOrderId(int clientId)
+	{
+		return await _dbContext.Clients
+			.SingleAsync(cl => cl.Id == clientId);
+    }
 	
 	public async Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int id) {
 		return await _dbContext.WorkOrders
 			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
-			.Select(wo => wo.MapToWorkOrderDeleteDto(_dbContext))
+			.Select(wo => wo.MapToWorkOrderDeleteDto())
 			.SingleAsync(wo => wo.Id == id);
 	}
 
 	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int id) {
 		return await _dbContext.WorkOrders
-			.Select(wo => wo.MapToWorkOrderViewDto(_dbContext))
+			.Select(wo => wo.MapToWorkOrderViewDto())
 			.SingleAsync(wo => wo.Id == id);
 	}
 	
 	public async Task<WorkOrderFormDto> GetForEditByIdAsync(int id) {
-		return await _dbContext.WorkOrders
+		var workOrder = await _dbContext.WorkOrders
 			.Where(wo => !wo.IsDeleted || !wo.IsCompleted)
-			.Select(wo => wo.MapToWorkOrderFormDto(_dbContext))
+			.Select(wo => wo.MapToWorkOrderFormDto())
 			.SingleAsync(wo => wo.Id == id);
+		workOrder.ClientName = (await GetClientByWorkOrderId(workOrder.ClientId)).Name;
+
+		return workOrder;
 	}
 
-    public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrder) {
-        return await _dbContext.WorkOrders
+    public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName) {
+		return await _dbContext.WorkOrders
 			.Where(wo => !wo.IsDeleted && !wo.IsCompleted &&
-				EF.Functions.ILike(wo.Name, $"%{workOrder}%"))
-			.Select(wo => wo.MapToWorkOrderSelectDto(_dbContext))
+				EF.Functions.ILike(wo.Name, $"%{workOrderName}%"))
+			.Select(wo => wo.MapToWorkOrderSelectDto())
 			.ToListAsync();
     }
 
@@ -97,7 +107,7 @@ public class WorkOrderRepository(
 			.Skip(limit)
 			.Take(offset)
             .AsSplitQuery()
-			.Select(wo => wo.MapToWorkOrderViewDto(_dbContext))
+			.Select(wo => wo.MapToWorkOrderViewDto())
 			.ToListAsync();
 	}
 

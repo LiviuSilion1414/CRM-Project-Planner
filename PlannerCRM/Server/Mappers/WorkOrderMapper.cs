@@ -2,7 +2,7 @@ namespace PlannerCRM.Server.Mappers;
 
 public static class WorkOrderMapper
 {
-    public static WorkOrder MapToWorkOrder(this WorkOrderFormDto dto, AppDbContext context)
+    public static WorkOrder MapToWorkOrder(this WorkOrderFormDto dto)
     {
         return new WorkOrder
         {
@@ -15,12 +15,11 @@ public static class WorkOrderMapper
             IsDeleted = false,
             IsCompleted = false,
             ClientId = dto.ClientId,
-            Client = context.Clients
-                .SingleOrDefault(cl => cl.Id == dto.ClientId)
+            Client = new()
         };
     }
 
-    public static WorkOrderFormDto MapToWorkOrderFormDto(this WorkOrder workOrder, AppDbContext context)
+    public static WorkOrderFormDto MapToWorkOrderFormDto(this WorkOrder workOrder)
     {
         return new WorkOrderFormDto
         {
@@ -30,21 +29,17 @@ public static class WorkOrderMapper
             FinishDate = workOrder.FinishDate,
             ClientId = workOrder.ClientId,
             IsOnEdit = true,
-            ClientName = context.Clients
-                .SingleOrDefault(cl => cl.Id == workOrder.ClientId)
-                .Name,
+            ClientName = string.Empty
         };
     }
 
-    public static WorkOrderSelectDto MapToWorkOrderSelectDto(this WorkOrder workOrder, AppDbContext context)
+    public static WorkOrderSelectDto MapToWorkOrderSelectDto(this WorkOrder workOrder)
     {
         return new WorkOrderSelectDto
         {
             Id = workOrder.Id,
             Name = workOrder.Name,
-            ClientName = context.Clients
-                .SingleOrDefault(cl => cl.Id == workOrder.ClientId)
-                .Name
+            Client = workOrder.Client.MapToClientViewDto()
         };
     }
 
@@ -57,7 +52,7 @@ public static class WorkOrderMapper
         };
     }
 
-    public static WorkOrderDeleteDto MapToWorkOrderDeleteDto(this WorkOrder workOrder, AppDbContext context)
+    public static WorkOrderDeleteDto MapToWorkOrderDeleteDto(this WorkOrder workOrder)
     {
         return new WorkOrderDeleteDto
         {
@@ -65,13 +60,11 @@ public static class WorkOrderMapper
             Name = workOrder.Name,
             StartDate = workOrder.StartDate,
             FinishDate = workOrder.FinishDate,
-            ClientName = context.Clients
-                .SingleOrDefault(cl => cl.Id == workOrder.ClientId)
-                .Name
+            Client = workOrder.Client.MapToClientViewDto()
         };
     }
 
-    public static WorkOrderViewDto MapToWorkOrderViewDto(this WorkOrder workOrder, AppDbContext context)
+    public static WorkOrderViewDto MapToWorkOrderViewDto(this WorkOrder workOrder)
     {
         return new WorkOrderViewDto
         {

@@ -1,3 +1,5 @@
+using PlannerCRM.Shared.DTOs.ClientDto;
+
 namespace PlannerCRM.Shared.DTOs.WorkOrder.Views;
 
 public class WorkOrderDeleteDto
@@ -6,5 +8,5 @@ public class WorkOrderDeleteDto
 	public string Name { get; set; }
 	public DateTime StartDate { get; set; }
 	public DateTime FinishDate { get; set; }
-	public string ClientName { get; set; }
+	public ClientViewDto Client { get; set; }
 }

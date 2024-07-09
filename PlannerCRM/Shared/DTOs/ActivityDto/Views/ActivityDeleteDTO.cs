@@ -8,5 +8,5 @@ public class ActivityDeleteDto
     public DateTime FinishDate { get; set; }
     public int WorkOrderId { get; set; }
     
-    public HashSet<EmployeeSelectDto> Employees { get; set; } 
+    public List<EmployeeSelectDto> Employees { get; set; } 
 }

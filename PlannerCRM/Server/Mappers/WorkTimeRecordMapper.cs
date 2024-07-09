@@ -2,7 +2,7 @@ namespace PlannerCRM.Server.Mappers;
 
 public static class WorkTimeRecordMapper
 {
-    public async static Task<WorkTimeRecord> MapToWorkTimeRecord(this WorkTimeRecordFormDto dto, AppDbContext context)
+    public static WorkTimeRecord MapToWorkTimeRecord(this WorkTimeRecordFormDto dto)
     {
         return new WorkTimeRecord
         {
@@ -14,38 +14,8 @@ public static class WorkTimeRecordMapper
                 ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
             ActivityId = dto.ActivityId,
             EmployeeId = dto.EmployeeId,
-            Employee = context.Users
-                .Where(em => !em.IsDeleted && !em.IsArchived)
-                .SingleOrDefault(e => e.Id == dto.EmployeeId),
-            WorkOrderId = await context.WorkOrders
-                .AnyAsync(wo => !wo.IsDeleted && !wo.IsCompleted)
-                    ? dto.WorkOrderId
-                    : throw new InvalidOperationException(ExceptionsMessages.IMPOSSIBLE_ADD)
-        };
-    }
-
-    public static WorkTimeRecordViewDto MapToWorkTimeRecordViewDto(
-        this WorkTimeRecord workTimeRecord,
-        AppDbContext context,
-        int workOrderId,
-        int activityId,
-        int employeeId)
-    {
-        return new WorkTimeRecordViewDto
-        {
-            Id = workTimeRecord.Id,
-            Date = workTimeRecord.Date,
-            Hours = context.WorkTimeRecords
-                .Where(wtr =>
-                    wtr.WorkOrderId == workOrderId &&
-                    wtr.ActivityId == activityId &&
-                    wtr.EmployeeId == employeeId)
-                .Distinct()
-                .Sum(wtrSum => wtrSum.Hours),
-            TotalPrice = workTimeRecord.TotalPrice,
-            ActivityId = workTimeRecord.ActivityId,
-            WorkOrderId = workTimeRecord.WorkOrderId,
-            EmployeeId = workTimeRecord.EmployeeId
+            Employee = new(), 
+            WorkOrderId = dto.WorkOrderId
         };
     }
 
@@ -58,6 +28,7 @@ public static class WorkTimeRecordMapper
             Hours = workTimeRecord.Hours,
             TotalPrice = workTimeRecord.TotalPrice,
             ActivityId = workTimeRecord.ActivityId,
+            WorkOrderId = workTimeRecord.WorkOrderId,
             EmployeeId = workTimeRecord.EmployeeId
         };
     }

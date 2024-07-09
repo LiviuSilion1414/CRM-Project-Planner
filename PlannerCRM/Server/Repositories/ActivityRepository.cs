@@ -76,25 +76,48 @@ public class ActivityRepository(
     public async Task<ActivityViewDto> GetForViewByIdAsync(int id)
     {
         return await _dbContext.Activities
-            .Select(ac => ac.MapToActivityViewDto(_dbContext))
+            .Select(ac => ac.MapToActivityViewDto())
             .SingleAsync(ac => ac.Id == id);
     }
 
     public async Task<ActivityFormDto> GetForEditByIdAsync(int activityId)
     {
-        return await _dbContext.Activities
+        var activity = await _dbContext.Activities
             .Where(ac => ac.Id == activityId &&
                 _dbContext.WorkOrders
                     .Any(wo => wo.Id == ac.WorkOrderId && !wo.IsDeleted || !wo.IsInvoiceCreated))
-            .Select(ac => ac.MapToActivityFormDto(_dbContext))
-            .SingleAsync(ac => ac.Id == activityId);
+            .Select(ac => ac.MapToActivityFormDto())
+            .SingleAsync();
+        activity.ClientName = await GetClientNameByActivityAsync(activity);
+
+        return activity;
     }
 
-    public async Task<ActivityDeleteDto> GetForDeleteByIdAsync(int id)
+    public async Task<string> GetClientNameByActivityAsync(ActivityFormDto activity)
     {
-        return await _dbContext.Activities
-            .Select(ac => ac.MapToActivityDeleteDto(_dbContext, id))
-            .SingleAsync(ac => ac.Id == id);
+        return (await _dbContext.Clients
+            .SingleAsync(cl => cl.WorkOrders
+                    .Any(wo => wo.Id == activity.WorkOrderId)))
+            .Name;
+    }
+
+    public async Task<ActivityDeleteDto> GetForDeleteByIdAsync(int activityId)
+    {
+        var activity = await _dbContext.Activities
+            .Select(ac => ac.MapToActivityDeleteDto())
+            .SingleAsync(ac => ac.Id == activityId);
+        var employeesInvolved = await GetEmployeesInvolvedInActivityAsync(activityId);
+        activity.Employees = employeesInvolved;
+
+        return activity;
+    }
+
+    private async Task<List<EmployeeSelectDto>> GetEmployeesInvolvedInActivityAsync(int activityId)
+    {
+        return await _dbContext.EmployeeActivities
+            .Where(ea => ea.ActivityId == activityId)
+            .Select(ea => ea.Employee.MapToEmployeeSelectDto())
+            .ToListAsync();
     }
 
     public async Task<List<ActivityViewDto>> GetActivityByEmployeeId(int employeeId, int limit = 10, int offset = 0)
@@ -102,7 +125,7 @@ public class ActivityRepository(
         return await _dbContext.Activities
             .Skip(offset)
             .Take(limit)
-            .Select(ac => ac.MapToActivityViewDto(_dbContext))
+            .Select(ac => ac.MapToActivityViewDto())
             .Where(ac => _dbContext.EmployeeActivities
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
             .ToListAsync();
@@ -112,14 +135,14 @@ public class ActivityRepository(
     {
         return await _dbContext.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
-            .Select(ac => ac.MapToActivityViewDto(_dbContext))
+            .Select(ac => ac.MapToActivityViewDto())
             .ToListAsync();
     }
 
     public async Task<List<ActivityViewDto>> GetAllAsync()
     {
         return await _dbContext.Activities
-            .Select(ac => ac.MapToActivityViewDto(_dbContext))
+            .Select(ac => ac.MapToActivityViewDto())
             .ToListAsync();
     }
 
