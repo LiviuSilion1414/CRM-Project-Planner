@@ -146,6 +146,9 @@ public class EmployeeRepository : IRepository<EmployeeFormDto>, IEmployeeReposit
             .Select(em => em.MapToEmployeeFormDto())
             .SingleAsync();
         var employeeSalaries = await GetEmployeeSalariesAsync(employeeId);
+        
+        employee.StartDateHourlyRate = employeeSalaries.Single().StartDate;
+        employee.FinishDateHourlyRate = employeeSalaries.Single().FinishDate;
         employee.EmployeeSalaries = new(employeeSalaries);
 
         return employee;
