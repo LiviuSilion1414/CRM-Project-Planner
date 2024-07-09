@@ -72,9 +72,9 @@ public class EmployeeController(
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email) =>
         await _employeeRepository.SearchEmployeeAsync(email);
 
-    [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset) =>
-        await _employeeRepository.GetPaginatedEmployeesAsync(limit, offset);
+    [HttpGet("get/paginated/{offset}/{limit}")]
+    public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int offset, int limit) =>
+        await _employeeRepository.GetPaginatedEmployeesAsync(offset, limit);
 
     [HttpGet("get/id/{email}")]
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email) =>
