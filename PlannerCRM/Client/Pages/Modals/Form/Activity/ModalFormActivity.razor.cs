@@ -73,7 +73,7 @@ public partial class ModalFormActivity : ComponentBase
     private void HandleChosenWorkOrder(WorkOrderSelectDto workOrderSelect) {
         Model.WorkOrderId = workOrderSelect.Id;
         Model.SelectedWorkOrder = workOrderSelect.Name;
-        Model.ClientName = workOrderSelect.ClientName;
+        Model.ClientName = workOrderSelect.Client.Name;
         _workOrderHasBeenSet = !_workOrderHasBeenSet;
     }
     

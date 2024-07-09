@@ -40,7 +40,7 @@ public class CalculatorService(AppDbContext dbContext)
             .OrderBy(wo => wo.Id)
             .Skip(limit)
             .Take(offset)
-            .Select(wo => wo.MapToWorkOrderViewDto(_dbContext))
+            .Select(wo => wo.MapToWorkOrderViewDto())
             .ToListAsync();
     }
 
@@ -58,7 +58,7 @@ public class CalculatorService(AppDbContext dbContext)
             .ToList();
 
         var activities = workOrderCost.Activities
-            .Select(ac => ac.MapToActivityViewDto(_dbContext))
+            .Select(ac => ac.MapToActivityViewDto())
             .ToList();
 
         var monthlyActivityCosts = workOrderCost.MonthlyActivityCosts

@@ -1,25 +1,14 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class EmployeeRepository : IRepository<EmployeeFormDto>, IEmployeeRepository
+public class EmployeeRepository(AppDbContext dbContext,
+                          DtoValidatorUtillity validator,
+                          UserManager<Employee> userManager,
+                          RoleManager<EmployeeRole> roleManager) : IRepository<EmployeeFormDto>, IEmployeeRepository
 {
-    private readonly AppDbContext _dbContext;
-    private readonly DtoValidatorUtillity _validator;
-    private readonly UserManager<Employee> _userManager;
-    private readonly RoleManager<EmployeeRole> _roleManager;
-
-    public EmployeeRepository(AppDbContext dbContext,
-                              DtoValidatorUtillity validator,
-                              UserManager<Employee> userManager,
-                              RoleManager<EmployeeRole> roleManager,
-                              IActivityRepository activityRepository)
-    {
-        _dbContext = dbContext;
-        _validator = validator;
-        _userManager = userManager;
-        _roleManager = roleManager;
-
-        EmployeeMapper.Configure(_dbContext);
-    }
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly DtoValidatorUtillity _validator = validator;
+    private readonly UserManager<Employee> _userManager = userManager;
+    private readonly RoleManager<EmployeeRole> _roleManager = roleManager;
 
     public async Task AddAsync(EmployeeFormDto dto)
     {
