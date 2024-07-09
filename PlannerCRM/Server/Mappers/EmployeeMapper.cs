@@ -36,7 +36,18 @@ public static class EmployeeMapper
             IsDeleted = employee.IsDeleted,
             StartDateHourlyRate = default,
             FinishDateHourlyRate = default,
-            EmployeeSalaries = []
+        };
+    }
+
+    public static EmployeeSalaryDto MapToEmployeeSalaryDto(this EmployeeSalary employeeSalary)
+    {
+        return new EmployeeSalaryDto
+        {
+            Id = employeeSalary.Id,
+            EmployeeId = employeeSalary.EmployeeId,
+            StartDate = employeeSalary.StartDate,
+            FinishDate = employeeSalary.FinishDate,
+            Salary = employeeSalary.Salary
         };
     }
 
@@ -47,37 +58,20 @@ public static class EmployeeMapper
             Id = employee.Id,
             FullName = $"{employee.FirstName} {employee.LastName}",
             Email = employee.Email,
-            Role = employee.Role
-                .ToString()
-                .Replace('_', ' '),
-            EmployeeActivities = _dbContext.EmployeeActivities
-                .Where(ea => ea.EmployeeId == employeeId)
-                .Select(ea => new EmployeeActivityDto
-                {
-                    Id = ea.Id,
-                    EmployeeId = ea.EmployeeId,
-                    Employee = _dbContext.Users
-                        .Where(e => e.Id == ea.EmployeeId)
-                        .Select(_ => new EmployeeSelectDto
-                        {
-                            Id = ea.Employee.Id,
-                            Email = ea.Employee.Email,
-                            FullName = ea.Employee.FullName,
-                        })
-                        .SingleOrDefault(),
-                    ActivityId = ea.ActivityId,
-                    Activity = _dbContext.Activities
-                        .Where(ac => ac.Id == ea.ActivityId)
-                        .Select(_ => new ActivitySelectDto
-                        {
-                            Id = ea.Activity.Id,
-                            Name = ea.Activity.Name,
-                            WorkOrderId = ea.Activity.WorkOrderId,
-                        })
-                        .SingleOrDefault()
-                })
-                .ToList()
+            Role = employee.Role.ToString(),
+            EmployeeActivities = []
+        };
+    }
 
+    public static EmployeeActivityDto MapToEmployeeActivityDto(this EmployeeActivity employeeActivity)
+    {
+        return new EmployeeActivityDto
+        {
+            Id = employeeActivity.Id,
+            EmployeeId = employeeActivity.EmployeeId,
+            Employee = employeeActivity.Employee.MapToEmployeeSelectDto(),
+            ActivityId = employeeActivity.ActivityId,
+            Activity = employeeActivity.Activity.MapToActivitySelectDto(),
         };
     }
 
@@ -132,14 +126,7 @@ public static class EmployeeMapper
             Role = dto.Role ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             CurrentHourlyRate = dto.CurrentHourlyRate,
             Salaries = dto.EmployeeSalaries
-                .Select(ems =>
-                    new EmployeeSalary
-                    {
-                        StartDate = ems.StartDate,
-                        FinishDate = ems.FinishDate,
-                        Salary = ems.Salary
-                    }
-                )
+                .Select(ems => ems.MapToEmployeeSalary(dto))
                 .ToList()
         };
     }

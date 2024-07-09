@@ -90,6 +90,18 @@ public static class ActivityMapper
         };
     }
 
+    public static ActivitySelectDto MapToActivitySelectDto(this Activity activity)
+    {
+        return new ActivitySelectDto
+        {
+            Id = activity.Id,
+            Name = activity.Name,
+            StartDate = activity.StartDate,
+            FinishDate = activity.FinishDate,
+            WorkOrderId = activity.WorkOrderId
+        };
+    }
+
     public static ActivityViewDto MapToActivityViewDto(this Activity activity, AppDbContext context)
     {
         return new ActivityViewDto
