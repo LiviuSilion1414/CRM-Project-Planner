@@ -1,5 +1,3 @@
-using PlannerCRM.Client.Utilities.Navigation;
-
 namespace PlannerCRM.Client.Components.ProfileMenu.ProfileSettings;
 
 [Authorize]
@@ -26,13 +24,15 @@ public partial class ProfileInfoSettings : ComponentBase
         _model = await AccountManagerService.GetEmployeeForEditByIdAsync(Id);
     }
 
-    private string AddEditCssClass() {
+    private string AddEditCssClass()
+    {
         return !_isModifyModeEnabled
             ? CssClass.Span
             : CssClass.FormControl;
     }
-        
-    private void Modify() {
+
+    private void Modify()
+    {
         _isModifyModeEnabled = !_isModifyModeEnabled;
         _editButtonText = _isModifyModeEnabled switch
         {
@@ -41,30 +41,44 @@ public partial class ProfileInfoSettings : ComponentBase
         };
     }
 
-    private string SetColonToLabel() {
+    private string SetColonToLabel()
+    {
         return !_isModifyModeEnabled
             ? ConstantValues.COLON
             : string.Empty;
     }
 
-    private void SetBanner(bool hidden) {
+    private void SetBanner(bool hidden)
+    {
         _operationDone = hidden;
     }
 
-    public async Task AutoHideBanner() {
+    public async Task AutoHideBanner()
+    {
         await Task.Delay(5000);
         _operationDone = false;
-    } 
+    }
 
-    private async Task EditUserAsync() {
+    private async Task EditUserAsync()
+    {
         var isValid = ValidatorService.Validate(_model, out _errors);
-
-        if (isValid) {
+        foreach (var error in _errors)
+        {
+            Console.WriteLine(error.Key);
+            foreach (var v in error.Value)
+            {
+                Console.WriteLine(v);
+            }
+        }
+        if (isValid)
+        {
+            Console.WriteLine("Arrivato a modifica");
             await AccountManagerService.UpdateEmployeeAsync(_model);
 
             _operationDone = true;
             Console.WriteLine("fATTO");
-        } else {
+        } else
+        {
             CustomValidator.DisplayErrors(_errors);
         }
 

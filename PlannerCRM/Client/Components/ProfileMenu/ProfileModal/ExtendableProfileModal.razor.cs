@@ -8,6 +8,7 @@ public partial class ExtendableProfileModal : ComponentBase
 
     private CurrentUser _currentUser;
     private bool _isMenuSwitched = false;
+    private bool _isSettingsClicked = false;
 
     protected override async Task OnInitializedAsync()
         => _currentUser = await AuthStateService.GetCurrentUserAsync();
@@ -18,13 +19,9 @@ public partial class ExtendableProfileModal : ComponentBase
         };
     }
 
-    private void SwitchMenu() {
-        _isMenuSwitched = !_isMenuSwitched;
-    }
+    private void SwitchMenu() => _isMenuSwitched = !_isMenuSwitched;
 
-    private void NavigateToProfileSettings() {
-        NavManager.NavigateTo($"/profile-settings/{_currentUser.Id}");
-    }
+    private void NavigateToProfileSettings() => NavManager.NavigateTo($"/profile-settings/{_currentUser.Id}");
 
     public async Task OnClickLogout() {
         await LoginService.LogoutAsync();
