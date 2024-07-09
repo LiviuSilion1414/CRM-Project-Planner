@@ -63,6 +63,10 @@ public class EmployeeController(
     public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) =>
         await _employeeRepository.GetForEditByIdAsync(employeeId);
 
+    [HttpGet("get/employee/salaries/by/employeeid/{employeeId}")]
+    public async Task<List<EmployeeSalaryDto>> GetEmployeeSalariesByIdAsync(int employeeId) =>
+        await _employeeRepository.GetEmployeeSalariesAsync(employeeId);
+
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("get/for/delete/{employeeId}")]
     public async Task<EmployeeDeleteDto> GetEmployeeForDeleteByIdAsync(int employeeId) =>
