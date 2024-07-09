@@ -70,24 +70,25 @@ public class WorkOrderRepository(
 			.SingleAsync(cl => cl.Id == clientId);
     }
 	
-	public async Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int id) {
+	public async Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int workOrderid) {
 		return await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted && !wo.IsCompleted)
+			.Where(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == workOrderid)
 			.Select(wo => wo.MapToWorkOrderDeleteDto())
-			.SingleAsync(wo => wo.Id == id);
+			.SingleAsync();
 	}
 
-	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int id) {
+	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int workOrderid) {
 		return await _dbContext.WorkOrders
+			.Where(wo => wo.Id == workOrderid)
 			.Select(wo => wo.MapToWorkOrderViewDto())
-			.SingleAsync(wo => wo.Id == id);
+			.SingleAsync();
 	}
 	
-	public async Task<WorkOrderFormDto> GetForEditByIdAsync(int id) {
+	public async Task<WorkOrderFormDto> GetForEditByIdAsync(int workOrderid) {
 		var workOrder = await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted || !wo.IsCompleted)
+			.Where(wo => !wo.IsDeleted || !wo.IsCompleted && wo.Id == workOrderid)
 			.Select(wo => wo.MapToWorkOrderFormDto())
-			.SingleAsync(wo => wo.Id == id);
+			.SingleAsync();
 		workOrder.ClientName = (await GetClientByWorkOrderId(workOrder.ClientId)).Name;
 
 		return workOrder;
@@ -95,7 +96,7 @@ public class WorkOrderRepository(
 
     public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName) {
 		return await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted && !wo.IsCompleted &&
+			.Where(wo => !wo.IsDeleted || !wo.IsCompleted &&
 				EF.Functions.ILike(wo.Name, $"%{workOrderName}%"))
 			.Select(wo => wo.MapToWorkOrderSelectDto())
 			.ToListAsync();
