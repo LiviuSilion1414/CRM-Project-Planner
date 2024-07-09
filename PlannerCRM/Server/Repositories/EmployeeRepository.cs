@@ -10,7 +10,8 @@ public class EmployeeRepository : IRepository<EmployeeFormDto>, IEmployeeReposit
     public EmployeeRepository(AppDbContext dbContext,
                               DtoValidatorUtillity validator,
                               UserManager<Employee> userManager,
-                              RoleManager<EmployeeRole> roleManager)
+                              RoleManager<EmployeeRole> roleManager,
+                              IActivityRepository activityRepository)
     {
         _dbContext = dbContext;
         _validator = validator;
@@ -140,18 +141,45 @@ public class EmployeeRepository : IRepository<EmployeeFormDto>, IEmployeeReposit
 
     public async Task<EmployeeFormDto> GetForEditByIdAsync(int employeeId)
     {
-        return await _userManager.Users
-            .Where(em => /*!em.IsDeleted || !em.IsArchived && */em.Id == employeeId)
+        var employee = await _userManager.Users
+            .Where(em => em.Id == employeeId)
             .Select(em => em.MapToEmployeeFormDto())
             .SingleAsync();
+        var employeeSalaries = await GetEmployeeSalariesAsync(employeeId);
+        employee.EmployeeSalaries = new(employeeSalaries);
+
+        return employee;
+    }
+
+    public async Task<List<EmployeeSalaryDto>> GetEmployeeSalariesAsync(int employeeId)
+    {
+        return await _dbContext.EmployeeSalaries
+            .Where(ems => ems.EmployeeId == employeeId)
+            .Select(ems => ems.MapToEmployeeSalaryDto())
+            .ToListAsync();
     }
 
     public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int employeeId)
     {
-        return await _userManager.Users
-            .Where(em => !em.IsDeleted || !em.IsArchived && em.Id == employeeId)
+        var employee = await _userManager.Users
+            .Where(em => em.Id == employeeId)
             .Select(em => em.MapToEmployeeDeleteDto(employeeId))
             .SingleAsync();
+        var employeeActivities = await GetEmployeeActivitiesByEmployeeIdAsync(employeeId);
+        employee.EmployeeActivities = new(employeeActivities);
+
+        return employee;
+    }
+
+    public async Task<List<EmployeeActivityDto>> GetEmployeeActivitiesByEmployeeIdAsync(int employeeId)
+    {
+        var employee = await _userManager.Users
+            .SingleAsync(em => em.Id == employeeId);
+
+        return await _dbContext.EmployeeActivities
+            .Where(ea => ea.EmployeeId == employeeId)
+            .Select(ea => ea.MapToEmployeeActivityDto())
+            .ToListAsync();
     }
 
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email)
@@ -167,11 +195,11 @@ public class EmployeeRepository : IRepository<EmployeeFormDto>, IEmployeeReposit
     public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int offset, int limit)
     {
         return await _userManager.Users
+            .OrderBy(em => em.Id)
             .Skip(offset)
             .Take(limit)
-            .OrderBy(em => em.Id)
             .Select(employee => employee.MapToEmployeeViewDto())
-            .ToListAsync();    
+            .ToListAsync();
     }
 
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email)
@@ -183,4 +211,9 @@ public class EmployeeRepository : IRepository<EmployeeFormDto>, IEmployeeReposit
     }
 
     public async Task<int> GetEmployeesSizeAsync() => await _userManager.Users.CountAsync();
+
+    public Task<List<EmployeeSalaryDto>> GetEmployeeActivitiesAsync(int employeeId)
+    {
+        throw new NotImplementedException();
+    }
 }

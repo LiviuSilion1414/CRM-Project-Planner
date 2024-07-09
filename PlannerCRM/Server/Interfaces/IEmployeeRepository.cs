@@ -7,6 +7,8 @@ public interface IEmployeeRepository
     public Task<EmployeeSelectDto> GetForRestoreAsync(int employeeId);
     public Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId);
     public Task<EmployeeFormDto> GetForEditByIdAsync(int employeeId);
+    public Task<List<EmployeeSalaryDto>> GetEmployeeSalariesAsync(int employeeId);
+    public Task<List<EmployeeActivityDto>> GetEmployeeActivitiesByEmployeeIdAsync(int employeeId);
     public Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int employeeId);
     public Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email);
     public Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int limit, int offset);
