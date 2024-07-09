@@ -288,4 +288,10 @@ public class OperationManagerCrudService
             return new();
         }
     }
+
+    internal async Task<ClientViewDto> GetClientByWorkOrderIdAsync(int workOrderId)
+    {
+        return await _http
+            .GetFromJsonAsync<ClientViewDto>($"api/client/get/by/workorderid/{workOrderId}");
+    }
 }

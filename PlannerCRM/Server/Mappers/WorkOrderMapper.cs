@@ -39,7 +39,7 @@ public static class WorkOrderMapper
         {
             Id = workOrder.Id,
             Name = workOrder.Name,
-            Client = workOrder.Client.MapToClientViewDto()
+            Client = new()
         };
     }
 

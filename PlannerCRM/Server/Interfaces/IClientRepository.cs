@@ -8,5 +8,6 @@ public interface IClientRepository
     public Task<List<ClientViewDto>> GetClientsPaginatedAsync(int limit, int offset);
     public Task<List<ClientViewDto>> SearchClientAsync(int clientId);
     public Task<List<ClientViewDto>> SearchClientAsync(string clientName);
+    public Task<ClientViewDto> GetClientByWorkOrderIdAsync(int workOrderId);
     public Task<int> GetCollectionSizeAsync();
 }

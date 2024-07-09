@@ -58,4 +58,8 @@ public class ClientController(IRepository<ClientFormDto> repo, IClientRepository
     [HttpGet("search/by/id/{clientId}")]
     public async Task<List<ClientViewDto>> SearchClientByIdAsync(int clientId) =>
         await _clientRepository.SearchClientAsync(clientId);
+
+    [HttpGet("get/by/workorderid/{workOrderId}")]
+    public async Task<ClientViewDto> SearchClientByWorkOrderIdAsync(int workOrderId) =>
+        await _clientRepository.GetClientByWorkOrderIdAsync(workOrderId);
 }
