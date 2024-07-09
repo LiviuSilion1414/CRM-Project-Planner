@@ -97,11 +97,11 @@ public class ActivityRepository(
             .SingleAsync(ac => ac.Id == id);
     }
 
-    public async Task<List<ActivityViewDto>> GetActivityByEmployeeId(int employeeId, int limit = 0, int offset = 5)
+    public async Task<List<ActivityViewDto>> GetActivityByEmployeeId(int employeeId, int limit = 10, int offset = 0)
     {
         return await _dbContext.Activities
-            .Skip(limit)
-            .Take(offset)
+            .Skip(offset)
+            .Take(limit)
             .Select(ac => ac.MapToActivityViewDto(_dbContext))
             .Where(ac => _dbContext.EmployeeActivities
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
