@@ -42,16 +42,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
         base.OnModelCreating(modelBuilder);
     }
 
-/*
-    public DbSet<Employee> Employees { get; set; }
-    public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-    public DbSet<EmployeeUserClaim> EmployeeClaims { get; set; }
-    public DbSet<EmployeeRoleClaim> EmployeeRoleClaims { get; set; }
-    public DbSet<EmployeeUserLogin> EmployeeUserLogins { get; set; }
-    public DbSet<EmployeeUserToken> EmployeeUserTokens { get; set; }
-    public DbSet<EmployeeUserRole> EmployeeUserRoles { get; set; }
-*/
     public DbSet<EmployeeActivity> EmployeeActivities { get; set; }
+    public DbSet<EmployeeSalary> EmployeeSalaries { get; set; }
 
     public DbSet<FirmClient> Clients { get; set; }
     public DbSet<Activity> Activities { get; set; }
