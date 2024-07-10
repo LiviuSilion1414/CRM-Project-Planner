@@ -126,9 +126,24 @@ public class ActivityRepository(
 
     public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId)
     {
-        return await _dbContext.Activities
+        var activities = await _dbContext.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
+            .ToListAsync();
+    
+        foreach (var ac in activities)
+        {
+            ac.EmployeeActivity = (await GetEmployeesActivitiesByActivityId(ac.Id)).ToHashSet();
+        }
+
+        return activities
             .Select(ac => ac.MapToActivityViewDto())
+            .ToList();
+    }
+    
+    private async Task<List<EmployeeActivity>> GetEmployeesActivitiesByActivityId(int activityId)
+    {
+        return await _dbContext.EmployeeActivities
+            .Where(ea => ea.ActivityId == activityId)
             .ToListAsync();
     }
 
