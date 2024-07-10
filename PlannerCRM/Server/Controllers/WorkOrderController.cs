@@ -51,7 +51,7 @@ public class WorkOrderController(IRepository<WorkOrderFormDto> repo, IWorkOrderR
     public async Task<int> GetSizeAsync() =>
         await _workOrderRepository.GetWorkOrdersSizeAsync();
 
-    [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5) =>
-        await _workOrderRepository.GetPaginatedWorkOrdersAsync(limit, offset);
+    [HttpGet("get/paginated/{offset}/{limit}")]
+    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int offset = 0, int limit = 5) =>
+        await _workOrderRepository.GetPaginatedWorkOrdersAsync(offset, limit);
 }

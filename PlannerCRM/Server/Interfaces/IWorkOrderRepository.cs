@@ -7,5 +7,5 @@ public interface IWorkOrderRepository
     public Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int id);
     public Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName);
     public Task<int> GetWorkOrdersSizeAsync();
-    public Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5);
+    public Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int offset = 0, int limit = 5);
 }
