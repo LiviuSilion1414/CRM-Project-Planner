@@ -15,14 +15,7 @@ public class ActivityRepository(
         {
             var model = dto.MapToActivity();
             await _dbContext.Activities.AddAsync(model);
-
-            var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => wo.Id == dto.WorkOrderId);
-
-            workOrder.Activities.Add(model);
-
-            _dbContext.Update(workOrder);
-
+            
             await _dbContext.SaveChangesAsync();
         }
     }

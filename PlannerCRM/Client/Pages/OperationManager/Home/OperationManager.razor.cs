@@ -50,7 +50,7 @@ public partial class OperationManager : ComponentBase
                     return
                         wo.Name
                             .Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                        wo.ClientName
+                        wo.Client.Name
                             .Contains(query, StringComparison.OrdinalIgnoreCase);
                 })
             .ToList();

@@ -89,10 +89,10 @@ public class OperationManagerCrudService
         }
     }
 
-    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5) {
+    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int offset = 0, int limit = 5) {
         try {
             return await _http
-                .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/workorder/get/paginated/{limit}/{offset}");
+                .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/workorder/get/paginated/{offset}/{limit}");
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 

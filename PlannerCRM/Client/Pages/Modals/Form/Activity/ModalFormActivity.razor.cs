@@ -104,20 +104,25 @@ public partial class ModalFormActivity : ComponentBase
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
 
-    //private void HandleRemoveEmployee(EmployeeActivityDto employeeActivity) {
-    //    try {
-    //        var isContained = Model.ViewEmployeeActivity
-    //            .Any(ea => ea.Employee.FullName == employeeActivity.Employee.FullName);
-    //
-    //        if (isContained) {
-    //            Model.ViewEmployeeActivity.Remove(employeeActivity);
-    //        }
-    //    } catch (Exception exc) {
-    //        Logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
-    //        _message = exc.Message;
-    //        _isError = true;
-    //    }
-    //}
+    private void HandleRemoveEmployee(EmployeeActivityDto employeeActivity)
+    {
+        try
+        {
+            var isContained = Model.ViewEmployeeActivity
+                .Any(ea => ea.Employee.FullName == employeeActivity.Employee.FullName);
+
+            if (isContained)
+            {
+                Model.ViewEmployeeActivity.Remove(employeeActivity);
+            }
+        }
+        catch (Exception exc)
+        {
+            Logger.LogError("Error: { } Message: { }", exc.StackTrace, exc.Message);
+            _message = exc.Message;
+            _isError = true;
+        }
+    }
 
     private void HandleChosenEmployee(EmployeeSelectDto employee)
     {
@@ -131,7 +136,7 @@ public partial class ModalFormActivity : ComponentBase
                 var activity =
                     new EmployeeActivityDto
                     {
-                        EmployeeId = 0,
+                        EmployeeId = employee.Id,
                         Employee = new EmployeeSelectDto
                         {
                             Id = employee.Id,

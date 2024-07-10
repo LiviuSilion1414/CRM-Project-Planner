@@ -67,7 +67,7 @@ public partial class GridDataReport : ComponentBase
 
     private void OnClickOrderByClient() {
         WorkOrders = WorkOrders
-            .OrderBy(wo => wo.ClientName)
+            .OrderBy(wo => wo.Client.Name)
             .ToList();
 
         StateHasChanged();
