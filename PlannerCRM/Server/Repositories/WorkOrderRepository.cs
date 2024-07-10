@@ -1,132 +1,139 @@
 namespace PlannerCRM.Server.Repositories;
 
 public class WorkOrderRepository(
-	AppDbContext dbContext,
-	DtoValidatorUtillity validator) : IRepository<WorkOrderFormDto>, IWorkOrderRepository
+    AppDbContext dbContext,
+    DtoValidatorUtillity validator) : IRepository<WorkOrderFormDto>, IWorkOrderRepository
 {
-	private readonly AppDbContext _dbContext = dbContext;
-	private readonly DtoValidatorUtillity _validator = validator;
+    private readonly AppDbContext _dbContext = dbContext;
+    private readonly DtoValidatorUtillity _validator = validator;
 
-	public async Task AddAsync(WorkOrderFormDto dto)
-	{
-		var isValid = await _validator.ValidateWorkOrderAsync(dto, OperationType.ADD);
+    public async Task AddAsync(WorkOrderFormDto dto)
+    {
+        var isValid = await _validator.ValidateWorkOrderAsync(dto, OperationType.ADD);
 
-		if (isValid)
-		{
-			await _dbContext.WorkOrders.AddAsync(dto.MapToWorkOrder());
+        if (isValid)
+        {
+            await _dbContext.WorkOrders.AddAsync(dto.MapToWorkOrder());
 
-			await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
-			var workOrder = await _dbContext.WorkOrders
-				.SingleAsync(wo => EF.Functions.ILike(wo.Name, dto.Name) && wo.ClientId == dto.ClientId);
+            var workOrder = await _dbContext.WorkOrders
+                .SingleAsync(wo => EF.Functions.ILike(wo.Name, dto.Name) && wo.ClientId == dto.ClientId);
 
-			await SetForeignKeyToClientAsync(workOrder, OperationType.ADD);
-		}
-	}
+            await SetForeignKeyToClientAsync(workOrder, OperationType.ADD);
+        }
+    }
 
-	private async Task SetForeignKeyToClientAsync(WorkOrder workOrder, OperationType operationType)
-	{
-		if (!string.IsNullOrEmpty(workOrder.Name) && await _dbContext.WorkOrders.AnyAsync(wo => wo.Id == workOrder.Id))
-		{
-			if (operationType == OperationType.ADD)
-			{
-				await _dbContext.ClientWorkOrders.AddAsync(workOrder.MapToClientWorkOrder());
-			}
-			else
-			{
-				var clientWorkOrder = await _dbContext.ClientWorkOrders
-					.SingleAsync(clwo => clwo.WorkOrderId == workOrder.Id);
+    private async Task SetForeignKeyToClientAsync(WorkOrder workOrder, OperationType operationType)
+    {
+        if (!string.IsNullOrEmpty(workOrder.Name) && await _dbContext.WorkOrders.AnyAsync(wo => wo.Id == workOrder.Id))
+        {
+            if (operationType == OperationType.ADD)
+            {
+                await _dbContext.ClientWorkOrders.AddAsync(workOrder.MapToClientWorkOrder());
+            } else
+            {
+                var clientWorkOrder = await _dbContext.ClientWorkOrders
+                    .SingleAsync(clwo => clwo.WorkOrderId == workOrder.Id);
 
-				clientWorkOrder.ClientId = workOrder.ClientId;
-			}
+                clientWorkOrder.ClientId = workOrder.ClientId;
+            }
 
-			await _dbContext.SaveChangesAsync();
-		}
-	}
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 
-	public async Task DeleteAsync(int id)
-	{
-		var workOrderDelete = await _validator.ValidateDeleteWorkOrderAsync(id);
+    public async Task DeleteAsync(int id)
+    {
+        var workOrderDelete = await _validator.ValidateDeleteWorkOrderAsync(id);
 
-		if (workOrderDelete is not null)
-		{
+        if (workOrderDelete is not null)
+        {
 
-			workOrderDelete.IsDeleted = true;
+            workOrderDelete.IsDeleted = true;
 
-			await _dbContext.SaveChangesAsync();
-		}
-	}
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 
-	public async Task EditAsync(WorkOrderFormDto dto)
-	{
-		var isValid = await _validator.ValidateWorkOrderAsync(dto, OperationType.EDIT);
+    public async Task EditAsync(WorkOrderFormDto dto)
+    {
+        var isValid = await _validator.ValidateWorkOrderAsync(dto, OperationType.EDIT);
 
-		if (isValid)
-		{
-			var model = await _dbContext.WorkOrders
-				.SingleAsync(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == dto.Id);
+        if (isValid)
+        {
+            var model = await _dbContext.WorkOrders
+                .SingleAsync(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == dto.Id);
 
-			model = dto.MapToWorkOrder();
-			model.Client = await GetClientByWorkOrderIdAsync(dto.ClientId);
+            model = dto.MapToWorkOrder();
+            model.Client = await GetClientByWorkOrderIdAsync(dto.ClientId);
 
-			await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
-			await SetForeignKeyToClientAsync(model, OperationType.EDIT);
-		}
-	}
+            await SetForeignKeyToClientAsync(model, OperationType.EDIT);
+        }
+    }
 
-	public async Task<FirmClient> GetClientByWorkOrderIdAsync(int clientId)
-	{
-		return await _dbContext.Clients
-			.SingleAsync(cl => cl.Id == clientId);
-	}
+    public async Task<FirmClient> GetClientByWorkOrderIdAsync(int clientId)
+    {
+        return await _dbContext.Clients
+            .SingleAsync(cl => cl.Id == clientId);
+    }
 
-	public async Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int workOrderid)
-	{
-		return await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == workOrderid)
-			.Select(wo => wo.MapToWorkOrderDeleteDto())
-			.SingleAsync();
-	}
+    public async Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int workOrderid)
+    {
+        return await _dbContext.WorkOrders
+            .Where(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == workOrderid)
+            .Select(wo => wo.MapToWorkOrderDeleteDto())
+            .SingleAsync();
+    }
 
-	public async Task<WorkOrderViewDto> GetForViewByIdAsync(int workOrderid)
-	{
-		return await _dbContext.WorkOrders
-			.Where(wo => wo.Id == workOrderid)
-			.Select(wo => wo.MapToWorkOrderViewDto())
-			.SingleAsync();
-	}
+    public async Task<WorkOrderViewDto> GetForViewByIdAsync(int workOrderid)
+    {
+        return await _dbContext.WorkOrders
+            .Where(wo => wo.Id == workOrderid)
+            .Select(wo => wo.MapToWorkOrderViewDto())
+            .SingleAsync();
+    }
 
-	public async Task<WorkOrderFormDto> GetForEditByIdAsync(int workOrderid)
-	{
-		var workOrder = await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted || !wo.IsCompleted && wo.Id == workOrderid)
-			.Select(wo => wo.MapToWorkOrderFormDto())
-			.SingleAsync();
-		workOrder.ClientName = (await GetClientByWorkOrderIdAsync(workOrder.ClientId)).Name;
+    public async Task<WorkOrderFormDto> GetForEditByIdAsync(int workOrderid)
+    {
+        var workOrder = await _dbContext.WorkOrders
+            .Where(wo => !wo.IsDeleted || !wo.IsCompleted && wo.Id == workOrderid)
+            .Select(wo => wo.MapToWorkOrderFormDto())
+            .SingleAsync();
+        workOrder.ClientName = (await GetClientByWorkOrderIdAsync(workOrder.ClientId)).Name;
 
-		return workOrder;
-	}
+        return workOrder;
+    }
 
-	public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName)
-	{
-		return await _dbContext.WorkOrders
-			.Where(wo => !wo.IsDeleted || !wo.IsCompleted &&
-				EF.Functions.ILike(wo.Name, $"%{workOrderName}%"))
-			.Select(wo => wo.MapToWorkOrderSelectDto())
-			.ToListAsync();
-	}
+    public async Task<List<WorkOrderSelectDto>> SearchWorkOrderAsync(string workOrderName)
+    {
+        return await _dbContext.WorkOrders
+            .Where(wo => !wo.IsDeleted || !wo.IsCompleted &&
+                EF.Functions.ILike(wo.Name, $"%{workOrderName}%"))
+            .Select(wo => wo.MapToWorkOrderSelectDto())
+            .ToListAsync();
+    }
 
-	public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int limit = 0, int offset = 5)
-	{
-		return await _dbContext.WorkOrders
-			.OrderBy(wo => wo.Name)
-			.Skip(limit)
-			.Take(offset)
-			.AsSplitQuery()
-			.Select(wo => wo.MapToWorkOrderViewDto())
-			.ToListAsync();
-	}
+    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersAsync(int offset, int limit = 5)
+    {
+        var workOrders = await _dbContext.WorkOrders
+            .OrderBy(wo => wo.Name)
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync();
 
-	public async Task<int> GetWorkOrdersSizeAsync() => await _dbContext.WorkOrders.CountAsync();
+        foreach (var wo in workOrders) 
+        { 
+            wo.Client = await _dbContext.Clients
+                .SingleAsync(cl => cl.Id == wo.ClientId);
+        }
+        
+        return workOrders
+            .Select(wo => wo.MapToWorkOrderViewDto())
+            .ToList();
+    }
+
+    public async Task<int> GetWorkOrdersSizeAsync() => await _dbContext.WorkOrders.CountAsync();
 }

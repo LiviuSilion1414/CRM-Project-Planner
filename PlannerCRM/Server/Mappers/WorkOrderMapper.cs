@@ -73,7 +73,8 @@ public static class WorkOrderMapper
             StartDate = workOrder.StartDate,
             FinishDate = workOrder.FinishDate,
             IsCompleted = workOrder.IsCompleted,
-            IsDeleted = workOrder.IsDeleted
+            IsDeleted = workOrder.IsDeleted,
+            Client = workOrder.Client.MapToClientViewDto()
         };
     }
 }
