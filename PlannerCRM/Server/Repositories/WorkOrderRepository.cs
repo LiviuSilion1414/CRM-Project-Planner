@@ -66,7 +66,7 @@ public class WorkOrderRepository(
                 .SingleAsync(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == dto.Id);
 
             model = dto.MapToWorkOrder();
-            model.Client = await GetClientByWorkOrderIdAsync(dto.ClientId);
+            model.Client = await GetClientByClientIdAsync(dto.ClientId);
 
             await _dbContext.SaveChangesAsync();
 
@@ -74,7 +74,7 @@ public class WorkOrderRepository(
         }
     }
 
-    public async Task<FirmClient> GetClientByWorkOrderIdAsync(int clientId)
+    public async Task<FirmClient> GetClientByClientIdAsync(int clientId)
     {
         return await _dbContext.Clients
             .SingleAsync(cl => cl.Id == clientId);
@@ -90,10 +90,13 @@ public class WorkOrderRepository(
 
     public async Task<WorkOrderViewDto> GetForViewByIdAsync(int workOrderid)
     {
-        return await _dbContext.WorkOrders
+        var workOrder = await _dbContext.WorkOrders
             .Where(wo => wo.Id == workOrderid)
-            .Select(wo => wo.MapToWorkOrderViewDto())
             .SingleAsync();
+
+        workOrder.Client = (await GetClientByClientIdAsync(workOrder.ClientId));
+
+        return workOrder.MapToWorkOrderViewDto();
     }
 
     public async Task<WorkOrderFormDto> GetForEditByIdAsync(int workOrderid)
@@ -102,7 +105,7 @@ public class WorkOrderRepository(
             .Where(wo => !wo.IsDeleted || !wo.IsCompleted && wo.Id == workOrderid)
             .Select(wo => wo.MapToWorkOrderFormDto())
             .SingleAsync();
-        workOrder.ClientName = (await GetClientByWorkOrderIdAsync(workOrder.ClientId)).Name;
+        workOrder.ClientName = (await GetClientByClientIdAsync(workOrder.ClientId)).Name;
 
         return workOrder;
     }
