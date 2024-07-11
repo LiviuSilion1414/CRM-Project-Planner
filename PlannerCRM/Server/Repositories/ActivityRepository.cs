@@ -130,6 +130,15 @@ public class ActivityRepository(
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
 
+        return (await GetEmployeesInvolvedInActivity(activities))
+            .Select(ac => ac.MapToActivityViewDto())
+            .ToList();
+    }
+
+    private async Task<List<Activity>> GetEmployeesInvolvedInActivity(List<Activity> activitiesList)
+    {
+        var activities = new List<Activity>(activitiesList);
+
         foreach (var ac in activities)
         {
             ac.EmployeeActivity = (await GetEmployeesActivitiesByActivityId(ac.Id)).ToHashSet();
@@ -139,10 +148,7 @@ public class ActivityRepository(
                     .SingleAsync(e => e.Id == ea.EmployeeId);
             }
         }
-
-        return activities
-            .Select(ac => ac.MapToActivityViewDto())
-            .ToList();
+        return activities;
     }
 
     private async Task<List<EmployeeActivity>> GetEmployeesActivitiesByActivityId(int activityId)
