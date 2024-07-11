@@ -15,7 +15,7 @@ public class ActivityRepository(
         {
             var model = dto.MapToActivity();
             await _dbContext.Activities.AddAsync(model);
-            
+
             await _dbContext.SaveChangesAsync();
         }
     }
@@ -129,17 +129,22 @@ public class ActivityRepository(
         var activities = await _dbContext.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
-    
+
         foreach (var ac in activities)
         {
             ac.EmployeeActivity = (await GetEmployeesActivitiesByActivityId(ac.Id)).ToHashSet();
+            foreach (var ea in ac.EmployeeActivity)
+            {
+                ea.Employee = await _dbContext.Users
+                    .SingleAsync(e => e.Id == ea.EmployeeId);
+            }
         }
 
         return activities
             .Select(ac => ac.MapToActivityViewDto())
             .ToList();
     }
-    
+
     private async Task<List<EmployeeActivity>> GetEmployeesActivitiesByActivityId(int activityId)
     {
         return await _dbContext.EmployeeActivities
