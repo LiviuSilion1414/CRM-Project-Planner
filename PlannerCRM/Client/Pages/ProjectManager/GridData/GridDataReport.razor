@@ -30,7 +30,7 @@
                 <td>@wo.Name</td>
                 <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
                 <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
-                @if (wo.IsInvoiceCreated) {
+                @if (wo.IsInvoiceCreated || wo.IsCompleted) {
                     <td>
                         <span class="text-success">
                             <i class="bi bi-check2-circle">Creato</i>

@@ -26,7 +26,7 @@ public class CalculatorService(AppDbContext dbContext)
             .SingleAsync(wo => wo.Id == workOrderId);
 
         workOrder.IsCompleted = true;
-
+        workOrder.IsInvoiceCreated = true;
         _dbContext.Update(workOrder);
 
         var workOrderCost = await ExecuteCalculationsAsync(workOrder, true);
@@ -64,25 +64,20 @@ public class CalculatorService(AppDbContext dbContext)
     }
 
     public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId) {
-        if (workOrderId == 0) {
-            throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
-        }
-
-        var workOrder = await _dbContext.WorkOrders
-            .SingleAsync(wo => wo.Id == workOrderId);
-        var workOrderCost = await ExecuteCalculationsAsync(workOrder);
+        var workOrderCost = await _dbContext.WorkOrderCosts
+            .SingleAsync(wo => wo.WorkOrderId == workOrderId);
 
         var employees = workOrderCost.Employees
             .Select(em => em.MapToEmployeeViewDto())
-            .ToList();
+            .ToList() ?? [];
 
         var activities = workOrderCost.Activities
             .Select(ac => ac.MapToActivityViewDto())
-            .ToList();
+            .ToList() ?? [];
 
         var monthlyActivityCosts = workOrderCost.MonthlyActivityCosts
             .Select(ac => ac.MapToActivityCostDto(employees))
-            .ToList();
+            .ToList() ?? [];
 
         return workOrderCost.MapToWorkOrderCostDto(employees, activities, monthlyActivityCosts);
     }
