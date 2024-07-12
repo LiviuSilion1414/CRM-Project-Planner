@@ -9,6 +9,4 @@ public class ClientFormDto
 
     [Required(ErrorMessage = """ Campo "Partita IVA" richiesto """)]
     public string VatNumber { get; set; }
-
-    public int WorkOrderId { get; set; }
 }

@@ -16,10 +16,7 @@ public static class FirmClientMapper
         {
             Id = client.Id,
             Name = client.Name,
-            VatNumber = client.VatNumber,
-            WorkOrderId = client.WorkOrders
-                .Single(wo => wo.ClientId == client.Id)
-                .Id
+            VatNumber = client.VatNumber
         };
     }
 

@@ -55,24 +55,26 @@ public class ClientRepository(
 
     public async Task<ClientFormDto> GetClientForEditByIdAsync(int id)
     {
-        return await _dbContext.Clients
-            .Select(client => client.MapToClientFormDto())
+        var client = await _dbContext.Clients
             .SingleAsync(cl => cl.Id == id);
+
+        return client.MapToClientFormDto();
     }
 
     public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int id)
     {
-        return await _dbContext.Clients
-            .Select(client => client.MapToClientDeleteDto())
+        var client = await _dbContext.Clients
             .SingleAsync(cl => cl.Id == id);
+
+        return client.MapToClientDeleteDto();
     }
 
-    public async Task<List<ClientViewDto>> GetClientsPaginatedAsync(int limit, int offset)
+    public async Task<List<ClientViewDto>> GetClientsPaginatedAsync(int offset, int limit)
     {
         return await _dbContext.Clients
             .OrderBy(client => client.Id)
-            .Skip(limit)
-            .Take(offset)
+            .Skip(offset)
+            .Take(limit)
             .Select(client => client.MapToClientViewDto())
             .ToListAsync();
     }
@@ -82,18 +84,24 @@ public class ClientRepository(
 
     public async Task<List<ClientViewDto>> SearchClientAsync(string clientName)
     {
-        return await _dbContext.Clients
-            .Select(cl => cl.MapToClientViewDto())
+        var clients = await _dbContext.Clients
             .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
             .ToListAsync();
+
+        return clients
+            .Select(cl => cl.MapToClientViewDto())
+            .ToList();
     }
 
     public async Task<List<ClientViewDto>> SearchClientAsync(int clientId)
     {
-        return await _dbContext.Clients
-            .Select(cl => cl.MapToClientViewDto())
+        var clients = await _dbContext.Clients
             .Where(cl => cl.Id == clientId)
             .ToListAsync();
+
+        return clients
+            .Select(cl => cl.MapToClientViewDto())
+            .ToList();
     }
 
     public async Task<ClientViewDto> GetClientByWorkOrderIdAsync(int workOrderId)

@@ -43,9 +43,9 @@ public class ClientController(IRepository<ClientFormDto> repo, IClientRepository
     public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int clientId) =>
         await _clientRepository.GetClientForDeleteByIdAsync(clientId);
        
-    [HttpGet("get/paginated/{limit}/{offset}")]
-    public async Task<List<ClientViewDto>> GetPaginatedClientsAsync(int limit, int offset) =>
-        await _clientRepository.GetClientsPaginatedAsync(limit, offset);
+    [HttpGet("get/paginated/{offset}/{limit}")]
+    public async Task<List<ClientViewDto>> GetPaginatedClientsAsync(int offset, int limit) =>
+        await _clientRepository.GetClientsPaginatedAsync(offset, limit);
     
     [HttpGet("get/size")]
     public async Task<int> GetCollectionSizeAsync() =>
