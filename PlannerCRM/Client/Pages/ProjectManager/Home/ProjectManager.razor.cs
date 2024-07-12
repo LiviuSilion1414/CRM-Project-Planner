@@ -29,9 +29,9 @@ public partial class ProjectManager : ComponentBase
     protected override async Task OnInitializedAsync()
         => await FetchDataAsync();
 
-    private async Task FetchDataAsync(int limit = 0, int offset = 5) {
+    private async Task FetchDataAsync(int offset = 0, int limit = 5) {
         _collectionSize = await ProjectManagerService.GetWorkOrderCostsCollectionSizeAsync();
-        _workOrders = await ProjectManagerService.GetWorkOrdersCostsPaginatedAsync(limit, offset);
+        _workOrders = await ProjectManagerService.GetWorkOrdersCostsPaginatedAsync(offset, limit);
 
         _filteredList = new(_workOrders);
     }

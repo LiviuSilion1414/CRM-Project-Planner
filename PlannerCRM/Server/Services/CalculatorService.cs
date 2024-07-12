@@ -1,3 +1,4 @@
+
 namespace PlannerCRM.Server.Services;
 
 public class CalculatorService(AppDbContext dbContext)
@@ -35,13 +36,31 @@ public class CalculatorService(AppDbContext dbContext)
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset) {
-        return await _dbContext.WorkOrders
+    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset)
+    {
+        var workOrders = await _dbContext.WorkOrders
             .OrderBy(wo => wo.Id)
             .Skip(limit)
             .Take(offset)
-            .Select(wo => wo.MapToWorkOrderViewDto())
             .ToListAsync();
+
+        foreach (var wo in workOrders)
+        {
+            wo.Client = await GetClientByClientIdAsync(wo.ClientId);
+        }
+
+        return workOrders
+            .Select(wo => wo.MapToWorkOrderViewDto())
+            .ToList();
+    }
+
+    private async Task<FirmClient> GetClientByClientIdAsync(int workOrderId)
+    {
+        var workOrder = await _dbContext.WorkOrders
+            .SingleAsync(wo => wo.Id == workOrderId);
+
+        return await _dbContext.Clients
+            .SingleAsync(cl => cl.Id == workOrder.ClientId);
     }
 
     public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId) {
@@ -149,18 +168,15 @@ public class CalculatorService(AppDbContext dbContext)
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
 
-        var salaries = await _dbContext.Users
-            .Where(em => em.Salaries
-                .Any(sal => sal.EmployeeId == em.Id) &&
-                    _dbContext.WorkTimeRecords
-                        .Any(wtr => wtr.EmployeeId == em.Id))
-            .Select(em => em.MapToEmployeeSalary())
+        var employeesSalariesInWorkOrder = await _dbContext.EmployeeSalaries
+            .Where(sal => _dbContext.Users
+                .Any(em => em.Id == sal.EmployeeId))
             .ToListAsync();
 
         return workTimeRecords
-            .Where(wtr => salaries
+            .Where(wtr => employeesSalariesInWorkOrder
                 .Any(sal => sal.EmployeeId == wtr.EmployeeId))
-            .Select(wtr => wtr.MapToActivityCost(_dbContext, activities, salaries))
+            .Select(wtr => wtr.MapToActivityCost(_dbContext, activities, employeesSalariesInWorkOrder))
             .ToList();
     }
 }
