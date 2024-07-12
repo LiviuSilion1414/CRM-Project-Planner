@@ -56,11 +56,7 @@ public class ActivityRepository(
             employeesToRemove
                 .ForEach(item => _dbContext.EmployeeActivities.Remove(item));
 
-            var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => wo.Id == dto.WorkOrderId);
-
             _dbContext.Update(model);
-            _dbContext.Update(workOrder);
 
             await _dbContext.SaveChangesAsync();
         }
