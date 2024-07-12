@@ -76,9 +76,7 @@ public class ActivityRepository(
     public async Task<ActivityFormDto> GetForEditByIdAsync(int activityId)
     {
         var activity = await _dbContext.Activities
-            .Where(ac => ac.Id == activityId &&
-                _dbContext.WorkOrders
-                    .Any(wo => wo.Id == ac.WorkOrderId && !wo.IsDeleted || !wo.IsInvoiceCreated))
+            .Where(ac => ac.Id == activityId)
             .Select(ac => ac.MapToActivityFormDto())
             .SingleAsync();
         activity.ClientName = await GetClientNameByActivityAsync(activity);
@@ -88,9 +86,11 @@ public class ActivityRepository(
 
     public async Task<string> GetClientNameByActivityAsync(ActivityFormDto activity)
     {
+        var workOrder = await _dbContext.WorkOrders
+            .SingleAsync(wo => wo.Id == activity.WorkOrderId);
+
         return (await _dbContext.Clients
-            .SingleAsync(cl => cl.WorkOrders
-                    .Any(wo => wo.Id == activity.WorkOrderId)))
+            .SingleAsync(cl => cl.Id == workOrder.ClientId))
             .Name;
     }
 
