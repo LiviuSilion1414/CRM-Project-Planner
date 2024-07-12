@@ -75,23 +75,22 @@ public class ActivityRepository(
 
     public async Task<ActivityFormDto> GetForEditByIdAsync(int activityId)
     {
-        var activity = await _dbContext.Activities
-            .Where(ac => ac.Id == activityId)
-            .Select(ac => ac.MapToActivityFormDto())
-            .SingleAsync();
-        activity.ClientName = await GetClientNameByActivityAsync(activity);
+        var activity = await GetEmployeesInvolvedInSingleActivity(activityId);
+        var client = (await GetClientByWorkOrderIdAsync(activity.WorkOrderId));
 
-        return activity;
+        var mappedActivity = activity.MapToActivityFormDto();
+        mappedActivity.ClientName = client.Name;
+        
+        return mappedActivity;
     }
 
-    public async Task<string> GetClientNameByActivityAsync(ActivityFormDto activity)
+    public async Task<FirmClient> GetClientByWorkOrderIdAsync(int workOrderId)
     {
         var workOrder = await _dbContext.WorkOrders
-            .SingleAsync(wo => wo.Id == activity.WorkOrderId);
+            .SingleAsync(wo => wo.Id == workOrderId);
 
         return (await _dbContext.Clients
-            .SingleAsync(cl => cl.Id == workOrder.ClientId))
-            .Name;
+            .SingleAsync(cl => cl.Id == workOrder.ClientId));
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteByIdAsync(int activityId)
@@ -129,25 +128,33 @@ public class ActivityRepository(
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
 
-        return (await GetEmployeesInvolvedInActivity(activities))
+        return (await GetEmployeesInvolvedInEachActivity(activities))
             .Select(ac => ac.MapToActivityViewDto())
             .ToList();
     }
 
-    private async Task<List<Activity>> GetEmployeesInvolvedInActivity(List<Activity> activitiesList)
+    private async Task<List<Activity>> GetEmployeesInvolvedInEachActivity(List<Activity> activitiesList)
     {
-        var activities = new List<Activity>(activitiesList);
+        var activities = new List<Activity>();
 
-        foreach (var ac in activities)
+        foreach (var ac in activitiesList)
         {
-            ac.EmployeeActivity = (await GetEmployeesActivitiesByActivityId(ac.Id)).ToHashSet();
-            foreach (var ea in ac.EmployeeActivity)
-            {
-                ea.Employee = await _dbContext.Users
-                    .SingleAsync(e => e.Id == ea.EmployeeId);
-            }
+            activities.Add(await GetEmployeesInvolvedInSingleActivity(ac.Id));
         }
         return activities;
+    }
+
+    private async Task<Activity> GetEmployeesInvolvedInSingleActivity(int activityId)
+    {
+        var activity = await _dbContext.Activities
+            .SingleAsync(ac => ac.Id == activityId);
+        activity.EmployeeActivity = (await GetEmployeesActivitiesByActivityId(activity.Id)).ToHashSet();
+        foreach (var ea in activity.EmployeeActivity)
+        {
+            ea.Employee = await _dbContext.Users
+                .SingleAsync(e => e.Id == ea.EmployeeId);
+        }
+        return activity;
     }
 
     private async Task<List<EmployeeActivity>> GetEmployeesActivitiesByActivityId(int activityId)
