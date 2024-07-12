@@ -99,8 +99,7 @@ public class ActivityRepository(
         var activity = await _dbContext.Activities
             .Select(ac => ac.MapToActivityDeleteDto())
             .SingleAsync(ac => ac.Id == activityId);
-        var employeesInvolved = await GetEmployeesInvolvedInActivityAsync(activityId);
-        activity.Employees = employeesInvolved;
+        activity.Employees = await GetEmployeesInvolvedInActivityAsync(activityId);
 
         return activity;
     }
