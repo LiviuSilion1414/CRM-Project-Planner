@@ -8,26 +8,38 @@
             <EditForm EditContext="@_editContext" OnValidSubmit="OnClickModalConfirm">
                 <CascadingValue Value="@_errors">
                     <CustomDataAnnotationsValidator @ref="CustomValidator"/>
-                    @if (_workOrderHasBeenSet) {
+                    @if (FormMode == OperationType.ADD)
+                    {
+                        @if (_workOrderHasBeenSet) {
+                            <div class="form-group">
+                                <i class="bi bi-person"></i>
+                                <label for=>Cliente</label>
+                                <InputText type="search" @bind-Value="Model.ClientName" class="form-control" disabled=@_isDisabled readonly="@_isDisabled"/>
+                            </div>
+                        }
                         <div class="form-group">
-                            <i class="bi bi-person"></i>
-                            <label for=>Cliente</label>
-                            <InputText type="search" @bind-Value="Model.ClientName" class="form-control" disabled=@_isDisabled readonly="@_isDisabled"/>
+                            <i class="bi bi-briefcase"></i>
+                            <label for="Nome commessa">Commessa</label>
+                            <SearchBox
+                                GetSearchedItems="@HandleSearchedWorkOrders"/>
+
+                            <ItemsList
+                                T ="@WorkOrderSelectDto"
+                                Items="@_workOrders"
+                                PropertyKeys="@(new List<string>(){"Name"})"
+                                GetSelectedItem="@HandleChosenWorkOrder"/>
+                            <CustomValidationMessage FieldName="@nameof(Model.WorkOrderId)"/>
                         </div>
                     }
-                    <div class="form-group">
-                        <i class="bi bi-briefcase"></i>
-                        <label for="Nome commessa">Commessa</label>
-                        <SearchBox
-                            GetSearchedItems="@HandleSearchedWorkOrders"/>
+                    else
+                    {
+                        <div class="form-group">
+                            <i class="bi bi-briefcase"></i>
+                            <label for="Nome commessa">Commessa</label>
+                            <InputText class="form-control" @bind-Value="Model.SelectedWorkOrder" disabled=@_isDisabled readonly=@_isDisabled />
+                        </div>
+                    }
 
-                        <ItemsList
-                            T ="@WorkOrderSelectDto"
-                            Items="@_workOrders"
-                            PropertyKeys="@(new List<string>(){"Name"})"
-                            GetSelectedItem="@HandleChosenWorkOrder"/>
-                        <CustomValidationMessage FieldName="@nameof(Model.WorkOrderId)"/>
-                    </div>
                     <div class="form-group">
                         <i class="bi bi-fonts"></i>
                         <label for="Nome attività">Nome</label>

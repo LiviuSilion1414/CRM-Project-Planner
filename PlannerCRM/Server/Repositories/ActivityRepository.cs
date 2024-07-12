@@ -91,12 +91,16 @@ public class ActivityRepository(
 
     public async Task<ActivityDeleteDto> GetForDeleteByIdAsync(int activityId)
     {
+        var employees = await GetEmployeesInvolvedInActivityAsync(activityId);
         var activity = await _dbContext.Activities
-            .Select(ac => ac.MapToActivityDeleteDto())
             .SingleAsync(ac => ac.Id == activityId);
-        activity.Employees = await GetEmployeesInvolvedInActivityAsync(activityId);
+        var client = await GetClientByWorkOrderIdAsync(activity.WorkOrderId);
 
-        return activity;
+        var mappedActivity = activity.MapToActivityDeleteDto();
+        mappedActivity.Employees = employees;
+        mappedActivity.Client = client.MapToClientViewDto();
+
+        return mappedActivity;
     }
 
     private async Task<List<EmployeeSelectDto>> GetEmployeesInvolvedInActivityAsync(int activityId)

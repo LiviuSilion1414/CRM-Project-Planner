@@ -12,6 +12,7 @@
         <div class="modal-body">
             <p>Commessa: @_currentWorkOrder.Name 
                 <span>(@_currentWorkOrder.StartDate.ToString("dd/MM/yyyy") - @_currentWorkOrder.FinishDate.ToString("dd/MM/yyyy"))</span></p>
+            <p>Cliente: @_currentActivity.Client.Name</p>
             <p>Vuoi davvero eliminare questa attività?</p>
             <p> <strong>Nome:</strong> @_currentActivity.Name</p>
             <p> <strong>Data d'inizio:</strong> @_currentActivity.StartDate.ToString("dd/MM/yyyy")</p>

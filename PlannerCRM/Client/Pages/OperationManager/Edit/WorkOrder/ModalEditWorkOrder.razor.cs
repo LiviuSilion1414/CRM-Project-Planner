@@ -7,7 +7,6 @@ public partial class ModalEditWorkOrder : ComponentBase
 {
     [Parameter] public int Id { get; set; }
     [Parameter] public string Title { get; set; }
-    
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
     [Inject] public NavigationManager NavManager { get; set; } 
     [Inject] public NavigationLockService NavigationUtil { get; set; } 

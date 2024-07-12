@@ -7,20 +7,31 @@
             <CascadingValue Value="@_errors">
                 <CustomDataAnnotationsValidator @ref="CustomValidator"/>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <i class="bi bi-person"></i>
-                            <label>Cliente</label>
-                                <SearchBox
-                                    GetSearchedItems="@HandleSearchedElements"/>
-                                @foreach (var cl in _clients) {
-                                    <ul style="list-style: none;" hidden=@_hideclientsList> 
-                                        <li @onclick="@(() => OnClickSetAsClient(cl))">@cl.Name</li>
-                                    </ul> 
-                                }
+                        @if (FormMode == OperationType.ADD)
+                        {
+                            <div class="form-group">
+                                <i class="bi bi-person"></i>
+                                <label>Cliente</label>
+                                    <SearchBox
+                                        GetSearchedItems="@HandleSearchedElements"/>
+                                    @foreach (var cl in _clients) {
+                                        <ul style="list-style: none;" hidden=@_hideclientsList> 
+                                            <li @onclick="@(() => OnClickSetAsClient(cl))">@cl.Name</li>
+                                        </ul> 
+                                    }
                             
-                            <CustomValidationMessage FieldName="@nameof(Model.ClientName)"/>
-                            <CustomValidationMessage FieldName="@nameof(Model.ClientId)"/>
-                        </div>
+                                <CustomValidationMessage FieldName="@nameof(Model.ClientName)"/>
+                                <CustomValidationMessage FieldName="@nameof(Model.ClientId)"/>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <i class="bi bi-briefcase"></i>
+                                <label for="Nome cliente">Cliente</label>
+                                <InputText class="form-control" @bind-Value="Model.ClientName" disabled="@true" readonly="@true"/>
+                            </div>
+                        }
                         <div class="form-group">
                             <i class="bi bi-fonts"></i>
                             <label for="Nome commessa">Nome</label>

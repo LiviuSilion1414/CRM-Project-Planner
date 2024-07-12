@@ -7,6 +7,8 @@ public partial class ModalFormWorkOrder : ComponentBase
 {
     [Parameter] public string Title { get; set; }
     [Parameter] public WorkOrderFormDto Model { get; set; }
+    [Parameter] public OperationType FormMode { get; set; } = OperationType.ADD;
+
     [Parameter] public EventCallback<WorkOrderFormDto> GetValidatedModel { get; set; }
 
     [Inject] public NavigationLockService NavigationUtil { get; set; }

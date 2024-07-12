@@ -83,6 +83,7 @@ public static class ActivityMapper
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
+            Client = new(),
             Employees = []
         };
     }
