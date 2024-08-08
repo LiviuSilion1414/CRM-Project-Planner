@@ -96,7 +96,7 @@ public partial class GridData : ComponentBase
         StateHasChanged();
     }
 
-    private async Task FetchDataAsync(int limit = 0, int offset = 5)
+    private async Task FetchDataAsync(int limit = 5, int offset = 0)
     {
         _activities = await DeveloperService.GetActivitiesByEmployeeIdAsync(EmployeeId, limit, offset);
 

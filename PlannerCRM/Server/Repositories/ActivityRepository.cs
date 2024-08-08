@@ -113,13 +113,16 @@ public class ActivityRepository(
 
     public async Task<List<ActivityViewDto>> GetActivityByEmployeeId(int employeeId, int limit = 10, int offset = 0)
     {
-        return await _dbContext.Activities
+        var activities = await _dbContext.Activities
             .Skip(offset)
             .Take(limit)
-            .Select(ac => ac.MapToActivityViewDto())
             .Where(ac => _dbContext.EmployeeActivities
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
             .ToListAsync();
+
+        return activities
+            .Select(ac => ac.MapToActivityViewDto())
+            .ToList();
     }
 
     public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId)

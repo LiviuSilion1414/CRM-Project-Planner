@@ -60,7 +60,7 @@ public class DeveloperService
         }
     }
 
-    public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId, int limit = 0, int offset = 5)
+    public async Task<List<ActivityViewDto>> GetActivitiesByEmployeeIdAsync(int employeeId, int limit = 5, int offset = 0)
     {
         try
         {
