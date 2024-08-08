@@ -1,4 +1,6 @@
 
+using PlannerCRM.Server.Models;
+
 namespace PlannerCRM.Server.Services;
 
 public class CalculatorService(AppDbContext dbContext)
@@ -7,18 +9,21 @@ public class CalculatorService(AppDbContext dbContext)
 
     public async Task<int> GetCollectionSizeAsync() => await _dbContext.WorkOrderCosts.CountAsync();
 
-    public async Task AddInvoiceAsync(int workOrderId) {
+    public async Task AddInvoiceAsync(int workOrderId)
+    {
         var isAnyWorkOrder = await _dbContext.WorkOrders
             .AnyAsync(wo => wo.Id == workOrderId);
 
         var isAnyInvoice = await _dbContext.WorkOrderCosts
             .AnyAsync(inv => inv.WorkOrderId == workOrderId);
 
-        if (!isAnyWorkOrder) {
+        if (!isAnyWorkOrder)
+        {
             throw new KeyNotFoundException(ExceptionsMessages.WORKORDER_NOT_FOUND);
         }
 
-        if (isAnyInvoice) {
+        if (isAnyInvoice)
+        {
             throw new DuplicateElementException(ExceptionsMessages.DUPLICATE_OBJECT);
         }
 
@@ -63,26 +68,37 @@ public class CalculatorService(AppDbContext dbContext)
             .SingleAsync(cl => cl.Id == workOrder.ClientId);
     }
 
-    public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId) {
+    public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId)
+    {
         var workOrderCost = await _dbContext.WorkOrderCosts
             .SingleAsync(wo => wo.WorkOrderId == workOrderId);
 
-        var employees = workOrderCost.Employees
+        var employees = await _dbContext.Users
+            .Where(em => _dbContext.WorkTimeRecords
+                .Any(wtr => wtr.EmployeeId == em.Id && wtr.WorkOrderId == workOrderId))
+            .ToListAsync();
+        var mappedEmployees = employees
             .Select(em => em.MapToEmployeeViewDto())
-            .ToList() ?? [];
+            .ToList();
 
-        var activities = workOrderCost.Activities
+        var activities = await _dbContext.Activities
+            .Where(ac => _dbContext.WorkTimeRecords
+                .Any(wtr => wtr.ActivityId == ac.Id && wtr.WorkOrderId == workOrderId))
+            .ToListAsync();
+        var mappedActivities = activities
             .Select(ac => ac.MapToActivityViewDto())
-            .ToList() ?? [];
+            .ToList();
 
-        var monthlyActivityCosts = workOrderCost.MonthlyActivityCosts
-            .Select(ac => ac.MapToActivityCostDto(employees))
-            .ToList() ?? [];
+        var monthlyActivityCosts = await CalculateMonthlyCostAsync(workOrderId);
+        var mappedMonthlyActivityCosts = monthlyActivityCosts
+            .Select(mac => mac.MapToActivityCostDto(mappedEmployees))
+            .ToList();
 
-        return workOrderCost.MapToWorkOrderCostDto(employees, activities, monthlyActivityCosts);
+        return workOrderCost.MapToWorkOrderCostDto(mappedEmployees, mappedActivities, mappedMonthlyActivityCosts);
     }
 
-    private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder) {
+    private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder)
+    {
         workOrder.IsInvoiceCreated = true;
 
         _dbContext.Update(workOrder);
@@ -90,8 +106,10 @@ public class CalculatorService(AppDbContext dbContext)
         await _dbContext.SaveChangesAsync();
     }
 
-    private async Task<WorkOrderCost> ExecuteCalculationsAsync(WorkOrder workOrder, bool onCreate = false) {
-        if (onCreate) {
+    private async Task<WorkOrderCost> ExecuteCalculationsAsync(WorkOrder workOrder, bool onCreate = false)
+    {
+        if (onCreate)
+        {
             await SetInvoiceCreatedFlagAsync(workOrder);
         }
 
@@ -122,39 +140,45 @@ public class CalculatorService(AppDbContext dbContext)
         );
     }
 
-    private async Task<int> CalculateTotalHoursAsync(int workOrderId) {
+    private async Task<int> CalculateTotalHoursAsync(int workOrderId)
+    {
         return await _dbContext.WorkTimeRecords
             .Where(wtr => wtr.WorkOrderId == workOrderId)
             .SumAsync(x => x.Hours);
     }
 
-    private async Task<int> GetRelatedEmployeesSizeAsync(int workOrderId) {
+    private async Task<int> GetRelatedEmployeesSizeAsync(int workOrderId)
+    {
         return await _dbContext.Users
             .Where(em => _dbContext.WorkTimeRecords
                 .Any(wtr => wtr.EmployeeId == em.Id && wtr.WorkOrderId == workOrderId))
             .CountAsync();
     }
 
-    private async Task<int> GetRelatedActivitiesSizeAsync(int workOrderId) {
+    private async Task<int> GetRelatedActivitiesSizeAsync(int workOrderId)
+    {
         return await _dbContext.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
             .CountAsync();
     }
 
-    private async Task<List<Employee>> GetAllRelatedEmployeesAsync(int workOrderId) {
+    private async Task<List<Employee>> GetAllRelatedEmployeesAsync(int workOrderId)
+    {
         return await _dbContext.Users
             .Where(em => _dbContext.EmployeeActivities
                 .Any(ea => em.Id == ea.EmployeeId))
             .ToListAsync();
     }
 
-    private async Task<List<Activity>> GetAllRelatedActivitiesAsync(int workOrderId) {
+    private async Task<List<Activity>> GetAllRelatedActivitiesAsync(int workOrderId)
+    {
         return await _dbContext.Activities
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
     }
 
-    private async Task<List<ActivityCost>> CalculateMonthlyCostAsync(int workOrderId) {
+    private async Task<List<ActivityCost>> CalculateMonthlyCostAsync(int workOrderId)
+    {
         var workTimeRecords = await _dbContext.WorkTimeRecords
             .Where(wtr => wtr.WorkOrderId == workOrderId)
             .ToListAsync();
