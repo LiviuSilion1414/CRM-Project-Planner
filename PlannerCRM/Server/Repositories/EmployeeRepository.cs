@@ -66,7 +66,7 @@ public class EmployeeRepository(AppDbContext dbContext,
             var employee = await _userManager.Users
                 .SingleAsync(em => em.Id == employeeId);
 
-            _dbContext.Users.Remove(employee);
+            await _userManager.DeleteAsync(employee);
         }
     }
 
@@ -168,10 +168,13 @@ public class EmployeeRepository(AppDbContext dbContext,
         var employee = await _userManager.Users
             .SingleAsync(em => em.Id == employeeId);
 
-        return await _dbContext.EmployeeActivities
+        var activity = await _dbContext.EmployeeActivities
             .Where(ea => ea.EmployeeId == employeeId)
-            .Select(ea => ea.MapToEmployeeActivityDto())
             .ToListAsync();
+
+        return activity
+            .Select(ea => ea.MapToEmployeeActivityDto())
+            .ToList();
     }
 
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email)
