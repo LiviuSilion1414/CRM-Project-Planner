@@ -10,34 +10,25 @@ public partial class ModalDeleteActivity : ComponentBase
     [Parameter] public int ActivityId { get; set; }
 
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }    
-    [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public NavigationLockService NavigationUtil { get; set; }
     
-    private WorkOrderViewDto _currentWorkOrder;
-    private ActivityDeleteDto _currentActivity;
+    private WorkOrderViewDto _currentWorkOrder = new();
+    private ActivityDeleteDto _currentActivity = new() { Employees = [], Client = new() };
 
     private bool _isCancelClicked;
     public string _message; 
 
-    private string _currentPage;
     private bool _isError;
 
     protected override async Task OnInitializedAsync() {
+        Console.WriteLine($"{_currentActivity.Employees.Count == 0}: collection Employees of Activities entity has no elements");
+
         _currentWorkOrder = await OperationManagerService.GetWorkOrderForViewByIdAsync(WorkOrderId);
         _currentActivity = await OperationManagerService.GetActivityForDeleteByIdAsync(ActivityId);
     }
 
-    protected override void OnInitialized() {
-        _currentPage = _currentPage = NavigationUtil.GetCurrentPage();
-        _currentWorkOrder = new();
-        _currentActivity = new() {
-            Employees = new()
-        };
-    }
-
     public void OnClickModalCancel() {
-        _isCancelClicked = !_isCancelClicked;
-        NavManager.NavigateTo(_currentPage);
+        _isCancelClicked = !_isCancelClicked;    
     }
 
     private void OnClickHideBanner(bool hidden) => _isError = hidden;
@@ -51,7 +42,6 @@ public partial class ModalDeleteActivity : ComponentBase
                 _isError = true;
             } else {
                 _isCancelClicked = !_isCancelClicked;
-                NavManager.NavigateTo(_currentPage, true);
             }
         } catch (Exception exc) {
             _isError = true;

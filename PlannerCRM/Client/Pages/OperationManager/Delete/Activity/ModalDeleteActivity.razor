@@ -19,12 +19,20 @@
             <p> <strong>Data di fine:</strong> @_currentActivity.FinishDate.ToString("dd/MM/yyyy")</p>
             <p> <strong>Dipendenti assegnati: </strong> </p>
             <div id="wrapper-card" class="card"> 
-                @foreach (var em in _currentActivity.Employees) {
-                    <div class="card" style="">
-                        <p><strong>Nome: </strong> @em.FullName</p>
-                        <p><strong>Email:</strong> @em.Email</p>
-                        <p><strong>Ruolo:</strong> @em.Role</p>
-                    </div>
+                @if (_currentActivity.Employees is null || _currentActivity.Employees.Count == 0)
+                {
+                    <p>Caricamento in corso...</p>
+                }
+                else
+                {
+                    @foreach (var em in _currentActivity.Employees) 
+                    {
+                        <div class="card" style="">
+                            <p><strong>Nome: </strong> @em.FullName</p>
+                            <p><strong>Email:</strong> @em.Email</p>
+                            <p><strong>Ruolo:</strong> @em.Role</p>
+                        </div>
+                    }
                 }
             </div>
         </div>
