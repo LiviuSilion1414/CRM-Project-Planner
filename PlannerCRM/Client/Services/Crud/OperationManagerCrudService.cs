@@ -294,4 +294,9 @@ public class OperationManagerCrudService
         return await _http
             .GetFromJsonAsync<ClientViewDto>($"api/client/get/by/workorderid/{workOrderId}");
     }
+    internal async Task<ActivityViewDto> GetActivityForViewByIdAsync(int activityId)
+    {
+        return await _http
+            .GetFromJsonAsync<ActivityViewDto>($"api/activity/get/for/view/{activityId}");
+    }
 }

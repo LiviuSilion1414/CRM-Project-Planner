@@ -68,10 +68,9 @@ public static class ActivityMapper
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
-            //EmployeeActivity = activity.EmployeeActivity
-            //    .Select(ea => ea.MapToEmployeeActivityDto())
-            //    .ToHashSet()
-            EmployeeActivity = []
+            EmployeeActivity = activity.EmployeeActivity
+                .Select(ea => ea.MapToEmployeeActivityDto())
+                .ToHashSet()
         };
     }
 

@@ -34,7 +34,7 @@
                             </td>
                             <td>
                                 <button type="button" class="btn btn-primary" title="Visualizza attività"
-                                    @onclick="@(() => OnClickShowDetails(ac))">
+                                    @onclick="@(() => OnClickShowDetails(ac.Id))">
                                     <i class="bi bi-eye"></i>
                                 </button>                
                             </td>
@@ -76,6 +76,6 @@
 @if (_isShowActivityClicked) {
     <ModalActivityDetails 
         Title=@Titles.DETAILS_ACTIVITY
-        Activity=@_activityView 
+        ActivityId=@_activityId
         WorkOrderName=@WorkOrder.Name/>
 }

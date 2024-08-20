@@ -62,11 +62,15 @@ public class ActivityRepository(
         }
     }
 
-    public async Task<ActivityViewDto> GetForViewByIdAsync(int id)
+    public async Task<ActivityViewDto> GetForViewByIdAsync(int activityId)
     {
-        return await _dbContext.Activities
-            .Select(ac => ac.MapToActivityViewDto())
-            .SingleAsync(ac => ac.Id == id);
+        var activity = await GetEmployeesInvolvedInSingleActivity(activityId);
+        var client = (await GetClientByWorkOrderIdAsync(activity.WorkOrderId));
+
+        var mappedActivity = activity.MapToActivityViewDto();
+        mappedActivity.ClientName = client.Name;
+
+        return mappedActivity;
     }
 
     public async Task<ActivityFormDto> GetForEditByIdAsync(int activityId)

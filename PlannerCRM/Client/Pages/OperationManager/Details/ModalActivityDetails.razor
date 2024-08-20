@@ -1,7 +1,7 @@
 <Modal Size="@ModalSize.LARGE" Title="@Title">
     <Body>
         <div id="before-modal-body">
-            <EditForm Model="@Activity" OnSubmit="OnClickModalCancel">
+            <EditForm Model="@ActivityDto" OnSubmit="OnClickModalCancel">
                     <div class="form-group">
                         <i class="bi bi-briefcase"></i>
                         <label for="Nome commessa">Commessa</label>
@@ -10,20 +10,20 @@
                     <div class="form-group">
                         <i class="bi bi-fonts"></i>
                         <label for="Nome attività">Nome</label>
-                        <InputText class="form-control" @bind-Value="Activity.Name" disabled=@_isDisabled readonly=@_isDisabled/>
+                        <InputText class="form-control" @bind-Value="@ActivityDto.Name" disabled=@_isDisabled readonly=@_isDisabled/>
                     </div>
                     <div class="form-group">
                         <i class="bi bi-calendar3"></i>
                         <label for="Data d'inizio">Data d'inizio</label>
-                        <InputDate class="form-control" @bind-Value="@Activity.StartDate" disabled=@_isDisabled readonly=@_isDisabled/>
+                        <InputDate class="form-control" @bind-Value="@ActivityDto.StartDate" disabled=@_isDisabled readonly=@_isDisabled/>
                     </div>
                     <div class="form-group">
                         <i class="bi bi-calendar3"></i>
                         <label for="Data di fine">Data di fine</label>
-                        <InputDate class="form-control" @bind-Value="@Activity.FinishDate" disabled=@_isDisabled readonly=@_isDisabled/>
+                        <InputDate class="form-control" @bind-Value="@ActivityDto.FinishDate" disabled=@_isDisabled readonly=@_isDisabled/>
                     </div>
                     <div class="container">
-                        <span>Dipendenti selezionati per questa attività: @Activity.EmployeeActivity.Count</span> <br>
+                        <span>Dipendenti selezionati per questa attività: @ActivityDto.EmployeeActivity.Count</span> <br>
                             <div>
                                 <table class="table table-sm">
                                     <thead>
@@ -31,10 +31,10 @@
                                         <th>Nome</th>
                                         <th>Email</th>
                                         <th></th>
-                                    <th></th>
+                                    <th></th>   
                                     </thead>
                                     <tbody>
-                                        @foreach (var ea in Activity.EmployeeActivity) {
+                                        @foreach (var ea in ActivityDto.EmployeeActivity) {
                                             <tr>
                                                 <td>@(ea.Employee.Role.ToString().Replace('_', ' '))</td>
                                                 <td>@ea.Employee.FullName</td>

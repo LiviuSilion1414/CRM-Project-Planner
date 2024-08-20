@@ -44,6 +44,11 @@ public class ActivityController(IRepository<ActivityFormDto> repo, IActivityRepo
     public async Task<ActivityDeleteDto> GetActivityForDelete(int activityId) =>
         await _activityRepository.GetForDeleteByIdAsync(activityId);
 
+    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
+    [HttpGet("get/for/view/{activityId}")]
+    public async Task<ActivityViewDto> GetActivityForView(int activityId) =>
+        await _activityRepository.GetForViewByIdAsync(activityId);
+
     [Authorize]
     [HttpGet("get/activity/by/workorder/{workOrderId}")]
     public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId) =>

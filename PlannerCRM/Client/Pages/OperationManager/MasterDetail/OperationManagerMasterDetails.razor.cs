@@ -32,16 +32,9 @@ public partial class OperationManagerMasterDetails : ComponentBase
         _activityId = activityId;
     }
 
-    private void OnClickShowDetails(ActivityViewDto activity) {
+    private void OnClickShowDetails(int activityId) {
         _isShowActivityClicked = !_isShowActivityClicked;
-        _activityView = new() {
-            Id = activity.Id,
-            Name = activity.Name,
-            StartDate = activity.StartDate,
-            FinishDate = activity.FinishDate,
-            WorkOrderId = activity.WorkOrderId,
-            EmployeeActivity = activity.EmployeeActivity
-        };
+        _activityId = activityId;
     }
 
     private void OnClickDelete(int activityId) {

@@ -8,7 +8,7 @@ public class ActivityViewDto
     public DateTime FinishDate { get; set; }
     public int WorkOrderId { get; set; }
     public string WorkOrderName { get; init; }
-    public string ClientName { get; init; }
+    public string ClientName { get; set; }
 
     public HashSet<EmployeeActivityDto> EmployeeActivity { get; set; }
 }
