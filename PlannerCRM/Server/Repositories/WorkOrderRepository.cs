@@ -62,12 +62,11 @@ public class WorkOrderRepository(
 
         if (isValid)
         {
-            var model = await _dbContext.WorkOrders
-                .SingleAsync(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == dto.Id);
-
-            model = dto.MapToWorkOrder();
+            var model = dto.MapToWorkOrder();
             model.Client = await GetClientByClientIdAsync(dto.ClientId);
-
+            
+            _dbContext.Update(model);
+            
             await _dbContext.SaveChangesAsync();
 
             await SetForeignKeyToClientAsync(model, OperationType.EDIT);
