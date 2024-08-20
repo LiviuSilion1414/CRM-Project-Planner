@@ -42,21 +42,19 @@ public class ActivityRepository(
 
         if (isValid)
         {
-            var model = await _dbContext.Activities
-                .SingleAsync(ac => ac.Id == dto.Id);
+            if (dto.DeleteEmployeeActivity.Count > 0) 
+            {
+                var employeesToRemove = dto.DeleteEmployeeActivity
+                    .Where(eaDto => _dbContext.EmployeeActivities
+                        .Any(ea => eaDto.EmployeeId == ea.EmployeeId))
+                    .Select(e => e.MapToEmployeeActivity(dto.Id))
+                    .ToList();
 
-            model = dto.MapToActivity();
+                employeesToRemove
+                    .ForEach(item => _dbContext.EmployeeActivities.Remove(item));
+            }
 
-            var employeesToRemove = dto.DeleteEmployeeActivity
-                .Where(eaDto => _dbContext.EmployeeActivities
-                    .Any(ea => eaDto.EmployeeId == ea.EmployeeId))
-                .Select(e => e.MapToEmployeeActivity(dto.Id))
-                .ToList();
-
-            employeesToRemove
-                .ForEach(item => _dbContext.EmployeeActivities.Remove(item));
-
-            _dbContext.Update(model);
+            _dbContext.Update(dto.MapToActivity());
 
             await _dbContext.SaveChangesAsync();
         }
