@@ -165,14 +165,30 @@ public class EmployeeRepository(AppDbContext dbContext,
 
     public async Task<List<EmployeeActivityDto>> GetEmployeeActivitiesByEmployeeIdAsync(int employeeId)
     {
-        var employee = await _userManager.Users
-            .SingleAsync(em => em.Id == employeeId);
-
-        var activity = await _dbContext.EmployeeActivities
+        var employeeActivities = await _dbContext.EmployeeActivities
             .Where(ea => ea.EmployeeId == employeeId)
             .ToListAsync();
 
-        return activity
+        var employee = await _userManager.Users
+            .SingleAsync(em => em.Id == employeeId);
+    
+        var activities = await _dbContext.Activities
+            .Where(ac => _dbContext.EmployeeActivities.Any(ea => ea.ActivityId == ac.Id))
+            .ToListAsync();
+
+        foreach (var ea in employeeActivities)
+        {
+            ea.Employee = employee;
+            foreach (var ac in activities) 
+            {
+                if (ea.ActivityId == ac.Id) 
+                { 
+                    ea.Activity = ac;
+                }
+            }
+        }
+
+        return employeeActivities
             .Select(ea => ea.MapToEmployeeActivityDto())
             .ToList();
     }
