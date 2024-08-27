@@ -1,76 +1,80 @@
 @if (!_activities.Any()) {
     <p class="text-center">@Titles.NOT_AVAILABLE_ACTIVITIES</p>
 } else {
-    <div class="master-detail">
-        <div class="container-fluid">
-            <h3>Attività</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nome</th>
-                        <th>Data d'inizio</th>
-                        <th>Data di fine</th>
-                        <th>Dipendenti assegnati</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var ac in _activities) {
-                        <tr>
-                            <td><i class="bi bi-puzzle"></i></td>
-                            <td>@ac.Name</td>
-                            <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
-                            <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
-                            <td>
-                                @foreach (var ea in ac.EmployeeActivity) {
-                                    <tr>
+    <Modal Size="@ModalSize.EXTRA_LARGE" Title="@Titles.DETAILS_ACTIVITY">
+        <Body>
+            <div class="master-detail">
+                <div class="container-fluid">
+                    <h3>Attività</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nome</th>
+                                <th>Data d'inizio</th>
+                                <th>Data di fine</th>
+                                <th>Dipendenti assegnati</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ac in _activities) {
+                                <tr>
+                                    <td><i class="bi bi-puzzle"></i></td>
+                                    <td>@ac.Name</td>
+                                    <td>@ac.StartDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@ac.FinishDate.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @foreach (var ea in ac.EmployeeActivity) {
+                                            <tr>
+                                                <td>
+                                                    @ea.Employee.Email
+                                                </td>
+                                            </tr>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" title="Visualizza attività"
+                                            @onclick="@(() => OnClickShowDetails(ac.Id))">
+                                            <i class="bi bi-eye"></i>
+                                        </button>                
+                                    </td>
+                                    @if (HasBlockedActions) {
                                         <td>
-                                            @ea.Employee.Email
+                                            <button type="button" class="btn btn-primary" title="Modifica attività"
+                                                @onclick="@(() => OnClickEdit(ac.Id))">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>                
+                                        </td> 
+                                        <td> 
+                                            <button type="button" class="btn btn-danger" title="Elimina attività"
+                                                @onclick="@(() => OnClickDelete(ac.Id))">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
                                         </td>
-                                    </tr>
-                                }
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-primary" title="Visualizza attività"
-                                    @onclick="@(() => OnClickShowDetails(ac.Id))">
-                                    <i class="bi bi-eye"></i>
-                                </button>                
-                            </td>
-                            @if (HasBlockedActions) {
-                                <td>
-                                    <button type="button" class="btn btn-primary" title="Modifica attività"
-                                        @onclick="@(() => OnClickEdit(ac.Id))">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>                
-                                </td> 
-                                <td> 
-                                    <button type="button" class="btn btn-danger" title="Elimina attività"
-                                        @onclick="@(() => OnClickDelete(ac.Id))">
-                                        <i class="bi bi-trash3"></i>
-                                    </button>
-                                </td>
+                                    }
+                                </tr>
                             }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </Body>
+    </Modal>
 }
 @if (_isEditActivityClicked) { 
     <ModalEditActivity 
         Title=@Titles.EDIT_ACTIVITY
         ActivityId=@_activityId 
-        WorkOrderId=@WorkOrderId/> 
+        WorkOrderId=@WorkOrder.Id/> 
 }
 
 @if (_isDeleteActivityClicked) {
     <ModalDeleteActivity 
         Title=@Titles.DELETE_ACTIVITY
         ActivityId=@_activityId 
-        WorkOrderId=@WorkOrderId/> 
+        WorkOrderId=@WorkOrder.Id/> 
 }
 
 @if (_isShowActivityClicked) {

@@ -8,7 +8,7 @@ public partial class ExtendableProfileModal : ComponentBase
 
     private CurrentUser _currentUser;
     private bool _isMenuSwitched = false;
-    private bool _isSettingsClicked = false;
+    //private bool _isSettingsClicked = false;
 
     protected override async Task OnInitializedAsync()
         => _currentUser = await AuthStateService.GetCurrentUserAsync();

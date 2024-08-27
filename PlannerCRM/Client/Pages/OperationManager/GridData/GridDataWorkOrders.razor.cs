@@ -84,11 +84,11 @@ public partial class GridDataWorkOrders : ComponentBase
         _workOrderId = id;
     }
 
-    private void OnClickTableRow(int workOrderId) {
+    private void OnClickTableRow(WorkOrderViewDto workOrder) {
         _trIsClicked = !_trIsClicked;
-        _currentWorkOrder = WorkOrders
-            .Single(wo => wo.Id == workOrderId);
+        _currentWorkOrder = workOrder;
     }
+
     private static bool IsWorkOrderEligible(WorkOrderViewDto workOrder)
     {     
         return !workOrder.IsDeleted || !workOrder.IsCompleted;

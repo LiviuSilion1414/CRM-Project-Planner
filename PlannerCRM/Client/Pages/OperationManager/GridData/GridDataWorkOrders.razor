@@ -12,70 +12,59 @@
                     <th scope="col" @onclick="@(() => HandleOrdering(order.Key))">@order.Key</th>
                 }
             }
-            
+            <th scope="col"></th>
+            <th scope="col"></th>
             <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-            @foreach (var wo in WorkOrders) {
-                <tr>
-                    <td>
-                        @if (wo.IsCompleted) {  
-                            <strong style="color: blue;">[Completato]</strong>
-                        } else if (wo.IsDeleted) {
-                            <strong style="color: darkred;">[Eliminato]</strong>
-                        } else {
-                            <strong style="color: green;">[Attivo]</strong>
-                        }
-                    </td>
-                    <td> @wo.Client.Name </td>
-                    <td>
-                        @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
-                            <i class="bi bi-arrow-up-square-fill" style="cursor: pointer; padding-right: 5px;" 
-                                @onclick="(() => OnClickTableRow(wo.Id))" title="Comprimi">
-                            </i>
-                        } else {
-                            <i class="bi bi-arrow-down-square-fill" style="cursor: pointer; padding-right: 5px;" 
-                                @onclick="(() => OnClickTableRow(wo.Id))" title="Espandi"></i>
-                        }
-                        @wo.Name
-                    </td>
-                    <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
-                    <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
-                    @if (IsWorkOrderEligible(wo)) 
-                    {
-                        <td>
-                            <td style="padding-right: 10px;">
-                                <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEditWorkOrder(wo.Id))"></i>
-                            </td> 
-                            <td> 
-                                <i class="bi bi-trash3 danger" @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))"></i>
-                            </td>
-                        </td>
+        @foreach (var wo in WorkOrders) {
+            <tr>
+                <td>
+                    @if (wo.IsCompleted) {  
+                        <strong style="color: blue;">Completato</strong>
+                    } else if (wo.IsDeleted) {
+                        <strong style="color: darkred;">Eliminato</strong>
+                    } else {
+                        <strong style="color: green;">Attivo</strong>
                     }
-                <td></td>
-                </tr>
-                @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) 
+                </td>
+                <td> @wo.Client.Name </td>
+
+                <td>@wo.Name</td>
+                <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
+                <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
+                @if (IsWorkOrderEligible(wo)) 
                 {
-                    <tr style="border: 1px solid blue;" title="Visualizza attività su questa commessa">
-                        <td></td>
-                        <td style="width: 100%; height: 80%;"> 
-                            <OperationManagerMasterDetails 
-                                WorkOrderId="@_currentWorkOrder.Id" 
-                                WorkOrder="@wo"
-                                HasBlockedActions="@IsWorkOrderEligible(wo)"/> 
+                    <td>
+                        <td style="padding-right: 10px;">
+                            <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEditWorkOrder(wo.Id))"></i>
+                        </td> 
+                        <td> 
+                            <i class="bi bi-trash3 danger" @onclick="@(() => OnClickDeleteWorkOrder(wo.Id))"></i>
                         </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                </td>
                 }
-            }
+                else
+                {
+                    <td></td>
+                }
+            <td><span id="info-btn" @onclick="(() => OnClickTableRow(wo))">Dettagli</span></td>
+            <td></td>
+            </tr>
+        }      
     </tbody>
 </table>
 
 @if (!WorkOrders.Any()) {
     <p class="text-center">@Titles.NOT_AVAILABLE_WORKORDERS</p>
+}
+
+@if (_trIsClicked)
+{
+    <OperationManagerMasterDetails
+        WorkOrder="@_currentWorkOrder"
+        HasBlockedActions="@IsWorkOrderEligible(_currentWorkOrder)" />
 }
 
 @if (_isEditWorkOrderClicked) { 
