@@ -85,7 +85,14 @@ public class CalculatorService(AppDbContext dbContext)
             .Where(ac => _dbContext.WorkTimeRecords
                 .Any(wtr => wtr.ActivityId == ac.Id && wtr.WorkOrderId == workOrderId))
             .ToListAsync();
-        var mappedActivities = activities
+
+        var activitiesWithEmployeeActivities = new List<Activity>();
+        foreach (var ac in activities)
+        {
+            activitiesWithEmployeeActivities.Add(await GetEmployeesInvolvedInSingleActivity(ac.Id));
+        }
+        
+        var mappedActivities = activitiesWithEmployeeActivities
             .Select(ac => ac.MapToActivityViewDto())
             .ToList();
 
@@ -95,6 +102,26 @@ public class CalculatorService(AppDbContext dbContext)
             .ToList();
 
         return workOrderCost.MapToWorkOrderCostDto(mappedEmployees, mappedActivities, mappedMonthlyActivityCosts);
+    }
+
+    private async Task<Activity> GetEmployeesInvolvedInSingleActivity(int activityId)
+    {
+        var activity = await _dbContext.Activities
+            .SingleAsync(ac => ac.Id == activityId);
+        activity.EmployeeActivity = (await GetEmployeesActivitiesByActivityId(activity.Id)).ToHashSet();
+        foreach (var ea in activity.EmployeeActivity)
+        {
+            ea.Employee = await _dbContext.Users
+                .SingleAsync(e => e.Id == ea.EmployeeId);
+        }
+        return activity;
+    }
+
+    private async Task<List<EmployeeActivity>> GetEmployeesActivitiesByActivityId(int activityId)
+    {
+        return await _dbContext.EmployeeActivities
+            .Where(ea => ea.ActivityId == activityId)
+            .ToListAsync();
     }
 
     private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder)
