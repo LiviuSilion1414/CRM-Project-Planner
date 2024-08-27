@@ -42,7 +42,8 @@
                     </td>
                     <td>@wo.StartDate.ToString("dd/MM/yyyy")</td>
                     <td>@wo.FinishDate.ToString("dd/MM/yyyy")</td>
-                    @if (!wo.IsInvoiceCreated) {
+                    @if (IsWorkOrderEligible(wo)) 
+                    {
                         <td>
                             <td style="padding-right: 10px;">
                                 <i class="bi bi-pencil-square info" @onclick="@(() => OnClickEditWorkOrder(wo.Id))"></i>
@@ -54,11 +55,15 @@
                     }
                 <td></td>
                 </tr>
-                @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) {
+                @if (_trIsClicked && (wo.Id == _currentWorkOrder.Id)) 
+                {
                     <tr style="border: 1px solid blue;" title="Visualizza attività su questa commessa">
                         <td></td>
                         <td style="width: 100%; height: 80%;"> 
-                            <OperationManagerMasterDetails WorkOrderId="@_currentWorkOrder.Id" WorkOrder="@wo"/> 
+                            <OperationManagerMasterDetails 
+                                WorkOrderId="@_currentWorkOrder.Id" 
+                                WorkOrder="@wo"
+                                HasBlockedActions="@IsWorkOrderEligible(wo)"/> 
                         </td>
                         <td></td>
                         <td></td>

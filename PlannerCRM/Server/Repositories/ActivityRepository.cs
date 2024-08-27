@@ -172,7 +172,7 @@ public class ActivityRepository(
     public async Task<List<ActivityViewDto>> GetAllAsync()
     {
         return await _dbContext.Activities
-            .Select(ac => ac.MapToActivityViewDto())
+            .Select(ac => ac.MapToActivityViewDto("", ""))
             .ToListAsync();
     }
 

@@ -89,4 +89,8 @@ public partial class GridDataWorkOrders : ComponentBase
         _currentWorkOrder = WorkOrders
             .Single(wo => wo.Id == workOrderId);
     }
+    private static bool IsWorkOrderEligible(WorkOrderViewDto workOrder)
+    {     
+        return !workOrder.IsDeleted || !workOrder.IsCompleted;
+    }
 }

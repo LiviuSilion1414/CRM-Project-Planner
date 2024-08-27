@@ -59,7 +59,7 @@ public static class ActivityMapper
         };
     }
 
-    public static ActivityViewDto MapToActivityViewDto(this Activity activity)
+    public static ActivityViewDto MapToActivityViewDto(this Activity activity, string clientName = "", string workOrderName = "")
     {
         return new ActivityViewDto
         {
@@ -68,9 +68,9 @@ public static class ActivityMapper
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
-            EmployeeActivity = activity.EmployeeActivity
-                .Select(ea => ea.MapToEmployeeActivityDto())
-                .ToHashSet()
+            ClientName = clientName,
+            WorkOrderName = workOrderName,
+            EmployeeActivity = []
         };
     }
 

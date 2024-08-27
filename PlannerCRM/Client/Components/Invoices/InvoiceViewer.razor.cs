@@ -11,20 +11,11 @@ public partial class InvoiceViewer : ComponentBase
     [Inject] public IJSRuntime JSRuntime { get; set; }
     [Inject] public ProjectManagerService ProjectManagerService { get; set; }
 
-    private WorkOrderCostDto _invoice;
-    private ClientViewDto _client;
+    private WorkOrderCostDto _invoice = new() { Activities = [], Employees = [], MonthlyActivityCosts = [] };
+    private ClientViewDto _client = new();
 
     protected override async Task OnInitializedAsync() {
         _invoice = await ProjectManagerService.GetInvoiceAsync(WorkOrderId);
         _client = await ProjectManagerService.GetClientForViewByIdAsync(_invoice.ClientId);
-    }
-
-    protected override void OnInitialized() {
-        _client = new();
-        _invoice = new() {
-            Activities = new(),
-            Employees = new(),
-            MonthlyActivityCosts = new()
-        };
     }
 }

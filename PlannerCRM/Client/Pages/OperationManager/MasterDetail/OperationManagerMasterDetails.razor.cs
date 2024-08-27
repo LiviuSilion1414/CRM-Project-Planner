@@ -5,6 +5,7 @@ public partial class OperationManagerMasterDetails : ComponentBase
 {
     [Parameter] public int WorkOrderId { get; set; }
     [Parameter] public WorkOrderViewDto WorkOrder { get; set; }
+    [Parameter] public bool HasBlockedActions { get; init; }
 
     [Inject] public OperationManagerCrudService OperationManagerService { get; set; }
 
