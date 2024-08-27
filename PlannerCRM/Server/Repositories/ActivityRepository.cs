@@ -64,7 +64,7 @@ public class ActivityRepository(
     {
         var activity = await GetEmployeesInvolvedInSingleActivity(activityId);
         var client = (await GetClientByWorkOrderIdAsync(activity.WorkOrderId));
-
+        
         var mappedActivity = activity.MapToActivityViewDto();
         mappedActivity.ClientName = client.Name;
 

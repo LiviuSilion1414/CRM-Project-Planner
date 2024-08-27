@@ -70,7 +70,9 @@ public static class ActivityMapper
             WorkOrderId = activity.WorkOrderId,
             ClientName = clientName,
             WorkOrderName = workOrderName,
-            EmployeeActivity = []
+            EmployeeActivity = activity.EmployeeActivity
+                .Select(ea => ea.MapToEmployeeActivityDto())
+                .ToHashSet()
         };
     }
 
