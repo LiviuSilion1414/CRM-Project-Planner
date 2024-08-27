@@ -114,53 +114,60 @@ public class EmployeeRepository(AppDbContext dbContext,
 
     public async Task<EmployeeViewDto> GetForViewByIdAsync(int employeeId)
     {
-        return await _userManager.Users
+        var employee = await _userManager.Users
             .Where(em => em.Id == employeeId)
-            .Select(em => em.MapToEmployeeViewDto())
             .SingleAsync();
+
+        return employee.MapToEmployeeViewDto();
     }
 
     public async Task<EmployeeSelectDto> GetForRestoreAsync(int employeeId)
     {
-        return await _userManager.Users
+        var employee = await _userManager.Users
             .Where(em => em.Id == employeeId)
-            .Select(em => em.MapToEmployeeSelectDto())
             .SingleAsync();
+
+        return employee.MapToEmployeeSelectDto();
     }
 
     public async Task<EmployeeFormDto> GetForEditByIdAsync(int employeeId)
     {
         var employee = await _userManager.Users
-            .Where(em => em.Id == employeeId)
-            .Select(em => em.MapToEmployeeFormDto())
-            .SingleAsync();
-        var employeeSalaries = await GetEmployeeSalariesAsync(employeeId);
-        
-        employee.StartDateHourlyRate = employeeSalaries.Single().StartDate;
-        employee.FinishDateHourlyRate = employeeSalaries.Single().FinishDate;
-        employee.EmployeeSalaries = new(employeeSalaries);
+            .SingleAsync(em => em.Id == employeeId);
 
-        return employee;
+        var employeeSalaries = await GetEmployeeSalariesAsync(employeeId);
+
+        var mappedEmployee = employee.MapToEmployeeFormDto();
+
+        mappedEmployee.StartDateHourlyRate = employeeSalaries.SingleOrDefault().StartDate;
+        mappedEmployee.FinishDateHourlyRate = employeeSalaries.SingleOrDefault().FinishDate;
+        mappedEmployee.EmployeeSalaries = new(employeeSalaries);
+
+        return mappedEmployee;
     }
 
     public async Task<List<EmployeeSalaryDto>> GetEmployeeSalariesAsync(int employeeId)
     {
-        return await _dbContext.EmployeeSalaries
+        var employeesSalaries = await _dbContext.EmployeeSalaries
             .Where(ems => ems.EmployeeId == employeeId)
-            .Select(ems => ems.MapToEmployeeSalaryDto())
             .ToListAsync();
+
+        return employeesSalaries
+            .Select(em => em.MapToEmployeeSalaryDto())
+            .ToList();
     }
 
     public async Task<EmployeeDeleteDto> GetForDeleteByIdAsync(int employeeId)
     {
         var employee = await _userManager.Users
             .Where(em => em.Id == employeeId)
-            .Select(em => em.MapToEmployeeDeleteDto(employeeId))
             .SingleAsync();
         var employeeActivities = await GetEmployeeActivitiesByEmployeeIdAsync(employeeId);
-        employee.EmployeeActivities = new(employeeActivities);
+        
+        var mappedEmployee = employee.MapToEmployeeDeleteDto(employeeId);
+        mappedEmployee.EmployeeActivities = new(employeeActivities);
 
-        return employee;
+        return mappedEmployee;
     }
 
     public async Task<List<EmployeeActivityDto>> GetEmployeeActivitiesByEmployeeIdAsync(int employeeId)
@@ -195,36 +202,38 @@ public class EmployeeRepository(AppDbContext dbContext,
 
     public async Task<List<EmployeeSelectDto>> SearchEmployeeAsync(string email)
     {
-        return await _userManager.Users
+        var employees = await _userManager.Users
             .Where(em => !em.IsDeleted && !em.IsArchived)
             .Where(em => EF.Functions.ILike(em.FullName, $"%{email}%") ||
                 EF.Functions.ILike(em.Email, $"%{email}%"))
-            .Select(em => em.MapToEmployeeSelectDto())
             .ToListAsync();
+        
+        return employees
+            .Select(em => em.MapToEmployeeSelectDto())
+            .ToList();
     }
 
     public async Task<List<EmployeeViewDto>> GetPaginatedEmployeesAsync(int offset, int limit)
     {
-        return await _userManager.Users
+        var employees = await _userManager.Users
             .OrderBy(em => em.Id)
             .Skip(offset)
             .Take(limit)
-            .Select(employee => employee.MapToEmployeeViewDto())
             .ToListAsync();
+
+        return employees
+            .Select(employees => employees.MapToEmployeeViewDto())
+            .ToList();
     }
 
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email)
     {
-        return await _userManager.Users
+        var employee = await _userManager.Users
             .Where(em => !em.IsDeleted && !em.IsArchived && em.Email == email)
-            .Select(em => em.MapToCurrentEmployeeDto())
             .SingleAsync();
+
+        return employee.MapToCurrentEmployeeDto();
     }
 
     public async Task<int> GetEmployeesSizeAsync() => await _userManager.Users.CountAsync();
-
-    public Task<List<EmployeeSalaryDto>> GetEmployeeActivitiesAsync(int employeeId)
-    {
-        throw new NotImplementedException();
-    }
 }

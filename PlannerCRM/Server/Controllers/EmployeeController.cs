@@ -63,7 +63,7 @@ public class EmployeeController(
     public async Task<EmployeeFormDto> GetEmployeeForEditByIdAsync(int employeeId) =>
         await _employeeRepository.GetForEditByIdAsync(employeeId);
 
-    [HttpGet("get/employee/salaries/by/employeeid/{employeeId}")]
+    [HttpGet("get/employee/salaries/by/employeeId/{employeeId}")]
     public async Task<List<EmployeeSalaryDto>> GetEmployeeSalariesByIdAsync(int employeeId) =>
         await _employeeRepository.GetEmployeeSalariesAsync(employeeId);
 
