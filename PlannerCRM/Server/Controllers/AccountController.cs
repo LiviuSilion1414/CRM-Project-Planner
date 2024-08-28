@@ -9,7 +9,6 @@ public class AccountController(
 {
     private readonly UserManager<Employee> _userManager = userManager;
     private readonly SignInManager<Employee> _signInManager = signInManager;
-    private readonly AppDbContext _dbCcontext = dbContext;
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto)

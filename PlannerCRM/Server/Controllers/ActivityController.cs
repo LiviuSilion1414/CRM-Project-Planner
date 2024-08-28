@@ -60,7 +60,7 @@ public class ActivityController(IRepository<ActivityFormDto> repo, IActivityRepo
         await _activityRepository.GetActivityByEmployeeId(employeeId, limit, offset);
 
     [Authorize]
-    [HttpGet("get/size/by/employee/id/{employeeId}")]
+    [HttpGet("get/size/by/employeeId/{employeeId}")]
     public async Task<int> GetCollectionSizeByEmployeeIdAsync(int employeeId) =>
         await _activityRepository.GetCollectionSizeByEmployeeIdAsync(employeeId);
 }

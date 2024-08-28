@@ -125,7 +125,7 @@ public class DeveloperService
         try
         {
             return await _http
-                .GetFromJsonAsync<int>($"api/activity/get/size/by/employee/id/{employeeId}");
+                .GetFromJsonAsync<int>($"api/activity/get/size/by/employeeId/{employeeId}");
         }
         catch (Exception exc)
         {

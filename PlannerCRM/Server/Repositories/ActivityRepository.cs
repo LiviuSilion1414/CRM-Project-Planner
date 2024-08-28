@@ -120,10 +120,10 @@ public class ActivityRepository(
             .Take(limit)
             .Where(ac => _dbContext.EmployeeActivities
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
-            .ToListAsync();
+            .ToListAsync(); 
 
         return activities
-            .Select(ac => ac.MapToActivityViewDto())
+            .Select(ac => ac.MapToActivityViewDto("", ""))
             .ToList();
     }
 
