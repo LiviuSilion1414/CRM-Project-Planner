@@ -78,27 +78,13 @@ public class EmployeeRepository(AppDbContext dbContext,
         {
             var user = await _userManager.FindByEmailAsync(dto.OldEmail);
 
-            user = dto.MapToEmployee();
-
-            var isContainedModifiedHourlyRate = await _dbContext.Users
-                .AnyAsync(em => em.Salaries
-                    .Any(s => s.Salary != dto.CurrentHourlyRate));
-
-            if (!isContainedModifiedHourlyRate)
-            {
-                user.Salaries = dto.EmployeeSalaries
-                    .Where(ems => _dbContext.Users
-                        .Any(em => em.Id == ems.EmployeeId))
-                    .Select(ems => ems.MapToEmployeeSalary(dto))
-                    .ToList();
-            }
-
             var userHasSamePassword = await _userManager.CheckPasswordAsync(user, dto.Password);
 
             if (!userHasSamePassword)
             {
                 await _userManager.RemovePasswordAsync(user);
                 await _userManager.AddPasswordAsync(user, dto.Password);
+                user.Password = dto.Password;
             }
 
             var userRole = (await _userManager.GetRolesAsync(user)).Single();
@@ -109,6 +95,24 @@ public class EmployeeRepository(AppDbContext dbContext,
                 await _userManager.RemoveFromRoleAsync(user, userRole);
                 await _userManager.AddToRoleAsync(user, dto.Role.ToString());
             }
+
+            user.Email = dto.Email;
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
+            user.UserName = dto.Email;
+            user.NormalizedEmail = dto.Email.ToUpper();
+            user.FullName = $"{dto.FirstName} {dto.LastName}";
+            user.BirthDay = dto.BirthDay ?? default;
+            user.StartDate = dto.StartDate ?? default;
+            user.Password = dto.Password;
+            user.NumericCode = dto.NumericCode;
+            user.Role = dto.Role ?? default;
+            user.CurrentHourlyRate = dto.CurrentHourlyRate;
+            user.Salaries = dto.EmployeeSalaries
+                .Select(ems => ems.MapToEmployeeSalary(dto))
+                .ToList();
+
+            await _userManager.UpdateAsync(user);
         }
     }
 
