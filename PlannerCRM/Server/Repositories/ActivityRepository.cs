@@ -122,8 +122,8 @@ public class ActivityRepository(
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
             .ToListAsync(); 
 
-        return activities
-            .Select(ac => ac.MapToActivityViewDto("", ""))
+        return (await GetEmployeesInvolvedInEachActivity(activities))
+            .Select(ac => ac.MapToActivityViewDto())
             .ToList();
     }
 
@@ -172,7 +172,7 @@ public class ActivityRepository(
     public async Task<List<ActivityViewDto>> GetAllAsync()
     {
         return await _dbContext.Activities
-            .Select(ac => ac.MapToActivityViewDto("", ""))
+            .Select(ac => ac.MapToActivityViewDto())
             .ToListAsync();
     }
 
