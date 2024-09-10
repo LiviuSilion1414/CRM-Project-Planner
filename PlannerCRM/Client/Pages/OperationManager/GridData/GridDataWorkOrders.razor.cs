@@ -91,6 +91,6 @@ public partial class GridDataWorkOrders : ComponentBase
 
     private static bool IsWorkOrderEligible(WorkOrderViewDto workOrder)
     {     
-        return !workOrder.IsDeleted || !workOrder.IsCompleted;
+        return !workOrder.IsCompleted;
     }
 }
