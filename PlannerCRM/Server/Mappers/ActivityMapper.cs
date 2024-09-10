@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.Mappers;
 
 public static class ActivityMapper
-{    
+{
     public static Activity MapToActivity(this ActivityFormDto dto)
     {
         return new Activity
@@ -68,12 +68,21 @@ public static class ActivityMapper
             StartDate = activity.StartDate,
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
-            //ClientName = clientName,
-            //WorkOrderName = workOrderName,
+            ClientName = string.Empty,
+            WorkOrderName = string.Empty,
             EmployeeActivity = activity.EmployeeActivity
                 .Select(ea => ea.MapToEmployeeActivityDto())
                 .ToHashSet()
         };
+    }
+
+    public static ActivityViewDto MapToActivityViewDto(this Activity activity, string clientName, string workOrderName)
+    {
+        var mappedActivity = activity.MapToActivityViewDto();
+        mappedActivity.ClientName = clientName;
+        mappedActivity.WorkOrderName = workOrderName;
+
+        return mappedActivity;
     }
 
     public static ActivityDeleteDto MapToActivityDeleteDto(this Activity activity)

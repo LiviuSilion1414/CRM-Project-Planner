@@ -4,8 +4,7 @@ namespace PlannerCRM.Server.Controllers;
 [Route("api/[controller]")]
 public class AccountController(
     UserManager<Employee> userManager,
-    SignInManager<Employee> signInManager,
-    AppDbContext dbContext) : ControllerBase
+    SignInManager<Employee> signInManager) : ControllerBase
 {
     private readonly UserManager<Employee> _userManager = userManager;
     private readonly SignInManager<Employee> _signInManager = signInManager;

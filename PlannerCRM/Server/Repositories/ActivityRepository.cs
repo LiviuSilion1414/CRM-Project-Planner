@@ -42,7 +42,7 @@ public class ActivityRepository(
 
         if (isValid)
         {
-            if (dto.DeleteEmployeeActivity.Count > 0) 
+            if (dto.DeleteEmployeeActivity.Count > 0)
             {
                 var employeesToRemove = dto.DeleteEmployeeActivity
                     .Where(eaDto => _dbContext.EmployeeActivities
@@ -64,7 +64,7 @@ public class ActivityRepository(
     {
         var activity = await GetEmployeesInvolvedInSingleActivity(activityId);
         var client = (await GetClientByWorkOrderIdAsync(activity.WorkOrderId));
-        
+
         var mappedActivity = activity.MapToActivityViewDto();
         mappedActivity.ClientName = client.Name;
 
@@ -78,7 +78,7 @@ public class ActivityRepository(
 
         var mappedActivity = activity.MapToActivityFormDto();
         mappedActivity.ClientName = client.Name;
-        
+
         return mappedActivity;
     }
 
@@ -87,8 +87,19 @@ public class ActivityRepository(
         var workOrder = await _dbContext.WorkOrders
             .SingleAsync(wo => wo.Id == workOrderId);
 
-        return (await _dbContext.Clients
-            .SingleAsync(cl => cl.Id == workOrder.ClientId));
+        return await _dbContext.Clients
+            .SingleAsync(cl => cl.Id == workOrder.ClientId);
+    }
+
+    public async Task<WorkOrderViewDto> GetWorkOrderViewByIdAsync(int workOrderId)
+    {
+        var workOrder = await _dbContext.WorkOrders
+            .Where(wo => wo.Id == workOrderId)
+            .SingleAsync();
+
+        workOrder.Client = await GetClientByWorkOrderIdAsync(workOrderId);
+
+        return workOrder.MapToWorkOrderViewDto();
     }
 
     public async Task<ActivityDeleteDto> GetForDeleteByIdAsync(int activityId)
@@ -120,11 +131,20 @@ public class ActivityRepository(
             .Take(limit)
             .Where(ac => _dbContext.EmployeeActivities
                 .Any(ea => ea.EmployeeId == employeeId && ac.Id == ea.ActivityId))
-            .ToListAsync(); 
+            .ToListAsync();
 
-        return (await GetEmployeesInvolvedInEachActivity(activities))
-            .Select(ac => ac.MapToActivityViewDto())
-            .ToList();
+        var activitiesWithInvolvedEmployees = await GetEmployeesInvolvedInEachActivity(activities);
+        var resultList = new List<ActivityViewDto>();
+
+        foreach (var ac in activitiesWithInvolvedEmployees)
+        {
+            var clientName = (await GetClientByWorkOrderIdAsync(ac.WorkOrderId)).Name;
+            var workOrderName = (await GetWorkOrderViewByIdAsync(ac.WorkOrderId)).Name;
+
+            resultList.Add(ac.MapToActivityViewDto(clientName, workOrderName));
+        }
+
+        return resultList;
     }
 
     public async Task<List<ActivityViewDto>> GetActivitiesPerWorkOrderAsync(int workOrderId)
