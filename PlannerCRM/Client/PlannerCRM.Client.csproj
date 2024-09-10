@@ -22,4 +22,8 @@
     <Folder Include="wwwroot\css\Bootstrap\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\person.png" />
+  </ItemGroup>
+
 </Project>
