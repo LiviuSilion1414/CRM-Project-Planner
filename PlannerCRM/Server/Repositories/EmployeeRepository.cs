@@ -225,9 +225,21 @@ public class EmployeeRepository(AppDbContext dbContext,
             .Take(limit)
             .ToListAsync();
 
-        return employees
+        var resultList = employees
             .Select(employees => employees.MapToEmployeeViewDto())
             .ToList();
+
+        foreach (var em in resultList)
+        {
+            em.StartDateHourlyRate = (await _dbContext.EmployeeSalaries
+                .SingleAsync(em => em.Id == em.EmployeeId))
+                .StartDate;
+            em.FinishDateHourlyRate = (await _dbContext.EmployeeSalaries
+                .SingleAsync(em => em.Id == em.EmployeeId))
+                .StartDate;
+        }
+
+        return resultList;
     }
 
     public async Task<CurrentEmployeeDto> GetEmployeeIdAsync(string email)

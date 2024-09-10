@@ -92,6 +92,7 @@ public static class EmployeeMapper
             BirthDay = employee.BirthDay,
             StartDate = employee.StartDate,
             Name = $"{employee.FirstName} {employee.LastName}",
+            NumericCode = employee.NumericCode,
             Email = employee.Email,
             Role = employee.Role,
             CurrentHourlyRate = employee.CurrentHourlyRate,
@@ -102,7 +103,17 @@ public static class EmployeeMapper
         };
     }
 
-    public static Employee MapToEmployee(this EmployeeFormDto dto)
+    public static EmployeeViewDto MapToEmployeeViewDto(this Employee employee, DateTime startDateHourlyRate, DateTime endDateHourlyRate)
+    {
+        var mappedEmployee = employee.MapToEmployeeViewDto();
+
+        mappedEmployee.StartDateHourlyRate = startDateHourlyRate;
+        mappedEmployee.FinishDateHourlyRate = endDateHourlyRate;
+
+        return mappedEmployee;
+    }
+
+        public static Employee MapToEmployee(this EmployeeFormDto dto)
     {
         return new Employee
         {

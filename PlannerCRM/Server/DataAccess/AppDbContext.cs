@@ -15,16 +15,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
 
         modelBuilder.ConvertToUtcDateTime();
 
-        modelBuilder.HasDefaultSchema("public");
-
-        modelBuilder.Entity<Employee>(entity => entity.ToTable("Employees"));
-        modelBuilder.Entity<EmployeeRole>(entity => entity.ToTable("Roles"));
-        modelBuilder.Entity<EmployeeUserRole>(entity => entity.ToTable("EmployeeRoles"));
-        modelBuilder.Entity<EmployeeUserClaim>(entity => entity.ToTable("EmployeeClaims"));
-        modelBuilder.Entity<EmployeeUserLogin>(entity => entity.ToTable("EmployeeLogins"));
-        modelBuilder.Entity<EmployeeRoleClaim>(entity => entity.ToTable("RoleClaims"));
-        modelBuilder.Entity<EmployeeUserToken>(entity => entity.ToTable("EmployeeTokens"));
-
+        modelBuilder.Entity<EmployeeSalary>()
+            .HasIndex(ems => ems.EmployeeId)
+            .IsUnique();
+        
         modelBuilder.Entity<EmployeeActivity>()
             .HasOne(e => e.Employee)
             .WithMany(ea => ea.EmployeeActivity)
