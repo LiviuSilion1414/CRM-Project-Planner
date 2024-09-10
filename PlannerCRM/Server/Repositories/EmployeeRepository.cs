@@ -232,11 +232,11 @@ public class EmployeeRepository(AppDbContext dbContext,
         foreach (var em in resultList)
         {
             em.StartDateHourlyRate = (await _dbContext.EmployeeSalaries
-                .SingleAsync(em => em.Id == em.EmployeeId))
+                .SingleAsync(ems => em.Id == ems.EmployeeId))
                 .StartDate;
             em.FinishDateHourlyRate = (await _dbContext.EmployeeSalaries
-                .SingleAsync(em => em.Id == em.EmployeeId))
-                .StartDate;
+                .SingleAsync(ems => em.Id == ems.EmployeeId))
+                .FinishDate;
         }
 
         return resultList;
