@@ -40,9 +40,6 @@ public class WorkTimeRecordRepository(
                 .SingleAsync(wtr => wtr.Id == dto.Id);
 
             model = dto.MapToWorkTimeRecord();
-            model.Employee = await _dbContext.Users
-                .Where(em => !em.IsDeleted || !em.IsArchived && em.Id == dto.EmployeeId)
-                .SingleAsync();
 
             _dbContext.Update(model);
 
@@ -52,13 +49,14 @@ public class WorkTimeRecordRepository(
 
     public async Task<WorkTimeRecordViewDto> GetForViewByIdAsync(int workOrderId, int activityId, int employeeId)
     {
-        return await _dbContext.WorkTimeRecords
-            .Select(wtr => wtr.MapToWorkTimeRecordViewDto())
+        var workTimeRecord = await _dbContext.WorkTimeRecords
             .OrderByDescending(wtr => wtr.Hours)
-            .FirstOrDefaultAsync(wtr =>
+            .SingleOrDefaultAsync(wtr =>
                 wtr.WorkOrderId == workOrderId &&
                 wtr.ActivityId == activityId &&
                 wtr.EmployeeId == employeeId);
+
+        return workTimeRecord?.MapToWorkTimeRecordViewDto();
     }
 
     public async Task<List<WorkTimeRecordViewDto>> GetPaginatedWorkTimeRecordsAsync(int limit, int offset)

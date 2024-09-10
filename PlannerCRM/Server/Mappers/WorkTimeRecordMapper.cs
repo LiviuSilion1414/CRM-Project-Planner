@@ -14,7 +14,6 @@ public static class WorkTimeRecordMapper
                 ?? throw new ArgumentNullException(nameof(dto.Hours), ExceptionsMessages.NULL_ARG),
             ActivityId = dto.ActivityId,
             EmployeeId = dto.EmployeeId,
-            Employee = new(), 
             WorkOrderId = dto.WorkOrderId
         };
     }

@@ -2,14 +2,15 @@ using PlannerCRM.Server.Extensions;
 
 namespace PlannerCRM.Server.DataAccess;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : 
+public class AppDbContext(DbContextOptions<AppDbContext> options) :
     IdentityDbContext<
-        Employee, EmployeeRole, int, 
-        EmployeeUserClaim, EmployeeUserRole, EmployeeUserLogin, 
+        Employee, EmployeeRole, int,
+        EmployeeUserClaim, EmployeeUserRole, EmployeeUserLogin,
         EmployeeRoleClaim, EmployeeUserToken>
     (options)
 {
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ConvertToUtcDateTime();
@@ -33,11 +34,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
             .HasOne(a => a.Activity)
             .WithMany(ea => ea.EmployeeActivity)
             .HasForeignKey(ai => ai.ActivityId);
-
-        modelBuilder.Entity<WorkTimeRecord>()
-            .HasOne(wtr => wtr.Employee)
-            .WithMany(em => em.WorkTimeRecords)
-            .HasForeignKey(wtr => wtr.EmployeeId);
 
         base.OnModelCreating(modelBuilder);
     }
