@@ -13,10 +13,25 @@ public class ProjectManagerService
         _logger = logger;       
     }
 
-    public async Task<List<WorkOrderViewDto>> GetWorkOrdersCostsPaginatedAsync(int offset = 0, int limit = 5) {
+    public async Task<List<WorkOrderViewDto>> GetCompletedWorkOrdersAsync(int limit = 5, int offset = 0)
+    {
+        try
+        {
+            return await _http
+                .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/calculator/get/completed/workOrders/{limit}/{offset}");
+        } catch (Exception exc)
+        {
+            _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
+
+            return new();
+        }
+    }
+
+
+    public async Task<List<WorkOrderCostDto>> GetWorkOrdersCostsPaginatedAsync(int limit = 0, int offset = 5) {
         try {
             return await _http
-                .GetFromJsonAsync<List<WorkOrderViewDto>>($"api/calculator/get/paginated/{offset}/{limit}");
+                .GetFromJsonAsync<List<WorkOrderCostDto>>($"api/calculator/get/paginated/{offset}/{limit}");
         } catch (Exception exc) {
             _logger.LogError("\nError: {0} \n\nMessage: {1}", exc.StackTrace, exc.Message);
 
@@ -66,5 +81,11 @@ public class ProjectManagerService
 
             return new();
         }
+    }
+
+    public async Task<HttpResponseMessage> DeleteInvoiceAsync(int workOrderId)
+    {
+        return await _http
+            .DeleteAsync($"api/calculator/delete/invoice/{workOrderId}");
     }
 }

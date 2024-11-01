@@ -29,6 +29,10 @@ public class WorkOrderController(IRepository<WorkOrderFormDto> repo, IWorkOrderR
         return Ok();
     }
 
+    // [Authorize(Roles=nameof(Roles.OPERATION_MANAGER))]
+    // [HttpPut("complete/workOrder/{workOrderId}")]
+    // public async Task<IActionResult> SetWorkOrderAsCompletedAsync(){ }
+
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
     [HttpGet("get/for/edit/{workOrderId}")]
     public async Task<WorkOrderFormDto> GetWorkOrderForEditByIdAsync(int workOrderId) =>

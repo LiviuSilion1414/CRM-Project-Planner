@@ -1,8 +1,11 @@
+using PlannerCRM.Shared.DTOs.ClientDto;
+
 namespace PlannerCRM.Shared.DTOs.CostDto;
 
 public class WorkOrderCostDto
 {
-    public int WorkOrderId { get; set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
     public DateTime StartDate { get; set; } 
     public DateTime FinishDate { get; set; }
     public int TotalHours { get; set; }
@@ -12,14 +15,11 @@ public class WorkOrderCostDto
     public decimal TotalCost { get; set; }
     public TimeSpan TotalTime { get; set; }
     public bool IsInvoiceCreated { get; init; }
+    public int WorkOrderId { get; set; }
+    public int ClientId { get; set; }
+    public WorkOrderViewDto WorkOrder { get; set; }
+    public ClientViewDto Client { get; set; }
     public List<ActivityViewDto> Activities { get; set; }
     public List<EmployeeViewDto> Employees { get; set; }
     public List<ActivityCostDto> MonthlyActivityCosts { get; set; }
-    public int ClientId { get; set; }
-    public int Id { get; set; }
-    public string FullName { get; set; }
-    public string Name { get; set; }
-    public bool IsCompleted { get; set; }
-    public bool IsDeleted { get; set; }
-    public bool IsArchived { get; set; }
 }

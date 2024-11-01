@@ -41,9 +41,10 @@ public class CalculatorService(AppDbContext dbContext)
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<List<WorkOrderViewDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset)
+    public async Task<List<WorkOrderViewDto>> GetCompletedWorkOrdersAsync(int limit, int offset)
     {
         var workOrders = await _dbContext.WorkOrders
+            .Where(wo => wo.IsCompleted)
             .OrderBy(wo => wo.Id)
             .Skip(limit)
             .Take(offset)
@@ -51,7 +52,7 @@ public class CalculatorService(AppDbContext dbContext)
 
         foreach (var wo in workOrders)
         {
-            wo.Client = await GetClientByClientIdAsync(wo.ClientId);
+            wo.Client = await GetClientByIdAsync(wo.ClientId);
         }
 
         return workOrders
@@ -59,7 +60,35 @@ public class CalculatorService(AppDbContext dbContext)
             .ToList();
     }
 
-    private async Task<FirmClient> GetClientByClientIdAsync(int workOrderId)
+    public async Task<List<WorkOrderCostDto>> GetPaginatedWorkOrdersCostsAsync(int limit, int offset)
+    {
+        var workOrdersCosts = await _dbContext.WorkOrderCosts
+            .OrderBy(wo => wo.Id)
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync();
+        
+        var mappedWorkOrdersCosts = workOrdersCosts
+            .Select(wo => wo.MapToWorkOrderCostDto())
+            .ToList();
+        
+        foreach (var wo in mappedWorkOrdersCosts)
+        {
+            wo.Client = (await GetClientByIdAsync(wo.ClientId)).MapToClientViewDto();
+            wo.WorkOrder = (await GetWorkOrderByIdAsync(wo.WorkOrderId)).MapToWorkOrderViewDto();
+        }
+                
+        return mappedWorkOrdersCosts;
+
+    }
+
+    private async Task<WorkOrder> GetWorkOrderByIdAsync(int workOrderId)
+    {
+        return await _dbContext.WorkOrders
+            .SingleAsync(wo => wo.Id == workOrderId);
+    }
+
+    private async Task<FirmClient> GetClientByIdAsync(int workOrderId)
     {
         var workOrder = await _dbContext.WorkOrders
             .SingleAsync(wo => wo.Id == workOrderId);
@@ -124,20 +153,13 @@ public class CalculatorService(AppDbContext dbContext)
             .ToListAsync();
     }
 
-    private async Task SetInvoiceCreatedFlagAsync(WorkOrder workOrder)
-    {
-        workOrder.IsInvoiceCreated = true;
-
-        _dbContext.Update(workOrder);
-
-        await _dbContext.SaveChangesAsync();
-    }
-
     private async Task<WorkOrderCost> ExecuteCalculationsAsync(WorkOrder workOrder, bool onCreate = false)
     {
         if (onCreate)
         {
-            await SetInvoiceCreatedFlagAsync(workOrder);
+            workOrder.IsInvoiceCreated = true;
+
+            _dbContext.Update(workOrder);
         }
 
         var employees = await GetAllRelatedEmployeesAsync(workOrder.Id);
@@ -224,5 +246,22 @@ public class CalculatorService(AppDbContext dbContext)
                 .Any(sal => sal.EmployeeId == wtr.EmployeeId))
             .Select(wtr => wtr.MapToActivityCost(_dbContext, activities, employeesSalariesInWorkOrder))
             .ToList();
+    }
+
+    public async Task DeleteInvoiceAsync(int workOrderId)
+    {
+        var workOrderCost = await _dbContext.WorkOrderCosts
+            .SingleAsync(w => w.WorkOrderId == workOrderId);
+
+        var workOrder = await _dbContext.WorkOrders
+            .SingleAsync(wo => wo.Id == workOrderId);
+
+        _dbContext.WorkOrderCosts.Remove(workOrderCost);
+
+        workOrder.IsInvoiceCreated = false;
+
+        _dbContext.Update(workOrder);
+
+        await _dbContext.SaveChangesAsync();
     }
 }

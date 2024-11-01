@@ -13,9 +13,12 @@
     </div>
 }
 
-<GridDataReport
-    WorkOrders=@_filteredList
-/>
+@*
+<GridDataReport WorkOrdersCosts=@_filteredList/>
+*@
+
+<GridDataWorkOrders 
+    WorkOrders=@_completedWorkOrders />
 
 @if (_filteredList.Any()) {
     <Paginator

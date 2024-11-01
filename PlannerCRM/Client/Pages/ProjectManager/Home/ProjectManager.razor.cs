@@ -10,8 +10,9 @@ public partial class ProjectManager : ComponentBase
     [Inject] public NavigationManager NavManager { get; set; }
     [Inject] public ILogger<ProjectManager> Logger { get; set; }
 
-    private List<WorkOrderViewDto> _workOrders;
-    private List<WorkOrderViewDto> _filteredList;
+    private List<WorkOrderCostDto> _workOrdersCosts;
+    private List<WorkOrderViewDto> _completedWorkOrders;
+    private List<WorkOrderCostDto> _filteredList;
 
     private Dictionary<string, Action> _filters => new() { 
         { "Tutti", OnClickAll },
@@ -23,27 +24,28 @@ public partial class ProjectManager : ComponentBase
 
     protected override void OnInitialized() {
         _filteredList = new();
-        _workOrders = new();
+        _workOrdersCosts = new();
+        _completedWorkOrders = new();
     }
 
     protected override async Task OnInitializedAsync()
         => await FetchDataAsync();
 
-    private async Task FetchDataAsync(int offset = 0, int limit = 5) {
+    private async Task FetchDataAsync(int limit = 5, int offset = 0) {
         _collectionSize = await ProjectManagerService.GetWorkOrderCostsCollectionSizeAsync();
-        _workOrders = await ProjectManagerService.GetWorkOrdersCostsPaginatedAsync(offset, limit);
-
-        _filteredList = new(_workOrders);
+        _workOrdersCosts = await ProjectManagerService.GetWorkOrdersCostsPaginatedAsync(limit, offset);
+        _completedWorkOrders = await ProjectManagerService.GetCompletedWorkOrdersAsync(limit, offset);
+        _filteredList = new(_workOrdersCosts);
     }
 
     private void OnClickAll() {
-        _filteredList = new(_workOrders);
+        _filteredList = new(_workOrdersCosts);
 
         StateHasChanged();
     }
 
     private void HandleSearchedElements(string query) {
-        _filteredList = _workOrders
+        _filteredList = _workOrdersCosts
             .Where(wo => wo.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
             .ToList();
 
@@ -52,7 +54,7 @@ public partial class ProjectManager : ComponentBase
 
     private void OnClickSortCreated() {
         try {
-            _filteredList = _workOrders
+            _filteredList = _workOrdersCosts
                 .Where(wo => wo.IsInvoiceCreated)
                 .ToList();
 
@@ -65,7 +67,7 @@ public partial class ProjectManager : ComponentBase
 
     private void OnClickSortNotCreated() {
         try {
-            _filteredList = _workOrders
+            _filteredList = _workOrdersCosts
                 .Where(wo => !wo.IsInvoiceCreated)
                 .ToList();
 
