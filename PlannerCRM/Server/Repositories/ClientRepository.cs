@@ -45,10 +45,10 @@ public class ClientRepository(
         }
     }
 
-    public async Task<ClientViewDto> GetForViewByIdAsync(int clientId)
+    public async Task<ClientViewDto> GetForViewByIdAsync(int FirmClientId)
     {
         return await _dbContext.Clients
-            .Where(cl => cl.Id == clientId)
+            .Where(cl => cl.Id == FirmClientId)
             .Select(client => client.MapToClientViewDto())
             .SingleAsync();
     }
@@ -93,10 +93,10 @@ public class ClientRepository(
             .ToList();
     }
 
-    public async Task<List<ClientViewDto>> SearchClientAsync(int clientId)
+    public async Task<List<ClientViewDto>> SearchClientAsync(int FirmClientId)
     {
         var clients = await _dbContext.Clients
-            .Where(cl => cl.Id == clientId)
+            .Where(cl => cl.Id == FirmClientId)
             .ToListAsync();
 
         return clients
@@ -107,7 +107,7 @@ public class ClientRepository(
     public async Task<ClientViewDto> GetClientByWorkOrderIdAsync(int workOrderId)
     {
         var workOrder = await _dbContext.WorkOrders.SingleAsync(wo => wo.Id == workOrderId);
-        var client = await _dbContext.Clients.SingleAsync(cl => cl.Id == workOrder.ClientId);
+        var client = await _dbContext.Clients.SingleAsync(cl => cl.Id == workOrder.FirmClientId);
 
         return client.MapToClientViewDto();
     }

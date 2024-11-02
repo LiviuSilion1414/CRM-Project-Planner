@@ -16,7 +16,7 @@ public static class WorkOrderMapper
                 ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
             IsDeleted = false,
             IsCompleted = false,
-            ClientId = dto.ClientId,
+            FirmClientId = dto.FirmClientId,
             Client = new()
         };
     }
@@ -29,7 +29,7 @@ public static class WorkOrderMapper
             Name = workOrder.Name,
             StartDate = workOrder.StartDate,
             FinishDate = workOrder.FinishDate,
-            ClientId = workOrder.ClientId,
+            FirmClientId = workOrder.FirmClientId,
             IsOnEdit = true,
             ClientName = string.Empty
         };
@@ -50,7 +50,7 @@ public static class WorkOrderMapper
         return new ClientWorkOrder
         {
             WorkOrderId = workOrder.Id,
-            ClientId = workOrder.ClientId,
+            FirmClientId = workOrder.FirmClientId,
         };
     }
 

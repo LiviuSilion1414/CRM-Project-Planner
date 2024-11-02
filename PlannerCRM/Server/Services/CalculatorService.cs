@@ -51,7 +51,7 @@ public class CalculatorService(AppDbContext dbContext)
 
         foreach (var wo in workOrders)
         {
-            wo.Client = await GetClientByIdAsync(wo.ClientId);
+            wo.Client = await GetClientByIdAsync(wo.FirmClientId);
         }
 
         return workOrders
@@ -73,7 +73,7 @@ public class CalculatorService(AppDbContext dbContext)
         
         foreach (var wo in mappedWorkOrdersCosts)
         {
-            wo.Client = (await GetClientByIdAsync(wo.ClientId)).MapToClientViewDto();
+            wo.Client = (await GetClientByIdAsync(wo.FirmClientId)).MapToClientViewDto();
             wo.WorkOrder = (await GetWorkOrderByIdAsync(wo.WorkOrderId)).MapToWorkOrderViewDto();
         }
                 
@@ -93,7 +93,7 @@ public class CalculatorService(AppDbContext dbContext)
             .SingleAsync(wo => wo.Id == workOrderId);
 
         return await _dbContext.Clients
-            .SingleAsync(cl => cl.Id == workOrder.ClientId);
+            .SingleAsync(cl => cl.Id == workOrder.FirmClientId);
     }
 
     public async Task<WorkOrderCostDto> GetWorkOrderCostForViewByIdAsync(int workOrderId)

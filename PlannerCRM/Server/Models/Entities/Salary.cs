@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Server.Models.Entities;
+﻿using PlannerCRM.Server.Models.JunctionEntities;
+
+namespace PlannerCRM.Server.Models.Entities;
 
 public class Salary
 {
@@ -10,4 +12,6 @@ public class Salary
 
     // Navigation properties
     public Employee Employee { get; set; }
+    public ICollection<EmployeeSalary> EmployeeSalaries { get; set; }
+
 }

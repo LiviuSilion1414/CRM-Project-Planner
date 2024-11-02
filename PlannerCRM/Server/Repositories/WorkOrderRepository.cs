@@ -20,7 +20,7 @@ public class WorkOrderRepository(
             await _dbContext.SaveChangesAsync();
 
             var workOrder = await _dbContext.WorkOrders
-                .SingleAsync(wo => EF.Functions.ILike(wo.Name, dto.Name) && wo.ClientId == dto.ClientId);
+                .SingleAsync(wo => EF.Functions.ILike(wo.Name, dto.Name) && wo.FirmClientId == dto.FirmClientId);
 
             await SetForeignKeyToClientAsync(workOrder, OperationType.ADD);
         }
@@ -38,7 +38,7 @@ public class WorkOrderRepository(
                 var clientWorkOrder = await _dbContext.ClientWorkOrders
                     .SingleAsync(clwo => clwo.WorkOrderId == workOrder.Id);
 
-                clientWorkOrder.ClientId = workOrder.ClientId;
+                clientWorkOrder.FirmClientId = workOrder.FirmClientId;
             }
 
             await _dbContext.SaveChangesAsync();
@@ -65,7 +65,7 @@ public class WorkOrderRepository(
         if (isValid)
         {
             var model = dto.MapToWorkOrder();
-            model.Client = await GetClientByClientIdAsync(dto.ClientId);
+            model.Client = await GetClientByFirmClientIdAsync(dto.FirmClientId);
             
             _dbContext.Update(model);
             
@@ -75,10 +75,10 @@ public class WorkOrderRepository(
         }
     }
 
-    public async Task<FirmClient> GetClientByClientIdAsync(int clientId)
+    public async Task<FirmClient> GetClientByFirmClientIdAsync(int FirmClientId)
     {
         return await _dbContext.Clients
-            .SingleAsync(cl => cl.Id == clientId);
+            .SingleAsync(cl => cl.Id == FirmClientId);
     }
 
     public async Task<WorkOrderDeleteDto> GetForDeleteByIdAsync(int workOrderId)
@@ -87,7 +87,7 @@ public class WorkOrderRepository(
             .Where(wo => !wo.IsDeleted && !wo.IsCompleted && wo.Id == workOrderId)
             .SingleAsync();
 
-        workOrder.Client = await GetClientByClientIdAsync(workOrder.ClientId);
+        workOrder.Client = await GetClientByFirmClientIdAsync(workOrder.FirmClientId);
 
         return workOrder.MapToWorkOrderDeleteDto();
     }
@@ -98,7 +98,7 @@ public class WorkOrderRepository(
             .Where(wo => wo.Id == workOrderId)
             .SingleAsync();
 
-        workOrder.Client = (await GetClientByClientIdAsync(workOrder.ClientId));
+        workOrder.Client = (await GetClientByFirmClientIdAsync(workOrder.FirmClientId));
 
         return workOrder.MapToWorkOrderViewDto();
     }
@@ -109,7 +109,7 @@ public class WorkOrderRepository(
             .Where(wo => !wo.IsDeleted || !wo.IsCompleted && wo.Id == workOrderId)
             .Select(wo => wo.MapToWorkOrderFormDto())
             .SingleAsync();
-        workOrder.ClientName = (await GetClientByClientIdAsync(workOrder.ClientId)).Name;
+        workOrder.ClientName = (await GetClientByFirmClientIdAsync(workOrder.FirmClientId)).Name;
 
         return workOrder;
     }
@@ -134,7 +134,7 @@ public class WorkOrderRepository(
         foreach (var wo in workOrders) 
         { 
             wo.Client = await _dbContext.Clients
-                .SingleAsync(cl => cl.Id == wo.ClientId);
+                .SingleAsync(cl => cl.Id == wo.FirmClientId);
         }
         
         return workOrders

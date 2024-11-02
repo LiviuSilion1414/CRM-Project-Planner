@@ -36,7 +36,7 @@ public static class FirmClientMapper
             Name = client.Name,
             VatNumber = client.VatNumber,
             WorkOrderId = client.WorkOrders
-                .Single(wo => wo.ClientId == client.Id)
+                .Single(wo => wo.FirmClientId == client.Id)
                 .Id
         };
     }

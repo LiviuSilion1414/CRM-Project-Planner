@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Server.Models.Entities;
+﻿using PlannerCRM.Server.Models.JunctionEntities;
+
+namespace PlannerCRM.Server.Models.Entities;
 
 public class Activity
 {
@@ -11,5 +13,7 @@ public class Activity
 
     // Navigation properties
     public WorkOrder WorkOrder { get; set; }
-    public ICollection<Employee> Employees { get; set; } = new List<Employee>();
+    public ICollection<Employee> Employees { get; set; }
+    public ICollection<EmployeeActivity> EmployeeActivities { get; set; }
+    public ICollection<ActivityWorkTime> ActivityWorkTimes { get; set; }
 }

@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Server.Models.Entities;
+﻿using PlannerCRM.Server.Models.JunctionEntities;
+
+namespace PlannerCRM.Server.Models.Entities;
 
 public class Role
 {
@@ -6,5 +8,6 @@ public class Role
     public Roles RoleName { get; set; }
 
     // Navigation properties
-    public ICollection<Employee> Employees { get; set; } = new List<Employee>();
+    public ICollection<Employee> Employees { get; set; }
+    public ICollection<EmployeeRole> EmployeeRoles { get; set; }
 }

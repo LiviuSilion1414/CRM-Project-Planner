@@ -23,25 +23,25 @@ public class ClientController(IRepository<ClientFormDto> repo, IClientRepository
     }
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpDelete("delete/{clientId}")]
-    public async Task<IActionResult> DeleteClientAsync(int clientId) {
-        await _repo.DeleteAsync(clientId);
+    [HttpDelete("delete/{FirmClientId}")]
+    public async Task<IActionResult> DeleteClientAsync(int FirmClientId) {
+        await _repo.DeleteAsync(FirmClientId);
         return Ok();
     }
 
-    [HttpGet("get/for/view/{clientId}")]
-    public async Task<ClientViewDto> GetClientForViewByIdAsync(int clientId) =>
-        await _clientRepository.GetForViewByIdAsync(clientId);
+    [HttpGet("get/for/view/{FirmClientId}")]
+    public async Task<ClientViewDto> GetClientForViewByIdAsync(int FirmClientId) =>
+        await _clientRepository.GetForViewByIdAsync(FirmClientId);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpGet("get/for/edit/{clientId}")]
-    public async Task<ClientFormDto> GetClientForEditByIdAsync(int clientId) =>
-        await _clientRepository.GetClientForEditByIdAsync(clientId);
+    [HttpGet("get/for/edit/{FirmClientId}")]
+    public async Task<ClientFormDto> GetClientForEditByIdAsync(int FirmClientId) =>
+        await _clientRepository.GetClientForEditByIdAsync(FirmClientId);
 
     [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpGet("get/for/delete/{clientId}")]
-    public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int clientId) =>
-        await _clientRepository.GetClientForDeleteByIdAsync(clientId);
+    [HttpGet("get/for/delete/{FirmClientId}")]
+    public async Task<ClientDeleteDto> GetClientForDeleteByIdAsync(int FirmClientId) =>
+        await _clientRepository.GetClientForDeleteByIdAsync(FirmClientId);
        
     [HttpGet("get/paginated/{offset}/{limit}")]
     public async Task<List<ClientViewDto>> GetPaginatedClientsAsync(int offset, int limit) =>
@@ -55,9 +55,9 @@ public class ClientController(IRepository<ClientFormDto> repo, IClientRepository
     public async Task<List<ClientViewDto>> SearchClientByNameAsync(string clientName) =>
         await _clientRepository.SearchClientAsync(clientName);
 
-    [HttpGet("search/by/id/{clientId}")]
-    public async Task<List<ClientViewDto>> SearchClientByIdAsync(int clientId) =>
-        await _clientRepository.SearchClientAsync(clientId);
+    [HttpGet("search/by/id/{FirmClientId}")]
+    public async Task<List<ClientViewDto>> SearchClientByIdAsync(int FirmClientId) =>
+        await _clientRepository.SearchClientAsync(FirmClientId);
 
     [HttpGet("get/by/workorderid/{workOrderId}")]
     public async Task<ClientViewDto> SearchClientByWorkOrderIdAsync(int workOrderId) =>

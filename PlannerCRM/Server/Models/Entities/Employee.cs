@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Server.Models.Entities;
+﻿using PlannerCRM.Server.Models.JunctionEntities;
+
+namespace PlannerCRM.Server.Models.Entities;
 
 public class Employee
 {
@@ -9,8 +11,11 @@ public class Employee
     public string PhoneNumber { get; set; }
 
     // Navigation properties
-    public ICollection<WorkTime> WorkTimes { get; set; } = new List<WorkTime>();
-    public ICollection<Activity> Activities { get; set; } = new List<Activity>();
-    public ICollection<Role> Roles { get; set; } = new List<Role>();
-    public ICollection<Salary> Salaries { get; set; } = new List<Salary>();
+    public ICollection<WorkTime> WorkTimes { get; set; }
+    public ICollection<Activity> Activities { get; set; }
+    public ICollection<Role> Roles { get; set; }
+    public ICollection<Salary> Salaries { get; set; }
+    public ICollection<EmployeeRole> EmployeeRoles { get; set; }
+    public ICollection<EmployeeSalary> EmployeeSalaries { get; set; }
+    public ICollection<EmployeeActivity> EmployeeActivities { get; set; }
 }

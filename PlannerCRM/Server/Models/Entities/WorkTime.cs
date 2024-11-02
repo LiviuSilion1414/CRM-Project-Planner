@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using PlannerCRM.Server.Models.JunctionEntities;
+using System.Diagnostics;
 
 namespace PlannerCRM.Server.Models.Entities;
 
@@ -15,4 +16,5 @@ public class WorkTime
     public WorkOrder WorkOrder { get; set; }
     public Employee Employee { get; set; }
     public Activity Activity { get; set; }
+    public ICollection<ActivityWorkTime> ActivityWorkTimes { get; set; }
 }

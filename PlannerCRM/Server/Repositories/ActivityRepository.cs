@@ -90,7 +90,7 @@ public class ActivityRepository(
             .SingleAsync(wo => wo.Id == workOrderId);
 
         return await _dbContext.Clients
-            .SingleAsync(cl => cl.Id == workOrder.ClientId);
+            .SingleAsync(cl => cl.Id == workOrder.FirmClientId);
     }
 
     public async Task<WorkOrderViewDto> GetWorkOrderViewByIdAsync(int workOrderId)
