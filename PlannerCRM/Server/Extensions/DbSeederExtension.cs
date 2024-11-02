@@ -1,4 +1,6 @@
 
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Extensions;
 
 public static class DbSeederExtension

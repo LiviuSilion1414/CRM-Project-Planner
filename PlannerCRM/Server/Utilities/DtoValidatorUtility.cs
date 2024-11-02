@@ -1,3 +1,5 @@
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Utilities;
 
 public class DtoValidatorUtillity(AppDbContext context, UserManager<Employee> userManager)

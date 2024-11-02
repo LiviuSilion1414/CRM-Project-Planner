@@ -1,0 +1,15 @@
+﻿namespace PlannerCRM.Server.Models.Entities;
+
+public class WorkOrder
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public DateTime CreationTime { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public int ClientId { get; set; }
+
+    // Navigation properties
+    public Client Client { get; set; }
+    public ICollection<Activity> Activities { get; set; } = new List<Activity>();
+}

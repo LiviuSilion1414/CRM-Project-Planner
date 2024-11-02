@@ -1,3 +1,5 @@
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Mappers;
 
 public static class ActivityMapper

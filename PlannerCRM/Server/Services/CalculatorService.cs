@@ -1,5 +1,4 @@
-
-using PlannerCRM.Server.Models;
+using PlannerCRM.Server.Models.Entities;
 
 namespace PlannerCRM.Server.Services;
 

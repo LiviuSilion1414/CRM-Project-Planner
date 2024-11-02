@@ -1,4 +1,5 @@
 using PlannerCRM.Server.Extensions;
+using PlannerCRM.Server.Models.Entities;
 
 namespace PlannerCRM.Server.DataAccess;
 

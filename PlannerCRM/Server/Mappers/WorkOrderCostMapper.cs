@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Server.Mappers;
+﻿using PlannerCRM.Server.Models.Entities;
+
+namespace PlannerCRM.Server.Mappers;
 
 public static class WorkOrderCostMapper
 {

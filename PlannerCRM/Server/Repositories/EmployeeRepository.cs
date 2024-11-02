@@ -1,3 +1,5 @@
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Repositories;
 
 public class EmployeeRepository(AppDbContext dbContext,
