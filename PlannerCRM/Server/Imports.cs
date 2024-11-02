@@ -1,4 +1,3 @@
-global using System.ComponentModel.DataAnnotations.Schema;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.EntityFrameworkCore;
@@ -6,6 +5,7 @@ global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
+
 global using PlannerCRM.Shared.DTOs.CostDto;
 global using PlannerCRM.Shared.DTOs.ClientDto;
 global using PlannerCRM.Shared.DTOs.EmployeeDto.Forms;
@@ -19,14 +19,11 @@ global using PlannerCRM.Shared.DTOs.WorkOrder.Views;
 global using PlannerCRM.Shared.CustomExceptions;
 global using PlannerCRM.Shared.Constants;
 global using PlannerCRM.Shared.Feedbacks;
+global using PlannerCRM.Shared.Models;
+
+global using PlannerCRM.Server.DataAccess;
 global using PlannerCRM.Server.Repositories;
 global using PlannerCRM.Server.Services;
-global using PlannerCRM.Shared.Models;
-global using PlannerCRM.Server.Models;
-global using PlannerCRM.Server.DataAccess;
-global using PlannerCRM.Server.Utilities;
 global using PlannerCRM.Server.Mappers;
-global using PlannerCRM.Server.Middlewares;
-global using PlannerCRM.Server.Converters;
 global using PlannerCRM.Server.Interfaces;
 global using System.Net;
