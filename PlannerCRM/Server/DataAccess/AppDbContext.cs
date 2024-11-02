@@ -11,23 +11,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.ConvertToUtcDateTime();
-
-        modelBuilder.Entity<EmployeeSalary>()
-            .HasIndex(ems => ems.EmployeeId)
-            .IsUnique();
-        
-        modelBuilder.Entity<EmployeeActivity>()
-            .HasOne(e => e.Employee)
-            .WithMany(ea => ea.EmployeeActivity)
-            .HasForeignKey(ei => ei.EmployeeId);
-
-        modelBuilder.Entity<EmployeeActivity>()
-            .HasOne(a => a.Activity)
-            .WithMany(ea => ea.EmployeeActivity)
-            .HasForeignKey(ai => ai.ActivityId);
+        modelBuilder.ConfigureEnums();
+        modelBuilder.ConfigureRelationships();
 
         base.OnModelCreating(modelBuilder);
     }
