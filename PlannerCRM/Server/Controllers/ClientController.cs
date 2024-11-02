@@ -1,33 +1,13 @@
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class ClientController(IRepository<ClientFormDto> repo, IClientRepository clientRepository) : ControllerBase 
+public class ClientController(IClientRepository clientRepository) : CrudController<FirmClient>
 {
-    private readonly IRepository<ClientFormDto> _repo = repo;
     private readonly IClientRepository _clientRepository = clientRepository;
-
-    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpPost("add")]
-    public async Task<IActionResult> AddClientAsync(ClientFormDto dto) {
-        await _repo.AddAsync(dto);
-        return Ok();
-    }
-
-    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpPut("edit")]
-    public async Task<IActionResult> EditClientAsync(ClientFormDto dto) {
-        await _repo.EditAsync(dto);
-        return Ok();
-    }
-
-    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpDelete("delete/{FirmClientId}")]
-    public async Task<IActionResult> DeleteClientAsync(int FirmClientId) {
-        await _repo.DeleteAsync(FirmClientId);
-        return Ok();
-    }
 
     [HttpGet("get/for/view/{FirmClientId}")]
     public async Task<ClientViewDto> GetClientForViewByIdAsync(int FirmClientId) =>

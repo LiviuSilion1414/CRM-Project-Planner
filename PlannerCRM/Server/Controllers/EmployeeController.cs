@@ -1,38 +1,13 @@
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class EmployeeController(
-    IRepository<EmployeeFormDto> repo,
-    IEmployeeRepository employeeRepository) : ControllerBase
+public class EmployeeController(IEmployeeRepository employeeRepository) : CrudController<Employee>
 {
-    private readonly IRepository<EmployeeFormDto> _repo = repo;
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
-
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpPost("add")]
-    public async Task<IActionResult> AddEmployeeAsync(EmployeeFormDto dto)
-    {
-        await _repo.AddAsync(dto);
-        return Ok(SuccessfulCrudFeedBack.USER_ADD);
-    }
-
-    [Authorize]
-    [HttpPut("edit")]
-    public async Task<IActionResult> EditEmployeeAsync(EmployeeFormDto dto)
-    {
-        await _repo.EditAsync(dto);
-        return Ok(SuccessfulCrudFeedBack.USER_EDIT);
-    }
-
-    [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
-    [HttpDelete("delete/{employeeId}")]
-    public async Task<IActionResult> DeleteEmployeeAsync(int employeeId)
-    {
-        await _repo.DeleteAsync(employeeId);
-        return Ok();
-    }
 
     [Authorize(Roles = nameof(Roles.ACCOUNT_MANAGER))]
     [HttpGet("archive/{employeeId}")]

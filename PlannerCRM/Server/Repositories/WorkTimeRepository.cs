@@ -1,8 +1,8 @@
 namespace PlannerCRM.Server.Repositories;
 
-public class WorkTimeRecordRepository(
+public class WorkTimeRepository(
     AppDbContext db,
-    DtoValidatorUtillity validator) : IRepository<WorkTimeRecordFormDto>, IWorkTimeRecordRepository
+    DtoValidatorUtillity validator) : IRepository<WorkTimeRecordFormDto>, IWorkTimeRepository
 {
     private readonly AppDbContext _dbContext = db;
     private readonly DtoValidatorUtillity _validator = validator;

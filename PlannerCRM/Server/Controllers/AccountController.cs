@@ -15,7 +15,7 @@ public class AccountController(
     public async Task<IActionResult> LoginAsync(EmployeeLoginDto dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user is null || user.IsArchived || user.IsDeleted)
+        if (user is null)
         {
             return NotFound(LoginFeedBack.USER_NOT_FOUND);
         }
@@ -53,8 +53,7 @@ public class AccountController(
     {
         if (User.Identity.IsAuthenticated)
         {
-            return (await _userManager.FindByEmailAsync(User.Identity.Name))
-                .FullName;
+            return (await _userManager.FindByEmailAsync(User.Identity.Name)).Name;
         }
         return string.Empty;
     }

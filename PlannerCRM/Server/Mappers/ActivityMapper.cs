@@ -10,12 +10,9 @@ public static class ActivityMapper
         {
             Id = dto.Id,
             Name = dto.Name,
-            StartDate = dto?.StartDate
-                ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-            FinishDate = dto.FinishDate
-                ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
-            WorkOrderId = dto.WorkOrderId
-                ?? throw new NullReferenceException(ExceptionsMessages.NULL_ARG),
+            StartDate = dto.StartDate,
+            FinishDate = dto.FinishDate,
+            WorkOrderId = dto.WorkOrderId,
             EmployeeActivity = dto.EmployeeActivity
                 .Select(ea => ea.MapToEmployeeActivity(dto.Id))
                 .ToHashSet()
@@ -32,7 +29,7 @@ public static class ActivityMapper
             FinishDate = activity.FinishDate,
             WorkOrderId = activity.WorkOrderId,
             ClientName = string.Empty,
-            EmployeeActivity = [],
+            EmployeeActivity = activity.EmployeeActivities,
             ViewEmployeeActivity = activity.EmployeeActivity
                 .Select(ea => ea.MapToEmployeeActivityDto())
                 .ToHashSet()

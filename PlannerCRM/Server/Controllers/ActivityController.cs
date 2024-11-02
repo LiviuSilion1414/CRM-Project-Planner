@@ -1,33 +1,13 @@
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class ActivityController(IRepository<ActivityFormDto> repo, IActivityRepository activityRepository) : ControllerBase
+public class ActivityController(IActivityRepository activityRepository) : CrudController<Activity>
 {
-    private readonly IRepository<ActivityFormDto> _repo = repo;
     private readonly IActivityRepository _activityRepository = activityRepository;
-
-    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpPost("add")]
-    public async Task<IActionResult> AddActivityAsync(ActivityFormDto dto) {
-        await _repo.AddAsync(dto);
-        return Ok(SuccessfulCrudFeedBack.ACTIVITY_ADD);
-    }
-
-    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpPut("edit")]
-    public async Task<IActionResult> EditActivityAsync(ActivityFormDto dto) {
-        await _repo.EditAsync(dto);
-        return Ok(SuccessfulCrudFeedBack.ACTIVITY_EDIT);
-    }
-
-    [Authorize(Roles = nameof(Roles.OPERATION_MANAGER))]
-    [HttpDelete("delete/{activityId}")]
-    public async Task<IActionResult> DeleteActivityAsync(int activityId) {
-        await _repo.DeleteAsync(activityId);
-        return Ok(SuccessfulCrudFeedBack.ACTIVITY_DELETE);
-    }
 
     [Authorize]
     [HttpGet("get/{activityId}")]

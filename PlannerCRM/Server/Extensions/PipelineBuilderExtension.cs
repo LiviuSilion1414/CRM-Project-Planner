@@ -53,12 +53,12 @@ public static class PipelineBuilderExtension
         services.AddScoped<IRepository<EmployeeFormDto>, EmployeeRepository>();
         services.AddScoped<IRepository<WorkOrderFormDto>, WorkOrderRepository>();
         services.AddScoped<IRepository<ActivityFormDto>, ActivityRepository>();
-        services.AddScoped<IRepository<WorkTimeRecordFormDto>, WorkTimeRecordRepository>();
+        services.AddScoped<IRepository<WorkTimeRecordFormDto>, WorkTimeRepository>();
         services.AddScoped<IRepository<ClientFormDto>, ClientRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
-        services.AddScoped<IWorkTimeRecordRepository, WorkTimeRecordRepository>();
+        services.AddScoped<IWorkTimeRepository, WorkTimeRepository>();
     }
 }
