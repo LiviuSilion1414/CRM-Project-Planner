@@ -2,13 +2,9 @@
 
 namespace PlannerCRM.Server.Models.Entities;
 
-public class Employee
+public class Employee : IdentityUser<int>
 {
-    public int Id { get; set; }
     public string Name { get; set; }
-    public string Email { get; set; }
-    public string UserName { get; set; }
-    public string PhoneNumber { get; set; }
 
     // Navigation properties
     public ICollection<WorkTime> WorkTimes { get; set; }

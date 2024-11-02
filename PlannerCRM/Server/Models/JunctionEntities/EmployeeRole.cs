@@ -2,9 +2,8 @@
 
 using PlannerCRM.Server.Models.Entities;
 
-public class EmployeeRole
+public class EmployeeRole : IdentityRole<int>
 {
-    public int Id { get; set; }
     public int EmployeeId { get; set; }
     public int RoleId { get; set; }
 
