@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.Models;
+namespace PlannerCRM.Shared.Constants;
 
 public enum Roles
 {
