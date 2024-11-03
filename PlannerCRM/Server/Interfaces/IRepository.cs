@@ -14,11 +14,13 @@ public interface IRepository
         where TInput : class
     ;
 
-    public Task<TOutput> GetByIdAsync<TOutput>(int id)
+    public Task<TOutput> GetByIdAsync<TInput, TOutput>(int id)
+        where TInput : class
         where TOutput : class
     ;
 
-    public Task<ICollection<TOutput>> GetWithPagination<TOutput>(int offset, int limit)
+    public Task<ICollection<TOutput>> GetWithPagination<TInput, TOutput>(int offset, int limit)
+        where TInput : class
         where TOutput : class
     ;
 }
