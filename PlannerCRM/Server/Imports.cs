@@ -16,6 +16,8 @@ global using PlannerCRM.Shared.Feedbacks;
 global using PlannerCRM.Server.DataAccess;
 global using PlannerCRM.Server.Extensions;
 global using PlannerCRM.Server.Interfaces;
+global using PlannerCRM.Server.Models.Entities;
+global using PlannerCRM.Server.Models.JunctionEntities;
 global using PlannerCRM.Server.Models;
 global using PlannerCRM.Server.Repositories;
 global using PlannerCRM.Server.Services;
