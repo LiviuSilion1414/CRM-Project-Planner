@@ -15,6 +15,8 @@ builder.Services.ConfigureIdentityOptions();
 
 builder.Services.ConfigureCookiePolicy();
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.RegisterServices();
 
 builder.Logging.AddConfiguration(
