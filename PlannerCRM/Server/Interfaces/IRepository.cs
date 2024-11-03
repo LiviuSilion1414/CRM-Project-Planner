@@ -1,11 +1,24 @@
 namespace PlannerCRM.Server.Interfaces;
 
-public interface IRepository<TInput>
-    where TInput : class
+public interface IRepository
 {
-    public Task AddAsync(TInput model);
-    public Task EditAsync(TInput model, int id);
-    public Task DeleteAsync(int id);
-    public Task<TInput> GetByIdAsync(int id);
-    public Task<ICollection<TInput>> GetWithPagination(int offset, int limit);
+    public Task AddAsync<TInput>(TInput model) 
+        where TInput : class
+    ;
+
+    public Task EditAsync<TInput>(TInput model, int id)
+        where TInput : class
+    ;
+
+    public Task DeleteAsync<TInput>(int id)
+        where TInput : class
+    ;
+
+    public Task<TOutput> GetByIdAsync<TOutput>(int id)
+        where TOutput : class
+    ;
+
+    public Task<ICollection<TOutput>> GetWithPagination<TOutput>(int offset, int limit)
+        where TOutput : class
+    ;
 }
