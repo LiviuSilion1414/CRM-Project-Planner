@@ -1,6 +1,6 @@
-﻿using PlannerCRM.Shared.Models.Entities;
+﻿using PlannerCRM.Shared.Dtos.Entities;
 
-namespace PlannerCRM.Shared.Models.JunctionEntities;
+namespace PlannerCRM.Shared.Dtos.JunctionEntities;
 
 public class ActivityWorkTimeDto
 {

@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Models.Entities;
+﻿namespace PlannerCRM.Shared.Dtos.Entities;
 
 public class WorkOrderCostDto
 {
