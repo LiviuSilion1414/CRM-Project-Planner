@@ -1,7 +1,4 @@
-﻿using PlannerCRM.Server.Models.Entities;
-using PlannerCRM.Server.Models.JunctionEntities;
-
-namespace PlannerCRM.Server.Extensions;
+﻿namespace PlannerCRM.Server.Extensions;
 
 public static class PipelineBuilderExtension
 {
@@ -10,9 +7,8 @@ public static class PipelineBuilderExtension
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
                 builder.Configuration
-                    .GetConnectionString("ConnString")
-                        ?? throw new InvalidOperationException("ConnString not found!"))
-);
+                    .GetConnectionString("DefaultDbString")
+                        ?? throw new InvalidOperationException(""" "DefaultDbString" not found!""")));
     }
 
     public static void ConfigureIdentityOptions(this IServiceCollection services)
