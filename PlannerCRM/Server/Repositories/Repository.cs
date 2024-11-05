@@ -7,14 +7,14 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(TInput model)
+    public virtual async Task AddAsync(TInput model)
     {
         await _context.Set<TInput>().AddAsync(model);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public virtual async Task DeleteAsync(int id)
     {
         var model = await _context.Set<TInput>().FindAsync(id);
         
@@ -23,7 +23,7 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
         await _context.SaveChangesAsync();
     }
 
-    public async Task EditAsync(TInput model, int id)
+    public virtual async Task EditAsync(TInput model, int id)
     {
         var item = await _context.Set<TInput>().FindAsync(id);
         
@@ -34,14 +34,14 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
         await _context.SaveChangesAsync();
     }
 
-    public async Task<TOutput> GetByIdAsync(int id)
+    public virtual async Task<TOutput> GetByIdAsync(int id)
     {
         var item = await _context.Set<TInput>().FindAsync(id);
 
         return _mapper.Map<TOutput>(item);
     }
 
-    public async Task<ICollection<TOutput>> GetWithPagination(int offset, int limit)
+    public virtual async Task<ICollection<TOutput>> GetWithPagination(int offset, int limit)
     {
         var items = await _context
             .Set<TInput>()
