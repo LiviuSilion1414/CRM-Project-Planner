@@ -1,13 +1,16 @@
 ﻿namespace PlannerCRM.Server.Controllers;
 
-public class CrudController<TEntity>(IRepository<TEntity> repo) : ControllerBase
-    where TEntity : class
+[ApiController]
+[Route("api/[controller]")]
+public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) : ControllerBase
+    where TInput : class
+    where TOutput : class
 {
-    private readonly IRepository<TEntity> _repo = repo;
+    private readonly IRepository<TInput, TOutput> _repo = repo;
 
     [HttpPost]
-    [Route("[action]")]
-    public async Task<IActionResult> Add(TEntity entity)
+    [Route("add")]
+    public async Task<IActionResult> Add(TInput entity)
     {
         await _repo.AddAsync(entity);
 
@@ -15,8 +18,8 @@ public class CrudController<TEntity>(IRepository<TEntity> repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route("[action]/{entityId:int}")]
-    public async Task<IActionResult> Edit(TEntity entity, int entityId)
+    [Route("edit/{entityId:int}")]
+    public async Task<IActionResult> Edit(TInput entity, int entityId)
     {
         await _repo.EditAsync(entity, entityId);
 
@@ -24,7 +27,7 @@ public class CrudController<TEntity>(IRepository<TEntity> repo) : ControllerBase
     }
 
     [HttpDelete]
-    [Route("[action]")]
+    [Route("delete")]
     public async Task<IActionResult> Delete(int entityId)
     {
         await _repo.DeleteAsync(entityId);
@@ -33,8 +36,8 @@ public class CrudController<TEntity>(IRepository<TEntity> repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("[action]/{entityId:int}")]
-    public async Task<ActionResult<TEntity>> GetById(int entityId)
+    [Route("getById/{entityId:int}")]
+    public async Task<ActionResult<TOutput>> GetById(int entityId)
     {
         var entity = await _repo.GetByIdAsync(entityId); //add null interceptor
 
@@ -47,8 +50,8 @@ public class CrudController<TEntity>(IRepository<TEntity> repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("[action]/{limit:int}/{offset:int}")]
-    public async Task<ActionResult<ICollection<TEntity>>> GetAll(int limit, int offset)
+    [Route("getWithPagination/{limit:int}/{offset:int}")]
+    public async Task<ActionResult<ICollection<TOutput>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(offset, limit);
 
