@@ -1,20 +1,20 @@
 ﻿namespace PlannerCRM.Server.Repositories;
 
-public class Repository(AppDbContext context, IMapper mapper) : IRepository
+public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) : IRepository<TInput, TOutput>
+    where TInput : class
+    where TOutput : class
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync<TInput>(TInput model)
-        where TInput : class
+    public async Task AddAsync(TInput model)
     {
         await _context.Set<TInput>().AddAsync(model);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync<TInput>(int id)
-        where TInput : class
+    public async Task DeleteAsync(int id)
     {
         var model = await _context.Set<TInput>().FindAsync(id);
         
@@ -23,8 +23,7 @@ public class Repository(AppDbContext context, IMapper mapper) : IRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task EditAsync<TInput>(TInput model, int id)
-        where TInput : class
+    public async Task EditAsync(TInput model, int id)
     {
         var item = await _context.Set<TInput>().FindAsync(id);
         
@@ -35,18 +34,14 @@ public class Repository(AppDbContext context, IMapper mapper) : IRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<TOutput> GetByIdAsync<TInput, TOutput>(int id)
-        where TInput : class
-        where TOutput : class
+    public async Task<TOutput> GetByIdAsync(int id)
     {
         var item = await _context.Set<TInput>().FindAsync(id);
 
         return _mapper.Map<TOutput>(item);
     }
 
-    public async Task<ICollection<TOutput>> GetWithPagination<TInput, TOutput>(int offset, int limit)
-        where TInput : class
-        where TOutput : class
+    public async Task<ICollection<TOutput>> GetWithPagination(int offset, int limit)
     {
         var items = await _context
             .Set<TInput>()
