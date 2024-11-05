@@ -49,7 +49,13 @@ public static class PipelineBuilderExtension
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddScoped<CalculatorService>();
+        services.RegisterDtoToModelMappings();
+        services.RegisterModelToDtoMappings();
+               
+    }
 
+    private static void RegisterModelToDtoMappings(this IServiceCollection services)
+    {
         services.AddScoped<IRepository<Activity, ActivityDto>, Repository<Activity, ActivityDto>>();
         services.AddScoped<IRepository<Employee, EmployeeDto>, Repository<Employee, EmployeeDto>>();
         services.AddScoped<IRepository<FirmClient, FirmClientDto>, Repository<FirmClient, FirmClientDto>>();
@@ -66,5 +72,25 @@ public static class PipelineBuilderExtension
         services.AddScoped<IRepository<EmployeeSalary, EmployeeSalaryDto>, Repository<EmployeeSalary, EmployeeSalaryDto>>();
         services.AddScoped<IRepository<EmployeeWorkTime, EmployeeWorkTimeDto>, Repository<EmployeeWorkTime, EmployeeWorkTimeDto>>();
         services.AddScoped<IRepository<WorkOrderActivity, WorkOrderActivityDto>, Repository<WorkOrderActivity, WorkOrderActivityDto>>();
+    }
+    
+    private static void RegisterDtoToModelMappings(this IServiceCollection services)
+    {
+        services.AddScoped<IRepository<ActivityDto, Activity>, Repository<ActivityDto, Activity>>();
+        services.AddScoped<IRepository<EmployeeDto, Employee>, Repository<EmployeeDto, Employee>>();
+        services.AddScoped<IRepository<FirmClientDto, FirmClient>, Repository<FirmClientDto, FirmClient>>();
+        services.AddScoped<IRepository<RoleDto, Role>, Repository<RoleDto, Role>>();
+        services.AddScoped<IRepository<SalaryDto, Salary>, Repository<SalaryDto, Salary>>();
+        services.AddScoped<IRepository<WorkOrderDto, WorkOrder>, Repository<WorkOrderDto, WorkOrder>>();
+        services.AddScoped<IRepository<WorkOrderCostDto, WorkOrderCost>, Repository<WorkOrderCostDto, WorkOrderCost>>();
+        services.AddScoped<IRepository<WorkTimeDto, WorkTime>, Repository<WorkTimeDto, WorkTime>>();
+
+        services.AddScoped<IRepository<ActivityWorkTimeDto, ActivityWorkTime>, Repository<ActivityWorkTimeDto, ActivityWorkTime>>();
+        services.AddScoped<IRepository<ClientWorkOrderCostDto, ClientWorkOrderCost>, Repository<ClientWorkOrderCostDto, ClientWorkOrderCost>>();
+        services.AddScoped<IRepository<EmployeeActivityDto, EmployeeActivity>, Repository<EmployeeActivityDto, EmployeeActivity>>();
+        services.AddScoped<IRepository<EmployeeRoleDto, EmployeeRole>, Repository<EmployeeRoleDto, EmployeeRole>>();
+        services.AddScoped<IRepository<EmployeeSalaryDto, EmployeeSalary>, Repository<EmployeeSalaryDto, EmployeeSalary>>();
+        services.AddScoped<IRepository<EmployeeWorkTimeDto, EmployeeWorkTime>, Repository<EmployeeWorkTimeDto, EmployeeWorkTime>>();
+        services.AddScoped<IRepository<WorkOrderActivityDto, WorkOrderActivity>, Repository<WorkOrderActivityDto, WorkOrderActivity>>();
     }
 }
