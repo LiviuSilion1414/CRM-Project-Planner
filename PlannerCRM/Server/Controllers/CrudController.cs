@@ -1,5 +1,6 @@
 ﻿namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) : ControllerBase
