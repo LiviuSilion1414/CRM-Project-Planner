@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\AccountManager\" />
+    <Folder Include="Pages\Developer\" />
+    <Folder Include="Pages\OperationManager\" />
+    <Folder Include="Pages\ProjectManager\" />
     <Folder Include="wwwroot\css\Bootstrap\" />
   </ItemGroup>
 
