@@ -124,7 +124,7 @@ public static class ModelBuilderExtensions
 
         modelBuilder.Entity<EmployeeSalary>()
             .HasOne(es => es.Salary)
-            .WithMany(s => s.EmployeesSalaries)
+            .WithMany(s => s.EmployeeSalaries)
             .HasForeignKey(es => es.SalaryId);
     }
 }
