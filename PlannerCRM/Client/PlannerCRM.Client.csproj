@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Pages\" />
-    <Folder Include="Shared\MenuPages\" />
     <Folder Include="wwwroot\css\Bootstrap\" />
   </ItemGroup>
 
