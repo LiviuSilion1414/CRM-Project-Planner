@@ -1,5 +1,6 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         <Homepage/>
     </Found>
@@ -11,5 +12,6 @@
         </div>
     </NotFound>
 </Router>
+
 <RadzenTheme Theme="material" @rendermode="RenderMode.InteractiveWebAssembly"/>
 <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
