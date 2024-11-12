@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\AccountManager\" />
+    <Folder Include="Pages\Authentication\" />
     <Folder Include="Pages\Developer\" />
     <Folder Include="Pages\OperationManager\" />
     <Folder Include="Pages\ProjectManager\" />
