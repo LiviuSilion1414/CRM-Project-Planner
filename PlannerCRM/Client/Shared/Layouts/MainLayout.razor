@@ -5,17 +5,19 @@
     <main>
         <header>
             <nav>
-                <Navbar/>
+                <Navbar />
             </nav>
         </header>
-        <body class="content px-4">
-            @Body   
-        </body>
-        <article >
-            <Sidebar/>
-        </article>
+        <div class="content-container">
+            <article class="sidebar">
+                <Sidebar />
+            </article>
+            <div class="main-content px-4">
+                @Body
+            </div>
+        </div>
         <footer>
-            <Footer/>
+            <Footer />
         </footer>
     </main>
 </div>
