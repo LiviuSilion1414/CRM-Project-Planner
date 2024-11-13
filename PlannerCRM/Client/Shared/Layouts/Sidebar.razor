@@ -22,7 +22,7 @@
     {
         get
         {
-            return _isExpanded ? SidebarStyle.MIN_WIDTH : SidebarStyle.AUTO_WIDTH;
+            return _isExpanded ? SidebarStyle.MAX_WIDTH : SidebarStyle.MIN_WIDTH;
         }
     }
 
@@ -55,7 +55,7 @@
 
     public static class SidebarStyle
     {
-        public const string MIN_WIDTH = "width: 250px;";
-        public const string AUTO_WIDTH = "width: auto;";
+        public const string MAX_WIDTH = "width: 250px;";
+        public const string MIN_WIDTH = "width: 56px;";
     }
 }
