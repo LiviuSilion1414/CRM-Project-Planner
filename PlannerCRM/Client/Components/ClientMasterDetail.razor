@@ -1,42 +1,157 @@
 ﻿<div style="width: 400px; display: flex;">
-    <div style="display: inline-block;">
+    <div style="margin-right: 20px; display: inline-block;">
+        <div>
+            <div>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="@OnAdd" />
+            </div>
+            @if (_isDetailVisible && _selectedClient is not null)
+            {
+                <div style="margin-top: 20px;">
+                    <RadzenButton ButtonStyle="ButtonStyle.Info" Text="Deselect" Click="@OnRowDeselect" />
+                </div>
+            }
+        </div>
+    </div>
+    <div style="display: inline-block; height: 50vh;">
         <RadzenDataGrid TItem="@FirmClientDto" Data="@_firmClients" AllowPaging="@true" AllowFiltering="@true" AllowSorting="@true"
-                        RowSelect="@OnRowSelect" Style=" width: 500px; height: 100%;">
+        RowSelect="@OnRowSelect" Style=" width: 500px;" RowDeselect="@OnRowDeselect">
             <Columns>
-                <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name"/>
+                <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
                 <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
             </Columns>
         </RadzenDataGrid>
     </div>
 
-    <div style="margin-left: 20px; display: inline-block;">
-        <RadzenPanel Style="width: 500px; height: 100%; text-align: center;">
-            @if (_isDetailVisible && _selectedClient != null)
-            {
-                <RadzenCard Style="height: 100%;">
+    @if (_isDetailVisible && _selectedClient is not null)
+    {
+        <div style="margin-left: 20px; display: inline-block;">
+            <RadzenPanel Style="width: 500px; text-align: center;">
+                <RadzenCard>
                     <p><strong>Name:</strong> @_selectedClient.Name</p>
                     <p><strong>VAT Number:</strong> @_selectedClient.VatNumber</p>
                 </RadzenCard>
-            }
-            else
-            {
-                <p>Select a client to see his/her details.</p>
-            }
-        </RadzenPanel>
-    </div>
+                <div style="float: right; display: inline-block; margin-top: 10px;">
+                    <div style="display: inline-block; margin-left: 10px;">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@OnRemove" />
+                    </div>
+                    <div style="display: inline-block; margin-right: 10px;">
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@OnEdit" />
+                    </div>
+                </div>
+            </RadzenPanel>
+        </div>
+    }
+    @if (_isAddMode)
+    {
+        <div style="margin-left: 20px; float: right;">
+            <RadzenPanel>
+                <EditForm EditContext="@_editContext" OnValidSubmit="@OnAddSubmitted">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <InputText @bind-Value="@_model.Name" DisplayName="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label>VAT Number</label>
+                        <InputText @bind-Value="@_model.VatNumber" DisplayName="VAT Number" />
+                    </div>
+                    <div style="margin-top: 10px; float: right;">
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Submit" ButtonType="ButtonType.Submit" />
+                    </div>
+                </EditForm>
+            </RadzenPanel>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(_opMessage))
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Info" AllowClose="@true" Text="Message" Close="@OnClose">
+            <ChildContent>
+                <p>@_opMessage</p>
+            </ChildContent>
+        </RadzenAlert>
+    }
+
 </div>
 
 @code
 {
     //mock data
 
-    private IEnumerable<FirmClientDto> _firmClients;
+    private List<FirmClientDto> _firmClients;
     private bool _isDetailVisible = false;
     private FirmClientDto _selectedClient;
+
+    private static FirmClientDto _model = new FirmClientDto();
+    private EditContext _editContext = new(_model);
+
+    private bool _isAddMode = false;
+    private bool _isEditMode = false;
+    private bool _dataSubmitted = false;
+
+    private string _opMessage = string.Empty;
+    private bool _isOpOK = false;
 
     protected override void OnInitialized()
     {
         LoadClientsData();
+    }
+
+    private void OnAdd(MouseEventArgs _)
+    {
+        _isAddMode = !_isAddMode;
+    }
+
+    private void OnClose()
+    {
+        _opMessage = string.Empty;
+        _isOpOK = false;
+    }
+
+    private void OnAddSubmitted()
+    {
+        _dataSubmitted = !_dataSubmitted;
+
+        if (_firmClients.Find(cl => cl.Id == _model.Id) is null)
+        {
+            _firmClients.Add(_model);
+            _opMessage = "Cliente aggiunto!";
+        }
+        else
+        {
+            _opMessage = "Cliente già presente!";
+        }
+        _model = new();
+        StateHasChanged();
+    }
+
+    private void OnRemove()
+    {
+        if (_firmClients.Find(cl => cl.Id == _selectedClient.Id) is not null)
+        {
+            _firmClients.Remove(_selectedClient);
+            _opMessage = "Cliente rimosso!";
+            _isOpOK = true;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnEdit()
+    {
+        var foundItem = _firmClients.Find(cl => cl.Id == _selectedClient.Id);
+        if (foundItem is not null)
+        {
+            foundItem.Id = _model.Id;
+            foundItem.Name = _model.Name;
+            foundItem.VatNumber = _model.VatNumber;
+            _opMessage = "Cliente rimosso!";
+            _isOpOK = true;
+        }
+    }
+
+    private void OnRowDeselect()
+    {
+        _isAddMode = false;
+        _selectedClient = null;
     }
 
     private void OnRowSelect(FirmClientDto client)
