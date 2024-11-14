@@ -1,0 +1,167 @@
+﻿<div style="width: 400px;">
+    <RadzenDataGrid TItem="@FirmClientDto" Data="@_firmClients" AllowPaging="@true" AllowFiltering="@true" AllowSorting="@true"
+        RowSelect="@OnRowSelect">
+        <Columns>
+            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name"/>
+            <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
+        </Columns>
+    </RadzenDataGrid>
+    <p>Ciao</p>
+
+    @if (_isDetailVisible && _selectedClient != null)
+    {
+        <RadzenPanel Style="margin-top: 20px;">
+            <RadzenCard>
+                <p><strong>Name:</strong> @_selectedClient.Name</p>
+                <p><strong>VAT Number:</strong> @_selectedClient.VatNumber</p>
+            </RadzenCard>
+        </RadzenPanel>
+    }
+</div>
+
+@code
+{
+    //mock data
+
+    private IEnumerable<FirmClientDto> _firmClients;
+    private bool _isDetailVisible = false;
+    private FirmClientDto _selectedClient;
+
+    protected override void OnInitialized()
+    {
+        LoadClientsData();
+    }
+
+    private void OnRowSelect(FirmClientDto client)
+    {
+        _isDetailVisible = true;
+        _selectedClient = client;
+    }
+
+    private void LoadClientsData()
+    {
+        _firmClients = new List<FirmClientDto>()
+            {
+                new()
+                {
+                    Id = 1,
+                    Name = "Liviu Silion",
+                    VatNumber = "GB123456789"
+                },
+                new()
+                {
+                    Id = 2,
+                    Name = "Alessandra Rossi",
+                    VatNumber = "IT987654321"
+                },
+                new()
+                {
+                    Id = 3,
+                    Name = "John Doe Ltd.",
+                    VatNumber = "US123456789"
+                },
+                new()
+                {
+                    Id = 4,
+                    Name = "Carlos Mejía",
+                    VatNumber = "ES234567890"
+                },
+                new()
+                {
+                    Id = 5,
+                    Name = "Olga Ivanova",
+                    VatNumber = "RU345678901"
+                },
+                new()
+                {
+                    Id = 6,
+                    Name = "Marta D'Angelo",
+                    VatNumber = "IT456789012"
+                },
+                new()
+                {
+                    Id = 7,
+                    Name = "Markus Svensson",
+                    VatNumber = "SE567890123"
+                },
+                new()
+                {
+                    Id = 8,
+                    Name = "Sandra Novak",
+                    VatNumber = "CZ678901234"
+                },
+                new()
+                {
+                    Id = 9,
+                    Name = "Benjamin Schmidt",
+                    VatNumber = "DE789012345"
+                },
+                new()
+                {
+                    Id = 10,
+                    Name = "Fabio Gonzalez",
+                    VatNumber = "MX890123456"
+                },
+                new()
+                {
+                    Id = 11,
+                    Name = "Clara Martínez",
+                    VatNumber = "ES901234567"
+                },
+                new()
+                {
+                    Id = 12,
+                    Name = "Lucia Bianchi",
+                    VatNumber = "IT012345678"
+                },
+                new()
+                {
+                    Id = 13,
+                    Name = "David Williams",
+                    VatNumber = "GB234567890"
+                },
+                new()
+                {
+                    Id = 14,
+                    Name = "Anna Petrova",
+                    VatNumber = "BG345678901"
+                },
+                new()
+                {
+                    Id = 15,
+                    Name = "Pierre Dubois",
+                    VatNumber = "FR456789012"
+                },
+                new()
+                {
+                    Id = 16,
+                    Name = "Tomáš Horák",
+                    VatNumber = "CZ567890123"
+                },
+                new()
+                {
+                    Id = 17,
+                    Name = "Eva Jankovic",
+                    VatNumber = "SK678901234"
+                },
+                new()
+                {
+                    Id = 18,
+                    Name = "William Brown",
+                    VatNumber = "US789012345"
+                },
+                new()
+                {
+                    Id = 19,
+                    Name = "Maria Alvarez",
+                    VatNumber = "ES890123456"
+                },
+                new()
+                {
+                    Id = 20,
+                    Name = "Hans Müller",
+                    VatNumber = "DE901234567"
+                }
+            };
+    }
+}
