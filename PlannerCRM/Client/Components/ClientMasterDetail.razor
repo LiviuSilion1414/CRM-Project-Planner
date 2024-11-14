@@ -1,22 +1,29 @@
-﻿<div style="width: 400px;">
-    <RadzenDataGrid TItem="@FirmClientDto" Data="@_firmClients" AllowPaging="@true" AllowFiltering="@true" AllowSorting="@true"
-        RowSelect="@OnRowSelect">
-        <Columns>
-            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name"/>
-            <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
-        </Columns>
-    </RadzenDataGrid>
-    <p>Ciao</p>
+﻿<div style="width: 400px; display: flex;">
+    <div style="display: inline-block;">
+        <RadzenDataGrid TItem="@FirmClientDto" Data="@_firmClients" AllowPaging="@true" AllowFiltering="@true" AllowSorting="@true"
+                        RowSelect="@OnRowSelect" Style=" width: 500px; height: 100%;">
+            <Columns>
+                <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name"/>
+                <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
+            </Columns>
+        </RadzenDataGrid>
+    </div>
 
-    @if (_isDetailVisible && _selectedClient != null)
-    {
-        <RadzenPanel Style="margin-top: 20px;">
-            <RadzenCard>
-                <p><strong>Name:</strong> @_selectedClient.Name</p>
-                <p><strong>VAT Number:</strong> @_selectedClient.VatNumber</p>
-            </RadzenCard>
+    <div style="margin-left: 20px; display: inline-block;">
+        <RadzenPanel Style="width: 500px; height: 100%; text-align: center;">
+            @if (_isDetailVisible && _selectedClient != null)
+            {
+                <RadzenCard Style="height: 100%;">
+                    <p><strong>Name:</strong> @_selectedClient.Name</p>
+                    <p><strong>VAT Number:</strong> @_selectedClient.VatNumber</p>
+                </RadzenCard>
+            }
+            else
+            {
+                <p>Select a client to see his/her details.</p>
+            }
         </RadzenPanel>
-    }
+    </div>
 </div>
 
 @code
