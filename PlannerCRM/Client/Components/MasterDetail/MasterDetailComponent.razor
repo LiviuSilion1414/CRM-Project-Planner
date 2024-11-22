@@ -1,0 +1,46 @@
+﻿@typeparam TItem
+
+<h3>MasterDetailView</h3>
+
+<div class="master-detail-container">
+    <div class="master-container">
+        @MasterContent(default(TItem))
+    </div>
+
+    <div class="detail-container">
+        <RadzenPanel class="radzen-panel">
+            @DetailContent(default(TItem)) 
+            <div class="edit-delete-btns-container">
+                <div class="delete-btn">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@OnDelete" />
+                </div>
+                <div class="edit-btn">
+                    <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@OnEdit" />
+                </div>
+            </div>
+        </RadzenPanel>
+    </div>
+</div>
+
+@code 
+{
+    [Parameter] public RenderFragment<TItem> MasterContent { get; set; }
+    [Parameter] public RenderFragment<TItem> DetailContent { get; set; }
+    [Parameter] public EventCallback<bool> EditSelected { get; set; }
+    [Parameter] public EventCallback<bool> DeleteSelected { get; set; }
+
+    private bool _isEditClicked = false;
+    private bool _isDeleteClicked = false;
+
+    private async Task OnEdit() 
+    {
+        _isEditClicked = !_isEditClicked;
+        await EditSelected.InvokeAsync(true);
+    }
+
+    private async Task OnDelete() 
+    {
+        _isDeleteClicked = !_isDeleteClicked;
+        await EditSelected.InvokeAsync(true);
+    }
+}
