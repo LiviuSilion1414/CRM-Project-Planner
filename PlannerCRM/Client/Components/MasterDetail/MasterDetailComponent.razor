@@ -38,12 +38,12 @@
     private async Task OnEdit() 
     {
         _isEditClicked = !_isEditClicked;
-        await EditSelected.InvokeAsync(true);
+        await EditSelected.InvokeAsync(_isEditClicked);
     }
 
     private async Task OnDelete() 
     {
         _isDeleteClicked = !_isDeleteClicked;
-        await EditSelected.InvokeAsync(true);
+        await DeleteSelected.InvokeAsync(_isDeleteClicked);
     }
 }
