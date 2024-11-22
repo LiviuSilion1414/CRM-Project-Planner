@@ -2,12 +2,10 @@
 
 <h3>Contacts</h3>
 
-<MasterDetailComponent TItem="FirmClientDto" EditSelected="OnEditSelected" DeleteSelected="OnDeleteSelected">
+<MasterDetailComponent TItem="FirmClientDto" EditSelected="OnEditSelected" DeleteSelected="OnDeleteSelected" ShowOps="_isRowSelected">
     <MasterContent>
-        <RadzenDataGrid TItem="FirmClientDto"
-        Data="_clients"
-        RowSelect="OnRowSelected"
-        AllowPaging="true" AllowFiltering="true" AllowSorting="true">
+        <RadzenDataGrid TItem="FirmClientDto" Data="_clients" RowSelect="OnRowSelect" RowDeselect="OnRowSelect" 
+            SelectionMode="DataGridSelectionMode.Multiple" AllowPaging="true" AllowFiltering="true" AllowSorting="true">
             <Columns>
                 <RadzenDataGridColumn TItem="FirmClientDto" Title="Name" Property="Name" />
                 <RadzenDataGridColumn TItem="FirmClientDto" Title="VAT Number" Property="VatNumber" />
@@ -23,8 +21,10 @@
             </RadzenCard>
         }
         else
-        {
-            <p>Please select a client.</p>
+        { 
+            <RadzenCard>
+                <p>Please select a client.</p>
+            </RadzenCard>
         }
     </DetailContent>
 </MasterDetailComponent>
@@ -64,18 +64,19 @@
         _isDeleteSelected = value;
     }
 
-    private void OnRowSelected(FirmClientDto client)
-    {
-        if (_selectedClient is not null)
-        {
-            _selectedClient = null;
-        }
-        else
+    private void OnRowSelect(FirmClientDto client) {
+        _isRowSelected = !_isRowSelected;
+
+        if (_isRowSelected)
         {
             _selectedClient = client;
         }
+        else
+        {
+            _selectedClient = null;
+        } 
     }
-
+    
     private void LoadData()
     {
         _clients = new List<FirmClientDto>()
