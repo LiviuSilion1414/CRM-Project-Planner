@@ -1,26 +1,29 @@
 ﻿@typeparam TItem
 
-<h3>MasterDetailView</h3>
-
 <div class="master-detail-container">
     <div class="master-container">
         @MasterContent(default(TItem))
     </div>
-    <div class="detail-container">
-        <RadzenPanel class="radzen-panel">
-            @DetailContent(default(TItem))
-            @if(ShowOps)
-            {
-                <div class="edit-delete-btns-container">
-                    <div class="delete-btn">
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@OnDelete" />
+    <div class="side-container">
+        <div class="detail-container">
+            <RadzenPanel class="radzen-panel">
+                @DetailContent(default(TItem))
+                @if(ShowOps)
+                {
+                    <div class="edit-delete-btns-container">
+                        <div class="delete-btn">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@OnDelete" />
+                        </div>
+                        <div class="edit-btn">
+                            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@OnEdit" />
+                        </div>
                     </div>
-                    <div class="edit-btn">
-                        <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@OnEdit" />
-                    </div>
-                </div>
-            }
-        </RadzenPanel>
+                }
+            </RadzenPanel>
+        </div>
+        <div class="additional-data-container">
+            @AdditionalContent(default(TItem))
+        </div>
     </div>
 </div>
 
@@ -28,6 +31,7 @@
 {
     [Parameter] public RenderFragment<TItem> MasterContent { get; set; }
     [Parameter] public RenderFragment<TItem> DetailContent { get; set; }
+    [Parameter] public RenderFragment<TItem> AdditionalContent { get; set; }
     [Parameter] public EventCallback<bool> EditSelected { get; set; }
     [Parameter] public EventCallback<bool> DeleteSelected { get; set; }
     [Parameter] public bool ShowOps { get; set; }

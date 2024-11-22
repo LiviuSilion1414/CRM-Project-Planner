@@ -5,7 +5,7 @@
 <MasterDetailComponent TItem="FirmClientDto" EditSelected="OnEditSelected" DeleteSelected="OnDeleteSelected" ShowOps="_isRowSelected">
     <MasterContent>
         <RadzenDataGrid TItem="FirmClientDto" Data="_clients" RowSelect="OnRowSelect" RowDeselect="OnRowSelect" 
-        SelectionMode="DataGridSelectionMode.Multiple" AllowPaging="true" AllowFiltering="true" AllowSorting="true">
+        SelectionMode="DataGridSelectionMode.Single" AllowPaging="true" AllowFiltering="true" AllowSorting="true">
             <Columns>
                 <RadzenDataGridColumn TItem="FirmClientDto" Title="Name" Property="Name" />
                 <RadzenDataGridColumn TItem="FirmClientDto" Title="VAT Number" Property="VatNumber" />
@@ -27,16 +27,18 @@
             </RadzenCard>
         }
     </DetailContent>
+    <AdditionalContent>
+        @if (_isEditSelected)
+        {
+            <ClientFormComponent Client="@_selectedClient" UpdatedClient="OnUpdatedClient" />
+        }
+        @if (_isDeleteSelected)
+        {
+            <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed"/>
+        }
+    </AdditionalContent>
 </MasterDetailComponent>
 
-@if (_isEditSelected)
-{
-    <ClientFormComponent Client="@_selectedClient" UpdatedClient="OnUpdatedClient" />
-}
-@if (_isDeleteSelected)
-{
-    <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed"/>
-}
 
 @code {
     private List<FirmClientDto> _clients { get; set; }

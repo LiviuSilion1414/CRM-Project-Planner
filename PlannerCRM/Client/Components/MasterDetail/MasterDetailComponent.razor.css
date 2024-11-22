@@ -7,13 +7,19 @@
     height: 50vh;
 }
 
-.detail-container {
+.side-container {
     height: 40vh;
     width: 40vw;
     margin-left: 20px;
 }
 
-.master-container, .detail-container {
+.additional-data-container {
+    height: 30vh;
+    width: 20vw;
+    padding-top: 20px;
+}
+
+.master-container, .side-container {
     display: inline-block;
 }
 
