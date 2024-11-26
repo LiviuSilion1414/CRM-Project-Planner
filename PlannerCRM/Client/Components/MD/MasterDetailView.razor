@@ -1,0 +1,67 @@
+﻿@typeparam TItem
+
+<h3>MasterDetailView</h3>
+
+<div class="master-detail-container">
+    <div class="master-container">
+        <RadzenDataGrid TItem="@TItem" Data="Data" RowSelect="OnRowSelect" RowDeselect="OnRowSelect"
+            SelectionMode="SelectionMode" AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting">
+            <Columns>
+                @foreach (var colName in Columns)
+                {
+                    <RadzenDataGridColumn TItem="@TItem" Title="@colName" Property="@colName" />
+                }
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+    <div class="side-container">
+        <div class="detail-container">
+            <RadzenPanel class="radzen-panel">            
+                @if (_selectedItem is not null)
+                {
+                    <RadzenCard>
+                        @foreach (var colName in Columns)
+                        {
+                            <p>@colName: @GetPropertyValue(colName)</p>
+                        }
+                    </RadzenCard>
+                    <div class="edit-delete-btns-container">
+                        <div class="delete-btn">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@OnDelete" />
+                        </div>
+                        <div class="edit-btn">
+                            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@OnEdit" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <RadzenCard>
+                        <p>Please select a client.</p>
+                    </RadzenCard>
+                }
+            </RadzenPanel>
+        </div>
+        <div class="additional-data-container">
+            @if (_isEditSelected)
+            {
+                <ClientFormComponent TItem="@TItem" Model="@_selectedItem" UpdatedItem="OnUpdatedClient">
+                    <FormContent>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <InputText @bind-Value="_selectedItem.Name" />
+                        </div>
+                        <div class="form-group">
+                            <label>VAT Number</label>
+                            <InputText @bind-Value="_selectedItem.VatNumber" />
+                        </div>
+                    </FormContent>
+                </ClientFormComponent>
+            }
+            @if (_isDeleteSelected)
+            {
+                <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed" />
+            }
+        </div>
+    </div>
+</div>

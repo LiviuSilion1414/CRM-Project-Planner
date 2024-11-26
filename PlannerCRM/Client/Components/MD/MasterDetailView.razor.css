@@ -1,0 +1,47 @@
+﻿.master-detail-container {
+    display: flex;
+}
+
+.master-container {
+    width: 50vw;
+    height: 50vh;
+}
+
+.side-container {
+    height: 40vh;
+    width: 40vw;
+    margin-left: 20px;
+}
+
+.additional-data-container {
+    height: 30vh;
+    width: 20vw;
+    padding-top: 20px;
+}
+
+.master-container, .side-container {
+    display: inline-block;
+}
+
+.radzen-panel {
+    width: 500px;
+    text-align: center;
+}
+
+.edit-delete-btns-container {
+    float: right;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.delete-btn {
+    margin-left: 10px;
+}
+
+.edit-btn {
+    margin-right: 10px;
+}
+
+.delete-btn, .edit-btn {
+    display: inline-block;
+}
