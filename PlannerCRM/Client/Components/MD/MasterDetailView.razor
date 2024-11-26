@@ -45,7 +45,11 @@
         <div class="additional-data-container">
             @if (_isEditSelected)
             {
-                <ClientFormComponent Model="_selectedItem" TItem="TItem" Properties="@_properties" OnSubmitCallback="OnUpdatedItem"/>
+                <FormView Model="_selectedItem" TItem="TItem" OnUpdatedItem="OnUpdatedItem">
+                    <FormContent>
+                        <p>not working!</p>
+                    </FormContent>
+                </FormView>
             }
             @if (_isDeleteSelected)
             {

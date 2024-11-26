@@ -2,8 +2,9 @@
 
 <h3>Contacts</h3>
 
-<MasterDetailView TItem="FirmClientDto" Columns="_selectedColumns" Data="_clients" SelectionMode="DataGridSelectionMode.Single"
-                  AllowPaging="true" AllowFiltering="true" AllowSorting="true" />
+<MasterDetailView 
+    TItem="FirmClientDto" Columns="_selectedColumns" Data="_clients" SelectionMode="DataGridSelectionMode.Single" AllowPaging="true" 
+    AllowFiltering="true" AllowSorting="true" />
 
 @code {
     private List<FirmClientDto> _clients;
