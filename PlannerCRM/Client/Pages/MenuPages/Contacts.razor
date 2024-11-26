@@ -2,22 +2,35 @@
 
 <h3>Contacts</h3>
 
-<MasterDetailView 
-    TItem="FirmClientDto" Data="_clients" SelectionMode="DataGridSelectionMode.Single" 
-    Columns="_columns" AllowPaging="true" AllowFiltering="true" AllowSorting="true">
-</MasterDetailView>
-
-
+<MasterDetailView TItem="FirmClientDto" Columns="_selectedColumns" Data="_clients" SelectionMode="DataGridSelectionMode.Single"
+                  AllowPaging="true" AllowFiltering="true" AllowSorting="true" />
 
 @code {
-    private List<FirmClientDto> _clients { get; set; }
-    private List<string> _columns = new List<string>() { "Name", "VatNumber" };
+    private List<FirmClientDto> _clients;
+    private Dictionary<string, bool> _selectedColumns;
 
     protected override void OnInitialized()
     {
+        LoadDynamicColumns();
         LoadData();
     }
-    
+
+    private static bool IsSimpleType(Type type)
+    {
+        return type.IsPrimitive ||
+               type == typeof(string) ||
+               type == typeof(DateTime) ||
+               type == typeof(decimal);
+    }
+
+    private void LoadDynamicColumns()
+    {
+        _selectedColumns = typeof(FirmClientDto)
+            .GetProperties()
+            .Where(p => IsSimpleType(p.PropertyType))
+            .ToDictionary(k => k.Name, v => true);
+    }
+
     private void LoadData()
     {
         _clients = new List<FirmClientDto>()

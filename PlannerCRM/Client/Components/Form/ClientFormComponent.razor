@@ -1,92 +1,74 @@
-﻿@typeparam TItem
+﻿@using System.Text.Json
+@using System.Reflection
+@typeparam TItem where TItem : class, new()
 
-<RadzenPanel>
-    <EditForm EditContext="_context" OnValidSubmit="OnSubmit">
-        <DataAnnotationsValidator/>
-        <ValidationSummary />
-        @*@FormContent draft*@
-            <div class="form-group">
-                <label>Name</label>
-                <InputText @bind-Value="NameValue" />
-            </div>
-            <div class="form-group">
-                <label>VAT Number</label>
-                <InputText @bind-Value="VatNumberValue" />
-            </div>
-        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" Text="Submit" />
-    </EditForm>
-</RadzenPanel>
+<RadzenStack class="rz-p-0 rz-p-md-12">
+    <RadzenTemplateForm TItem="TItem" Data="@Model" Submit="@OnSubmit" InvalidSubmit="@OnInvalidSubmit">
+        <RadzenFieldset Text="Personal Information">
+            <RadzenStack Gap="2rem" class="rz-p-4 rz-p-md-12">
+                @foreach (var propertyName in Properties)
+                {
+                    var property = typeof(TItem).GetProperty(propertyName);
+                    if (property != null)
+                    {
+                        <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
+                            <RadzenColumn Size="12" SizeMD="6" class="rz-text-align-start rz-text-align-md-end">
+                                <RadzenLabel Text="@propertyName" Component="@propertyName" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenTextBox Name="@propertyName"
+                                Value="@(GetPropertyValue(Model, propertyName)?.ToString())"
+                                Change="@(args => SetPropertyValue(Model, propertyName, args))"
+                                Style="display: block; width: 100%;" />
 
-@code
-{
-    [Parameter] public TItem Model { get; set; }
-    [Parameter] public RenderFragment FormContent { get; set; }
-    [Parameter] public EventCallback<TItem> UpdatedItem { get; set; }
+                            <RadzenRequiredValidator Component="@propertyName"
+                                                    Text="@($"{propertyName}: err")"
+                                                    Popup="@Popup"
+                                                    Style="position: absolute" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    }
+                }
+                <RadzenRow AlignItems="AlignItems.Center" class="rz-mt-4">
+                    <RadzenColumn Size="12" Offset="0" SizeMD="8" OffsetMD="4">
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Submit" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+</RadzenStack>
 
-    private Dictionary<string, string> _validationErrors;
-    private EditContext _context;
+@code {
+    [Parameter] public TItem Model { get; set; } = new TItem();
+    [Parameter] public IEnumerable<string> Properties { get; set; }
+    [Parameter] public EventCallback<TItem> OnSubmitCallback { get; set; }
 
-    protected override void OnInitialized()
+    bool Popup;
+
+    void OnSubmit(TItem model)
     {
-        _validationErrors = new();
-        _context = new(Model);
+        Console.WriteLine($"Submit: {JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true })}");
+        OnSubmitCallback.InvokeAsync(model);
     }
 
-    private async Task OnSubmit()
+    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
     {
-        await UpdatedItem.InvokeAsync(Model);
+        Console.WriteLine($"InvalidSubmit: {JsonSerializer.Serialize(args, new JsonSerializerOptions { WriteIndented = true })}");
     }
 
-    private string NameValue
+    object GetPropertyValue(object model, string propertyName)
     {
-        get => GetPropertyValue("Name");
-        set => SetPropertyValue("Name", value);
+        return model?.GetType().GetProperty(propertyName)?.GetValue(model);
     }
 
-    private string VatNumberValue
+    void SetPropertyValue(object model, string propertyName, object value)
     {
-        get => GetPropertyValue("VatNumber");
-        set => SetPropertyValue("VatNumber", value);
-    }
-
-    private string GetPropertyValue(string propertyName)
-    {
-        var propertyInfo = typeof(TItem).GetProperty(propertyName)
-            ?? throw new InvalidOperationException($"Property '{propertyName}' not found in '{typeof(TItem).Name}'.");
-
-        var value = propertyInfo.GetValue(Model);
-        return value?.ToString() ?? string.Empty;
-    }
-
-    private void SetPropertyValue(string propertyName, string value)
-    {
-        var propertyInfo = typeof(TItem).GetProperty(propertyName)
-            ?? throw new InvalidOperationException($"Property '{propertyName}' not found in '{typeof(TItem).Name}'.");
-
-        propertyInfo.SetValue(Model, value);
-    }
-
-    private Dictionary<string, string> GetValidationErrors(string propertyName)
-    {
-        var errors = new Dictionary<string, string>();
-
-        var property = Model.GetType().GetProperty(propertyName)
-            ?? throw new InvalidOperationException($"Property '{propertyName}' not found in '{typeof(TItem).Name}'.");
-
-        var attributes = property
-            .GetCustomAttributes(typeof(ValidationAttribute), true)
-            .OfType<ValidationAttribute>()
-            .ToList();
-
-        foreach (var attribute in attributes)
+        var property = model?.GetType().GetProperty(propertyName);
+        if (property != null && value != null)
         {
-            if (attribute is ValidationAttribute validationAttribute)
-            {
-                var errorMessage = validationAttribute.ErrorMessage ?? "Validation error occurred.";
-                errors[attribute.GetType().Name] = errorMessage;
-            }
+            var convertedValue = Convert.ChangeType(value, property.PropertyType);
+            property.SetValue(model, convertedValue);
         }
-
-        return errors;
     }
 }

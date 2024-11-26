@@ -8,14 +8,28 @@ public partial class MasterDetailView<TItem> : ComponentBase
     [Parameter] public bool AllowFiltering { get; set; }
     [Parameter] public bool AllowSorting { get; set; }
 
-    [Parameter] public IEnumerable<string> Columns { get; set; }
+    [Parameter] public Dictionary<string, bool> Columns { get; set; }
 
+    private List<string> _properties;
 
     private bool _isEditSelected = false;
     private bool _isDeleteSelected = false;
 
     private bool _isRowSelected = false;
     private TItem _selectedItem;
+
+    protected override void OnInitialized()
+    {
+        FilterSelectedColumns();
+    }
+
+    private void FilterSelectedColumns()
+    {
+        _properties = Columns
+            .Where(col => col.Value)
+            .Select(col => col.Key)
+            .ToList();
+    }
 
     private void OnRowSelect(TItem item)
     {
@@ -30,7 +44,7 @@ public partial class MasterDetailView<TItem> : ComponentBase
         }
     }
 
-    private void OnUpdatedClient(TItem item)
+    private void OnUpdatedItem(TItem item)
     {
         _selectedItem = item;
     }
