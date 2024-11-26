@@ -2,93 +2,20 @@
 
 <h3>Contacts</h3>
 
-<MasterDetailComponent TItem="FirmClientDto" EditSelected="OnEditSelected" DeleteSelected="OnDeleteSelected" ShowOps="_isRowSelected">
-    <MasterContent>
-        <RadzenDataGrid TItem="FirmClientDto" Data="_clients" RowSelect="OnRowSelect" RowDeselect="OnRowSelect" 
-        SelectionMode="DataGridSelectionMode.Single" AllowPaging="true" AllowFiltering="true" AllowSorting="true">
-            <Columns>
-                <RadzenDataGridColumn TItem="FirmClientDto" Title="Name" Property="Name" />
-                <RadzenDataGridColumn TItem="FirmClientDto" Title="VAT Number" Property="VatNumber" />
-            </Columns>
-        </RadzenDataGrid>
-    </MasterContent>
-    <DetailContent>
-        @if (_selectedClient != null)
-        {
-            <RadzenCard>
-                <p>Name: @_selectedClient.Name</p>
-                <p>VAT Number: @_selectedClient.VatNumber</p>
-            </RadzenCard>
-        }
-        else
-        { 
-            <RadzenCard>
-                <p>Please select a client.</p>
-            </RadzenCard>
-        }
-    </DetailContent>
-    <AdditionalContent>
-        @if (_isEditSelected)
-        {
-            <ClientFormComponent Client="@_selectedClient" UpdatedClient="OnUpdatedClient" />
-        }
-        @if (_isDeleteSelected)
-        {
-            <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed"/>
-        }
-    </AdditionalContent>
-</MasterDetailComponent>
+<MasterDetailView 
+    TItem="FirmClientDto" Data="_clients" SelectionMode="DataGridSelectionMode.Single" 
+    Columns="_columns" AllowPaging="true" AllowFiltering="true" AllowSorting="true">
+</MasterDetailView>
+
 
 
 @code {
     private List<FirmClientDto> _clients { get; set; }
-    private FirmClientDto _selectedClient;
-
-    private bool _isRowSelected = false;
-    private bool _isEditSelected = false;
-    private bool _isDeleteSelected = false;
+    private List<string> _columns = new List<string>() { "Name", "VatNumber" };
 
     protected override void OnInitialized()
     {
         LoadData();
-        Console.WriteLine("There's a few of clients...");
-        Console.WriteLine(_clients == null);
-    }
-
-    private void OnEditSelected(bool value)
-    {
-        _isEditSelected = value;
-    }
-
-    private void OnUpdatedClient(FirmClientDto client)
-    {
-        _selectedClient = client;
-    }
-
-    private void OnDeleteSelected(bool value)
-    {
-        _isDeleteSelected = value;
-    }
-
-    private void OnDeleteConfirmed(bool isConfirmed)
-    {
-        if (isConfirmed)
-        {
-            _clients.Remove(_selectedClient);
-        }
-    }
-
-    private void OnRowSelect(FirmClientDto client) {
-        _isRowSelected = !_isRowSelected;
-
-        if (_isRowSelected)
-        {
-            _selectedClient = client;
-        }
-        else
-        {
-            _selectedClient = null;
-        } 
     }
     
     private void LoadData()
@@ -146,6 +73,5 @@
             new() { Id = 49, Name = "Fatima Hassan", VatNumber = "EG987654321" },
             new() { Id = 50, Name = "Enrico Bianchi", VatNumber = "IT56789012345" },
         };
-
     }
 }

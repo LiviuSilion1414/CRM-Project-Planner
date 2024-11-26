@@ -1,13 +1,92 @@
-﻿<RadzenPanel>
+﻿@typeparam TItem
+
+<RadzenPanel>
     <EditForm EditContext="_context" OnValidSubmit="OnSubmit">
-        <div class="form-group">
-            <label>Name</label>
-            <InputText @bind-Value="@Client.Name" />
-        </div>
-        <div class="form-group">
-            <label>VAT Number</label>
-            <InputText @bind-Value="@Client.VatNumber" />
-            <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" Text="Submit"/>
-        </div>
+        <DataAnnotationsValidator/>
+        <ValidationSummary />
+        @*@FormContent draft*@
+            <div class="form-group">
+                <label>Name</label>
+                <InputText @bind-Value="NameValue" />
+            </div>
+            <div class="form-group">
+                <label>VAT Number</label>
+                <InputText @bind-Value="VatNumberValue" />
+            </div>
+        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" Text="Submit" />
     </EditForm>
 </RadzenPanel>
+
+@code
+{
+    [Parameter] public TItem Model { get; set; }
+    [Parameter] public RenderFragment FormContent { get; set; }
+    [Parameter] public EventCallback<TItem> UpdatedItem { get; set; }
+
+    private Dictionary<string, string> _validationErrors;
+    private EditContext _context;
+
+    protected override void OnInitialized()
+    {
+        _validationErrors = new();
+        _context = new(Model);
+    }
+
+    private async Task OnSubmit()
+    {
+        await UpdatedItem.InvokeAsync(Model);
+    }
+
+    private string NameValue
+    {
+        get => GetPropertyValue("Name");
+        set => SetPropertyValue("Name", value);
+    }
+
+    private string VatNumberValue
+    {
+        get => GetPropertyValue("VatNumber");
+        set => SetPropertyValue("VatNumber", value);
+    }
+
+    private string GetPropertyValue(string propertyName)
+    {
+        var propertyInfo = typeof(TItem).GetProperty(propertyName)
+            ?? throw new InvalidOperationException($"Property '{propertyName}' not found in '{typeof(TItem).Name}'.");
+
+        var value = propertyInfo.GetValue(Model);
+        return value?.ToString() ?? string.Empty;
+    }
+
+    private void SetPropertyValue(string propertyName, string value)
+    {
+        var propertyInfo = typeof(TItem).GetProperty(propertyName)
+            ?? throw new InvalidOperationException($"Property '{propertyName}' not found in '{typeof(TItem).Name}'.");
+
+        propertyInfo.SetValue(Model, value);
+    }
+
+    private Dictionary<string, string> GetValidationErrors(string propertyName)
+    {
+        var errors = new Dictionary<string, string>();
+
+        var property = Model.GetType().GetProperty(propertyName)
+            ?? throw new InvalidOperationException($"Property '{propertyName}' not found in '{typeof(TItem).Name}'.");
+
+        var attributes = property
+            .GetCustomAttributes(typeof(ValidationAttribute), true)
+            .OfType<ValidationAttribute>()
+            .ToList();
+
+        foreach (var attribute in attributes)
+        {
+            if (attribute is ValidationAttribute validationAttribute)
+            {
+                var errorMessage = validationAttribute.ErrorMessage ?? "Validation error occurred.";
+                errors[attribute.GetType().Name] = errorMessage;
+            }
+        }
+
+        return errors;
+    }
+}
