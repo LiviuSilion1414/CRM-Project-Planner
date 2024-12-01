@@ -1,0 +1,35 @@
+﻿@page "/"
+@using PlannerCRM.Shared.Dtos.Entities
+@inject HttpClient http
+
+<h3>Index</h3>
+
+<div style="border: thin 1px green; background-color: white;">
+    @if (_clients == null)
+    {
+        <p>..Loading </p>
+    }
+    else
+    {
+        <ul style="list-style: none;">
+            @foreach (var cl in _clients)
+            {
+                <li><strong>Name:</strong>@cl.Name</li>
+                <li><strong>Vat Number:</strong>@cl.VatNumber</li>
+                <br />
+            }
+        </ul>
+    }
+</div>
+
+@code {
+
+    List<FirmClientDto> _clients;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{5}/{0}");
+        Console.WriteLine(_clients.Any());
+        Console.WriteLine("++++++ARRIVATO");
+    }
+}

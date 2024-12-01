@@ -3,17 +3,7 @@
 <div class="page">
     <main>
         <div class="navbar">
-            <a class="nav-link" @onclick=@NavigateBasedOnRole title="Homepage">CRM - Gestionale Commesse</a>
-        <AuthorizeView>
-            <Authorized>
-                <ExtendableProfileModal/>
-            </Authorized>
-            <NotAuthorized>
-                <div class="wrapper">
-                    <span>Accedi al tuo account!</span>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
+            <a title="Homepage">CRM - Gestionale Commesse</a>
         </div>
         <article class="content px-4">
             @Body

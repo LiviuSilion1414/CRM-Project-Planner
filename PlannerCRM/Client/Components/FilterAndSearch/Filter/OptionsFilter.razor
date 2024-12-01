@@ -1,7 +1,0 @@
-<div class="filter">
-    @foreach (var action in Actions) {
-        <div class="opt-filter @SetStyle(action.Key)" @onclick=@(() => HandleFiltering(action.Key))>
-            @action.Key
-        </div>
-    }
-</div>

@@ -1,24 +1,13 @@
-﻿<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly">
-        <Found Context="routeData">
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-            <AuthorizeRouteView RouteData="@routeData">
-                <Authorizing>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <LoadingAuthorization/>
-                    </LayoutView>
-                </Authorizing>
-                <NotAuthorized>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <NotAuthorizedPage/>
-                    </LayoutView>
-                </NotAuthorized>
-            </AuthorizeRouteView>
-        </Found>
-        <NotFound>
-            <CascadingAuthenticationState>
-                <NotFoundPage/>
-            </CascadingAuthenticationState> 
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState>
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <LayoutView Layout="@typeof(MainLayout)">
+            <RouteView RouteData="@routeData" />
+        </LayoutView>
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>No page found.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
