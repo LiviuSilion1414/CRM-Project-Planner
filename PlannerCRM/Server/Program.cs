@@ -35,10 +35,10 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-app.UseAuthentication();
+//app.UseAuthentication();
 
 app.UseRouting();
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();

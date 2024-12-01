@@ -12,5 +12,5 @@ public interface IRepository<TInput, TOutput>
 
     Task<TOutput> GetByIdAsync(int id);
 
-    Task<ICollection<TOutput>> GetWithPagination(int offset, int limit);
+    Task<ICollection<TOutput>> GetWithPagination(int limit, int offset);
 }

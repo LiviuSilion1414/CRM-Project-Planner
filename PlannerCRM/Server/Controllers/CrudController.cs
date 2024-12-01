@@ -1,8 +1,6 @@
 ﻿namespace PlannerCRM.Server.Controllers;
 
-[Authorize]
 [ApiController]
-[Route("api/[controller]")]
 public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) : ControllerBase
     where TInput : class
     where TOutput : class
@@ -54,7 +52,7 @@ public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) 
     [Route("getWithPagination/{limit:int}/{offset:int}")]
     public async Task<ActionResult<ICollection<TOutput>>> GetWithPagination(int limit, int offset)
     {
-        var entities = await _repo.GetWithPagination(offset, limit);
+        var entities = await _repo.GetWithPagination(limit, offset);
 
         return Ok(entities);
     }

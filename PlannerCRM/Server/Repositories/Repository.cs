@@ -41,7 +41,7 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
         return _mapper.Map<TOutput>(item);
     }
 
-    public virtual async Task<ICollection<TOutput>> GetWithPagination(int offset, int limit)
+    public virtual async Task<ICollection<TOutput>> GetWithPagination(int limit, int offset)
     {
         var items = await _context
             .Set<TInput>()
