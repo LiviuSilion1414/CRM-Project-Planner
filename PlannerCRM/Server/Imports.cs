@@ -7,17 +7,15 @@ global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using AutoMapper;
 
-global using PlannerCRM.Shared.Attributes;
 global using PlannerCRM.Shared.Constants;
 global using PlannerCRM.Shared.Dtos.Entities;
 global using PlannerCRM.Shared.Dtos.JunctionEntities;
-global using PlannerCRM.Shared.Feedbacks;
 
 global using PlannerCRM.Server.DataAccess;
 global using PlannerCRM.Server.Extensions;
 global using PlannerCRM.Server.Interfaces;
 global using PlannerCRM.Server.Models.Entities;
 global using PlannerCRM.Server.Models.JunctionEntities;
-global using PlannerCRM.Server.Models;
-global using PlannerCRM.Server.Repositories;
+global using PlannerCRM.Server.Repositories.Specific;
+global using PlannerCRM.Server.Repositories.Generic;
 global using PlannerCRM.Server.Services;

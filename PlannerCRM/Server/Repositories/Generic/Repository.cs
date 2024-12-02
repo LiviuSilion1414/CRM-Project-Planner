@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Server.Repositories;
+﻿namespace PlannerCRM.Server.Repositories.Generic;
 
 public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) : IRepository<TInput, TOutput>
     where TInput : class
@@ -17,7 +17,7 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
     public virtual async Task DeleteAsync(int id)
     {
         var model = await _context.Set<TInput>().FindAsync(id);
-        
+
         _context.Set<TInput>().Remove(model);
 
         await _context.SaveChangesAsync();
@@ -26,7 +26,7 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
     public virtual async Task EditAsync(TInput model, int id)
     {
         var item = await _context.Set<TInput>().FindAsync(id);
-        
+
         item = model;
 
         _context.Set<TInput>().Update(item);
