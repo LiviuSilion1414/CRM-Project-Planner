@@ -17,7 +17,7 @@ public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) 
     }
 
     [HttpPut]
-    [Route("edit/{entityId:int}")]
+    [Route("edit/{entityId}")]
     public async Task<IActionResult> Edit(TInput entity, int entityId)
     {
         await _repo.EditAsync(entity, entityId);
@@ -35,7 +35,7 @@ public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) 
     }
 
     [HttpGet]
-    [Route("getById/{entityId:int}")]
+    [Route("getById/{entityId}")]
     public async Task<ActionResult<TOutput>> GetById(int entityId)
     {
         var entity = await _repo.GetByIdAsync(entityId); //add null interceptor
@@ -49,7 +49,7 @@ public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) 
     }
 
     [HttpGet]
-    [Route("getWithPagination/{limit:int}/{offset:int}")]
+    [Route("getWithPagination/{limit}/{offset}")]
     public async Task<ActionResult<ICollection<TOutput>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);

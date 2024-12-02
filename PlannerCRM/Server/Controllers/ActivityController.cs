@@ -8,28 +8,28 @@ public class ActivityController(IRepository<Activity, ActivityDto> genericRepo, 
     private readonly ActivityRepository _specificRepo = specificRepo;
 
     [HttpGet]
-    [Route("searchByTitle/{activityTitle:string}")]
+    [Route("searchByTitle/{activityTitle}")]
     public async Task<ActivityDto> SearchActivityByTitle(string activityTitle)
     {
         return await _specificRepo.SearchActivityByTitle(activityTitle);
     }
 
     [HttpGet]
-    [Route("findAssociatedEmployeesByActivityId/{activityId:int}")]
+    [Route("findAssociatedEmployeesByActivityId/{activityId}")]
     public async Task<ICollection<EmployeeDto>> FindAssociatedEmployeesWithinActivity(int activityId)
     {
         return await _specificRepo.FindAssociatedEmployeesWithinActivity(activityId);
     }
 
     [HttpGet]
-    [Route("findAssociatedWorkOrdersByActivityId/{activityId:int}")]
+    [Route("findAssociatedWorkOrdersByActivityId/{activityId}")]
     public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(int activityId)
     {
         return await _specificRepo.FindAssociatedWorkOrderByActivityId(activityId);
     }
 
     [HttpGet]
-    [Route("findAssociatedWorkTimesWithinActivity/{activityId:int}")]
+    [Route("findAssociatedWorkTimesWithinActivity/{activityId}")]
     public async Task<ICollection<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(int activityId)
     {
         return await _specificRepo.FindAssociatedWorkTimesWithinActivity(activityId);
