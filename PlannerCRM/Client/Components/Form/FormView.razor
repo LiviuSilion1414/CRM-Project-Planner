@@ -1,0 +1,32 @@
+﻿@typeparam TItem where TItem : class, new()
+
+<RadzenCard Style=" margin-top: 50px;">
+    <EditForm EditContext="_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+            @FormContent(Model)
+        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" Text="Submit"/>
+    </EditForm>
+</RadzenCard>
+
+@code 
+{
+    [Parameter] public TItem Model { get; set; }
+    [Parameter] public RenderFragment<TItem> FormContent { get; set; }
+    [Parameter] public EventCallback<TItem> OnUpdatedItem { get; set; }
+
+    private EditContext _context;
+
+    protected override void OnInitialized()
+    {
+        _context = new(Model);
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (_context.Validate())
+        {
+            await OnUpdatedItem.InvokeAsync(Model);
+        }
+    }
+}

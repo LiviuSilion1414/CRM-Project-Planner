@@ -1,0 +1,25 @@
+﻿<RadzenAlert AllowClose="true" Icon="warning" IconColor="red" Text="Attention" Close="OnCancel" Visible="_isVisible">
+    <strong>Do you really want to delete the selected item?</strong>
+    <div>
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="undo" Text="Cancel" Click="@OnCancel"/>
+        <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="delete" Text="Delete" Click="@OnDelete"/>
+    </div>
+</RadzenAlert>
+
+@code {
+    [Parameter] public EventCallback<bool> IsDeleteConfirmed { get; set; }
+
+    private bool _isVisible = true;
+
+    private async Task OnCancel()
+    {
+        await IsDeleteConfirmed.InvokeAsync(false);
+        _isVisible = false;
+    }
+
+    private async Task OnDelete()
+    {
+        await IsDeleteConfirmed.InvokeAsync(true);
+        _isVisible = false;
+    }
+}

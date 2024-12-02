@@ -1,0 +1,60 @@
+﻿@typeparam TItem where TItem : class, new()
+
+<h3>MasterDetailView</h3>
+
+<div class="master-detail-container">
+    <div class="master-container">
+        <RadzenDataGrid TItem="@TItem" Data="Data" RowSelect="OnRowSelect" RowDeselect="OnRowSelect"
+            SelectionMode="SelectionMode" AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting">
+            <Columns>
+                @foreach (var prop in _properties)
+                {
+                    <RadzenDataGridColumn TItem="@TItem" Title="@prop" Property="@prop" />
+                }
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+    <div class="side-container">
+        <div class="detail-container">
+            <RadzenPanel class="radzen-panel">            
+                @if (_selectedItem is not null)
+                {
+                    <RadzenCard>
+                        @foreach (var prop in _properties)
+                        {
+                            <p>@prop: @GetPropertyValue(prop)</p>
+                        }
+                    </RadzenCard>
+                    <div class="edit-delete-btns-container">
+                        <div class="delete-btn">
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@OnDelete" />
+                        </div>
+                        <div class="edit-btn">
+                            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@OnEdit" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <RadzenCard>
+                        <p>Please select an item.</p>
+                    </RadzenCard>
+                }
+            </RadzenPanel>
+        </div>
+        <div class="additional-data-container">
+            @if (_isEditSelected)
+            {
+                <FormView Model="_selectedItem" TItem="TItem" OnUpdatedItem="OnUpdatedItem">
+                    <FormContent>
+                        <p>not working!</p>
+                    </FormContent>
+                </FormView>
+            }
+            @if (_isDeleteSelected)
+            {
+                <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed" />
+            }
+        </div>
+    </div>
+</div>

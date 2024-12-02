@@ -1,0 +1,23 @@
+﻿@inherits LayoutComponentBase
+<RadzenComponents @rendermode="RenderMode.InteractiveWebAssembly"/>
+
+<div class="page">
+    <main>
+        <header>
+            <nav>
+                <Navbar />
+            </nav>
+        </header>
+        <div class="content-container">
+            <article class="sidebar">
+                <Sidebar />
+            </article>
+            <div class="main-content px-4">
+                @Body
+            </div>
+        </div>
+        <footer>
+            <Footer />
+        </footer>
+    </main>
+</div>
