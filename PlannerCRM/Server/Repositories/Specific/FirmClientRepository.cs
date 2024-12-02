@@ -5,10 +5,10 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<FirmClientDto> SearchClientByName(string name)
+    public async Task<FirmClientDto> SearchClientByName(string clientName)
     {
         var foundClient = await _context.Clients
-            .SingleOrDefaultAsync(cl => EF.Functions.ILike(cl.Name, $"{cl.Name}"));
+            .SingleOrDefaultAsync(cl => EF.Functions.ILike(cl.Name, $"{clientName}"));
 
         return _mapper.Map<FirmClientDto>(foundClient);
     }

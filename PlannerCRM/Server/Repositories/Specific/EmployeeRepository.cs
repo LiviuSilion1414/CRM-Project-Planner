@@ -5,10 +5,10 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<EmployeeDto> SearchEmployeeByName(string name)
+    public async Task<EmployeeDto> SearchEmployeeByName(string employeeName)
     {
         var foundEmployee = await _context.Employees
-            .SingleOrDefaultAsync(em => EF.Functions.ILike(em.Name, $"{name}"));
+            .SingleOrDefaultAsync(em => EF.Functions.ILike(em.Name, $"{employeeName}"));
 
         return _mapper.Map<EmployeeDto>(foundEmployee);
     }

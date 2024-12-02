@@ -5,14 +5,15 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<Employee> SearchWorkTimeByEmployeeName(string employeeName)
+    public async Task<WorkTimeDto> SearchWorkTimeByEmployeeName(string employeeName)
     {
-        var foundWorkTime = await _context.Employees
-            .Include(em => em.Activities)
-            .Include(em => em.Salaries)
-            .Include(em => em.WorkTimes)
-            .SingleOrDefaultAsync(em => EF.Functions.ILike(em.Name, $"%{employeeName}%"));
+        var foundWorkTime = await _context.WorkTimes
+            .Include(wt => wt.WorkOrder)
+            .Include(wt => wt.ActivityWorkTimes)
+            .Include(wt => wt.Activity)
+            .Include(wt => wt.Employee)
+            .SingleOrDefaultAsync(wt => EF.Functions.ILike(wt.Employee.Name, $"%{employeeName}%"));
 
-        return _mapper.Map<Employee>(foundWorkTime);
+        return _mapper.Map<WorkTimeDto>(foundWorkTime);
     }
 }

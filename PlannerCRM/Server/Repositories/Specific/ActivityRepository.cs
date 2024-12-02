@@ -5,10 +5,10 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<ActivityDto> SearchActivityByTitle(string title)
+    public async Task<ActivityDto> SearchActivityByTitle(string activityTitle)
     {
         var foundItem = await _context.Activities
-            .SingleOrDefaultAsync(ac => EF.Functions.ILike(ac.Name, $"{title}"));
+            .SingleOrDefaultAsync(ac => EF.Functions.ILike(ac.Name, $"{activityTitle}"));
 
         return _mapper?.Map<ActivityDto>(foundItem);
     }
