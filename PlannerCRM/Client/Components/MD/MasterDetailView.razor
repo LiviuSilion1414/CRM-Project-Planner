@@ -7,7 +7,7 @@
         <RadzenDataGrid TItem="@TItem" Data="Data" RowSelect="OnRowSelect" RowDeselect="OnRowSelect"
             SelectionMode="SelectionMode" AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting">
             <Columns>
-                @foreach (var prop in _properties)
+                @foreach (var prop in Properties)
                 {
                     <RadzenDataGridColumn TItem="@TItem" Title="@prop" Property="@prop" />
                 }
@@ -20,7 +20,7 @@
                 @if (_selectedItem is not null)
                 {
                     <RadzenCard>
-                        @foreach (var prop in _properties)
+                        @foreach (var prop in Properties)
                         {
                             <p>@prop: @GetPropertyValue(prop)</p>
                         }

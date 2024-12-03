@@ -1,35 +1,29 @@
 ﻿@page "/contacts"
+@inject HttpClient http
 
 <h3>Contacts</h3>
 
 <MasterDetailView 
-    TItem="FirmClientDto" Columns="_selectedColumns" Data="_clients" SelectionMode="DataGridSelectionMode.Single" AllowPaging="true" 
-    AllowFiltering="true" AllowSorting="true" />
+    TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients" SelectionMode="DataGridSelectionMode.Single" 
+    AllowPaging="true" AllowFiltering="true" AllowSorting="true" />
 
 @code {
     private List<FirmClientDto> _clients;
-    private Dictionary<string, bool> _selectedColumns;
+    private List<string> _selectedColumns = ["Name", "VatNumber"];
 
     protected override void OnInitialized()
     {
-        LoadDynamicColumns();
-        LoadData();
+        //LoadData();
     }
 
-    private static bool IsSimpleType(Type type)
+    protected override async Task OnInitializedAsync()
     {
-        return type.IsPrimitive ||
-               type == typeof(string) ||
-               type == typeof(DateTime) ||
-               type == typeof(decimal);
+        await LoadDataFromServer();
     }
 
-    private void LoadDynamicColumns()
+    private async Task LoadDataFromServer()
     {
-        _selectedColumns = typeof(FirmClientDto)
-            .GetProperties()
-            .Where(p => IsSimpleType(p.PropertyType))
-            .ToDictionary(k => k.Name, v => true);
+        _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{25}/{0}");
     }
 
     private void LoadData()
