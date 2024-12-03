@@ -44,10 +44,9 @@ public static class PipelineBuilderExtension
 
     public static void RegisterServices(this IServiceCollection services)
     {
-        services.AddScoped<CalculatorService>();
+        services.RegisterSpecificRepositories();
         services.RegisterDtoToModelMappings();
         services.RegisterModelToDtoMappings();
-               
     }
 
     private static void RegisterModelToDtoMappings(this IServiceCollection services)
@@ -88,5 +87,17 @@ public static class PipelineBuilderExtension
         services.AddScoped<IRepository<EmployeeSalaryDto, EmployeeSalary>, Repository<EmployeeSalaryDto, EmployeeSalary>>();
         services.AddScoped<IRepository<EmployeeWorkTimeDto, EmployeeWorkTime>, Repository<EmployeeWorkTimeDto, EmployeeWorkTime>>();
         services.AddScoped<IRepository<WorkOrderActivityDto, WorkOrderActivity>, Repository<WorkOrderActivityDto, WorkOrderActivity>>();
+    }
+
+    private static void RegisterSpecificRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<ActivityRepository>();
+        services.AddScoped<EmployeeRepository>();
+        services.AddScoped<FirmClientRepository>();
+        services.AddScoped<SalaryRepository>();
+        services.AddScoped<WorkOrderRepository>();
+        services.AddScoped<WorkOrderCostRepository>();
+        services.AddScoped<WorkTimeRepository>();
+        services.AddScoped<CalculatorService>();
     }
 }
