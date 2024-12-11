@@ -4,12 +4,44 @@
 <h3>Contacts</h3>
 
 <MasterDetailView 
-    TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients" SelectionMode="DataGridSelectionMode.Single" 
-    AllowPaging="true" AllowFiltering="true" AllowSorting="true" />
+    TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients"
+    OnItemSelected="OnItemSelected" OnEditSelected="@IsEditSelected" OnDeleteSelected="@IsDeleteSelected"
+    AllowPaging="true" AllowFiltering="true" AllowSorting="true" >
+    <AdditionalContent Context="additionalcontent">
+        @if (_isEditSelected && _selectedClient is not null)
+        {
+            <FormView TItem="@FirmClientDto" Model="@_selectedClient" OnUpdatedItem="@UpdateItem">
+                <FormContent Context="formcontent">
+                    <div class="form-group">
+                        <label>@nameof(_selectedClient.Name):</label>
+                        <InputText @bind-Value="@_selectedClient.Name"/>
+                    </div>
+                    <div class="form-group">
+                        <label>@nameof(_selectedClient.VatNumber):</label>
+                        <InputText @bind-Value="@_selectedClient.VatNumber" />
+                    </div>
+                </FormContent>
+            </FormView>
+        }
+        else if (_isDeleteSelected)
+        {
+            <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed"/>
+        }
+
+        else
+        {
+            <p>Select one action from above!</p>
+        }
+    </AdditionalContent>
+</MasterDetailView>
 
 @code {
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumns = ["Name", "VatNumber"];
+
+    private FirmClientDto _selectedClient = null;
+    private bool _isEditSelected = false;
+    private bool _isDeleteSelected = false;
 
     protected override void OnInitialized()
     {
@@ -19,6 +51,37 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadDataFromServer();
+    }
+
+    private void OnItemSelected(FirmClientDto client)
+    {
+        _selectedClient = client;
+    }
+
+    private void IsEditSelected(bool value)
+    {
+        Console.WriteLine("edit:" + value);
+        Console.WriteLine("client:" + _selectedClient is null);
+        _isEditSelected = value;
+    }
+
+    private void IsDeleteSelected(bool value)
+    {
+        _isDeleteSelected = value;
+    }
+
+    private async Task UpdateItem(FirmClientDto updatedClient)
+    {
+        await http.PutAsJsonAsync<FirmClientDto>($"api/client/edit/{updatedClient.Id}", updatedClient);
+        StateHasChanged();
+    }
+
+    private async Task OnDeleteConfirmed(bool isConfirmed)
+    {
+        if (isConfirmed)
+        {
+            await http.DeleteAsync($"api/client/delete/{_selectedClient.Id}");
+        }
     }
 
     private async Task LoadDataFromServer()

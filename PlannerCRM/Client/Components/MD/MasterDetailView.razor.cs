@@ -3,61 +3,41 @@
 public partial class MasterDetailView<TItem> : ComponentBase
 {
     [Parameter] public ICollection<TItem> Data { get; set; } 
-    [Parameter] public DataGridSelectionMode SelectionMode { get; set; }
     [Parameter] public bool AllowPaging { get; set; }
     [Parameter] public bool AllowFiltering { get; set; }
     [Parameter] public bool AllowSorting { get; set; }
-
     [Parameter] public List<string> Properties { get; set; }
+    [Parameter] public EventCallback<TItem> OnItemSelected { get; set; }
+    [Parameter] public EventCallback<bool> OnEditSelected { get; set; }
+    [Parameter] public EventCallback<bool> OnDeleteSelected { get; set; }
+    [Parameter] public RenderFragment<TItem> AdditionalContent { get; set; }
 
-    private bool _isEditSelected = false;
-    private bool _isDeleteSelected = false;
+    private TItem _selectedItem = null;
 
-    private bool _isRowSelected = false;
-    private TItem _selectedItem;
-
-    private void OnRowSelect(TItem item)
-    {
-        _isRowSelected = !_isRowSelected;
-
-        if (_isRowSelected)
-        {
-            _selectedItem = item;
-        } else
-        {
-            _selectedItem = default;
-        }
-    }
-
-    private void OnUpdatedItem(TItem item)
+    private async Task OnRowSelect(TItem item)
     {
         _selectedItem = item;
+        await OnItemSelected.InvokeAsync(_selectedItem);
     }
 
-    private void OnDeleteConfirmed(bool isConfirmed)
+    private async Task OnRowDeselect(TItem item)
     {
-        if (isConfirmed)
-        {
-            Data.Remove(_selectedItem);
-        }
+        _selectedItem = null;
+        await OnItemSelected.InvokeAsync(_selectedItem);
     }
 
-    private async Task OnEdit()
+    private bool IsItemSelected()
     {
-        _isEditSelected = !_isEditSelected;
+        return _selectedItem is not null;
     }
 
-    private async Task OnDelete()
+    private async Task EditSelected()
     {
-        _isDeleteSelected = !_isDeleteSelected;
+        await OnEditSelected.InvokeAsync(IsItemSelected());
     }
 
-    private string GetPropertyValue(string propertyName)
+    private async Task DeleteSelected()
     {
-        var propertyInfo = _selectedItem.GetType().GetProperty(propertyName)
-            ??throw new InvalidOperationException($"Property with name:'{propertyName}' does not exist in '{typeof(TItem).Name}' type.");
-
-        var value = propertyInfo.GetValue(_selectedItem);
-        return value?.ToString() ?? string.Empty;
+        await OnDeleteSelected.InvokeAsync(IsItemSelected());
     }
 }

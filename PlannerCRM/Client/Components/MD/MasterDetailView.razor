@@ -4,8 +4,8 @@
 
 <div class="master-detail-container">
     <div class="master-container">
-        <RadzenDataGrid TItem="@TItem" Data="Data" RowSelect="OnRowSelect" RowDeselect="OnRowSelect"
-            SelectionMode="SelectionMode" AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting">
+        <RadzenDataGrid TItem="@TItem" Data="Data" RowSelect="@OnRowSelect" RowDeselect="@OnRowDeselect"
+            AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting">
             <Columns>
                 @foreach (var prop in Properties)
                 {
@@ -22,15 +22,15 @@
                     <RadzenCard>
                         @foreach (var prop in Properties)
                         {
-                            <p>@prop: @GetPropertyValue(prop)</p>
+                            <p>@prop: @_selectedItem.GetType().GetProperty(prop).GetValue(_selectedItem)</p>
                         }
                     </RadzenCard>
                     <div class="edit-delete-btns-container">
                         <div class="delete-btn">
-                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@OnDelete" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@DeleteSelected" />
                         </div>
                         <div class="edit-btn">
-                            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@OnEdit" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Success" Text="Edit" Click="@EditSelected" />
                         </div>
                     </div>
                 }
@@ -43,18 +43,7 @@
             </RadzenPanel>
         </div>
         <div class="additional-data-container">
-            @if (_isEditSelected)
-            {
-                <FormView Model="_selectedItem" TItem="TItem" OnUpdatedItem="OnUpdatedItem">
-                    <FormContent>
-                        <p>not working!</p>
-                    </FormContent>
-                </FormView>
-            }
-            @if (_isDeleteSelected)
-            {
-                <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed" />
-            }
+            @AdditionalContent(default)
         </div>
     </div>
 </div>
