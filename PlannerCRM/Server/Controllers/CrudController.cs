@@ -18,7 +18,7 @@ public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) 
 
     [HttpPut]
     [Route("edit/{entityId}")]
-    public async Task<IActionResult> Edit(TInput entity, int entityId)
+    public async Task<IActionResult> Edit(TOutput entity, int entityId)
     {
         await _repo.EditAsync(entity, entityId);
 
@@ -26,7 +26,7 @@ public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) 
     }
 
     [HttpDelete]
-    [Route("delete")]
+    [Route("delete/{entityId}")]
     public async Task<IActionResult> Delete(int entityId)
     {
         await _repo.DeleteAsync(entityId);

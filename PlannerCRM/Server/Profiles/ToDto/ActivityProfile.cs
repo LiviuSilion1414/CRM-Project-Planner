@@ -1,10 +1,8 @@
-﻿
-
-namespace PlannerCRM.Server.Profiles;
+﻿namespace PlannerCRM.Server.Profiles.ToDto;
 
 public class ActivityProfile : Profile
 {
-    public ActivityProfile() 
+    public ActivityProfile()
     {
         CreateMap<Activity, ActivityDto>();
     }
