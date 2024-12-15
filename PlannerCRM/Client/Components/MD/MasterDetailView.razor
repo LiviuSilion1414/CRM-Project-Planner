@@ -20,6 +20,15 @@
                     <RadzenDataGridColumn TItem="@TItem" Title="@prop" Property="@prop" />
                 }
             </Columns>
+            <FooterTemplate>
+                <tr>
+                    <td colspan="2" style="text-align:center;">
+                        <button @onclick="LoadMoreItems" class="btn btn-info">
+                            Load more @_count items
+                        </button>
+                    </td>
+                </tr>
+            </FooterTemplate>
         </RadzenDataGrid>
     </div>
     <div class="side-container">

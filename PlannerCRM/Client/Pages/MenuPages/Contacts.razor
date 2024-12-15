@@ -6,7 +6,7 @@
 <MasterDetailView 
 TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients"
 OnItemSelected="OnItemSelected" OnEditSelected="@IsEditSelected" OnDeleteSelected="@IsDeleteSelected"
-AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDisplayCountSet">
+AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDisplayCountSet" OnLoadMoreItems="LoadMoreItems">
     <AdditionalContent Context="additionalcontent">
         @if (_isEditSelected && _selectedClient is not null)
         {
@@ -51,12 +51,17 @@ AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDis
         await LoadDataFromServer(displayCount);
     }
 
+    private async Task LoadMoreItems(PaginationHelper paginationHelper)
+    {
+        await LoadDataFromServer(paginationHelper);
+    }
+
     private void OnItemSelected(FirmClientDto client) => _selectedClient = client;
 
     private void IsAddClicked() => _isAddClicked = !_isAddClicked;
 
     private void IsEditSelected(bool value) => _isEditSelected = value;
-    
+
     private void IsDeleteSelected(bool value) => _isDeleteSelected = value;
 
     private async Task UpdateItem(FirmClientDto updatedClient)
@@ -76,6 +81,13 @@ AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDis
     private async Task LoadDataFromServer(int displayCount = 25)
     {
         _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{displayCount}/{0}");
+        _isReloadRequired = !_isReloadRequired;
+    }
+
+    private async Task LoadDataFromServer(PaginationHelper paginationHelper)
+    {
+        var newLoadedClients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+        newLoadedClients.ForEach(e => _clients.Add(e));
         _isReloadRequired = !_isReloadRequired;
     }
 }

@@ -12,16 +12,20 @@ public partial class MasterDetailView<TItem> : ComponentBase
     [Parameter] public EventCallback<bool> OnEditSelected { get; set; }
     [Parameter] public EventCallback<bool> OnDeleteSelected { get; set; }
     [Parameter] public EventCallback<int> DisplayCount { get; set; }
+    [Parameter] public EventCallback<PaginationHelper> OnLoadMoreItems { get; set; }
     [Parameter] public RenderFragment<TItem> AdditionalContent { get; set; }
 
     private RadzenDataGrid<TItem> _grid;
-    private TItem _selectedItem = null;
+    private TItem _selectedItem;
+    private PaginationHelper _paginationHelper;
     private int _count = 0;
 
     protected override async Task OnInitializedAsync()
     {
         _grid = new();
+        _selectedItem = default;
         _count = (int)ItemsCount.T25;
+        _paginationHelper = new();
         await SetDisplayCount(_count);
     }
 
@@ -37,12 +41,19 @@ public partial class MasterDetailView<TItem> : ComponentBase
     {
         if (int.TryParse(e.Value?.ToString(), out int displayCount))
         {
-            Console.WriteLine($"display count selected: {displayCount}");
+            _count = displayCount;
             await DisplayCount.InvokeAsync(displayCount);
         }
     }
 
     private async Task SetDisplayCount(int displayCount) => await DisplayCount.InvokeAsync(displayCount);
+
+    private async Task LoadMoreItems()
+    {
+        _paginationHelper.Offset = _grid.Data.Count();
+        _paginationHelper.Limit = _count;
+        await OnLoadMoreItems.InvokeAsync(_paginationHelper);
+    }
 
     private async Task OnRowSelect(TItem item)
     {
