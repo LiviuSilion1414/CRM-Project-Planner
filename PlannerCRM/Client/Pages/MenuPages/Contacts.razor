@@ -4,9 +4,9 @@
 <h3>Contacts</h3>
 
 <MasterDetailView 
-    TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients"
-    OnItemSelected="OnItemSelected" OnEditSelected="@IsEditSelected" OnDeleteSelected="@IsDeleteSelected"
-    AllowPaging="true" AllowFiltering="true" AllowSorting="true" >
+TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients"
+OnItemSelected="OnItemSelected" OnEditSelected="@IsEditSelected" OnDeleteSelected="@IsDeleteSelected"
+AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDisplayCountSet">
     <AdditionalContent Context="additionalcontent">
         @if (_isEditSelected && _selectedClient is not null)
         {
@@ -40,35 +40,24 @@
     private List<string> _selectedColumns = ["Name", "VatNumber"];
 
     private FirmClientDto _selectedClient = null;
+
+    private bool _isAddClicked = false;
     private bool _isEditSelected = false;
     private bool _isDeleteSelected = false;
+    private bool _isReloadRequired = false;
 
-    protected override void OnInitialized()
+    private async Task OnDisplayCountSet(int displayCount)
     {
-        //LoadData();
+        await LoadDataFromServer(displayCount);
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadDataFromServer();
-    }
+    private void OnItemSelected(FirmClientDto client) => _selectedClient = client;
 
-    private void OnItemSelected(FirmClientDto client)
-    {
-        _selectedClient = client;
-    }
+    private void IsAddClicked() => _isAddClicked = !_isAddClicked;
 
-    private void IsEditSelected(bool value)
-    {
-        Console.WriteLine("edit:" + value);
-        Console.WriteLine("client:" + _selectedClient is null);
-        _isEditSelected = value;
-    }
-
-    private void IsDeleteSelected(bool value)
-    {
-        _isDeleteSelected = value;
-    }
+    private void IsEditSelected(bool value) => _isEditSelected = value;
+    
+    private void IsDeleteSelected(bool value) => _isDeleteSelected = value;
 
     private async Task UpdateItem(FirmClientDto updatedClient)
     {
@@ -84,65 +73,9 @@
         }
     }
 
-    private async Task LoadDataFromServer()
+    private async Task LoadDataFromServer(int displayCount = 25)
     {
-        _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{25}/{0}");
-    }
-
-    private void LoadData()
-    {
-        _clients = new List<FirmClientDto>()
-        {
-            new() { Id = 1, Name = "Liviu Silion", VatNumber = "IT12345678901" },
-            new() { Id = 2, Name = "Claire Dubois", VatNumber = "FR12345678901" },
-            new() { Id = 3, Name = "Hans Müller", VatNumber = "DE98765432109" },
-            new() { Id = 4, Name = "Sofia Rossi", VatNumber = "IT56789012345" },
-            new() { Id = 5, Name = "John Smith", VatNumber = "GB123456789" },
-            new() { Id = 6, Name = "Emma Johnson", VatNumber = "US98-1234567" },
-            new() { Id = 7, Name = "Pablo García", VatNumber = "ESB12345678" },
-            new() { Id = 8, Name = "André Silva", VatNumber = "PT123456789" },
-            new() { Id = 9, Name = "Maria Ivanova", VatNumber = "RU7701234567" },
-            new() { Id = 10, Name = "Chen Wei", VatNumber = "CN1234567890" },
-            new() { Id = 11, Name = "Lars Johansson", VatNumber = "SE1234567890" },
-            new() { Id = 12, Name = "Olivia Brown", VatNumber = "US47-9876543" },
-            new() { Id = 13, Name = "Isabella Gallo", VatNumber = "IT45678901234" },
-            new() { Id = 14, Name = "Antonios Papadopoulos", VatNumber = "GR123456789" },
-            new() { Id = 15, Name = "William Clarke", VatNumber = "GB987654321" },
-            new() { Id = 16, Name = "Natalie Dubois", VatNumber = "FR34567890123" },
-            new() { Id = 17, Name = "Karl Schmidt", VatNumber = "DE65432109876" },
-            new() { Id = 18, Name = "Lucia Martínez", VatNumber = "ESX12345678" },
-            new() { Id = 19, Name = "Jens Petersen", VatNumber = "DK12345678" },
-            new() { Id = 20, Name = "Mehmet Yılmaz", VatNumber = "TR9876543210" },
-            new() { Id = 21, Name = "Anna Kowalska", VatNumber = "PL1234567890" },
-            new() { Id = 22, Name = "Matsuki Haruto", VatNumber = "JP123456789" },
-            new() { Id = 23, Name = "Ethan Miller", VatNumber = "US12-3456789" },
-            new() { Id = 24, Name = "Sven Berg", VatNumber = "NO123456789" },
-            new() { Id = 25, Name = "Alicia Costa", VatNumber = "ESQ98765432" },
-            new() { Id = 26, Name = "Dario Ferrari", VatNumber = "IT78901234567" },
-            new() { Id = 27, Name = "Nina Ivanovich", VatNumber = "RU5023456789" },
-            new() { Id = 28, Name = "Michael Novak", VatNumber = "CZ9876543210" },
-            new() { Id = 29, Name = "Luca Moretti", VatNumber = "IT23456789012" },
-            new() { Id = 30, Name = "Camille Lefevre", VatNumber = "FR56789012345" },
-            new() { Id = 31, Name = "Patrick O'Connor", VatNumber = "IE1234567A" },
-            new() { Id = 32, Name = "Marianne Sørensen", VatNumber = "DK87654321" },
-            new() { Id = 33, Name = "Josef Müller", VatNumber = "DE23456789012" },
-            new() { Id = 34, Name = "Ricardo Lima", VatNumber = "PT0987654321" },
-            new() { Id = 35, Name = "Emily Davis", VatNumber = "US83-6543219" },
-            new() { Id = 36, Name = "Alexei Petrov", VatNumber = "RU9870123456" },
-            new() { Id = 37, Name = "Giulia Conti", VatNumber = "IT12340987654" },
-            new() { Id = 38, Name = "Sophia Wong", VatNumber = "CN2345678901" },
-            new() { Id = 39, Name = "Ivan Ivanov", VatNumber = "BG123456789" },
-            new() { Id = 40, Name = "Juan Pérez", VatNumber = "MXR123456789" },
-            new() { Id = 41, Name = "Hassan Ahmed", VatNumber = "AE9876543210" },
-            new() { Id = 42, Name = "Sergio Alves", VatNumber = "BR0123456789" },
-            new() { Id = 43, Name = "Yuki Takahashi", VatNumber = "JP0987654321" },
-            new() { Id = 44, Name = "Leo Svensson", VatNumber = "SE3456789012" },
-            new() { Id = 45, Name = "Marco Russo", VatNumber = "IT09876543211" },
-            new() { Id = 46, Name = "Charlotte Dupont", VatNumber = "FR67890123456" },
-            new() { Id = 47, Name = "Tomás González", VatNumber = "CL1234567890" },
-            new() { Id = 48, Name = "Hiroshi Yamamoto", VatNumber = "JP3456789012" },
-            new() { Id = 49, Name = "Fatima Hassan", VatNumber = "EG987654321" },
-            new() { Id = 50, Name = "Enrico Bianchi", VatNumber = "IT56789012345" },
-        };
+        _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{displayCount}/{0}");
+        _isReloadRequired = !_isReloadRequired;
     }
 }

@@ -4,6 +4,7 @@ global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 global using Radzen;
+global using Radzen.Blazor;
 
 global using PlannerCRM.Client;
 global using PlannerCRM.Client.Interfaces;

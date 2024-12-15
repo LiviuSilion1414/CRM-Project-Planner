@@ -1,11 +1,19 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-<h3>MasterDetailView</h3>
-
 <div class="master-detail-container">
+    <div class="filters-container">
+        <div>
+            <select @onchange="SetDisplayCount">
+                @foreach (var count in Enum.GetValues(typeof(ItemsCount)))
+                {
+                    <option value="@((int) count)">@((int) count)</option>
+                }
+            </select>
+        </div>
+    </div>
     <div class="master-container">
-        <RadzenDataGrid TItem="@TItem" Data="Data" RowSelect="@OnRowSelect" RowDeselect="@OnRowDeselect"
-            AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting">
+        <RadzenDataGrid @ref="_grid" TItem="@TItem" Data="Data" RowSelect="@OnRowSelect" RowDeselect="@OnRowDeselect"
+            AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting" FilterDelay="0" >
             <Columns>
                 @foreach (var prop in Properties)
                 {

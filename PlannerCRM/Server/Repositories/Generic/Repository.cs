@@ -27,11 +27,12 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
     {
         var item = await _context.Set<TInput>().FindAsync(id);
 
-        item = _mapper.Map<TInput>(model);
+        if (item is not null)
+        {
+            _mapper.Map(model, item);
 
-        _context.Set<TInput>().Update(item);
-
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+        }
     }
 
     public virtual async Task<TOutput> GetByIdAsync(int id)

@@ -2,6 +2,10 @@
     display: flex;
 }
 
+.filters-container {
+    display: flex;
+}
+
 .master-container {
     width: 50vw;
     height: 50vh;
