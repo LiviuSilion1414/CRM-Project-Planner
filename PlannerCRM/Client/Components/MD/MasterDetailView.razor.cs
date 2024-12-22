@@ -34,6 +34,7 @@ public partial class MasterDetailView<TItem> : ComponentBase
         if (IsReloadRequired)
         {
             _grid.Reload();
+            StateHasChanged();
         }
     }
 

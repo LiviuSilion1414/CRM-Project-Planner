@@ -8,7 +8,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     public async Task<FirmClientDto> SearchClientByName(string clientName)
     {
         var foundClient = await _context.Clients
-            .SingleOrDefaultAsync(cl => EF.Functions.ILike(cl.Name, $"{clientName}"));
+            .SingleOrDefaultAsync(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%")); //more items
 
         return _mapper.Map<FirmClientDto>(foundClient);
     }

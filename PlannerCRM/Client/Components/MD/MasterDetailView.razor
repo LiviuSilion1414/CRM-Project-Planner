@@ -12,8 +12,8 @@
         </div>
     </div>
     <div class="master-container">
-        <RadzenDataGrid @ref="_grid" TItem="@TItem" Data="Data" RowSelect="@OnRowSelect" RowDeselect="@OnRowDeselect"
-            AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting" FilterDelay="0" >
+        <RadzenDataGrid @ref="_grid"  TItem="@TItem" Data="Data" RowSelect="@OnRowSelect" RowDeselect="@OnRowDeselect"
+            AllowPaging="AllowPaging" AllowFiltering="AllowFiltering" AllowSorting="AllowSorting" FilterDelay="0">
             <Columns>
                 @foreach (var prop in Properties)
                 {
@@ -21,13 +21,21 @@
                 }
             </Columns>
             <FooterTemplate>
-                <tr>
-                    <td colspan="2" style="text-align:center;">
-                        <button @onclick="LoadMoreItems" class="btn btn-info">
-                            Load more @_count items
-                        </button>
-                    </td>
-                </tr>
+                @if (Data is not null)
+                {
+                    <tr >
+                        <td>
+                            <strong>Total items: @Data.Count</strong>
+                        </td>
+                        <td></td>
+
+                        <td style="text-align:center;float: right; padding-right: 10px;  justify-content:center; display: inline;" colspan="2">
+                            <button @onclick="LoadMoreItems" class="btn btn-info">
+                                Load more @_count items
+                            </button>
+                        </td>
+                    </tr>
+                }
             </FooterTemplate>
         </RadzenDataGrid>
     </div>
