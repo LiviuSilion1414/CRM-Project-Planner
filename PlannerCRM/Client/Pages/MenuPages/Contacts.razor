@@ -3,6 +3,7 @@
 
 <h3>Contacts</h3>
 
+@*
 <MasterDetailView 
 TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients"
 OnItemSelected="OnItemSelected" OnEditSelected="@IsEditSelected" OnDeleteSelected="@IsDeleteSelected"
@@ -34,6 +35,10 @@ AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDis
         }
     </AdditionalContent>
 </MasterDetailView>
+*@
+
+
+<DataGridView TItem="@FirmClientDto" Data="@_clients" Properties="@_selectedColumns" />
 
 @code {
     private List<FirmClientDto> _clients;
@@ -45,6 +50,11 @@ AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDis
     private bool _isEditSelected = false;
     private bool _isDeleteSelected = false;
     private bool _isReloadRequired = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataFromServer();
+    }
 
     private async Task OnDisplayCountSet(int displayCount)
     {

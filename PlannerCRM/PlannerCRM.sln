@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35506.116 d17.12
+VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 16.0.0.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlannerCRM.Server", "Server\PlannerCRM.Server.csproj", "{9471FD13-C7EA-4D2B-8F8A-ED4BD7E367B6}"
 EndProject

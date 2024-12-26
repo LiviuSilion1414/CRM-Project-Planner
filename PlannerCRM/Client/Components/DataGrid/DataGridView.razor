@@ -1,0 +1,36 @@
+﻿@typeparam TItem where TItem: class, new()
+
+@if (Data is null)
+{
+    <p>loading...</p>
+} 
+else {
+    <div class="container text-center">
+        <div class="row">
+            @foreach (var prop in Properties)
+            {
+                <div class="col">
+                    <strong>@prop</strong>
+                </div>
+            }
+        </div>
+        <div class="row">
+            @foreach (var item in Data)
+            {
+                <div class="row">
+                    @foreach (var prop in Properties)
+                    {
+                        <div class="col">
+                            @item.GetType().GetProperty(prop).GetValue(item)
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public IEnumerable<string> Properties { get; set; }
+    [Parameter] public IEnumerable<TItem> Data { get; set; }
+}

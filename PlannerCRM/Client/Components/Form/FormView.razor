@@ -1,13 +1,13 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-<RadzenCard Style=" margin-top: 50px;">
+<div style="margin-top: 50px;">
     <EditForm EditContext="_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
             @FormContent(Model)
-        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Success" Text="Submit"/>
+        <button type="submit" class="btn btn-primary">Save</button>
     </EditForm>
-</RadzenCard>
+</div>
 
 @code 
 {

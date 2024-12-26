@@ -1,10 +1,10 @@
-﻿<RadzenAlert AllowClose="true" Icon="warning" IconColor="red" Text="Attention" Close="OnCancel" Visible="_isVisible">
+﻿<div class="alert-danger">
     <strong>Do you really want to delete the selected item?</strong>
     <div>
         <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="undo" Text="Cancel" Click="@OnCancel"/>
         <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="delete" Text="Delete" Click="@OnDelete"/>
     </div>
-</RadzenAlert>
+</div>
 
 @code {
     [Parameter] public EventCallback<bool> IsDeleteConfirmed { get; set; }
