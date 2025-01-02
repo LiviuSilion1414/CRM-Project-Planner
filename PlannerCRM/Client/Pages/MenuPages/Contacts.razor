@@ -1,44 +1,77 @@
 ﻿@page "/contacts"
 @inject HttpClient http
 
-<h3>Contacts</h3>
+<style>
+    .master-detail-container {
+        display: flex;
+    }
 
-@*
-<MasterDetailView 
-TItem="FirmClientDto" Properties="_selectedColumns" Data="_clients"
-OnItemSelected="OnItemSelected" OnEditSelected="@IsEditSelected" OnDeleteSelected="@IsDeleteSelected"
-AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDisplayCountSet" OnLoadMoreItems="LoadMoreItems">
-    <AdditionalContent Context="additionalcontent">
-        @if (_isEditSelected && _selectedClient is not null)
+    .filters-container {
+        display: flex;
+    }
+
+    .master, .detail {
+        display: inline-block;
+        width: 50vw;
+    }
+
+    .detail {
+        padding-left: 50px;
+    }
+</style>
+
+<div class="master-detail-container">
+    @if (_clients is not null)
+    {
+        <div class="filters-container">
+            <DisplayView 
+                CurrentItems="@_clients.Count" 
+                DisplayCount="@OnDisplayCountSet" 
+                OnLoadMoreItems="@LoadMoreItems" />
+        </div>
+        <div class="master">
+            <DataGridView 
+                TItem="@FirmClientDto" 
+                Data="@_clients" 
+                Properties="@_selectedColumns" 
+                RowSelect="@OnItemSelected"
+                RowEdit="IsEditSelected"
+                RowDelete="IsDeleteSelected"/>
+        </div>
+    }
+    <div class="detail">
+        @if (_isItemSelected)
+        {
+            <ItemPanel 
+                TItem="@FirmClientDto" 
+                Item="@_selectedClient" 
+                Properties="@_selectedColumns" 
+                OnEdit="@IsEditSelected" 
+                OnDelete="@IsDeleteSelected" />
+        }
+        else if (_isEditSelected)
         {
             <FormView TItem="@FirmClientDto" Model="@_selectedClient" OnUpdatedItem="@UpdateItem">
                 <FormContent Context="formcontent">
                     <div class="form-group">
                         <label>@nameof(_selectedClient.Name):</label>
-                        <InputText @bind-Value="@_selectedClient.Name"/>
+                        <InputText class="form-control w-auto" @bind-Value="@_selectedClient.Name" />
                     </div>
                     <div class="form-group">
                         <label>@nameof(_selectedClient.VatNumber):</label>
-                        <InputText @bind-Value="@_selectedClient.VatNumber" />
+                        <InputText class="form-control w-auto" @bind-Value="@_selectedClient.VatNumber" />
                     </div>
                 </FormContent>
             </FormView>
         }
         else if (_isDeleteSelected)
         {
-            <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed"/>
+            <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed" />
         }
-
         else
-        {
-            <p>Select one action from above!</p>
-        }
-    </AdditionalContent>
-</MasterDetailView>
-*@
-
-
-<DataGridView TItem="@FirmClientDto" Data="@_clients" Properties="@_selectedColumns" />
+        {}
+    </div>
+</div>
 
 @code {
     private List<FirmClientDto> _clients;
@@ -49,6 +82,7 @@ AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDis
     private bool _isAddClicked = false;
     private bool _isEditSelected = false;
     private bool _isDeleteSelected = false;
+    private bool _isItemSelected = false;
     private bool _isReloadRequired = false;
 
     protected override async Task OnInitializedAsync()
@@ -66,13 +100,23 @@ AllowPaging="true" AllowFiltering="true" AllowSorting="true" DisplayCount="OnDis
         await LoadDataFromServer(paginationHelper);
     }
 
-    private void OnItemSelected(FirmClientDto client) => _selectedClient = client;
+    private void OnItemSelected(FirmClientDto client) 
+    {
+        _selectedClient = client;
+        _isItemSelected = !_isItemSelected;
+    }
 
     private void IsAddClicked() => _isAddClicked = !_isAddClicked;
 
-    private void IsEditSelected(bool value) => _isEditSelected = value;
+    private void IsEditSelected() 
+    {
+        _isEditSelected = !_isEditSelected; 
+    }
 
-    private void IsDeleteSelected(bool value) => _isDeleteSelected = value;
+    private void IsDeleteSelected() 
+    {
+        _isDeleteSelected = !_isDeleteSelected;
+    }
 
     private async Task UpdateItem(FirmClientDto updatedClient)
     {

@@ -1,34 +1,69 @@
 ﻿@typeparam TItem where TItem: class, new()
 
-@if (Data is null)
-{
-    <p>loading...</p>
-} 
-else {
-    <table class="table table-striped w-50">
-        <thead>
-            <tr>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            @foreach (var prop in Properties)
+            {
+                <th>@prop</th>
+            }
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in _currentPage)
+        {
+            <tr @onclick="@(() => OnSelectedItem(item))" style="cursor: pointer;">
                 @foreach (var prop in Properties)
                 {
-                    <th>@prop</th>
+                    <td>@item.GetType().GetProperty(prop).GetValue(item)</td>
+                }
+                <td @onclick="@(() => OnEditSelected(item))"><i class="bi bi-pencil-square"></i></td>
+                <td @onclick="@(() => OnDeleteSelected(item))"><i class="bi bi-trash3"></i></td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <div>
+            <tr>
+                @for (var i = 0; i <= _totalPages; i++)
+                {
+                    <td>
+                        <button class="btn btn-info" @onclick="(() => SetCurrentPage(i))">@i</button>
+                    </td>
                 }
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Data)
-            {
-                <tr>
-                    @foreach (var prop in Properties)
-                    {
-                        <td>@item.GetType().GetProperty(prop).GetValue(item)</td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+        </div>
+    </tfoot>
+</table>
 
 @code {
     [Parameter] public IEnumerable<string> Properties { get; set; }
     [Parameter] public IEnumerable<TItem> Data { get; set; }
+    [Parameter] public EventCallback<TItem> RowSelect { get; set; }
+    [Parameter] public EventCallback<TItem> RowEdit { get; set; }
+    [Parameter] public EventCallback<TItem> RowDelete { get; set; }
+
+    private IEnumerable<TItem> _currentPage = null;
+    private int _currentPageNumber = 0;
+    private int _totalPages = 0;
+    private int _pageSize = 10;
+
+    protected override void OnInitialized()
+    {
+        _totalPages = (int) Math.Ceiling((double)Data.Count() / _pageSize);
+        SetCurrentPage();
+    }
+
+    private async Task OnSelectedItem(TItem item) => await RowSelect.InvokeAsync(item);
+
+    private async Task OnEditSelected(TItem item) => await RowEdit.InvokeAsync(item);
+
+    private async Task OnDeleteSelected(TItem item) => await RowDelete.InvokeAsync(item);
+
+    private void SetCurrentPage(int pageNumber = 1)
+    {
+        _currentPage = Data.Skip(pageNumber * _pageSize).Take(pageNumber * _pageSize);
+    }
 }
