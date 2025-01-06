@@ -9,8 +9,16 @@
                 @Body
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-info" @onclick="@OnFirstAction">@FirstActionText</button>
-                <button type="button" class="btn btn-outline-danger" @onclick="@OnSecondAction">@SecondActionText</button>
+                @if (FirstAction is null || SecondAction is null)
+                {
+                    <div style="float: left;">
+                        <button type="button" class="btn btn-outline-info" @onclick="@CloseModal">@_closeModal</button>
+                    </div>
+                }
+                <div style="float: right;">
+                    <button type="button" class="btn btn-outline-success" @onclick="@OnFirstAction" hidden="@(FirstAction is null)">@FirstActionText</button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="@OnSecondAction" hidden="@(SecondAction is null)">@SecondActionText</button>
+                </div>
             </div>
         </div>
     </div>
@@ -24,6 +32,7 @@
     [Parameter] public Action SecondAction { get; set; }
     [Parameter] public string SecondActionText { get; set; }
 
+    private string _closeModal = "Close";
     private bool _hidden = false;
 
     private void CloseModal() => _hidden = !_hidden;
