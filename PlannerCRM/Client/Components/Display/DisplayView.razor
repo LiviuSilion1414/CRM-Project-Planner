@@ -1,6 +1,6 @@
 ﻿<div class="filters-container">
     <div>
-        <InputSelect @bind-Value="@ItemsToDisplay" class="form-control" @onchange="SetDisplayCount">
+        <InputSelect @bind-Value="@ItemsToDisplay" class="form-select" @onchange="SetDisplayCount">
             @foreach (var count in Enum.GetValues(typeof(ItemsCount)))
             {
                 <option value="@((int) count)">@((int)count)</option>
