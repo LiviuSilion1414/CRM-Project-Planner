@@ -9,8 +9,8 @@
                 @Body
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-info" @onclick="@FirstAction">@FirstActionText</button>
-                <button type="button" class="btn btn-outline-danger" @onclick="@SecondAction">@SecondActionText</button>
+                <button type="button" class="btn btn-outline-info" @onclick="@OnFirstAction">@FirstActionText</button>
+                <button type="button" class="btn btn-outline-danger" @onclick="@OnSecondAction">@SecondActionText</button>
             </div>
         </div>
     </div>
@@ -27,4 +27,16 @@
     private bool _hidden = false;
 
     private void CloseModal() => _hidden = !_hidden;
+
+    private void OnFirstAction()
+    {
+        FirstAction?.Invoke();
+        CloseModal();
+    }
+
+    private void OnSecondAction()
+    {
+        SecondAction?.Invoke();
+        CloseModal();
+    }
 }
