@@ -1,37 +1,44 @@
 ﻿<div class="filters-container">
     <div>
-        <select @onchange="SetDisplayCount">
+        <InputSelect @bind-Value="@ItemsToDisplay" class="form-control" @onchange="SetDisplayCount">
             @foreach (var count in Enum.GetValues(typeof(ItemsCount)))
             {
                 <option value="@((int) count)">@((int)count)</option>
             }
-        </select>
+        </InputSelect>
     </div>
 </div>
 
 @code {
+    [Parameter] public int ItemsToDisplay { get; set; }
     [Parameter] public int CurrentItems { get; set; }
     [Parameter] public EventCallback<int> DisplayCount { get; set; }
     [Parameter] public EventCallback<PaginationHelper> OnLoadMoreItems { get; set; }
 
     private PaginationHelper _paginationHelper;
-    private int _count = (int) ItemsCount.T25;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ItemsToDisplay == 0)
+        {
+            ItemsToDisplay = (int)ItemsCount.T50;
+        }
+        await DisplayCount.InvokeAsync(ItemsToDisplay);
+    }
 
     private async Task SetDisplayCount(ChangeEventArgs e)
     {
         if (int.TryParse(e.Value?.ToString(), out int displayCount))
         {
-            _count = displayCount;
+            ItemsToDisplay = displayCount;
             await DisplayCount.InvokeAsync(displayCount);
         }
     }
 
-    private async Task SetDisplayCount(int displayCount) => await DisplayCount.InvokeAsync(displayCount);
-
     private async Task LoadMoreItems()
     {
         _paginationHelper.Offset = CurrentItems; 
-        _paginationHelper.Limit = _count;
+        _paginationHelper.Limit = ItemsToDisplay;
         await OnLoadMoreItems.InvokeAsync(_paginationHelper);
     }
 }

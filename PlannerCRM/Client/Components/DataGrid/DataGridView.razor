@@ -1,4 +1,4 @@
-﻿@typeparam TItem where TItem: class, new()
+﻿@typeparam TItem where TItem : class, new()
 
 <table class="table table-striped">
     <thead>
@@ -8,34 +8,23 @@
                 <th>@prop</th>
             }
             <th></th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in _currentPage)
+        @foreach (var item in Data)
         {
             <tr @onclick="@(() => OnSelectedItem(item))" style="cursor: pointer;">
                 @foreach (var prop in Properties)
                 {
-                    <td>@item.GetType().GetProperty(prop).GetValue(item)</td>
+                    <td>@GetItemValue(item, prop)</td>
                 }
-                <td @onclick="@(() => OnEditSelected(item))"><i class="bi bi-pencil-square"></i></td>
-                <td @onclick="@(() => OnDeleteSelected(item))"><i class="bi bi-trash3"></i></td>
+                <td colspan="2">
+                    <i class="bi bi-pencil-square" @onclick="@(() => OnEditSelected(item))"></i>
+                    <i class="bi bi-trash3" @onclick="@(() => OnDeleteSelected(item))"></i>
+                </td>
             </tr>
         }
     </tbody>
-    <tfoot>
-        <div>
-            <tr>
-                @for (var i = 0; i <= _totalPages; i++)
-                {
-                    <td>
-                        <button class="btn btn-info" @onclick="(() => SetCurrentPage(i))">@i</button>
-                    </td>
-                }
-            </tr>
-        </div>
-    </tfoot>
 </table>
 
 @code {
@@ -45,16 +34,6 @@
     [Parameter] public EventCallback<TItem> RowEdit { get; set; }
     [Parameter] public EventCallback<TItem> RowDelete { get; set; }
 
-    private IEnumerable<TItem> _currentPage = null;
-    private int _currentPageNumber = 0;
-    private int _totalPages = 0;
-    private int _pageSize = 10;
-
-    protected override void OnInitialized()
-    {
-        _totalPages = (int) Math.Ceiling((double)Data.Count() / _pageSize);
-        SetCurrentPage();
-    }
 
     private async Task OnSelectedItem(TItem item) => await RowSelect.InvokeAsync(item);
 
@@ -62,8 +41,8 @@
 
     private async Task OnDeleteSelected(TItem item) => await RowDelete.InvokeAsync(item);
 
-    private void SetCurrentPage(int pageNumber = 1)
-    {
-        _currentPage = Data.Skip(pageNumber * _pageSize).Take(pageNumber * _pageSize);
-    }
+    private object GetItemValue(TItem item, string propertyName) =>
+        item.GetType()
+            .GetProperty(propertyName)?
+            .GetValue(item);
 }

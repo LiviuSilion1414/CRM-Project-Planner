@@ -3,20 +3,20 @@
 
 <style>
     .master-detail-container {
-        display: flex;
+    display: flex;
     }
 
     .filters-container {
-        display: flex;
+    display: flex;
     }
 
     .master, .detail {
-        display: inline-block;
-        width: 50vw;
+    display: inline-block;
+    width: 50vw;
     }
 
     .detail {
-        padding-left: 50px;
+    padding-left: 50px;
     }
 </style>
 
@@ -25,29 +25,30 @@
     {
         <div class="filters-container">
             <DisplayView 
-                CurrentItems="@_clients.Count" 
-                DisplayCount="@OnDisplayCountSet" 
-                OnLoadMoreItems="@LoadMoreItems" />
+            ItemsToDisplay="@_displayCount"
+            CurrentItems="@_clients.Count" 
+            DisplayCount="@OnDisplayCountSet" 
+            OnLoadMoreItems="@LoadMoreItems" />
         </div>
         <div class="master">
             <DataGridView 
-                TItem="@FirmClientDto" 
-                Data="@_clients" 
-                Properties="@_selectedColumns" 
-                RowSelect="@OnItemSelected"
-                RowEdit="IsEditSelected"
-                RowDelete="IsDeleteSelected"/>
+            TItem="@FirmClientDto" 
+            Data="@_clients" 
+            Properties="@_selectedColumns"
+            RowSelect="@OnItemSelected"
+            RowEdit="IsEditSelected"
+            RowDelete="IsDeleteSelected"/>
         </div>
     }
     <div class="detail">
         @if (_isItemSelected)
         {
             <ItemPanel 
-                TItem="@FirmClientDto" 
-                Item="@_selectedClient" 
-                Properties="@_selectedColumns" 
-                OnEdit="@IsEditSelected" 
-                OnDelete="@IsDeleteSelected" />
+            TItem="@FirmClientDto" 
+            Item="@_selectedClient" 
+            Properties="@_selectedColumns" 
+            OnEdit="@IsEditSelected" 
+            OnDelete="@IsDeleteSelected" />
         }
         else if (_isEditSelected)
         {
@@ -77,17 +78,17 @@
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumns = ["Name", "VatNumber"];
 
+    private int _displayCount = (int)ItemsCount.T50;
     private FirmClientDto _selectedClient = null;
 
     private bool _isAddClicked = false;
     private bool _isEditSelected = false;
     private bool _isDeleteSelected = false;
     private bool _isItemSelected = false;
-    private bool _isReloadRequired = false;
-
+    
     protected override async Task OnInitializedAsync()
     {
-        await LoadDataFromServer();
+        await LoadDataFromServer(_displayCount);
     }
 
     private async Task OnDisplayCountSet(int displayCount)
@@ -132,16 +133,14 @@
         }
     }
 
-    private async Task LoadDataFromServer(int displayCount = 25)
+    private async Task LoadDataFromServer(int displayCount)
     {
         _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{displayCount}/{0}");
-        _isReloadRequired = !_isReloadRequired;
     }
 
     private async Task LoadDataFromServer(PaginationHelper paginationHelper)
     {
         var newLoadedClients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
         newLoadedClients.ForEach(e => _clients.Add(e));
-        _isReloadRequired = !_isReloadRequired;
     }
 }
