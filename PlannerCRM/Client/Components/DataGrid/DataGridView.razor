@@ -11,7 +11,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Data)
+        @foreach (var item in _paginatedData)
         {
             <tr @onclick="@(() => OnSelectedItem(item))" style="cursor: pointer;">
                 @foreach (var prop in Properties)
@@ -25,6 +25,19 @@
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-center">
+                @for (var pageNumber = 1; pageNumber <= _totalPages; pageNumber++)
+                {
+                    var currentPage = pageNumber;
+                    <button class="btn btn-outline-primary me-1" @onclick="@(() => GetPaginatedData((currentPage - 1) * _pageSize))">
+                        @pageNumber
+                    </button>
+                }
+            </td>
+        </tr>
+    </tfoot>
 </table>
 
 @code {
@@ -34,6 +47,18 @@
     [Parameter] public EventCallback<TItem> RowEdit { get; set; }
     [Parameter] public EventCallback<TItem> RowDelete { get; set; }
 
+    private IEnumerable<TItem> _paginatedData = Enumerable.Empty<TItem>();
+
+    public int _pageSize = 10;
+    private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
+
+    protected override void OnParametersSet()
+    {
+        if (Data != null && Data.Any())
+        {
+            GetPaginatedData(offset: 0);
+        }
+    }
 
     private async Task OnSelectedItem(TItem item) => await RowSelect.InvokeAsync(item);
 
@@ -45,4 +70,19 @@
         item.GetType()
             .GetProperty(propertyName)?
             .GetValue(item);
+
+    private void GetPaginatedData(int offset) 
+    {
+        _paginatedData = Data
+            .Skip(offset)
+            .Take(_pageSize)
+            .ToList();
+
+        Console.WriteLine($"Is Empty: {!_paginatedData.Any()}");
+        foreach (var i in _paginatedData)
+        {
+            Console.WriteLine(GetItemValue(i, "Name"));
+        }
+    }
+    
 }
