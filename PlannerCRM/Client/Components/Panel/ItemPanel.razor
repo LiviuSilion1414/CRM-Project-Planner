@@ -1,29 +1,22 @@
-﻿@typeparam TItem where TItem: class, new()
+﻿@typeparam TItem where TItem : class, new()
 
-<h3>ItemPanel</h3>
-
-<div style="border: 2px solid black; padding: 5px; border-radius: 5px; width: max-content;">
-    @foreach (var prop in Properties)
-    {
-        <p>@(prop): <strong>@GetObjectValue(prop)</strong></p>
-    }
-    @if (Fragments is not null)
-    {
-        @foreach (var fragment in Fragments)
+<Modal Size="@ModalSize.LARGE" Title="Client details"
+       FirstActionText="Edit" SecondActionText="Delete"
+       FirstAction="@(async () => await OnEdit.InvokeAsync())"
+       SecondAction="@(async () => await OnDelete.InvokeAsync())">
+    <Body>
+        @foreach (var prop in Properties)
         {
-            @fragment
+            <p>@(prop): <strong>@GetObjectValue(prop)</strong></p>
         }
-    }
-    <div>
-        <button type="button" class="btn btn-primary" @onclick="@OnEditSelected">Edit</button>
-        <button type="button" class="btn btn-danger" @onclick="@OnDeleteSelected">Delete</button>
-    </div>
-</div>
+        @Content
+    </Body>
+</Modal>
 
 @code {
     [Parameter] public TItem Item { get; set; }
     [Parameter] public IEnumerable<string> Properties { get; set; }
-    [Parameter] public IEnumerable<RenderFragment> Fragments { get; set; }
+    [Parameter] public RenderFragment Content { get; set; }
     [Parameter] public EventCallback OnEdit { get; set; }
     [Parameter] public EventCallback OnDelete { get; set; }
 
@@ -32,8 +25,4 @@
             .GetType()
             .GetProperty(propertyName)
             .GetValue(Item);
-
-    private async Task OnEditSelected() => await OnEdit.InvokeAsync();
-
-    private async Task OnDeleteSelected() => await OnDelete.InvokeAsync();
 }
