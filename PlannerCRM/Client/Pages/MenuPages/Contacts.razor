@@ -7,8 +7,17 @@
         display: flex;
     }
 
-    .filters-container {
+    .actions {
+        width: 100px;
         display: flex;
+        flex-direction: column;
+        margin-right: 20px;
+    }
+
+    .action {
+        width: auto;
+        height: max-content;
+        padding-bottom: 5px;
     }
 
     .master, .detail {
@@ -19,33 +28,59 @@
     .detail {
         padding-left: 50px;
     }
+
+    .over {
+        position: fixed;
+    }
 </style>
 
 <div class="master-detail-container">
+    <div class="actions">
+        <div class="action">
+            <button class="action btn btn-outline-primary" @onclick="IsAddClicked">Add</button>
+        </div>
+
+        @if (_isItemSelected || _isEditSelected || _isDeleteSelected)
+        {
+            <div class="action">
+                <button class="action btn btn-outline-info" @onclick="IsEditSelected">Edit</button>
+            </div>
+            <div>
+                <button class="action btn btn-outline-danger" @onclick="IsDeleteSelected">Delete</button>
+            </div>
+        }
+
+    </div>
     @if (_clients is not null)
     {
         <div class="master">
-            <DataGridView 
-            TItem="@FirmClientDto" 
-            Data="@_clients" 
-            Properties="@_selectedColumns"
-            RowSelect="@OnItemSelected"
-            RowEdit="IsEditSelected"
-            RowDelete="IsDeleteSelected"/>
+            <DataGridView TItem="@FirmClientDto"
+                          Data="@_clients"
+                          Properties="@_selectedColumnsForClient"
+                          RowSelect="@OnItemSelected"
+                          RowEdit="IsEditSelected"
+                          RowDelete="IsDeleteSelected" />
         </div>
     }
-    <div class="detail">
-        @if (_isItemSelected)
-        {
-            <ItemPanel 
-            TItem="@FirmClientDto" 
-            Item="@_selectedClient" 
-            Properties="@_selectedColumns" 
-            OnEdit="@IsEditSelected" 
-            OnDelete="@IsDeleteSelected" />
-        }
-        else if (_isEditSelected)
-        {
+    @if (_isItemSelected)
+    {
+        <div class="over">
+            <ItemPanel TItem="@FirmClientDto"
+                       Item="@_selectedClient"
+                       Properties="@_selectedColumnsForClient"
+                       OnEdit="@IsEditSelected"
+                       OnDelete="@IsDeleteSelected">
+                <Content>
+                    <DataGridView TItem="@WorkOrderDto"
+                                  Data="@_selectedClient.WorkOrdersDto"
+                                  Properties="@_selectedColumnsForWorkOrder"/>
+                </Content>
+            </ItemPanel>
+        </div>
+    }
+    @if (_isEditSelected)
+    {
+        <div class="detail">
             <FormView TItem="@FirmClientDto" Model="@_selectedClient" OnUpdatedItem="@UpdateItem">
                 <FormContent Context="formcontent">
                     <div class="form-group">
@@ -56,21 +91,26 @@
                         <label>@nameof(_selectedClient.VatNumber):</label>
                         <InputText class="form-control w-auto" @bind-Value="@_selectedClient.VatNumber" />
                     </div>
+                    <div class="form-group">
+                        <br />
+                        <label>WorkOrders</label>
+                        <div class="master">
+                            <DataGridView TItem="@WorkOrderDto"
+                                          Data="@_selectedClient.WorkOrdersDto"
+                                          Properties="@_selectedColumnsForClient" />
+                        </div>
+                    </div>
                 </FormContent>
             </FormView>
-        }
-        else if (_isDeleteSelected)
-        {
-            <AlertComponent IsDeleteConfirmed="OnDeleteConfirmed" />
-        }
-        else
-        {}
-    </div>
+        </div>
+    }
 </div>
 
 @code {
     private List<FirmClientDto> _clients;
-    private List<string> _selectedColumns = ["Name", "VatNumber"];
+    private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
+
+    private List<string> _selectedColumnsForWorkOrder = ["Name", "CreationTime", "StartDate", "EndDate"];
 
     private int _displayCount = (int)ItemsCount.T100;
     private FirmClientDto _selectedClient = null;
@@ -85,7 +125,7 @@
         await LoadData(new PaginationHelper { Limit = _displayCount, Offset = 0 });
     }
 
-    private void OnItemSelected(FirmClientDto client) 
+    private void OnItemSelected(FirmClientDto client)
     {
         _selectedClient = client;
         _isItemSelected = !_isItemSelected;
@@ -95,8 +135,14 @@
 
     private void IsEditSelected() => _isEditSelected = !_isEditSelected;
 
-    private void IsDeleteSelected() => _isDeleteSelected = !_isDeleteSelected;
-
+    private async Task IsDeleteSelected()
+    {
+        _isDeleteSelected = !_isDeleteSelected;
+        if (_isDeleteSelected)
+        {
+            await DeleteItem();
+        }
+    }
 
     private async Task UpdateItem(FirmClientDto updatedClient)
     {
@@ -104,13 +150,10 @@
         StateHasChanged();
     }
 
-    private async Task OnDeleteConfirmed(bool isConfirmed)
+    private async Task DeleteItem()
     {
-        if (isConfirmed)
-        {
-            await http.DeleteAsync($"api/client/delete/{_selectedClient.Id}");
-            StateHasChanged();
-        }
+        await http.DeleteAsync($"api/client/delete/{_selectedClient.Id}");
+        StateHasChanged();
     }
 
     private async Task LoadData(PaginationHelper paginationHelper)
