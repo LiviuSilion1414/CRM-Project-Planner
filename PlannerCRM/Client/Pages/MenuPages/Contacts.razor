@@ -85,7 +85,7 @@
     private bool _isEditSelected = false;
     private bool _isDeleteSelected = false;
     private bool _isItemSelected = false;
-    
+
     protected override async Task OnInitializedAsync()
     {
         await LoadDataFromServer(_displayCount);
@@ -136,11 +136,13 @@
     private async Task LoadDataFromServer(int displayCount)
     {
         _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{displayCount}/{0}");
+        StateHasChanged();
     }
 
     private async Task LoadDataFromServer(PaginationHelper paginationHelper)
     {
         var newLoadedClients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
         newLoadedClients.ForEach(e => _clients.Add(e));
+        StateHasChanged();
     }
 }

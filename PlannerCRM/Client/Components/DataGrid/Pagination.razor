@@ -1,67 +1,36 @@
 ﻿@typeparam TItem
 
 <div class="pagination-controls">
-    <!-- Navigazione tra pagine -->
-    <button class="btn btn-secondary me-2" @onclick="PreviousPage" disabled="@IsPreviousDisabled">Previous</button>
-
-    @foreach (var pageNumber in Enumerable.Range(1, TotalPages))
+    @for (var pageNumber = 1; pageNumber <= _totalPages; pageNumber++)
     {
-        <button class="btn @(CurrentPage == pageNumber ? "btn-primary" : "btn-outline-primary") me-1"
-                @onclick="() => GoToPage(pageNumber)">
+        var currentPage = pageNumber;
+        <button class="btn @(_currentPage == currentPage ? "btn-primary" : "btn-outline-primary") me-1" @onclick="@(() => GetPaginatedData((currentPage - OFFSET) * PageSize, currentPage))">
             @pageNumber
         </button>
     }
-
-    <button class="btn btn-secondary ms-2" @onclick="NextPage" disabled="@IsNextDisabled">Next</button>
 </div>
 
-@code {
+@code 
+{
     [Parameter] public IEnumerable<TItem> Data { get; set; }
     [Parameter] public EventCallback<IEnumerable<TItem>> OnPagination { get; set; }
     [Parameter] public int PageSize { get; set; } = 10;
 
-    private int CurrentPage { get; set; } = 1;
-    private int TotalPages => (int)Math.Ceiling((double)Data.Count() / PageSize);
+    private const int OFFSET = 1;
 
-    private bool IsPreviousDisabled => CurrentPage == 1;
-    private bool IsNextDisabled => CurrentPage == TotalPages;
+    private int _currentPage = 1;
+    private int _totalPages => (int)Math.Ceiling((double)Data.Count() / PageSize);
 
-    protected override void OnParametersSet()
+    private IEnumerable<TItem> _paginatedData = Enumerable.Empty<TItem>();
+  
+    private async Task GetPaginatedData(int offset, int pageNumber)
     {
-        // Inizializza i dati paginati
-        Paginate();
-    }
+        _currentPage = pageNumber;
+        _paginatedData = Data
+            .Skip(offset)
+            .Take(PageSize)
+            .ToList();
 
-    private void Paginate()
-    {
-        var paginatedData = Data.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
-        OnPagination.InvokeAsync(paginatedData);
-    }
-
-    private void GoToPage(int pageNumber)
-    {
-        if (pageNumber >= 1 && pageNumber <= TotalPages)
-        {
-            CurrentPage = pageNumber;
-            Paginate();
-        }
-    }
-
-    private void PreviousPage()
-    {
-        if (CurrentPage > 1)
-        {
-            CurrentPage--;
-            Paginate();
-        }
-    }
-
-    private void NextPage()
-    {
-        if (CurrentPage < TotalPages)
-        {
-            CurrentPage++;
-            Paginate();
-        }
+        await OnPagination.InvokeAsync(_paginatedData);
     }
 }
