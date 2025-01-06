@@ -1,13 +1,17 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-<div style="border: 2px solid black; padding: 5px; border-radius: 5px; width: max-content;">
-    <EditForm EditContext="_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-            @FormContent(Model)
-        <button type="submit" class="btn btn-primary">Save</button>
-    </EditForm>
-</div>
+<Modal Size="@ModalSize.LARGE" Title="Edit the selected item" FirstAction="(async () => await OnValidSubmit())" FirstActionText="Submit">
+    <Body>
+        <EditForm EditContext="_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+                @FormContent(Model)
+            @*
+                <button type="submit" class="btn btn-primary">Save</button>
+            *@
+        </EditForm>
+    </Body>
+</Modal>
 
 @code 
 {
