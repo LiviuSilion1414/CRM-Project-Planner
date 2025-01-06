@@ -5,9 +5,9 @@
        FirstAction="@(async () => await OnEdit.InvokeAsync())"
        SecondAction="@(async () => await OnDelete.InvokeAsync())">
     <Body>
-        @foreach (var prop in Properties)
+        @foreach (var property in Properties)
         {
-            <p>@(prop): <strong>@GetObjectValue(prop)</strong></p>
+            <p>@(property): <strong>@GetObjectValue(property)</strong></p>
         }
         @Content
     </Body>
