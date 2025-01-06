@@ -1,38 +1,45 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            @foreach (var prop in Properties)
-            {
-                <th>@prop</th>
-            }
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in _paginatedData)
-        {
-            <tr @onclick="@(() => OnSelectedItem(item))" style="cursor: pointer;">
+@if (Data is null)
+{
+    <p>No data available.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
                 @foreach (var prop in Properties)
                 {
-                    <td>@GetItemValue(item, prop)</td>
+                    <th>@prop</th>
                 }
-                <td colspan="2">
-                    <i class="bi bi-pencil-square" @onclick="@(() => OnEditSelected(item))"></i>
-                    <i class="bi bi-trash3" @onclick="@(() => OnDeleteSelected(item))"></i>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in _paginatedData)
+            {
+                <tr @onclick="@(() => OnSelectedItem(item))" style="cursor: pointer;">
+                    @foreach (var prop in Properties)
+                    {
+                        <td>@GetItemValue(item, prop)</td>
+                    }
+                    <td colspan="2">
+                        <i class="bi bi-pencil-square" @onclick="@(() => OnEditSelected(item))"></i>
+                        <i class="bi bi-trash3" @onclick="@(() => OnDeleteSelected(item))"></i>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-center">
+                    <Pagination TItem="@TItem" Data="@Data" OnPagination="@GetPaginatedData" />
                 </td>
             </tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="3" class="text-center">
-                <Pagination TItem ="@TItem" Data="@Data" OnPagination="@GetPaginatedData"/>
-            </td>
-        </tr>
-    </tfoot>
-</table>
+        </tfoot>
+    </table>
+}
 
 @code {
     [Parameter] public IEnumerable<string> Properties { get; set; }
