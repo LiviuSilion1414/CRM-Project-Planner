@@ -23,13 +23,6 @@
 <div class="master-detail-container">
     @if (_clients is not null)
     {
-        <div class="filters-container">
-            <DisplayView 
-            ItemsToDisplay="@_displayCount"
-            CurrentItems="@_clients.Count" 
-            DisplayCount="@OnDisplayCountSet" 
-            OnLoadMoreItems="@LoadMoreItems" />
-        </div>
         <div class="master">
             <DataGridView 
             TItem="@FirmClientDto" 
@@ -78,7 +71,7 @@
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumns = ["Name", "VatNumber"];
 
-    private int _displayCount = (int)ItemsCount.T50;
+    private int _displayCount = (int)ItemsCount.T100;
     private FirmClientDto _selectedClient = null;
 
     private bool _isAddClicked = false;
@@ -88,17 +81,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadDataFromServer(_displayCount);
-    }
-
-    private async Task OnDisplayCountSet(int displayCount)
-    {
-        await LoadDataFromServer(displayCount);
-    }
-
-    private async Task LoadMoreItems(PaginationHelper paginationHelper)
-    {
-        await LoadDataFromServer(paginationHelper);
+        await LoadData(new PaginationHelper { Limit = _displayCount, Offset = 0 });
     }
 
     private void OnItemSelected(FirmClientDto client) 
@@ -109,15 +92,10 @@
 
     private void IsAddClicked() => _isAddClicked = !_isAddClicked;
 
-    private void IsEditSelected() 
-    {
-        _isEditSelected = !_isEditSelected; 
-    }
+    private void IsEditSelected() => _isEditSelected = !_isEditSelected;
 
-    private void IsDeleteSelected() 
-    {
-        _isDeleteSelected = !_isDeleteSelected;
-    }
+    private void IsDeleteSelected() => _isDeleteSelected = !_isDeleteSelected;
+
 
     private async Task UpdateItem(FirmClientDto updatedClient)
     {
@@ -130,19 +108,12 @@
         if (isConfirmed)
         {
             await http.DeleteAsync($"api/client/delete/{_selectedClient.Id}");
+            StateHasChanged();
         }
     }
 
-    private async Task LoadDataFromServer(int displayCount)
+    private async Task LoadData(PaginationHelper paginationHelper)
     {
-        _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{displayCount}/{0}");
-        StateHasChanged();
-    }
-
-    private async Task LoadDataFromServer(PaginationHelper paginationHelper)
-    {
-        var newLoadedClients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
-        newLoadedClients.ForEach(e => _clients.Add(e));
-        StateHasChanged();
+        _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
     }
 }

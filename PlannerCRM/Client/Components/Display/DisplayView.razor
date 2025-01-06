@@ -1,9 +1,9 @@
 ﻿<div class="filters-container">
     <div>
-        <InputSelect @bind-Value="@ItemsToDisplay" class="form-select" @onchange="SetDisplayCount">
+        <InputSelect @bind-Value="@ItemsToDisplay" class="form-select">
             @foreach (var count in Enum.GetValues(typeof(ItemsCount)))
             {
-                <option value="@((int) count)">@((int)count)</option>
+                <option value="@((int) count)" @onclick="@(() => SetDisplayCount((int)count))">@((int)count)</option>
             }
         </InputSelect>
     </div>
@@ -11,34 +11,27 @@
 
 @code {
     [Parameter] public int ItemsToDisplay { get; set; }
-    [Parameter] public int CurrentItems { get; set; }
-    [Parameter] public EventCallback<int> DisplayCount { get; set; }
-    [Parameter] public EventCallback<PaginationHelper> OnLoadMoreItems { get; set; }
+    [Parameter] public EventCallback<PaginationHelper> OnDisplayCountSet { get; set; }
 
     private PaginationHelper _paginationHelper;
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (ItemsToDisplay == 0)
-        {
-            ItemsToDisplay = (int)ItemsCount.T50;
-        }
-        await DisplayCount.InvokeAsync(ItemsToDisplay);
-    }
 
     private async Task SetDisplayCount(ChangeEventArgs e)
     {
         if (int.TryParse(e.Value?.ToString(), out int displayCount))
         {
+            Console.WriteLine("Items to display: " + ItemsToDisplay);
             ItemsToDisplay = displayCount;
-            await DisplayCount.InvokeAsync(displayCount);
+            _paginationHelper.Limit = ItemsToDisplay;
+            _paginationHelper.Offset = 0;
+            await OnDisplayCountSet.InvokeAsync(_paginationHelper);
+
         }
+        Console.WriteLine("Items to display 2222: " + ItemsToDisplay);
     }
 
-    private async Task LoadMoreItems()
+    private void SetDisplayCount(int count) 
     {
-        _paginationHelper.Offset = CurrentItems; 
-        _paginationHelper.Limit = ItemsToDisplay;
-        await OnLoadMoreItems.InvokeAsync(_paginationHelper);
+        ItemsToDisplay = count;     
+        Console.WriteLine("Items to display 2222: " + ItemsToDisplay);
     }
 }
