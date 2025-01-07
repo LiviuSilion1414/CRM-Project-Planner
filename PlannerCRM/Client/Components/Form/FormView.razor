@@ -1,36 +1,24 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-@if (RenderFormAsModal)
-{
-    <Modal Size="@ModalSize.LARGE" Title="Edit the selected item" FirstAction="(async () => await OnValidSubmit())" FirstActionText="Submit">
-        <Body>
-            <EditForm EditContext="@_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                @FormContent(Model)
-            </EditForm>
-        </Body>
-    </Modal>
-}
-else
-{
-    <div class="card p-1">
+<Modal Size="@ModalSize.LARGE" Title="@Title" CanCloseModal="@_canCloseModal" FirstAction="(async () => await OnValidSubmit())" FirstActionText="Submit">
+    <Body>
         <EditForm EditContext="@_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
             @FormContent(Model)
         </EditForm>
-    </div>
-}
+    </Body>
+</Modal>
 
 @code
 {
-    [Parameter] public bool RenderFormAsModal { get; set; } = false;
+    [Parameter] public string Title { get; set; }
     [Parameter] public TItem Model { get; set; }
     [Parameter] public RenderFragment<TItem> FormContent { get; set; }
     [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
 
     private EditContext _context;
+    private bool _canCloseModal = false;
 
     protected override void OnInitialized()
     {
@@ -41,6 +29,7 @@ else
     {
         if (_context.Validate())
         {
+            _canCloseModal = !_canCloseModal;
             await OnItemChanged.InvokeAsync(Model);
         }
     }
