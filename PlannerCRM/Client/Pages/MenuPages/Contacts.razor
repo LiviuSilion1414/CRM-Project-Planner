@@ -41,6 +41,13 @@
     </FormView>
 }
 
+@if (_isDeleteClientClicked)
+{
+    <AlertComponent Title="Sure to delete this item?"
+                    BodyMessage="The action is irreversible!"
+                    IsDeleteConfirmed="@OnClientDeleteConfirmation" />
+}
+
 @code {
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
@@ -62,6 +69,8 @@
 
     private void OnClientDataUpdated(FirmClientDto client) => _selectedClient = client;
 
+    private async Task OnClientDeleteConfirmation(bool isConfirmed) => await DeleteClient();
+
     private void ToggleAddClient() => _isAddClientClicked = !_isAddClientClicked;
 
 
@@ -77,10 +86,10 @@
         _isEditClientClicked = !_isEditClientClicked;
     }
 
-    private async Task ToggleDeleteClient()
+    private void ToggleDeleteClient(FirmClientDto client)
     {
+        _selectedClient = client;
         _isDeleteClientClicked = !_isDeleteClientClicked;
-        await DeleteClient();
     }
 
     private async Task AddClient(FirmClientDto updatedClient) => await http.PostAsJsonAsync("api/client/add", updatedClient);
