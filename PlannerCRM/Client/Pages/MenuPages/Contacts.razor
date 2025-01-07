@@ -8,6 +8,23 @@
               RowSelect="@ToggleSelectClient"
               RowEdit="ToggleEditClient"
               RowDelete="ToggleDeleteClient" />
+
+@if (_isAddClientClicked)
+{
+    <FormView Title="Add new client " TItem="@FirmClientDto" Model="@_clientDto" OnItemChanged="@OnClientDataAdded">
+        <FormContent>
+            <div class="form-group">
+                <label>@nameof(_clientDto.Name):</label>
+                <InputText class="form-control" @bind-Value="@_clientDto.Name"/>
+            </div>
+            <div class="form-group">
+                <label>@nameof(_clientDto.VatNumber):</label>
+                <InputText class="form-control" @bind-Value="@_clientDto.VatNumber" />
+            </div>
+        </FormContent>
+    </FormView>
+}
+
 @code {
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
@@ -24,6 +41,10 @@
     {
         await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
     }
+
+    private void OnClientDataAdded(FirmClientDto client) => _clientDto = client;
+
+    private void OnClientDataUpdated(FirmClientDto client) => _selectedClient = client;
 
     private void ToggleSelectClient() => _isClientSelected = !_isClientSelected;
 
