@@ -3,50 +3,50 @@
 
 <style>
     .master-detail-container {
-    margin-top: 20px;
-    display: flex;
+        margin-top: 20px;
+        display: flex;
     }
 
     .actions {
-    width: 100px;
-    display: flex;
-    flex-direction: column;
-    margin-right: 20px;
+        width: 100px;
+        display: flex;
+        flex-direction: column;
+        margin-right: 20px;
     }
 
     .action {
-    width: auto;
-    height: max-content;
-    padding-bottom: 5px;
+        width: auto;
+        height: max-content;
+        padding-bottom: 5px;
     }
 
     .master, .detail {
-    display: inline-block;
-    width: 50vw;
+        display: inline-block;
+        width: 50vw;
     }
 
     .detail {
-    padding-left: 50px;
+        padding-left: 50px;
     }
 
     .over {
-    position: fixed;
+        position: fixed;
     }
 </style>
 
 <div class="master-detail-container">
     <div class="actions">
         <div class="action">
-            <button class="action btn btn-outline-primary" @onclick="IsAddClicked">Add</button>
+            <button class="action btn btn-outline-primary" @onclick="IsAddClientClicked">Add</button>
         </div>
 
-        @if (_isItemSelected || _isEditSelected || _isDeleteSelected)
+        @if (_isClientClicked || _isEditClientClicked || _isDeleteClientClicked)
         {
             <div class="action">
-                <button class="action btn btn-outline-info" @onclick="IsEditSelected">Edit</button>
+                <button class="action btn btn-outline-info" @onclick="IsEditClientClicked">Edit</button>
             </div>
             <div>
-                <button class="action btn btn-outline-danger" @onclick="IsDeleteSelected">Delete</button>
+                <button class="action btn btn-outline-danger" @onclick="IsDeleteClientClicked">Delete</button>
             </div>
         }
 
@@ -55,34 +55,34 @@
     {
         <div class="master">
             <DataGridView TItem="@FirmClientDto"
-            Data="@_clients"
-            Properties="@_selectedColumnsForClient"
-            RowSelect="@OnItemSelected"
-            RowEdit="IsEditSelected"
-            RowDelete="IsDeleteSelected" />
+                          Data="@_clients"
+                          Properties="@_selectedColumnsForClient"
+                          RowSelect="@IsClientSelected"
+                          RowEdit="IsEditClientClicked"
+                          RowDelete="IsDeleteClientClicked" />
         </div>
     }
-    @if (_isItemSelected)
+    @if (_isClientClicked)
     {
         <div class="over">
             <ItemPanel TItem="@FirmClientDto"
-            Item="@_selectedClient"
-            Properties="@_selectedColumnsForClient"
-            OnEdit="@IsEditSelected"
-            OnDelete="@IsDeleteSelected">
+                       Item="@_selectedClient"
+                       Properties="@_selectedColumnsForClient"
+                       OnEdit="@IsEditClientClicked"
+                       OnDelete="@IsDeleteClientClicked">
                 <Content>
                     <DataGridView TItem="@WorkOrderDto"
-                    Data="@_selectedClient.WorkOrdersDto"
-                    Properties="@_selectedColumnsForWorkOrder"/>
+                                  Data="@_selectedClient.WorkOrdersDto"
+                                  Properties="@_selectedColumnsForWorkOrder" />
                 </Content>
             </ItemPanel>
         </div>
     }
 
-    @if (_isAddClicked)
+    @if (_isAddClientClicked)
     {
         <div class="detail">
-            <FormView TItem="@FirmClientDto" Model="@_clientDto" OnItemChanged="@AddItem">
+            <FormView TItem="@FirmClientDto" Model="@_clientDto" OnItemChanged="@AddClient">
                 <FormContent Context="formcontent">
                     <div class="form-group">
                         <label>@nameof(_clientDto.Name):</label>
@@ -97,10 +97,10 @@
         </div>
     }
 
-    @if (_isEditSelected)
+    @if (_isEditClientClicked)
     {
         <div class="detail">
-            <FormView TItem="@FirmClientDto" Model="@_selectedClient" OnItemChanged="@UpdateItem">
+            <FormView TItem="@FirmClientDto" Model="@_selectedClient" OnItemChanged="@UpdateClient">
                 <FormContent Context="formcontent">
                     <div class="form-group">
                         <label>@nameof(_selectedClient.Name):</label>
@@ -115,8 +115,8 @@
                         <label>WorkOrders</label>
                         <div class="master">
                             <DataGridView TItem="@WorkOrderDto"
-                            Data="@_selectedClient.WorkOrdersDto"
-                            Properties="@_selectedColumnsForClient" />
+                                          Data="@_selectedClient.WorkOrdersDto"
+                                          Properties="@_selectedColumnsForClient" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -125,6 +125,11 @@
                         {
                             <FormView TItem="@WorkOrderDto" Model="@_workOrderDto" OnItemChanged="AddWorkOrder">
                                 <FormContent>
+                                    <h6>Client information:</h6>
+                                    <div class="card p-2">
+                                        <label class="w-auto"><strong>Name: </strong> @_selectedClient.Name</label>
+                                        <label class="w-auto"><strong>Vat Number: </strong> @_selectedClient.VatNumber</label>
+                                    </div>
                                     <div class="form-group">
                                         <label>@nameof(_workOrderDto.Name):</label>
                                         <InputText class="form-control w-auto" @bind-Value="@_workOrderDto.Name" />
@@ -138,15 +143,37 @@
                                         <InputDate class="form-control w-auto" @bind-Value="@_workOrderDto.EndDate" />
                                     </div>
                                     <br />
-                                    <h6>Client information:</h6>
-                                    <div class="form-group">
-                                        <label>Name: </label>
-                                        <p class="form-control w-auto">"@_selectedClient.Name"</p>
-                                        <label>VatNumber: </label>
-                                        <p class="form-control w-auto">"@_selectedClient.VatNumber"</p>
-                                    </div>
+
                                 </FormContent>
                             </FormView>
+                        }
+                        else
+                        {
+                            <div class="master">
+                                <DataGridView TItem="@ActivityDto"
+                                              Data="@_workOrderDto.ActivitiesDto"
+                                              Properties="@_selectedColumnsForActivity" />
+                            </div>
+                            <button type="button" class="btn btn-outline-primary" @onclick="@IsAddActivityClicked">Add Activity</button>
+                            @if (_isAddActivityClicked)
+                            {
+                                <FormView TItem="@ActivityDto" Model="@_activityDto" OnItemChanged="AddActivity">
+                                    <FormContent>
+                                        <div class="form-group">
+                                            <label>@nameof(_activityDto.Name):</label>
+                                            <InputText class="form-control w-auto" @bind-Value="@_activityDto.Name" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>@nameof(_activityDto.CreationDate):</label>
+                                            <InputDate class="form-control w-auto" @bind-Value="@_activityDto.StartDate" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>@nameof(_activityDto.EndDate):</label>
+                                            <InputDate class="form-control w-auto" @bind-Value="@_activityDto.EndDate" />
+                                        </div>
+                                    </FormContent>
+                                </FormView>
+                            }
                         }
                     </div>
                     <div class="form-group">
@@ -154,8 +181,8 @@
                         <label>WorkOrders</label>
                         <div class="master">
                             <DataGridView TItem="@WorkOrderDto"
-                            Data="@_selectedClient.WorkOrdersDto"
-                            Properties="@_selectedColumnsForClient" />
+                                          Data="@_selectedClient.WorkOrdersDto"
+                                          Properties="@_selectedColumnsForClient" />
                         </div>
                     </div>
                 </FormContent>
@@ -169,86 +196,112 @@
     private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
 
     private List<string> _selectedColumnsForWorkOrder = ["Name", "CreationTime", "StartDate", "EndDate"];
+    private List<string> _selectedColumnsForActivity = ["Name", "CreationTime", "StartDate", "EndDate"];
 
     private int _displayCount = (int)ItemsCount.T100;
     private FirmClientDto _selectedClient = null;
 
     private FirmClientDto _clientDto = new();
     private WorkOrderDto _workOrderDto = new();
+    private ActivityDto _activityDto = new();
 
-    private bool _isAddClicked = false;
-    private bool _isEditSelected = false;
-    private bool _isDeleteSelected = false;
-    private bool _isItemSelected = false;
+    private bool _isAddClientClicked = false;
+    private bool _isEditClientClicked = false;
+    private bool _isDeleteClientClicked = false;
+    private bool _isClientClicked = false;
 
     private bool _isAddWorkOrderClicked = false;
     private bool _isEditWorkOrderClicked = false;
     private bool _isDeleteWorkOrderClicked = false;
 
-    private void IsAddWorkOrderClicked() => _isAddWorkOrderClicked = !_isAddWorkOrderClicked;
-    private void IsEditWorkOrderClicked() => _isEditWorkOrderClicked = !_isEditWorkOrderClicked;
-    private void IsDeleteWorkOrderClicked() => _isDeleteWorkOrderClicked = !_isDeleteWorkOrderClicked;
+    private bool _isAddActivityClicked = false;
+    private bool _isEditActivityClicked = false;
+    private bool _isDeleteActivityClicked = false;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadData(new PaginationHelper { Limit = _displayCount, Offset = 0 });
     }
 
-    private void OnItemSelected(FirmClientDto client)
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="client"></param>
+    private void IsClientSelected(FirmClientDto client)
     {
         _selectedClient = client;
-        _isItemSelected = !_isItemSelected;
+        _isClientClicked = !_isClientClicked;
     }
 
-    private void IsAddClicked() => _isAddClicked = !_isAddClicked;
+    private void IsAddClientClicked() => _isAddClientClicked = !_isAddClientClicked;
 
-    private void IsEditSelected() => _isEditSelected = !_isEditSelected;
+    private void IsEditClientClicked() => _isEditClientClicked = !_isEditClientClicked;
 
-    private async Task IsDeleteSelected()
+    private async Task IsDeleteClientClicked()
     {
-        _isDeleteSelected = !_isDeleteSelected;
-        if (_isDeleteSelected)
+        _isDeleteClientClicked = !_isDeleteClientClicked;
+        if (_isDeleteClientClicked)
         {
-            await DeleteItem();
+            await DeleteClient();
         }
     }
 
-    private async Task AddItem(FirmClientDto updatedClient)
-    {
+    private async Task AddClient(FirmClientDto updatedClient) =>
         await http.PostAsJsonAsync<FirmClientDto>($"api/client/add", updatedClient);
-        StateHasChanged();
-    }
 
-    private async Task UpdateItem(FirmClientDto updatedClient)
-    {
+    /// <summary>
+    ///
+    /// </summary>
+    private void IsAddActivityClicked() => _isAddActivityClicked = !_isAddActivityClicked;
+    private void IsEditActivityClicked() => _isEditActivityClicked = !_isEditActivityClicked;
+    private void IsDeleteActivityClicked() => _isDeleteActivityClicked = !_isDeleteActivityClicked;
+
+    /// <summary>
+    ///
+    /// </summary>
+    private void IsAddWorkOrderClicked() => _isAddWorkOrderClicked = !_isAddWorkOrderClicked;
+    private void IsEditWorkOrderClicked() => _isEditWorkOrderClicked = !_isEditWorkOrderClicked;
+    private void IsDeleteWorkOrderClicked() => _isDeleteWorkOrderClicked = !_isDeleteWorkOrderClicked;
+
+    private async Task UpdateClient(FirmClientDto updatedClient) =>
         await http.PutAsJsonAsync<FirmClientDto>($"api/client/edit/{updatedClient.Id}", updatedClient);
-        StateHasChanged();
-    }
 
-    private async Task DeleteItem()
-    {
+    private async Task DeleteClient() =>
         await http.DeleteAsync($"api/client/delete/{_selectedClient.Id}");
-        StateHasChanged();
-    }
 
-        private async Task AddWorkOrder(WorkOrderDto updatedClient)
-    {
-        await http.PostAsJsonAsync<WorkOrderDto>($"api/workOrder/add", updatedClient);
-        StateHasChanged();
-    }
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="workOrder"></param>
+    /// <returns></returns>
+    private async Task AddWorkOrder(WorkOrderDto workOrder) =>
+        await http.PostAsJsonAsync<WorkOrderDto>($"api/workOrder/add", workOrder);
 
-    private async Task UpdateWorkOrder(WorkOrderDto updatedClient)
-    {
-        await http.PutAsJsonAsync<WorkOrderDto>($"api/workOrder/edit/{updatedClient.Id}", updatedClient);
-        StateHasChanged();
-    }
+    private async Task UpdateWorkOrder(WorkOrderDto workOrder) =>
+        await http.PutAsJsonAsync<WorkOrderDto>($"api/workOrder/edit/{workOrder.Id}", workOrder);
 
-    private async Task DeleteWorkOrder()
-    {
+    private async Task DeleteWorkOrder() =>
         await http.DeleteAsync($"api/workOrder/delete/{_selectedClient.Id}");
-        StateHasChanged();
-    }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="activity"></param>
+    /// <returns></returns>
+    private async Task AddActivity(ActivityDto activity) =>
+    await http.PostAsJsonAsync<ActivityDto>($"api/activity/add", activity);
+
+    private async Task UpdateActivity(ActivityDto activity) =>
+        await http.PutAsJsonAsync<ActivityDto>($"api/activity/edit/{activity.Id}", activity);
+
+    private async Task DeleteActivity() =>
+        await http.DeleteAsync($"api/activity/delete/{_selectedClient.Id}");
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="paginationHelper"></param>
+    /// <returns></returns>
     private async Task LoadData(PaginationHelper paginationHelper)
     {
         _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
