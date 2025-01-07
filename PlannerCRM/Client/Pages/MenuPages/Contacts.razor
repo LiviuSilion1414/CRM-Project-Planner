@@ -3,34 +3,34 @@
 
 <style>
     .master-detail-container {
-        margin-top: 20px;
-        display: flex;
+    margin-top: 20px;
+    display: flex;
     }
 
     .actions {
-        width: 100px;
-        display: flex;
-        flex-direction: column;
-        margin-right: 20px;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
     }
 
     .action {
-        width: auto;
-        height: max-content;
-        padding-bottom: 5px;
+    width: auto;
+    height: max-content;
+    padding-bottom: 5px;
     }
 
     .master, .detail {
-        display: inline-block;
-        width: 50vw;
+    display: inline-block;
+    width: 50vw;
     }
 
     .detail {
-        padding-left: 50px;
+    padding-left: 50px;
     }
 
     .over {
-        position: fixed;
+    position: fixed;
     }
 </style>
 
@@ -55,33 +55,52 @@
     {
         <div class="master">
             <DataGridView TItem="@FirmClientDto"
-                          Data="@_clients"
-                          Properties="@_selectedColumnsForClient"
-                          RowSelect="@OnItemSelected"
-                          RowEdit="IsEditSelected"
-                          RowDelete="IsDeleteSelected" />
+            Data="@_clients"
+            Properties="@_selectedColumnsForClient"
+            RowSelect="@OnItemSelected"
+            RowEdit="IsEditSelected"
+            RowDelete="IsDeleteSelected" />
         </div>
     }
     @if (_isItemSelected)
     {
         <div class="over">
             <ItemPanel TItem="@FirmClientDto"
-                       Item="@_selectedClient"
-                       Properties="@_selectedColumnsForClient"
-                       OnEdit="@IsEditSelected"
-                       OnDelete="@IsDeleteSelected">
+            Item="@_selectedClient"
+            Properties="@_selectedColumnsForClient"
+            OnEdit="@IsEditSelected"
+            OnDelete="@IsDeleteSelected">
                 <Content>
                     <DataGridView TItem="@WorkOrderDto"
-                                  Data="@_selectedClient.WorkOrdersDto"
-                                  Properties="@_selectedColumnsForWorkOrder"/>
+                    Data="@_selectedClient.WorkOrdersDto"
+                    Properties="@_selectedColumnsForWorkOrder"/>
                 </Content>
             </ItemPanel>
         </div>
     }
+
+    @if (_isAddClicked)
+    {
+        <div class="detail">
+            <FormView TItem="@FirmClientDto" Model="@_clientDto" OnItemChanged="@AddItem">
+                <FormContent Context="formcontent">
+                    <div class="form-group">
+                        <label>@nameof(_clientDto.Name):</label>
+                        <InputText class="form-control w-auto" @bind-Value="@_clientDto.Name" />
+                    </div>
+                    <div class="form-group">
+                        <label>@nameof(_clientDto.VatNumber):</label>
+                        <InputText class="form-control w-auto" @bind-Value="@_clientDto.VatNumber" />
+                    </div>
+                </FormContent>
+            </FormView>
+        </div>
+    }
+
     @if (_isEditSelected)
     {
         <div class="detail">
-            <FormView TItem="@FirmClientDto" Model="@_selectedClient" OnUpdatedItem="@UpdateItem">
+            <FormView TItem="@FirmClientDto" Model="@_selectedClient" OnItemChanged="@UpdateItem">
                 <FormContent Context="formcontent">
                     <div class="form-group">
                         <label>@nameof(_selectedClient.Name):</label>
@@ -96,8 +115,47 @@
                         <label>WorkOrders</label>
                         <div class="master">
                             <DataGridView TItem="@WorkOrderDto"
-                                          Data="@_selectedClient.WorkOrdersDto"
-                                          Properties="@_selectedColumnsForClient" />
+                            Data="@_selectedClient.WorkOrdersDto"
+                            Properties="@_selectedColumnsForClient" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-outline-primary" @onclick="@IsAddWorkOrderClicked">Add WorkOrder</button>
+                        @if (_isAddWorkOrderClicked)
+                        {
+                            <FormView TItem="@WorkOrderDto" Model="@_workOrderDto" OnItemChanged="AddWorkOrder">
+                                <FormContent>
+                                    <div class="form-group">
+                                        <label>@nameof(_workOrderDto.Name):</label>
+                                        <InputText class="form-control w-auto" @bind-Value="@_workOrderDto.Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>@nameof(_workOrderDto.CreationTime):</label>
+                                        <InputDate class="form-control w-auto" @bind-Value="@_workOrderDto.StartDate" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>@nameof(_workOrderDto.EndDate):</label>
+                                        <InputDate class="form-control w-auto" @bind-Value="@_workOrderDto.EndDate" />
+                                    </div>
+                                    <br />
+                                    <h6>Client information:</h6>
+                                    <div class="form-group">
+                                        <label>Name: </label>
+                                        <p class="form-control w-auto">"@_selectedClient.Name"</p>
+                                        <label>VatNumber: </label>
+                                        <p class="form-control w-auto">"@_selectedClient.VatNumber"</p>
+                                    </div>
+                                </FormContent>
+                            </FormView>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <br />
+                        <label>WorkOrders</label>
+                        <div class="master">
+                            <DataGridView TItem="@WorkOrderDto"
+                            Data="@_selectedClient.WorkOrdersDto"
+                            Properties="@_selectedColumnsForClient" />
                         </div>
                     </div>
                 </FormContent>
@@ -115,10 +173,21 @@
     private int _displayCount = (int)ItemsCount.T100;
     private FirmClientDto _selectedClient = null;
 
+    private FirmClientDto _clientDto = new();
+    private WorkOrderDto _workOrderDto = new();
+
     private bool _isAddClicked = false;
     private bool _isEditSelected = false;
     private bool _isDeleteSelected = false;
     private bool _isItemSelected = false;
+
+    private bool _isAddWorkOrderClicked = false;
+    private bool _isEditWorkOrderClicked = false;
+    private bool _isDeleteWorkOrderClicked = false;
+
+    private void IsAddWorkOrderClicked() => _isAddWorkOrderClicked = !_isAddWorkOrderClicked;
+    private void IsEditWorkOrderClicked() => _isEditWorkOrderClicked = !_isEditWorkOrderClicked;
+    private void IsDeleteWorkOrderClicked() => _isDeleteWorkOrderClicked = !_isDeleteWorkOrderClicked;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,6 +213,12 @@
         }
     }
 
+    private async Task AddItem(FirmClientDto updatedClient)
+    {
+        await http.PostAsJsonAsync<FirmClientDto>($"api/client/add", updatedClient);
+        StateHasChanged();
+    }
+
     private async Task UpdateItem(FirmClientDto updatedClient)
     {
         await http.PutAsJsonAsync<FirmClientDto>($"api/client/edit/{updatedClient.Id}", updatedClient);
@@ -153,6 +228,24 @@
     private async Task DeleteItem()
     {
         await http.DeleteAsync($"api/client/delete/{_selectedClient.Id}");
+        StateHasChanged();
+    }
+
+        private async Task AddWorkOrder(WorkOrderDto updatedClient)
+    {
+        await http.PostAsJsonAsync<WorkOrderDto>($"api/workOrder/add", updatedClient);
+        StateHasChanged();
+    }
+
+    private async Task UpdateWorkOrder(WorkOrderDto updatedClient)
+    {
+        await http.PutAsJsonAsync<WorkOrderDto>($"api/workOrder/edit/{updatedClient.Id}", updatedClient);
+        StateHasChanged();
+    }
+
+    private async Task DeleteWorkOrder()
+    {
+        await http.DeleteAsync($"api/workOrder/delete/{_selectedClient.Id}");
         StateHasChanged();
     }
 
