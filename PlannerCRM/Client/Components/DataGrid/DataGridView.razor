@@ -1,53 +1,114 @@
 ﻿@typeparam TItem where TItem : class, new()
 
+<style>
+    .master-detail-container {
+        margin-top: 20px;
+        display: flex;
+    }
+
+    .actions {
+        width: 100px;
+        display: flex;
+        flex-direction: column;
+        margin-right: 20px;
+    }
+
+    .action {
+        width: auto;
+        height: max-content;
+        padding-bottom: 5px;
+    }
+
+    .master, .detail {
+        display: inline-block;
+        width: 50vw;
+    }
+
+    .detail {
+        padding-left: 50px;
+    }
+
+    .over {
+        position: fixed;
+    }
+</style>
+
 @if (Data is null)
 {
     <p>No data available.</p>
 }
 else
 {
-    <table class="table table-hover text-center">
-        <thead>
-            <tr>
-                @foreach (var prop in Properties)
-                {
-                    <th>@prop</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in _paginatedData)
+    <div class="master-detail-container">
+        <div class="actions">
+            <div class="action">
+                <button class="action btn btn-outline-primary" @onclick="ToggleAddItem">Add</button>
+            </div>
+
+            @if (_selectedItem is not null)
             {
-                <tr class="@(item.Equals(_selectedItem) ? "table-active" : string.Empty)" @onclick="@(() => OnSelectedItem(item))">
-                    @foreach (var prop in Properties)
-                    {
-                        <td>@GetItemValue(item, prop)</td>
-                    }
-                </tr>
+                <div class="action">
+                    <button class="action btn btn-outline-info" @onclick="ToggleEditItem">Edit</button>
+                </div>
+                <div>
+                    <button class="action btn btn-outline-danger" @onclick="ToggleDeleteItem">Delete</button>
+                </div>
             }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2" class="text-center">
-                    <Pagination TItem="@TItem" Data="@Data" OnPagination="@GetPaginatedData" />
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+        </div>
+        <div class="master">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        @foreach (var prop in Properties)
+                        {
+                            <th>@prop</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in _paginatedData)
+                    {
+                        <tr class="@(item.Equals(_selectedItem) ? "table-active" : string.Empty)" @onclick="@(() => OnSelectedItem(item))">
+                            @foreach (var prop in Properties)
+                            {
+                                <td>@GetItemValue(item, prop)</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            <Pagination TItem="@TItem" Data="@Data" OnPagination="@GetPaginatedData" />
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="detail">
+
+        </div>
+    </div>
 }
 
-@code {
+@code 
+{
     [Parameter] public IEnumerable<string> Properties { get; set; }
     [Parameter] public IEnumerable<TItem> Data { get; set; }
     [Parameter] public EventCallback<TItem> RowSelect { get; set; }
+    [Parameter] public EventCallback RowAdd { get; set; }
     [Parameter] public EventCallback<TItem> RowEdit { get; set; }
     [Parameter] public EventCallback<TItem> RowDelete { get; set; }
 
     private IEnumerable<TItem> _paginatedData = Enumerable.Empty<TItem>();
+    private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
+    private int _pageSize = 10;
 
     private TItem _selectedItem = null;
-    private int _pageSize = 10;
-    private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
+
+    private bool _isAddItemSelected = false;
+    private bool _isEditItemSelected = false;
+    private bool _isDeleteItemSelected = false;
 
     protected override void OnParametersSet()
     {
@@ -71,9 +132,23 @@ else
         await RowSelect.InvokeAsync(item);
     }
 
-    private async Task OnEditSelected(TItem item) => await RowEdit.InvokeAsync(item);
+    private async Task ToggleAddItem()
+    {    
+        _isAddItemSelected = !_isAddItemSelected;
+        await RowAdd.InvokeAsync();
+    }
 
-    private async Task OnDeleteSelected(TItem item) => await RowDelete.InvokeAsync(item);
+    private async Task ToggleEditItem()
+    {
+        _isEditItemSelected = !_isEditItemSelected;
+        await RowEdit.InvokeAsync(_selectedItem);
+    }
+
+    private async Task ToggleDeleteItem()
+    {
+        _isDeleteItemSelected = !_isDeleteItemSelected;
+        await RowDelete.InvokeAsync(_selectedItem);
+    }
 
     private object GetItemValue(TItem item, string propertyName) =>
         item.GetType()
