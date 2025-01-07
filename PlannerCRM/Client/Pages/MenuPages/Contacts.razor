@@ -15,11 +15,27 @@
         <FormContent>
             <div class="form-group">
                 <label>@nameof(_clientDto.Name):</label>
-                <InputText class="form-control" @bind-Value="@_clientDto.Name"/>
+                <InputText class="form-control" @bind-Value="@_clientDto.Name" />
             </div>
             <div class="form-group">
                 <label>@nameof(_clientDto.VatNumber):</label>
                 <InputText class="form-control" @bind-Value="@_clientDto.VatNumber" />
+            </div>
+        </FormContent>
+    </FormView>
+}
+
+@if (_isEditClientClicked)
+{
+    <FormView Title="Add new client " TItem="@FirmClientDto" Model="@_selectedClient" OnItemChanged="@OnClientDataAdded">
+        <FormContent>
+            <div class="form-group">
+                <label>@nameof(_selectedClient.Name):</label>
+                <InputText class="form-control" @bind-Value="@_selectedClient.Name" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_selectedClient.VatNumber):</label>
+                <InputText class="form-control" @bind-Value="@_selectedClient.VatNumber" />
             </div>
         </FormContent>
     </FormView>
@@ -46,11 +62,20 @@
 
     private void OnClientDataUpdated(FirmClientDto client) => _selectedClient = client;
 
-    private void ToggleSelectClient() => _isClientSelected = !_isClientSelected;
-
     private void ToggleAddClient() => _isAddClientClicked = !_isAddClientClicked;
 
-    private void ToggleEditClient() => _isEditClientClicked = !_isEditClientClicked;
+
+    private void ToggleSelectClient(FirmClientDto client)
+    {
+        _selectedClient = client;
+        _isClientSelected = !_isClientSelected;
+    }
+
+    private void ToggleEditClient(FirmClientDto client)
+    {
+        _selectedClient = client;
+        _isEditClientClicked = !_isEditClientClicked;
+    }
 
     private async Task ToggleDeleteClient()
     {
