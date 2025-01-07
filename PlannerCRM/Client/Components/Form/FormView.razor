@@ -14,7 +14,7 @@
 {
     [Parameter] public TItem Model { get; set; }
     [Parameter] public RenderFragment<TItem> FormContent { get; set; }
-    [Parameter] public EventCallback<TItem> OnUpdatedItem { get; set; }
+    [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
 
     private EditContext _context;
 
@@ -27,7 +27,7 @@
     {
         if (_context.Validate())
         {
-            await OnUpdatedItem.InvokeAsync(Model);
+            await OnItemChanged.InvokeAsync(Model);
         }
     }
 }
