@@ -6,34 +6,29 @@
 }
 else
 {
-    <table class="table table-striped">
+    <table class="table table-hover text-center">
         <thead>
             <tr>
                 @foreach (var prop in Properties)
                 {
                     <th>@prop</th>
                 }
-                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in _paginatedData)
             {
-                <tr @onclick="@(() => OnSelectedItem(item))" style="cursor: pointer;">
+                <tr class="@(item.Equals(_selectedItem) ? "table-active" : string.Empty)" @onclick="@(() => OnSelectedItem(item))">
                     @foreach (var prop in Properties)
                     {
                         <td>@GetItemValue(item, prop)</td>
                     }
-                    <td colspan="2">
-                        <i class="bi bi-pencil-square" @onclick="@(() => OnEditSelected(item))"></i>
-                        <i class="bi bi-trash3" @onclick="@(() => OnDeleteSelected(item))"></i>
-                    </td>
                 </tr>
             }
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3" class="text-center">
+                <td colspan="2" class="text-center">
                     <Pagination TItem="@TItem" Data="@Data" OnPagination="@GetPaginatedData" />
                 </td>
             </tr>
@@ -50,7 +45,8 @@ else
 
     private IEnumerable<TItem> _paginatedData = Enumerable.Empty<TItem>();
 
-    public int _pageSize = 10;
+    private TItem _selectedItem = null;
+    private int _pageSize = 10;
     private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
 
     protected override void OnParametersSet()
@@ -61,7 +57,19 @@ else
         }
     }
 
-    private async Task OnSelectedItem(TItem item) => await RowSelect.InvokeAsync(item);
+    private async Task OnSelectedItem(TItem item)
+    {
+        if (_selectedItem is not null) 
+        {
+            _selectedItem = null;
+        }
+        else
+        {
+            _selectedItem = item;
+        }
+
+        await RowSelect.InvokeAsync(item);
+    }
 
     private async Task OnEditSelected(TItem item) => await RowEdit.InvokeAsync(item);
 
@@ -73,5 +81,4 @@ else
             .GetValue(item);
 
     private void GetPaginatedData(IEnumerable<TItem> items) => _paginatedData = items;
-
 }
