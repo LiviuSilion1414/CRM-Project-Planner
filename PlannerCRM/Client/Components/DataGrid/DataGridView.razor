@@ -31,6 +31,19 @@
     .over {
         position: fixed;
     }
+
+    .table-row-hover:hover {
+        transform: scale(1.1);
+        font-weight: bold;
+        transition: transform 0.3s ease, font-weight 0.3s ease;
+    }
+
+        .table-row-selected {
+        background-color: #f0f0f0; /* Cambia il colore di sfondo della riga selezionata */
+        transform: scale(1.1); /* Mantieni l'effetto di ingrandimento */
+        font-weight: bold; /* Mantieni il testo in grassetto */
+    }
+
 </style>
 
 @if (Data is null)
@@ -68,7 +81,7 @@ else
                 <tbody>
                     @foreach (var item in _paginatedData)
                     {
-                        <tr class="@(item.Equals(_selectedItem) ? "table-active" : string.Empty)" @onclick="@(() => OnSelectedItem(item))">
+                        <tr class="@(item.Equals(_selectedItem) ? "table-active table-row-selected" : string.Empty) table-row-hover" @onclick="@(() => OnSelectedItem(item))">
                             @foreach (var prop in Properties)
                             {
                                 <td>@GetItemValue(item, prop)</td>
