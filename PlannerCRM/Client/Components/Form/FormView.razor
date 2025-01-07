@@ -1,17 +1,31 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-<Modal Size="@ModalSize.LARGE" Title="Edit the selected item" FirstAction="(async () => await OnValidSubmit())" FirstActionText="Submit">
-    <Body>
-        <EditForm EditContext="_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
+@if (RenderFormAsModal)
+{
+    <Modal Size="@ModalSize.LARGE" Title="Edit the selected item" FirstAction="(async () => await OnValidSubmit())" FirstActionText="Submit">
+        <Body>
+            <EditForm EditContext="@_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                @FormContent(Model)
+            </EditForm>
+        </Body>
+    </Modal>
+}
+else
+{
+    <div class="card p-1">
+        <EditForm EditContext="@_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
-                @FormContent(Model)
+            @FormContent(Model)
         </EditForm>
-    </Body>
-</Modal>
+    </div>
+}
 
-@code 
+@code
 {
+    [Parameter] public bool RenderFormAsModal { get; set; } = false;
     [Parameter] public TItem Model { get; set; }
     [Parameter] public RenderFragment<TItem> FormContent { get; set; }
     [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
@@ -20,7 +34,7 @@
 
     protected override void OnInitialized()
     {
-        _context = new(Model);
+        _context = new EditContext(Model);
     }
 
     private async Task OnValidSubmit()
