@@ -1,25 +1,22 @@
-﻿<div class="alert-danger">
-    <strong>Do you really want to delete the selected item?</strong>
-    <div>
-        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="undo" Text="Cancel" Click="@OnCancel"/>
-        <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="delete" Text="Delete" Click="@OnDelete"/>
-    </div>
-</div>
+﻿<Modal Size="@ModalSize.SMALL"
+       Title="@Title" 
+       CanCloseModal="@_canCloseModal" 
+       SecondAction="@(async () => await OnDelete())" SecondActionText="Delete">
+       <Body>
+           @BodyMessage
+       </Body>
+</Modal>
 
 @code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string? BodyMessage { get; set; }
     [Parameter] public EventCallback<bool> IsDeleteConfirmed { get; set; }
 
-    private bool _isVisible = true;
-
-    private async Task OnCancel()
-    {
-        await IsDeleteConfirmed.InvokeAsync(false);
-        _isVisible = false;
-    }
+    private bool _canCloseModal = false;
 
     private async Task OnDelete()
     {
+        _canCloseModal = !_canCloseModal;   
         await IsDeleteConfirmed.InvokeAsync(true);
-        _isVisible = false;
     }
 }
