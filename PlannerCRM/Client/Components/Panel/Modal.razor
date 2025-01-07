@@ -23,10 +23,12 @@
         </div>
     </div>
 </div>
+
 @code {
     [Parameter] public string Title { get; set; }
     [Parameter] public string Size { get; set; } = ModalSize.DEFAULT;
     [Parameter] public RenderFragment Body { get; set; }
+    [Parameter] public bool CanCloseModal { get; set; }
     [Parameter] public Action FirstAction { get; set; }
     [Parameter] public string FirstActionText { get; set; }
     [Parameter] public Action SecondAction { get; set; }
@@ -37,15 +39,16 @@
 
     private void CloseModal() => _hidden = !_hidden;
 
-    private void OnFirstAction()
+    protected override void OnParametersSet()
     {
-        FirstAction?.Invoke();
-        CloseModal();
+        if (CanCloseModal)
+        {
+            CloseModal();
+        }
     }
 
-    private void OnSecondAction()
-    {
-        SecondAction?.Invoke();
-        CloseModal();
-    }
+    private void OnFirstAction() => FirstAction?.Invoke();
+
+    private void OnSecondAction() => SecondAction?.Invoke();
+    //may be an error here due to automatic close of modal even if func it does not perform well so we call CloseModal() on specific conditions
 }
