@@ -14,7 +14,7 @@
     }
 
     .action {
-        width: auto;
+        width: max-content;
         height: max-content;
         padding-bottom: 5px;
     }
@@ -40,7 +40,6 @@
 
     .table-row-selected {
         background-color: #f0f0f0;
-        transform: scale(1.1);
         font-weight: bold;
     }
 
@@ -55,21 +54,46 @@ else
     <div class="master-detail-container">
         <div class="actions">
             <div class="action">
-                <button class="action btn btn-outline-primary" @onclick="ToggleAddItem">Add</button>
+                <button class="action btn btn-outline-primary" @onclick="ToggleAddItem">
+                    <i class="bi bi-plus"></i>
+                    Add
+                </button>
             </div>
 
-            @if (_selectedItem is not null)
+            @if (_selectedItems.Count() == 1)
             {
                 <div class="action">
-                    <button class="action btn btn-outline-info" @onclick="ToggleEditItem">Edit</button>
+                    <button class="action btn btn-outline-info" @onclick="ToggleEditItem">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </button>
                 </div>
-                <div>
-                    <button class="action btn btn-outline-danger" @onclick="ToggleDeleteItem">Delete</button>
+                <div class="action">
+                    <button class="action btn btn-outline-danger" @onclick="ToggleDeleteItem">
+                        <i class="bi bi-trash3"></i>
+                        Delete
+                    </button>
                 </div>
             }
+            <div class="action">
+                @if (_selectedItems.Any())
+                {
+                    <button class="action btn btn-outline-secondary" @onclick="DeselectAll">
+                        <i class="bi bi-x-circle"></i>
+                        Deselect
+                    </button>
+                }
+                else
+                {
+                    <button class="action btn btn-outline-secondary" @onclick="SelectAll">
+                        <i class="bi bi-x-circle"></i>
+                        Select
+                    </button>
+                }
+            </div>
         </div>
         <div class="master">
-            <table class="table table-hover text-center">
+            <table class="table text-center">
                 <thead>
                     <tr>
                         @foreach (var prop in Properties)
@@ -81,10 +105,16 @@ else
                 <tbody>
                     @foreach (var item in _paginatedData)
                     {
-                        <tr class="@(item.Equals(_selectedItem) ? "table-active table-row-selected" : string.Empty) table-row-hover" @onclick="@(() => OnSelectedItem(item))">
+                        <tr class="@(_selectedItems.Contains(item) ? "table-active table-row-selected" : string.Empty) table-row-hover" @onclick="@(() => OnSelectMultipleItems(item))">
                             @foreach (var prop in Properties)
                             {
-                                <td>@GetItemValue(item, prop)</td>
+                                <td>
+                                    @if (Properties.First() == prop && _selectedItems.Contains(item))
+                                    {
+                                        <i class="bi bi-check2-square float-start"></i>
+                                    }
+                                    @GetItemValue(item, prop)
+                                </td>
                             }
                         </tr>
                     }
@@ -105,16 +135,17 @@ else
 {
     [Parameter] public IEnumerable<string> Properties { get; set; }
     [Parameter] public IEnumerable<TItem> Data { get; set; }
+    [Parameter] public EventCallback<List<TItem>> RowsSelected { get; set; }
     [Parameter] public EventCallback<TItem> RowSelect { get; set; }
     [Parameter] public EventCallback RowAdd { get; set; }
     [Parameter] public EventCallback<TItem> RowEdit { get; set; }
     [Parameter] public EventCallback<TItem> RowDelete { get; set; }
 
-    private IEnumerable<TItem> _paginatedData = Enumerable.Empty<TItem>();
+    private IEnumerable<TItem> _paginatedData = [];
     private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
     private int _pageSize = 10;
 
-    private TItem _selectedItem = null;
+    private List<TItem> _selectedItems = [];
 
     private bool _isAddItemSelected = false;
     private bool _isEditItemSelected = false;
@@ -128,19 +159,30 @@ else
         }
     }
 
-    private async Task OnSelectedItem(TItem item)
+    private async Task OnSelectMultipleItems(TItem item)
     {
-        if (_selectedItem is not null) 
+        if (_selectedItems.Contains(item))
         {
-            _selectedItem = null;
+            _selectedItems.Remove(item);
         }
         else
         {
-            _selectedItem = item;
+            _selectedItems.Add(item);
         }
 
-        await RowSelect.InvokeAsync(item);
+        if (_selectedItems.Count() == 1)
+        {
+            await RowSelect.InvokeAsync(_selectedItems.Single());
+        }
+        else
+        {
+            await RowsSelected.InvokeAsync(_selectedItems);
+        }
     }
+
+    private void DeselectAll() => _selectedItems.Clear();
+
+    private void SelectAll() => _selectedItems = Data.ToList();
 
     private async Task ToggleAddItem()
     {    
@@ -151,13 +193,13 @@ else
     private async Task ToggleEditItem()
     {
         _isEditItemSelected = !_isEditItemSelected;
-        await RowEdit.InvokeAsync(_selectedItem);
+        await RowEdit.InvokeAsync(_selectedItems.Single());
     }
 
     private async Task ToggleDeleteItem()
     {
         _isDeleteItemSelected = !_isDeleteItemSelected;
-        await RowDelete.InvokeAsync(_selectedItem);
+        await RowDelete.InvokeAsync(_selectedItems.Single());
     }
 
     private object GetItemValue(TItem item, string propertyName) =>

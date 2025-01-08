@@ -6,6 +6,7 @@
               Properties="@_selectedColumnsForClient"
               RowAdd="@ToggleAddClient"
               RowSelect="@ToggleSelectClient"
+              RowsSelected="@ToggleSelectClient"
               RowEdit="ToggleEditClient"
               RowDelete="ToggleDeleteClient" />
 
@@ -53,6 +54,7 @@
     private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
 
     private FirmClientDto _selectedClient = new();
+    private List<FirmClientDto> _selectedClients = [];
     private FirmClientDto _clientDto = new();
 
     private bool _isAddClientClicked = false;
@@ -73,6 +75,12 @@
 
     private void ToggleAddClient() => _isAddClientClicked = !_isAddClientClicked;
 
+
+    private void ToggleSelectClient(List<FirmClientDto> clients)
+    {
+        _selectedClients = clients;
+        _isClientSelected = !_isClientSelected;
+    }
 
     private void ToggleSelectClient(FirmClientDto client)
     {
