@@ -20,7 +20,7 @@
     private EditContext _context;
     private bool _canCloseModal = false;
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         _context = new EditContext(Model);
     }

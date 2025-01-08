@@ -149,25 +149,19 @@ else
 {
     [Parameter] public IEnumerable<string> Properties { get; set; }
     [Parameter] public IEnumerable<TItem> Data { get; set; }
-    [Parameter] public EventCallback<List<TItem>> MultipleRowsSelected { get; set; }
-    [Parameter] public EventCallback<TItem> RowSelect { get; set; }
-    [Parameter] public EventCallback RowAdd { get; set; }
-    [Parameter] public EventCallback<TItem> RowEdit { get; set; }
-    [Parameter] public EventCallback<TItem> RowDelete { get; set; }
-    [Parameter] public EventCallback<List<TItem>> RowsSelectedForDelete { get; set; }
     [Parameter] public EventCallback<bool> ShouldFetchNewData { get; set; }
-    [Parameter] public EventCallback<CascadingDataContainer> GetCascadingContainerStates { get; set; }
+    [Parameter] public EventCallback<CascadingDataContainer<TItem>> GetCascadingContainerStates { get; set; }
 
     private List<TItem> _selectedItems = [];
     private IEnumerable<TItem> _paginatedData = [];
     private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
     private int _pageSize = 10;
 
-    private CascadingDataContainer _dataContainer = new();
+    private CascadingDataContainer<TItem> _dataContainer = new();
 
     protected override void OnParametersSet()
     {
-        if (Data != null && Data.Any())
+        if (Data is not null)
         {
             GetPaginatedData(Data.Take(10).ToList());
         }
@@ -178,6 +172,7 @@ else
         StateHasChanged();
         await ShouldFetchNewData.InvokeAsync(true);
     }
+
     private async Task OnSelectMultipleItems(TItem item)
     {
         if (_selectedItems.Contains(item))
@@ -191,11 +186,15 @@ else
 
         if (_selectedItems.Count() == 1)
         {
-            await RowSelect.InvokeAsync(_selectedItems.Single());
+            _dataContainer.SelectedItem = _selectedItems.Single();
+
+            await GetCascadingContainerStates.InvokeAsync(_dataContainer);
         }
         else
         {
-            await MultipleRowsSelected.InvokeAsync(_selectedItems);
+            _dataContainer.SelectedItems = _selectedItems.ToList();
+
+            await GetCascadingContainerStates.InvokeAsync(_dataContainer);
         }
     }
 
@@ -206,21 +205,24 @@ else
     private async Task ToggleAddItem()
     {    
         _dataContainer.IsAddSelected = !_dataContainer.IsAddSelected;
-        await RowAdd.InvokeAsync();
+        _dataContainer.NewItem = new();
+
         await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 
     private async Task ToggleEditItem()
     {
         _dataContainer.IsUpdateSelected = !_dataContainer.IsUpdateSelected;
-        await RowEdit.InvokeAsync(_selectedItems.Single());
+        _dataContainer.SelectedItem = _selectedItems.Single();
+
         await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 
     private async Task ToggleDeleteItem()
     {
         _dataContainer.IsDeleteSingleItemSelected = !_dataContainer.IsDeleteSingleItemSelected;
-        await RowDelete.InvokeAsync(_selectedItems.Single());
+        _dataContainer.SelectedItem = _selectedItems.Single();
+
         await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 
@@ -228,7 +230,8 @@ else
     {
         _dataContainer.IsDeleteSingleItemSelected = !_dataContainer.IsDeleteSingleItemSelected;
         _dataContainer.IsDeleteMultipleSelected = !_dataContainer.IsDeleteMultipleSelected;
-        await RowsSelectedForDelete.InvokeAsync(_selectedItems);
+        _dataContainer.SelectedItems = _selectedItems;
+
         await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 

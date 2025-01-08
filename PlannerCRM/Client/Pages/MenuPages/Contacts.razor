@@ -5,120 +5,50 @@
               TItem="@FirmClientDto"
               Data="@_clients"
               Properties="@_selectedColumnsForClient"
-              RowAdd="@ToggleAdd"
-              RowSelect="@ToggleSelect"
-              MultipleRowsSelected="@ToggleSelectedMultipleItems"
-              RowsSelectedForDelete="@ToggleDeleteMultiple"
-              RowEdit="@ToggleEdit"
-              RowDelete="@ToggleDelete"
+              GetCascadingContainerStates="@GetCascadingContainerStates"
               ShouldFetchNewData="@ReloadUpdatedData" />
 
-<DataGridViewItemHandler TItem="@FirmClientDto"
-                         IsAddItemClicked="@_isAddClientClicked"
-                         IsEditItemClicked="@_isEditClientClicked"
-                         IsDeleteItemClicked="@_isDeleteClientClicked"
-                         IsDeleteMultipleItemsClicked="@_isDeleteMultipleClientsClicked"
-                         IsItemSelected="@_isClientSelected"
-                         IsOperationDone="@_isOperationDone"
-                         OnNewItem="@GetNewClientData"
-                         OnUpdatedItem="@GetUpdatedClientData">
-    <AddFormMarkup>
-        <div class="form-group">
-            <label>@nameof(_newClient.Name):</label>
-            <InputText class="form-control" @bind-Value="@_newClient.Name" />
-        </div>
-        <div class="form-group">
-            <label>@nameof(_newClient.VatNumber):</label>
-            <InputText class="form-control" @bind-Value="@_newClient.VatNumber" />
-        </div>
-    </AddFormMarkup>
-    <EditFormMarkup>
-        <div class="form-group">
-            <label>@nameof(_selectedClient.Name):</label>
-            <InputText class="form-control" @bind-Value="@_selectedClient.Name" />
-        </div>
-        <div class="form-group">
-            <label>@nameof(_selectedClient.VatNumber):</label>
-            <InputText class="form-control" @bind-Value="@_selectedClient.VatNumber" />
-        </div>
-    </EditFormMarkup>
-</DataGridViewItemHandler>
+<CascadingValue Value="@_dataContainer">
 
+    <DataGridViewItemHandler TItem="@FirmClientDto"
+                             AddAction="@(async client => await AddClient(client))"
+                             UpdateAction="@(async client => await UpdateClient(client))"
+                             DeleteAction="@(async client => await DeleteClient(client))"
+                             DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
+        <AddFormMarkup>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.NewItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.Name" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.NewItem.VatNumber):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.VatNumber" />
+            </div>
+        </AddFormMarkup>
+        <EditFormMarkup>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.SelectedItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.SelectedItem.Name" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.SelectedItem.VatNumber):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.SelectedItem.VatNumber" />
+            </div>
+        </EditFormMarkup>
+    </DataGridViewItemHandler>
+</CascadingValue>
 
 @code {
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
 
-    private FirmClientDto _selectedClient = new();
-    private List<FirmClientDto> _selectedClients = [];
-    private FirmClientDto _newClient = new();
+    private CascadingDataContainer<FirmClientDto> _dataContainer = new();
     private DataGridView<FirmClientDto> _grid = new();
-
-    private bool _isAddClientClicked = false;
-    private bool _isEditClientClicked = false;
-    private bool _isDeleteClientClicked = false;
-    private bool _isDeleteMultipleClientsClicked = false;
-    private bool _isClientSelected = false;
-    private bool _isOperationDone = false;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
     }
-
-    private async Task GetNewClientData(FirmClientDto client)
-    {
-        _newClient = client;
-        await AddClient(client);
-    }
-
-    private async Task GetUpdatedClientData(FirmClientDto client)
-    {
-        _selectedClient = client;
-        await UpdateClient(client);
-    }
-
-    private void GetSelectClientData(FirmClientDto client) => _newClient = client;
-
-    private async Task GetDeleteClientData(bool isConfirmed)
-    {
-        if (isConfirmed)
-        {
-            await DeleteClient(_selectedClient);
-        }
-    }
-
-    private async Task GetDeleteMultipleClientsData(List<FirmClientDto> clients)
-    {
-        foreach (var client in clients)
-        {
-            await DeleteClient(client);
-        }
-    }
-
-    private void ToggleSelect() => _isClientSelected = !_isClientSelected;
-
-    private void ToggleSelectedMultipleItems(List<FirmClientDto> items)
-    {
-        _selectedClients = items;
-        ToggleSelect();
-    }
-
-    private void ToggleAdd() => _isAddClientClicked = !_isAddClientClicked;
-
-    private void ToggleEdit(FirmClientDto client)
-    {
-        _selectedClient = client;
-        _isEditClientClicked = !_isEditClientClicked;
-    }
-
-    private void ToggleDelete(FirmClientDto client)
-    {
-        _selectedClient = client;
-        _isDeleteClientClicked = !_isDeleteClientClicked;
-    }
-
-    private void ToggleDeleteMultiple() => _isDeleteMultipleClientsClicked = !_isDeleteMultipleClientsClicked;
 
     private async Task ReloadUpdatedData(bool shouldReload)
     {
@@ -128,11 +58,21 @@
         }
     }
 
+    private void GetCascadingContainerStates(CascadingDataContainer<FirmClientDto> dataContainer) => _dataContainer = dataContainer;
+
     private async Task AddClient(FirmClientDto updatedClient) => await http.PostAsJsonAsync("api/client/add", updatedClient);
 
     private async Task UpdateClient(FirmClientDto updatedClient) => await http.PutAsJsonAsync($"api/client/edit/{updatedClient.Id}", updatedClient);
 
     private async Task DeleteClient(FirmClientDto client) => await http.DeleteAsync($"api/client/delete/{client.Id}");
+
+    private async Task DeleteMultipleClients(IEnumerable<FirmClientDto> clients)
+    {
+        foreach (var client in clients)
+        {
+            await DeleteClient(client);
+        }
+    }
 
     private async Task LoadData(PaginationHelper paginationHelper)
     {

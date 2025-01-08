@@ -1,119 +1,111 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-@if (IsAddItemClicked)
+@if (DataContainer.IsAddSelected)
 {
-    <FormView Title="Add new item " TItem="@TItem" Model="@_newItem" OnItemChanged="@OnItemDataAdded">
+    <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.NewItem" OnItemChanged="@OnItemDataAdded">
         <FormContent>
-            @AddFormMarkup(_newItem)
+            @AddFormMarkup(DataContainer.NewItem)
         </FormContent>
     </FormView>
 }
 
-@if (IsEditItemClicked)
+@if (DataContainer.IsUpdateSelected)
 {
-    <FormView Title="Add new item " TItem="@TItem" Model="@_selectedItem" OnItemChanged="@OnItemDataAdded">
+    <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.SelectedItem" OnItemChanged="@OnItemDataAdded">
         <FormContent>
-            @EditFormMarkup(_selectedItem)
+            @EditFormMarkup(DataContainer.SelectedItem)
         </FormContent>
     </FormView>
 }
 
-@if (IsDeleteItemClicked)
+@if (DataContainer.IsDeleteSingleItemSelected)
 {
     <AlertComponent Title="Sure to delete this item?"
     BodyMessage="The action is irreversible!"
     IsDeleteConfirmed="@OnItemDeleteConfirmation" />
 }
 
-@if (IsDeleteMultipleItemsClicked)
+@if (DataContainer.IsDeleteMultipleSelected)
 {
     <AlertComponent Title="Sure to delete this item?"
     BodyMessage="The action is irreversible!"
     IsDeleteConfirmed="@OnMultipleItemsDeleteConfirmation" />
 }
 
-@if (IsOperationDone)
+@if (DataContainer.IsOperationDone)
 {
     <Toast />
 }
 
 @code
 {
-    [Parameter] public bool IsAddItemClicked { get; set; } = false;
-    [Parameter] public bool IsEditItemClicked { get; set; } = false;
-    [Parameter] public bool IsDeleteItemClicked { get; set; } = false;
-    [Parameter] public bool IsDeleteMultipleItemsClicked { get; set; } = false;
-    [Parameter] public bool IsItemSelected { get; set; } = false;
-    [Parameter] public bool IsOperationDone { get; set; } = false;
+    [CascadingParameter] public CascadingDataContainer<TItem> DataContainer { get; set; }
+
     [Parameter] public RenderFragment<TItem> AddFormMarkup { get; set; }
     [Parameter] public RenderFragment<TItem> EditFormMarkup { get; set; }
-    [Parameter] public EventCallback<TItem> OnNewItem { get; set; }
-    [Parameter] public EventCallback<TItem> OnUpdatedItem { get; set; }
-    [Parameter] public EventCallback<TItem> OnDeleteSingleItem { get; set; }
-    [Parameter] public EventCallback<List<TItem>> OnDeleteMultipleItems { get; set; }
     [Parameter] public Action<TItem> AddAction { get; set; }
     [Parameter] public Action<TItem> UpdateAction { get; set; }
     [Parameter] public Action<TItem> DeleteAction { get; set; }
-    [Parameter] public Action<TItem> DeleteMultipleAction { get; set; }
+    [Parameter] public Action<IEnumerable<TItem>> DeleteMultipleAction { get; set; }
 
-
-    private TItem _selectedItem = new();
-    private List<TItem> _selectedItems = [];
-    private TItem _newItem = new();
     private DataGridView<TItem> _grid = new();
 
-    private async Task OnItemDataAdded(TItem item)
+    private void OnItemDataAdded(TItem item)
     {
-        _newItem = item;
-        await OnNewItem.InvokeAsync(item);
+        DataContainer.NewItem = item;
+        AddAction.Invoke(item);
     }
 
-    private async Task OnItemDataUpdated(TItem item)
+    private void OnItemDataUpdated(TItem item)
     {
-        _selectedItem = item;
-        await OnUpdatedItem.InvokeAsync(item);
+        DataContainer.SelectedItem = item;
+        UpdateAction.Invoke(item);
     }
 
-    private async Task OnItemDeleteConfirmation(bool isConfirmed)
+    private void OnItemDeleteConfirmation(bool isConfirmed)
     {
-        IsDeleteItemClicked = !IsDeleteItemClicked;
-        await OnDeleteSingleItem.InvokeAsync(_selectedItem);
+        DataContainer.IsDeleteSingleItemSelected = !DataContainer.IsDeleteSingleItemSelected;
+        DeleteAction.Invoke(DataContainer.SelectedItem);
     }
 
-    private async Task OnMultipleItemsDeleteConfirmation(bool isConfirmed)
+    private void OnMultipleItemsDeleteConfirmation(bool isConfirmed)
     {
-        IsDeleteMultipleItemsClicked = !IsDeleteMultipleItemsClicked;
-        await OnDeleteMultipleItems.InvokeAsync(_selectedItems);
+        DataContainer.IsDeleteMultipleSelected = !DataContainer.IsDeleteMultipleSelected;
+        DeleteMultipleAction.Invoke(DataContainer.SelectedItems);
     }
 
-    private void ToggleAddItem() => IsAddItemClicked = !IsAddItemClicked;
+    private void ToggleAddItem()
+    {
+        DataContainer.NewItem = new();
+        DataContainer.IsAddSelected = !DataContainer.IsAddSelected;
+    }
 
     private void ToggleSelectedItems(List<TItem> items)
     {
-        _selectedItems = items;
-        IsItemSelected = !IsItemSelected;
+        DataContainer.SelectedItems = items;
+        DataContainer.IsItemSelected = !DataContainer.IsItemSelected;
     }
 
     private void ToggleSelectedItemsForDelete(List<TItem> items)
     {
-        IsDeleteMultipleItemsClicked = !IsDeleteMultipleItemsClicked;
+        DataContainer.IsDeleteMultipleSelected = !DataContainer.IsDeleteMultipleSelected;
     }
 
     private void ToggleSelectItem(TItem item)
     {
-        _selectedItem = item;
-        IsItemSelected = !IsItemSelected;
+        DataContainer.SelectedItem = item;
+        DataContainer.IsItemSelected = !DataContainer.IsItemSelected;
     }
 
     private void ToggleEditItem(TItem item)
     {
-        _selectedItem = item;
-        IsEditItemClicked = !IsEditItemClicked;
+        DataContainer.SelectedItem = item;
+        DataContainer.IsUpdateSelected = !DataContainer.IsUpdateSelected;
     }
 
     private void ToggleDeleteItem(TItem item)
     {
-        _selectedItem = item;
-        IsDeleteItemClicked = !IsDeleteItemClicked;
+        DataContainer.SelectedItem = item;
+        DataContainer.IsDeleteSingleItemSelected = !DataContainer.IsDeleteSingleItemSelected;
     }
 }
