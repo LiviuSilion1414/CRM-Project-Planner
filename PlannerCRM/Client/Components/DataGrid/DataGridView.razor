@@ -75,22 +75,36 @@ else
                     </button>
                 </div>
             }
-            <div class="action">
-                @if (_selectedItems.Any())
-                {
+            @if (_selectedItems.Count() > 1)
+            {
+                <div class="action">
+                    <div class="action">
+                        <button class="action btn btn-outline-danger" @onclick="ToggleDeleteAllItems">
+                            <i class="bi bi-x-circle"></i>
+                            Delete all
+                        </button>
+                    </div>
+                </div>
+            }
+
+            @if (_selectedItems.Count() > 1 || _selectedItems.Count() == 1)
+            {
+                <div class="action">
                     <button class="action btn btn-outline-secondary" @onclick="DeselectAll">
                         <i class="bi bi-x-circle"></i>
                         Deselect
                     </button>
-                }
-                else
-                {
+                </div>
+            }
+            else
+            {
+                <div class="action">
                     <button class="action btn btn-outline-secondary" @onclick="SelectAll">
                         <i class="bi bi-x-circle"></i>
                         Select
                     </button>
-                }
-            </div>
+                </div>
+            }
         </div>
         <div class="master">
             <table class="table text-center">
@@ -140,6 +154,8 @@ else
     [Parameter] public EventCallback RowAdd { get; set; }
     [Parameter] public EventCallback<TItem> RowEdit { get; set; }
     [Parameter] public EventCallback<TItem> RowDelete { get; set; }
+    [Parameter] public EventCallback<List<TItem>> RowsSelectedForDelete { get; set; }
+    [Parameter] public EventCallback<bool> ShouldFetchNewData { get; set; }
 
     private IEnumerable<TItem> _paginatedData = [];
     private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
@@ -159,6 +175,11 @@ else
         }
     }
 
+    public async Task Reload()
+    {
+        StateHasChanged();
+        await ShouldFetchNewData.InvokeAsync(true);
+    }
     private async Task OnSelectMultipleItems(TItem item)
     {
         if (_selectedItems.Contains(item))
@@ -200,6 +221,12 @@ else
     {
         _isDeleteItemSelected = !_isDeleteItemSelected;
         await RowDelete.InvokeAsync(_selectedItems.Single());
+    }
+
+    private async Task ToggleDeleteAllItems()
+    {
+        _isDeleteItemSelected = !_isDeleteItemSelected;
+        await RowsSelectedForDelete.InvokeAsync(_selectedItems);
     }
 
     private object GetItemValue(TItem item, string propertyName) =>

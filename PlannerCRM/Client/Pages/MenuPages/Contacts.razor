@@ -1,14 +1,17 @@
 ﻿@page "/contacts"
 @inject HttpClient http
 
-<DataGridView TItem="@FirmClientDto"
-              Data="@_clients"
-              Properties="@_selectedColumnsForClient"
-              RowAdd="@ToggleAddClient"
-              RowSelect="@ToggleSelectClient"
-              RowsSelected="@ToggleSelectedClients"
-              RowEdit="ToggleEditClient"
-              RowDelete="ToggleDeleteClient" />
+<DataGridView @ref="@_grid"
+TItem="@FirmClientDto"
+Data="@_clients"
+Properties="@_selectedColumnsForClient"
+RowAdd="@ToggleAddClient"
+RowSelect="@ToggleSelectClient"
+RowsSelected="@ToggleSelectedClients"
+RowsSelectedForDelete="@ToggleSelectedClientsForDelete"
+RowEdit="@ToggleEditClient"
+RowDelete="@ToggleDeleteClient"
+ShouldFetchNewData="@ReloadUpdatedData"/>
 
 @if (_isAddClientClicked)
 {
@@ -45,8 +48,15 @@
 @if (_isDeleteClientClicked)
 {
     <AlertComponent Title="Sure to delete this item?"
-                    BodyMessage="The action is irreversible!"
-                    IsDeleteConfirmed="@OnClientDeleteConfirmation" />
+    BodyMessage="The action is irreversible!"
+    IsDeleteConfirmed="@OnClientDeleteConfirmation" />
+}
+
+@if (_isDeleteMultipleClientsClicked)
+{
+    <AlertComponent Title="Sure to delete this item?"
+    BodyMessage="The action is irreversible!"
+    IsDeleteConfirmed="@OnMultipleClientsDeleteConfirmation" />
 }
 
 @code {
@@ -56,10 +66,12 @@
     private FirmClientDto _selectedClient = new();
     private List<FirmClientDto> _selectedClients = [];
     private FirmClientDto _clientDto = new();
+    private DataGridView<FirmClientDto> _grid = new();
 
     private bool _isAddClientClicked = false;
     private bool _isEditClientClicked = false;
     private bool _isDeleteClientClicked = false;
+    private bool _isDeleteMultipleClientsClicked = false;
     private bool _isClientSelected = false;
 
     protected override async Task OnInitializedAsync()
@@ -71,7 +83,16 @@
 
     private void OnClientDataUpdated(FirmClientDto client) => _selectedClient = client;
 
-    private async Task OnClientDeleteConfirmation(bool isConfirmed) => await DeleteClient();
+    private async Task OnClientDeleteConfirmation(bool isConfirmed) => await DeleteClient(_selectedClient);
+    private async Task OnMultipleClientsDeleteConfirmation(bool isConfirmed)
+    {
+        foreach (var client in _selectedClients)
+        {
+            Console.WriteLine($"{client.Name}");
+            await DeleteClient(client);
+        }
+        _grid.Reload();
+    }
 
     private void ToggleAddClient() => _isAddClientClicked = !_isAddClientClicked;
 
@@ -80,6 +101,11 @@
     {
         _selectedClients = clients;
         _isClientSelected = !_isClientSelected;
+    }
+
+    private void ToggleSelectedClientsForDelete(List<FirmClientDto> clients)
+    {
+        _isDeleteMultipleClientsClicked = !_isDeleteMultipleClientsClicked;
     }
 
     private void ToggleSelectClient(FirmClientDto client)
@@ -100,11 +126,19 @@
         _isDeleteClientClicked = !_isDeleteClientClicked;
     }
 
+    private async Task ReloadUpdatedData(bool shouldReload)
+    {
+        if (shouldReload)
+        {
+            await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+        }
+    }
+
     private async Task AddClient(FirmClientDto updatedClient) => await http.PostAsJsonAsync("api/client/add", updatedClient);
 
     private async Task UpdateClient(FirmClientDto updatedClient) => await http.PutAsJsonAsync($"api/client/edit/{updatedClient.Id}", updatedClient);
 
-    private async Task DeleteClient() => await http.DeleteAsync($"api/client/delete/{_selectedClient.Id}");
+    private async Task DeleteClient(FirmClientDto client) => await http.DeleteAsync($"api/client/delete/{client.Id}");
 
     private async Task LoadData(PaginationHelper paginationHelper)
     {
