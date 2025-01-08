@@ -156,16 +156,14 @@ else
     [Parameter] public EventCallback<TItem> RowDelete { get; set; }
     [Parameter] public EventCallback<List<TItem>> RowsSelectedForDelete { get; set; }
     [Parameter] public EventCallback<bool> ShouldFetchNewData { get; set; }
+    [Parameter] public EventCallback<CascadingDataContainer> GetCascadingContainerStates { get; set; }
 
+    private List<TItem> _selectedItems = [];
     private IEnumerable<TItem> _paginatedData = [];
     private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
     private int _pageSize = 10;
 
-    private List<TItem> _selectedItems = [];
-
-    private bool _isAddItemSelected = false;
-    private bool _isEditItemSelected = false;
-    private bool _isDeleteItemSelected = false;
+    private CascadingDataContainer _dataContainer = new();
 
     protected override void OnParametersSet()
     {
@@ -207,26 +205,31 @@ else
 
     private async Task ToggleAddItem()
     {    
-        _isAddItemSelected = !_isAddItemSelected;
+        _dataContainer.IsAddSelected = !_dataContainer.IsAddSelected;
         await RowAdd.InvokeAsync();
+        await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 
     private async Task ToggleEditItem()
     {
-        _isEditItemSelected = !_isEditItemSelected;
+        _dataContainer.IsUpdateSelected = !_dataContainer.IsUpdateSelected;
         await RowEdit.InvokeAsync(_selectedItems.Single());
+        await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 
     private async Task ToggleDeleteItem()
     {
-        _isDeleteItemSelected = !_isDeleteItemSelected;
+        _dataContainer.IsDeleteSingleItemSelected = !_dataContainer.IsDeleteSingleItemSelected;
         await RowDelete.InvokeAsync(_selectedItems.Single());
+        await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 
     private async Task ToggleDeleteAllItems()
     {
-        _isDeleteItemSelected = !_isDeleteItemSelected;
+        _dataContainer.IsDeleteSingleItemSelected = !_dataContainer.IsDeleteSingleItemSelected;
+        _dataContainer.IsDeleteMultipleSelected = !_dataContainer.IsDeleteMultipleSelected;
         await RowsSelectedForDelete.InvokeAsync(_selectedItems);
+        await GetCascadingContainerStates.InvokeAsync(_dataContainer);
     }
 
     private object GetItemValue(TItem item, string propertyName) =>
