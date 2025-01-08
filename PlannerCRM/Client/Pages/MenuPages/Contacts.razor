@@ -11,7 +11,7 @@ RowsSelected="@ToggleSelectedClients"
 RowsSelectedForDelete="@ToggleSelectedClientsForDelete"
 RowEdit="@ToggleEditClient"
 RowDelete="@ToggleDeleteClient"
-ShouldFetchNewData="@ReloadUpdatedData"/>
+ShouldFetchNewData="@ReloadUpdatedData" />
 
 @if (_isAddClientClicked)
 {
@@ -59,6 +59,11 @@ ShouldFetchNewData="@ReloadUpdatedData"/>
     IsDeleteConfirmed="@OnMultipleClientsDeleteConfirmation" />
 }
 
+@if (_isOperationDone)
+{
+    <Toast />
+}
+
 @code {
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
@@ -73,6 +78,7 @@ ShouldFetchNewData="@ReloadUpdatedData"/>
     private bool _isDeleteClientClicked = false;
     private bool _isDeleteMultipleClientsClicked = false;
     private bool _isClientSelected = false;
+    private bool _isOperationDone = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,7 +97,8 @@ ShouldFetchNewData="@ReloadUpdatedData"/>
             Console.WriteLine($"{client.Name}");
             await DeleteClient(client);
         }
-        _grid.Reload();
+        await _grid.Reload();
+        _isOperationDone = true;
     }
 
     private void ToggleAddClient() => _isAddClientClicked = !_isAddClientClicked;
