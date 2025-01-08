@@ -1,0 +1,47 @@
+﻿@using System.Timers
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="@ToastClasses" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img src="..." class="rounded me-2" alt="...">
+            <strong class="me-auto">@SenderName</strong>
+            <small>@ReceptionTime</small>
+            <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public DateTime ReceptionTime { get; set; } = DateTime.Now;
+    [Parameter] public string Message { get; set; } = "Operation succeded!";
+    [Parameter] public string SenderName { get; set; } = "PlannerCRM";
+
+    private string ToastClasses = "toast fade show";
+    private Timer _timer;
+
+    private void ShowToast()
+    {
+        ToastClasses = "toast fade show";
+        StartHideTimer();
+    }
+
+    private void HideToast()
+    {
+        ToastClasses = "toast fade";
+        _timer?.Stop();
+        _timer?.Dispose();
+    }
+
+    private void StartHideTimer()
+    {
+        _timer = new Timer(5000);
+        _timer.Elapsed += (sender, e) =>
+        {
+            InvokeAsync(() => HideToast());
+        };
+        _timer.Start();
+    }
+}
