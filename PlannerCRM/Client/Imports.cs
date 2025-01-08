@@ -11,6 +11,7 @@ global using PlannerCRM.Client;
 global using PlannerCRM.Client.Interfaces;
 global using PlannerCRM.Client.Services;
 global using PlannerCRM.Client.Extensions;
+global using PlannerCRM.Client.Models;
 
 global using PlannerCRM.Shared.Constants;
 global using PlannerCRM.Shared.Dtos;
