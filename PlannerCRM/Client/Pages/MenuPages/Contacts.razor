@@ -6,7 +6,7 @@
               Properties="@_selectedColumnsForClient"
               RowAdd="@ToggleAddClient"
               RowSelect="@ToggleSelectClient"
-              RowsSelected="@ToggleSelectClient"
+              RowsSelected="@ToggleSelectedClients"
               RowEdit="ToggleEditClient"
               RowDelete="ToggleDeleteClient" />
 
@@ -76,7 +76,7 @@
     private void ToggleAddClient() => _isAddClientClicked = !_isAddClientClicked;
 
 
-    private void ToggleSelectClient(List<FirmClientDto> clients)
+    private void ToggleSelectedClients(List<FirmClientDto> clients)
     {
         _selectedClients = clients;
         _isClientSelected = !_isClientSelected;
