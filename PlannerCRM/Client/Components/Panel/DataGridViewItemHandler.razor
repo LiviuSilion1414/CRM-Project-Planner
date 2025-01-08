@@ -1,0 +1,119 @@
+﻿@typeparam TItem where TItem : class, new()
+
+@if (IsAddItemClicked)
+{
+    <FormView Title="Add new item " TItem="@TItem" Model="@_newItem" OnItemChanged="@OnItemDataAdded">
+        <FormContent>
+            @AddFormMarkup(_newItem)
+        </FormContent>
+    </FormView>
+}
+
+@if (IsEditItemClicked)
+{
+    <FormView Title="Add new item " TItem="@TItem" Model="@_selectedItem" OnItemChanged="@OnItemDataAdded">
+        <FormContent>
+            @EditFormMarkup(_selectedItem)
+        </FormContent>
+    </FormView>
+}
+
+@if (IsDeleteItemClicked)
+{
+    <AlertComponent Title="Sure to delete this item?"
+    BodyMessage="The action is irreversible!"
+    IsDeleteConfirmed="@OnItemDeleteConfirmation" />
+}
+
+@if (IsDeleteMultipleItemsClicked)
+{
+    <AlertComponent Title="Sure to delete this item?"
+    BodyMessage="The action is irreversible!"
+    IsDeleteConfirmed="@OnMultipleItemsDeleteConfirmation" />
+}
+
+@if (IsOperationDone)
+{
+    <Toast />
+}
+
+@code
+{
+    [Parameter] public bool IsAddItemClicked { get; set; } = false;
+    [Parameter] public bool IsEditItemClicked { get; set; } = false;
+    [Parameter] public bool IsDeleteItemClicked { get; set; } = false;
+    [Parameter] public bool IsDeleteMultipleItemsClicked { get; set; } = false;
+    [Parameter] public bool IsItemSelected { get; set; } = false;
+    [Parameter] public bool IsOperationDone { get; set; } = false;
+    [Parameter] public RenderFragment<TItem> AddFormMarkup { get; set; }
+    [Parameter] public RenderFragment<TItem> EditFormMarkup { get; set; }
+    [Parameter] public EventCallback<TItem> OnNewItem { get; set; }
+    [Parameter] public EventCallback<TItem> OnUpdatedItem { get; set; }
+    [Parameter] public EventCallback<TItem> OnDeleteSingleItem { get; set; }
+    [Parameter] public EventCallback<List<TItem>> OnDeleteMultipleItems { get; set; }
+    [Parameter] public Action<TItem> AddAction { get; set; }
+    [Parameter] public Action<TItem> UpdateAction { get; set; }
+    [Parameter] public Action<TItem> DeleteAction { get; set; }
+    [Parameter] public Action<TItem> DeleteMultipleAction { get; set; }
+
+
+    private TItem _selectedItem = new();
+    private List<TItem> _selectedItems = [];
+    private TItem _newItem = new();
+    private DataGridView<TItem> _grid = new();
+
+    private async Task OnItemDataAdded(TItem item)
+    {
+        _newItem = item;
+        await OnNewItem.InvokeAsync(item);
+    }
+
+    private async Task OnItemDataUpdated(TItem item)
+    {
+        _selectedItem = item;
+        await OnUpdatedItem.InvokeAsync(item);
+    }
+
+    private async Task OnItemDeleteConfirmation(bool isConfirmed)
+    {
+        IsDeleteItemClicked = !IsDeleteItemClicked;
+        await OnDeleteSingleItem.InvokeAsync(_selectedItem);
+    }
+
+    private async Task OnMultipleItemsDeleteConfirmation(bool isConfirmed)
+    {
+        IsDeleteMultipleItemsClicked = !IsDeleteMultipleItemsClicked;
+        await OnDeleteMultipleItems.InvokeAsync(_selectedItems);
+    }
+
+    private void ToggleAddItem() => IsAddItemClicked = !IsAddItemClicked;
+
+    private void ToggleSelectedItems(List<TItem> items)
+    {
+        _selectedItems = items;
+        IsItemSelected = !IsItemSelected;
+    }
+
+    private void ToggleSelectedItemsForDelete(List<TItem> items)
+    {
+        IsDeleteMultipleItemsClicked = !IsDeleteMultipleItemsClicked;
+    }
+
+    private void ToggleSelectItem(TItem item)
+    {
+        _selectedItem = item;
+        IsItemSelected = !IsItemSelected;
+    }
+
+    private void ToggleEditItem(TItem item)
+    {
+        _selectedItem = item;
+        IsEditItemClicked = !IsEditItemClicked;
+    }
+
+    private void ToggleDeleteItem(TItem item)
+    {
+        _selectedItem = item;
+        IsDeleteItemClicked = !IsDeleteItemClicked;
+    }
+}

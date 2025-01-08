@@ -2,67 +2,48 @@
 @inject HttpClient http
 
 <DataGridView @ref="@_grid"
-TItem="@FirmClientDto"
-Data="@_clients"
-Properties="@_selectedColumnsForClient"
-RowAdd="@ToggleAddClient"
-RowSelect="@ToggleSelectClient"
-RowsSelected="@ToggleSelectedClients"
-RowsSelectedForDelete="@ToggleSelectedClientsForDelete"
-RowEdit="@ToggleEditClient"
-RowDelete="@ToggleDeleteClient"
-ShouldFetchNewData="@ReloadUpdatedData" />
+              TItem="@FirmClientDto"
+              Data="@_clients"
+              Properties="@_selectedColumnsForClient"
+              RowAdd="@ToggleAdd"
+              RowSelect="@ToggleSelect"
+              MultipleRowsSelected="@ToggleSelectedMultipleItems"
+              RowsSelectedForDelete="@ToggleDeleteMultiple"
+              RowEdit="@ToggleEdit"
+              RowDelete="@ToggleDelete"
+              ShouldFetchNewData="@ReloadUpdatedData" />
 
-@if (_isAddClientClicked)
-{
-    <FormView Title="Add new client " TItem="@FirmClientDto" Model="@_clientDto" OnItemChanged="@OnClientDataAdded">
-        <FormContent>
-            <div class="form-group">
-                <label>@nameof(_clientDto.Name):</label>
-                <InputText class="form-control" @bind-Value="@_clientDto.Name" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_clientDto.VatNumber):</label>
-                <InputText class="form-control" @bind-Value="@_clientDto.VatNumber" />
-            </div>
-        </FormContent>
-    </FormView>
-}
+<DataGridViewItemHandler TItem="@FirmClientDto"
+                         IsAddItemClicked="@_isAddClientClicked"
+                         IsEditItemClicked="@_isEditClientClicked"
+                         IsDeleteItemClicked="@_isDeleteClientClicked"
+                         IsDeleteMultipleItemsClicked="@_isDeleteMultipleClientsClicked"
+                         IsItemSelected="@_isClientSelected"
+                         IsOperationDone="@_isOperationDone"
+                         OnNewItem="@GetNewClientData"
+                         OnUpdatedItem="@GetUpdatedClientData">
+    <AddFormMarkup>
+        <div class="form-group">
+            <label>@nameof(_newClient.Name):</label>
+            <InputText class="form-control" @bind-Value="@_newClient.Name" />
+        </div>
+        <div class="form-group">
+            <label>@nameof(_newClient.VatNumber):</label>
+            <InputText class="form-control" @bind-Value="@_newClient.VatNumber" />
+        </div>
+    </AddFormMarkup>
+    <EditFormMarkup>
+        <div class="form-group">
+            <label>@nameof(_selectedClient.Name):</label>
+            <InputText class="form-control" @bind-Value="@_selectedClient.Name" />
+        </div>
+        <div class="form-group">
+            <label>@nameof(_selectedClient.VatNumber):</label>
+            <InputText class="form-control" @bind-Value="@_selectedClient.VatNumber" />
+        </div>
+    </EditFormMarkup>
+</DataGridViewItemHandler>
 
-@if (_isEditClientClicked)
-{
-    <FormView Title="Add new client " TItem="@FirmClientDto" Model="@_selectedClient" OnItemChanged="@OnClientDataAdded">
-        <FormContent>
-            <div class="form-group">
-                <label>@nameof(_selectedClient.Name):</label>
-                <InputText class="form-control" @bind-Value="@_selectedClient.Name" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_selectedClient.VatNumber):</label>
-                <InputText class="form-control" @bind-Value="@_selectedClient.VatNumber" />
-            </div>
-        </FormContent>
-    </FormView>
-}
-
-@if (_isDeleteClientClicked)
-{
-    <AlertComponent Title="Sure to delete this item?"
-    BodyMessage="The action is irreversible!"
-    IsDeleteConfirmed="@OnClientDeleteConfirmation" />
-}
-
-@if (_isDeleteMultipleClientsClicked)
-{
-    <AlertComponent Title="Sure to delete this item?"
-    BodyMessage="The action is irreversible!"
-    IsDeleteConfirmed="@OnMultipleClientsDeleteConfirmation" />
-}
-
-@if (_isOperationDone)
-{
-    <Toast />
-}
 
 @code {
     private List<FirmClientDto> _clients;
@@ -70,7 +51,7 @@ ShouldFetchNewData="@ReloadUpdatedData" />
 
     private FirmClientDto _selectedClient = new();
     private List<FirmClientDto> _selectedClients = [];
-    private FirmClientDto _clientDto = new();
+    private FirmClientDto _newClient = new();
     private DataGridView<FirmClientDto> _grid = new();
 
     private bool _isAddClientClicked = false;
@@ -85,53 +66,59 @@ ShouldFetchNewData="@ReloadUpdatedData" />
         await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
     }
 
-    private void OnClientDataAdded(FirmClientDto client) => _clientDto = client;
-
-    private void OnClientDataUpdated(FirmClientDto client) => _selectedClient = client;
-
-    private async Task OnClientDeleteConfirmation(bool isConfirmed) => await DeleteClient(_selectedClient);
-    private async Task OnMultipleClientsDeleteConfirmation(bool isConfirmed)
+    private async Task GetNewClientData(FirmClientDto client)
     {
-        foreach (var client in _selectedClients)
-        {
-            Console.WriteLine($"{client.Name}");
-            await DeleteClient(client);
-        }
-        await _grid.Reload();
-        _isOperationDone = true;
+        _newClient = client;
+        await AddClient(client);
     }
 
-    private void ToggleAddClient() => _isAddClientClicked = !_isAddClientClicked;
-
-
-    private void ToggleSelectedClients(List<FirmClientDto> clients)
-    {
-        _selectedClients = clients;
-        _isClientSelected = !_isClientSelected;
-    }
-
-    private void ToggleSelectedClientsForDelete(List<FirmClientDto> clients)
-    {
-        _isDeleteMultipleClientsClicked = !_isDeleteMultipleClientsClicked;
-    }
-
-    private void ToggleSelectClient(FirmClientDto client)
+    private async Task GetUpdatedClientData(FirmClientDto client)
     {
         _selectedClient = client;
-        _isClientSelected = !_isClientSelected;
+        await UpdateClient(client);
     }
 
-    private void ToggleEditClient(FirmClientDto client)
+    private void GetSelectClientData(FirmClientDto client) => _newClient = client;
+
+    private async Task GetDeleteClientData(bool isConfirmed)
+    {
+        if (isConfirmed)
+        {
+            await DeleteClient(_selectedClient);
+        }
+    }
+
+    private async Task GetDeleteMultipleClientsData(List<FirmClientDto> clients)
+    {
+        foreach (var client in clients)
+        {
+            await DeleteClient(client);
+        }
+    }
+
+    private void ToggleSelect() => _isClientSelected = !_isClientSelected;
+
+    private void ToggleSelectedMultipleItems(List<FirmClientDto> items)
+    {
+        _selectedClients = items;
+        ToggleSelect();
+    }
+
+    private void ToggleAdd() => _isAddClientClicked = !_isAddClientClicked;
+
+    private void ToggleEdit(FirmClientDto client)
     {
         _selectedClient = client;
         _isEditClientClicked = !_isEditClientClicked;
     }
 
-    private void ToggleDeleteClient(FirmClientDto client)
+    private void ToggleDelete(FirmClientDto client)
     {
         _selectedClient = client;
         _isDeleteClientClicked = !_isDeleteClientClicked;
     }
+
+    private void ToggleDeleteMultiple() => _isDeleteMultipleClientsClicked = !_isDeleteMultipleClientsClicked;
 
     private async Task ReloadUpdatedData(bool shouldReload)
     {

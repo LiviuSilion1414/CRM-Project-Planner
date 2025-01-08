@@ -149,7 +149,7 @@ else
 {
     [Parameter] public IEnumerable<string> Properties { get; set; }
     [Parameter] public IEnumerable<TItem> Data { get; set; }
-    [Parameter] public EventCallback<List<TItem>> RowsSelected { get; set; }
+    [Parameter] public EventCallback<List<TItem>> MultipleRowsSelected { get; set; }
     [Parameter] public EventCallback<TItem> RowSelect { get; set; }
     [Parameter] public EventCallback RowAdd { get; set; }
     [Parameter] public EventCallback<TItem> RowEdit { get; set; }
@@ -197,7 +197,7 @@ else
         }
         else
         {
-            await RowsSelected.InvokeAsync(_selectedItems);
+            await MultipleRowsSelected.InvokeAsync(_selectedItems);
         }
     }
 
