@@ -1,8 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class WorkOrderController(IRepository<WorkOrder, WorkOrderDto> genericRepo, WorkOrderRepository specificRepo) : CrudController<WorkOrder, WorkOrderDto>(genericRepo)
