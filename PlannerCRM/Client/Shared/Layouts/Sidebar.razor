@@ -1,61 +1,112 @@
-﻿<RadzenLayout>
-    <RadzenSidebar Responsive="true" Style="@_sidebarStyle">
-        <RadzenPanelMenu DisplayStyle="@_panelMenuDisplayStyle" Match="NavLinkMatch.All">
-            <RadzenPanelMenuItem Icon="@_menuStatus" Click="OnMenuExpansion"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="home" Path="/home" Text="Home"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="schedule" Path="/recently" Text="Recently"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="task" Path="/tasks" Text="Tasks"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="contacts" Path="contacts" Text="Contacts"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="monitoring" Path="/statistics" Text="Statistics"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="event" Path="/calendar" Text="Calendar"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="picture_as_pdf" Path="/invoices" Text="Invoices"></RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Icon="settings" Path="/settings" Text="Settings"></RadzenPanelMenuItem>
-        </RadzenPanelMenu>
-    </RadzenSidebar>
-</RadzenLayout>
+﻿<div class="d-flex">
+    <nav class="sidebar bg-light border" style="@_sidebarStyle" id="sidebar">
+        <ul class="list-unstyled p-0 m-0">
+            <li class="p-2">
+                <button class="btn btn-light w-100 text-start" @onclick="OnMenuExpansion">
+                    <i class="bi @menuStatus"></i>
+                </button>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/home">
+                    <i class="bi bi-house me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Home</span>
+                    }
+                </a>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/recently">
+                    <i class="bi bi-clock me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Recently</span>
+                    }
+                </a>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/tasks">
+                    <i class="bi bi-check2-circle me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Tasks</span>
+                    }
+                </a>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/contacts">
+                    <i class="bi bi-people me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Contacts</span>
+                    }
+                </a>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/statistics">
+                    <i class="bi bi-bar-chart me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Statistics</span>
+                    }
+                </a>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/calendar">
+                    <i class="bi bi-calendar-event me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Calendar</span>
+                    }
+                </a>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/invoices">
+                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Invoices</span>
+                    }
+                </a>
+            </li>
+            <li>
+                <a class="nav-link text-dark d-flex align-items-center" href="/settings">
+                    <i class="bi bi-gear me-2"></i>
+                    @if (_isExpanded)
+                    {
+                        <span>Settings</span>
+                    }
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="flex-grow-1 p-4">
+        @Body
+    </div>
+</div>
 
 @code {
     private bool _isExpanded = false;
     private string _menuStatus = MenuStatus.OPEN;
 
-    private string _sidebarStyle
-    {
-        get
-        {
-            return _isExpanded ? SidebarStyle.MAX_WIDTH : SidebarStyle.MIN_WIDTH;
-        }
-    }
-
-    private MenuItemDisplayStyle _panelMenuDisplayStyle
-    {
-        get
-        {
-            return _isExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon;
-        }
-    }
+    private string _sidebarStyle => _isExpanded ? SidebarStyle.MAX_WIDTH : SidebarStyle.MIN_WIDTH;
 
     private void OnMenuExpansion()
     {
         _isExpanded = !_isExpanded;
-        if (!_isExpanded)
-        {
-            _menuStatus = MenuStatus.OPEN;
-        }
-        else
-        {
-            _menuStatus = MenuStatus.CLOSE;
-        }
+        _menuStatus = _isExpanded ? MenuStatus.CLOSE : MenuStatus.OPEN;
     }
 
     public static class MenuStatus
     {
-        public const string CLOSE = "close";
-        public const string OPEN = "menu";
+        public const string CLOSE = "bi-chevron-left";
+        public const string OPEN = "bi-list";
     }
 
     public static class SidebarStyle
     {
-        public const string MAX_WIDTH = "width: 250px;";
-        public const string MIN_WIDTH = "width: 56px;";
+        public const string MAX_WIDTH = "width: 250px; transition: width 0.3s;";
+        public const string MIN_WIDTH = "width: 56px; transition: width 0.3s;";
     }
 }
