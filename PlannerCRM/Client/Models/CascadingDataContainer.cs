@@ -10,6 +10,6 @@ public class CascadingDataContainer<TItem>
     public bool IsDeleteMultipleSelected { get; set; }
     public bool IsOperationDone { get; set; }
     public TItem SelectedItem { get; set; }
-    public IEnumerable<TItem> SelectedItems { get; set; }
+    public List<TItem> SelectedItems { get; set; }
     public TItem NewItem { get; set; }
 }
