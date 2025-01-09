@@ -169,6 +169,7 @@
         {
             GetPaginatedData(Data.Take(10).ToList());
         }
+        EntityHelper<TItem>.InitializePropertiesRecursively(_dataContainer);
     }
 
     public async Task Reload()
