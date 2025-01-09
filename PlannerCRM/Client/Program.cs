@@ -8,8 +8,6 @@ builder.Services.RegisterServices();
 builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();
 
-builder.Services.AddRadzenComponents();
-
 builder.Services.AddScoped(_ => 
     new HttpClient {
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) 
