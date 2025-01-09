@@ -26,6 +26,15 @@
                     </a>
                 </li>
                 <li class="w-100 sidebar-item">
+                    <a class="nav-link text-dark d-flex align-items-center" href="/workOrders">
+                        <i class="bi bi-file-earmark"></i>
+                        @if (_isExpanded)
+                        {
+                            <span>Tasks</span>
+                        }
+                    </a>
+                </li>
+                <li class="w-100 sidebar-item">
                     <a class="nav-link text-dark d-flex align-items-center" href="/tasks">
                         <i class="bi bi-check2-circle sidebar-icon"></i>
                         @if (_isExpanded)
