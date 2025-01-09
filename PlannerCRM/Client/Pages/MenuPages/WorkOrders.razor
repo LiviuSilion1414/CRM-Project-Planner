@@ -1,0 +1,88 @@
+﻿@page "/workOrders"
+@inject HttpClient http
+
+<DataGridView @ref="@_grid"
+              TItem="@WorkOrderDto"
+              Data="@_workOrders"
+              Properties="@_selectedColumnsForWorkOrder"
+              GetCascadingContainerStates="@GetCascadingContainerStates"
+              ShouldFetchNewData="@ReloadUpdatedData" />
+
+<CascadingValue Value="@_dataContainer">
+    <DataGridViewItemHandler TItem="@WorkOrderDto"
+                             AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
+                             UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
+                             DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
+                             DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
+        <AddFormMarkup>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.NewItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.Name" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.NewItem.StartDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.NewItem.StartDate" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.NewItem.EndDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.NewItem.EndDate" />
+            </div>
+        </AddFormMarkup>
+        <EditFormMarkup>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.SelectedItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.Name" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.SelectedItem.StartDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.SelectedItem.StartDate" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.SelectedItem.EndDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.SelectedItem.EndDate" />
+            </div>
+        </EditFormMarkup>
+    </DataGridViewItemHandler>
+</CascadingValue>
+
+@code {
+    private List<WorkOrderDto> _workOrders;
+    private List<string> _selectedColumnsForWorkOrder = ["Name", "StartDate", "EndDate"];
+
+    private CascadingDataContainer<WorkOrderDto> _dataContainer = new();
+    private DataGridView<WorkOrderDto> _grid = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+    }
+
+    private async Task ReloadUpdatedData(bool shouldReload)
+    {
+        if (shouldReload)
+        {
+            await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+        }
+    }
+
+    private void GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto> dataContainer) => _dataContainer = dataContainer;
+
+    private async Task AddWorkOrder(WorkOrderDto updatedClient) => await http.PostAsJsonAsync("api/workOrder/add", updatedClient);
+
+    private async Task UpdateWorkOrder(WorkOrderDto updatedClient) => await http.PutAsJsonAsync($"api/workOrder/edit/{updatedClient.Id}", updatedClient);
+
+    private async Task DeleteWorkOrder(WorkOrderDto workOrder) => await http.DeleteAsync($"api/workOrder/delete/{workOrder.Id}");
+
+    private async Task DeleteMultipleClients(IEnumerable<WorkOrderDto> workOrders)
+    {
+        foreach (var workOrder in workOrders)
+        {
+            await DeleteWorkOrder(workOrder);
+        }
+    }
+
+    private async Task LoadData(PaginationHelper paginationHelper)
+    {
+        _workOrders = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/workOrder/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+    }
+}

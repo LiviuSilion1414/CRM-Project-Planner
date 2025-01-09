@@ -9,7 +9,6 @@
               ShouldFetchNewData="@ReloadUpdatedData" />
 
 <CascadingValue Value="@_dataContainer">
-
     <DataGridViewItemHandler TItem="@FirmClientDto"
                              AddAction="@(async client => await AddClient(client))"
                              UpdateAction="@(async client => await UpdateClient(client))"
