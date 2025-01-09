@@ -2,18 +2,18 @@
 @inject HttpClient http
 
 <DataGridView @ref="@_grid"
-              TItem="@WorkOrderDto"
-              Data="@_workOrders"
-              Properties="@_selectedColumnsForWorkOrder"
-              GetCascadingContainerStates="@GetCascadingContainerStates"
-              ShouldFetchNewData="@ReloadUpdatedData" />
+TItem="@WorkOrderDto"
+Data="@_workOrders"
+Properties="@_selectedColumnsForWorkOrder"
+GetCascadingContainerStates="@GetCascadingContainerStates"
+ShouldFetchNewData="@ReloadUpdatedData" />
 
 <CascadingValue Value="@_dataContainer">
     <DataGridViewItemHandler TItem="@WorkOrderDto"
-                             AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
-                             UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
-                             DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
-                             DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
+    AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
+    UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
+    DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
+    DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
             <div class="form-group">
                 <label>@nameof(_dataContainer.NewItem.Name):</label>
@@ -26,6 +26,34 @@
             <div class="form-group">
                 <label>@nameof(_dataContainer.NewItem.EndDate):</label>
                 <InputDate class="form-control" @bind-Value="@_dataContainer.NewItem.EndDate" />
+            </div>
+            <br />
+            <h5>Client Information</h5>
+            <div class="form-group">
+                @if (_dataContainer.NewItem is null)
+                {
+                    <input type="search" class="form-control" @oninput="@SearchClient"/>
+
+                    @if (_clients is not null)
+                    {
+                        <div class="list-group">
+                            @foreach (var client in _clients)
+                            {
+                                <button type="button" class="list-group-item list-group-item-action @(_client is not null ? "active" : string.Empty)" 
+                                @onclick="@(() => SelectClient(client))">
+                                    @client.Name
+                                </button>
+                            }
+                        </div>
+                    }
+                } 
+                else
+                {
+                    <div class="card">
+                        <p><strong>Name: </strong>@_dataContainer.NewItem.FirmClientDto.Name</p>
+                        <p><strong>VatNumber: </strong>@_dataContainer.NewItem.FirmClientDto.VatNumber</p>
+                    </div>
+                }
             </div>
         </AddFormMarkup>
         <EditFormMarkup>
@@ -52,11 +80,36 @@
     private CascadingDataContainer<WorkOrderDto> _dataContainer = new();
     private DataGridView<WorkOrderDto> _grid = new();
 
+     /*
+    * 
+    */
+    private List<FirmClientDto> _clients = [];
+    private FirmClientDto _client = new();
+    /*
+    * 
+     */
+
     protected override async Task OnInitializedAsync()
     {
         await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+
+        Console.WriteLine(_dataContainer.NewItem is null);
     }
 
+    private async Task SearchClient(ChangeEventArgs e)
+    {
+        if (string.IsNullOrEmpty(e.Value.ToString()))
+        {
+            _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{e.Value.ToString()}");
+        }
+    }
+
+    private void SelectClient(FirmClientDto client)
+    {
+        _client = client;
+        _dataContainer.NewItem.FirmClientDto = client;
+        _dataContainer.NewItem.FirmClientId = client.Id;
+    }
     private async Task ReloadUpdatedData(bool shouldReload)
     {
         if (shouldReload)
