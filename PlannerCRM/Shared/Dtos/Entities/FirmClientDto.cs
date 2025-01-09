@@ -14,6 +14,6 @@ public class FirmClientDto
     public string VatNumber { get; set; }
 
     // Navigation properties
-    public ICollection<WorkOrderDto> WorkOrdersDto { get; set; }
-    public ICollection<WorkOrderCostDto> WorkOrderCostsDto { get; set; }
+    public List<WorkOrderDto> WorkOrdersDto { get; set; }
+    public List<WorkOrderCostDto> WorkOrderCostsDto { get; set; }
 }

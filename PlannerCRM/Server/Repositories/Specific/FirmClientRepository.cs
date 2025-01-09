@@ -5,12 +5,13 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<FirmClientDto> SearchClientByName(string clientName)
+    public async Task<IEnumerable<FirmClientDto>> SearchClientByName(string clientName)
     {
-        var foundClient = await _context.Clients
-            .SingleOrDefaultAsync(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%")); //more items
+        var foundClients = await _context.Clients
+            .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
+            .ToListAsync();
 
-        return _mapper.Map<FirmClientDto>(foundClient);
+        return _mapper.Map<IEnumerable<FirmClientDto>>(foundClients);
     }
 
     public async Task<ICollection<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)

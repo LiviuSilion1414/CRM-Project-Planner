@@ -12,6 +12,6 @@ public class SalaryDto
 
     // Navigation properties
     public EmployeeDto EmployeeDto { get; set; }
-    public ICollection<EmployeeSalaryDto> EmployeeSalariesDto { get; set; }
+    public List<EmployeeSalaryDto> EmployeeSalariesDto { get; set; }
 
 }

@@ -26,5 +26,5 @@ public class WorkOrderDto
     [Required]
     public FirmClientDto FirmClientDto { get; set; }
     public WorkOrderCostDto WorkOrderCostDto { get; set; }
-    public ICollection<ActivityDto> ActivitiesDto { get; set; }
+    public List<ActivityDto> ActivitiesDto { get; set; }
 }

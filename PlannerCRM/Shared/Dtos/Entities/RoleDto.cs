@@ -8,6 +8,6 @@ public class RoleDto
     public Roles RoleName { get; set; }
 
     // Navigation properties
-    public ICollection<EmployeeDto> EmployeesDto { get; set; }
-    public ICollection<EmployeeRoleDto> EmployeeRolesDto { get; set; }
+    public List<EmployeeDto> EmployeesDto { get; set; }
+    public List<EmployeeRoleDto> EmployeeRolesDto { get; set; }
 }
