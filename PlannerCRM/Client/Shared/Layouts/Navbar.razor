@@ -1,7 +1,15 @@
-﻿<RadzenMenu Style="background-color:lightseagreen;">
-    <RadzenMenuItem Path="/home" Text="PlannerCRM - Gestionale Commesse"/>
-    <div style="margin-left: auto; display: flex;">
-        <RadzenMenuItem Icon="notifications" />
-        <RadzenMenuItem Icon="person" Path="/profile" />
+﻿<nav class="navbar navbar-expand-lg" style="background-color: lightseagreen;">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="/home">
+            PlannerCRM - Gestionale Commesse
+        </a>
+        <div class="d-flex ms-auto">
+            <a class="nav-link text-white" href="#">
+                <i class="bi bi-bell"></i>
+            </a>
+            <a class="nav-link text-white" href="/profile">
+                <i class="bi bi-person"></i>
+            </a>
+        </div>
     </div>
-</RadzenMenu>
+</nav>
