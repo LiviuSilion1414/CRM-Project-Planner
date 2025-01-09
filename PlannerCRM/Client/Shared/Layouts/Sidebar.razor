@@ -1,6 +1,4 @@
-﻿@inherits LayoutComponentBase
-
-<div class="d-flex" style="position: fixed; height: 100%; width: 100%;">
+﻿<div class="d-flex" style="position: fixed; height: 100%;">
     <nav class="sidebar bg-light border" style="@_sidebarStyle" id="sidebar">
         <ul class="list-unstyled p-0 m-0">
             <li class="p-2">
@@ -82,38 +80,33 @@
             </li>
         </ul>
     </nav>
-
-    <div class="flex-grow-1 p-4">
-        @Body
-    </div>
 </div>
 
 <style>
     .sidebar {
-    height: 100vh;
+        height: 100vh;
     }
 
     .sidebar-icon {
-    font-size: 1.5rem;
-    margin-right: 16px;
-    padding: 8px;
+        font-size: 1.5rem;
+        margin-right: 16px;
+        padding: 8px;
     }
 
     .sidebar-item {
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
     }
 
     .nav-link {
-    text-decoration: none;
+        text-decoration: none;
     }
 
-    .nav-link:hover {
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    @(_isItemOnHover = true;)
-    }
+        .nav-link:hover {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
 </style>
 
 @code {
