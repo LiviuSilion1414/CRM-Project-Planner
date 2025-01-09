@@ -3,6 +3,10 @@
     flex-direction: row;
 }
 
+.sidebar {
+    margin-right: 200px;
+}
+
 .main-content {
     flex-grow: 1;
     padding-left: 20px;
