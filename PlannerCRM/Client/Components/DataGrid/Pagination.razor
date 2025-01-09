@@ -1,14 +1,18 @@
 ﻿@typeparam TItem
 
-<div class="pagination-controls">
-    @for (var pageNumber = 1; pageNumber <= _totalPages; pageNumber++)
-    {
-        var currentPage = pageNumber;
-        <button class="btn @(_currentPage == currentPage ? "btn-primary" : "btn-outline-primary") me-1" @onclick="@(() => GetPaginatedData((currentPage - OFFSET) * PageSize, currentPage))">
-            @pageNumber
-        </button>
-    }
-</div>
+@if (Data is not null)
+{
+    <div class="pagination-controls">
+        @for (var pageNumber = 1; pageNumber <= _totalPages; pageNumber++)
+        {
+            var currentPage = pageNumber;
+            <button class="btn @(_currentPage == currentPage ? "btn-primary" : "btn-outline-primary") me-1" 
+                @onclick="@(() => GetPaginatedData((currentPage - OFFSET) * PageSize, currentPage))">
+                @pageNumber
+            </button>
+        }
+    </div>
+}
 
 @code 
 {
