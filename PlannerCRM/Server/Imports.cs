@@ -5,6 +5,8 @@ global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Diagnostics;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
+global using System.ComponentModel.DataAnnotations.Schema;
+
 global using AutoMapper;
 
 global using PlannerCRM.Shared.Constants;
