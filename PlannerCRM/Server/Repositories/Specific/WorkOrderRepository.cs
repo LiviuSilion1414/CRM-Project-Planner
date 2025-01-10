@@ -1,9 +1,75 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class WorkOrderRepository(AppDbContext context, IMapper mapper)
+    : Repository<WorkOrder, WorkOrderDto>(context, mapper)
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
+
+    public override async Task AddAsync(WorkOrder model)
+    {
+        await _context.ClientWorkOrders.AddAsync(
+            new ClientWorkOrder { 
+                FirmClientId = model.FirmClientId,
+                WorkOrderId = model.Id
+            }
+        );
+        await _context.SaveChangesAsync();
+        
+        await base.AddAsync(model);
+    }
+
+    public override async Task EditAsync(WorkOrder model, int id)
+    {
+        var clientWorkOrder = await _context.ClientWorkOrders
+            .SingleAsync(x => x.WorkOrderId == id);
+
+        clientWorkOrder.FirmClientId = model.FirmClientId;
+        clientWorkOrder.WorkOrderId = model.Id;
+
+        _context.Update(clientWorkOrder);
+
+        await _context.SaveChangesAsync();
+
+        await  base.EditAsync(model, id);
+    }
+
+    public override async Task DeleteAsync(int id)
+    {
+        var workOrder = await _context.WorkOrders
+            .Include(w => w.Activities)
+            .Include(w => w.WorkOrderCost)
+            .SingleAsync(w => w.Id == id);
+
+        _context.Remove(workOrder);
+        
+        await _context.SaveChangesAsync();
+    }
+
+    public override async Task<WorkOrderDto> GetByIdAsync(int id)
+    {
+        var workOrder = await _context.WorkOrders
+            .Include(w => w.Activities)
+            .Include(w => w.WorkOrderCost)
+            .Include(w => w.FirmClient)
+            .SingleAsync(w => w.Id == id);
+
+        return _mapper.Map<WorkOrderDto>(workOrder);
+    }
+
+    public override async Task<ICollection<WorkOrderDto>> GetWithPagination(int limit, int offset)
+    {
+        var workOrder = await _context.WorkOrders
+            .OrderBy(w => w.Id)
+            .Skip(offset)
+            .Take(limit)
+            .Include(w => w.Activities)
+            .Include(w => w.WorkOrderCost)
+            .Include(w => w.FirmClient)
+            .ToListAsync();
+
+        return _mapper.Map<ICollection<WorkOrderDto>>(workOrder);
+    }
 
     public async Task<WorkOrderDto> SearchWorOrderByTitle(string worOrderTitle)
     {

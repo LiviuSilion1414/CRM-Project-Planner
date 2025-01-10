@@ -18,7 +18,7 @@ public class CrudController<TInput, TOutput>(IRepository<TInput, TOutput> repo) 
 
     [HttpPut]
     [Route("edit/{entityId}")]
-    public async Task<IActionResult> Edit(TOutput entity, int entityId)
+    public async Task<IActionResult> Edit(TInput entity, int entityId)
     {
         await _repo.EditAsync(entity, entityId);
 

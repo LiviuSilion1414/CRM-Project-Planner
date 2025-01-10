@@ -91,13 +91,13 @@ public static class PipelineBuilderExtension
 
     private static void RegisterSpecificRepositories(this IServiceCollection services)
     {
-        services.AddScoped<ActivityRepository>();
-        services.AddScoped<EmployeeRepository>();
-        services.AddScoped<FirmClientRepository>();
-        services.AddScoped<SalaryRepository>();
-        services.AddScoped<WorkOrderRepository>();
-        services.AddScoped<WorkOrderCostRepository>();
-        services.AddScoped<WorkTimeRepository>();
+        services.AddScoped<Repository<Activity, ActivityDto>, ActivityRepository>();
+        services.AddScoped<Repository<Employee, EmployeeDto>, EmployeeRepository>();
+        services.AddScoped<Repository<FirmClient, FirmClientDto>, FirmClientRepository>();
+        services.AddScoped<Repository<Salary, SalaryDto> ,SalaryRepository>();
+        services.AddScoped<Repository<WorkOrder, WorkOrderDto>, WorkOrderRepository>();
+        services.AddScoped<Repository<WorkOrderCost, WorkOrderCostDto>, WorkOrderCostRepository>();
+        services.AddScoped<Repository<WorkTime, WorkTimeDto>, WorkTimeRepository>();
         services.AddScoped<CalculatorService>();
     }
 }

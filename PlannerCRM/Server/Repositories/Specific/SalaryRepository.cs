@@ -1,9 +1,40 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class SalaryRepository(AppDbContext context, IMapper mapper)
+    : Repository<Salary, SalaryDto>(context, mapper)
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
+
+    public override async Task AddAsync(Salary model)
+    {
+        await _context.EmployeeSalaries.AddAsync(
+            new EmployeeSalary
+            {
+                EmployeeId = model.EmployeeId,
+                SalaryId = model.Id
+            }
+        );
+
+        await _context.SaveChangesAsync();
+        
+        await base.AddAsync(model);
+    }
+
+    public override async Task EditAsync(Salary model, int id)
+    {
+        var existingSalary = await _context.EmployeeSalaries
+            .SingleAsync(ex => ex.EmployeeId == model.Id && ex.SalaryId == id);
+        
+        existingSalary.EmployeeId = model.EmployeeId;
+        existingSalary.SalaryId = model.Id;
+
+        _context.Update(existingSalary);  //it could be redundant
+
+        await _context.SaveChangesAsync();
+
+        await base.EditAsync(model, id);
+    }
 
     public async Task<ICollection<SalaryDto>> FindAssociatedSalariesByEmployeeId(int employeeId)
     {

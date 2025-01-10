@@ -1,9 +1,95 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class ActivityRepository(AppDbContext context, IMapper mapper)
+    : Repository<Activity, ActivityDto>(context, mapper)
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
+
+    public override async Task AddAsync(Activity model)
+    {
+        foreach (var em in model.Employees) 
+        {
+            await _context.EmployeeActivities.AddAsync(
+                new EmployeeActivity()
+                {
+                    ActivityId = model.Id,
+                    EmployeeId = em.Id
+                }
+            );
+        }
+
+        await _context.WorkOrderActivities.AddAsync(
+            new WorkOrderActivity 
+            {
+                ActivityId = model.Id,
+                WorkOrderId = model.WorkOrderId
+            }
+        );
+
+        await base.AddAsync(model); //may be an issue
+    }
+
+    public override async Task EditAsync(Activity model, int id)
+    {
+        var existingEmployeeActivity = await _context.EmployeeActivities
+            .Where(a => a.Id == id)
+            .ToListAsync();
+
+        List<EmployeeActivity> updatedEmployeeActivities = [];
+
+        foreach (var em in model.Employees)
+        {
+            if (!existingEmployeeActivity.Any(ex => ex.EmployeeId == em.Id))
+            {
+                updatedEmployeeActivities.Add(
+                    new EmployeeActivity()
+                    {
+                        EmployeeId = em.Id
+                    }
+                );
+            }
+        }
+
+        _context.Update(updatedEmployeeActivities);
+
+        await base.EditAsync(model, id);
+    }
+
+    public override async Task DeleteAsync(int id)
+    {
+        var activity = await _context.Activities
+            .Include(a => a.EmployeeActivities)
+            .Include(a => a.ActivityWorkTimes)
+            .SingleAsync(a => a.Id == id);
+
+        _context.Remove(activity);
+
+        await _context.SaveChangesAsync();
+    }
+
+    public override async Task<ActivityDto> GetByIdAsync(int id)
+    {
+        var activity = await _context.Activities
+            .Include(a => a.EmployeeActivities)
+            .Include(a => a.ActivityWorkTimes)
+            .SingleAsync(a => a.Id == id);
+
+        return _mapper.Map<ActivityDto>(activity);
+    }
+
+    public override async Task<ICollection<ActivityDto>> GetWithPagination(int limit, int offset)
+    {
+        var activities = await _context.Activities
+            .OrderBy(a => a.Id)
+            .Skip(offset)
+            .Take(limit)
+            .Include(a => a.EmployeeActivities)
+            .Include(a => a.ActivityWorkTimes)
+            .ToListAsync();
+
+        return _mapper.Map<ICollection<ActivityDto>>(activities);
+    }
 
     public async Task<ActivityDto> SearchActivityByTitle(string activityTitle)
     {
