@@ -1,11 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PlannerCRM.Server.Models.Entities;
-using PlannerCRM.Server.Models.JunctionEntities;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace PlannerCRM.Server.Extensions;
 
 public static class ModelBuilderExtensions
 {
+
+    public static void ApplyUtcDateTimeConversion(this ModelBuilder modelBuilder)
+    {
+        var utcConverter = new ValueConverter<DateTime, DateTime>(
+            v => v.ToUniversalTime(), //when saving
+            v => DateTime.SpecifyKind(v, DateTimeKind.Utc) //when reading
+        );
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var dateTimeProperties = entityType.ClrType
+                .GetProperties()
+                .Where(p => p.PropertyType == typeof(DateTime));
+
+            foreach (var property in dateTimeProperties)
+            {
+                modelBuilder.Entity(entityType.ClrType)
+                    .Property(property.Name)
+                    .HasConversion(utcConverter);
+            }
+        }
+    }
+
+
     public static void ConfigureEnums(this ModelBuilder modelBuilder)
     {
         modelBuilder.HasPostgresEnum<Roles>();

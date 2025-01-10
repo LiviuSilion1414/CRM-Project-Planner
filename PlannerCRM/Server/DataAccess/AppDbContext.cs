@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyUtcDateTimeConversion();
         modelBuilder.ConfigureEnums();
         modelBuilder.ConfigureRelationships();
 
