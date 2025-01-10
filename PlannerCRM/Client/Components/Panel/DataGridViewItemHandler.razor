@@ -11,7 +11,7 @@
 
 @if (DataContainer.IsUpdateSelected)
 {
-    <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.SelectedItem" OnItemChanged="@OnItemDataAdded">
+    <FormView Title="Edit new item " TItem="@TItem" Model="@DataContainer.SelectedItem" OnItemChanged="@OnItemDataUpdated">
         <FormContent>
             @EditFormMarkup(DataContainer.SelectedItem)
         </FormContent>
