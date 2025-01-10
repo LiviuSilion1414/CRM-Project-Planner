@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241203135708_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20250110224317_ExcludePropsFromMapping")]
+    partial class ExcludePropsFromMapping
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -302,7 +302,7 @@ namespace PlannerCRM.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId1")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("EndDate")
@@ -316,7 +316,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("EmployeeId1");
 
                     b.ToTable("Salaries");
                 });
@@ -343,9 +343,6 @@ namespace PlannerCRM.Server.Migrations
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("WorkOrderCostId")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -395,7 +392,7 @@ namespace PlannerCRM.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ActivityId")
+                    b.Property<int?>("ActivityId1")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreationDate")
@@ -404,7 +401,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("WorkOrderId")
+                    b.Property<int?>("WorkOrderId1")
                         .HasColumnType("integer");
 
                     b.Property<double>("WorkedHours")
@@ -412,11 +409,11 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActivityId");
+                    b.HasIndex("ActivityId1");
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("WorkOrderId");
+                    b.HasIndex("WorkOrderId1");
 
                     b.ToTable("WorkTimes");
                 });
@@ -717,9 +714,7 @@ namespace PlannerCRM.Server.Migrations
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
                         .WithMany("Salaries")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId1");
 
                     b.Navigation("Employee");
                 });
@@ -758,9 +753,7 @@ namespace PlannerCRM.Server.Migrations
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Activity", "Activity")
                         .WithMany()
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ActivityId1");
 
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
                         .WithMany("WorkTimes")
@@ -770,9 +763,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasOne("PlannerCRM.Server.Models.Entities.WorkOrder", "WorkOrder")
                         .WithMany()
-                        .HasForeignKey("WorkOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WorkOrderId1");
 
                     b.Navigation("Activity");
 

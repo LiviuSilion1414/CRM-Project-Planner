@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PlannerCRM.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class ExcludePropsFromMapping : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -139,17 +139,16 @@ namespace PlannerCRM.Server.Migrations
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     HourlyRate = table.Column<decimal>(type: "numeric", nullable: false),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false)
+                    EmployeeId1 = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Salaries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Salaries_AspNetUsers_EmployeeId",
-                        column: x => x.EmployeeId,
+                        name: "FK_Salaries_AspNetUsers_EmployeeId1",
+                        column: x => x.EmployeeId1,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -162,8 +161,7 @@ namespace PlannerCRM.Server.Migrations
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FirmClientId = table.Column<int>(type: "integer", nullable: false),
-                    WorkOrderCostId = table.Column<int>(type: "integer", nullable: false)
+                    FirmClientId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -461,20 +459,19 @@ namespace PlannerCRM.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
                     WorkedHours = table.Column<double>(type: "double precision", nullable: false),
-                    ActivityId = table.Column<int>(type: "integer", nullable: false)
+                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
+                    WorkOrderId1 = table.Column<int>(type: "integer", nullable: true),
+                    ActivityId1 = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WorkTimes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WorkTimes_Activities_ActivityId",
-                        column: x => x.ActivityId,
+                        name: "FK_WorkTimes_Activities_ActivityId1",
+                        column: x => x.ActivityId1,
                         principalTable: "Activities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_WorkTimes_AspNetUsers_EmployeeId",
                         column: x => x.EmployeeId,
@@ -482,11 +479,10 @@ namespace PlannerCRM.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WorkTimes_WorkOrders_WorkOrderId",
-                        column: x => x.WorkOrderId,
+                        name: "FK_WorkTimes_WorkOrders_WorkOrderId1",
+                        column: x => x.WorkOrderId1,
                         principalTable: "WorkOrders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -690,9 +686,9 @@ namespace PlannerCRM.Server.Migrations
                 column: "WorkTimeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Salaries_EmployeeId",
+                name: "IX_Salaries_EmployeeId1",
                 table: "Salaries",
-                column: "EmployeeId");
+                column: "EmployeeId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkOrderActivities_ActivityId",
@@ -721,9 +717,9 @@ namespace PlannerCRM.Server.Migrations
                 column: "FirmClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkTimes_ActivityId",
+                name: "IX_WorkTimes_ActivityId1",
                 table: "WorkTimes",
-                column: "ActivityId");
+                column: "ActivityId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkTimes_EmployeeId",
@@ -731,9 +727,9 @@ namespace PlannerCRM.Server.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkTimes_WorkOrderId",
+                name: "IX_WorkTimes_WorkOrderId1",
                 table: "WorkTimes",
-                column: "WorkOrderId");
+                column: "WorkOrderId1");
         }
 
         /// <inheritdoc />
