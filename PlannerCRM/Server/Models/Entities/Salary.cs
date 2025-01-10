@@ -8,6 +8,8 @@ public class Salary
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public decimal HourlyRate { get; set; }
+    
+    [NotMapped]
     public int EmployeeId { get; set; }
 
     // Navigation properties

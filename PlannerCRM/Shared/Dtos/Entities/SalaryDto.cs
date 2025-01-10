@@ -11,7 +11,7 @@ public class SalaryDto
     public int EmployeeId { get; set; }
 
     // Navigation properties
-    public EmployeeDto Employee { get; set; }
-    public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
+    //public EmployeeDto Employee { get; set; }
+    //public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
 
 }

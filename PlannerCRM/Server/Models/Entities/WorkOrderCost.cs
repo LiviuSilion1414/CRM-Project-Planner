@@ -6,7 +6,11 @@ public class WorkOrderCost
     public string Name { get; set; }
     public DateTime CreationDate { get; set; }
     public decimal TotalCost { get; set; }
+
+    [NotMapped]
     public int WorkOrderId { get; set; }
+    
+    [NotMapped]
     public int FirmClientId { get; set; }
 
     // Navigation properties

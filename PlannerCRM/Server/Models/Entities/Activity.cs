@@ -1,6 +1,4 @@
-﻿using PlannerCRM.Server.Models.JunctionEntities;
-
-namespace PlannerCRM.Server.Models.Entities;
+﻿namespace PlannerCRM.Server.Models.Entities;
 
 public class Activity
 {
@@ -9,6 +7,8 @@ public class Activity
     public DateTime CreationDate { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+
+    [NotMapped]
     public int WorkOrderId { get; set; }
 
     // Navigation properties

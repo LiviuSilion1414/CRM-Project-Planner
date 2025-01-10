@@ -7,9 +7,16 @@ public class WorkTime
 {
     public int Id { get; set; }
     public DateTime CreationDate { get; set; }
-    public int WorkOrderId { get; set; }
-    public int EmployeeId { get; set; }
+
     public double WorkedHours { get; set; }
+    
+    [NotMapped]
+    public int WorkOrderId { get; set; }
+
+    [NotMapped]
+    public int EmployeeId { get; set; }
+
+    [NotMapped]
     public int ActivityId { get; set; }
 
     // Navigation properties
