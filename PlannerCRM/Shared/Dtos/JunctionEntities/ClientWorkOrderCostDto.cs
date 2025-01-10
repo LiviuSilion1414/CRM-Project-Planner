@@ -9,6 +9,6 @@ public class ClientWorkOrderCostDto
     public int WorkOrderCostId { get; set; }
 
     // Navigation properties
-    public FirmClientDto FirmClientDto { get; set; }
-    public WorkOrderCostDto WorkOrderCostDto { get; set; }
+    public FirmClientDto FirmClient { get; set; }
+    public WorkOrderCostDto WorkOrderCost { get; set; }
 }

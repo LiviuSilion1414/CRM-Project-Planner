@@ -24,7 +24,7 @@ public class WorkOrderDto
 
     // Navigation properties
     [Required]
-    public FirmClientDto FirmClientDto { get; set; }
-    public WorkOrderCostDto WorkOrderCostDto { get; set; }
-    public List<ActivityDto> ActivitiesDto { get; set; }
+    public FirmClientDto FirmClient { get; set; }
+    public WorkOrderCostDto WorkOrderCost { get; set; }
+    public List<ActivityDto> Activities { get; set; }
 }

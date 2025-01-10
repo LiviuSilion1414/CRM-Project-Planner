@@ -8,6 +8,6 @@ public class EmployeeActivityDto
     public int ActivityId { get; set; }
 
     // Navigation properties
-    public EmployeeDto EmployeeDto { get; set; }
-    public ActivityDto ActivityDto { get; set; }
+    public EmployeeDto Employee { get; set; }
+    public ActivityDto Activity { get; set; }
 }

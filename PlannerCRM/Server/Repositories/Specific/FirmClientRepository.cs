@@ -9,7 +9,17 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         var foundClients = await _context.Clients
             .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
+            .Include(cl => cl.WorkOrders)
             .ToListAsync();
+
+        foreach (var foundClient in foundClients)
+        {
+            foreach (var wo in foundClient.WorkOrders)
+            {
+                Console.WriteLine(wo.Name);
+                
+            }
+        }
 
         return _mapper.Map<IEnumerable<FirmClientDto>>(foundClients);
     }

@@ -1,8 +1,8 @@
 ﻿@page "/contacts"
 @inject HttpClient http
 
-<DataGridView @ref="@_grid"
-              TItem="@FirmClientDto"
+<DataGridView TItem="@FirmClientDto"
+              DataContainer="@_dataContainer"
               Data="@_clients"
               Properties="@_selectedColumnsForClient"
               GetCascadingContainerStates="@GetCascadingContainerStates"
@@ -41,12 +41,24 @@
     private List<FirmClientDto> _clients;
     private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
 
-    private CascadingDataContainer<FirmClientDto> _dataContainer = new();
-    private DataGridView<FirmClientDto> _grid = new();
+    private CascadingDataContainer<FirmClientDto> _dataContainer = new()
+    {
+        NewItem = new()
+        {
+            WorkOrders = [],
+            WorkOrderCosts = []
+        },
+        SelectedItem = new()
+        {
+            WorkOrders = [],
+            WorkOrderCosts = []
+        },
+        SelectedItems = []
+    };
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+        await LoadData(new PaginationHelper { Limit = 200, Offset = 0 });
     }
 
     private async Task ReloadUpdatedData(bool shouldReload)

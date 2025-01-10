@@ -25,8 +25,8 @@ public class ActivityDto
 
     // Navigation properties
     [Required]
-    public WorkOrderDto WorkOrderDto { get; set; }
-    public List<EmployeeDto> EmployeesDto { get; set; }
-    public List<EmployeeActivityDto> EmployeeActivitiesDto { get; set; }
-    public List<ActivityWorkTimeDto> ActivityWorkTimesDto { get; set; }
+    public WorkOrderDto WorkOrder { get; set; }
+    public List<EmployeeDto> Employees { get; set; }
+    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
+    public List<ActivityWorkTimeDto> ActivityWorkTimes { get; set; }
 }

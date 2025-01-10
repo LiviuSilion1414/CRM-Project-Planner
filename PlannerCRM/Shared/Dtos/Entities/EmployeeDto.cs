@@ -11,11 +11,11 @@ public class EmployeeDto
     public string UserName { get; set; }
 
     // Navigation properties
-    public List<WorkTimeDto> WorkTimesDto { get; set; }
-    public List<ActivityDto> ActivitiesDto { get; set; }
-    public List<RoleDto> RolesDto { get; set; }
-    public List<SalaryDto> SalariesDto { get; set; }
-    public List<EmployeeRoleDto> EmployeeRolesDto { get; set; }
-    public List<EmployeeSalaryDto> EmployeeSalariesDto { get; set; }
-    public List<EmployeeActivityDto> EmployeeActivitiesDto { get; set; }
+    public List<WorkTimeDto> WorkTimes { get; set; }
+    public List<ActivityDto> Activities { get; set; }
+    public List<RoleDto> Roles { get; set; }
+    public List<SalaryDto> Salaries { get; set; }
+    public List<EmployeeRoleDto> EmployeeRoles { get; set; }
+    public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
+    public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }

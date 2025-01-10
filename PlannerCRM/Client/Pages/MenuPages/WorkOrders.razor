@@ -1,8 +1,8 @@
 ﻿@page "/workOrders"
 @inject HttpClient http
 
-<DataGridView @ref="@_grid"
-TItem="@WorkOrderDto"
+<DataGridView TItem="@WorkOrderDto"
+DataContainer="@_dataContainer"
 Data="@_workOrders"
 Properties="@_selectedColumnsForWorkOrder"
 GetCascadingContainerStates="@GetCascadingContainerStates"
@@ -30,28 +30,45 @@ ShouldFetchNewData="@ReloadUpdatedData" />
             <br />
             <h5>Client Information</h5>
             <div class="form-group">
-                @if (_dataContainer.NewItem is null)
+                @if (_client is null)
                 {
-                    <input type="search" class="form-control" @oninput="@SearchClient"/>
-
+                    <div style="margin: 0;">
+                        <div style="float: left;">
+                            <InputText type="search" class="form-control" @bind-value="@_query" />
+                        </div>
+                        <div style="float: left;">
+                            <button class="btn btn-outline-primary" @onclick="@SearchClient">
+                                <i class="bi bi-search"></i>
+                                Search
+                            </button>
+                        </div>
+                    </div>
                     @if (_clients is not null)
                     {
                         <div class="list-group">
                             @foreach (var client in _clients)
                             {
-                                <button type="button" class="list-group-item list-group-item-action @(_client is not null ? "active" : string.Empty)" 
+                                <button type="button" class="list-group-item list-group-item-action @(_client is not null ? "active" : string.Empty)"
                                 @onclick="@(() => SelectClient(client))">
                                     @client.Name
                                 </button>
                             }
                         </div>
                     }
-                } 
+                }
                 else
                 {
-                    <div class="card">
-                        <p><strong>Name: </strong>@_dataContainer.NewItem.FirmClientDto.Name</p>
-                        <p><strong>VatNumber: </strong>@_dataContainer.NewItem.FirmClientDto.VatNumber</p>
+                    <div class="card" style="margin: 0;">
+                        <div style="float: left;">
+                            <p><strong>Name: </strong>@_dataContainer.NewItem.FirmClient.Name</p>
+                            <p><strong>VatNumber: </strong>@_dataContainer.NewItem.FirmClient.VatNumber</p>
+                        </div>
+                        <div style="float: left;">
+                            <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
+                                <i class="bi bi-trash3"></i>
+                                Remove
+                            </button>
+                        </div>
                     </div>
                 }
             </div>
@@ -59,7 +76,7 @@ ShouldFetchNewData="@ReloadUpdatedData" />
         <EditFormMarkup>
             <div class="form-group">
                 <label>@nameof(_dataContainer.SelectedItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.Name" />
+                <InputText class="form-control" @bind-Value="@_dataContainer.SelectedItem.Name" />
             </div>
             <div class="form-group">
                 <label>@nameof(_dataContainer.SelectedItem.StartDate):</label>
@@ -77,16 +94,31 @@ ShouldFetchNewData="@ReloadUpdatedData" />
     private List<WorkOrderDto> _workOrders;
     private List<string> _selectedColumnsForWorkOrder = ["Name", "StartDate", "EndDate"];
 
-    private CascadingDataContainer<WorkOrderDto> _dataContainer = new();
-    private DataGridView<WorkOrderDto> _grid = new();
+    private CascadingDataContainer<WorkOrderDto> _dataContainer = new()
+    {
+        NewItem = new()
+        {
+            FirmClient = new(),
+            WorkOrderCost = new(),
+            Activities = [],
+        },
+        SelectedItem = new ()
+        {
+            FirmClient = new(),
+            WorkOrderCost = new(),
+            Activities = []
+        },
+        SelectedItems = []
+    };
 
-     /*
-    * 
+       /*
+       *
     */
     private List<FirmClientDto> _clients = [];
-    private FirmClientDto _client = new();
+    private FirmClientDto _client = null;
+    private string _query = string.Empty;
     /*
-    * 
+    *
      */
 
     protected override async Task OnInitializedAsync()
@@ -96,20 +128,21 @@ ShouldFetchNewData="@ReloadUpdatedData" />
         Console.WriteLine(_dataContainer.NewItem is null);
     }
 
-    private async Task SearchClient(ChangeEventArgs e)
+    private async Task SearchClient()
     {
-        if (string.IsNullOrEmpty(e.Value.ToString()))
+        if (!string.IsNullOrEmpty(_query))
         {
-            _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{e.Value.ToString()}");
+            _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{_query}");
         }
     }
 
     private void SelectClient(FirmClientDto client)
     {
         _client = client;
-        _dataContainer.NewItem.FirmClientDto = client;
+        _dataContainer.NewItem.FirmClient = client;
         _dataContainer.NewItem.FirmClientId = client.Id;
     }
+
     private async Task ReloadUpdatedData(bool shouldReload)
     {
         if (shouldReload)

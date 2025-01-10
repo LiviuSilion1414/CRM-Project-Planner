@@ -12,8 +12,8 @@ public class WorkTimeDto
     public int ActivityId { get; set; }
 
     // Navigation properties
-    public WorkOrderDto WorkOrderDto { get; set; }
-    public EmployeeDto EmployeeDto { get; set; }
-    public ActivityDto ActivityDto { get; set; }
-    public ICollection<ActivityWorkTimeDto> ActivityWorkTimesDto { get; set; }
+    public WorkOrderDto WorkOrder { get; set; }
+    public EmployeeDto Employee { get; set; }
+    public ActivityDto Activity { get; set; }
+    public ICollection<ActivityWorkTimeDto> ActivityWorkTimes { get; set; }
 }

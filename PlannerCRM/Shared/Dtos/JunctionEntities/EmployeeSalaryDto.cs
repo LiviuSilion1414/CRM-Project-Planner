@@ -9,6 +9,6 @@ public class EmployeeSalaryDto
     public int SalaryId { get; set; }
 
     // Navigation properties
-    public EmployeeDto EmployeeDto { get; set; }
-    public SalaryDto SalaryDto { get; set; }
+    public EmployeeDto Employee { get; set; }
+    public SalaryDto Salary { get; set; }
 }
