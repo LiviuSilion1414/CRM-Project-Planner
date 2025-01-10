@@ -4,6 +4,7 @@ public class EmployeeDtoProfile : Profile
 {
     public EmployeeDtoProfile()
     {
-        CreateMap<Employee, EmployeeDto>();
+        CreateMap<Employee, EmployeeDto>().MaxDepth(1);
+        CreateMap<EmployeeDto, Employee>().MaxDepth(1);
     }
 }

@@ -4,6 +4,7 @@ public class EmployeeWorkTimeProfile : Profile
 {
     public EmployeeWorkTimeProfile()
     {
-        CreateMap<EmployeeWorkTime, EmployeeWorkTimeDto>();
+        CreateMap<EmployeeWorkTime, EmployeeWorkTimeDto>().MaxDepth(1);
+        CreateMap<EmployeeWorkTimeDto, EmployeeWorkTime>().MaxDepth(1);
     }
 }

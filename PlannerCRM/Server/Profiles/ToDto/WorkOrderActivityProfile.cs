@@ -4,6 +4,7 @@ public class WorkOrderActivityProfile : Profile
 {
     public WorkOrderActivityProfile()
     {
-        CreateMap<WorkOrderActivity, WorkOrderActivityDto>();
+        CreateMap<WorkOrderActivity, WorkOrderActivityDto>().MaxDepth(1);
+        CreateMap<WorkOrderActivityDto, WorkOrderActivity>().MaxDepth(1);
     }
 }
