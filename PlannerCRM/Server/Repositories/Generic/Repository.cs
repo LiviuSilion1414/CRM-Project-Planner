@@ -23,7 +23,7 @@ public class Repository<TInput, TOutput>(AppDbContext context, IMapper mapper) :
         await _context.SaveChangesAsync();
     }
 
-    public virtual async Task EditAsync(TOutput model, int id)
+    public virtual async Task EditAsync(TInput model, int id)
     {
         var item = await _context.Set<TInput>().FindAsync(id);
 

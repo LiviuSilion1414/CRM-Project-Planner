@@ -6,7 +6,7 @@ public interface IRepository<TInput, TOutput>
 {
     Task AddAsync(TInput model);
 
-    Task EditAsync(TOutput model, int id);
+    Task EditAsync(TInput model, int id);
 
     Task DeleteAsync(int id);
 
