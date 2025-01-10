@@ -60,8 +60,8 @@ ShouldFetchNewData="@ReloadUpdatedData" />
                 {
                     <div class="card" style="margin: 0;">
                         <div style="float: left;">
-                            <p><strong>Name: </strong>@_dataContainer.NewItem.FirmClient.Name</p>
-                            <p><strong>VatNumber: </strong>@_dataContainer.NewItem.FirmClient.VatNumber</p>
+                            <p><strong>Name: </strong>@_client.Name</p>
+                            <p><strong>VatNumber: </strong>@_client.VatNumber</p>
                         </div>
                         <div style="float: left;">
                             <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
@@ -96,18 +96,8 @@ ShouldFetchNewData="@ReloadUpdatedData" />
 
     private CascadingDataContainer<WorkOrderDto> _dataContainer = new()
     {
-        NewItem = new()
-        {
-            FirmClient = new(),
-            WorkOrderCost = new(),
-            Activities = [],
-        },
-        SelectedItem = new ()
-        {
-            FirmClient = new(),
-            WorkOrderCost = new(),
-            Activities = []
-        },
+        NewItem = new(),
+        SelectedItem = new (),
         SelectedItems = []
     };
 
@@ -139,7 +129,6 @@ ShouldFetchNewData="@ReloadUpdatedData" />
     private void SelectClient(FirmClientDto client)
     {
         _client = client;
-        _dataContainer.NewItem.FirmClient = client;
         _dataContainer.NewItem.FirmClientId = client.Id;
     }
 
