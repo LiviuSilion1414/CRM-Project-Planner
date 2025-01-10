@@ -17,7 +17,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
             foreach (var wo in foundClient.WorkOrders)
             {
                 Console.WriteLine(wo.Name);
-                
+
             }
         }
 

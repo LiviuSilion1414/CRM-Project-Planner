@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Server.Profiles.ToDto;
+﻿namespace PlannerCRM.Server.Profiles;
 
 public class EmployeeDtoProfile : Profile
 {

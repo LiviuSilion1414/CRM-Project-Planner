@@ -25,7 +25,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
 
         return _mapper.Map<ICollection<SalaryDto>>(foundSalaries);
     }
-    
+
     public async Task<SalaryDto> FindLatestSalaryAssignedByEmployeeId(int employeeId)
     {
         var foundSalaries = await _context.Salaries
