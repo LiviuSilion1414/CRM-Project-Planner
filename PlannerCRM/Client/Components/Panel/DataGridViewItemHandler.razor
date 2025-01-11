@@ -1,4 +1,18 @@
 ﻿@typeparam TItem where TItem : class, new()
+@typeparam TTemp where TTemp : class, new()
+
+@if (DataContainer.IsItemSelected)
+{
+    <ItemPanel TItem="@TItem" 
+               Item="@DataContainer.SelectedItem"
+               Properties="@DataContainer.SelectedProperties"
+               OnEdit="@(() => ToggleEditItem(DataContainer.SelectedItem))"
+               OnDelete="@(() => ToggleDeleteItem(DataContainer.SelectedItem))">
+        <Content>
+            @ViewDetailsMarkup(DataContainer.SelectedItem)
+        </Content>
+    </ItemPanel>
+}
 
 @if (DataContainer.IsAddSelected)
 {
@@ -39,16 +53,16 @@
 
 @code
 {
-    [CascadingParameter] public CascadingDataContainer<TItem> DataContainer { get; set; }
-
+    [CascadingParameter] public CascadingDataContainer<TItem, TTemp> DataContainer { get; set; }
     [Parameter] public RenderFragment<TItem> AddFormMarkup { get; set; }
     [Parameter] public RenderFragment<TItem> EditFormMarkup { get; set; }
+    [Parameter] public RenderFragment<TItem> ViewDetailsMarkup { get; set; }
     [Parameter] public Action<TItem> AddAction { get; set; }
     [Parameter] public Action<TItem> UpdateAction { get; set; }
     [Parameter] public Action<TItem> DeleteAction { get; set; }
     [Parameter] public Action<IEnumerable<TItem>> DeleteMultipleAction { get; set; }
 
-    private DataGridView<TItem> _grid = new();
+    private DataGridView<TItem, TTemp> _grid = new();
 
     private void OnItemDataAdded(TItem item)
     {
