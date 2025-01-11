@@ -1,15 +1,21 @@
 ﻿namespace PlannerCRM.Client.Models;
 
-public class CascadingDataContainer<TItem>
+public class CascadingDataContainer<TItem, TTemp>
     where TItem : class, new()
+    where TTemp : class, new()
 {
-    public bool IsItemSelected { get; set; }
-    public bool IsAddSelected { get; set; }
-    public bool IsUpdateSelected { get; set; }
-    public bool IsDeleteSingleItemSelected { get; set; }
-    public bool IsDeleteMultipleSelected { get; set; }
-    public bool IsOperationDone { get; set; }
-    public TItem SelectedItem { get; set; }
-    public List<TItem> SelectedItems { get; set; }
-    public TItem NewItem { get; set; }
+    public bool IsItemSelected { get; set; } = false;
+    public bool IsAddSelected { get; set; } = false;
+    public bool IsUpdateSelected { get; set; } = false;
+    public bool IsDeleteSingleItemSelected { get; set; } = false;
+    public bool IsDeleteMultipleSelected { get; set; } = false;
+    public bool IsOperationDone { get; set; } = false;
+    public string Query { get; set; } = string.Empty;
+    public TItem SelectedItem { get; set; } = new();
+    public TItem NewItem { get; set; } = new();
+    public TTemp TempItem { get; set; } = new();
+    public List<string> SelectedProperties { get; set; } = [];
+    public List<TItem> MainItems { get; set; } = [];
+    public List<TTemp> TempItems { get; set; } = [];
+    public List<TItem> SelectedItems { get; set; } = [];
 }
