@@ -8,6 +8,8 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
 
     public override async Task AddAsync(Salary model)
     {
+        await base.AddAsync(model);
+
         await _context.EmployeeSalaries.AddAsync(
             new EmployeeSalary
             {
@@ -17,12 +19,12 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
         );
 
         await _context.SaveChangesAsync();
-        
-        await base.AddAsync(model);
     }
 
     public override async Task EditAsync(Salary model, int id)
     {
+        await base.EditAsync(model, id);
+
         var existingSalary = await _context.EmployeeSalaries
             .SingleAsync(ex => ex.EmployeeId == model.Id && ex.SalaryId == id);
         
@@ -32,8 +34,6 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
         _context.Update(existingSalary);  //it could be redundant
 
         await _context.SaveChangesAsync();
-
-        await base.EditAsync(model, id);
     }
 
     public async Task<ICollection<SalaryDto>> FindAssociatedSalariesByEmployeeId(int employeeId)

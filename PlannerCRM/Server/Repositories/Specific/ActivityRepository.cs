@@ -8,6 +8,8 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
 
     public override async Task AddAsync(Activity model)
     {
+        await base.AddAsync(model); //may be an issue
+
         foreach (var em in model.Employees) 
         {
             await _context.EmployeeActivities.AddAsync(
@@ -27,11 +29,13 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             }
         );
 
-        await base.AddAsync(model); //may be an issue
+        await _context.SaveChangesAsync();
     }
 
     public override async Task EditAsync(Activity model, int id)
     {
+        await base.EditAsync(model, id);
+
         var existingEmployeeActivity = await _context.EmployeeActivities
             .Where(a => a.Id == id)
             .ToListAsync();
@@ -53,7 +57,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
 
         _context.Update(updatedEmployeeActivities);
 
-        await base.EditAsync(model, id);
+        await _context.SaveChangesAsync();
     }
 
     public override async Task DeleteAsync(int id)

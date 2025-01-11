@@ -8,6 +8,8 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
 
     public override async Task AddAsync(Employee model)
     {
+        await base.AddAsync(model);
+
         foreach (var role in model.Roles)
         {
             await _context.EmployeeRoles.AddAsync(
@@ -31,12 +33,12 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
 
         await _context.SaveChangesAsync();
-
-        await base.AddAsync(model);
     }
 
     public override async Task EditAsync(Employee model, int id)
     {
+        await base.EditAsync(model, id);
+
         var existingEmployeeRoles = await _context.EmployeeRoles
             .Where(e => e.EmployeeId == model.Id)
             .ToListAsync();
@@ -60,8 +62,6 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         _context.Update(updatedEmployeeRoles);
 
         await _context.SaveChangesAsync();
-
-        await base.EditAsync(model, id);
     }
 
     public override async Task DeleteAsync(int id)

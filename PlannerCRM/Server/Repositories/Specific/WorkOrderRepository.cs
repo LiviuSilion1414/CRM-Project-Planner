@@ -1,13 +1,15 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class WorkOrderRepository(AppDbContext context, IMapper mapper)
-    : Repository<WorkOrder, WorkOrderDto>(context, mapper)
+    : Repository<WorkOrder, WorkOrderDto>(context, mapper), IRepository<WorkOrder, WorkOrderDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public override async Task AddAsync(WorkOrder model)
     {
+        await base.AddAsync(model);
+
         await _context.ClientWorkOrders.AddAsync(
             new ClientWorkOrder { 
                 FirmClientId = model.FirmClientId,
@@ -15,23 +17,22 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
             }
         );
         await _context.SaveChangesAsync();
-        
-        await base.AddAsync(model);
     }
 
     public override async Task EditAsync(WorkOrder model, int id)
     {
-        var clientWorkOrder = await _context.ClientWorkOrders
+        await base.EditAsync(model, id);
+        
+        var existingClientWorkOrder = await _context.ClientWorkOrders
             .SingleAsync(x => x.WorkOrderId == id);
 
-        clientWorkOrder.FirmClientId = model.FirmClientId;
-        clientWorkOrder.WorkOrderId = model.Id;
+        existingClientWorkOrder.FirmClientId = model.FirmClientId;
+        existingClientWorkOrder.WorkOrderId = model.Id;
 
-        _context.Update(clientWorkOrder);
+        _context.Update(existingClientWorkOrder);
 
         await _context.SaveChangesAsync();
 
-        await  base.EditAsync(model, id);
     }
 
     public override async Task DeleteAsync(int id)
