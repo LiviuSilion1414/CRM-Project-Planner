@@ -1,15 +1,14 @@
 ﻿@page "/contacts"
 @inject HttpClient http
 
-<DataGridView TItem="@FirmClientDto"
-              DataContainer="@_dataContainer"
-              Data="@_clients"
-              Properties="@_selectedColumnsForClient"
-              GetCascadingContainerStates="@GetCascadingContainerStates"
-              ShouldFetchNewData="@ReloadUpdatedData" />
-
 <CascadingValue Value="@_dataContainer">
+    <DataGridView TItem="@FirmClientDto"
+                  TTemp="@WorkOrderDto"
+                  GetCascadingContainerStates="@GetCascadingContainerStates"
+                  ShouldFetchNewData="@ReloadUpdatedData" />
+
     <DataGridViewItemHandler TItem="@FirmClientDto"
+                             TTemp="@WorkOrderDto"
                              AddAction="@(async client => await AddClient(client))"
                              UpdateAction="@(async client => await UpdateClient(client))"
                              DeleteAction="@(async client => await DeleteClient(client))"
@@ -38,14 +37,9 @@
 </CascadingValue>
 
 @code {
-    private List<FirmClientDto> _clients;
-    private List<string> _selectedColumnsForClient = ["Name", "VatNumber"];
-
-    private CascadingDataContainer<FirmClientDto> _dataContainer = new()
+    private CascadingDataContainer<FirmClientDto, WorkOrderDto> _dataContainer = new()
     {
-        NewItem = new(),
-        SelectedItem = new(),
-        SelectedItems = []
+        SelectedProperties = ["Name", "VatNumber"]
     };
 
     protected override async Task OnInitializedAsync()
@@ -61,7 +55,7 @@
         }
     }
 
-    private void GetCascadingContainerStates(CascadingDataContainer<FirmClientDto> dataContainer) => _dataContainer = dataContainer;
+    private void GetCascadingContainerStates(CascadingDataContainer<FirmClientDto, WorkOrderDto> dataContainer) => _dataContainer = dataContainer;
 
     private async Task AddClient(FirmClientDto updatedClient) => await http.PostAsJsonAsync("api/client/add", updatedClient);
 
@@ -79,6 +73,6 @@
 
     private async Task LoadData(PaginationHelper paginationHelper)
     {
-        _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+        _dataContainer.MainItems = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
     }
 }
