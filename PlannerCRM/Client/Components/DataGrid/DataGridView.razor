@@ -1,4 +1,5 @@
 ﻿@typeparam TItem where TItem : class, new()
+@typeparam TTemp where TTemp : class, new()
 
 <style>
     .master-detail-container {
@@ -106,7 +107,7 @@
         <table class="table text-center">
             <thead>
                 <tr>
-                    @foreach (var prop in Properties)
+                    @foreach (var prop in DataContainer.SelectedProperties)
                     {
                         <th>@prop</th>
                     }
@@ -124,10 +125,10 @@
                     @foreach (var item in _paginatedData)
                     {
                         <tr class="@(_selectedItems.Contains(item) ? "table-active table-row-selected" : string.Empty) table-row-hover" @onclick="@(() => OnSelectMultipleItems(item))">
-                            @foreach (var prop in Properties)
+                            @foreach (var prop in DataContainer.SelectedProperties)
                             {
                                 <td>
-                                    @if (Properties.First() == prop && _selectedItems.Contains(item))
+                                    @if (DataContainer.SelectedProperties.First() == prop && _selectedItems.Contains(item))
                                     {
                                         <i class="bi bi-check2-square float-start"></i>
                                     }
@@ -141,7 +142,7 @@
             <tfoot>
                 <tr>
                     <td colspan="2" class="text-center">
-                        <Pagination TItem="@TItem" Data="@Data" OnPagination="@GetPaginatedData" />
+                        <Pagination TItem="@TItem" Data="@DataContainer.MainItems" OnPagination="@GetPaginatedData" />
                     </td>
                 </tr>
             </tfoot>
@@ -151,23 +152,21 @@
 
 @code
 {
-    [Parameter] public IEnumerable<string> Properties { get; set; }
-    [Parameter] public IEnumerable<TItem> Data { get; set; }
-    [Parameter] public CascadingDataContainer<TItem> DataContainer { get; set; }
+    [CascadingParameter] public CascadingDataContainer<TItem, TTemp> DataContainer { get; set; }
     [Parameter] public EventCallback<bool> ShouldFetchNewData { get; set; }
-    [Parameter] public EventCallback<CascadingDataContainer<TItem>> GetCascadingContainerStates { get; set; }
+    [Parameter] public EventCallback<CascadingDataContainer<TItem, TTemp>> GetCascadingContainerStates { get; set; }
 
     private List<TItem> _selectedItems = [];
     private IEnumerable<TItem> _paginatedData = [];
-    private int _totalPages => (int)Math.Ceiling((double)Data.Count() / _pageSize);
+    private int _totalPages => (int)Math.Ceiling((double)DataContainer.MainItems.Count() / _pageSize);
     private int _pageSize = 10;
 
 
     protected override void OnParametersSet()
     {
-        if (Data is not null)
+        if (DataContainer.MainItems is not null)
         {
-            GetPaginatedData(Data.Take(10).ToList());
+            GetPaginatedData(DataContainer.MainItems.Take(10).ToList());
         }
         //EntityHelper<TItem>.InitializePropertiesRecursively(DataContainer);  //should init DataContainer here, but shall I pass it as parameter
     }
@@ -205,7 +204,7 @@
 
     private void DeselectAll() => _selectedItems.Clear();
 
-    private void SelectAll() => _selectedItems = Data.ToList();
+    private void SelectAll() => _selectedItems = DataContainer.MainItems.ToList();
 
     private async Task ToggleAddItem()
     {
