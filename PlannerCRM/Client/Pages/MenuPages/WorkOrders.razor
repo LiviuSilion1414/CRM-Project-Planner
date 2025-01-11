@@ -28,7 +28,7 @@
             <br />
             <h5>Client Information</h5>
             <div class="form-group">
-                @if (_dataContainer.TempItem is null)
+                @if (string.IsNullOrEmpty(_dataContainer.TempItem.Name))
                 {
                     <div style="margin: 0;">
                         <div style="float: left;">
@@ -41,18 +41,15 @@
                             </button>
                         </div>
                     </div>
-                    @if (_dataContainer.TempItems is not null)
-                    {
-                        <div class="list-group">
-                            @foreach (var client in _dataContainer.TempItems)
-                            {
-                                <button type="button" class="list-group-item list-group-item-action @(_dataContainer.TempItem is not null ? "active" : string.Empty)"
-                                        @onclick="@(() => SelectClient(client))">
-                                    @client.Name
-                                </button>
-                            }
-                        </div>
-                    }
+                    <div class="list-group">
+                        @foreach (var client in _dataContainer.TempItems)
+                        {
+                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.TempItem is not null ? "active" : string.Empty)"
+                                    @onclick="@(() => SelectClient(client))">
+                                @client.Name
+                            </button>
+                        }
+                    </div>
                 }
                 else
                 {
