@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class SalaryRepository(AppDbContext context, IMapper mapper)
-    : Repository<Salary, SalaryDto>(context, mapper)
+    : Repository<Salary, SalaryDto>(context, mapper), IRepository<Salary, SalaryDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;

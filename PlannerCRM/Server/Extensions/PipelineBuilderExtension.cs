@@ -67,6 +67,15 @@ public static class PipelineBuilderExtension
         services.AddScoped<IRepository<EmployeeSalary, EmployeeSalaryDto>, Repository<EmployeeSalary, EmployeeSalaryDto>>();
         services.AddScoped<IRepository<EmployeeWorkTime, EmployeeWorkTimeDto>, Repository<EmployeeWorkTime, EmployeeWorkTimeDto>>();
         services.AddScoped<IRepository<WorkOrderActivity, WorkOrderActivityDto>, Repository<WorkOrderActivity, WorkOrderActivityDto>>();
+
+        services.AddScoped<IRepository<Activity, ActivityDto>, ActivityRepository>();
+        services.AddScoped<IRepository<Employee, EmployeeDto>, EmployeeRepository>();
+        services.AddScoped<IRepository<FirmClient, FirmClientDto>, FirmClientRepository>();
+        services.AddScoped<IRepository<Salary, SalaryDto>, SalaryRepository>();
+        services.AddScoped<IRepository<WorkOrder, WorkOrderDto>, WorkOrderRepository>();
+        services.AddScoped<IRepository<WorkOrderCost, WorkOrderCostDto>, WorkOrderCostRepository>();
+        services.AddScoped<IRepository<WorkTime, WorkTimeDto>, WorkTimeRepository>();
+
     }
     
     private static void RegisterDtoToModelMappings(this IServiceCollection services)
@@ -99,5 +108,13 @@ public static class PipelineBuilderExtension
         services.AddScoped<Repository<WorkOrderCost, WorkOrderCostDto>, WorkOrderCostRepository>();
         services.AddScoped<Repository<WorkTime, WorkTimeDto>, WorkTimeRepository>();
         services.AddScoped<CalculatorService>();
+
+        services.AddScoped<ActivityRepository>();
+        services.AddScoped<EmployeeRepository>();
+        services.AddScoped<FirmClientRepository>();
+        services.AddScoped<SalaryRepository>();
+        services.AddScoped<WorkOrderRepository>();
+        services.AddScoped<WorkOrderCostRepository>();
+        services.AddScoped<WorkTimeRepository>();
     }
 }

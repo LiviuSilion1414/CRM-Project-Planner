@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class FirmClientRepository(AppDbContext context, IMapper mapper)
-    : Repository<FirmClient, FirmClientDto>(context, mapper)
+    : Repository<FirmClient, FirmClientDto>(context, mapper), IRepository<FirmClient, FirmClientDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;

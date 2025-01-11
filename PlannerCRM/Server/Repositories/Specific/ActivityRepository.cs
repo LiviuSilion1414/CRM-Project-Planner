@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class ActivityRepository(AppDbContext context, IMapper mapper)
-    : Repository<Activity, ActivityDto>(context, mapper)
+    : Repository<Activity, ActivityDto>(context, mapper), IRepository<Activity, ActivityDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;

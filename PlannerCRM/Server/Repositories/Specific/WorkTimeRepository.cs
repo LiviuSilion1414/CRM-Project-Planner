@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class WorkTimeRepository(AppDbContext context, IMapper mapper)
-    : Repository<WorkTime, WorkTimeDto>(context, mapper)
+    : Repository<WorkTime, WorkTimeDto>(context, mapper), IRepository<WorkTime, WorkTimeDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;

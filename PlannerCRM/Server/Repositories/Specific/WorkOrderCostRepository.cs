@@ -1,7 +1,7 @@
 namespace PlannerCRM.Server.Repositories.Specific;
 
 public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
-    : Repository<WorkOrderCost, WorkOrderCostDto>(context, mapper)
+    : Repository<WorkOrderCost, WorkOrderCostDto>(context, mapper), IRepository<WorkOrderCost, WorkOrderCostDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
