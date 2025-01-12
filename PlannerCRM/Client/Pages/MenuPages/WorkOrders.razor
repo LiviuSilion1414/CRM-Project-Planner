@@ -85,7 +85,7 @@
         <ViewDetailsMarkup>
             <div>
                 <strong>Activities</strong>
-                @foreach(var ac in _dataContainer.DataManager.SelectedItem.Activities)
+                @foreach (var ac in _activities)
                 {
                     <p><strong>Name: </strong> @ac.Name</p>
                 }
@@ -95,17 +95,24 @@
 </CascadingValue>
 
 @code {
-    private CascadingDataContainer<WorkOrderDto, FirmClientDto> _dataContainer = new() 
-    { 
-        DataManager = new ()
+    private CascadingDataContainer<WorkOrderDto, FirmClientDto> _dataContainer = new()
         {
-            SelectedProperties = ["Name", "StartDate", "EndDate"]
-        }
-    };
+            DataManager = new()
+            {
+                SelectedProperties = ["Name", "StartDate", "EndDate"]
+            }
+        };
+
+    private List<ActivityDto> _activities = [];
 
     protected override async Task OnInitializedAsync()
     {
         await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+    }
+
+    private async Task GetAssociatedActivities(WorkOrderDto workOrder)
+    {
+        _activities = await http.GetFromJsonAsync<List<ActivityDto>>($"/api/workOrder/findAssociatedActivitiesByWorkOrderId/{workOrder.Id}");
     }
 
     private async Task SearchClient()
@@ -130,7 +137,11 @@
         }
     }
 
-    private void GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto, FirmClientDto> dataContainer) => _dataContainer = dataContainer;
+    private async Task GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto, FirmClientDto> dataContainer)
+    {
+        await GetAssociatedActivities(dataContainer.DataManager.SelectedItem);
+        _dataContainer = dataContainer;
+    }
 
     private async Task AddWorkOrder(WorkOrderDto updatedClient) => await http.PostAsJsonAsync("api/workOrder/add", updatedClient);
 
