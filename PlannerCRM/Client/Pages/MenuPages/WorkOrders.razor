@@ -3,15 +3,15 @@
 
 <CascadingValue Value="@_dataContainer">
     <DataGridView TItem="@WorkOrderDto"
-    TTemp="@FirmClientDto"
-    GetCascadingContainerStates="@GetCascadingContainerStates"
-    ShouldFetchNewData="@ReloadUpdatedData" />
+                  TTemp="@FirmClientDto"
+                  GetCascadingContainerStates="@GetCascadingContainerStates"
+                  ShouldFetchNewData="@ReloadUpdatedData" />
     <DataGridViewItemHandler TItem="@WorkOrderDto"
-    TTemp="@FirmClientDto"
-    AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
-    UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
-    DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
-    DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
+                             TTemp="@FirmClientDto"
+                             AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
+                             UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
+                             DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
+                             DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
             <div class="form-group">
                 <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
@@ -45,7 +45,7 @@
                         @foreach (var client in _dataContainer.DataManager.TempItems)
                         {
                             <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.TempItem is not null ? "active" : string.Empty)"
-                            @onclick="@(() => SelectClient(client))">
+                                    @onclick="@(() => SelectClient(client))">
                                 @client.Name
                             </button>
                         }
@@ -84,10 +84,14 @@
         </EditFormMarkup>
         <ViewDetailsMarkup>
             <div>
-                <strong>Activities</strong>
+                <p><strong>Client</strong></p>
+                <p style="text-indent: 40px;">Name: @_dataContainer.DataManager.SelectedItem.FirmClient.Name</p>
+                <p style="text-indent: 40px;">Vat Number: @_dataContainer.DataManager.SelectedItem.FirmClient.VatNumber</p>
+                <br />
+                <p><strong>Activities</strong></p>
                 @foreach (var ac in _activities)
                 {
-                    <p><strong>Name: </strong> @ac.Name</p>
+                    <p style="text-indent: 40px;">Name: @ac.Name</p>
                 }
             </div>
         </ViewDetailsMarkup>

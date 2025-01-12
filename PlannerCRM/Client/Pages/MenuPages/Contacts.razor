@@ -3,16 +3,16 @@
 
 <CascadingValue Value="@_dataContainer">
     <DataGridView TItem="@FirmClientDto"
-                  TTemp="@WorkOrderDto"
-                  GetCascadingContainerStates="@GetCascadingContainerStates"
-                  ShouldFetchNewData="@ReloadUpdatedData" />
+    TTemp="@WorkOrderDto"
+    GetCascadingContainerStates="@GetCascadingContainerStates"
+    ShouldFetchNewData="@ReloadUpdatedData" />
 
     <DataGridViewItemHandler TItem="@FirmClientDto"
-                             TTemp="@WorkOrderDto"
-                             AddAction="@(async client => await AddClient(client))"
-                             UpdateAction="@(async client => await UpdateClient(client))"
-                             DeleteAction="@(async client => await DeleteClient(client))"
-                             DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
+    TTemp="@WorkOrderDto"
+    AddAction="@(async client => await AddClient(client))"
+    UpdateAction="@(async client => await UpdateClient(client))"
+    DeleteAction="@(async client => await DeleteClient(client))"
+    DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
         <AddFormMarkup>
             <div class="form-group">
                 <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
@@ -33,6 +33,21 @@
                 <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.VatNumber" />
             </div>
         </EditFormMarkup>
+        <ViewDetailsMarkup>
+            <div style="overflow-y: scroll;">
+                <strong>WorkOrders</strong>
+                @foreach (var wo in _workOrders)
+                {
+                    <p style="text-indent: 40px;"><strong>Name: </strong>@wo.Name</p>
+                    <br />
+                    <strong>Activities</strong>
+                    @foreach (var ac in wo.Activities)
+                    {
+                        <p style="text-indent: 40px;"><strong>Name: </strong>@ac.Name</p>
+                    }
+                }
+            </div>
+        </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>
 
@@ -45,9 +60,17 @@
         }
     };
 
+    private List<WorkOrderDto> _workOrders = [];
+
     protected override async Task OnInitializedAsync()
     {
         await LoadData(new PaginationHelper { Limit = 200, Offset = 0 });
+    }
+
+
+    private async Task GetAssociatedWorkOrders(FirmClientDto client)
+    {
+        _workOrders = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/client/findAssociatedWorkOrdersByClientId/{client.Id}");
     }
 
     private async Task ReloadUpdatedData(bool shouldReload)
@@ -58,8 +81,11 @@
         }
     }
 
-    private void GetCascadingContainerStates(CascadingDataContainer<FirmClientDto, WorkOrderDto> dataContainer) => _dataContainer = dataContainer;
-
+    private async Task GetCascadingContainerStates(CascadingDataContainer<FirmClientDto, WorkOrderDto> dataContainer)
+    {
+        await GetAssociatedWorkOrders(dataContainer.DataManager.SelectedItem);
+        _dataContainer = dataContainer;
+    }
     private async Task AddClient(FirmClientDto updatedClient) => await http.PostAsJsonAsync("api/client/add", updatedClient);
 
     private async Task UpdateClient(FirmClientDto updatedClient) => await http.PutAsJsonAsync($"api/client/edit/{updatedClient.Id}", updatedClient);
