@@ -56,9 +56,16 @@
                 {
                     <div class="card" style="margin: 0;">
                         <div style="float: left;">
-                            <p><strong>Name: </strong>@_dataContainer.DataManager.TempItem.Name</p>
-                            <p><strong>Start Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
-                            <p><strong>End Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
+                            <strong>WorkOrder info</strong>
+                            <p style="text-indent: 40px;"><strong>Name: </strong>@_dataContainer.DataManager.TempItem.Name</p>
+                            <p style="text-indent: 40px;"><strong>Start Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
+                            <p style="text-indent: 40px;"><strong>End Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
+                            <br />
+                            <div style="float: left;">
+                                <strong>Client Info</strong>
+                                <p style="text-indent: 40px;"><strong>Name: </strong>@_dataContainer.DataManager.TempItem.FirmClient.Name</p>
+                                <p style="text-indent: 40px;"><strong>Vat Number: </strong>@_dataContainer.DataManager.TempItem.FirmClient.VatNumber</p>
+                            </div>
                         </div>
                         <div style="float: left;">
                             <button class="btn btn-outlien-danger" @onclick="@(() => SelectWorkOrder(null))">
@@ -108,7 +115,7 @@
     {
         if (_dataContainer.QueryManager.HasQuery)
         {
-            _dataContainer.DataManager.TempItems = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/activity/searchWorkOrderByName/{_dataContainer.QueryManager.Query}");
+            _dataContainer.DataManager.TempItems = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/workOrder/searchWorkOrderByTitle/{_dataContainer.QueryManager.Query}");
         }
     }
 
