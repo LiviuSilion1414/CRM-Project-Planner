@@ -1,5 +1,4 @@
 ﻿@typeparam TItem where TItem : class, new()
-@typeparam TTemp where TTemp : class, new()
 
 @if (DataContainer.ActionStateManager.IsViewSelected)
 {
@@ -56,7 +55,7 @@ else
 
 @code
 {
-    [CascadingParameter] public CascadingDataContainer<TItem, TTemp> DataContainer { get; set; }
+    [CascadingParameter] public CascadingDataContainer<TItem> DataContainer { get; set; }
     [Parameter] public RenderFragment<TItem> AddFormMarkup { get; set; }
     [Parameter] public RenderFragment<TItem> EditFormMarkup { get; set; }
     [Parameter] public RenderFragment<TItem> ViewDetailsMarkup { get; set; }
@@ -64,8 +63,6 @@ else
     [Parameter] public Action<TItem> UpdateAction { get; set; }
     [Parameter] public Action<TItem> DeleteAction { get; set; }
     [Parameter] public Action<IEnumerable<TItem>> DeleteMultipleAction { get; set; }
-
-    private DataGridView<TItem, TTemp> _grid = new();
 
     private void OnItemDataAdded(TItem item)
     {

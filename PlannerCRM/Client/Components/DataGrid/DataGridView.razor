@@ -1,5 +1,4 @@
 ﻿@typeparam TItem where TItem : class, new()
-@typeparam TTemp where TTemp : class, new()
 
 <style>
     .master-detail-container {
@@ -153,9 +152,9 @@
 
 @code
 {
-    [CascadingParameter] public CascadingDataContainer<TItem, TTemp> DataContainer { get; set; }
+    [CascadingParameter] public CascadingDataContainer<TItem> DataContainer { get; set; }
     [Parameter] public EventCallback<bool> ShouldFetchNewData { get; set; }
-    [Parameter] public EventCallback<CascadingDataContainer<TItem, TTemp>> GetCascadingContainerStates { get; set; }
+    [Parameter] public EventCallback<CascadingDataContainer<TItem>> GetCascadingContainerStates { get; set; }
 
     private List<TItem> _selectedItems = [];
     private IEnumerable<TItem> _paginatedData = [];
