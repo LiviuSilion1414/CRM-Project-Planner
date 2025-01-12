@@ -8,8 +8,8 @@ public class DataManager<TItem, TTemp>
     public TItem NewItem { get; set; } = new();
     public TTemp TempItem { get; set; } = new();
 
-    public List<TItem> MainItems { get; set; } = new();
-    public List<TTemp> TempItems { get; set; } = new();
-    public List<TItem> SelectedItems { get; set; } = new();
-    public List<string> SelectedProperties { get; set; } = new();
+    public List<TItem> MainItems { get; set; } = [];
+    public List<TTemp> TempItems { get; set; } = [];
+    public List<TItem> SelectedItems { get; set; } = [];
+    public List<string> SelectedProperties { get; set; } = [];
 }
