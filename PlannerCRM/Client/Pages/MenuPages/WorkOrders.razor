@@ -3,36 +3,36 @@
 
 <CascadingValue Value="@_dataContainer">
     <DataGridView TItem="@WorkOrderDto"
-                  TTemp="@FirmClientDto"
-                  GetCascadingContainerStates="@GetCascadingContainerStates"
-                  ShouldFetchNewData="@ReloadUpdatedData" />
+    TTemp="@FirmClientDto"
+    GetCascadingContainerStates="@GetCascadingContainerStates"
+    ShouldFetchNewData="@ReloadUpdatedData" />
     <DataGridViewItemHandler TItem="@WorkOrderDto"
-                             TTemp="@FirmClientDto"
-                             AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
-                             UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
-                             DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
-                             DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
+    TTemp="@FirmClientDto"
+    AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
+    UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
+    DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
+    DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
             <div class="form-group">
-                <label>@nameof(_dataContainer.NewItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.Name" />
+                <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.Name" />
             </div>
             <div class="form-group">
-                <label>@nameof(_dataContainer.NewItem.StartDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.NewItem.StartDate" />
+                <label>@nameof(_dataContainer.DataManager.NewItem.StartDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.StartDate" />
             </div>
             <div class="form-group">
-                <label>@nameof(_dataContainer.NewItem.EndDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.NewItem.EndDate" />
+                <label>@nameof(_dataContainer.DataManager.NewItem.EndDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.EndDate" />
             </div>
             <br />
             <h5>Client Information</h5>
             <div class="form-group">
-                @if (string.IsNullOrEmpty(_dataContainer.TempItem.Name))
+                @if (string.IsNullOrEmpty(_dataContainer.DataManager.TempItem.Name))
                 {
                     <div style="margin: 0;">
                         <div style="float: left;">
-                            <InputText type="search" class="form-control" @bind-value="@_dataContainer.Query" />
+                            <InputText type="search" class="form-control" @bind-value="@_dataContainer.QueryManager.Query" />
                         </div>
                         <div style="float: left;">
                             <button class="btn btn-outline-primary" @onclick="@SearchClient">
@@ -42,10 +42,10 @@
                         </div>
                     </div>
                     <div class="list-group">
-                        @foreach (var client in _dataContainer.TempItems)
+                        @foreach (var client in _dataContainer.DataManager.TempItems)
                         {
-                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.TempItem is not null ? "active" : string.Empty)"
-                                    @onclick="@(() => SelectClient(client))">
+                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.TempItem is not null ? "active" : string.Empty)"
+                            @onclick="@(() => SelectClient(client))">
                                 @client.Name
                             </button>
                         }
@@ -55,8 +55,8 @@
                 {
                     <div class="card" style="margin: 0;">
                         <div style="float: left;">
-                            <p><strong>Name: </strong>@_dataContainer.TempItem.Name</p>
-                            <p><strong>VatNumber: </strong>@_dataContainer.TempItem.VatNumber</p>
+                            <p><strong>Name: </strong>@_dataContainer.DataManager.TempItem.Name</p>
+                            <p><strong>VatNumber: </strong>@_dataContainer.DataManager.TempItem.VatNumber</p>
                         </div>
                         <div style="float: left;">
                             <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
@@ -70,16 +70,16 @@
         </AddFormMarkup>
         <EditFormMarkup>
             <div class="form-group">
-                <label>@nameof(_dataContainer.SelectedItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.SelectedItem.Name" />
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.Name" />
             </div>
             <div class="form-group">
-                <label>@nameof(_dataContainer.SelectedItem.StartDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.SelectedItem.StartDate" />
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.StartDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.StartDate" />
             </div>
             <div class="form-group">
-                <label>@nameof(_dataContainer.SelectedItem.EndDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.SelectedItem.EndDate" />
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.EndDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.EndDate" />
             </div>
         </EditFormMarkup>
         <ViewDetailsMarkup>
@@ -91,7 +91,10 @@
 @code {
     private CascadingDataContainer<WorkOrderDto, FirmClientDto> _dataContainer = new() 
     { 
-        SelectedProperties = ["Name", "StartDate", "EndDate"]
+        DataManager = new ()
+        {
+            SelectedProperties = ["Name", "StartDate", "EndDate"]
+        }
     };
 
     protected override async Task OnInitializedAsync()
@@ -101,16 +104,16 @@
 
     private async Task SearchClient()
     {
-        if (!string.IsNullOrEmpty(_dataContainer.Query))
+        if (_dataContainer.QueryManager.HasQuery)
         {
-            _dataContainer.TempItems = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{_dataContainer.Query}");
+            _dataContainer.DataManager.TempItems = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{_dataContainer.QueryManager.Query}");
         }
     }
 
     private void SelectClient(FirmClientDto client)
     {
-        _dataContainer.TempItem = client;
-        _dataContainer.NewItem.FirmClientId = client.Id;
+        _dataContainer.DataManager.TempItem = client;
+        _dataContainer.DataManager.NewItem.FirmClientId = client.Id;
     }
 
     private async Task ReloadUpdatedData(bool shouldReload)
@@ -139,6 +142,6 @@
 
     private async Task LoadData(PaginationHelper paginationHelper)
     {
-        _dataContainer.MainItems = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/workOrder/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+        _dataContainer.DataManager.MainItems = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/workOrder/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
     }
 }
