@@ -14,7 +14,7 @@
     </ItemPanel>
 }
 
-@if (DataContainer.ActionStateManager.IsAddSelected)
+else if (DataContainer.ActionStateManager.IsAddSelected)
 {
     <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.DataManager.NewItem" OnItemChanged="@OnItemDataAdded">
         <FormContent>
@@ -23,7 +23,7 @@
     </FormView>
 }
 
-@if (DataContainer.ActionStateManager.IsUpdateSelected)
+else if (DataContainer.ActionStateManager.IsUpdateSelected)
 {
     <FormView Title="Edit new item " TItem="@TItem" Model="@DataContainer.DataManager.SelectedItem" OnItemChanged="@OnItemDataUpdated">
         <FormContent>
@@ -32,24 +32,27 @@
     </FormView>
 }
 
-@if (DataContainer.ActionStateManager.IsDeleteSingleSelected)
+else if (DataContainer.ActionStateManager.IsDeleteSingleSelected)
 {
     <AlertComponent Title="Sure to delete this item?"
     BodyMessage="The action is irreversible!"
     IsDeleteConfirmed="@OnItemDeleteConfirmation" />
 }
 
-@if (DataContainer.ActionStateManager.IsDeleteMultipleSelected)
+else if (DataContainer.ActionStateManager.IsDeleteMultipleSelected)
 {
     <AlertComponent Title="Sure to delete this item?"
     BodyMessage="The action is irreversible!"
     IsDeleteConfirmed="@OnMultipleItemsDeleteConfirmation" />
 }
 
-@if (DataContainer.ActionStateManager.IsOperationDone)
+else if (DataContainer.ActionStateManager.IsOperationDone)
 {
     <Toast />
 }
+
+else
+{ }
 
 @code
 {
@@ -68,47 +71,33 @@
     {
         DataContainer.DataManager.NewItem = item;
         AddAction.Invoke(item);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private void OnItemDataUpdated(TItem item)
     {
         DataContainer.DataManager.SelectedItem = item;
         UpdateAction.Invoke(item);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private void OnItemDeleteConfirmation(bool isConfirmed)
     {
-        DataContainer.ActionStateManager.SetAction(ActionType.DeleteSingle);
         DeleteAction.Invoke(DataContainer.DataManager.SelectedItem);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private void OnMultipleItemsDeleteConfirmation(bool isConfirmed)
     {
-        DataContainer.ActionStateManager.SetAction(ActionType.DeleteMultiple);
         DeleteMultipleAction.Invoke(DataContainer.DataManager.SelectedItems);
-    }
-
-    private void ToggleAddItem()
-    {
-        DataContainer.DataManager.NewItem = new();
-        DataContainer.ActionStateManager.SetAction(ActionType.Add);
-    }
-
-    private void ToggleSelectedItemsForDelete(List<TItem> items)
-    {
-        DataContainer.ActionStateManager.SetAction(ActionType.DeleteMultiple);
-    }
-
-    private void ToggleSelectItem(TItem item)
-    {
-        DataContainer.DataManager.SelectedItem = item;
-        DataContainer.ActionStateManager.SetAction(ActionType.View);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private void ToggleEditItem(TItem item)
     {
         DataContainer.DataManager.SelectedItem = item;
         DataContainer.ActionStateManager.SetAction(ActionType.Update);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private void ToggleDeleteItem(TItem item)

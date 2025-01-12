@@ -1,6 +1,9 @@
 ﻿@page "/contacts"
 @inject HttpClient http
 
+<h3>Clients</h3>
+<PageTitle>Clients</PageTitle>
+
 <CascadingValue Value="@_dataContainer">
     <DataGridView TItem="@FirmClientDto"
     TTemp="@WorkOrderDto"

@@ -194,7 +194,6 @@
         if (_selectedItems.Count() == 1)
         {
             await ToggleSelectItem();
-
         }
         else
         {
@@ -212,6 +211,7 @@
         DataContainer.DataManager.SelectedItem = _selectedItems.Single();
 
         await GetCascadingContainerStates.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleSelectedItems()
@@ -219,6 +219,7 @@
         DataContainer.DataManager.SelectedItems = _selectedItems.ToList();
 
         await GetCascadingContainerStates.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleAddItem()
@@ -227,6 +228,7 @@
         DataContainer.DataManager.NewItem = new();
 
         await GetCascadingContainerStates.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleEditItem()
@@ -235,6 +237,7 @@
         DataContainer.DataManager.SelectedItem = _selectedItems.Single();
 
         await GetCascadingContainerStates.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleDeleteItem()
@@ -243,15 +246,16 @@
         DataContainer.DataManager.SelectedItem = _selectedItems.Single();
 
         await GetCascadingContainerStates.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleDeleteAllItems()
     {
-        DataContainer.ActionStateManager.SetAction(ActionType.DeleteSingle);
         DataContainer.ActionStateManager.SetAction(ActionType.DeleteMultiple);
         DataContainer.DataManager.SelectedItems = _selectedItems;
 
         await GetCascadingContainerStates.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private object GetItemValue(TItem item, string propertyName) =>

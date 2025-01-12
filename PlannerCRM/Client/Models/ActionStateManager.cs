@@ -7,7 +7,8 @@ public enum ActionType
     Add,
     Update,
     DeleteSingle,
-    DeleteMultiple
+    DeleteMultiple,
+    OperationDone
 }
 
 public class ActionStateManager
@@ -39,6 +40,9 @@ public class ActionStateManager
                 break;
             case ActionType.DeleteMultiple:
                 IsDeleteMultipleSelected = true;
+                break;
+            case ActionType.OperationDone:
+                IsOperationDone = true;
                 break;
             case ActionType.None:
             default:
