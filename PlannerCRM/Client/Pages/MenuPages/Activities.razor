@@ -1,0 +1,149 @@
+﻿@page "/activities"
+
+@inject HttpClient http
+
+<CascadingValue Value="@_dataContainer">
+    <DataGridView TItem="@ActivityDto"
+                  TTemp="@WorkOrderDto"
+                  GetCascadingContainerStates="@GetCascadingContainerStates"
+                  ShouldFetchNewData="@ReloadUpdatedData" />
+    <DataGridViewItemHandler TItem="@ActivityDto"
+                             TTemp="@WorkOrderDto"
+                             AddAction="@(async activity => await AddActivity(activity))"
+                             UpdateAction="@(async activity => await UpdateActivity(activity))"
+                             DeleteAction="@(async activity => await DeleteActivity(activity))"
+                             DeleteMultipleAction="@(async activities => await DeleteMultipleWorkOrders(activities))">
+        <AddFormMarkup>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.Name" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.DataManager.NewItem.StartDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.StartDate" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.DataManager.NewItem.EndDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.EndDate" />
+            </div>
+            <br />
+            <h5>WorkOrder Information</h5>
+            <div class="form-group">
+                @if (string.IsNullOrEmpty(_dataContainer.DataManager.TempItem.Name))
+                {
+                    <div style="margin: 0;">
+                        <div style="float: left;">
+                            <InputText type="search" class="form-control" @bind-value="@_dataContainer.QueryManager.Query" />
+                        </div>
+                        <div style="float: left;">
+                            <button class="btn btn-outline-primary" @onclick="@SearchWorkOrder">
+                                <i class="bi bi-search"></i>
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                    <div class="list-group">
+                        @foreach (var workOrder in _dataContainer.DataManager.TempItems)
+                        {
+                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.TempItem is not null ? "active" : string.Empty)"
+                                    @onclick="@(() => SelectWorkOrder(workOrder))">
+                                @workOrder.Name
+                            </button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="card" style="margin: 0;">
+                        <div style="float: left;">
+                            <p><strong>Name: </strong>@_dataContainer.DataManager.TempItem.Name</p>
+                            <p><strong>Start Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
+                            <p><strong>End Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
+                        </div>
+                        <div style="float: left;">
+                            <button class="btn btn-outlien-danger" @onclick="@(() => SelectWorkOrder(null))">
+                                <i class="bi bi-trash3"></i>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </AddFormMarkup>
+        <EditFormMarkup>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.Name" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.StartDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.StartDate" />
+            </div>
+            <div class="form-group">
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.EndDate):</label>
+                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.EndDate" />
+            </div>
+        </EditFormMarkup>
+        <ViewDetailsMarkup>
+            <!-- To do -->
+        </ViewDetailsMarkup>
+    </DataGridViewItemHandler>
+</CascadingValue>
+
+@code {
+    private CascadingDataContainer<ActivityDto, WorkOrderDto> _dataContainer = new()
+    {
+        DataManager = new()
+        {
+            SelectedProperties = ["Name", "StartDate", "EndDate"]
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+    }
+
+    private async Task SearchWorkOrder()
+    {
+        if (_dataContainer.QueryManager.HasQuery)
+        {
+            _dataContainer.DataManager.TempItems = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/activity/searchWorkOrderByName/{_dataContainer.QueryManager.Query}");
+        }
+    }
+
+    private void SelectWorkOrder(WorkOrderDto workOrder)
+    {
+        _dataContainer.DataManager.TempItem = workOrder;
+        _dataContainer.DataManager.NewItem.WorkOrderId = workOrder.Id;
+    }
+
+    private async Task ReloadUpdatedData(bool shouldReload)
+    {
+        if (shouldReload)
+        {
+            await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
+        }
+    }
+
+    private void GetCascadingContainerStates(CascadingDataContainer<ActivityDto, WorkOrderDto> dataContainer) => _dataContainer = dataContainer;
+
+    private async Task AddActivity(ActivityDto updatedWorkOrder) => await http.PostAsJsonAsync("api/activity/add", updatedWorkOrder);
+
+    private async Task UpdateActivity(ActivityDto updatedWorkOrder) => await http.PutAsJsonAsync($"api/activity/edit/{updatedWorkOrder.Id}", updatedWorkOrder);
+
+    private async Task DeleteActivity(ActivityDto activity) => await http.DeleteAsync($"api/activity/delete/{activity.Id}");
+
+    private async Task DeleteMultipleWorkOrders(IEnumerable<ActivityDto> activitys)
+    {
+        foreach (var activity in activitys)
+        {
+            await DeleteActivity(activity);
+        }
+    }
+
+    private async Task LoadData(PaginationHelper paginationHelper)
+    {
+        _dataContainer.DataManager.MainItems = await http.GetFromJsonAsync<List<ActivityDto>>($"/api/activity/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+    }
+}
