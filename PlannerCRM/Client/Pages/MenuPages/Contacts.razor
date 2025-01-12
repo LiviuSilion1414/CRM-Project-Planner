@@ -6,12 +6,10 @@
 
 <CascadingValue Value="@_dataContainer">
     <DataGridView TItem="@FirmClientDto"
-    TTemp="@WorkOrderDto"
     GetCascadingContainerStates="@GetCascadingContainerStates"
     ShouldFetchNewData="@ReloadUpdatedData" />
 
     <DataGridViewItemHandler TItem="@FirmClientDto"
-    TTemp="@WorkOrderDto"
     AddAction="@(async client => await AddClient(client))"
     UpdateAction="@(async client => await UpdateClient(client))"
     DeleteAction="@(async client => await DeleteClient(client))"
@@ -55,7 +53,7 @@
 </CascadingValue>
 
 @code {
-    private CascadingDataContainer<FirmClientDto, WorkOrderDto> _dataContainer = new()
+    private CascadingDataContainer<FirmClientDto> _dataContainer = new()
     {
         DataManager = new() 
         {
@@ -84,7 +82,7 @@
         }
     }
 
-    private async Task GetCascadingContainerStates(CascadingDataContainer<FirmClientDto, WorkOrderDto> dataContainer)
+    private async Task GetCascadingContainerStates(CascadingDataContainer<FirmClientDto> dataContainer)
     {
         await GetAssociatedWorkOrders(dataContainer.DataManager.SelectedItem);
         _dataContainer = dataContainer;

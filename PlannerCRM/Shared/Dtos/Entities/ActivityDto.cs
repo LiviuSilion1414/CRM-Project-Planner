@@ -22,10 +22,10 @@ public class ActivityDto
 
     [Required]
     public int WorkOrderId { get; set; }
+    public WorkOrderDto WorkOrder { get; set; }
 
     //// Navigation properties
     //[Required]
-    //public WorkOrderDto WorkOrder { get; set; }
     //public List<EmployeeDto> Employees { get; set; }
     //public List<EmployeeActivityDto> EmployeeActivities { get; set; }
     //public List<ActivityWorkTimeDto> ActivityWorkTimes { get; set; }

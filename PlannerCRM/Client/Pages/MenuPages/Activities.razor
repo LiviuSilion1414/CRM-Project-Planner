@@ -7,15 +7,13 @@
 
 <CascadingValue Value="@_dataContainer">
     <DataGridView TItem="@ActivityDto"
-                  TTemp="@WorkOrderDto"
-                  GetCascadingContainerStates="@GetCascadingContainerStates"
-                  ShouldFetchNewData="@ReloadUpdatedData" />
+    GetCascadingContainerStates="@GetCascadingContainerStates"
+    ShouldFetchNewData="@ReloadUpdatedData" />
     <DataGridViewItemHandler TItem="@ActivityDto"
-                             TTemp="@WorkOrderDto"
-                             AddAction="@(async activity => await AddActivity(activity))"
-                             UpdateAction="@(async activity => await UpdateActivity(activity))"
-                             DeleteAction="@(async activity => await DeleteActivity(activity))"
-                             DeleteMultipleAction="@(async activities => await DeleteMultipleWorkOrders(activities))">
+    AddAction="@(async activity => await AddActivity(activity))"
+    UpdateAction="@(async activity => await UpdateActivity(activity))"
+    DeleteAction="@(async activity => await DeleteActivity(activity))"
+    DeleteMultipleAction="@(async activities => await DeleteMultipleWorkOrders(activities))">
         <AddFormMarkup>
             <div class="form-group">
                 <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
@@ -32,7 +30,7 @@
             <br />
             <h5>WorkOrder Information</h5>
             <div class="form-group">
-                @if (string.IsNullOrEmpty(_dataContainer.DataManager.TempItem.Name))
+                @if (string.IsNullOrEmpty(_dataContainer.DataManager.NewItem.WorkOrder.Name))
                 {
                     <div style="margin: 0;">
                         <div style="float: left;">
@@ -46,10 +44,10 @@
                         </div>
                     </div>
                     <div class="list-group">
-                        @foreach (var workOrder in _dataContainer.DataManager.TempItems)
+                        @foreach (var workOrder in _workOrders)
                         {
-                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.TempItem is not null ? "active" : string.Empty)"
-                                    @onclick="@(() => SelectWorkOrder(workOrder))">
+                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.NewItem is not null ? "active" : string.Empty)"
+                            @onclick="@(() => SelectWorkOrder(workOrder))">
                                 @workOrder.Name
                             </button>
                         }
@@ -60,14 +58,14 @@
                     <div class="card" style="margin: 0;">
                         <div style="float: left;">
                             <strong>WorkOrder info</strong>
-                            <p style="text-indent: 40px;"><strong>Name: </strong>@_dataContainer.DataManager.TempItem.Name</p>
-                            <p style="text-indent: 40px;"><strong>Start Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
-                            <p style="text-indent: 40px;"><strong>End Date: </strong>@_dataContainer.DataManager.TempItem.StartDate</p>
+                            <p style="text-indent: 40px;"><strong>Name: </strong>@_dataContainer.DataManager.NewItem.WorkOrder.Name</p>
+                            <p style="text-indent: 40px;"><strong>Start Date: </strong>@_dataContainer.DataManager.NewItem.WorkOrder.StartDate</p>
+                            <p style="text-indent: 40px;"><strong>End Date: </strong>@_dataContainer.DataManager.NewItem.WorkOrder.StartDate</p>
                             <br />
                             <div style="float: left;">
                                 <strong>Client Info</strong>
-                                <p style="text-indent: 40px;"><strong>Name: </strong>@_dataContainer.DataManager.TempItem.FirmClient.Name</p>
-                                <p style="text-indent: 40px;"><strong>Vat Number: </strong>@_dataContainer.DataManager.TempItem.FirmClient.VatNumber</p>
+                                <p style="text-indent: 40px;"><strong>Name: </strong>@_dataContainer.DataManager.NewItem.WorkOrder.FirmClient.Name</p>
+                                <p style="text-indent: 40px;"><strong>Vat Number: </strong>@_dataContainer.DataManager.NewItem.WorkOrder.FirmClient.VatNumber</p>
                             </div>
                         </div>
                         <div style="float: left;">
@@ -101,13 +99,15 @@
 </CascadingValue>
 
 @code {
-    private CascadingDataContainer<ActivityDto, WorkOrderDto> _dataContainer = new()
+    private CascadingDataContainer<ActivityDto> _dataContainer = new()
     {
         DataManager = new()
         {
             SelectedProperties = ["Name", "StartDate", "EndDate"]
         }
     };
+
+    private List<WorkOrderDto> _workOrders = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,13 +118,13 @@
     {
         if (_dataContainer.QueryManager.HasQuery)
         {
-            _dataContainer.DataManager.TempItems = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/workOrder/searchWorkOrderByTitle/{_dataContainer.QueryManager.Query}");
+            _workOrders = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/workOrder/searchWorkOrderByTitle/{_dataContainer.QueryManager.Query}");
         }
     }
 
     private void SelectWorkOrder(WorkOrderDto workOrder)
     {
-        _dataContainer.DataManager.TempItem = workOrder;
+        _dataContainer.DataManager.NewItem.WorkOrder = workOrder;
         _dataContainer.DataManager.NewItem.WorkOrderId = workOrder.Id;
     }
 
@@ -136,7 +136,7 @@
         }
     }
 
-    private void GetCascadingContainerStates(CascadingDataContainer<ActivityDto, WorkOrderDto> dataContainer) => _dataContainer = dataContainer;
+    private void GetCascadingContainerStates(CascadingDataContainer<ActivityDto> dataContainer) => _dataContainer = dataContainer;
 
     private async Task AddActivity(ActivityDto updatedWorkOrder) => await http.PostAsJsonAsync("api/activity/add", updatedWorkOrder);
 

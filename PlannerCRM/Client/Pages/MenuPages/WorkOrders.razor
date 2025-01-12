@@ -6,15 +6,13 @@
 
 <CascadingValue Value="@_dataContainer">
     <DataGridView TItem="@WorkOrderDto"
-                  TTemp="@FirmClientDto"
-                  GetCascadingContainerStates="@GetCascadingContainerStates"
-                  ShouldFetchNewData="@ReloadUpdatedData" />
+    GetCascadingContainerStates="@GetCascadingContainerStates"
+    ShouldFetchNewData="@ReloadUpdatedData" />
     <DataGridViewItemHandler TItem="@WorkOrderDto"
-                             TTemp="@FirmClientDto"
-                             AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
-                             UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
-                             DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
-                             DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
+    AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
+    UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
+    DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
+    DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
             <div class="form-group">
                 <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
@@ -31,7 +29,7 @@
             <br />
             <h5>Client Information</h5>
             <div class="form-group">
-                @if (string.IsNullOrEmpty(_dataContainer.DataManager.TempItem.Name))
+                @if (string.IsNullOrEmpty(_dataContainer.DataManager.NewItem.FirmClient.Name))
                 {
                     <div style="margin: 0;">
                         <div style="float: left;">
@@ -45,10 +43,10 @@
                         </div>
                     </div>
                     <div class="list-group">
-                        @foreach (var client in _dataContainer.DataManager.TempItems)
+                        @foreach (var client in _clients)
                         {
-                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.TempItem is not null ? "active" : string.Empty)"
-                                    @onclick="@(() => SelectClient(client))">
+                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.NewItem is not null ? "active" : string.Empty)"
+                            @onclick="@(() => SelectClient(client))">
                                 @client.Name
                             </button>
                         }
@@ -58,8 +56,8 @@
                 {
                     <div class="card" style="margin: 0;">
                         <div style="float: left;">
-                            <p><strong>Name: </strong>@_dataContainer.DataManager.TempItem.Name</p>
-                            <p><strong>VatNumber: </strong>@_dataContainer.DataManager.TempItem.VatNumber</p>
+                            <p><strong>Name: </strong>@_dataContainer.DataManager.NewItem.FirmClient.Name</p>
+                            <p><strong>VatNumber: </strong>@_dataContainer.DataManager.NewItem.FirmClient.VatNumber</p>
                         </div>
                         <div style="float: left;">
                             <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
@@ -102,7 +100,7 @@
 </CascadingValue>
 
 @code {
-    private CascadingDataContainer<WorkOrderDto, FirmClientDto> _dataContainer = new()
+    private CascadingDataContainer<WorkOrderDto> _dataContainer = new()
         {
             DataManager = new()
             {
@@ -111,6 +109,7 @@
         };
 
     private List<ActivityDto> _activities = [];
+    private List<FirmClientDto> _clients = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -126,13 +125,13 @@
     {
         if (_dataContainer.QueryManager.HasQuery)
         {
-            _dataContainer.DataManager.TempItems = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{_dataContainer.QueryManager.Query}");
+            _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{_dataContainer.QueryManager.Query}");
         }
     }
 
     private void SelectClient(FirmClientDto client)
     {
-        _dataContainer.DataManager.TempItem = client;
+        _dataContainer.DataManager.NewItem.FirmClient = client;
         _dataContainer.DataManager.NewItem.FirmClientId = client.Id;
     }
 
@@ -144,7 +143,7 @@
         }
     }
 
-    private async Task GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto, FirmClientDto> dataContainer)
+    private async Task GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto> dataContainer)
     {
         await GetAssociatedActivities(dataContainer.DataManager.SelectedItem);
         _dataContainer = dataContainer;
