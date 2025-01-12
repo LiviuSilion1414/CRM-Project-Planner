@@ -9,7 +9,7 @@ public class EmployeeController(IRepository<Employee, EmployeeDto> genericRepo, 
 
     [HttpGet]
     [Route("searchEmployeeByName/{employeeName}")]
-    public async Task<EmployeeDto> SearchEmployeeByName(string employeeName)
+    public async Task<ICollection<EmployeeDto>> SearchEmployeeByName(string employeeName)
     {
         return await _specificRepo.SearchEmployeeByName(employeeName);
     }

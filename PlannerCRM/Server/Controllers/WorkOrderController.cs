@@ -7,8 +7,8 @@ public class WorkOrderController(IRepository<WorkOrder, WorkOrderDto> genericRep
     private readonly WorkOrderRepository _specificRepo = specificRepo;
 
     [HttpGet]
-    [Route("searchWorOrderByTitle/{worOrderTitle}")]
-    public async Task<WorkOrderDto> SearchWorOrderByTitle(string worOrderTitle)
+    [Route("searchWorkOrderByTitle/{worOrderTitle}")]
+    public async Task<ICollection<WorkOrderDto>> SearchWorOrderByTitle(string worOrderTitle)
     {
         return await _specificRepo.SearchWorOrderByTitle(worOrderTitle);
     }

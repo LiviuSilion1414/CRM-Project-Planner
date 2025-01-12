@@ -41,14 +41,14 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<ICollection<FirmClientDto>>(clients);
     }
 
-    public async Task<IEnumerable<FirmClientDto>> SearchClientByName(string clientName)
+    public async Task<ICollection<FirmClientDto>> SearchClientByName(string clientName)
     {
         var foundClients = await _context.Clients
             .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
             .Include(cl => cl.WorkOrders)
             .ToListAsync();
 
-        return _mapper.Map<IEnumerable<FirmClientDto>>(foundClients);
+        return _mapper.Map<ICollection<FirmClientDto>>(foundClients);
     }
 
     public async Task<ICollection<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)

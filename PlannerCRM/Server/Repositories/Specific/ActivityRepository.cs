@@ -95,12 +95,14 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<ICollection<ActivityDto>>(activities);
     }
 
-    public async Task<ActivityDto> SearchActivityByTitle(string activityTitle)
+    public async Task<ICollection<ActivityDto>> SearchActivityByTitle(string activityTitle)
     {
         var foundItem = await _context.Activities
-            .SingleOrDefaultAsync(ac => EF.Functions.ILike(ac.Name, $"{activityTitle}"));
+            .Where(ac => EF.Functions.ILike(ac.Name, $"{activityTitle}"))
+            .Include(ac => ac.WorkOrder)
+            .ToListAsync();
 
-        return _mapper?.Map<ActivityDto>(foundItem);
+        return _mapper?.Map<ICollection<ActivityDto>>(foundItem);
     }
 
     public async Task<ICollection<EmployeeDto>> FindAssociatedEmployeesWithinActivity(int activityId)

@@ -9,7 +9,7 @@ public class ClientController(IRepository<FirmClient, FirmClientDto> genericRepo
 
     [HttpGet]
     [Route("searchClientByName/{clientName}")]
-    public async Task<IEnumerable<FirmClientDto>> SearchClientByName(string clientName)
+    public async Task<ICollection<FirmClientDto>> SearchClientByName(string clientName)
     {
         return await _specificRepo.SearchClientByName(clientName);
     }

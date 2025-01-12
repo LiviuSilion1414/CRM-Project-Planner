@@ -72,15 +72,16 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<ICollection<WorkOrderDto>>(workOrder);
     }
 
-    public async Task<WorkOrderDto> SearchWorOrderByTitle(string worOrderTitle)
+    public async Task<ICollection<WorkOrderDto>> SearchWorOrderByTitle(string worOrderTitle)
     {
         var foundWorkOrder = await _context.WorkOrders
+            .Where(wo => EF.Functions.ILike(wo.Name, $"%{worOrderTitle}%"))
             .Include(wo => wo.WorkOrderCost)
             .Include(wo => wo.FirmClient)
             .Include(wo => wo.Activities)
-            .SingleOrDefaultAsync(wo => EF.Functions.ILike(wo.Name, $"%{worOrderTitle}%"));
+            .ToListAsync();
 
-        return _mapper.Map<WorkOrderDto>(foundWorkOrder);
+        return _mapper.Map<ICollection<WorkOrderDto>>(foundWorkOrder);
     }
 
     public async Task<ICollection<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(int workOrderId)

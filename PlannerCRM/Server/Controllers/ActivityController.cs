@@ -9,7 +9,7 @@ public class ActivityController(IRepository<Activity, ActivityDto> genericRepo, 
 
     [HttpGet]
     [Route("searchByTitle/{activityTitle}")]
-    public async Task<ActivityDto> SearchActivityByTitle(string activityTitle)
+    public async Task<ICollection<ActivityDto>> SearchActivityByTitle(string activityTitle)
     {
         return await _specificRepo.SearchActivityByTitle(activityTitle);
     }

@@ -105,16 +105,17 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<ICollection<EmployeeDto>>(employees);
     }
 
-    public async Task<EmployeeDto> SearchEmployeeByName(string employeeName)
+    public async Task<ICollection<EmployeeDto>> SearchEmployeeByName(string employeeName)
     {
         var foundEmployee = await _context.Employees
+            .Where(em => EF.Functions.ILike(em.Name, $"{employeeName}"))
             .Include(e => e.Activities)
             .Include(e => e.WorkTimes)
             .Include(e => e.Salaries)
             .Include(e => e.Roles)
-            .SingleOrDefaultAsync(em => EF.Functions.ILike(em.Name, $"{employeeName}"));
+            .ToListAsync();
 
-        return _mapper.Map<EmployeeDto>(foundEmployee);
+        return _mapper.Map<ICollection<EmployeeDto>>(foundEmployee);
     }
 
     public async Task<ICollection<ActivityDto>> FindAssociatedActivitiesByEmployeeId(int employeeId)

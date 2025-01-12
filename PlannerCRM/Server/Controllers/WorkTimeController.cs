@@ -9,7 +9,7 @@ public class WorkTimeController(IRepository<WorkTime, WorkTimeDto> genericRepo, 
 
     [HttpGet]
     [Route("searchWorkTimeByEmployeeName/{employeeName}")]
-    public async Task<WorkTimeDto> SearchWorkTimeByEmployeeName(string employeeName)
+    public async Task<ICollection<WorkTimeDto>> SearchWorkTimeByEmployeeName(string employeeName)
     {
         return await _specificRepo.SearchWorkTimeByEmployeeName(employeeName);
     }

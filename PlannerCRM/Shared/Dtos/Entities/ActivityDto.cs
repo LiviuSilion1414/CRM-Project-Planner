@@ -10,7 +10,7 @@ public class ActivityDto
 
     [Required]
     [PresentOrFutureDate]
-    public DateTime CreationDate { get; set; }
+    public DateTime CreationDate { get; set; } = DateTime.Now;
 
     [Required]
     [PresentOrFutureDate]
