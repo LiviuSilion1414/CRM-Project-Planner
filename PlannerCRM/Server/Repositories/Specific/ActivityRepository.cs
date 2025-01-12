@@ -10,17 +10,6 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     {
         await base.AddAsync(model); //may be an issue
 
-        foreach (var em in model.Employees) 
-        {
-            await _context.EmployeeActivities.AddAsync(
-                new EmployeeActivity()
-                {
-                    ActivityId = model.Id,
-                    EmployeeId = em.Id
-                }
-            );
-        }
-
         await _context.WorkOrderActivities.AddAsync(
             new WorkOrderActivity 
             {
