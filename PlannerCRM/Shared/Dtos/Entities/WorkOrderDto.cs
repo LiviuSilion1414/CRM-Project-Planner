@@ -22,9 +22,9 @@ public class WorkOrderDto
     public int FirmClientId { get; set; }
     public int WorkOrderCostId { get; set; }
     public FirmClientDto FirmClient { get; set; }
+    public List<ActivityDto> Activities { get; set; }
 
     // Navigation properties
     //[Required]
     //public WorkOrderCostDto WorkOrderCost { get; set; }
-    //public List<ActivityDto> Activities { get; set; }
 }
