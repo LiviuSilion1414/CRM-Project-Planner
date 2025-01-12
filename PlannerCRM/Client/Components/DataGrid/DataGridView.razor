@@ -141,8 +141,8 @@
                 }
             </tbody>
             <tfoot>
-                <tr>
-                    <td colspan="2" class="text-center">
+                <tr class ="text-center">
+                    <td colspan="3">
                         <Pagination TItem="@TItem" Data="@DataContainer.DataManager.MainItems" OnPagination="@GetPaginatedData" />
                     </td>
                 </tr>
@@ -169,9 +169,6 @@
         {
             GetPaginatedData(DataContainer.DataManager.MainItems.Take(10).ToList());
         }
-        // EntityHelper<TItem>.InitializePropertiesRecursively(DataContainer);
-        // This should initialize DataContainer. Consider passing it as a parameter instead.
-
     }
 
     public async Task Reload()
