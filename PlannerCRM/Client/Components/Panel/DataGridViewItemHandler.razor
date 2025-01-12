@@ -94,12 +94,6 @@
         DataContainer.ActionStateManager.SetAction(ActionType.Add);
     }
 
-    private void ToggleSelectedItems(List<TItem> items)
-    {
-        DataContainer.DataManager.SelectedItems = items;
-        DataContainer.ActionStateManager.SetAction(ActionType.View);
-    }
-
     private void ToggleSelectedItemsForDelete(List<TItem> items)
     {
         DataContainer.ActionStateManager.SetAction(ActionType.DeleteMultiple);
