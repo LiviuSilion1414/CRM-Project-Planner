@@ -46,9 +46,10 @@ public class ActionStateManager
         }
     }
 
-    private void ResetFlags()
+    public void ResetFlags()
     {
         IsAddSelected = false;
+        IsViewSelected = false;
         IsUpdateSelected = false;
         IsDeleteSingleSelected = false;
         IsDeleteMultipleSelected = false;
