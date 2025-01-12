@@ -15,22 +15,22 @@
                              DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
         <AddFormMarkup>
             <div class="form-group">
-                <label>@nameof(_dataContainer.NewItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.Name" />
+                <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.Name" />
             </div>
             <div class="form-group">
-                <label>@nameof(_dataContainer.NewItem.VatNumber):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.NewItem.VatNumber" />
+                <label>@nameof(_dataContainer.DataManager.NewItem.VatNumber):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.VatNumber" />
             </div>
         </AddFormMarkup>
         <EditFormMarkup>
             <div class="form-group">
-                <label>@nameof(_dataContainer.SelectedItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.SelectedItem.Name" />
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.Name):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.Name" />
             </div>
             <div class="form-group">
-                <label>@nameof(_dataContainer.SelectedItem.VatNumber):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.SelectedItem.VatNumber" />
+                <label>@nameof(_dataContainer.DataManager.SelectedItem.VatNumber):</label>
+                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.VatNumber" />
             </div>
         </EditFormMarkup>
     </DataGridViewItemHandler>
@@ -39,7 +39,10 @@
 @code {
     private CascadingDataContainer<FirmClientDto, WorkOrderDto> _dataContainer = new()
     {
-        SelectedProperties = ["Name", "VatNumber"]
+        DataManager = new() 
+        {
+            SelectedProperties = ["Name", "VatNumber"]
+        }
     };
 
     protected override async Task OnInitializedAsync()
@@ -73,6 +76,6 @@
 
     private async Task LoadData(PaginationHelper paginationHelper)
     {
-        _dataContainer.MainItems = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+        _dataContainer.DataManager.MainItems = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
     }
 }
