@@ -190,21 +190,33 @@
 
         if (_selectedItems.Count() == 1)
         {
-            DataContainer.SelectedItem = _selectedItems.Single();
+            await ToggleSelectItem();
 
-            await GetCascadingContainerStates.InvokeAsync(DataContainer);
         }
         else
         {
-            DataContainer.SelectedItems = _selectedItems.ToList();
-
-            await GetCascadingContainerStates.InvokeAsync(DataContainer);
+            await ToggleSelectedItems();
         }
     }
 
     private void DeselectAll() => _selectedItems.Clear();
 
     private void SelectAll() => _selectedItems = DataContainer.MainItems.ToList();
+
+    private async Task ToggleSelectItem()
+    {
+        DataContainer.IsItemSelected = !DataContainer.IsItemSelected;
+        DataContainer.SelectedItem = _selectedItems.Single();
+
+        await GetCascadingContainerStates.InvokeAsync(DataContainer);
+    }
+
+    private async Task ToggleSelectedItems()
+    {
+        DataContainer.SelectedItems = _selectedItems.ToList();
+
+        await GetCascadingContainerStates.InvokeAsync(DataContainer);
+    }
 
     private async Task ToggleAddItem()
     {
