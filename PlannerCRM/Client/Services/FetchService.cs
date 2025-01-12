@@ -6,31 +6,30 @@ public class FetchService<TItem>(HttpClient http) : IFetchService<TItem>
     where TItem : class
 {
     private readonly HttpClient _http = http;
-    private readonly string _baseUrl = "http://localhost:5030/api";
 
     public async Task Create(string url, TItem item)
     {
-        await _http.PostAsJsonAsync($"{_baseUrl}/{url}", item);
+        await _http.PostAsJsonAsync($"api/{url}", item);
     }
 
     public async Task<TItem> Read(string url, int itemId)
     {
-        return await _http.GetFromJsonAsync<TItem>($"{_baseUrl}/{url}");
+        return await _http.GetFromJsonAsync<TItem>($"api/{url}");
     }
 
     public async Task Update(string url, TItem item)
     {
-        await _http.PutAsJsonAsync($"{_baseUrl}/{url}", item);
+        await _http.PutAsJsonAsync($"api/{url}", item);
     }
 
     public async Task Delete(string url, int itemId)
     {
-        await _http.DeleteAsync($"{_baseUrl}/{url}/{itemId}");
+        await _http.DeleteAsync($"api/{url}/{itemId}");
     }
 
     public async Task<ICollection<TItem>> GetAll(string url, int offset, int limit)
     {
-        return await _http.GetFromJsonAsync<ICollection<TItem>>($"{_baseUrl}/{url}/{offset}/{limit}");
+        return await _http.GetFromJsonAsync<ICollection<TItem>>($"api/{url}/{offset}/{limit}");
     }
 }
 
