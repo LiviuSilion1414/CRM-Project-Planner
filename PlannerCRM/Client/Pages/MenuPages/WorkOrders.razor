@@ -29,7 +29,7 @@
             <br />
             <h5>Client Information</h5>
             <div class="form-group">
-                @if (string.IsNullOrEmpty(_dataContainer.DataManager.NewItem.FirmClient.Name))
+                @if (_dataContainer.DataManager.NewItem.FirmClient is null)
                 {
                     <div style="margin: 0;">
                         <div style="float: left;">

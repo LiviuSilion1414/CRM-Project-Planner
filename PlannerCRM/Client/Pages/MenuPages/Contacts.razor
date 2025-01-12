@@ -40,12 +40,6 @@
                 @foreach (var wo in _workOrders)
                 {
                     <p style="text-indent: 40px;"><strong>Name: </strong>@wo.Name</p>
-                    <br />
-                    <strong>Activities</strong>
-                    @foreach (var ac in wo.Activities)
-                    {
-                        <p style="text-indent: 40px;"><strong>Name: </strong>@ac.Name</p>
-                    }
                 }
             </div>
         </ViewDetailsMarkup>
