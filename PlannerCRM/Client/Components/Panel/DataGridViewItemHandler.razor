@@ -1,52 +1,52 @@
 ﻿@typeparam TItem where TItem : class, new()
 @typeparam TTemp where TTemp : class, new()
 
-@if (DataContainer.IsItemSelected)
+@if (DataContainer.ActionStateManager.IsViewSelected)
 {
     <ItemPanel TItem="@TItem" 
-               Item="@DataContainer.SelectedItem"
-               Properties="@DataContainer.SelectedProperties"
-               OnEdit="@(() => ToggleEditItem(DataContainer.SelectedItem))"
-               OnDelete="@(() => ToggleDeleteItem(DataContainer.SelectedItem))">
+    Item="@DataContainer.DataManager.SelectedItem"
+    Properties="@DataContainer.DataManager.SelectedProperties"
+    OnEdit="@(() => ToggleEditItem(DataContainer.DataManager.SelectedItem))"
+    OnDelete="@(() => ToggleDeleteItem(DataContainer.DataManager.SelectedItem))">
         <Content>
-            @ViewDetailsMarkup(DataContainer.SelectedItem)
+            @ViewDetailsMarkup(DataContainer.DataManager.SelectedItem)
         </Content>
     </ItemPanel>
 }
 
-@if (DataContainer.IsAddSelected)
+@if (DataContainer.ActionStateManager.IsAddSelected)
 {
-    <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.NewItem" OnItemChanged="@OnItemDataAdded">
+    <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.DataManager.NewItem" OnItemChanged="@OnItemDataAdded">
         <FormContent>
-            @AddFormMarkup(DataContainer.NewItem)
+            @AddFormMarkup(DataContainer.DataManager.NewItem)
         </FormContent>
     </FormView>
 }
 
-@if (DataContainer.IsUpdateSelected)
+@if (DataContainer.ActionStateManager.IsUpdateSelected)
 {
-    <FormView Title="Edit new item " TItem="@TItem" Model="@DataContainer.SelectedItem" OnItemChanged="@OnItemDataUpdated">
+    <FormView Title="Edit new item " TItem="@TItem" Model="@DataContainer.DataManager.SelectedItem" OnItemChanged="@OnItemDataUpdated">
         <FormContent>
-            @EditFormMarkup(DataContainer.SelectedItem)
+            @EditFormMarkup(DataContainer.DataManager.SelectedItem)
         </FormContent>
     </FormView>
 }
 
-@if (DataContainer.IsDeleteSingleItemSelected)
+@if (DataContainer.ActionStateManager.IsDeleteSingleSelected)
 {
     <AlertComponent Title="Sure to delete this item?"
     BodyMessage="The action is irreversible!"
     IsDeleteConfirmed="@OnItemDeleteConfirmation" />
 }
 
-@if (DataContainer.IsDeleteMultipleSelected)
+@if (DataContainer.ActionStateManager.IsDeleteMultipleSelected)
 {
     <AlertComponent Title="Sure to delete this item?"
     BodyMessage="The action is irreversible!"
     IsDeleteConfirmed="@OnMultipleItemsDeleteConfirmation" />
 }
 
-@if (DataContainer.IsOperationDone)
+@if (DataContainer.ActionStateManager.IsOperationDone)
 {
     <Toast />
 }
@@ -66,60 +66,60 @@
 
     private void OnItemDataAdded(TItem item)
     {
-        DataContainer.NewItem = item;
+        DataContainer.DataManager.NewItem = item;
         AddAction.Invoke(item);
     }
 
     private void OnItemDataUpdated(TItem item)
     {
-        DataContainer.SelectedItem = item;
+        DataContainer.DataManager.SelectedItem = item;
         UpdateAction.Invoke(item);
     }
 
     private void OnItemDeleteConfirmation(bool isConfirmed)
     {
-        DataContainer.IsDeleteSingleItemSelected = !DataContainer.IsDeleteSingleItemSelected;
-        DeleteAction.Invoke(DataContainer.SelectedItem);
+        DataContainer.ActionStateManager.SetAction(ActionType.DeleteSingle);
+        DeleteAction.Invoke(DataContainer.DataManager.SelectedItem);
     }
 
     private void OnMultipleItemsDeleteConfirmation(bool isConfirmed)
     {
-        DataContainer.IsDeleteMultipleSelected = !DataContainer.IsDeleteMultipleSelected;
-        DeleteMultipleAction.Invoke(DataContainer.SelectedItems);
+        DataContainer.ActionStateManager.SetAction(ActionType.DeleteMultiple);
+        DeleteMultipleAction.Invoke(DataContainer.DataManager.SelectedItems);
     }
 
     private void ToggleAddItem()
     {
-        DataContainer.NewItem = new();
-        DataContainer.IsAddSelected = !DataContainer.IsAddSelected;
+        DataContainer.DataManager.NewItem = new();
+        DataContainer.ActionStateManager.SetAction(ActionType.Add);
     }
 
     private void ToggleSelectedItems(List<TItem> items)
     {
-        DataContainer.SelectedItems = items;
-        DataContainer.IsItemSelected = !DataContainer.IsItemSelected;
+        DataContainer.DataManager.SelectedItems = items;
+        DataContainer.ActionStateManager.SetAction(ActionType.View);
     }
 
     private void ToggleSelectedItemsForDelete(List<TItem> items)
     {
-        DataContainer.IsDeleteMultipleSelected = !DataContainer.IsDeleteMultipleSelected;
+        DataContainer.ActionStateManager.SetAction(ActionType.DeleteMultiple);
     }
 
     private void ToggleSelectItem(TItem item)
     {
-        DataContainer.SelectedItem = item;
-        DataContainer.IsItemSelected = !DataContainer.IsItemSelected;
+        DataContainer.DataManager.SelectedItem = item;
+        DataContainer.ActionStateManager.SetAction(ActionType.View);
     }
 
     private void ToggleEditItem(TItem item)
     {
-        DataContainer.SelectedItem = item;
-        DataContainer.IsUpdateSelected = !DataContainer.IsUpdateSelected;
+        DataContainer.DataManager.SelectedItem = item;
+        DataContainer.ActionStateManager.SetAction(ActionType.Update);
     }
 
     private void ToggleDeleteItem(TItem item)
     {
-        DataContainer.SelectedItem = item;
-        DataContainer.IsDeleteSingleItemSelected = !DataContainer.IsDeleteSingleItemSelected;
+        DataContainer.DataManager.SelectedItem = item;
+        DataContainer.ActionStateManager.SetAction(ActionType.DeleteSingle);
     }
 }
