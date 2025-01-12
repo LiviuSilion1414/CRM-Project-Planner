@@ -12,8 +12,8 @@ public class FirmClientDto
     [Length(11, 11)]
     [Required]
     public string VatNumber { get; set; }
+    public List<WorkOrderDto> WorkOrders { get; set; }
 
     // Navigation properties
-    //public List<WorkOrderDto> WorkOrders { get; set; }
     //public List<WorkOrderCostDto> WorkOrderCosts { get; set; }
 }
