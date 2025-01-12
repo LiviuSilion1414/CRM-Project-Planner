@@ -57,7 +57,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
             .Include(wo => wo.FirmClient)
             .Include(wo => wo.Activities)
             .Include(wo => wo.WorkOrderCost)
-            .Where(wo => wo.Id == clientId)
+            .Where(wo => wo.FirmClientId == clientId)
             .ToListAsync();
 
         return _mapper.Map<ICollection<WorkOrderDto>>(foundWorkOrders);
