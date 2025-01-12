@@ -83,7 +83,13 @@
             </div>
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <!-- To do -->
+            <div>
+                <strong>Activities</strong>
+                @foreach(var ac in _dataContainer.DataManager.SelectedItem.Activities)
+                {
+                    <p><strong>Name: </strong> @ac.Name</p>
+                }
+            </div>
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>
