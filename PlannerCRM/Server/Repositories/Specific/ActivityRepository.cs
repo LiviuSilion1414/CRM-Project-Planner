@@ -89,6 +89,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         var foundItem = await _context.Activities
             .Where(ac => EF.Functions.ILike(ac.Name, $"{activityTitle}"))
             .Include(ac => ac.WorkOrder)
+            .ThenInclude(wo => wo.FirmClient)
             .ToListAsync();
 
         return _mapper?.Map<ICollection<ActivityDto>>(foundItem);
@@ -117,9 +118,10 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     public async Task<ICollection<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(int activityId)
     {
         var foundWorkTimes = await _context.WorkTimes
-            .Include(wt => wt.WorkOrder)
             .Include(wt => wt.Activity)
             .Include(wt => wt.Employee)
+            .Include(wt => wt.WorkOrder)
+            .ThenInclude(wo => wo.FirmClient)
             .Where(wt => wt.Activity.Id == activityId)
             .ToListAsync();
 
