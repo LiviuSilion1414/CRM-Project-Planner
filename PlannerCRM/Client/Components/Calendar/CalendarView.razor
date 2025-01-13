@@ -6,17 +6,11 @@
             <button class="btn btn-outline-primary" @onclick="PreviousPeriod">
                 <i class="bi bi-chevron-left"></i>
             </button>
-
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    @CurrentView
-                </button>
-                <select class="dropdown-menu" aria-labelledby="viewDropdown">
-                    <option class="dropdown-item" @onclick="() => SetView(ViewType.Month)">Month</option>
-                    <option class="dropdown-item" @onclick="() => SetView(ViewType.Week)">Week</option>
-                    <option class="dropdown-item" @onclick="() => SetView(ViewType.Day)">Day</option>
-                    <option class="dropdown-item" @onclick="() => SetView(ViewType.Year)">Year</option>
-                </select>
+            <div>
+                @foreach (var vt in Enum.GetValues(typeof(ViewType))) 
+                {
+                    <button class="btn btn-outline-info @(GetViewClass((ViewType)vt)) mx-1" type="button" @onclick="@(() => SetView((ViewType)vt))">@vt</button>
+                }
             </div>
             <button class="btn btn-outline-primary" @onclick="NextPeriod">
                 <i class="bi bi-chevron-right"></i>
@@ -158,8 +152,8 @@
     private DateTime CurrentDate { get; set; } = DateTime.Today;
     private List<int?> CurrentMonthDays { get; set; } = new List<int?>();
     private List<DateTime> CurrentWeekDays { get; set; } = new List<DateTime>();
-    private readonly string[] DayNames = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-    private readonly string[] MonthNames = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+    private readonly string[] DayNames = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
+    private readonly string[] MonthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
 
     protected override void OnInitialized()
     {
@@ -199,6 +193,7 @@
 
     private void SetView(ViewType view)
     {
+        Console.WriteLine("Setting calendar view...");
         CurrentView = view;
         GenerateCalendar();
     }
@@ -245,6 +240,8 @@
         var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
         return currentDate == DateTime.Today ? "today" : string.Empty;
     }
+
+    private string GetViewClass(ViewType vt) => vt == CurrentView ? "active" : string.Empty;
 
     private string GetCurrentMonthAndYear()
      => $"{MonthNames[CurrentDate.Month - 1]} {CurrentDate.Year}";
