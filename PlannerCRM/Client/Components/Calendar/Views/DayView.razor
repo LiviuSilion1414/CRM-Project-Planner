@@ -1,0 +1,7 @@
+﻿<div class="calendar-day-view text-center">
+    <h3>@CurrentDate.ToString("D", CultureInfo.InvariantCulture)</h3>
+</div>
+
+@code {
+    [Parameter] public DateTime CurrentDate { get; set; }
+}

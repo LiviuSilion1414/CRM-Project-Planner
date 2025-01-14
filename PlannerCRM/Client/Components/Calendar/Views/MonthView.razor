@@ -1,0 +1,74 @@
+﻿<div class="calendar-grid">
+    @foreach (var dayName in Enum.GetValues(typeof(DayNames)))
+    {
+        <div class="calendar-day-name">@dayName</div>
+    }
+    @foreach (var day in CurrentMonthDays)
+    {
+        <div class="calendar-day @GetDayClass(day)" style="position: relative;">
+            @if (day.HasValue)
+            {
+                foreach (var ev in Events)
+                {
+                    @if (ev.StartDate.Day <= day && ev.EndDate.Day >= day)
+                    {
+                        <div style="display: flex;">
+                            <br />
+                            <span style="position: relative; width: 100%; margin-bottom: 5px; color:white; background-color: @ev.Color;">@ev.Title</span>
+                        </div>
+                    }
+                }
+                <span style="position: absolute; padding: 10px; top: 0; right: 0;">@day.Value</span>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    }
+
+    .calendar-day-name {
+    text-align: center;
+    font-weight: bold;
+    color: #888;
+    }
+
+    .calendar-day {
+    text-align: center;
+    padding: 30px;
+    max-width: 200px;
+    background-color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    }
+
+    .calendar-day:hover {
+    background-color: #f4f4f4;
+    color: #4285f4;
+    }
+
+    .today {
+    background-color: #4285f4;
+    color: white;
+    font-weight: bold;
+    }
+</style>
+
+@code {
+    [Parameter] public DateTime CurrentDate { get; set; }
+    [Parameter] public List<int?> CurrentMonthDays { get; set; }
+    [Parameter] public List<CalendarEvent> Events { get; set; }
+
+    private string GetDayClass(int? day)
+    {
+        if (!day.HasValue)
+            return string.Empty;
+
+        var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
+        return currentDate == DateTime.Today ? "today" : string.Empty;
+    }
+}

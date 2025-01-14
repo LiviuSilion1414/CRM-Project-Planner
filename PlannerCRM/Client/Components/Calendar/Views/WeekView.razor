@@ -1,0 +1,23 @@
+﻿<div class="calendar-week text-center">
+    @foreach (var day in CurrentWeekDays)
+    {
+        <div class="calendar-week-day @GetDayClass(day.Day) mx-5 p-2" style="display: inline;">
+            <span>@day.DayOfWeek</span>
+            <span>@day.Day</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public DateTime CurrentDate { get; set; }
+    [Parameter] public List<DateTime> CurrentWeekDays { get; set; }
+
+    private string GetDayClass(int? day)
+    {
+        if (!day.HasValue)
+            return string.Empty;
+
+        var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
+        return currentDate == DateTime.Today ? "today" : string.Empty;
+    }
+}

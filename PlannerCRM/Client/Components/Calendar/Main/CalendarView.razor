@@ -1,0 +1,37 @@
+﻿@using System.Globalization
+
+<div class="calendar-container">
+    <div class="calendar-header">
+        <NavigationControls 
+                CurrentDate="@CurrentDate" 
+                CurrentView="@CurrentView" 
+                OnGoToTodaySet="@GoToToday" 
+                OnPreviousPeriodSet="@PreviousPeriod" 
+                OnNextPeriodSet="@NextPeriod"
+                OnViewSet="@SetView"/>
+    </div>
+
+    <div class="calendar-main">
+        @if (CurrentView == ViewType.Month)
+        {
+            <MonthView 
+                CurrentDate="@CurrentDate" 
+                CurrentMonthDays="@CurrentMonthDays" 
+                Events="@_events" />
+        }
+        else if (CurrentView == ViewType.Week)
+        {
+            <WeekView 
+                CurrentDate="@CurrentDate" 
+                CurrentWeekDays="@CurrentWeekDays" />
+        }
+        else if (CurrentView == ViewType.Day)
+        {
+            <DayView CurrentDate="@CurrentDate" />
+        }
+        else if (CurrentView == ViewType.Year)
+        {
+            <YearView CurrentDate="@CurrentDate" />
+        }
+    </div>
+</div>

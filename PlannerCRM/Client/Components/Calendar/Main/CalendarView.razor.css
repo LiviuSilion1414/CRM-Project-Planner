@@ -67,7 +67,3 @@
     color: white;
     font-weight: bold;
 }
-
-.calendar-week, .calendar-day-view, .calendar-year-grid {
-    text-align: center;
-}

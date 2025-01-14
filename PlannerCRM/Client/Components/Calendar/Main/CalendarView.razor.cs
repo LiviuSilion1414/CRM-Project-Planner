@@ -1,18 +1,7 @@
-﻿namespace PlannerCRM.Client.Components.Calendar;
+﻿namespace PlannerCRM.Client.Components.Calendar.Main;
 
 public partial class CalendarView : ComponentBase
 {
-    private enum MonthNames { January, February, March, April, May, June, July, August, September, October, November, December }
-    private enum DayNames { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday };
-    private enum ViewType { Month, Week, Day, Year }
-    public class CalendarEvent
-    {
-        public string Title { get; set; }
-        public string Color { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-    }
-
     private ViewType CurrentView { get; set; } = ViewType.Month;
     private DateTime CurrentDate { get; set; } = DateTime.Today;
 
@@ -31,6 +20,7 @@ public partial class CalendarView : ComponentBase
     protected override void OnInitialized()
     {
         GenerateCalendar();
+        Console.WriteLine(DateTime.Now);
     }
 
 
@@ -119,31 +109,4 @@ public partial class CalendarView : ComponentBase
         var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
         return currentDate == DateTime.Today ? "today" : string.Empty;
     }
-
-    private string GetViewClass(ViewType vt) => vt == CurrentView ? "active" : string.Empty;
-
-    private string GetCurrentDateInfoByCurrentView()
-    {
-        if (CurrentView == ViewType.Month)
-        {
-            return GetCurrentDayOfMonthAndYear();
-        } else if (CurrentView == ViewType.Week)
-        {
-            return GetCurrentDayOfMonthAndYear();
-        } else if (CurrentView == ViewType.Day)
-        {
-            return GetCurrentDayWeekMonthAndYear();
-        } else
-        {
-            return GetCurrentYear();
-        }
-    }
-
-    private string GetCurrentDayOfMonthAndYear()
-        => $"{Enum.GetName(typeof(MonthNames), CurrentDate.Month - 1)} {CurrentDate.Year}";
-
-    private string GetCurrentDayWeekMonthAndYear()
-        => $"{CurrentDate.DayOfWeek} {CurrentDate.Day} {GetCurrentDayOfMonthAndYear()}";
-
-    private string GetCurrentYear() => $"{CurrentDate.Year}";
 }
