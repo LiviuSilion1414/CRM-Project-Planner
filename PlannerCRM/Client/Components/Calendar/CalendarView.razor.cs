@@ -19,7 +19,7 @@ public partial class CalendarView : ComponentBase
     private List<int?> CurrentMonthDays { get; set; } = [];
     private List<DateTime> CurrentWeekDays { get; set; } = [];
 
-    private List<CalendarEvent> _events =
+    private readonly List<CalendarEvent> _events =
     [
         new() { Title = "Task 1", Color="orange", StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2) },
         new() { Title = "Task 2", Color="purple", StartDate = DateTime.Now.AddDays(-1), EndDate = DateTime.Now },
@@ -129,7 +129,7 @@ public partial class CalendarView : ComponentBase
             return GetCurrentDayOfMonthAndYear();
         } else if (CurrentView == ViewType.Week)
         {
-            return GetCurrentDayWeekMonthAndYear();
+            return GetCurrentDayOfMonthAndYear();
         } else if (CurrentView == ViewType.Day)
         {
             return GetCurrentDayWeekMonthAndYear();
@@ -143,7 +143,7 @@ public partial class CalendarView : ComponentBase
         => $"{Enum.GetName(typeof(MonthNames), CurrentDate.Month - 1)} {CurrentDate.Year}";
 
     private string GetCurrentDayWeekMonthAndYear()
-        => $" {CurrentDate.DayOfWeek} {CurrentDate.Day} {GetCurrentDayOfMonthAndYear()}";
+        => $"{CurrentDate.DayOfWeek} {CurrentDate.Day} {GetCurrentDayOfMonthAndYear()}";
 
     private string GetCurrentYear() => $"{CurrentDate.Year}";
 }
