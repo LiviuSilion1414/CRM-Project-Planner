@@ -7,7 +7,7 @@
                 <i class="bi bi-chevron-left"></i>
             </button>
             <div>
-                @foreach (var vt in Enum.GetValues(typeof(ViewType))) 
+                @foreach (var vt in Enum.GetValues(typeof(ViewType)))
                 {
                     <button class="btn btn-outline-info @(GetViewClass((ViewType)vt)) mx-1" type="button" @onclick="@(() => SetView((ViewType)vt))">@vt</button>
                 }
@@ -30,14 +30,24 @@
                 }
                 @foreach (var day in CurrentMonthDays)
                 {
-                    <div class="calendar-day @GetDayClass(day)">
+                    <div class="calendar-day @GetDayClass(day)" style="position: relative;">
                         @if (day.HasValue)
                         {
-                            if (DateTime.Today.Day == day && DateTime.Today.AddDays(1).Day > day)
+                            foreach (var ev in _events)
                             {
-                                <span style="display: flex; position: relative; padding: 10px; width: 350px; background-color: green; z-index: 100; color: red;">Task 1</span>
+                                @if (ev.StartDate.Day <= day && ev.EndDate.Day >= day)
+                                {
+                                    <div style="display: flex;">
+                                        <br />
+                                        @if (ev.StartDate.Day == day)
+                                        {
+                                            <span style="position: relative; width: 100%; margin-bottom: 5px; background-color: @(ev.Color);">@ev.Title</span>
+                                        }
+                                        <span style="position: relative; width: 100%; margin-bottom: 5px; background-color: @(ev.Color);"></span>
+                                    </div>
+                                }
                             }
-                            <span>@day.Value</span>
+                            <span style="position: absolute; padding: 10px; top: 0; right: 0;">@day.Value</span>
                         }
                     </div>
                 }
@@ -48,7 +58,7 @@
             <div class="calendar-week">
                 @foreach (var day in CurrentWeekDays)
                 {
-                    <div class="calendar-week-day @GetDayClass(day.Day)">
+                    <div class="calendar-week-day @GetDayClass(day.Day) mx-5 p-2" style="display: inline;">
                         <span>@day.DayOfWeek</span>
                         <span>@day.Day</span>
                     </div>
@@ -77,77 +87,77 @@
 
 <style>
     .calendar-container {
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
-    width: 80vw;
-    background-color: #f9f9f9;
-    font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+        width: 80vw;
+        background-color: #f9f9f9;
+        font-family: Arial, sans-serif;
     }
 
     .calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: rgb(3, 155, 229);
-    color: white;
-    font-size: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: rgb(3, 155, 229);
+        color: white;
+        font-size: 18px;
     }
 
     .navigation-buttons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .today-button {
-    background-color: white;
-    color: #4285f4;
+        background-color: white;
+        color: #4285f4;
     }
 
     .calendar-main {
-    flex: 1;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+        flex: 1;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
     .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
     }
 
     .calendar-day-name {
-    text-align: center;
-    font-weight: bold;
-    color: #888;
+        text-align: center;
+        font-weight: bold;
+        color: #888;
     }
 
     .calendar-day {
-    text-align: center;
-    padding: 30px;
-    max-width: 200px;
-    background-color: white;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+        text-align: center;
+        padding: 30px;
+        max-width: 200px;
+        background-color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
     }
 
-    .calendar-day:hover {
-    background-color: #f4f4f4;
-    color: #4285f4;
-    }
+        .calendar-day:hover {
+            background-color: #f4f4f4;
+            color: #4285f4;
+        }
 
     .today {
-    background-color: #4285f4;
-    color: white;
-    font-weight: bold;
+        background-color: #4285f4;
+        color: white;
+        font-weight: bold;
     }
 
     .calendar-week, .calendar-day-view, .calendar-year-grid {
-    text-align: center;
+        text-align: center;
     }
 </style>
 
@@ -155,17 +165,35 @@
     private enum MonthNames { January, February, March, April, May, June, July, August, September, October, November, December }
     private enum DayNames { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday };
     private enum ViewType { Month, Week, Day, Year }
-    
+    public class CalendarEvent
+    {
+        public string Title { get; set; }
+        public string Color { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
+
     private ViewType CurrentView { get; set; } = ViewType.Month;
     private DateTime CurrentDate { get; set; } = DateTime.Today;
 
     private List<int?> CurrentMonthDays { get; set; } = new List<int?>();
     private List<DateTime> CurrentWeekDays { get; set; } = new List<DateTime>();
 
+    private List<CalendarEvent> _events =
+    [
+        new() { Title = "Task 1", Color="orange", StartDate = DateTime.Now, EndDate=DateTime.Now.AddDays(2) },
+    new() { Title = "Task 2", Color="purple", StartDate = DateTime.Now.AddDays(-1), EndDate=DateTime.Now },
+    new() { Title = "Task 3", Color="blue", StartDate = DateTime.Now.AddDays(-7), EndDate=DateTime.Now.AddDays(-2) },
+    new() { Title = "Task 4", Color="green", StartDate = DateTime.Now.AddDays(-10), EndDate=DateTime.Now.AddDays(-7) },
+    new() { Title = "Task 5", Color="red", StartDate = DateTime.Now.AddDays(2), EndDate=DateTime.Now.AddDays(9) }
+
+    ];
+
     protected override void OnInitialized()
     {
         GenerateCalendar();
     }
+
 
     private void GenerateCalendar()
     {
