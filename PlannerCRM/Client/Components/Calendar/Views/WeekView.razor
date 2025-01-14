@@ -8,6 +8,14 @@
     }
 </div>
 
+<style>
+    .today {
+        background-color: #4285f4;
+        color: white;
+        font-weight: bold;
+    }
+</style>
+
 @code {
     [Parameter] public DateTime CurrentDate { get; set; }
     [Parameter] public List<DateTime> CurrentWeekDays { get; set; }
