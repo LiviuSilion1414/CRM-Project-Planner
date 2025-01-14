@@ -1,30 +1,108 @@
-﻿namespace PlannerCRM.Client.Components.Calendar.Main;
+﻿using PlannerCRM.Client.Components.Calendar.Views;
+
+namespace PlannerCRM.Client.Components.Calendar.Main;
 
 public partial class CalendarView : ComponentBase
 {
-    private ViewType CurrentView { get; set; } = ViewType.Month;
-    private DateTime CurrentDate { get; set; } = DateTime.Today;
+    private static ViewType CurrentView { get; set; } = ViewType.Month;
+    private static DateTime CurrentDate { get; set; } = DateTime.Today;
 
-    private List<int?> CurrentMonthDays { get; set; } = [];
-    private List<DateTime> CurrentWeekDays { get; set; } = [];
+    private static List<int?> CurrentMonthDays { get; set; } = new List<int?>();
+    private static List<DateTime> CurrentWeekDays { get; set; } = new List<DateTime>();
 
-    private readonly List<CalendarEvent> _events =
-    [
-        new() { Title = "Task 1", Color="orange", StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2) },
-        new() { Title = "Task 2", Color="purple", StartDate = DateTime.Now.AddDays(-1), EndDate = DateTime.Now },
-        new() { Title = "Task 3", Color="blue", StartDate = DateTime.Now.AddDays(-7), EndDate = DateTime.Now.AddDays(-2) },
-        new() { Title = "Task 4", Color="green", StartDate = DateTime.Now.AddDays(-10), EndDate = DateTime.Now.AddDays(-7) },
-        new() { Title = "Task 5", Color="red", StartDate = DateTime.Now.AddDays(2), EndDate = DateTime.Now.AddDays(9) }
-    ];
+    private static readonly List<CalendarEvent> Events = new List<CalendarEvent>
+    {
+        new CalendarEvent { Title = "Task 1", Color = "orange", StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2) },
+        new CalendarEvent { Title = "Task 2", Color = "purple", StartDate = DateTime.Now.AddDays(-1), EndDate = DateTime.Now },
+        new CalendarEvent { Title = "Task 3", Color = "blue", StartDate = DateTime.Now.AddDays(-7), EndDate = DateTime.Now.AddDays(-2) },
+        new CalendarEvent { Title = "Task 4", Color = "green", StartDate = DateTime.Now.AddDays(-10), EndDate = DateTime.Now.AddDays(-7) },
+        new CalendarEvent { Title = "Task 5", Color = "red", StartDate = DateTime.Now.AddDays(2), EndDate = DateTime.Now.AddDays(9) }
+    };
+
+    private static readonly Dictionary<string, Type> ViewTypes = new Dictionary<string, Type>
+    {
+        { nameof(MonthView), typeof(MonthView) },
+        { nameof(WeekView), typeof(WeekView) },
+        { nameof(DayView), typeof(DayView) },
+        { nameof(YearView), typeof(YearView) }
+    };
+
+    private static ComponentMetadata _selectedMetadata = null;
+    private static readonly Dictionary<string, ComponentMetadata> ComponentsParameters = new Dictionary<string, ComponentMetadata>
+    {
+        {
+            nameof(MonthView), new ComponentMetadata
+            {
+                Name = nameof(MonthView),
+                ComponentType = typeof(MonthView),
+                Parameters = new Dictionary<string, object>
+                {
+                    [nameof(MonthView.CurrentDate)] = CurrentDate,
+                    [nameof(MonthView.CurrentMonthDays)] = CurrentMonthDays,
+                    [nameof(MonthView.Events)] = Events
+                }
+            }
+        },
+        {
+            nameof(WeekView), new ComponentMetadata
+            {
+                Name = nameof(WeekView),
+                ComponentType = typeof(WeekView),
+                Parameters = new Dictionary<string, object>
+                {
+                    [nameof(WeekView.CurrentDate)] = CurrentDate,
+                    [nameof(WeekView.CurrentWeekDays)] = CurrentWeekDays
+                }
+            }
+        },
+        {
+            nameof(DayView), new ComponentMetadata
+            {
+                Name = nameof(DayView),
+                ComponentType = typeof(DayView),
+                Parameters = new Dictionary<string, object>
+                {
+                    [nameof(DayView.CurrentDate)] = CurrentDate
+                }
+            }
+        },
+        {
+            nameof(YearView), new ComponentMetadata
+            {
+                Name = nameof(YearView),
+                ComponentType = typeof(YearView),
+                Parameters = new Dictionary<string, object>
+                {
+                    [nameof(YearView.CurrentDate)] = CurrentDate
+                }
+            }
+        }
+    };
 
     protected override void OnInitialized()
     {
         GenerateCalendar();
-        Console.WriteLine(DateTime.Now);
     }
 
+    private class ComponentMetadata
+    {
+        public Type ComponentType { get; set; }
+        public string Name { get; set; }
+        public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+    }
 
-    private void GenerateCalendar()
+    private static void OnDropDownChange(ChangeEventArgs e)
+    {
+        if (ComponentsParameters.TryGetValue(e.Value?.ToString() ?? string.Empty, out var metadata))
+        {
+            _selectedMetadata = metadata;
+        } else
+        {
+            Console.WriteLine($"Chiave {e.Value} non trovata nel dizionario.");
+        }
+    }
+
+    private static void GenerateCalendar()
     {
         CurrentMonthDays.Clear();
 
@@ -47,8 +125,7 @@ public partial class CalendarView : ComponentBase
         GenerateWeekDays();
     }
 
-
-    private void GenerateWeekDays()
+    private static void GenerateWeekDays()
     {
         CurrentWeekDays.Clear();
 
@@ -60,20 +137,19 @@ public partial class CalendarView : ComponentBase
         }
     }
 
-
-    private void SetView(ViewType view)
+    private static void SetView(ViewType view)
     {
         CurrentView = view;
         GenerateCalendar();
     }
 
-    private void GoToToday()
+    private static void GoToToday()
     {
         CurrentDate = DateTime.Today;
         GenerateCalendar();
     }
 
-    private void PreviousPeriod()
+    private static void PreviousPeriod()
     {
         if (CurrentView == ViewType.Month)
             CurrentDate = CurrentDate.AddMonths(-1);
@@ -87,7 +163,7 @@ public partial class CalendarView : ComponentBase
         GenerateCalendar();
     }
 
-    private void NextPeriod()
+    private static void NextPeriod()
     {
         if (CurrentView == ViewType.Month)
             CurrentDate = CurrentDate.AddMonths(1);
@@ -101,7 +177,7 @@ public partial class CalendarView : ComponentBase
         GenerateCalendar();
     }
 
-    private string GetDayClass(int? day)
+    private static string GetDayClass(int? day)
     {
         if (!day.HasValue)
             return string.Empty;

@@ -10,28 +10,15 @@
                 OnNextPeriodSet="@NextPeriod"
                 OnViewSet="@SetView"/>
     </div>
-
-    <div class="calendar-main">
-        @if (CurrentView == ViewType.Month)
+    <select @onchange="OnDropDownChange">
+        <option value="">Select a value</option>
+        @foreach (var vt in ViewTypes.Keys)
         {
-            <MonthView 
-                CurrentDate="@CurrentDate" 
-                CurrentMonthDays="@CurrentMonthDays" 
-                Events="@_events" />
+            <option value="@vt">@vt</option>
         }
-        else if (CurrentView == ViewType.Week)
-        {
-            <WeekView 
-                CurrentDate="@CurrentDate" 
-                CurrentWeekDays="@CurrentWeekDays" />
-        }
-        else if (CurrentView == ViewType.Day)
-        {
-            <DayView CurrentDate="@CurrentDate" />
-        }
-        else if (CurrentView == ViewType.Year)
-        {
-            <YearView CurrentDate="@CurrentDate" />
-        }
-    </div>
+    </select>
+    @if (_selectedMetadata is not null)
+    {
+        <DynamicComponent Type="@_selectedMetadata.ComponentType" Parameters="@_selectedMetadata.Parameters" />
+    }
 </div>
