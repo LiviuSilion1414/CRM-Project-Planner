@@ -16,7 +16,7 @@
                 <i class="bi bi-chevron-right"></i>
             </button>
         </div>
-        <span class="text-center">@GetCurrentMonthAndYear()</span>
+        <span class="text-center">@GetCurrentDateInfoByCurrentView()</span>
         <span class="rounded btn btn-outline-info pe-3" @onclick="GoToToday">Today</span>
     </div>
 
@@ -83,77 +83,77 @@
 
 <style>
     .calendar-container {
-        display: flex;
-        flex-direction: column;
-        height: 80vh;
-        width: 80vw;
-        background-color: #f9f9f9;
-        font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    width: 80vw;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
     }
 
     .calendar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: rgb(3, 155, 229);
-        color: white;
-        font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgb(3, 155, 229);
+    color: white;
+    font-size: 18px;
     }
 
     .navigation-buttons {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     }
 
     .today-button {
-        background-color: white;
-        color: #4285f4;
+    background-color: white;
+    color: #4285f4;
     }
 
     .calendar-main {
-        flex: 1;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     }
 
     .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
     }
 
     .calendar-day-name {
-        text-align: center;
-        font-weight: bold;
-        color: #888;
+    text-align: center;
+    font-weight: bold;
+    color: #888;
     }
 
     .calendar-day {
-        text-align: center;
-        padding: 30px;
-        max-width: 200px;
-        background-color: white;
-        border-radius: 5px;
-        transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+    padding: 30px;
+    max-width: 200px;
+    background-color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
     }
 
-        .calendar-day:hover {
-            background-color: #f4f4f4;
-            color: #4285f4;
-        }
+    .calendar-day:hover {
+    background-color: #f4f4f4;
+    color: #4285f4;
+    }
 
     .today {
-        background-color: #4285f4;
-        color: white;
-        font-weight: bold;
+    background-color: #4285f4;
+    color: white;
+    font-weight: bold;
     }
 
     .calendar-week, .calendar-day-view, .calendar-year-grid {
-        text-align: center;
+    text-align: center;
     }
 </style>
 
@@ -279,7 +279,31 @@
 
     private string GetViewClass(ViewType vt) => vt == CurrentView ? "active" : string.Empty;
 
-    private string GetCurrentMonthAndYear()
+    private string GetCurrentDateInfoByCurrentView()
+    {
+        if (CurrentView == ViewType.Month)
+        {
+            return GetCurrentDayOfMonthAndYear();
+        } 
+        else if (CurrentView == ViewType.Week)
+        {
+            return GetCurrentDayWeekMonthAndYear();
+        }
+        else if (CurrentView == ViewType.Day)
+        {
+            return GetCurrentDayWeekMonthAndYear();
+        }
+        else
+        {
+            return GetCurrentYear();
+        }
+    }
+
+    private string GetCurrentDayOfMonthAndYear()
         => $"{Enum.GetName(typeof(MonthNames), CurrentDate.Month - 1)} {CurrentDate.Year}";
 
+    private string GetCurrentDayWeekMonthAndYear()
+        => $" {CurrentDate.DayOfWeek} {CurrentDate.Day} {GetCurrentDayOfMonthAndYear()}";
+
+    private string GetCurrentYear() => $"{CurrentDate.Year}";
 }
