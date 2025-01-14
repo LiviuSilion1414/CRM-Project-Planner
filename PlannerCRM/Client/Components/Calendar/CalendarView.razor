@@ -39,11 +39,7 @@
                                 {
                                     <div style="display: flex;">
                                         <br />
-                                        @if (ev.StartDate.Day == day)
-                                        {
-                                            <span style="position: relative; width: 100%; margin-bottom: 5px; background-color: @(ev.Color);">@ev.Title</span>
-                                        }
-                                        <span style="position: relative; width: 100%; margin-bottom: 5px; background-color: @(ev.Color);"></span>
+                                        <span style="position: relative; width: 100%; margin-bottom: 5px; color:white; background-color: @ev.Color;">@ev.Title</span>
                                     </div>
                                 }
                             }
@@ -76,7 +72,7 @@
             <div class="calendar-year-grid">
                 @for (int i = 1; i <= 12; i++)
                 {
-                    <div class="calendar-year-month">
+                    <div class="calendar-year-month mx-3 p-2" style="display: inline-block;">
                         <h5>@(new DateTime(CurrentDate.Year, i, 1).ToString("MMMM"))</h5>
                     </div>
                 }
