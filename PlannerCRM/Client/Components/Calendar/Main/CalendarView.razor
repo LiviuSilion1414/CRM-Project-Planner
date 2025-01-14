@@ -10,14 +10,7 @@
                 OnNextPeriodSet="@NextPeriod"
                 OnViewSet="@SetView"/>
     </div>
-    <select @onchange="OnDropDownChange">
-        <option value="">Select a value</option>
-        @foreach (var vt in ViewTypes.Keys)
-        {
-            <option value="@vt">@vt</option>
-        }
-    </select>
-    @if (SelectedMetadata is not null)
+    @if (SelectedMetadata.ComponentType is not null)
     {
         <DynamicComponent Type="@SelectedMetadata.ComponentType" Parameters="@SelectedMetadata.Parameters" />
     }

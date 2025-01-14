@@ -7,22 +7,14 @@ public partial class CalendarView : ComponentBase
 {
     [Inject] public HttpClient Http { get; set; }
 
-    private ViewType CurrentView { get; set; } = ViewType.Month;
+    private ViewType CurrentView { get; set; } = ViewType.MonthView;
     private DateTime CurrentDate { get; set; } = DateTime.Today;
 
     private List<int?> CurrentMonthDays { get; set; } = new List<int?>();
     private List<DateTime> CurrentWeekDays { get; set; } = new List<DateTime>();
 
-    private Dictionary<string, Type> ViewTypes { get; set; } = new Dictionary<string, Type>
-    {
-        { nameof(MonthView), typeof(MonthView) },
-        { nameof(WeekView), typeof(WeekView) },
-        { nameof(DayView), typeof(DayView) },
-        { nameof(YearView), typeof(YearView) }
-    };
-
     private List<ActivityDto> Activities { get; set; } = new();
-    private ComponentMetadata SelectedMetadata { get; set; } = null;
+    private ComponentMetadata SelectedMetadata { get; set; } = new();
 
     private Dictionary<string, ComponentMetadata> ComponentsParameters { get; set; } = new()
     {
@@ -65,6 +57,7 @@ public partial class CalendarView : ComponentBase
         Activities = await Http.GetFromJsonAsync<List<ActivityDto>>($"api/activity/getWithPagination/{50}/{0}");
         InitializeComponentParameters();
         GenerateCalendar();
+        SelectedMetadata = ComponentsParameters[nameof(ViewType.MonthView)];
     }
 
     private void InitializeComponentParameters()
@@ -91,17 +84,6 @@ public partial class CalendarView : ComponentBase
         {
             [nameof(YearView.CurrentDate)] = CurrentDate
         };
-    }
-
-    private void OnDropDownChange(ChangeEventArgs e)
-    {
-        if (ComponentsParameters.TryGetValue(e.Value?.ToString() ?? string.Empty, out var metadata))
-        {
-            SelectedMetadata = metadata;
-        } else
-        {
-            Console.WriteLine($"Chiave {e.Value} non trovata nel dizionario.");
-        }
     }
 
     private void GenerateCalendar()
@@ -142,6 +124,7 @@ public partial class CalendarView : ComponentBase
     private void SetView(ViewType view)
     {
         CurrentView = view;
+        SelectedMetadata = ComponentsParameters[view.ToString()];
         GenerateCalendar();
     }
 
@@ -153,13 +136,13 @@ public partial class CalendarView : ComponentBase
 
     private void PreviousPeriod()
     {
-        if (CurrentView == ViewType.Month)
+        if (CurrentView == ViewType.MonthView)
             CurrentDate = CurrentDate.AddMonths(-1);
-        else if (CurrentView == ViewType.Week)
+        else if (CurrentView == ViewType.WeekView)
             CurrentDate = CurrentDate.AddDays(-7);
-        else if (CurrentView == ViewType.Day)
+        else if (CurrentView == ViewType.DayView)
             CurrentDate = CurrentDate.AddDays(-1);
-        else if (CurrentView == ViewType.Year)
+        else if (CurrentView == ViewType.YearView)
             CurrentDate = CurrentDate.AddYears(-1);
 
         GenerateCalendar();
@@ -167,13 +150,13 @@ public partial class CalendarView : ComponentBase
 
     private void NextPeriod()
     {
-        if (CurrentView == ViewType.Month)
+        if (CurrentView == ViewType.MonthView)
             CurrentDate = CurrentDate.AddMonths(1);
-        else if (CurrentView == ViewType.Week)
+        else if (CurrentView == ViewType.WeekView)
             CurrentDate = CurrentDate.AddDays(7);
-        else if (CurrentView == ViewType.Day)
+        else if (CurrentView == ViewType.DayView)
             CurrentDate = CurrentDate.AddDays(1);
-        else if (CurrentView == ViewType.Year)
+        else if (CurrentView == ViewType.YearView)
             CurrentDate = CurrentDate.AddYears(1);
 
         GenerateCalendar();
@@ -186,12 +169,5 @@ public partial class CalendarView : ComponentBase
 
         var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
         return currentDate == DateTime.Today ? "today" : string.Empty;
-    }
-
-    private class ComponentMetadata
-    {
-        public Type ComponentType { get; set; }
-        public string Name { get; set; }
-        public Dictionary<string, object> Parameters { get; set; } = new();
     }
 }

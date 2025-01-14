@@ -2,8 +2,8 @@
 
 public enum ViewType 
 { 
-    Month, 
-    Week, 
-    Day, 
-    Year 
+    MonthView,
+    WeekView,
+    DayView,
+    YearView
 }

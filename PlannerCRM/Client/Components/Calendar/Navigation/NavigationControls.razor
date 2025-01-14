@@ -6,8 +6,8 @@
         @foreach (var vt in Enum.GetValues(typeof(ViewType)))
         {
             <button 
-                class="btn btn-outline-info @(GetViewClass((ViewType)vt)) mx-1" 
-                type="button" @onclick="@(async () => await OnViewSet.InvokeAsync((ViewType)vt))">
+            class="btn btn-outline-info @(GetViewClass((ViewType)vt)) mx-1" 
+            type="button" @onclick="@(async () => await OnViewSet.InvokeAsync((ViewType)vt))">
                 @vt
             </button>
         }
@@ -21,9 +21,9 @@
 
 <style>
     .navigation-buttons {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     }
 </style>
 
@@ -39,15 +39,15 @@
 
     private string GetCurrentDateInfoByCurrentView()
     {
-        if (CurrentView == ViewType.Month)
+        if (CurrentView == ViewType.MonthView)
         {
             return GetCurrentDayOfMonthAndYear();
         }
-        else if (CurrentView == ViewType.Week)
+        else if (CurrentView == ViewType.WeekView)
         {
             return GetCurrentDayOfMonthAndYear();
         }
-        else if (CurrentView == ViewType.Day)
+        else if (CurrentView == ViewType.DayView)
         {
             return GetCurrentDayWeekMonthAndYear();
         }
