@@ -8,13 +8,13 @@
         <div class="calendar-day @GetDayClass(day)" style="position: relative;">
             @if (day.HasValue)
             {
-                foreach (var ev in Events)
+                foreach (var ev in Activities)
                 {
                     @if (ev.StartDate.Day <= day && ev.EndDate.Day >= day)
                     {
                         <div style="display: flex;">
                             <br />
-                            <span style="position: relative; width: 100%; margin-bottom: 5px; color:white; background-color: @ev.Color;">@ev.Title</span>
+                            <span style="position: relative; width: 100%; margin-bottom: 5px; color:white; background-color: green;">@ev.Name</span>
                         </div>
                     }
                 }
@@ -61,7 +61,7 @@
 @code {
     [Parameter] public DateTime CurrentDate { get; set; }
     [Parameter] public List<int?> CurrentMonthDays { get; set; }
-    [Parameter] public List<CalendarEvent> Events { get; set; }
+    [Parameter] public List<ActivityDto> Activities { get; set; }
 
     private string GetDayClass(int? day)
     {
@@ -70,5 +70,15 @@
 
         var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
         return currentDate == DateTime.Today ? "today" : string.Empty;
+    }
+
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine("Is null: " +Activities is null);
+        Console.WriteLine("Is any: " +Activities.Any());
+        foreach (var ac in Activities)
+        {
+            Console.WriteLine(ac.Name);
+        }
     }
 }

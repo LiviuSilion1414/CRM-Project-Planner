@@ -1,25 +1,19 @@
 ﻿using PlannerCRM.Client.Components.Calendar.Views;
+using System.Net.Http.Json;
 
 namespace PlannerCRM.Client.Components.Calendar.Main;
 
 public partial class CalendarView : ComponentBase
 {
-    private static ViewType CurrentView { get; set; } = ViewType.Month;
-    private static DateTime CurrentDate { get; set; } = DateTime.Today;
+    [Inject] public HttpClient Http { get; set; }
 
-    private static List<int?> CurrentMonthDays { get; set; } = new List<int?>();
-    private static List<DateTime> CurrentWeekDays { get; set; } = new List<DateTime>();
+    private ViewType CurrentView { get; set; } = ViewType.Month;
+    private DateTime CurrentDate { get; set; } = DateTime.Today;
 
-    private static readonly List<CalendarEvent> Events = new List<CalendarEvent>
-    {
-        new CalendarEvent { Title = "Task 1", Color = "orange", StartDate = DateTime.Now, EndDate = DateTime.Now.AddDays(2) },
-        new CalendarEvent { Title = "Task 2", Color = "purple", StartDate = DateTime.Now.AddDays(-1), EndDate = DateTime.Now },
-        new CalendarEvent { Title = "Task 3", Color = "blue", StartDate = DateTime.Now.AddDays(-7), EndDate = DateTime.Now.AddDays(-2) },
-        new CalendarEvent { Title = "Task 4", Color = "green", StartDate = DateTime.Now.AddDays(-10), EndDate = DateTime.Now.AddDays(-7) },
-        new CalendarEvent { Title = "Task 5", Color = "red", StartDate = DateTime.Now.AddDays(2), EndDate = DateTime.Now.AddDays(9) }
-    };
+    private List<int?> CurrentMonthDays { get; set; } = new List<int?>();
+    private List<DateTime> CurrentWeekDays { get; set; } = new List<DateTime>();
 
-    private static readonly Dictionary<string, Type> ViewTypes = new Dictionary<string, Type>
+    private Dictionary<string, Type> ViewTypes { get; set; } = new Dictionary<string, Type>
     {
         { nameof(MonthView), typeof(MonthView) },
         { nameof(WeekView), typeof(WeekView) },
@@ -27,20 +21,17 @@ public partial class CalendarView : ComponentBase
         { nameof(YearView), typeof(YearView) }
     };
 
-    private static ComponentMetadata _selectedMetadata = null;
-    private static readonly Dictionary<string, ComponentMetadata> ComponentsParameters = new Dictionary<string, ComponentMetadata>
+    private List<ActivityDto> Activities { get; set; } = new();
+    private ComponentMetadata SelectedMetadata { get; set; } = null;
+
+    private Dictionary<string, ComponentMetadata> ComponentsParameters { get; set; } = new()
     {
         {
             nameof(MonthView), new ComponentMetadata
             {
                 Name = nameof(MonthView),
                 ComponentType = typeof(MonthView),
-                Parameters = new Dictionary<string, object>
-                {
-                    [nameof(MonthView.CurrentDate)] = CurrentDate,
-                    [nameof(MonthView.CurrentMonthDays)] = CurrentMonthDays,
-                    [nameof(MonthView.Events)] = Events
-                }
+                Parameters = new Dictionary<string, object>()
             }
         },
         {
@@ -48,11 +39,7 @@ public partial class CalendarView : ComponentBase
             {
                 Name = nameof(WeekView),
                 ComponentType = typeof(WeekView),
-                Parameters = new Dictionary<string, object>
-                {
-                    [nameof(WeekView.CurrentDate)] = CurrentDate,
-                    [nameof(WeekView.CurrentWeekDays)] = CurrentWeekDays
-                }
+                Parameters = new Dictionary<string, object>()
             }
         },
         {
@@ -60,10 +47,7 @@ public partial class CalendarView : ComponentBase
             {
                 Name = nameof(DayView),
                 ComponentType = typeof(DayView),
-                Parameters = new Dictionary<string, object>
-                {
-                    [nameof(DayView.CurrentDate)] = CurrentDate
-                }
+                Parameters = new Dictionary<string, object>()
             }
         },
         {
@@ -71,38 +55,56 @@ public partial class CalendarView : ComponentBase
             {
                 Name = nameof(YearView),
                 ComponentType = typeof(YearView),
-                Parameters = new Dictionary<string, object>
-                {
-                    [nameof(YearView.CurrentDate)] = CurrentDate
-                }
+                Parameters = new Dictionary<string, object>()
             }
         }
     };
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        Activities = await Http.GetFromJsonAsync<List<ActivityDto>>($"api/activity/getWithPagination/{50}/{0}");
+        InitializeComponentParameters();
         GenerateCalendar();
     }
 
-    private class ComponentMetadata
+    private void InitializeComponentParameters()
     {
-        public Type ComponentType { get; set; }
-        public string Name { get; set; }
-        public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+        ComponentsParameters[nameof(MonthView)].Parameters = new Dictionary<string, object>
+        {
+            [nameof(MonthView.CurrentDate)] = CurrentDate,
+            [nameof(MonthView.CurrentMonthDays)] = CurrentMonthDays,
+            [nameof(MonthView.Activities)] = Activities
+        };
+
+        ComponentsParameters[nameof(WeekView)].Parameters = new Dictionary<string, object>
+        {
+            [nameof(WeekView.CurrentDate)] = CurrentDate,
+            [nameof(WeekView.CurrentWeekDays)] = CurrentWeekDays
+        };
+
+        ComponentsParameters[nameof(DayView)].Parameters = new Dictionary<string, object>
+        {
+            [nameof(DayView.CurrentDate)] = CurrentDate
+        };
+
+        ComponentsParameters[nameof(YearView)].Parameters = new Dictionary<string, object>
+        {
+            [nameof(YearView.CurrentDate)] = CurrentDate
+        };
     }
 
-    private static void OnDropDownChange(ChangeEventArgs e)
+    private void OnDropDownChange(ChangeEventArgs e)
     {
         if (ComponentsParameters.TryGetValue(e.Value?.ToString() ?? string.Empty, out var metadata))
         {
-            _selectedMetadata = metadata;
+            SelectedMetadata = metadata;
         } else
         {
             Console.WriteLine($"Chiave {e.Value} non trovata nel dizionario.");
         }
     }
 
-    private static void GenerateCalendar()
+    private void GenerateCalendar()
     {
         CurrentMonthDays.Clear();
 
@@ -125,7 +127,7 @@ public partial class CalendarView : ComponentBase
         GenerateWeekDays();
     }
 
-    private static void GenerateWeekDays()
+    private void GenerateWeekDays()
     {
         CurrentWeekDays.Clear();
 
@@ -137,19 +139,19 @@ public partial class CalendarView : ComponentBase
         }
     }
 
-    private static void SetView(ViewType view)
+    private void SetView(ViewType view)
     {
         CurrentView = view;
         GenerateCalendar();
     }
 
-    private static void GoToToday()
+    private void GoToToday()
     {
         CurrentDate = DateTime.Today;
         GenerateCalendar();
     }
 
-    private static void PreviousPeriod()
+    private void PreviousPeriod()
     {
         if (CurrentView == ViewType.Month)
             CurrentDate = CurrentDate.AddMonths(-1);
@@ -163,7 +165,7 @@ public partial class CalendarView : ComponentBase
         GenerateCalendar();
     }
 
-    private static void NextPeriod()
+    private void NextPeriod()
     {
         if (CurrentView == ViewType.Month)
             CurrentDate = CurrentDate.AddMonths(1);
@@ -177,12 +179,19 @@ public partial class CalendarView : ComponentBase
         GenerateCalendar();
     }
 
-    private static string GetDayClass(int? day)
+    private string GetDayClass(int? day)
     {
         if (!day.HasValue)
             return string.Empty;
 
         var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
         return currentDate == DateTime.Today ? "today" : string.Empty;
+    }
+
+    private class ComponentMetadata
+    {
+        public Type ComponentType { get; set; }
+        public string Name { get; set; }
+        public Dictionary<string, object> Parameters { get; set; } = new();
     }
 }

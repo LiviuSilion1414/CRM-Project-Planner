@@ -17,8 +17,8 @@
             <option value="@vt">@vt</option>
         }
     </select>
-    @if (_selectedMetadata is not null)
+    @if (SelectedMetadata is not null)
     {
-        <DynamicComponent Type="@_selectedMetadata.ComponentType" Parameters="@_selectedMetadata.Parameters" />
+        <DynamicComponent Type="@SelectedMetadata.ComponentType" Parameters="@SelectedMetadata.Parameters" />
     }
 </div>
