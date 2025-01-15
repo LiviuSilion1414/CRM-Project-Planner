@@ -1,0 +1,158 @@
+﻿@typeparam TItem where TItem : class, new()
+
+<div class="actions">
+    <div class="action">
+        <button class="action btn btn-outline-primary" @onclick="ToggleAddItem">
+            <i class="bi bi-plus"></i>
+            Add
+        </button>
+    </div>
+    @if (DataContainer is not null && DataContainer.DataManager is not null && DataContainer.DataManager.SelectedItems is not null)
+    {
+        @if (DataContainer.DataManager.SelectedItems.Count() == 1)
+        {
+            <div class="action">
+                <button class="action btn btn-outline-info" @onclick="ToggleEditItem">
+                    <i class="bi bi-pencil"></i>
+                    Edit
+                </button>
+            </div>
+            <div class="action">
+                <button class="action btn btn-outline-danger" @onclick="ToggleDeleteItem">
+                    <i class="bi bi-trash3"></i>
+                    Delete
+                </button>
+            </div>
+        }
+        @if (DataContainer.DataManager.SelectedItems.Count() > 1)
+        {
+            <div class="action">
+                <div class="action">
+                    <button class="action btn btn-outline-danger" @onclick="ToggleDeleteAllItems">
+                        <i class="bi bi-x-circle"></i>
+                        Delete all
+                    </button>
+                </div>
+            </div>
+        }
+
+        @if (DataContainer.DataManager.SelectedItems.Count() > 1 || DataContainer.DataManager.SelectedItems.Count() == 1)
+        {
+            <div class="action">
+                <button class="action btn btn-outline-secondary" @onclick="DeselectAll">
+                    <i class="bi bi-x-circle"></i>
+                    Deselect
+                </button>
+            </div>
+        }
+
+        @if (DataContainer.DataManager.SelectedItems.Any())
+        {
+            <div class="action">
+                <button class="action btn btn-outline-secondary" @onclick="SelectAll">
+                    <i class="bi bi-x-circle"></i>
+                    Select
+                </button>
+            </div>
+
+        }
+    }
+</div>
+
+<style>
+    .actions {
+        width: 100px;
+        display: flex;
+        flex-direction: column;
+        margin-right: 20px;
+    }
+
+    .action {
+        width: max-content;
+        height: max-content;
+        padding-bottom: 5px;
+    }
+</style>
+
+@code {
+    [Parameter] public CascadingDataContainer<TItem> DataContainer { get; set; }
+    [Parameter] public EventCallback<CascadingDataContainer<TItem>> OnChosenAction { get; set; }
+
+    public async Task OnSelectMultipleItems(TItem item)
+    {
+        if (DataContainer.DataManager.SelectedItems.Contains(item))
+        {
+            DataContainer.DataManager.SelectedItems.Remove(item);
+        }
+        else
+        {
+            DataContainer.DataManager.SelectedItems.Add(item);
+        }
+
+        if (DataContainer.DataManager.SelectedItems.Count() == 1)
+        {
+            await ToggleSelectItem();
+        }
+        else
+        {
+            await ToggleSelectedItems();
+        }
+    }
+
+    private void DeselectAll() => DataContainer.DataManager.SelectedItems.Clear();
+
+    private void SelectAll() => DataContainer.DataManager.SelectedItems = DataContainer.DataManager.MainItems.ToList();
+
+    private async Task ToggleSelectItem()
+    {
+        DataContainer.ActionStateManager.SetAction(ActionType.View);
+        DataContainer.DataManager.SelectedItem = DataContainer.DataManager.SelectedItems.Single();
+
+        await OnChosenAction.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
+    }
+
+    private async Task ToggleSelectedItems()
+    {
+        DataContainer.DataManager.SelectedItems = DataContainer.DataManager.SelectedItems.ToList();
+
+        await OnChosenAction.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
+    }
+
+    private async Task ToggleAddItem()
+    {
+        DataContainer.ActionStateManager.SetAction(ActionType.Add);
+        DataContainer.DataManager.NewItem = new();
+
+        await OnChosenAction.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
+    }
+
+    private async Task ToggleEditItem()
+    {
+        DataContainer.ActionStateManager.SetAction(ActionType.Update);
+        DataContainer.DataManager.SelectedItem = DataContainer.DataManager.SelectedItems.Single();
+
+        await OnChosenAction.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
+    }
+
+    private async Task ToggleDeleteItem()
+    {
+        DataContainer.ActionStateManager.SetAction(ActionType.DeleteSingle);
+        DataContainer.DataManager.SelectedItem = DataContainer.DataManager.SelectedItems.Single();
+
+        await OnChosenAction.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
+    }
+
+    private async Task ToggleDeleteAllItems()
+    {
+        DataContainer.ActionStateManager.SetAction(ActionType.DeleteMultiple);
+        DataContainer.DataManager.SelectedItems = DataContainer.DataManager.SelectedItems;
+
+        await OnChosenAction.InvokeAsync(DataContainer);
+        DataContainer.ActionStateManager.ResetFlags();
+    }
+}

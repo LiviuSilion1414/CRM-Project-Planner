@@ -5,135 +5,46 @@
 <PageTitle>Workorders</PageTitle>
 
 <CascadingValue Value="@_dataContainer">
-    <DataGridView TItem="@WorkOrderDto"
-    GetCascadingContainerStates="@GetCascadingContainerStates"
-    ShouldFetchNewData="@ReloadUpdatedData" />
-    <DataGridViewItemHandler TItem="@WorkOrderDto"
-    AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
-    UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
-    DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
-    DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
+    <DataGridView 
+        TItem="@WorkOrderDto"
+        GetCascadingContainerStates="@GetCascadingContainerStates"
+        ShouldFetchNewData="@ReloadUpdatedData" />
+    <DataGridViewItemHandler 
+        TItem="@WorkOrderDto"
+        AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
+        UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
+        DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
+        DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.Name" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.NewItem.StartDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.StartDate" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.NewItem.EndDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.EndDate" />
-            </div>
-            <br />
-            <h5>Client Information</h5>
-            <div class="form-group">
-                @if (_dataContainer.DataManager.NewItem.FirmClient is null)
-                {
-                    <div style="margin: 0;">
-                        <div style="float: left;">
-                            <InputText type="search" class="form-control" @bind-value="@_dataContainer.QueryManager.Query" />
-                        </div>
-                        <div style="float: left;">
-                            <button class="btn btn-outline-primary" @onclick="@SearchClient">
-                                <i class="bi bi-search"></i>
-                                Search
-                            </button>
-                        </div>
-                    </div>
-                    <div class="list-group">
-                        @foreach (var client in _clients)
-                        {
-                            <button type="button" class="list-group-item list-group-item-action @(_dataContainer.DataManager.NewItem is not null ? "active" : string.Empty)"
-                            @onclick="@(() => SelectClient(client))">
-                                @client.Name
-                            </button>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="card" style="margin: 0;">
-                        <div style="float: left;">
-                            <p><strong>Name: </strong>@_dataContainer.DataManager.NewItem.FirmClient.Name</p>
-                            <p><strong>VatNumber: </strong>@_dataContainer.DataManager.NewItem.FirmClient.VatNumber</p>
-                        </div>
-                        <div style="float: left;">
-                            <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
-                                <i class="bi bi-trash3"></i>
-                                Remove
-                            </button>
-                        </div>
-                    </div>
-                }
-            </div>
+            <WorkOrderAddForm DataContainer="@_dataContainer"/>
         </AddFormMarkup>
         <EditFormMarkup>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.SelectedItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.Name" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.SelectedItem.StartDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.StartDate" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.SelectedItem.EndDate):</label>
-                <InputDate class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.EndDate" />
-            </div>
+            <WorkOrderEditForm DataContainer="@_dataContainer" />
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <div>
-                <p><strong>Client</strong></p>
-                <p style="text-indent: 40px;">Name: @_dataContainer.DataManager.SelectedItem.FirmClient.Name</p>
-                <p style="text-indent: 40px;">Vat Number: @_dataContainer.DataManager.SelectedItem.FirmClient.VatNumber</p>
-                <br />
-                <p><strong>Activities</strong></p>
-                @foreach (var ac in _activities)
-                {
-                    <p style="text-indent: 40px;">Name: @ac.Name</p>
-                }
-            </div>
+            <WorkOrderViewForm DataContainer="@_dataContainer" Activities="@_activities" />
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>
 
 @code {
     private CascadingDataContainer<WorkOrderDto> _dataContainer = new()
+    {
+        DataManager = new()
         {
-            DataManager = new()
-            {
-                SelectedProperties = ["Name", "StartDate", "EndDate"]
-            }
-        };
+            SelectedProperties = ["Name", "StartDate", "EndDate"]
+        }
+    };
 
     private List<ActivityDto> _activities = [];
     private List<FirmClientDto> _clients = [];
 
     protected override async Task OnInitializedAsync()
-    {
-        await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
-    }
+        => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
 
     private async Task GetAssociatedActivities(WorkOrderDto workOrder)
-    {
-        _activities = await http.GetFromJsonAsync<List<ActivityDto>>($"/api/workOrder/findAssociatedActivitiesByWorkOrderId/{workOrder.Id}");
-    }
-
-    private async Task SearchClient()
-    {
-        if (_dataContainer.QueryManager.HasQuery)
-        {
-            _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{_dataContainer.QueryManager.Query}");
-        }
-    }
-
-    private void SelectClient(FirmClientDto client)
-    {
-        _dataContainer.DataManager.NewItem.FirmClient = client;
-        _dataContainer.DataManager.NewItem.FirmClientId = client.Id;
-    }
+        => _activities = await http.GetFromJsonAsync<List<ActivityDto>>(
+                $"/api/workOrder/findAssociatedActivitiesByWorkOrderId/{workOrder.Id}");
 
     private async Task ReloadUpdatedData(bool shouldReload)
     {
@@ -149,11 +60,14 @@
         _dataContainer = dataContainer;
     }
 
-    private async Task AddWorkOrder(WorkOrderDto updatedClient) => await http.PostAsJsonAsync("api/workOrder/add", updatedClient);
+    private async Task AddWorkOrder(WorkOrderDto updatedClient)
+        => await http.PostAsJsonAsync("api/workOrder/add", updatedClient);
 
-    private async Task UpdateWorkOrder(WorkOrderDto updatedClient) => await http.PutAsJsonAsync($"api/workOrder/edit/{updatedClient.Id}", updatedClient);
+    private async Task UpdateWorkOrder(WorkOrderDto updatedClient)
+        => await http.PutAsJsonAsync($"api/workOrder/edit/{updatedClient.Id}", updatedClient);
 
-    private async Task DeleteWorkOrder(WorkOrderDto workOrder) => await http.DeleteAsync($"api/workOrder/delete/{workOrder.Id}");
+    private async Task DeleteWorkOrder(WorkOrderDto workOrder)
+        => await http.DeleteAsync($"api/workOrder/delete/{workOrder.Id}");
 
     private async Task DeleteMultipleClients(IEnumerable<WorkOrderDto> workOrders)
     {
@@ -164,7 +78,7 @@
     }
 
     private async Task LoadData(PaginationHelper paginationHelper)
-    {
-        _dataContainer.DataManager.MainItems = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/workOrder/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
-    }
+       => _dataContainer.DataManager.MainItems = await 
+            http.GetFromJsonAsync<List<WorkOrderDto>>(
+               $"/api/workOrder/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
 }

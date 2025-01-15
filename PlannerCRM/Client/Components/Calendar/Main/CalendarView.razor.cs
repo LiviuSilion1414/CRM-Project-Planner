@@ -1,4 +1,6 @@
 ﻿using PlannerCRM.Client.Components.Calendar.Views;
+using PlannerCRM.Client.Components.Form.Specific.ActivityForms;
+using PlannerCRM.Client.Components.Panel;
 using System.Net.Http.Json;
 
 namespace PlannerCRM.Client.Components.Calendar.Main;
@@ -10,11 +12,12 @@ public partial class CalendarView : ComponentBase
     private ViewType CurrentView { get; set; } = ViewType.MonthView;
     private DateTime CurrentDate { get; set; } = DateTime.Today;
 
-    private List<int?> CurrentMonthDays { get; set; } = new List<int?>();
-    private List<DateTime> CurrentWeekDays { get; set; } = new List<DateTime>();
+    private List<int?> CurrentMonthDays { get; set; } = new();
+    private List<DateTime> CurrentWeekDays { get; set; } = new();
 
-    private List<ActivityDto> Activities { get; set; } = new();
     private ComponentMetadata SelectedMetadata { get; set; } = new();
+
+    private CascadingDataContainer<ActivityDto> DataContainer { get; set; } = new();
 
     private Dictionary<string, ComponentMetadata> ComponentsParameters { get; set; } = new()
     {
@@ -49,12 +52,21 @@ public partial class CalendarView : ComponentBase
                 ComponentType = typeof(YearView),
                 Parameters = new Dictionary<string, object>()
             }
-        }
+        },
+        {
+            nameof(DataGridViewItemHandler<ActivityDto>), new ComponentMetadata
+            {
+                Name = nameof(DataGridViewItemHandler<ActivityDto>),
+                ComponentType = typeof(DataGridViewItemHandler<ActivityDto>),
+                Parameters = new Dictionary<string, object>()
+            }
+        },
+
     };
 
     protected override async Task OnInitializedAsync()
     {
-        Activities = await Http.GetFromJsonAsync<List<ActivityDto>>($"api/activity/getWithPagination/{50}/{0}");
+        DataContainer.DataManager.MainItems = await Http.GetFromJsonAsync<List<ActivityDto>>($"api/activity/getWithPagination/{50}/{0}");
         InitializeComponentParameters();
         GenerateCalendar();
         SelectedMetadata = ComponentsParameters[nameof(ViewType.MonthView)];
@@ -66,7 +78,7 @@ public partial class CalendarView : ComponentBase
         {
             [nameof(MonthView.CurrentDate)] = CurrentDate,
             [nameof(MonthView.CurrentMonthDays)] = CurrentMonthDays,
-            [nameof(MonthView.Activities)] = Activities
+            [nameof(MonthView.Activities)] = DataContainer.DataManager.MainItems
         };
 
         ComponentsParameters[nameof(WeekView)].Parameters = new Dictionary<string, object>
@@ -83,6 +95,12 @@ public partial class CalendarView : ComponentBase
         ComponentsParameters[nameof(YearView)].Parameters = new Dictionary<string, object>
         {
             [nameof(YearView.CurrentDate)] = CurrentDate
+        };
+
+        ComponentsParameters[nameof(DataGridViewItemHandler<ActivityDto>)].Parameters = new Dictionary<string, object>
+        {
+            [nameof(DataGridViewItemHandler<ActivityDto>.DataContainer)] = DataContainer,
+            //[nameof(DataGridViewItemHandler<ActivityDto>.AddFormMarkup)] = ActivityAddForm, //the left hand side is a RenderFragment and the right side is a component
         };
     }
 
@@ -160,6 +178,11 @@ public partial class CalendarView : ComponentBase
             CurrentDate = CurrentDate.AddYears(1);
 
         GenerateCalendar();
+    }
+
+    private void GetChosenAction(CascadingDataContainer<ActivityDto> dataContainer)
+    {
+        DataContainer = dataContainer;
     }
 
     private string GetDayClass(int? day)

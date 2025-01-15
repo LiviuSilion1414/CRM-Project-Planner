@@ -1,0 +1,11 @@
+﻿<div style="overflow-y: scroll;">
+    <strong>WorkOrders</strong>
+    @foreach (var wo in WorkOrders)
+    {
+        <p style="text-indent: 40px;"><strong>Name: </strong>@wo.Name</p>
+    }
+</div>
+
+@code {
+    [Parameter] public List<WorkOrderDto> WorkOrders { get; set; }
+}

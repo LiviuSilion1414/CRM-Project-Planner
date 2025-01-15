@@ -1,6 +1,7 @@
 ﻿@using System.Globalization
 
 <div class="calendar-container">
+    <ItemActions TItem="@ActivityDto" DataContainer="@DataContainer" OnChosenAction="GetChosenAction" />
     <div class="calendar-header">
         <NavigationControls 
                 CurrentDate="@CurrentDate" 

@@ -5,5 +5,12 @@ public class CascadingDataContainer<TItem>
 {
     public ActionStateManager ActionStateManager { get; set; } = new();
     public QueryManager QueryManager { get; set; } = new();
-    public DataManager<TItem> DataManager { get; set; } = new();
+    public DataManager<TItem> DataManager { get; set; } = new() 
+    {
+        MainItems = [],
+        SelectedItems = [],
+        SelectedProperties = [],
+        SelectedItem = new(),
+        NewItem = new()
+    };
 }

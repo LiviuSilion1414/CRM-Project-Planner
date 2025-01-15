@@ -5,43 +5,24 @@
 <PageTitle>Clients</PageTitle>
 
 <CascadingValue Value="@_dataContainer">
-    <DataGridView TItem="@FirmClientDto"
-    GetCascadingContainerStates="@GetCascadingContainerStates"
-    ShouldFetchNewData="@ReloadUpdatedData" />
-
-    <DataGridViewItemHandler TItem="@FirmClientDto"
-    AddAction="@(async client => await AddClient(client))"
-    UpdateAction="@(async client => await UpdateClient(client))"
-    DeleteAction="@(async client => await DeleteClient(client))"
-    DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
+    <DataGridView 
+        TItem="@FirmClientDto"
+        GetCascadingContainerStates="@GetCascadingContainerStates"
+        ShouldFetchNewData="@ReloadUpdatedData" />
+    <DataGridViewItemHandler 
+        TItem="@FirmClientDto"
+        AddAction="@(async client => await AddClient(client))"
+        UpdateAction="@(async client => await UpdateClient(client))"
+        DeleteAction="@(async client => await DeleteClient(client))"
+        DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
         <AddFormMarkup>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.NewItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.Name" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.NewItem.VatNumber):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.NewItem.VatNumber" />
-            </div>
+            <FirmClientAddForm DataContainer="@_dataContainer" />
         </AddFormMarkup>
         <EditFormMarkup>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.SelectedItem.Name):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.Name" />
-            </div>
-            <div class="form-group">
-                <label>@nameof(_dataContainer.DataManager.SelectedItem.VatNumber):</label>
-                <InputText class="form-control" @bind-Value="@_dataContainer.DataManager.SelectedItem.VatNumber" />
-            </div>
+            <FirmClientEditForm DataContainer="@_dataContainer" />
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <div style="overflow-y: scroll;">
-                <strong>WorkOrders</strong>
-                @foreach (var wo in _workOrders)
-                {
-                    <p style="text-indent: 40px;"><strong>Name: </strong>@wo.Name</p>
-                }
-            </div>
+            <FirmClientViewForm WorkOrders="@_workOrders"/>
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>
@@ -58,15 +39,12 @@
     private List<WorkOrderDto> _workOrders = [];
 
     protected override async Task OnInitializedAsync()
-    {
-        await LoadData(new PaginationHelper { Limit = 200, Offset = 0 });
-    }
+        => await LoadData(new PaginationHelper { Limit = 200, Offset = 0 });
 
 
     private async Task GetAssociatedWorkOrders(FirmClientDto client)
-    {
-        _workOrders = await http.GetFromJsonAsync<List<WorkOrderDto>>($"/api/client/findAssociatedWorkOrdersByClientId/{client.Id}");
-    }
+        => _workOrders = await http.GetFromJsonAsync<List<WorkOrderDto>>(
+            $"/api/client/findAssociatedWorkOrdersByClientId/{client.Id}");
 
     private async Task ReloadUpdatedData(bool shouldReload)
     {
@@ -81,11 +59,15 @@
         await GetAssociatedWorkOrders(dataContainer.DataManager.SelectedItem);
         _dataContainer = dataContainer;
     }
-    private async Task AddClient(FirmClientDto updatedClient) => await http.PostAsJsonAsync("api/client/add", updatedClient);
 
-    private async Task UpdateClient(FirmClientDto updatedClient) => await http.PutAsJsonAsync($"api/client/edit/{updatedClient.Id}", updatedClient);
+    private async Task AddClient(FirmClientDto updatedClient) 
+        => await http.PostAsJsonAsync("api/client/add", updatedClient);
 
-    private async Task DeleteClient(FirmClientDto client) => await http.DeleteAsync($"api/client/delete/{client.Id}");
+    private async Task UpdateClient(FirmClientDto updatedClient) 
+        => await http.PutAsJsonAsync($"api/client/edit/{updatedClient.Id}", updatedClient);
+
+    private async Task DeleteClient(FirmClientDto client) 
+        => await http.DeleteAsync($"api/client/delete/{client.Id}");
 
     private async Task DeleteMultipleClients(IEnumerable<FirmClientDto> clients)
     {
@@ -96,7 +78,7 @@
     }
 
     private async Task LoadData(PaginationHelper paginationHelper)
-    {
-        _dataContainer.DataManager.MainItems = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
-    }
+        => _dataContainer.DataManager.MainItems = await 
+            http.GetFromJsonAsync<List<FirmClientDto>>(
+                $"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
 }

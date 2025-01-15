@@ -1,0 +1,17 @@
+﻿<div>
+    <p><strong>Client</strong></p>
+    <p style="text-indent: 40px;">Name: @DataContainer.DataManager.SelectedItem.FirmClient.Name</p>
+    <p style="text-indent: 40px;">Vat Number: @DataContainer.DataManager.SelectedItem.FirmClient.VatNumber</p>
+    <br />
+    <p><strong>Activities</strong></p>
+    @foreach (var ac in Activities)
+    {
+        <p style="text-indent: 40px;">Name: @ac.Name</p>
+    }
+</div>
+
+@code {
+    [Parameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
+    [Parameter] public List<ActivityDto> Activities { get; set; }
+
+}
