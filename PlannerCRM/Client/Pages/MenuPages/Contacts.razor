@@ -46,7 +46,6 @@
 
     private async Task GetAssociatedWorkOrders(FirmClientDto client)
         => _workOrders = await http.GetFromJsonAsync<List<WorkOrderDto>>(
-            $"/api/client/findAssociatedWorkOrdersByClientId/{client.Id}");
 
     private async Task ReloadUpdatedData(bool shouldReload)
     {
