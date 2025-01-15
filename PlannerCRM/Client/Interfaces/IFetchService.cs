@@ -1,7 +1,7 @@
 ﻿namespace PlannerCRM.Client.Interfaces;
 
 public interface IFetchService<TItem>
-    where TItem : class
+    where TItem : class, new()
 {
     Task Create(string url, TItem item);
     Task<TItem> Read(string url, int itemId);
