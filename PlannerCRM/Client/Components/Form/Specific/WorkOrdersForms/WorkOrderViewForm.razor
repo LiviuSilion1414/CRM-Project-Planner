@@ -5,7 +5,7 @@
         <p style="text-indent: 40px;">Name: @DataContainer.DataManager.SelectedItem.FirmClient.Name</p>
         <p style="text-indent: 40px;">Vat Number: @DataContainer.DataManager.SelectedItem.FirmClient.VatNumber</p>
         <br />
-        <p><strong>Activities</strong></p>
+        <p><strong>Activities (@(_activities.Count))</strong></p>
         @foreach (var ac in _activities)
         {
             <p style="text-indent: 40px;">Name: @ac.Name</p>

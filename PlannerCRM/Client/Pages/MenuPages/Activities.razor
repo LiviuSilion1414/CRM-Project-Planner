@@ -27,13 +27,23 @@
     [Inject] public IFetchService<ActivityDto> ActivityFetchService { get; set; }
     [Inject] public IFetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
 
-    private CascadingDataContainer<ActivityDto> _dataContainer = new()
+    private CascadingDataContainer<ActivityDto> _dataContainer { get; set; } = new()
+    {
+        DataManager = new()
         {
-            DataManager = new()
+            MainItems = [],
+            SelectedItems = [],
+            SelectedProperties = ["Name", "StartDate", "EndDate"],
+            NewItem = new()
             {
-                SelectedProperties = ["Name", "StartDate", "EndDate"]
-            }
-        };
+                WorkOrder = new()
+                {
+                    FirmClient = new()
+                }
+            },
+            SelectedItem = new()
+        }
+    };
 
     protected override async Task OnInitializedAsync()
         => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });

@@ -1,8 +1,8 @@
-﻿@if (WorkOrders is not null)
+﻿@if (_workOrders is not null)
 {
     <div style="overflow-y: scroll;">
-        <strong>WorkOrders</strong>
-        @foreach (var wo in WorkOrders)
+        <strong>WorkOrders (@(_workOrders.Count))</strong>
+        @foreach (var wo in _workOrders)
         {
             <p style="text-indent: 40px;"><strong>Name: </strong>@wo.Name</p>
         }
@@ -10,5 +10,12 @@
 }
 
 @code {
-    [CascadingParameter] public List<WorkOrderDto> WorkOrders { get; set; }
+    [CascadingParameter] public CascadingDataContainer<FirmClientDto> DataContainer { get; set; }
+    [Inject] public IFetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
+
+    private List<WorkOrderDto> _workOrders = [];
+
+    protected override async Task OnParametersSetAsync()
+        => _workOrders = await WorkOrderFetchService.GetAll(ControllersNames.WORK_ORDER,
+            WorkOrderApiManager.FindAssociatedWorkOrdersByClientId(DataContainer.DataManager.SelectedItem.Id));
 }

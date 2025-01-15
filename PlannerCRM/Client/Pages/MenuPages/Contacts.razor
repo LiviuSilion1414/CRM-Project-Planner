@@ -25,13 +25,16 @@
 
 @code {
     [Inject] public IFetchService<FirmClientDto> ClientFetchService { get; set; }
-    [Inject] public IFetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
 
     private CascadingDataContainer<FirmClientDto> _dataContainer = new()
         {
             DataManager = new()
             {
-                SelectedProperties = ["Name", "VatNumber"]
+                SelectedProperties = ["Name", "VatNumber"],
+                MainItems = [],
+                SelectedItems = [],
+                NewItem = new(),
+                SelectedItem = new()
             }
         };
 
