@@ -4,10 +4,7 @@
 {
     @if (DataContainer.ActionStateManager.IsViewSelected)
     {
-        Console.WriteLine($"Is null??? {DataContainer.DataManager.SelectedItem is null}");
-        Console.WriteLine($"Is null??? {DataContainer.DataManager.SelectedItem is null}");
-
-        <ItemPanel TItem="@TItem" 
+        <ItemPanel TItem="@TItem"
         Item="@DataContainer.DataManager.SelectedItem"
         Properties="@DataContainer.DataManager.SelectedProperties"
         OnEdit="@(() => ToggleEditItem(DataContainer.DataManager.SelectedItem))"
@@ -20,7 +17,7 @@
 
     else if (DataContainer.ActionStateManager.IsAddSelected)
     {
-        <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.DataManager.NewItem" OnItemChanged="@OnItemDataAdded">
+        <FormView Title="Add new item" TItem="@TItem" Model="@DataContainer.DataManager.NewItem" OnItemChanged="@OnItemDataAdded">
             <FormContent>
                 @AddFormMarkup(DataContainer.DataManager.NewItem)
             </FormContent>
@@ -29,7 +26,7 @@
 
     else if (DataContainer.ActionStateManager.IsUpdateSelected)
     {
-        <FormView Title="Edit new item " TItem="@TItem" Model="@DataContainer.DataManager.SelectedItem" OnItemChanged="@OnItemDataUpdated">
+        <FormView Title="Edit the selected item " TItem="@TItem" Model="@DataContainer.DataManager.SelectedItem" OnItemChanged="@OnItemDataUpdated">
             <FormContent>
                 @EditFormMarkup(DataContainer.DataManager.SelectedItem)
             </FormContent>
@@ -45,7 +42,7 @@
 
     else if (DataContainer.ActionStateManager.IsDeleteMultipleSelected)
     {
-        <AlertComponent Title="Sure to delete this item?"
+        <AlertComponent Title="Sure to delete the selected items?"
         BodyMessage="The action is irreversible!"
         IsDeleteConfirmed="@OnMultipleItemsDeleteConfirmation" />
     }
@@ -100,7 +97,6 @@
     {
         DataContainer.DataManager.SelectedItem = item;
         DataContainer.ActionStateManager.SetAction(ActionType.Update);
-        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private void ToggleDeleteItem(TItem item)

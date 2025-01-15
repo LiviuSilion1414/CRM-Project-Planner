@@ -109,7 +109,6 @@
         DataContainer.DataManager.SelectedItem = DataContainer.DataManager.SelectedItems.Single();
 
         await OnChosenAction.InvokeAsync(DataContainer);
-        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleSelectedItems()
@@ -117,7 +116,6 @@
         DataContainer.DataManager.SelectedItems = DataContainer.DataManager.SelectedItems.ToList();
 
         await OnChosenAction.InvokeAsync(DataContainer);
-        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleAddItem()
@@ -126,7 +124,6 @@
         DataContainer.DataManager.NewItem = new();
 
         await OnChosenAction.InvokeAsync(DataContainer);
-        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleEditItem()
@@ -135,7 +132,6 @@
         DataContainer.DataManager.SelectedItem = DataContainer.DataManager.SelectedItems.Single();
 
         await OnChosenAction.InvokeAsync(DataContainer);
-        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleDeleteItem()
@@ -144,7 +140,6 @@
         DataContainer.DataManager.SelectedItem = DataContainer.DataManager.SelectedItems.Single();
 
         await OnChosenAction.InvokeAsync(DataContainer);
-        DataContainer.ActionStateManager.ResetFlags();
     }
 
     private async Task ToggleDeleteAllItems()
@@ -153,6 +148,5 @@
         DataContainer.DataManager.SelectedItems = DataContainer.DataManager.SelectedItems;
 
         await OnChosenAction.InvokeAsync(DataContainer);
-        DataContainer.ActionStateManager.ResetFlags();
     }
 }

@@ -1,6 +1,6 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-<Modal Size="@ModalSize.LARGE" Title="Client details"
+<Modal Size="@ModalSize.LARGE" Title="@Title"
        FirstActionText="Edit" SecondActionText="Delete"
        FirstAction="@(async () => await OnEdit.InvokeAsync())"
        SecondAction="@(async () => await OnDelete.InvokeAsync())">
@@ -14,6 +14,7 @@
 </Modal>
 
 @code {
+    [Parameter] public string Title { get; set; } = "Item details";
     [Parameter] public TItem Item { get; set; }
     [Parameter] public IEnumerable<string> Properties { get; set; }
     [Parameter] public RenderFragment Content { get; set; }

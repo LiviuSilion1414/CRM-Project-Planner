@@ -17,7 +17,7 @@
     <br />
     <h5>WorkOrder Information</h5>
     <div class="form-group">
-        @if (string.IsNullOrEmpty(DataContainer.DataManager.NewItem.WorkOrder.Name))
+        @if (DataContainer.DataManager.NewItem.WorkOrder is null)
         {
             <div style="margin: 0;">
                 <div style="float: left;">
@@ -34,7 +34,7 @@
                 @foreach (var workOrder in _workOrders)
                 {
                     <button type="button" class="list-group-item list-group-item-action @(DataContainer.DataManager.NewItem is not null ? "active" : string.Empty)"
-                            @onclick="@(() => SelectWorkOrder(workOrder))">
+                    @onclick="@(() => SelectWorkOrder(workOrder))">
                         @workOrder.Name
                     </button>
                 }
