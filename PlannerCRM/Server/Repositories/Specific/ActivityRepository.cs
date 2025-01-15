@@ -79,6 +79,8 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             .Take(limit)
             .Include(a => a.EmployeeActivities)
             .Include(a => a.ActivityWorkTimes)
+            .Include(a => a.WorkOrder)
+            .ThenInclude(w => w.FirmClient)
             .ToListAsync();
 
         return _mapper.Map<ICollection<ActivityDto>>(activities);

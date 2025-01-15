@@ -1,59 +1,62 @@
 ﻿@inject HttpClient http
 
-<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.NewItem.Name):</label>
-    <InputText class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.Name" />
-</div>
-<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.NewItem.StartDate):</label>
-    <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.StartDate" />
-</div>
-<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.NewItem.EndDate):</label>
-    <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.EndDate" />
-</div>
-<br />
-<h5>Client Information</h5>
-<div class="form-group">
-    @if (DataContainer.DataManager.NewItem.FirmClient is null)
-    {
-        <div style="margin: 0;">
-            <div style="float: left;">
-                <InputText type="search" class="form-control" @bind-value="@DataContainer.QueryManager.Query" />
+@if (DataContainer is not null)
+{
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.NewItem.Name):</label>
+        <InputText class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.Name" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.NewItem.StartDate):</label>
+        <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.StartDate" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.NewItem.EndDate):</label>
+        <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.EndDate" />
+    </div>
+    <br />
+    <h5>Client Information</h5>
+    <div class="form-group">
+        @if (DataContainer.DataManager.NewItem.FirmClient is null)
+        {
+            <div style="margin: 0;">
+                <div style="float: left;">
+                    <InputText type="search" class="form-control" @bind-value="@DataContainer.QueryManager.Query" />
+                </div>
+                <div style="float: left;">
+                    <button class="btn btn-outline-primary" @onclick="@SearchClient">
+                        <i class="bi bi-search"></i>
+                        Search
+                    </button>
+                </div>
             </div>
-            <div style="float: left;">
-                <button class="btn btn-outline-primary" @onclick="@SearchClient">
-                    <i class="bi bi-search"></i>
-                    Search
-                </button>
+            <div class="list-group">
+                @foreach (var client in _clients)
+                {
+                    <button type="button" class="list-group-item list-group-item-action"
+                            @onclick="@(() => SelectClient(client))">
+                        @client.Name
+                    </button>
+                }
             </div>
-        </div>
-        <div class="list-group">
-            @foreach (var client in _clients)
-            {
-                <button type="button" class="list-group-item list-group-item-action"
-                @onclick="@(() => SelectClient(client))">
-                    @client.Name
-                </button>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="card" style="margin: 0;">
-            <div style="float: left;">
-                <p><strong>Name: </strong>@DataContainer.DataManager.NewItem.FirmClient.Name</p>
-                <p><strong>VatNumber: </strong>@DataContainer.DataManager.NewItem.FirmClient.VatNumber</p>
+        }
+        else
+        {
+            <div class="card" style="margin: 0;">
+                <div style="float: left;">
+                    <p><strong>Name: </strong>@DataContainer.DataManager.NewItem.FirmClient.Name</p>
+                    <p><strong>VatNumber: </strong>@DataContainer.DataManager.NewItem.FirmClient.VatNumber</p>
+                </div>
+                <div style="float: left;">
+                    <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
+                        <i class="bi bi-trash3"></i>
+                        Remove
+                    </button>
+                </div>
             </div>
-            <div style="float: left;">
-                <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
-                    <i class="bi bi-trash3"></i>
-                    Remove
-                </button>
-            </div>
-        </div>
-    }
-</div>
+        }
+    </div>
+}
 
 @code {
     [CascadingParameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }

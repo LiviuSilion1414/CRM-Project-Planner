@@ -1,16 +1,18 @@
-﻿<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.SelectedItem.Name):</label>
-    <InputText class="form-control" @bind-Value="@DataContainer.DataManager.SelectedItem.Name" />
-</div>
-<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.SelectedItem.StartDate):</label>
-    <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.SelectedItem.StartDate" />
-</div>
-<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.SelectedItem.EndDate):</label>
-    <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.SelectedItem.EndDate" />
-</div>
-
+﻿@if (DataContainer is not null)
+{
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.SelectedItem.Name):</label>
+        <InputText class="form-control" @bind-Value="@DataContainer.DataManager.SelectedItem.Name" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.SelectedItem.StartDate):</label>
+        <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.SelectedItem.StartDate" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.SelectedItem.EndDate):</label>
+        <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.SelectedItem.EndDate" />
+    </div>
+}
 @code {
     [CascadingParameter] public CascadingDataContainer<ActivityDto> DataContainer { get; set; }
 }

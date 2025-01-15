@@ -15,7 +15,23 @@ public partial class CalendarView : ComponentBase
 
     private ComponentMetadata SelectedMetadata { get; set; } = new();
 
-    private CascadingDataContainer<ActivityDto> DataContainer { get; set; } = new();
+    private CascadingDataContainer<ActivityDto> DataContainer { get; set; } = new()
+    {
+        DataManager = new() 
+        {
+            MainItems = [],
+            SelectedItems = [],
+            SelectedProperties = [ "Name", "StartDate", "EndDate" ],
+            NewItem = new()
+            {
+                WorkOrder = new() 
+                { 
+                    FirmClient = new()
+                }
+            },
+            SelectedItem = new()
+        }
+    };  
 
     private Dictionary<string, ComponentMetadata> ComponentsParameters { get; set; } = new()
     {
@@ -92,7 +108,9 @@ public partial class CalendarView : ComponentBase
         {
             [nameof(MonthView.CurrentDate)] = CurrentDate,
             [nameof(MonthView.CurrentMonthDays)] = CurrentMonthDays,
-            [nameof(MonthView.Activities)] = DataContainer.DataManager.MainItems
+            [nameof(MonthView.Activities)] = DataContainer.DataManager.MainItems,
+            [nameof(MonthView.DataContainer)] = DataContainer,
+            [nameof(MonthView.OnActivitySelected)] = EventCallback.Factory.Create<CascadingDataContainer<ActivityDto>>(this, GetChosenAction)
         };
 
         ComponentsParameters[nameof(WeekView)].Parameters = new Dictionary<string, object>
@@ -189,9 +207,7 @@ public partial class CalendarView : ComponentBase
     }
 
     private void GetChosenAction(CascadingDataContainer<ActivityDto> dataContainer)
-    {
-        DataContainer = dataContainer;
-    }
+        => DataContainer = dataContainer;
 
     private string GetDayClass(int? day)
     {

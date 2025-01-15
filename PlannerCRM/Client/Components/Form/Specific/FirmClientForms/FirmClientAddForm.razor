@@ -1,11 +1,14 @@
-﻿<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.NewItem.Name):</label>
-    <InputText class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.Name" />
-</div>
-<div class="form-group">
-    <label>@nameof(DataContainer.DataManager.NewItem.VatNumber):</label>
-    <InputText class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.VatNumber" />
-</div>
+﻿@if (DataContainer is not null)
+{
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.NewItem.Name):</label>
+        <InputText class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.Name" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.NewItem.VatNumber):</label>
+        <InputText class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.VatNumber" />
+    </div>
+}
 
 @code {
     [CascadingParameter] public CascadingDataContainer<FirmClientDto> DataContainer { get; set; }

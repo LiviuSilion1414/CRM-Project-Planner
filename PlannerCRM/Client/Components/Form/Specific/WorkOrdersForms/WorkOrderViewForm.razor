@@ -1,14 +1,17 @@
-﻿<div>
-    <p><strong>Client</strong></p>
-    <p style="text-indent: 40px;">Name: @DataContainer.DataManager.SelectedItem.FirmClient.Name</p>
-    <p style="text-indent: 40px;">Vat Number: @DataContainer.DataManager.SelectedItem.FirmClient.VatNumber</p>
-    <br />
-    <p><strong>Activities</strong></p>
-    @foreach (var ac in _activities)
-    {
-        <p style="text-indent: 40px;">Name: @ac.Name</p>
-    }
-</div>
+﻿@if (DataContainer is not null)
+{
+    <div>
+        <p><strong>Client</strong></p>
+        <p style="text-indent: 40px;">Name: @DataContainer.DataManager.SelectedItem.FirmClient.Name</p>
+        <p style="text-indent: 40px;">Vat Number: @DataContainer.DataManager.SelectedItem.FirmClient.VatNumber</p>
+        <br />
+        <p><strong>Activities</strong></p>
+        @foreach (var ac in _activities)
+        {
+            <p style="text-indent: 40px;">Name: @ac.Name</p>
+        }
+    </div>
+}
 
 @code {
     [Inject] public IFetchService<ActivityDto> ActivityFetchService { get; set; }

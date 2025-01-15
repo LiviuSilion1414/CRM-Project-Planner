@@ -1,83 +1,96 @@
-﻿<div class="calendar-grid">
-    @foreach (var dayName in Enum.GetValues(typeof(DayNames)))
-    {
-        <div class="calendar-day-name">@dayName</div>
-    }
-    @foreach (var day in CurrentMonthDays)
-    {
-        <div class="calendar-day @GetDayClass(day)" style="position: relative;">
-            @if (day.HasValue)
-            {
-                foreach (var ev in Activities)
+﻿@if (DataContainer is not null)
+{
+    <div class="calendar-grid">
+        @foreach (var dayName in Enum.GetValues(typeof(DayNames)))
+        {
+            <div class="calendar-day-name">@dayName</div>
+        }
+        @foreach (var day in CurrentMonthDays)
+        {
+            <div class="calendar-day @GetDayClass(day)" style="position: relative;">
+                @if (day.HasValue)
                 {
-                    @if (ev.StartDate.Day <= day && ev.EndDate.Day >= day)
+                    foreach (var ac in Activities)
                     {
-                        <div style="display: flex;">
-                            <br />
-                            <span class="task-position" style="background-color: green;">@ev.Name</span>
-                        </div>
+                        @if (ac.StartDate.Day <= day && ac.EndDate.Day >= day)
+                        {
+                            <div class="activity-badge p-2" style="display: flex;" @onclick="@(() => SelectActivity(ac))">
+                                <br />
+                                <span class="task-position" style=" background-color: green;">@ac.Name</span>
+                            </div>
+                        }
                     }
+                    <span class="day-number">@day.Value</span>
                 }
-                <span class="day-number">@day.Value</span>
-            }
-        </div>
-    }
-</div>
-
+            </div>
+        }
+    </div>
+}
 <style>
     .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
     }
 
     .calendar-day-name {
-    text-align: center;
-    font-weight: bold;
-    color: #888;
+        text-align: center;
+        font-weight: bold;
+        color: #888;
     }
 
     .calendar-day {
-    text-align: center;
-    padding: 30px;
-    max-width: 200px;
-    background-color: white;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+        text-align: center;
+        padding: 30px;
+        max-width: 200px;
+        background-color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
     }
 
-    .calendar-day:hover {
-    background-color: #f4f4f4;
-    color: #4285f4;
+        .calendar-day:hover {
+            background-color: #f4f4f4;
+            color: #4285f4;
+        }
+
+    .activity-badge {
+        margin: 2px;
     }
+
+        .activity-badge:hover {
+            transform: scale(1.5);
+            cursor: pointer;
+        }
 
     .today {
-    background-color: #4285f4;
-    color: white;
-    font-weight: bold;
+        background-color: #4285f4;
+        color: white;
+        font-weight: bold;
     }
 
     .day-number {
-    position: absolute;
-    padding: 10px;
-    top: 0;
-    right: 0;
+        position: absolute;
+        padding: 10px;
+        top: 0;
+        right: 0;
     }
 
     .task-position {
-    position: relative;
-    width: 100%;
-    margin-bottom: 5px;
-    color: white;
-    border: 0 initial silver;
-    border-radius: 10px;
+        position: relative;
+        width: 100%;
+        margin-bottom: 5px;
+        color: white;
+        border: 0 initial silver;
+        border-radius: 10px;
     }
 </style>
 
 @code {
+    [Parameter] public CascadingDataContainer<ActivityDto> DataContainer { get; set; }
     [Parameter] public DateTime CurrentDate { get; set; }
     [Parameter] public List<int?> CurrentMonthDays { get; set; }
     [Parameter] public List<ActivityDto> Activities { get; set; }
+    [Parameter] public EventCallback<CascadingDataContainer<ActivityDto>> OnActivitySelected { get; set; }
 
     private string GetDayClass(int? day)
     {
@@ -86,5 +99,16 @@
 
         var currentDate = new DateTime(CurrentDate.Year, CurrentDate.Month, day.Value);
         return currentDate == DateTime.Today ? "today" : string.Empty;
+    }
+
+    private async Task SelectActivity(ActivityDto activity)
+    {
+        Console.WriteLine($"Is activity null ? {activity is null}");
+        Console.WriteLine($"Is container null ? {DataContainer is null}");
+        Console.WriteLine($"Is container.datamanager.selectedItem null ? {DataContainer is null}");
+
+        DataContainer.DataManager.SelectedItem = activity;
+        DataContainer.ActionStateManager.SetAction(ActionType.View);
+        await OnActivitySelected.InvokeAsync(DataContainer);
     }
 }

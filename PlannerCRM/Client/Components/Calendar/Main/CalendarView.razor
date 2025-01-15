@@ -15,20 +15,21 @@
     {
         <DynamicComponent Type="@SelectedMetadata.ComponentType" Parameters="@SelectedMetadata.Parameters" />
     }
-
-    <DataGridViewItemHandler TItem="@ActivityDto"
-                             AddAction="@(async activity => await ActivityFetchService.Create(ControllersNames.ACTIVITY, CrudApiManager.ADD, activity))"
-                             UpdateAction="@(async activity => await ActivityFetchService.Update(ControllersNames.ACTIVITY, CrudApiManager.EDIT, activity))"
-                             DeleteAction="@(async activity => await DeleteActivity(activity))"
-                             DeleteMultipleAction="@(async activities => await DeleteMultipleActivities(activities))">
-        <AddFormMarkup>
-            <ActivityAddForm />
-        </AddFormMarkup>
-        <EditFormMarkup>
-            <ActivityEditForm />
-        </EditFormMarkup>
-        <ViewDetailsMarkup>
-            <ActivityViewForm />
-        </ViewDetailsMarkup>
-    </DataGridViewItemHandler>
+    <CascadingValue Value="@DataContainer">
+        <DataGridViewItemHandler TItem="@ActivityDto"
+                                    AddAction="@(async activity => await ActivityFetchService.Create(ControllersNames.ACTIVITY, CrudApiManager.ADD, activity))"
+                                    UpdateAction="@(async activity => await ActivityFetchService.Update(ControllersNames.ACTIVITY, CrudApiManager.EDIT, activity))"
+                                    DeleteAction="@(async activity => await DeleteActivity(activity))"
+                                    DeleteMultipleAction="@(async activities => await DeleteMultipleActivities(activities))">
+            <AddFormMarkup>
+                <ActivityAddForm />
+            </AddFormMarkup>
+            <EditFormMarkup>
+                <ActivityEditForm />
+            </EditFormMarkup>
+            <ViewDetailsMarkup>
+                <ActivityViewForm />
+            </ViewDetailsMarkup>
+        </DataGridViewItemHandler>
+    </CascadingValue>
 </div>

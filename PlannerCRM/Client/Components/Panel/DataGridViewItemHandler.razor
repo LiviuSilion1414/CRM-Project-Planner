@@ -4,6 +4,9 @@
 {
     @if (DataContainer.ActionStateManager.IsViewSelected)
     {
+        Console.WriteLine($"Is null??? {DataContainer.DataManager.SelectedItem is null}");
+        Console.WriteLine($"Is null??? {DataContainer.DataManager.SelectedItem is null}");
+
         <ItemPanel TItem="@TItem" 
         Item="@DataContainer.DataManager.SelectedItem"
         Properties="@DataContainer.DataManager.SelectedProperties"
