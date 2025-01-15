@@ -7,8 +7,8 @@
     <DataGridView TItem="@ActivityDto"
                   GetCascadingContainerStates="@GetCascadingContainerStates" />
     <DataGridViewItemHandler TItem="@ActivityDto"
-                             AddAction="@(async activity => await ActivityFetchService.Create(CrudApiManager.ADD, activity))"
-                             UpdateAction="@(async activity => await ActivityFetchService.Update(CrudApiManager.EDIT, activity))"
+                             AddAction="@(async activity => await ActivityFetchService.Create(ControllersNames.ACTIVITY, CrudApiManager.ADD, activity))"
+                             UpdateAction="@(async activity => await ActivityFetchService.Update(ControllersNames.ACTIVITY, CrudApiManager.EDIT, activity))"
                              DeleteAction="@(async activity => await DeleteActivity(activity))"
                              DeleteMultipleAction="@(async activities => await DeleteMultipleActivities(activities))">
         <AddFormMarkup>
@@ -42,7 +42,7 @@
         => _dataContainer = dataContainer;
 
     private async Task DeleteActivity(ActivityDto activity)
-        => await ActivityFetchService.Delete(CrudApiManager.DELETE, activity.Id);
+        => await ActivityFetchService.Delete(ControllersNames.ACTIVITY, CrudApiManager.DELETE, activity.Id);
 
     private async Task DeleteMultipleActivities(IEnumerable<ActivityDto> activitys)
     {
@@ -54,5 +54,5 @@
 
     private async Task LoadData(PaginationHelper paginationHelper)
         => _dataContainer.DataManager.MainItems =
-                await ActivityFetchService.GetAll(CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
+                await ActivityFetchService.GetAll(ControllersNames.ACTIVITY, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
 }

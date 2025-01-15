@@ -9,7 +9,7 @@
 
 @code {
     [Parameter] public string Title { get; set; }
-    [Parameter] public string? BodyMessage { get; set; }
+    [Parameter] public string BodyMessage { get; set; }
     [Parameter] public EventCallback<bool> IsDeleteConfirmed { get; set; }
 
     private bool _canCloseModal = false;

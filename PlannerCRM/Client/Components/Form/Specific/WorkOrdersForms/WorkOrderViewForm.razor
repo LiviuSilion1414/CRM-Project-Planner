@@ -20,5 +20,5 @@
         => await GetAssociatedActivities(DataContainer.DataManager.SelectedItem);
 
     private async Task GetAssociatedActivities(WorkOrderDto workOrder)
-        => _activities = await ActivityFetchService.GetAll(WorkOrderApiManager.FindAssociatedActivitiesByWorkOrderId(workOrder.Id));
+        => _activities = await ActivityFetchService.GetAll(ControllersNames.WORK_ORDER, WorkOrderApiManager.FindAssociatedActivitiesByWorkOrderId(workOrder.Id));
 }

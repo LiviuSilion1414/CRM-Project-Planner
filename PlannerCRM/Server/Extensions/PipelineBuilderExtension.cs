@@ -107,7 +107,6 @@ public static class PipelineBuilderExtension
         services.AddScoped<Repository<WorkOrder, WorkOrderDto>, WorkOrderRepository>();
         services.AddScoped<Repository<WorkOrderCost, WorkOrderCostDto>, WorkOrderCostRepository>();
         services.AddScoped<Repository<WorkTime, WorkTimeDto>, WorkTimeRepository>();
-        services.AddScoped<CalculatorService>();
 
         services.AddScoped<ActivityRepository>();
         services.AddScoped<EmployeeRepository>();

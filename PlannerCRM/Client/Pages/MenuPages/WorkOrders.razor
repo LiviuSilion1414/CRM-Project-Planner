@@ -7,8 +7,8 @@
     <DataGridView TItem="@WorkOrderDto"
                   GetCascadingContainerStates="@GetCascadingContainerStates" />
     <DataGridViewItemHandler TItem="@WorkOrderDto"
-                             AddAction="@(async workOrder => await WorkOrderFetchService.Create(CrudApiManager.ADD, workOrder))"
-                             UpdateAction="@(async workOrder => await WorkOrderFetchService.Update(CrudApiManager.EDIT, workOrder))"
+                             AddAction="@(async workOrder => await WorkOrderFetchService.Create(ControllersNames.WORK_ORDER, CrudApiManager.ADD, workOrder))"
+                             UpdateAction="@(async workOrder => await WorkOrderFetchService.Update(ControllersNames.WORK_ORDER, CrudApiManager.EDIT, workOrder))"
                              DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
                              DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
@@ -42,7 +42,7 @@
         => _dataContainer = dataContainer;
 
     private async Task DeleteWorkOrder(WorkOrderDto workOrder)
-        => await WorkOrderFetchService.Delete(CrudApiManager.DELETE, workOrder.Id);
+        => await WorkOrderFetchService.Delete(ControllersNames.WORK_ORDER, CrudApiManager.DELETE, workOrder.Id);
 
     private async Task DeleteMultipleClients(IEnumerable<WorkOrderDto> workOrders)
     {
@@ -54,5 +54,5 @@
 
     private async Task LoadData(PaginationHelper paginationHelper)
         => _dataContainer.DataManager.MainItems =
-            await WorkOrderFetchService.GetAll(CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
+            await WorkOrderFetchService.GetAll(ControllersNames.WORK_ORDER, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
 }

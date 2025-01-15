@@ -20,4 +20,3 @@ global using PlannerCRM.Server.Models.Entities;
 global using PlannerCRM.Server.Models.JunctionEntities;
 global using PlannerCRM.Server.Repositories.Specific;
 global using PlannerCRM.Server.Repositories.Generic;
-global using PlannerCRM.Server.Services;

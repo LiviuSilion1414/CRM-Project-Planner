@@ -7,8 +7,8 @@
     <DataGridView TItem="@FirmClientDto"
                   GetCascadingContainerStates="@GetCascadingContainerStates" />
     <DataGridViewItemHandler TItem="@FirmClientDto"
-                             AddAction="@(async client => await ClientFetchService.Create(CrudApiManager.ADD, client))"
-                             UpdateAction="@(async client => await ClientFetchService.Update(CrudApiManager.EDIT, client))"
+                             AddAction="@(async client => await ClientFetchService.Create(ControllersNames.FIRM_CLIENT, CrudApiManager.ADD, client))"
+                             UpdateAction="@(async client => await ClientFetchService.Update(ControllersNames.FIRM_CLIENT, CrudApiManager.EDIT, client))"
                              DeleteAction="@(async client => await DeleteClient(client))"
                              DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
         <AddFormMarkup>
@@ -42,7 +42,7 @@
         => _dataContainer = dataContainer;
 
     private async Task DeleteClient(FirmClientDto client)
-        => await ClientFetchService.Delete(CrudApiManager.DELETE, client.Id);
+        => await ClientFetchService.Delete(ControllersNames.FIRM_CLIENT, CrudApiManager.DELETE, client.Id);
 
     private async Task DeleteMultipleClients(IEnumerable<FirmClientDto> clients)
     {
@@ -54,5 +54,5 @@
 
     private async Task LoadData(PaginationHelper paginationHelper)
         => _dataContainer.DataManager.MainItems =
-            await ClientFetchService.GetAll(CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
+            await ClientFetchService.GetAll(ControllersNames.FIRM_CLIENT, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
 }

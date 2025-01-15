@@ -1,13 +1,11 @@
 ﻿using PlannerCRM.Client.Components.Calendar.Views;
-using PlannerCRM.Client.Components.Form.Specific.ActivityForms;
 using PlannerCRM.Client.Components.Panel;
-using System.Net.Http.Json;
 
 namespace PlannerCRM.Client.Components.Calendar.Main;
 
 public partial class CalendarView : ComponentBase
 {
-    [Inject] public HttpClient Http { get; set; }
+    [Inject] public IFetchService<ActivityDto> ActivityFetchService { get; set; }
 
     private ViewType CurrentView { get; set; } = ViewType.MonthView;
     private DateTime CurrentDate { get; set; } = DateTime.Today;
@@ -66,10 +64,26 @@ public partial class CalendarView : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        DataContainer.DataManager.MainItems = await Http.GetFromJsonAsync<List<ActivityDto>>($"api/activity/getWithPagination/{50}/{0}");
+        await LoadData(new PaginationHelper { Offset = 0, Limit = 100 });
+        
         InitializeComponentParameters();
         GenerateCalendar();
         SelectedMetadata = ComponentsParameters[nameof(ViewType.MonthView)];
+    }
+
+    private async Task LoadData(PaginationHelper paginationHelper)
+        => DataContainer.DataManager.MainItems =
+                await ActivityFetchService.GetAll(ControllersNames.ACTIVITY, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
+
+    private async Task DeleteActivity(ActivityDto activity)
+        => await ActivityFetchService.Delete(ControllersNames.ACTIVITY, CrudApiManager.DELETE, activity.Id);
+
+    private async Task DeleteMultipleActivities(IEnumerable<ActivityDto> activitys)
+    {
+        foreach (var activity in activitys)
+        {
+            await DeleteActivity(activity);
+        }
     }
 
     private void InitializeComponentParameters()
@@ -95,12 +109,6 @@ public partial class CalendarView : ComponentBase
         ComponentsParameters[nameof(YearView)].Parameters = new Dictionary<string, object>
         {
             [nameof(YearView.CurrentDate)] = CurrentDate
-        };
-
-        ComponentsParameters[nameof(DataGridViewItemHandler<ActivityDto>)].Parameters = new Dictionary<string, object>
-        {
-            [nameof(DataGridViewItemHandler<ActivityDto>.DataContainer)] = DataContainer,
-            //[nameof(DataGridViewItemHandler<ActivityDto>.AddFormMarkup)] = ActivityAddForm, //the left hand side is a RenderFragment and the right side is a component
         };
     }
 
