@@ -8,6 +8,9 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
 
     public override async Task AddAsync(Activity model)
     {
+        _context.WorkOrders.Attach(model.WorkOrder);
+        _context.Clients.Attach(model.WorkOrder.FirmClient);
+
         await base.AddAsync(model); //may be an issue
 
         await _context.WorkOrderActivities.AddAsync(
@@ -23,6 +26,9 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
 
     public override async Task EditAsync(Activity model, int id)
     {
+        _context.WorkOrders.Attach(model.WorkOrder);
+        _context.Clients.Attach(model.WorkOrder.FirmClient);
+
         await base.EditAsync(model, id);
 
         var existingEmployeeActivity = await _context.EmployeeActivities

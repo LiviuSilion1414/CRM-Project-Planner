@@ -8,6 +8,9 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
 
     public override async Task AddAsync(WorkOrder model)
     {
+        _context.Attach(model.FirmClient);
+        _context.Attach(model.WorkOrderCost);
+
         await base.AddAsync(model);
 
         await _context.ClientWorkOrders.AddAsync(
@@ -21,6 +24,9 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
 
     public override async Task EditAsync(WorkOrder model, int id)
     {
+        _context.Attach(model.FirmClient);
+        _context.Attach(model.WorkOrderCost);
+
         await base.EditAsync(model, id);
         
         var existingClientWorkOrder = await _context.ClientWorkOrders
