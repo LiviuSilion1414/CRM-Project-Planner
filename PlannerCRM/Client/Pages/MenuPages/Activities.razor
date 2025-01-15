@@ -1,34 +1,32 @@
 ﻿@page "/activities"
-@inject HttpClient http
 
 <h3>Activities</h3>
 <PageTitle>Activities</PageTitle>
 
 <CascadingValue Value="@_dataContainer">
-    <DataGridView 
-        TItem="@ActivityDto"
-        GetCascadingContainerStates="@GetCascadingContainerStates"
-        ShouldFetchNewData="@ReloadUpdatedData" 
-    />
+    <DataGridView TItem="@ActivityDto"
+                  GetCascadingContainerStates="@GetCascadingContainerStates" />
     <DataGridViewItemHandler TItem="@ActivityDto"
-        AddAction="@(async activity => await AddActivity(activity))"
-        UpdateAction="@(async activity => await UpdateActivity(activity))"
-        DeleteAction="@(async activity => await DeleteActivity(activity))"
-        DeleteMultipleAction="@(async activities => await DeleteMultipleWorkOrders(activities))"
-    >
+                             AddAction="@(async activity => await ActivityFetchService.Create(CrudApiManager.ADD, activity))"
+                             UpdateAction="@(async activity => await ActivityFetchService.Update(CrudApiManager.EDIT, activity))"
+                             DeleteAction="@(async activity => await DeleteActivity(activity))"
+                             DeleteMultipleAction="@(async activities => await DeleteMultipleActivities(activities))">
         <AddFormMarkup>
-            <ActivityAddForm/>
+            <ActivityAddForm />
         </AddFormMarkup>
         <EditFormMarkup>
-            <ActivityEditForm/>
+            <ActivityEditForm />
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <ActivityViewForm/>
+            <ActivityViewForm />
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>
 
 @code {
+    [Inject] public IFetchService<ActivityDto> ActivityFetchService { get; set; }
+    [Inject] public IFetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
+
     private CascadingDataContainer<ActivityDto> _dataContainer = new()
         {
             DataManager = new()
@@ -37,32 +35,16 @@
             }
         };
 
-    private List<WorkOrderDto> _workOrders = [];
-
     protected override async Task OnInitializedAsync()
         => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
 
-    private async Task ReloadUpdatedData(bool shouldReload)
-    {
-        if (shouldReload)
-        {
-            await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
-        }
-    }
-
-    private void GetCascadingContainerStates(CascadingDataContainer<ActivityDto> dataContainer) 
+    private void GetCascadingContainerStates(CascadingDataContainer<ActivityDto> dataContainer)
         => _dataContainer = dataContainer;
 
-    private async Task AddActivity(ActivityDto updatedActivity) 
-        => await http.PostAsJsonAsync("api/activity/add", updatedActivity);
+    private async Task DeleteActivity(ActivityDto activity)
+        => await ActivityFetchService.Delete(CrudApiManager.DELETE, activity.Id);
 
-    private async Task UpdateActivity(ActivityDto updatedActivity) 
-        => await http.PutAsJsonAsync($"api/activity/edit/{updatedActivity.Id}", updatedActivity);
-
-    private async Task DeleteActivity(ActivityDto activity) 
-        => await http.DeleteAsync($"api/activity/delete/{activity.Id}");
-
-    private async Task DeleteMultipleWorkOrders(IEnumerable<ActivityDto> activitys)
+    private async Task DeleteMultipleActivities(IEnumerable<ActivityDto> activitys)
     {
         foreach (var activity in activitys)
         {
@@ -71,7 +53,6 @@
     }
 
     private async Task LoadData(PaginationHelper paginationHelper)
-        => _dataContainer.DataManager.MainItems = 
-            await http.GetFromJsonAsync<List<ActivityDto>>(
-                $"/api/activity/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+        => _dataContainer.DataManager.MainItems =
+                await ActivityFetchService.GetAll(CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
 }

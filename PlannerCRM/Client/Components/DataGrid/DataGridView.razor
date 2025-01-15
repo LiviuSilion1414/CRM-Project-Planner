@@ -83,7 +83,6 @@
 @code
 {
     [CascadingParameter] public CascadingDataContainer<TItem> DataContainer { get; set; }
-    [Parameter] public EventCallback<bool> ShouldFetchNewData { get; set; }
     [Parameter] public EventCallback<CascadingDataContainer<TItem>> GetCascadingContainerStates { get; set; }
 
     private IEnumerable<TItem> _paginatedData = [];
@@ -95,12 +94,6 @@
         {
             GetPaginatedData(DataContainer.DataManager.MainItems.Take(10).ToList());
         }
-    }
-
-    public async Task Reload()
-    {
-        StateHasChanged();
-        await ShouldFetchNewData.InvokeAsync(true);
     }
 
     private async Task GetChosenAction(CascadingDataContainer<TItem> dataContainer)

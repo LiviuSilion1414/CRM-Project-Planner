@@ -33,7 +33,10 @@ public class FetchService<TItem> : IFetchService<TItem>
     public async Task Delete(string action, int itemId)
         => await _http.DeleteAsync($"api/{_controllerName}/{action}/{itemId}");
 
-    public async Task<ICollection<TItem>> GetAll(string action, int offset, int limit)
-        => await _http.GetFromJsonAsync<ICollection<TItem>>($"api/{_controllerName}/{action}/{offset}/{limit}");
+    public async Task<List<TItem>> GetAll(string action, int offset, int limit)
+        => await _http.GetFromJsonAsync<List<TItem>>($"api/{_controllerName}/{action}/{offset}/{limit}");
+
+    public async Task<List<TItem>> GetAll(string parameterizedUrl)
+        => await _http.GetFromJsonAsync<List<TItem>>($"api/{parameterizedUrl}");
 }
 

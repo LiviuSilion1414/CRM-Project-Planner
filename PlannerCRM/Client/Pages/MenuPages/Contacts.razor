@@ -1,74 +1,48 @@
 ﻿@page "/contacts"
-@inject HttpClient http
 
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
 
 <CascadingValue Value="@_dataContainer">
-    <DataGridView 
-    TItem="@FirmClientDto"
-    GetCascadingContainerStates="@GetCascadingContainerStates"
-    ShouldFetchNewData="@ReloadUpdatedData"/>
-    <DataGridViewItemHandler 
-    TItem="@FirmClientDto"
-    AddAction="@(async client => await AddClient(client))"
-    UpdateAction="@(async client => await UpdateClient(client))"
-    DeleteAction="@(async client => await DeleteClient(client))"
-    DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
+    <DataGridView TItem="@FirmClientDto"
+                  GetCascadingContainerStates="@GetCascadingContainerStates" />
+    <DataGridViewItemHandler TItem="@FirmClientDto"
+                             AddAction="@(async client => await ClientFetchService.Create(CrudApiManager.ADD, client))"
+                             UpdateAction="@(async client => await ClientFetchService.Update(CrudApiManager.EDIT, client))"
+                             DeleteAction="@(async client => await DeleteClient(client))"
+                             DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
         <AddFormMarkup>
-            <FirmClientAddForm/>
+            <FirmClientAddForm />
         </AddFormMarkup>
         <EditFormMarkup>
-            <FirmClientEditForm/>
+            <FirmClientEditForm />
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <FirmClientViewForm/>
+            <FirmClientViewForm />
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>
 
 @code {
-    [Inject] public IFetchService<ActivityDto> FetchService { get; set; }
+    [Inject] public IFetchService<FirmClientDto> ClientFetchService { get; set; }
+    [Inject] public IFetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
 
     private CascadingDataContainer<FirmClientDto> _dataContainer = new()
-    {
-        DataManager = new() 
         {
-            SelectedProperties = ["Name", "VatNumber"]
-        }
-    };
-
-    private List<WorkOrderDto> _workOrders = [];
+            DataManager = new()
+            {
+                SelectedProperties = ["Name", "VatNumber"]
+            }
+        };
 
     protected override async Task OnInitializedAsync()
-        => await LoadData(new PaginationHelper { Limit = 200, Offset = 0 });
+        => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
 
+    private void GetCascadingContainerStates(CascadingDataContainer<FirmClientDto> dataContainer)
+        => _dataContainer = dataContainer;
 
-    private async Task GetAssociatedWorkOrders(FirmClientDto client)
-        => _workOrders = await http.GetFromJsonAsync<List<WorkOrderDto>>(
-
-    private async Task ReloadUpdatedData(bool shouldReload)
-    {
-        if (shouldReload)
-        {
-            await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
-        }
-    }
-
-    private async Task GetCascadingContainerStates(CascadingDataContainer<FirmClientDto> dataContainer)
-    {
-        await GetAssociatedWorkOrders(dataContainer.DataManager.SelectedItem);
-        _dataContainer = dataContainer;
-    }
-
-    private async Task AddClient(FirmClientDto updatedClient) 
-        => await http.PostAsJsonAsync("api/client/add", updatedClient);
-
-    private async Task UpdateClient(FirmClientDto updatedClient) 
-        => await http.PutAsJsonAsync($"api/client/edit/{updatedClient.Id}", updatedClient);
-
-    private async Task DeleteClient(FirmClientDto client) 
-        => await http.DeleteAsync($"api/client/delete/{client.Id}");
+    private async Task DeleteClient(FirmClientDto client)
+        => await ClientFetchService.Delete(CrudApiManager.DELETE, client.Id);
 
     private async Task DeleteMultipleClients(IEnumerable<FirmClientDto> clients)
     {
@@ -79,7 +53,6 @@
     }
 
     private async Task LoadData(PaginationHelper paginationHelper)
-        => _dataContainer.DataManager.MainItems = await 
-            http.GetFromJsonAsync<List<FirmClientDto>>(
-                $"/api/client/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+        => _dataContainer.DataManager.MainItems =
+            await ClientFetchService.GetAll(CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
 }

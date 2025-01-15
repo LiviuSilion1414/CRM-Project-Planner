@@ -1,73 +1,48 @@
 ﻿@page "/workOrders"
-@inject HttpClient http
 
 <h3>Workorders</h3>
 <PageTitle>Workorders</PageTitle>
 
 <CascadingValue Value="@_dataContainer">
-    <DataGridView 
-        TItem="@WorkOrderDto"
-        GetCascadingContainerStates="@GetCascadingContainerStates"
-        ShouldFetchNewData="@ReloadUpdatedData" />
-    <DataGridViewItemHandler 
-        TItem="@WorkOrderDto"
-        AddAction="@(async workOrder => await AddWorkOrder(workOrder))"
-        UpdateAction="@(async workOrder => await UpdateWorkOrder(workOrder))"
-        DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
-        DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
+    <DataGridView TItem="@WorkOrderDto"
+                  GetCascadingContainerStates="@GetCascadingContainerStates" />
+    <DataGridViewItemHandler TItem="@WorkOrderDto"
+                             AddAction="@(async workOrder => await WorkOrderFetchService.Create(CrudApiManager.ADD, workOrder))"
+                             UpdateAction="@(async workOrder => await WorkOrderFetchService.Update(CrudApiManager.EDIT, workOrder))"
+                             DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
+                             DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
-            <WorkOrderAddForm/>
+            <WorkOrderAddForm />
         </AddFormMarkup>
         <EditFormMarkup>
             <WorkOrderEditForm />
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <WorkOrderViewForm Activities="@_activities" />
+            <WorkOrderViewForm />
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>
 
 @code {
-    private CascadingDataContainer<WorkOrderDto> _dataContainer = new()
-    {
-        DataManager = new()
-        {
-            SelectedProperties = ["Name", "StartDate", "EndDate"]
-        }
-    };
+    [Inject] public IFetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
 
-    private List<ActivityDto> _activities = [];
-    private List<FirmClientDto> _clients = [];
+    private CascadingDataContainer<WorkOrderDto> _dataContainer = new()
+        {
+            DataManager = new()
+            {
+                SelectedProperties = ["Name", "StartDate", "EndDate"]
+            }
+        };
+
 
     protected override async Task OnInitializedAsync()
         => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
 
-    private async Task GetAssociatedActivities(WorkOrderDto workOrder)
-        => _activities = await http.GetFromJsonAsync<List<ActivityDto>>(
-                $"/api/workOrder/findAssociatedActivitiesByWorkOrderId/{workOrder.Id}");
-
-    private async Task ReloadUpdatedData(bool shouldReload)
-    {
-        if (shouldReload)
-        {
-            await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
-        }
-    }
-
-    private async Task GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto> dataContainer)
-    {
-        await GetAssociatedActivities(dataContainer.DataManager.SelectedItem);
-        _dataContainer = dataContainer;
-    }
-
-    private async Task AddWorkOrder(WorkOrderDto updatedClient)
-        => await http.PostAsJsonAsync("api/workOrder/add", updatedClient);
-
-    private async Task UpdateWorkOrder(WorkOrderDto updatedClient)
-        => await http.PutAsJsonAsync($"api/workOrder/edit/{updatedClient.Id}", updatedClient);
+    private void GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto> dataContainer)
+        => _dataContainer = dataContainer;
 
     private async Task DeleteWorkOrder(WorkOrderDto workOrder)
-        => await http.DeleteAsync($"api/workOrder/delete/{workOrder.Id}");
+        => await WorkOrderFetchService.Delete(CrudApiManager.DELETE, workOrder.Id);
 
     private async Task DeleteMultipleClients(IEnumerable<WorkOrderDto> workOrders)
     {
@@ -78,7 +53,6 @@
     }
 
     private async Task LoadData(PaginationHelper paginationHelper)
-       => _dataContainer.DataManager.MainItems = await 
-            http.GetFromJsonAsync<List<WorkOrderDto>>(
-               $"/api/workOrder/getWithPagination/{paginationHelper.Limit}/{paginationHelper.Offset}");
+        => _dataContainer.DataManager.MainItems =
+            await WorkOrderFetchService.GetAll(CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
 }

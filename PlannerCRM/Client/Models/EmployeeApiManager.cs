@@ -2,17 +2,15 @@
 
 public static class EmployeeApiManager
 {
-    public static string ActionUrl { get; private set; }
+    public static string SearchEmployeeByName(string employeeName)
+        => $"searchEmployeeByName/{employeeName}";
 
-    public static void SearchEmployeeByName(string employeeName)
-        => ActionUrl = $"searchEmployeeByName/{employeeName}";
+    public static string FindAssociatedActivitiesByEmployeeId(int employeeId)
+        => $"findAssociatedActivitiesByEmployeeId/{employeeId}";
 
-    public static void FindAssociatedActivitiesByEmployeeId(int employeeId)
-        => ActionUrl = $"findAssociatedActivitiesByEmployeeId/{employeeId}";
+    public static string FindAssociatedWorkTimesByActivityIdAndEmployeeId(int employeeId, int activityId)
+        => $"findAssociatedWorkTimesByActivityIdAndEmployeeId/{employeeId}/{activityId}";
 
-    public static void FindAssociatedWorkTimesByActivityIdAndEmployeeId(int employeeId, int activityId)
-        => ActionUrl = $"findAssociatedWorkTimesByActivityIdAndEmployeeId/{employeeId}/{activityId}";
-
-    public static void FindAssociatedSalaryDataByEmployeeId(int employeeId)
-        => ActionUrl = $"findAssociatedSalaryDataByEmployeeId/{employeeId}";
+    public static string FindAssociatedSalaryDataByEmployeeId(int employeeId)
+        => $"findAssociatedSalaryDataByEmployeeId/{employeeId}";
 }

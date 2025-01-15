@@ -7,5 +7,6 @@ public interface IFetchService<TItem>
     Task<TItem> Read(string url, int itemId);
     Task Update(string url, TItem item);
     Task Delete(string url, int itemId);
-    Task<ICollection<TItem>> GetAll(string url, int offset, int limit);
+    Task<List<TItem>> GetAll(string url, int offset, int limit);
+    Task<List<TItem>> GetAll(string parameterizedUrl);
 }

@@ -2,14 +2,12 @@
 
 public static class WorkOrderApiManager
 {
-    public static string ActionUrl { get; private set; }
+    public static string SearchWorkOrderByTitle(string worOrderTitle)
+        => $"searchWorkOrderByTitle/{worOrderTitle}";
 
-    public static void SearchWorkOrderByTitle(string worOrderTitle)
-        => ActionUrl = $"searchWorkOrderByTitle/{worOrderTitle}";
-
-    public static void FindAssociatedActivitiesByWorkOrderId(int workOrderId)
-        => ActionUrl = $"findAssociatedActivitiesByWorkOrderId/{workOrderId}";
+    public static string FindAssociatedActivitiesByWorkOrderId(int workOrderId)
+        => $"findAssociatedActivitiesByWorkOrderId/{workOrderId}";
     
-    public static void FindAssociatedWorkOrdersByClientId(int clientId)
-        => ActionUrl = $"findAssociatedWorkOrdersByClientId/{clientId}";
+    public static string FindAssociatedWorkOrdersByClientId(int clientId)
+        => $"findAssociatedWorkOrdersByClientId/{clientId}";
 }

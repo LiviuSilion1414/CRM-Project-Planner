@@ -4,14 +4,21 @@
     <p style="text-indent: 40px;">Vat Number: @DataContainer.DataManager.SelectedItem.FirmClient.VatNumber</p>
     <br />
     <p><strong>Activities</strong></p>
-    @foreach (var ac in Activities)
+    @foreach (var ac in _activities)
     {
         <p style="text-indent: 40px;">Name: @ac.Name</p>
     }
 </div>
 
 @code {
-    [CascadingParameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
-    [Parameter] public List<ActivityDto> Activities { get; set; }
+    [Inject] public IFetchService<ActivityDto> ActivityFetchService { get; set; }
 
+    [CascadingParameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
+    private List<ActivityDto> _activities = [];
+
+    protected override async Task OnParametersSetAsync()
+        => await GetAssociatedActivities(DataContainer.DataManager.SelectedItem);
+
+    private async Task GetAssociatedActivities(WorkOrderDto workOrder)
+        => _activities = await ActivityFetchService.GetAll(WorkOrderApiManager.FindAssociatedActivitiesByWorkOrderId(workOrder.Id));
 }

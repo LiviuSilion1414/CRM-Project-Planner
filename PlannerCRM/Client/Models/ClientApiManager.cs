@@ -2,11 +2,9 @@
 
 public static class ClientApiManager
 {
-    public static string ActionUrl { get; private set; }
+    public static string SearchClientByName(string clientName)
+        => $"searchClientByName/{clientName}";
 
-    public static void SearchClientByName(string clientName)
-        => ActionUrl = $"searchClientByName/{clientName}";
-
-    public static void FindAssociatedWorkOrdersByClientId(int clientId)
-        => ActionUrl = $"findAssociatedWorkOrdersByClientId/{clientId}";
+    public static string FindAssociatedWorkOrdersByClientId(int clientId)
+        => $"findAssociatedWorkOrdersByClientId/{clientId}";
 }
