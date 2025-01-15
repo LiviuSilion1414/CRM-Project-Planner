@@ -56,7 +56,7 @@
 </div>
 
 @code {
-    [Parameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
+    [CascadingParameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
     private List<FirmClientDto> _clients = [];
 
     private async Task SearchClient()

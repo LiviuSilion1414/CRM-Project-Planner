@@ -1,0 +1,34 @@
+﻿<div class="form-group">
+    <label>@nameof(DataContainer.DataManager.NewItem.Name):</label>
+    <InputText class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.Name" />
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.NewItem.StartDate):</label>
+        <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.StartDate" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(DataContainer.DataManager.NewItem.EndDate):</label>
+        <InputDate class="form-control" @bind-Value="@DataContainer.DataManager.NewItem.EndDate" />
+    </div>
+    <br />
+    <h5>WorkOrder Information</h5>
+    <div class="form-group">
+        <div class="card" style="margin: 0;">
+            <div style="float: left;">
+                <strong>WorkOrder info</strong>
+                <p style="text-indent: 40px;"><strong>Name: </strong>@DataContainer.DataManager.NewItem.WorkOrder.Name</p>
+                <p style="text-indent: 40px;"><strong>Start Date: </strong>@DataContainer.DataManager.NewItem.WorkOrder.StartDate</p>
+                <p style="text-indent: 40px;"><strong>End Date: </strong>@DataContainer.DataManager.NewItem.WorkOrder.StartDate</p>
+                <br />
+                <div style="float: left;">
+                    <strong>Client Info</strong>
+                    <p style="text-indent: 40px;"><strong>Name: </strong>@DataContainer.DataManager.NewItem.WorkOrder.FirmClient.Name</p>
+                    <p style="text-indent: 40px;"><strong>Vat Number: </strong>@DataContainer.DataManager.NewItem.WorkOrder.FirmClient.VatNumber</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] public CascadingDataContainer<ActivityDto> DataContainer { get; set; }
+}

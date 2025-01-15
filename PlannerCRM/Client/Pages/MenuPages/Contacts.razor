@@ -6,23 +6,23 @@
 
 <CascadingValue Value="@_dataContainer">
     <DataGridView 
-        TItem="@FirmClientDto"
-        GetCascadingContainerStates="@GetCascadingContainerStates"
-        ShouldFetchNewData="@ReloadUpdatedData" />
+            TItem="@FirmClientDto"
+            GetCascadingContainerStates="@GetCascadingContainerStates"
+            ShouldFetchNewData="@ReloadUpdatedData"/>
     <DataGridViewItemHandler 
-        TItem="@FirmClientDto"
-        AddAction="@(async client => await AddClient(client))"
-        UpdateAction="@(async client => await UpdateClient(client))"
-        DeleteAction="@(async client => await DeleteClient(client))"
-        DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
+            TItem="@FirmClientDto"
+            AddAction="@(async client => await AddClient(client))"
+            UpdateAction="@(async client => await UpdateClient(client))"
+            DeleteAction="@(async client => await DeleteClient(client))"
+            DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
         <AddFormMarkup>
-            <FirmClientAddForm DataContainer="@_dataContainer" />
+            <FirmClientAddForm/>
         </AddFormMarkup>
         <EditFormMarkup>
-            <FirmClientEditForm DataContainer="@_dataContainer" />
+            <FirmClientEditForm/>
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <FirmClientViewForm WorkOrders="@_workOrders"/>
+            <FirmClientViewForm/>
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>

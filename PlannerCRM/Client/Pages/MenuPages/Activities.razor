@@ -17,13 +17,13 @@
         DeleteMultipleAction="@(async activities => await DeleteMultipleWorkOrders(activities))"
     >
         <AddFormMarkup>
-            <ActivityAddForm DataContainer="@_dataContainer" />
+            <ActivityAddForm/>
         </AddFormMarkup>
         <EditFormMarkup>
-            <ActivityEditForm DataContainer="@_dataContainer" />
+            <ActivityEditForm/>
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <!-- To do -->
+            <ActivityViewForm/>
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>

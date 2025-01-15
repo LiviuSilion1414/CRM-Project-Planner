@@ -16,13 +16,13 @@
         DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
         DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>
-            <WorkOrderAddForm DataContainer="@_dataContainer"/>
+            <WorkOrderAddForm/>
         </AddFormMarkup>
         <EditFormMarkup>
-            <WorkOrderEditForm DataContainer="@_dataContainer" />
+            <WorkOrderEditForm />
         </EditFormMarkup>
         <ViewDetailsMarkup>
-            <WorkOrderViewForm DataContainer="@_dataContainer" Activities="@_activities" />
+            <WorkOrderViewForm Activities="@_activities" />
         </ViewDetailsMarkup>
     </DataGridViewItemHandler>
 </CascadingValue>

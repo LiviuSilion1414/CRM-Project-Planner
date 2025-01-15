@@ -8,6 +8,5 @@
 </div>
 
 @code {
-    [Parameter] public CascadingDataContainer<FirmClientDto> DataContainer { get; set; }
-
+    [CascadingParameter] public CascadingDataContainer<FirmClientDto> DataContainer { get; set; }
 }

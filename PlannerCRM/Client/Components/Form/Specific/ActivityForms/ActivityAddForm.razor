@@ -64,7 +64,7 @@
 </div>
 
 @code {
-    [Parameter] public CascadingDataContainer<ActivityDto> DataContainer { get; set; }
+    [CascadingParameter] public CascadingDataContainer<ActivityDto> DataContainer { get; set; }
 
     private List<WorkOrderDto> _workOrders = [];
 

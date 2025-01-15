@@ -11,7 +11,7 @@
 </div>
 
 @code {
-    [Parameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
+    [CascadingParameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
     [Parameter] public List<ActivityDto> Activities { get; set; }
 
 }
