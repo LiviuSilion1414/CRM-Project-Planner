@@ -9,15 +9,13 @@ public class ActivityDto
     public string Name { get; set; }
 
     [Required]
-    [PresentOrFutureDate]
     public DateTime CreationDate { get; set; } = DateTime.Now;
 
     [Required]
-    [PresentOrFutureDate]
     public DateTime StartDate { get; set; }
 
     [Required]
-    [PresentOrFutureDate]
+    [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
     public DateTime EndDate { get; set; }
 
     [Required]

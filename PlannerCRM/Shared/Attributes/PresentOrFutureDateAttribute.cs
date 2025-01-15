@@ -4,7 +4,6 @@ public sealed class PresentOrFutureDateAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        // your validation logic
         if (Convert.ToDateTime(value) >= DateTime.Today)
         {
             return ValidationResult.Success;
