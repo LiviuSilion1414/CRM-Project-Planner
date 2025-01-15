@@ -6,7 +6,7 @@
             <img src="..." class="rounded me-2" alt="...">
             <strong class="me-auto">@SenderName</strong>
             <small>@ReceptionTime</small>
-            <button type="button" class="btn-close" @onclick="HideToast" aria-label="Close"></button>
+            <button type="button" class="btn-close" @onclick="@HideToast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
             Hello, world! This is a toast message.
@@ -18,6 +18,7 @@
     [Parameter] public DateTime ReceptionTime { get; set; } = DateTime.Now;
     [Parameter] public string Message { get; set; } = "Operation succeded!";
     [Parameter] public string SenderName { get; set; } = "PlannerCRM";
+    [Parameter] public EventCallback OnToastClose { get; set; }
 
     private string ToastClasses = "toast fade show";
     private Timer _timer;

@@ -1,7 +1,8 @@
 ﻿<Modal Size="@ModalSize.SMALL"
        Title="@Title" 
        CanCloseModal="@_canCloseModal" 
-       SecondAction="@(async () => await OnDelete())" SecondActionText="Delete">
+       SecondAction="@(async () => await OnDelete())" SecondActionText="Delete"
+       OnModalClose="@(() => OnAlertClose.InvokeAsync())">
        <Body>
            @BodyMessage
        </Body>
@@ -11,6 +12,7 @@
     [Parameter] public string Title { get; set; }
     [Parameter] public string BodyMessage { get; set; }
     [Parameter] public EventCallback<bool> IsDeleteConfirmed { get; set; }
+    [Parameter] public EventCallback OnAlertClose { get; set; }
 
     private bool _canCloseModal = false;
 

@@ -1,6 +1,11 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-<Modal Size="@ModalSize.LARGE" Title="@Title" CanCloseModal="@_canCloseModal" FirstAction="(async () => await OnValidSubmit())" FirstActionText="Submit">
+<Modal Size="@ModalSize.LARGE" 
+       Title="@Title" 
+       CanCloseModal="@_canCloseModal" 
+       FirstAction="@(async () => await OnValidSubmit())" 
+       FirstActionText="Submit"
+       OnModalClose="@(async () => await OnFormClose.InvokeAsync())">
     <Body>
         <EditForm EditContext="@_context" FormName="Form Component" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator />
@@ -16,6 +21,7 @@
     [Parameter] public TItem Model { get; set; }
     [Parameter] public RenderFragment<TItem> FormContent { get; set; }
     [Parameter] public EventCallback<TItem> OnItemChanged { get; set; }
+    [Parameter] public EventCallback OnFormClose { get; set; }
 
     private EditContext _context;
     private bool _canCloseModal = false;
