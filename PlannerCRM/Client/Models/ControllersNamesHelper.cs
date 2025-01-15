@@ -20,6 +20,26 @@ public class ControllersNamesHelper
             _ => string.Empty,
         };
     }
+
+    public static string GetControllerName(Type genericType)
+    {
+        switch (genericType)
+        {
+            case Type type when type == typeof(EmployeeDto):
+                return EMPLOYEE;
+            case Type type when type == typeof(FirmClientDto):
+                return FIRM_CLIENT;
+            case Type type when type == typeof(WorkOrderDto):
+                return WORK_ORDER;
+            case Type type when type == typeof(ActivityDto):
+                return ACTIVITY;
+            case Type type when type == typeof(WorkTimeDto):
+                return WORK_TIME;
+            default:
+                return string.Empty;
+        }
+    }
+
 }
 
 public enum ControllersNames

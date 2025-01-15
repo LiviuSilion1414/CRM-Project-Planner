@@ -2,11 +2,24 @@
 
 namespace PlannerCRM.Client.Services;
 
-public class FetchService<TItem>(HttpClient http, ControllersNames controllerName) : IFetchService<TItem>
+public class FetchService<TItem> : IFetchService<TItem>
     where TItem : class, new()
 {
-    private readonly HttpClient _http = http;
-    private readonly string _controllerName = ControllersNamesHelper.GetControllerName(controllerName);
+    private readonly HttpClient _http;
+    private readonly string _controllerName;
+
+    public FetchService(HttpClient http, string controllerName)
+    {
+        if (string.IsNullOrEmpty(controllerName))
+        {
+            _controllerName = ControllersNamesHelper.GetControllerName(typeof(TItem));
+        }
+        else
+        {
+            _http=http;
+            _controllerName=controllerName;
+        }
+    }
 
     public async Task Create(string action, TItem item)
         => await _http.PostAsJsonAsync($"api/{_controllerName}/{action}", item);
