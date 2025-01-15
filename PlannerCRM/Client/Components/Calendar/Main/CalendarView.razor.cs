@@ -73,7 +73,7 @@ public partial class CalendarView : ComponentBase
 
     private async Task LoadData(PaginationHelper paginationHelper)
         => DataContainer.DataManager.MainItems =
-                await ActivityFetchService.GetAll(ControllersNames.ACTIVITY, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
+                await ActivityFetchService.GetAll(ControllersNames.ACTIVITY, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
 
     private async Task DeleteActivity(ActivityDto activity)
         => await ActivityFetchService.Delete(ControllersNames.ACTIVITY, CrudApiManager.DELETE, activity.Id);

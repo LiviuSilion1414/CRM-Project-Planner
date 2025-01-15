@@ -54,5 +54,5 @@
 
     private async Task LoadData(PaginationHelper paginationHelper)
         => _dataContainer.DataManager.MainItems =
-            await ClientFetchService.GetAll(ControllersNames.FIRM_CLIENT, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Offset, paginationHelper.Limit);
+            await ClientFetchService.GetAll(ControllersNames.FIRM_CLIENT, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
 }

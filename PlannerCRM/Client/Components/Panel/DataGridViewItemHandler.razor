@@ -1,57 +1,60 @@
 ﻿@typeparam TItem where TItem : class, new()
 
-@if (DataContainer.ActionStateManager.IsViewSelected)
+@if (DataContainer is not null && DataContainer.ActionStateManager is not null) 
 {
-    <ItemPanel TItem="@TItem" 
-    Item="@DataContainer.DataManager.SelectedItem"
-    Properties="@DataContainer.DataManager.SelectedProperties"
-    OnEdit="@(() => ToggleEditItem(DataContainer.DataManager.SelectedItem))"
-    OnDelete="@(() => ToggleDeleteItem(DataContainer.DataManager.SelectedItem))">
-        <Content>
-            @ViewDetailsMarkup(DataContainer.DataManager.SelectedItem)
-        </Content>
-    </ItemPanel>
-}
+    @if (DataContainer.ActionStateManager.IsViewSelected)
+    {
+        <ItemPanel TItem="@TItem" 
+        Item="@DataContainer.DataManager.SelectedItem"
+        Properties="@DataContainer.DataManager.SelectedProperties"
+        OnEdit="@(() => ToggleEditItem(DataContainer.DataManager.SelectedItem))"
+        OnDelete="@(() => ToggleDeleteItem(DataContainer.DataManager.SelectedItem))">
+            <Content>
+                @ViewDetailsMarkup(DataContainer.DataManager.SelectedItem)
+            </Content>
+        </ItemPanel>
+    }
 
-else if (DataContainer.ActionStateManager.IsAddSelected)
-{
-    <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.DataManager.NewItem" OnItemChanged="@OnItemDataAdded">
-        <FormContent>
-            @AddFormMarkup(DataContainer.DataManager.NewItem)
-        </FormContent>
-    </FormView>
-}
+    else if (DataContainer.ActionStateManager.IsAddSelected)
+    {
+        <FormView Title="Add new item " TItem="@TItem" Model="@DataContainer.DataManager.NewItem" OnItemChanged="@OnItemDataAdded">
+            <FormContent>
+                @AddFormMarkup(DataContainer.DataManager.NewItem)
+            </FormContent>
+        </FormView>
+    }
 
-else if (DataContainer.ActionStateManager.IsUpdateSelected)
-{
-    <FormView Title="Edit new item " TItem="@TItem" Model="@DataContainer.DataManager.SelectedItem" OnItemChanged="@OnItemDataUpdated">
-        <FormContent>
-            @EditFormMarkup(DataContainer.DataManager.SelectedItem)
-        </FormContent>
-    </FormView>
-}
+    else if (DataContainer.ActionStateManager.IsUpdateSelected)
+    {
+        <FormView Title="Edit new item " TItem="@TItem" Model="@DataContainer.DataManager.SelectedItem" OnItemChanged="@OnItemDataUpdated">
+            <FormContent>
+                @EditFormMarkup(DataContainer.DataManager.SelectedItem)
+            </FormContent>
+        </FormView>
+    }
 
-else if (DataContainer.ActionStateManager.IsDeleteSingleSelected)
-{
-    <AlertComponent Title="Sure to delete this item?"
-    BodyMessage="The action is irreversible!"
-    IsDeleteConfirmed="@OnItemDeleteConfirmation" />
-}
+    else if (DataContainer.ActionStateManager.IsDeleteSingleSelected)
+    {
+        <AlertComponent Title="Sure to delete this item?"
+        BodyMessage="The action is irreversible!"
+        IsDeleteConfirmed="@OnItemDeleteConfirmation" />
+    }
 
-else if (DataContainer.ActionStateManager.IsDeleteMultipleSelected)
-{
-    <AlertComponent Title="Sure to delete this item?"
-    BodyMessage="The action is irreversible!"
-    IsDeleteConfirmed="@OnMultipleItemsDeleteConfirmation" />
-}
+    else if (DataContainer.ActionStateManager.IsDeleteMultipleSelected)
+    {
+        <AlertComponent Title="Sure to delete this item?"
+        BodyMessage="The action is irreversible!"
+        IsDeleteConfirmed="@OnMultipleItemsDeleteConfirmation" />
+    }
 
-else if (DataContainer.ActionStateManager.IsOperationDone)
-{
-    <Toast />
-}
+    else if (DataContainer.ActionStateManager.IsOperationDone)
+    {
+        <Toast />
+    }
 
-else
-{ }
+    else
+    { }
+}
 
 @code
 {
