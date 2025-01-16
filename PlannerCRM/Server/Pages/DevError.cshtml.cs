@@ -2,7 +2,7 @@
 
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 [IgnoreAntiforgeryToken]
-public class ErrorModel : PageModel
+public class DevErrorModel : PageModel
 {
     public string RequestId { get; set; }
 
@@ -10,7 +10,7 @@ public class ErrorModel : PageModel
 
     private readonly ILogger<ErrorModel> _logger;
 
-    public ErrorModel(ILogger<ErrorModel> logger)
+    public DevErrorModel(ILogger<ErrorModel> logger)
     {
         _logger = logger;
     }

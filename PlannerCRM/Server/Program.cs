@@ -20,7 +20,9 @@ builder.Logging.AddConfiguration(
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment()) {
-    app.UseWebAssemblyDebugging();
+    app.UseExceptionHandler("/DevError");
+
+    //app.UseWebAssemblyDebugging();
 } else {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
