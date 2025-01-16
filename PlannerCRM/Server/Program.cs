@@ -19,11 +19,9 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) {
-    app.UseExceptionHandler("/DevError");
+app.UseMiddleware<CustomExceptionMiddleware>();
 
-    //app.UseWebAssemblyDebugging();
-} else {
+if (!app.Environment.IsDevelopment()) {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
@@ -33,10 +31,7 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-//app.UseAuthentication();
-
 app.UseRouting();
-//app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();

@@ -15,6 +15,7 @@ global using PlannerCRM.Shared.Dtos.JoinEntities;
 global using PlannerCRM.Server.DataAccess;
 global using PlannerCRM.Server.Extensions;
 global using PlannerCRM.Server.Interfaces;
+global using PlannerCRM.Server.Middlewares;
 global using PlannerCRM.Server.Models.Entities;
 global using PlannerCRM.Server.Models.JoinEntities;
 global using PlannerCRM.Server.Repositories.Specific;
