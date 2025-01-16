@@ -30,27 +30,29 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         _context.Clients.Attach(model.WorkOrder.FirmClient);
 
         await base.EditAsync(model, id);
-
-        var existingEmployeeActivity = await _context.EmployeeActivities
-            .Where(a => a.Id == id)
-            .ToListAsync();
-
-        List<EmployeeActivity> updatedEmployeeActivities = [];
-
-        foreach (var em in model.Employees)
+        if (model.Employees is not null)
         {
-            if (!existingEmployeeActivity.Any(ex => ex.EmployeeId == em.Id))
-            {
-                updatedEmployeeActivities.Add(
-                    new EmployeeActivity()
-                    {
-                        EmployeeId = em.Id
-                    }
-                );
-            }
-        }
+            var existingEmployeeActivity = await _context.EmployeeActivities
+                .Where(a => a.Id == id)
+                .ToListAsync();
 
-        _context.Update(updatedEmployeeActivities);
+            List<EmployeeActivity> updatedEmployeeActivities = [];
+
+            foreach (var em in model.Employees)
+            {
+                if (!existingEmployeeActivity.Any(ex => ex.EmployeeId == em.Id))
+                {
+                    updatedEmployeeActivities.Add(
+                        new EmployeeActivity()
+                        {
+                            EmployeeId = em.Id
+                        }
+                    );
+                }
+            }
+
+            _context.Update(updatedEmployeeActivities);
+        }
 
         await _context.SaveChangesAsync();
     }
