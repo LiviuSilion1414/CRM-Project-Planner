@@ -1,5 +1,6 @@
 ﻿using PlannerCRM.Client.Components.Calendar.Views;
 using PlannerCRM.Client.Components.Panel;
+using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Client.Components.Calendar.Main;
 

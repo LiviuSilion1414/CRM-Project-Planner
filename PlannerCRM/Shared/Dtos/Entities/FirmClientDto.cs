@@ -9,7 +9,7 @@ public class FirmClientDto
     [MaxLength(50)]
     public string Name { get; set; }
     
-    [Length(11, 11)]
+    [Length(8, 15)]
     [Required]
     public string VatNumber { get; set; }
     public List<WorkOrderDto> WorkOrders { get; set; }

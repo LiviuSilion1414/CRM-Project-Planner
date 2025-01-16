@@ -1,6 +1,4 @@
-﻿using PlannerCRM.Shared.Dtos.Entities;
-
-namespace PlannerCRM.Shared.Dtos.JunctionEntities;
+﻿namespace PlannerCRM.Shared.Dtos.JoinEntities;
 
 public class EmployeeSalaryDto
 {

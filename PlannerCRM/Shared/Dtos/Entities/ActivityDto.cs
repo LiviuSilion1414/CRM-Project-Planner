@@ -24,8 +24,8 @@ public class ActivityDto
     [Required]
     public WorkOrderDto WorkOrder { get; set; }
 
-    //// Navigation properties
-    //[Required]
+    // Navigation properties
+
     //public List<EmployeeDto> Employees { get; set; }
     //public List<EmployeeActivityDto> EmployeeActivities { get; set; }
     //public List<ActivityWorkTimeDto> ActivityWorkTimes { get; set; }

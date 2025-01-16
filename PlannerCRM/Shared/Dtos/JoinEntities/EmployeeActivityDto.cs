@@ -1,6 +1,5 @@
-﻿using PlannerCRM.Shared.Dtos.Entities;
+﻿namespace PlannerCRM.Shared.Dtos.JoinEntities;
 
-namespace PlannerCRM.Shared.Dtos.JunctionEntities;
 public class EmployeeActivityDto
 {
     public int Id { get; set; }

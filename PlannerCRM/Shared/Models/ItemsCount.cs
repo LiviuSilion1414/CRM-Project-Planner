@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Constants;
+﻿namespace PlannerCRM.Shared.Models;
 
 public enum ItemsCount
 {

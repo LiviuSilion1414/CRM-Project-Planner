@@ -10,7 +10,7 @@ public class EmployeeDto
     public string Email { get; set; }
     public string UserName { get; set; }
 
-    //// Navigation properties
+    // Navigation properties
     //public List<WorkTimeDto> WorkTimes { get; set; }
     //public List<ActivityDto> Activities { get; set; }
     //public List<RoleDto> Roles { get; set; }

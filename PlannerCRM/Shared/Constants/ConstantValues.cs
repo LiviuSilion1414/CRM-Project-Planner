@@ -1,3 +1,5 @@
+using PlannerCRM.Shared.Models;
+
 namespace PlannerCRM.Shared.Constants;
 
 public static class ConstantValues
