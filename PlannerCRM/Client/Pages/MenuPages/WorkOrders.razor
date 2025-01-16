@@ -8,7 +8,7 @@
                   GetCascadingContainerStates="@GetCascadingContainerStates" />
     <DataGridViewItemHandler TItem="@WorkOrderDto"
                              AddAction="@(async workOrder => await WorkOrderFetchService.Create(ControllersNames.WORK_ORDER, CrudApiManager.ADD, workOrder))"
-                             UpdateAction="@(async workOrder => await WorkOrderFetchService.Update(ControllersNames.WORK_ORDER, CrudApiManager.EDIT, workOrder))"
+                             UpdateAction="@(async workOrder => await WorkOrderFetchService.Update(ControllersNames.WORK_ORDER, $"{CrudApiManager.EDIT}/{workOrder.Id}", workOrder))"
                              DeleteAction="@(async workOrder => await DeleteWorkOrder(workOrder))"
                              DeleteMultipleAction="@(async workOrders => await DeleteMultipleClients(workOrders))">
         <AddFormMarkup>

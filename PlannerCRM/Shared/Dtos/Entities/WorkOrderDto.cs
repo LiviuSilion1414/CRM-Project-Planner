@@ -18,9 +18,13 @@ public class WorkOrderDto
     [Required]
     [PresentOrFutureDate]
     public DateTime EndDate { get; set; }
+    
     [Required]
     public int FirmClientId { get; set; }
+    
     public int WorkOrderCostId { get; set; }
+    [Required]
+
     public FirmClientDto FirmClient { get; set; }
     public List<ActivityDto> Activities { get; set; }
 

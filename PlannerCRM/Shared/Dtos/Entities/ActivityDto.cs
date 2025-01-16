@@ -20,6 +20,8 @@ public class ActivityDto
 
     [Required]
     public int WorkOrderId { get; set; }
+    
+    [Required]
     public WorkOrderDto WorkOrder { get; set; }
 
     //// Navigation properties

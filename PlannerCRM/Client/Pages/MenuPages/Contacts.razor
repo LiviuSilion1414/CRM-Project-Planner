@@ -8,7 +8,7 @@
                   GetCascadingContainerStates="@GetCascadingContainerStates" />
     <DataGridViewItemHandler TItem="@FirmClientDto"
                              AddAction="@(async client => await ClientFetchService.Create(ControllersNames.FIRM_CLIENT, CrudApiManager.ADD, client))"
-                             UpdateAction="@(async client => await ClientFetchService.Update(ControllersNames.FIRM_CLIENT, CrudApiManager.EDIT, client))"
+                             UpdateAction="@(async client => await ClientFetchService.Update(ControllersNames.FIRM_CLIENT, $"{CrudApiManager.EDIT}/{client.Id}", client))"
                              DeleteAction="@(async client => await DeleteClient(client))"
                              DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
         <AddFormMarkup>

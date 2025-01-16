@@ -8,7 +8,7 @@
                   GetCascadingContainerStates="@GetCascadingContainerStates" />
     <DataGridViewItemHandler TItem="@ActivityDto"
                              AddAction="@(async activity => await ActivityFetchService.Create(ControllersNames.ACTIVITY, CrudApiManager.ADD, activity))"
-                             UpdateAction="@(async activity => await ActivityFetchService.Update(ControllersNames.ACTIVITY, CrudApiManager.EDIT, activity))"
+                             UpdateAction="@(async activity => await ActivityFetchService.Update(ControllersNames.ACTIVITY, $"{CrudApiManager.EDIT}/{activity.Id}", activity))"
                              DeleteAction="@(async activity => await DeleteActivity(activity))"
                              DeleteMultipleAction="@(async activities => await DeleteMultipleActivities(activities))">
         <AddFormMarkup>

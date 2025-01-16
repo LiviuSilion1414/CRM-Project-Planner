@@ -9,7 +9,6 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
     public override async Task AddAsync(WorkOrder model)
     {
         _context.Attach(model.FirmClient);
-        _context.Attach(model.WorkOrderCost);
 
         await base.AddAsync(model);
 
