@@ -1,6 +1,4 @@
-﻿@inject HttpClient http
-
-@if (DataContainer is not null)
+﻿@if (DataContainer is not null)
 {
     <div class="form-group">
         <label>@nameof(DataContainer.DataManager.NewItem.Name):</label>
@@ -17,7 +15,8 @@
     <br />
     <h5>Client Information</h5>
     <div class="form-group">
-        @if (DataContainer.DataManager.NewItem.FirmClient is null)
+        @if (DataContainer.DataManager.NewItem.FirmClient is null || 
+          string.IsNullOrEmpty(DataContainer.DataManager.NewItem.FirmClient.Name))
         {
             <div style="margin: 0;">
                 <div style="float: left;">
@@ -34,7 +33,7 @@
                 @foreach (var client in _clients)
                 {
                     <button type="button" class="list-group-item list-group-item-action"
-                            @onclick="@(() => SelectClient(client))">
+                    @onclick="@(() => SelectClient(client))">
                         @client.Name
                     </button>
                 }
@@ -48,7 +47,7 @@
                     <p><strong>VatNumber: </strong>@DataContainer.DataManager.NewItem.FirmClient.VatNumber</p>
                 </div>
                 <div style="float: left;">
-                    <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(null))">
+                    <button class="btn btn-outlien-danger" @onclick="@(() => SelectClient(new()))">
                         <i class="bi bi-trash3"></i>
                         Remove
                     </button>
@@ -59,14 +58,17 @@
 }
 
 @code {
+    [Inject] public IFetchService<FirmClientDto> FetchService { get; set; }
+
     [CascadingParameter] public CascadingDataContainer<WorkOrderDto> DataContainer { get; set; }
+
     private List<FirmClientDto> _clients = [];
 
     private async Task SearchClient()
     {
         if (DataContainer.QueryManager.HasQuery)
         {
-            _clients = await http.GetFromJsonAsync<List<FirmClientDto>>($"/api/client/searchClientByName/{DataContainer.QueryManager.Query}");
+            _clients = await FetchService.GetAll(ControllersNames.FIRM_CLIENT, ClientApiManager.SearchClientByName(DataContainer.QueryManager.Query));
         }
     }
 
