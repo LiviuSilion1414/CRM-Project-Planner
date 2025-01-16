@@ -9,14 +9,13 @@ global using System.ComponentModel.DataAnnotations.Schema;
 
 global using AutoMapper;
 
-global using PlannerCRM.Shared.Constants;
 global using PlannerCRM.Shared.Dtos.Entities;
-global using PlannerCRM.Shared.Dtos.JunctionEntities;
+global using PlannerCRM.Shared.Dtos.JoinEntities;
 
 global using PlannerCRM.Server.DataAccess;
 global using PlannerCRM.Server.Extensions;
 global using PlannerCRM.Server.Interfaces;
 global using PlannerCRM.Server.Models.Entities;
-global using PlannerCRM.Server.Models.JunctionEntities;
+global using PlannerCRM.Server.Models.JoinEntities;
 global using PlannerCRM.Server.Repositories.Specific;
 global using PlannerCRM.Server.Repositories.Generic;

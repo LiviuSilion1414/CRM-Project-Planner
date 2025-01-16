@@ -15,7 +15,7 @@ public class WorkOrderDto
     public DateTime StartDate { get; set; }
 
     [Required]
-    [DateRangeValidation(nameof(StartDate), nameof(EndDate)]
+    [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
     public DateTime EndDate { get; set; }
 
     // Navigation properties

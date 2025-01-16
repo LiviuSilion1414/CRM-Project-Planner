@@ -1,6 +1,4 @@
-﻿using PlannerCRM.Server.Models.JunctionEntities;
-
-namespace PlannerCRM.Server.Models.Entities;
+﻿namespace PlannerCRM.Server.Models.Entities;
 
 public class Employee : IdentityUser<int>
 {

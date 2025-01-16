@@ -1,6 +1,4 @@
-﻿namespace PlannerCRM.Server.Models.JunctionEntities;
-
-using PlannerCRM.Server.Models.Entities;
+﻿namespace PlannerCRM.Server.Models.JoinEntities;
 
 public class EmployeeRole : IdentityRole<int>
 {

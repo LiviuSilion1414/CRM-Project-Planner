@@ -1,7 +1,4 @@
-﻿using PlannerCRM.Shared.Dtos.JunctionEntities;
-using PlannerCRM.Shared.Models;
-
-namespace PlannerCRM.Shared.Dtos.Entities;
+﻿namespace PlannerCRM.Shared.Dtos.Entities;
 
 public class RoleDto
 {

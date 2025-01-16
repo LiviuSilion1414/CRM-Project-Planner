@@ -1,5 +1,4 @@
-﻿using PlannerCRM.Server.Models.JunctionEntities;
-using PlannerCRM.Shared.Models;
+﻿using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Models.Entities;
 

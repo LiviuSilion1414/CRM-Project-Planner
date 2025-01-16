@@ -1,7 +1,3 @@
-using PlannerCRM.Server.Extensions;
-using PlannerCRM.Server.Models.Entities;
-using PlannerCRM.Server.Models.JunctionEntities;
-
 namespace PlannerCRM.Server.DataAccess;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) 

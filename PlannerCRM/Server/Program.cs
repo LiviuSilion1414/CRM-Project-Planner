@@ -1,7 +1,3 @@
-using PlannerCRM.Server.Extensions;
-using PlannerCRM.Server.Models.Entities;
-using PlannerCRM.Server.Models.JunctionEntities;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();

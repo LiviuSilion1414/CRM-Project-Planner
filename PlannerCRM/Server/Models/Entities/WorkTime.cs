@@ -1,7 +1,4 @@
-﻿using PlannerCRM.Server.Models.JunctionEntities;
-using System.Diagnostics;
-
-namespace PlannerCRM.Server.Models.Entities;
+﻿namespace PlannerCRM.Server.Models.Entities;
 
 public class WorkTime
 {
