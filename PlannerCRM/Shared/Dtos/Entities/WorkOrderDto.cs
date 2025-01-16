@@ -12,23 +12,19 @@ public class WorkOrderDto
     public DateTime CreationTime { get => DateTime.UtcNow; }
     
     [Required]
-    [PresentOrFutureDate]
     public DateTime StartDate { get; set; }
 
     [Required]
-    [PresentOrFutureDate]
+    [DateRangeValidation(nameof(StartDate), nameof(EndDate)]
     public DateTime EndDate { get; set; }
-    
+
+    // Navigation properties
     [Required]
     public int FirmClientId { get; set; }
     
     public int WorkOrderCostId { get; set; }
+   
     [Required]
-
     public FirmClientDto FirmClient { get; set; }
-    public List<ActivityDto> Activities { get; set; }
-
-    // Navigation properties
-    //[Required]
     //public WorkOrderCostDto WorkOrderCost { get; set; }
 }
