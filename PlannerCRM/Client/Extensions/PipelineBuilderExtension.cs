@@ -4,14 +4,14 @@ public static class PipelineBuilderExtension
 {
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
-        services.AddScoped<IFetchService<ActivityDto>, FetchService<ActivityDto>>();
-        services.AddScoped<IFetchService<EmployeeDto>, FetchService<EmployeeDto>>();
-        services.AddScoped<IFetchService<FirmClientDto>, FetchService<FirmClientDto>>();
-        services.AddScoped<IFetchService<RoleDto>, FetchService<RoleDto>>();
-        services.AddScoped<IFetchService<SalaryDto>, FetchService<SalaryDto>>();
-        services.AddScoped<IFetchService<WorkOrderDto>, FetchService<WorkOrderDto>>();
-        services.AddScoped<IFetchService<WorkOrderCostDto>, FetchService<WorkOrderCostDto>>();
-        services.AddScoped<IFetchService<WorkTimeDto>, FetchService<WorkTimeDto>>();
+        services.AddScoped<FetchService<ActivityDto>>();
+        services.AddScoped<FetchService<EmployeeDto>>();
+        services.AddScoped<FetchService<FirmClientDto>>();
+        services.AddScoped<FetchService<RoleDto>, FetchService<RoleDto>>();
+        services.AddScoped<FetchService<SalaryDto>>();
+        services.AddScoped<FetchService<WorkOrderDto>>();
+        services.AddScoped<FetchService<WorkOrderCostDto>>();
+        services.AddScoped<FetchService<WorkTimeDto>>();
 
         return services;
     }

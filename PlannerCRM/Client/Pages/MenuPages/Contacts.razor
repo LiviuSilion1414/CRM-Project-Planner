@@ -3,28 +3,8 @@
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
 
-<CascadingValue Value="@_dataContainer">
-    <DataGridView TItem="@FirmClientDto"
-                  GetCascadingContainerStates="@GetCascadingContainerStates" />
-    <DataGridViewItemHandler TItem="@FirmClientDto"
-                             AddAction="@(async client => await ClientFetchService.Create(ControllersNames.FIRM_CLIENT, CrudApiManager.ADD, client))"
-                             UpdateAction="@(async client => await ClientFetchService.Update(ControllersNames.FIRM_CLIENT, $"{CrudApiManager.EDIT}/{client.Id}", client))"
-                             DeleteAction="@(async client => await DeleteClient(client))"
-                             DeleteMultipleAction="@(async clients => await DeleteMultipleClients(clients))">
-        <AddFormMarkup>
-            <FirmClientAddForm />
-        </AddFormMarkup>
-        <EditFormMarkup>
-            <FirmClientEditForm />
-        </EditFormMarkup>
-        <ViewDetailsMarkup>
-            <FirmClientViewForm />
-        </ViewDetailsMarkup>
-    </DataGridViewItemHandler>
-</CascadingValue>
-
 @code {
-    [Inject] public IFetchService<FirmClientDto> ClientFetchService { get; set; }
+    [Inject] public FetchService<FirmClientDto> ClientFetchService { get; set; }
 
     private CascadingDataContainer<FirmClientDto> _dataContainer = new()
         {

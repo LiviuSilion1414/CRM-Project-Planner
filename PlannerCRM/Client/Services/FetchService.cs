@@ -2,7 +2,7 @@
 
 namespace PlannerCRM.Client.Services;
 
-public class FetchService<TItem>(HttpClient http) : IFetchService<TItem>
+public class FetchService<TItem>(HttpClient http)
     where TItem : class, new()
 {
     private readonly HttpClient _http = http;
