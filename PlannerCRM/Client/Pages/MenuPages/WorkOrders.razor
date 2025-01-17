@@ -3,37 +3,27 @@
 <h3>Workorders</h3>
 <PageTitle>Workorders</PageTitle>
 
+<RadzenDataGrid Data="@_workOrders" TItem="@WorkOrderDto" AllowSorting="true" AllowPaging="true" AllowFiltering="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
+        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="StartDate" Title="Start Date" />
+        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="EndDate" Title="End Date" />
+    </Columns>
+</RadzenDataGrid>
 
 @code {
     [Inject] public FetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
 
-    private CascadingDataContainer<WorkOrderDto> _dataContainer = new()
-        {
-            DataManager = new()
-            {
-                SelectedProperties = ["Name", "StartDate", "EndDate"]
-            }
-        };
-
+    private List<WorkOrderDto> _workOrders = new();
+    private PaginationHelper _paginationHelper = new() { Limit = 100, Offset = 0 };
 
     protected override async Task OnInitializedAsync()
-        => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
-
-    private void GetCascadingContainerStates(CascadingDataContainer<WorkOrderDto> dataContainer)
-        => _dataContainer = dataContainer;
-
-    private async Task DeleteWorkOrder(WorkOrderDto workOrder)
-        => await WorkOrderFetchService.Delete(ControllersNames.WORK_ORDER, CrudApiManager.DELETE, workOrder.Id);
-
-    private async Task DeleteMultipleClients(IEnumerable<WorkOrderDto> workOrders)
-    {
-        foreach (var workOrder in workOrders)
-        {
-            await DeleteWorkOrder(workOrder);
-        }
+    { 
+        _workOrders = await WorkOrderFetchService.GetAll(
+            ControllersNames.WORK_ORDER, 
+            CrudApiManager.GET_WITH_PAGINATION, 
+            _paginationHelper.Limit, 
+            _paginationHelper.Offset
+        );
     }
-
-    private async Task LoadData(PaginationHelper paginationHelper)
-        => _dataContainer.DataManager.MainItems =
-            await WorkOrderFetchService.GetAll(ControllersNames.WORK_ORDER, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
 }

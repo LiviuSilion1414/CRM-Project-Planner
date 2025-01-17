@@ -1,41 +1,28 @@
-﻿@page "/contacts"
+﻿@page "/clients"
 
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
 
+<RadzenDataGrid Data="@_clients" TItem="@FirmClientDto" AllowSorting="true" AllowPaging="true" AllowFiltering="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
+        <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
+    </Columns>
+</RadzenDataGrid>
+
 @code {
     [Inject] public FetchService<FirmClientDto> ClientFetchService { get; set; }
 
-    private CascadingDataContainer<FirmClientDto> _dataContainer = new()
-        {
-            DataManager = new()
-            {
-                SelectedProperties = ["Name", "VatNumber"],
-                MainItems = [],
-                SelectedItems = [],
-                NewItem = new(),
-                SelectedItem = new()
-            }
-        };
+    private List<FirmClientDto> _clients = new();
+    private PaginationHelper paginationHelper = new() { Limit = 100, Offset = 0 };
 
     protected override async Task OnInitializedAsync()
-        => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
-
-    private void GetCascadingContainerStates(CascadingDataContainer<FirmClientDto> dataContainer)
-        => _dataContainer = dataContainer;
-
-    private async Task DeleteClient(FirmClientDto client)
-        => await ClientFetchService.Delete(ControllersNames.FIRM_CLIENT, CrudApiManager.DELETE, client.Id);
-
-    private async Task DeleteMultipleClients(IEnumerable<FirmClientDto> clients)
     {
-        foreach (var client in clients)
-        {
-            await DeleteClient(client);
-        }
+        _clients = await ClientFetchService.GetAll(
+            ControllersNames.FIRM_CLIENT, 
+            CrudApiManager.GET_WITH_PAGINATION, 
+            paginationHelper.Limit, 
+            paginationHelper.Offset
+        );
     }
-
-    private async Task LoadData(PaginationHelper paginationHelper)
-        => _dataContainer.DataManager.MainItems =
-            await ClientFetchService.GetAll(ControllersNames.FIRM_CLIENT, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
 }

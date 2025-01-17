@@ -3,47 +3,28 @@
 <h3>Activities</h3>
 <PageTitle>Activities</PageTitle>
 
+<RadzenDataGrid Data="@_activities" TItem="@ActivityDto" AllowSorting="true" AllowPaging="true" AllowFiltering="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="@ActivityDto" Property="Name" Title="Name" />
+        <RadzenDataGridColumn TItem="@ActivityDto" Property="StartDate" Title="Start Date" />
+        <RadzenDataGridColumn TItem="@ActivityDto" Property="EndDate" Title="End Date" />
+    </Columns>
+</RadzenDataGrid>
 
 @code {
     [Inject] public FetchService<ActivityDto> ActivityFetchService { get; set; }
     [Inject] public FetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
 
-    private CascadingDataContainer<ActivityDto> _dataContainer { get; set; } = new()
-    {
-        DataManager = new()
-        {
-            MainItems = [],
-            SelectedItems = [],
-            SelectedProperties = ["Name", "StartDate", "EndDate"],
-            NewItem = new()
-            {
-                WorkOrder = new()
-                {
-                    FirmClient = new()
-                }
-            },
-            SelectedItem = new()
-        }
-    };
+    private List<ActivityDto> _activities = new();
+    private PaginationHelper paginationHelper = new() { Limit = 100, Offset = 0 };
 
     protected override async Task OnInitializedAsync()
-        => await LoadData(new PaginationHelper { Limit = 100, Offset = 0 });
-
-    private void GetCascadingContainerStates(CascadingDataContainer<ActivityDto> dataContainer)
-        => _dataContainer = dataContainer;
-
-    private async Task DeleteActivity(ActivityDto activity)
-        => await ActivityFetchService.Delete(ControllersNames.ACTIVITY, CrudApiManager.DELETE, activity.Id);
-
-    private async Task DeleteMultipleActivities(IEnumerable<ActivityDto> activitys)
     {
-        foreach (var activity in activitys)
-        {
-            await DeleteActivity(activity);
-        }
+        _activities = await ActivityFetchService.GetAll(
+            ControllersNames.ACTIVITY,
+            CrudApiManager.GET_WITH_PAGINATION, 
+            paginationHelper.Limit, 
+            paginationHelper.Offset
+        );
     }
-
-    private async Task LoadData(PaginationHelper paginationHelper)
-        => _dataContainer.DataManager.MainItems =
-                await ActivityFetchService.GetAll(ControllersNames.ACTIVITY, CrudApiManager.GET_WITH_PAGINATION, paginationHelper.Limit, paginationHelper.Offset);
 }
