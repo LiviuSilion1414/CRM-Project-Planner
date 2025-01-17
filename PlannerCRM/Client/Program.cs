@@ -1,3 +1,5 @@
+using Radzen;
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<App>("#app");
@@ -13,5 +15,7 @@ builder.Services.AddScoped(_ =>
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) 
     }
 );
+
+builder.Services.AddRadzenComponents();
 
 await builder.Build().RunAsync();
