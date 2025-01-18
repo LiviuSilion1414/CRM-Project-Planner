@@ -1,0 +1,19 @@
+﻿@inject DialogService dialogService
+
+<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Horizontal">
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenText TextStyle="TextStyle.H6">Name: @SelectedClient.Name</RadzenText>
+            <RadzenText TextStyle="TextStyle.H6">Vat Number: @SelectedClient.VatNumber</RadzenText>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack>
+        <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete"></RadzenButton>
+        <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit"></RadzenButton>
+    </RadzenStack>
+</RadzenStack>
+
+@code 
+{
+    [Parameter] public FirmClientDto SelectedClient { get; set; }
+}

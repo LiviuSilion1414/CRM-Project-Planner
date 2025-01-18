@@ -1,9 +1,13 @@
-﻿namespace PlannerCRM.Client.Extensions;
+﻿using Radzen;
+
+namespace PlannerCRM.Client.Extensions;
 
 public static class PipelineBuilderExtension
 {
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
+        services.AddScoped<DialogService>();
+
         services.AddScoped<FetchService<ActivityDto>>();
         services.AddScoped<FetchService<EmployeeDto>>();
         services.AddScoped<FetchService<FirmClientDto>>();
