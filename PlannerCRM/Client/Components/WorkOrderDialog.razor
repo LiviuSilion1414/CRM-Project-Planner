@@ -1,0 +1,42 @@
+﻿@inject DialogService ds
+
+<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Horizontal">
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenCard>
+                <RadzenText Text="Client Information"></RadzenText>
+                <RadzenText>Name: @SelectedWorkOrder.FirmClient.Name</RadzenText>
+                <RadzenText>Vat Number: @SelectedWorkOrder.FirmClient.VatNumber</RadzenText>
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText Text="Work Order Information"></RadzenText>
+                <RadzenText>Name: @SelectedWorkOrder.Name</RadzenText>
+                <RadzenText>Start Date: @SelectedWorkOrder.StartDate</RadzenText>
+                <RadzenText>End Date: @SelectedWorkOrder.EndDate</RadzenText>
+            </RadzenCard>
+        </RadzenRow>
+    </RadzenStack>
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenCard>
+                <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.Activities">
+                    <RadzenDataGridColumn Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="@nameof(ActivityDto.StartDate)"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="@nameof(ActivityDto.EndDate)"></RadzenDataGridColumn>
+                </RadzenDataGrid>
+            </RadzenCard>
+        </RadzenRow>
+        <RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Horizontal">
+            <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Text" Text="Close" Click="(() => ds.Close())"></RadzenButton>
+        </RadzenStack>
+        <RadzenStack AlignItems="AlignItems.End" Orientation="Orientation.Horizontal">
+            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete"></RadzenButton>
+            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit"></RadzenButton>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenStack>
+
+@code
+{
+    [Parameter] public WorkOrderDto SelectedWorkOrder { get; set; }
+}

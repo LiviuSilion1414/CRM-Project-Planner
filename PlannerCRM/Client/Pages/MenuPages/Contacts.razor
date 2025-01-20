@@ -1,15 +1,17 @@
 ﻿@page "/clients"
+@inject DialogService ds
+@inject FetchService<FirmClientDto> fs
 
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
 
 <RadzenDataGrid Data="@_clients"
-TItem="@FirmClientDto"
-AllowSorting="true"
-AllowPaging="true"
-AllowFiltering="true"
-SelectionMode="DataGridSelectionMode.Single"
-RowSelect="OnSelect">
+                TItem="@FirmClientDto"
+                AllowSorting="true"
+                AllowPaging="true"
+                AllowFiltering="true"
+                SelectionMode="DataGridSelectionMode.Single"
+                RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
@@ -17,22 +19,19 @@ RowSelect="OnSelect">
 </RadzenDataGrid>
 
 @code {
-    [Inject] public FetchService<FirmClientDto> ClientFetchService { get; set; }
-    [Inject] public DialogService DialogService { get; set; }
-
     private List<FirmClientDto> _clients = new();
-    private PaginationHelper paginationHelper = new() { Limit = 100, Offset = 0 };
+    private PaginationHelper _pg = new() { Limit = 100, Offset = 0 };
 
     private bool _isSelected = false;
     private FirmClientDto _selectedClient = null;
 
     protected override async Task OnInitializedAsync()
     {
-        _clients = await ClientFetchService.GetAll(
+        _clients = await fs.GetAll(
             ControllersNames.FIRM_CLIENT,
             CrudApiManager.GET_WITH_PAGINATION,
-            paginationHelper.Limit,
-            paginationHelper.Offset
+            _pg.Limit,
+            _pg.Offset
         );
     }
 
@@ -41,7 +40,7 @@ RowSelect="OnSelect">
     {
         _selectedClient = client;
 
-        await DialogService.OpenAsync<ClientDialog>("Client info",
+        await ds.OpenAsync<ClientDialog>("Client info",
                new Dictionary<string, object>() { { nameof(ClientDialog.SelectedClient), _selectedClient } });
     }
 }

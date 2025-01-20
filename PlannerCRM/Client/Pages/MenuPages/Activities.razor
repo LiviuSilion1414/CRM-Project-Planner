@@ -1,9 +1,17 @@
 ﻿@page "/activities"
+@inject DialogService ds
+@inject FetchService<ActivityDto> fs
 
 <h3>Activities</h3>
 <PageTitle>Activities</PageTitle>
 
-<RadzenDataGrid Data="@_activities" TItem="@ActivityDto" AllowSorting="true" AllowPaging="true" AllowFiltering="true">
+<RadzenDataGrid Data="@_activities"
+                TItem="@ActivityDto"
+                AllowSorting="true"
+                AllowPaging="true"
+                AllowFiltering="true"
+                SelectionMode="DataGridSelectionMode.Single"
+                RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@ActivityDto" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="@ActivityDto" Property="StartDate" Title="Start Date" />
@@ -12,19 +20,25 @@
 </RadzenDataGrid>
 
 @code {
-    [Inject] public FetchService<ActivityDto> ActivityFetchService { get; set; }
-    [Inject] public FetchService<WorkOrderDto> WorkOrderFetchService { get; set; }
-
+    private ActivityDto _selectedActivity = null;
     private List<ActivityDto> _activities = new();
-    private PaginationHelper paginationHelper = new() { Limit = 100, Offset = 0 };
+    private PaginationHelper _pg = new() { Limit = 100, Offset = 0 };
 
     protected override async Task OnInitializedAsync()
     {
-        _activities = await ActivityFetchService.GetAll(
+        _activities = await fs.GetAll(
             ControllersNames.ACTIVITY,
-            CrudApiManager.GET_WITH_PAGINATION, 
-            paginationHelper.Limit, 
-            paginationHelper.Offset
+            CrudApiManager.GET_WITH_PAGINATION,
+            _pg.Limit,
+            _pg.Offset
         );
+    }
+
+    private async Task OnSelect(ActivityDto activity)
+    {
+        _selectedActivity = activity;
+
+        await ds.OpenAsync<ActivityDialog>("WorkOrder Info",
+               new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), _selectedActivity } });
     }
 }
