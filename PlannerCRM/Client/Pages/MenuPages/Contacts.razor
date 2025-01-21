@@ -5,13 +5,15 @@
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
 
+<RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+
 <RadzenDataGrid Data="@_clients"
-                TItem="@FirmClientDto"
-                AllowSorting="true"
-                AllowPaging="true"
-                AllowFiltering="true"
-                SelectionMode="DataGridSelectionMode.Single"
-                RowSelect="OnSelect">
+TItem="@FirmClientDto"
+AllowSorting="true"
+AllowPaging="true"
+AllowFiltering="true"
+SelectionMode="DataGridSelectionMode.Single"
+RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
@@ -40,7 +42,16 @@
     {
         _selectedClient = client;
 
-        await ds.OpenAsync<ClientDialog>("Client info",
-               new Dictionary<string, object>() { { nameof(ClientDialog.SelectedClient), _selectedClient } });
+        await ds.OpenAsync<ClientDialog>("Client Info",
+            new Dictionary<string, object>() 
+            { 
+                { nameof(ClientDialog.SelectedClient), _selectedClient },
+            }
+        );
+    }
+
+    private async Task OnAdd()
+    {
+        await ds.OpenAsync<ClientAddForm>("Add Client");
     }
 }

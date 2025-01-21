@@ -1,0 +1,50 @@
+﻿@inject DialogService ds
+@inject FetchService<FirmClientDto> fs
+
+<RadzenStack>
+    <RadzenCard>
+        <EditForm EditContext="@_context" OnSubmit="@OnValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-control">
+                <label>Name</label>
+                <InputText class="form-control" @bind-Value="@Model.Name" />
+                <ValidationMessage For="@(() => Model.Name)" />
+            </div>
+            <div class="form-control">
+                <label>Vat Number</label>
+                <InputText class="form-control" @bind-Value="@Model.VatNumber" />
+                <ValidationMessage For="@(() => Model.VatNumber)" />
+            </div>
+        </EditForm>
+    </RadzenCard>
+    <RadzenStack AlignItems="AlignItems.End" Orientation="Orientation.Horizontal">
+        <button class="btn btn-outline-info" type="button" @onclick="(() => ds.Close())">Close</button>
+        <button class="btn btn-outline-primary" type="submit" @onclick="(() => OnValidSubmit())">Confirm</button>
+    </RadzenStack>
+</RadzenStack>
+
+@code
+{
+    [Parameter] public FirmClientDto Model { get; set; }
+
+    private EditContext _context;
+
+    protected override void OnParametersSet()
+    {
+        _context = new(Model);
+    }
+
+    private async Task OnValidSubmit()
+    {
+        if (_context.Validate())
+        {
+            await fs.Update(
+                ControllersNames.FIRM_CLIENT,
+                $"{CrudApiManager.EDIT}/{Model.Id}",
+                Model
+            );
+            ds.Close();
+        }
+    }
+}
