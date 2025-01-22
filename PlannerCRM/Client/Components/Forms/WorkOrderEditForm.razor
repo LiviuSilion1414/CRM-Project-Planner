@@ -1,0 +1,133 @@
+﻿@inject DialogService ds
+@inject FetchService<WorkOrderDto> fs
+@inject FetchService<FirmClientDto> cfs
+
+<RadzenStack>
+    <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <RadzenFieldset Text="WorkOrder Info">
+            <RadzenRow>
+                <RadzenColumn>
+                    <RadzenLabel Text="Name" />
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenTextBox Name="Name" @bind-Value=@Model.Name />
+                    <ValidationMessage For="@(() => Model.Name)" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn>
+                    <RadzenLabel Text="StartDate" />
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.StartDate />
+                    <ValidationMessage For="@(() => Model.StartDate)" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn>
+                    <RadzenLabel Text="EndDate" />
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.EndDate />
+                    <ValidationMessage For="@(() => Model.EndDate)" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenFieldset>
+        <RadzenFieldset Text="Client Info">
+            <RadzenRow>
+                <RadzenColumn Style="display:inline-block;">
+                    <RadzenTextBox @bind-Value="@_query"
+                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    <RadzenButton ButtonType="ButtonType.Button"
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="Search"
+                    Click="@SearchClient">
+                    </RadzenButton>
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenDataGrid TItem="@FirmClientDto"
+                    Data="@_clients"
+                    AllowFiltering="true"
+                    AllowSorting="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenColumn>
+            </RadzenRow>
+            @if (!string.IsNullOrEmpty(Model.FirmClient.Name))
+            {
+                <RadzenRow Style="margin-top: 20px;">
+                    <RadzenColumn>
+                        <RadzenTextBox @bind-Value="@Model.FirmClient.Name" Disabled="true" />
+                        <RadzenTextBox @bind-Value="@Model.FirmClient.VatNumber" Disabled="true" />
+                    </RadzenColumn>
+                    <RadzenButton ButtonType="ButtonType.Button"
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Danger"
+                    Icon="Delete"
+                    Click="@(() => SelectClient(new()))">
+                    </RadzenButton>
+                    <ValidationMessage For="@(() => Model.FirmClient)" />
+                </RadzenRow>
+            }
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+    <RadzenRow AlignItems="AlignItems.Center" class="rz-mt-4">
+        <RadzenColumn Size="12" Offset="0" SizeMD="8" OffsetMD="4">
+            <RadzenButton ButtonType="ButtonType.Button" Text="Close" Click="(() => ds.Close())"></RadzenButton>
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
+
+@code
+{
+    [Parameter] public WorkOrderDto Model { get; set; }
+
+    private string _query = string.Empty;
+
+    private List<FirmClientDto> _clients;
+    private EditContext _context;
+
+    protected override void OnInitialized()
+    {
+        _context = new(Model);
+        _clients = new();
+    }
+
+    private async Task SearchClient()
+    {
+        if (!string.IsNullOrEmpty(_query))
+        {
+            _clients = await cfs.GetAll(
+                ControllersNames.FIRM_CLIENT,
+                ClientApiManager.SearchClientByName(_query)
+            );
+
+        }
+    }
+
+    private void SelectClient(FirmClientDto client)
+    {
+        Model.FirmClient = client;
+    }
+
+    private async Task OnSubmit()
+    {
+        if (_context.Validate())
+        {
+            await fs.Create(
+                ControllersNames.WORK_ORDER,
+                CrudApiManager.ADD,
+                Model
+            );
+            ds.Close();
+        }
+    }
+}

@@ -30,8 +30,8 @@
             <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Text" Text="Close" Click="(() => ds.Close())"></RadzenButton>
         </RadzenStack>
         <RadzenStack AlignItems="AlignItems.End" Orientation="Orientation.Horizontal">
-            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete"></RadzenButton>
-            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit"></RadzenButton>
+            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
+            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit" Click="OnEdit"></RadzenButton>
         </RadzenStack>
     </RadzenStack>
 </RadzenStack>
@@ -39,4 +39,24 @@
 @code
 {
     [Parameter] public WorkOrderDto SelectedWorkOrder { get; set; }
+
+    private async Task OnDelete()
+    {
+        await ds.OpenAsync<WorkOrderDeleteDialog>("Delete WorkOrder",
+            new Dictionary<string, object>() 
+                { 
+                    { nameof(WorkOrderDeleteDialog.Model), SelectedWorkOrder }
+                }
+            );
+    }
+
+    private async Task OnEdit()
+    {
+        await ds.OpenAsync<WorkOrderEditForm>("Edit WorkOrder",
+            new Dictionary<string, object>()
+                    {
+                    { nameof(WorkOrderEditForm.Model), SelectedWorkOrder }
+                    }
+            );
+    }
 }

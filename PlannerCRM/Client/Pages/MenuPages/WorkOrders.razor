@@ -5,13 +5,15 @@
 <h3>Workorders</h3>
 <PageTitle>Workorders</PageTitle>
 
+<RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+
 <RadzenDataGrid Data="@_workOrders"
-                TItem="@WorkOrderDto"
-                AllowSorting="true"
-                AllowPaging="true"
-                AllowFiltering="true"
-                SelectionMode="DataGridSelectionMode.Single"
-                RowSelect="OnSelect">
+TItem="@WorkOrderDto"
+AllowSorting="true"
+AllowPaging="true"
+AllowFiltering="true"
+SelectionMode="DataGridSelectionMode.Single"
+RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="@WorkOrderDto" Property="StartDate" Title="Start Date" />
@@ -40,5 +42,10 @@
 
         await ds.OpenAsync<WorkOrderDialog>("WorkOrder Info",
                new Dictionary<string, object>() { { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } });
+    }
+
+    private async Task OnAdd()
+    {
+        await ds.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width="70vw;" });
     }
 }
