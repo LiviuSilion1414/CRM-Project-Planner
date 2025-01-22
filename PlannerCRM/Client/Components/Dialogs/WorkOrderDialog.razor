@@ -1,39 +1,40 @@
 ﻿@inject DialogService ds
 
-<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Horizontal">
-    <RadzenStack>
-        <RadzenRow>
-            <RadzenCard>
-                <RadzenText Text="Client Information"></RadzenText>
+<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
+    <RadzenRow>
+        <RadzenFieldset Text="Client Info">
+            <RadzenColumn>
+                <RadzenText TextStyle="TextStyle.DisplayH6" Text="Client"></RadzenText>
                 <RadzenText>Name: @SelectedWorkOrder.FirmClient.Name</RadzenText>
                 <RadzenText>Vat Number: @SelectedWorkOrder.FirmClient.VatNumber</RadzenText>
-            </RadzenCard>
-            <RadzenCard>
-                <RadzenText Text="Work Order Information"></RadzenText>
+            </RadzenColumn>
+        </RadzenFieldset>
+        <RadzenFieldset Text="WorkOrder Info">
+            <RadzenColumn>
+                <RadzenText TextStyle="TextStyle.DisplayH6" Text="WorkOrder"></RadzenText>
                 <RadzenText>Name: @SelectedWorkOrder.Name</RadzenText>
                 <RadzenText>Start Date: @SelectedWorkOrder.StartDate</RadzenText>
                 <RadzenText>End Date: @SelectedWorkOrder.EndDate</RadzenText>
-            </RadzenCard>
-        </RadzenRow>
-    </RadzenStack>
-    <RadzenStack>
-        <RadzenRow>
-            <RadzenCard>
+            </RadzenColumn>
+        </RadzenFieldset>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenFieldset Text="Activities">
+            <RadzenColumn>
                 <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.Activities">
                     <RadzenDataGridColumn Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
                     <RadzenDataGridColumn Property="@nameof(ActivityDto.StartDate)"></RadzenDataGridColumn>
                     <RadzenDataGridColumn Property="@nameof(ActivityDto.EndDate)"></RadzenDataGridColumn>
                 </RadzenDataGrid>
-            </RadzenCard>
-        </RadzenRow>
-        <RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Horizontal">
-            <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Text" Text="Close" Click="(() => ds.Close())"></RadzenButton>
-        </RadzenStack>
-        <RadzenStack AlignItems="AlignItems.End" Orientation="Orientation.Horizontal">
+            </RadzenColumn>
+        </RadzenFieldset>
+    </RadzenRow>
+    <RadzenRow AlignItems="AlignItems.End">
+        <RadzenColumn>
             <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
             <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit" Click="OnEdit"></RadzenButton>
-        </RadzenStack>
-    </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
 </RadzenStack>
 
 @code
@@ -44,19 +45,21 @@
     {
         await ds.OpenAsync<WorkOrderDeleteDialog>("Delete WorkOrder",
             new Dictionary<string, object>() 
-                { 
-                    { nameof(WorkOrderDeleteDialog.Model), SelectedWorkOrder }
-                }
-            );
+            { 
+                { nameof(WorkOrderDeleteDialog.Model), SelectedWorkOrder }
+            },
+            new DialogOptions() { Width = "40vw;" }
+        );
     }
 
     private async Task OnEdit()
     {
         await ds.OpenAsync<WorkOrderEditForm>("Edit WorkOrder",
             new Dictionary<string, object>()
-                    {
-                    { nameof(WorkOrderEditForm.Model), SelectedWorkOrder }
-                    }
-            );
+            {
+                { nameof(WorkOrderEditForm.Model), SelectedWorkOrder }
+            },
+            new DialogOptions() { Width="40vw;" }            
+        );
     }
 }

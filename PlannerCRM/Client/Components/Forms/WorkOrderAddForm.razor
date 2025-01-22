@@ -7,7 +7,7 @@
         <DataAnnotationsValidator />
         <ValidationSummary />
         <RadzenFieldset Text="WorkOrder Info">
-            <RadzenRow>
+            <RadzenRow Style="margin-bottom: 5px;">
                 <RadzenColumn>
                     <RadzenLabel Text="Name" />
                 </RadzenColumn>
@@ -16,7 +16,7 @@
                     <ValidationMessage For="@(() => _model.Name)" />
                 </RadzenColumn>
             </RadzenRow>
-            <RadzenRow>
+            <RadzenRow Style="margin-bottom: 5px;">
                 <RadzenColumn>
                     <RadzenLabel Text="StartDate" />
                 </RadzenColumn>
@@ -25,7 +25,7 @@
                     <ValidationMessage For="@(() => _model.StartDate)" />
                 </RadzenColumn>
             </RadzenRow>
-            <RadzenRow>
+            <RadzenRow Style="margin-bottom: 5px;">
                 <RadzenColumn>
                     <RadzenLabel Text="EndDate" />
                 </RadzenColumn>

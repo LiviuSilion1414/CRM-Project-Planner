@@ -41,11 +41,13 @@ RowSelect="OnSelect">
         _selectedWorkOrder = workOrder;
 
         await ds.OpenAsync<WorkOrderDialog>("WorkOrder Info",
-               new Dictionary<string, object>() { { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } });
+            new Dictionary<string, object>() { { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } },
+            new DialogOptions() { Width="50vw;" }       
+        );
     }
 
     private async Task OnAdd()
     {
-        await ds.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width="70vw;" });
+        await ds.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width="40vw;" });
     }
 }
