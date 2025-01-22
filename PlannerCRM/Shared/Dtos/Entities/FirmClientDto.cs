@@ -2,18 +2,18 @@
 
 public class FirmClientDto
 {
-    public int Id { get; set; } = 0;
+    public int Id { get; set; }
 
     [Required]
     [MinLength(4)]
     [MaxLength(50)]
-    public string Name { get; set; } = string.Empty;
-
+    public string Name { get; set; }
+    
     [Length(8, 15)]
     [Required]
-    public string VatNumber { get; set; } = string.Empty;
-    public List<WorkOrderDto> WorkOrders { get; set; } = [];
+    public string VatNumber { get; set; }
+    public List<WorkOrderDto> WorkOrders { get; set; }
 
     // Navigation properties
-    public List<WorkOrderCostDto> WorkOrderCosts { get; set; } = [];
+    //public List<WorkOrderCostDto> WorkOrderCosts { get; set; }
 }

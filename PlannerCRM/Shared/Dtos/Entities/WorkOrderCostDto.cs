@@ -2,14 +2,14 @@
 
 public class WorkOrderCostDto
 {
-    public int Id { get; set; } = 0;
-    public string Name { get; set; } = string.Empty;
+    public int Id { get; set; }
+    public string Name { get; set; }
     public DateTime CreationDate { get; set; } = DateTime.Now;
-    public decimal TotalCost { get; set; } = 0M;
-    public int WorkOrderId { get; set; } = 0;
-    public int FirmClientId { get; set; } = 0;
+    public decimal TotalCost { get; set; }
+    public int WorkOrderId { get; set; }
+    public int FirmClientId { get; set; }
 
     // Navigation properties
-    public WorkOrderDto WorkOrder { get; set; } = new();
-    public FirmClientDto FirmClient { get; set; } = new();
+    //public WorkOrderDto WorkOrder { get; set; }
+    //public FirmClientDto FirmClient { get; set; }
 }

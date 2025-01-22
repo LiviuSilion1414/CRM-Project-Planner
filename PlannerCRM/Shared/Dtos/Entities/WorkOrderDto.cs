@@ -2,13 +2,14 @@
 
 public class WorkOrderDto
 {
-    public int Id { get; set; } = 0;
+    public int Id { get; set; }
+    
 
     [Required]
     [MinLength(8)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
-    public DateTime CreationTime { get; set; } = DateTime.Now;
+    public DateTime CreationTime { get => DateTime.UtcNow; }
 
     [Required]
     public DateTime StartDate { get; set; } = DateTime.Now;
@@ -18,13 +19,13 @@ public class WorkOrderDto
     public DateTime EndDate { get; set; } = DateTime.Now;
 
     // Navigation properties
-    [Required] 
-    public int FirmClientId { get; set; } = 0;
+    [Required]
+    public int FirmClientId { get; set; }
     
-    [Required] 
-    public FirmClientDto FirmClient { get; set; } = new();
-    
-    public int WorkOrderCostId { get; set; } = 0;
-    public WorkOrderCostDto WorkOrderCost { get; set; } = new();
-    public List<ActivityDto> Activities { get; set; } = [];
+    public int WorkOrderCostId { get; set; }
+   
+    [Required]
+    public FirmClientDto FirmClient { get; set; }
+    public WorkOrderCostDto WorkOrderCost { get; set; }
+    public List<ActivityDto> Activities { get; set; }
 }
