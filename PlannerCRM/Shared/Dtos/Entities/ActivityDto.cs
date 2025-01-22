@@ -12,11 +12,11 @@ public class ActivityDto
     public DateTime CreationDate { get; set; } = DateTime.Now;
 
     [Required]
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now;
 
     [Required]
     [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
-    public DateTime EndDate { get; set; }
+    public DateTime EndDate { get; set; } = DateTime.Now;
 
     [Required]
     public int WorkOrderId { get; set; }

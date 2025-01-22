@@ -10,13 +10,13 @@ public class WorkOrderDto
     public string Name { get; set; }
 
     public DateTime CreationTime { get => DateTime.UtcNow; }
-    
+
     [Required]
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now;
 
     [Required]
     [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
-    public DateTime EndDate { get; set; }
+    public DateTime EndDate { get; set; } = DateTime.Now;
 
     // Navigation properties
     [Required]

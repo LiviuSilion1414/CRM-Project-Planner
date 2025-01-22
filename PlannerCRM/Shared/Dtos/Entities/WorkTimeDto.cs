@@ -3,7 +3,7 @@
 public class WorkTimeDto
 {
     public int Id { get; set; }
-    public DateTime CreationDate { get; set; }
+    public DateTime CreationDate { get; set; } = DateTime.Now;
     public double WorkedHours { get; set; }
     public int WorkOrderId { get; set; }
     public int EmployeeId { get; set; }
