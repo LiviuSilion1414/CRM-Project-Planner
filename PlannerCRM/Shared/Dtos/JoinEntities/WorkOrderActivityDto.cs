@@ -2,11 +2,11 @@
 
 public class WorkOrderActivityDto
 {
-    public int Id { get; set; }
-    public int WorkOrderId { get; set; }
-    public int ActivityId { get; set; }
-
+    public int Id { get; set; } = 0;
+    public int WorkOrderId { get; set; } = 0;
+    public int ActivityId { get; set; } = 0;
+ 
     // Navigation properties
-    public WorkOrderDto WorkOrder { get; set; }
-    public ActivityDto Activity { get; set; }
+    public WorkOrderDto WorkOrder { get; set; } = new();
+    public ActivityDto Activity { get; set; } = new();
 }
