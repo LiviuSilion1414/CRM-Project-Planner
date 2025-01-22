@@ -19,7 +19,7 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
 
-app.UseMiddleware<CustomExceptionMiddleware>();
+//app.UseMiddleware<CustomExceptionMiddleware>();
 
 if (!app.Environment.IsDevelopment()) 
 {
