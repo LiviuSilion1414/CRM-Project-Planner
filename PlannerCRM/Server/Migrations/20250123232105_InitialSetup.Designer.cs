@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250110224317_ExcludePropsFromMapping")]
-    partial class ExcludePropsFromMapping
+    [Migration("20250123232105_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -418,7 +418,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("WorkTimes");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.ActivityWorkTime", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ActivityWorkTime", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -441,7 +441,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("ActivityWorkTimes");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.ClientWorkOrder", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ClientWorkOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -464,7 +464,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("ClientWorkOrders");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.ClientWorkOrderCost", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ClientWorkOrderCost", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -487,7 +487,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("ClientWorkOrderCosts");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeActivity", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeActivity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -510,7 +510,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("EmployeeActivities");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeRole", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -549,7 +549,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeSalary", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeSalary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -572,7 +572,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("EmployeeSalaries");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeWorkTime", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeWorkTime", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -595,7 +595,7 @@ namespace PlannerCRM.Server.Migrations
                     b.ToTable("EmployeeWorkTimes");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.WorkOrderActivity", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.WorkOrderActivity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -650,7 +650,7 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("PlannerCRM.Server.Models.JunctionEntities.EmployeeRole", null)
+                    b.HasOne("PlannerCRM.Server.Models.JoinEntities.EmployeeRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -677,7 +677,7 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("PlannerCRM.Server.Models.JunctionEntities.EmployeeRole", null)
+                    b.HasOne("PlannerCRM.Server.Models.JoinEntities.EmployeeRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -772,7 +772,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("WorkOrder");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.ActivityWorkTime", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ActivityWorkTime", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Activity", "Activity")
                         .WithMany("ActivityWorkTimes")
@@ -791,7 +791,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("WorkTime");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.ClientWorkOrder", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ClientWorkOrder", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.FirmClient", "FirmClient")
                         .WithMany()
@@ -810,7 +810,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("WorkOrder");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.ClientWorkOrderCost", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ClientWorkOrderCost", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.FirmClient", "FirmClient")
                         .WithMany()
@@ -829,7 +829,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("WorkOrderCost");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeActivity", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeActivity", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Activity", "Activity")
                         .WithMany("EmployeeActivities")
@@ -848,7 +848,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeRole", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeRole", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
                         .WithMany("EmployeeRoles")
@@ -867,7 +867,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeSalary", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeSalary", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
                         .WithMany("EmployeeSalaries")
@@ -886,7 +886,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("Salary");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.EmployeeWorkTime", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeWorkTime", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
                         .WithMany()
@@ -905,7 +905,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("WorkTime");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.JunctionEntities.WorkOrderActivity", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.WorkOrderActivity", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Activity", "Activity")
                         .WithMany()
