@@ -103,11 +103,6 @@
         _clients = new();
     }
 
-    protected override void OnParametersSet()
-    {
-        Model.WorkOrderCost = Model.WorkOrderCost ?? new();
-    }
-
     private async Task SearchClient()
     {
         if (!string.IsNullOrEmpty(_query))
