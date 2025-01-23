@@ -36,37 +36,19 @@ public static class ModelBuilderExtensions
 
     public static void ConfigureRelationships(this ModelBuilder modelBuilder)
     {
-        ConfigureFirmClientWorkOrders(modelBuilder);
-        ConfigureWorkOrderCost(modelBuilder);
-        ConfigureFirmClientWorkOrderCosts(modelBuilder);
-        ConfigureWorkOrderActivities(modelBuilder);
-        ConfigureEmployeeWorkTimes(modelBuilder);
-        ConfigureActivitiesWorkTime(modelBuilder);
-        ConfigureEmployeeActivities(modelBuilder);
-        ConfigureEmployeesRoles(modelBuilder);
-        ConfigureEmployeesSalaries(modelBuilder);
+        ConfigureFirmRelationships(modelBuilder);
+        ConfigureWorkOrderRelationships(modelBuilder);
+        ConfigureEmployeeRelationships(modelBuilder);
     }
 
-    private static void ConfigureFirmClientWorkOrders(ModelBuilder modelBuilder)
+    private static void ConfigureFirmRelationships(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<FirmClient>()
             .HasMany(c => c.WorkOrders)
             .WithOne(w => w.FirmClient)
             .HasForeignKey(w => w.FirmClientId)
             .OnDelete(DeleteBehavior.Cascade);
-    }
 
-    private static void ConfigureWorkOrderCost(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<WorkOrder>()
-            .HasOne(w => w.WorkOrderCost)
-            .WithOne(c => c.WorkOrder)
-            .HasForeignKey<WorkOrderCost>(c => c.WorkOrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureFirmClientWorkOrderCosts(ModelBuilder modelBuilder)
-    {
         modelBuilder.Entity<FirmClient>()
             .HasMany(c => c.WorkOrderCosts)
             .WithOne(wc => wc.FirmClient)
@@ -74,8 +56,14 @@ public static class ModelBuilderExtensions
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    private static void ConfigureWorkOrderActivities(ModelBuilder modelBuilder)
+    private static void ConfigureWorkOrderRelationships(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<WorkOrder>()
+            .HasOne(w => w.WorkOrderCost)
+            .WithOne(c => c.WorkOrder)
+            .HasForeignKey<WorkOrderCost>(c => c.WorkOrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<WorkOrder>()
             .HasMany(w => w.Activities)
             .WithOne(a => a.WorkOrder)
@@ -83,34 +71,22 @@ public static class ModelBuilderExtensions
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    private static void ConfigureEmployeeWorkTimes(ModelBuilder modelBuilder)
+    private static void ConfigureEmployeeRelationships(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Employee>()
             .HasMany(e => e.WorkTimes)
             .WithOne(wt => wt.Employee)
             .HasForeignKey(wt => wt.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        ConfigureManyToManyEmployeeActivity(modelBuilder);
+        ConfigureManyToManyEmployeeRole(modelBuilder);
+        ConfigureManyToManyEmployeeSalary(modelBuilder);
+
+        ConfigureActivityWorkTimes(modelBuilder);
     }
 
-    private static void ConfigureActivitiesWorkTime(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<ActivityWorkTime>()
-            .HasKey(awt => awt.Id);
-
-        modelBuilder.Entity<ActivityWorkTime>()
-            .HasOne(awt => awt.Activity)
-            .WithMany(a => a.ActivityWorkTimes)
-            .HasForeignKey(awt => awt.ActivityId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ActivityWorkTime>()
-            .HasOne(awt => awt.WorkTime)
-            .WithMany(wt => wt.ActivityWorkTimes)
-            .HasForeignKey(awt => awt.WorkTimeId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureEmployeeActivities(ModelBuilder modelBuilder)
+    private static void ConfigureManyToManyEmployeeActivity(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EmployeeActivity>()
             .HasKey(ea => ea.Id);
@@ -128,7 +104,7 @@ public static class ModelBuilderExtensions
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    private static void ConfigureEmployeesRoles(ModelBuilder modelBuilder)
+    private static void ConfigureManyToManyEmployeeRole(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EmployeeRole>()
             .HasKey(er => er.Id);
@@ -146,7 +122,7 @@ public static class ModelBuilderExtensions
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    private static void ConfigureEmployeesSalaries(ModelBuilder modelBuilder)
+    private static void ConfigureManyToManyEmployeeSalary(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<EmployeeSalary>()
             .HasKey(es => es.Id);
@@ -161,6 +137,24 @@ public static class ModelBuilderExtensions
             .HasOne(es => es.Salary)
             .WithMany(s => s.EmployeeSalaries)
             .HasForeignKey(es => es.SalaryId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    private static void ConfigureActivityWorkTimes(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ActivityWorkTime>()
+            .HasKey(awt => awt.Id);
+
+        modelBuilder.Entity<ActivityWorkTime>()
+            .HasOne(awt => awt.Activity)
+            .WithMany(a => a.ActivityWorkTimes)
+            .HasForeignKey(awt => awt.ActivityId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ActivityWorkTime>()
+            .HasOne(awt => awt.WorkTime)
+            .WithMany(wt => wt.ActivityWorkTimes)
+            .HasForeignKey(awt => awt.WorkTimeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
