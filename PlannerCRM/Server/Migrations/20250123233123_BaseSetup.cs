@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PlannerCRM.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class BaseSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
