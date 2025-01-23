@@ -17,5 +17,5 @@ public class WorkOrder
     // Navigation properties
     public FirmClient FirmClient { get; set; }
     public WorkOrderCost WorkOrderCost { get; set; }
-    public ICollection<Activity> Activities { get; set; }
+    public List<Activity> Activities { get; set; }
 }

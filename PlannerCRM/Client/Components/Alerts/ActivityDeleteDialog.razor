@@ -1,5 +1,5 @@
 ﻿@inject DialogService ds
-@inject FetchService<WorkOrderDto> fs
+@inject FetchService<ActivityDto> fs
 
 <RadzenStack AlignItems="AlignItems.Start">
     <RadzenText Text="Do you confirm this item removal?" />
@@ -24,12 +24,12 @@
 
 @code
 {
-    [Parameter] public WorkOrderDto Model { get; set; }
+    [Parameter] public ActivityDto Model { get; set; }
 
     private async Task OnDeleteConfirmed()
     {
         await fs.Delete(
-            ControllersNames.WORK_ORDER,
+            ControllersNames.ACTIVITY,
             CrudApiManager.DELETE,
             Model.Id
         );

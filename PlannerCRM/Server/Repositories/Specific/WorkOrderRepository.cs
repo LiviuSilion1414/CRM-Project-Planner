@@ -66,15 +66,16 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
     public override async Task<ICollection<WorkOrderDto>> GetWithPagination(int limit, int offset)
     {
         var workOrder = await _context.WorkOrders
-            .OrderBy(w => w.Id)
+            .OrderBy(w => w.Id) 
             .Skip(offset)
             .Take(limit)
-            .Include(w => w.Activities)
             .Include(w => w.WorkOrderCost)
             .Include(w => w.FirmClient)
+            .Include(w => w.Activities)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<WorkOrderDto>>(workOrder);
+        var mapped = _mapper.Map<ICollection<WorkOrderDto>>(workOrder);
+        return mapped;
     }
 
     public async Task<ICollection<WorkOrderDto>> SearchWorOrderByTitle(string worOrderTitle)

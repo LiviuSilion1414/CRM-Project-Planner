@@ -1,40 +1,44 @@
 ﻿@inject DialogService ds
 
 <RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
-    <RadzenRow>
-        <RadzenFieldset Text="Client Info">
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenFieldset Text="Client Info">
+                <RadzenColumn>
+                    <RadzenText TextStyle="TextStyle.DisplayH6" Text="Client"></RadzenText>
+                    <RadzenText>Name: @SelectedWorkOrder.FirmClient.Name</RadzenText>
+                    <RadzenText>Vat Number: @SelectedWorkOrder.FirmClient.VatNumber</RadzenText>
+                </RadzenColumn>
+            </RadzenFieldset>
+            <RadzenFieldset Text="WorkOrder Info">
+                <RadzenColumn>
+                    <RadzenText TextStyle="TextStyle.DisplayH6" Text="WorkOrder"></RadzenText>
+                    <RadzenText>Name: @SelectedWorkOrder.Name</RadzenText>
+                    <RadzenText>Start Date: @SelectedWorkOrder.StartDate</RadzenText>
+                    <RadzenText>End Date: @SelectedWorkOrder.EndDate</RadzenText>
+                </RadzenColumn>
+            </RadzenFieldset>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenFieldset Text="Activities">
+                <RadzenColumn>
+                    <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.Activities">
+                        <RadzenDataGridColumn Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
+                        <RadzenDataGridColumn Property="@nameof(ActivityDto.StartDate)"></RadzenDataGridColumn>
+                        <RadzenDataGridColumn Property="@nameof(ActivityDto.EndDate)"></RadzenDataGridColumn>
+                    </RadzenDataGrid>
+                </RadzenColumn>
+            </RadzenFieldset>
+        </RadzenRow>
+    </RadzenStack>
+    <RadzenStack AlignItems="AlignItems.End">
+        <RadzenRow>
             <RadzenColumn>
-                <RadzenText TextStyle="TextStyle.DisplayH6" Text="Client"></RadzenText>
-                <RadzenText>Name: @SelectedWorkOrder.FirmClient.Name</RadzenText>
-                <RadzenText>Vat Number: @SelectedWorkOrder.FirmClient.VatNumber</RadzenText>
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit" Click="OnEdit"></RadzenButton>
             </RadzenColumn>
-        </RadzenFieldset>
-        <RadzenFieldset Text="WorkOrder Info">
-            <RadzenColumn>
-                <RadzenText TextStyle="TextStyle.DisplayH6" Text="WorkOrder"></RadzenText>
-                <RadzenText>Name: @SelectedWorkOrder.Name</RadzenText>
-                <RadzenText>Start Date: @SelectedWorkOrder.StartDate</RadzenText>
-                <RadzenText>End Date: @SelectedWorkOrder.EndDate</RadzenText>
-            </RadzenColumn>
-        </RadzenFieldset>
-    </RadzenRow>
-    <RadzenRow>
-        <RadzenFieldset Text="Activities">
-            <RadzenColumn>
-                <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.Activities">
-                    <RadzenDataGridColumn Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
-                    <RadzenDataGridColumn Property="@nameof(ActivityDto.StartDate)"></RadzenDataGridColumn>
-                    <RadzenDataGridColumn Property="@nameof(ActivityDto.EndDate)"></RadzenDataGridColumn>
-                </RadzenDataGrid>
-            </RadzenColumn>
-        </RadzenFieldset>
-    </RadzenRow>
-    <RadzenRow AlignItems="AlignItems.End">
-        <RadzenColumn>
-            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
-            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit" Click="OnEdit"></RadzenButton>
-        </RadzenColumn>
-    </RadzenRow>
+        </RadzenRow>
+    </RadzenStack>
 </RadzenStack>
 
 @code
@@ -47,8 +51,7 @@
             new Dictionary<string, object>() 
             { 
                 { nameof(WorkOrderDeleteDialog.Model), SelectedWorkOrder }
-            },
-            new DialogOptions() { Width = "40vw;" }
+            }
         );
     }
 

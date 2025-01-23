@@ -52,6 +52,6 @@ RowSelect="OnSelect">
 
     private async Task OnAdd()
     {
-        await ds.OpenAsync<ClientAddForm>("Add Client");
+        await ds.OpenAsync<ClientAddForm>("Add Client", null, new DialogOptions() { Width = "40vw;" });
     }
 }

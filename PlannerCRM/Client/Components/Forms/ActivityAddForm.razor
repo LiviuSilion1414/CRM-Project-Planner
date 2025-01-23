@@ -1,12 +1,12 @@
 ﻿@inject DialogService ds
+@inject FetchService<ActivityDto> afs
 @inject FetchService<WorkOrderDto> fs
-@inject FetchService<FirmClientDto> cfs
 
 <RadzenStack>
     <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
         <DataAnnotationsValidator />
         <ValidationSummary />
-        <RadzenFieldset Text="WorkOrder Info">
+        <RadzenFieldset Text="Activity Info">
             <RadzenRow Style="margin-bottom: 5px;">
                 <RadzenColumn>
                     <RadzenLabel Text="Name" />
@@ -35,47 +35,60 @@
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
-        <RadzenFieldset Text="Client Info">
+        <RadzenFieldset Text="Client and WorkOrder Info">
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
-                    <RadzenTextBox @bind-Value="@_query" 
+                    <RadzenTextBox @bind-Value="@_query"
+                                   Placeholder="Search workorder.."
                                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
                                   Variant="Variant.Outlined"
                                   ButtonStyle="ButtonStyle.Primary"
                                   Icon="Search"
-                                  Click="@SearchClient">
+                                  Click="@SearchWorkOrder">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDataGrid TItem="@FirmClientDto"
-                                    Data="@_clients"
+                    <RadzenDataGrid TItem="@WorkOrderDto"
+                                    Data="@_workOrders"
                                     AllowFiltering="true"
                                     AllowSorting="true"
                                     SelectionMode="DataGridSelectionMode.Single"
-                                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
                         <Columns>
-                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name"/>
+                            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenRow>
-            @if (!string.IsNullOrEmpty(_model.FirmClient.Name))
+            @if (_model.WorkOrder is not null && _model.WorkOrder.FirmClient is not null)
             {
-                <RadzenRow Style="margin-top: 20px;">
-                    <RadzenColumn>
-                        <RadzenTextBox @bind-Value="@_model.FirmClient.Name" Disabled="true" />
-                        <RadzenTextBox @bind-Value="@_model.FirmClient.VatNumber" Disabled="true" />
-                    </RadzenColumn>
-                    <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Danger"
-                                  Icon="Delete"
-                                  Click="@(() => SelectClient(new()))">
-                    </RadzenButton>
-                    <ValidationMessage For="@(() => _model.FirmClient)" />
-                </RadzenRow>
+                <RadzenFieldset Text="Current Selected WorkOrder">
+                    <RadzenRow AlignItems="AlignItems.Start">
+                        <RadzenColumn>
+                            <RadzenLabel Text="Client"></RadzenLabel>
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenLabel Text="WorkOrder"></RadzenLabel>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow Style="margin-top: 20px;">
+                        <RadzenColumn>
+                            <RadzenTextBox @bind-Value="@_model.WorkOrder.FirmClient.Name" Disabled="true"></RadzenTextBox>
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenTextBox @bind-Value="@_model.WorkOrder.Name" Disabled="true"></RadzenTextBox>
+                        </RadzenColumn>
+                        <RadzenButton ButtonType="ButtonType.Button"
+                                      Variant="Variant.Outlined"
+                                      ButtonStyle="ButtonStyle.Danger"
+                                      Icon="Delete"
+                                      Click="@(() => SelectWorkOrder(null))">
+                        </RadzenButton>
+                    </RadzenRow>
+                </RadzenFieldset>
             }
+            <ValidationMessage For="@(() => _model.WorkOrder)" />
         </RadzenFieldset>
     </RadzenTemplateForm>
     <RadzenStack AlignItems="AlignItems.End">
@@ -90,48 +103,45 @@
 
 @code
 {
-    private WorkOrderDto _model;
+    private ActivityDto _model;
     private string _query = string.Empty;
 
-    private List<FirmClientDto> _clients;
+    private List<WorkOrderDto> _workOrders;
     private EditContext _context;
 
     protected override void OnInitialized()
     {
         _model = new()
             {
-                FirmClient = new(),
-                WorkOrderCost = new(),
-                Activities = []
-                
+                WorkOrder = new()
             };
         _context = new(_model);
-        _clients = new();
+        _workOrders = new();
     }
 
-    private async Task SearchClient()
+    private async Task SearchWorkOrder()
     {
         if (!string.IsNullOrEmpty(_query))
         {
-            _clients = await cfs.GetAll(
-                ControllersNames.FIRM_CLIENT,
-                ClientApiManager.SearchClientByName(_query)
+            _workOrders = await fs.GetAll(
+                ControllersNames.WORK_ORDER,
+                WorkOrderApiManager.SearchWorkOrderByTitle(_query)
             );
 
         }
     }
 
-    private void SelectClient(FirmClientDto client)
+    private void SelectWorkOrder(WorkOrderDto workOrder)
     {
-        _model.FirmClient = client;
+        _model.WorkOrder = workOrder;
     }
 
     private async Task OnSubmit()
     {
         if (_context.Validate())
         {
-            await fs.Create(
-                ControllersNames.WORK_ORDER,
+            await afs.Create(
+                ControllersNames.ACTIVITY,
                 CrudApiManager.ADD,
                 _model
             );

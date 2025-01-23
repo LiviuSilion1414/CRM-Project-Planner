@@ -39,21 +39,21 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Icon="Search"
-                                  Click="@SearchClient">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="Search"
+                    Click="@SearchClient">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@FirmClientDto"
-                                    Data="@_clients"
-                                    AllowFiltering="true"
-                                    AllowSorting="true"
-                                    SelectionMode="DataGridSelectionMode.Single"
-                                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                    Data="@_clients"
+                    AllowFiltering="true"
+                    AllowSorting="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
                             <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
                         </Columns>
@@ -68,22 +68,24 @@
                         <RadzenTextBox @bind-Value="@Model.FirmClient.VatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Danger"
-                                  Icon="Delete"
-                                  Click="@(() => SelectClient(new()))">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Danger"
+                    Icon="Delete"
+                    Click="@(() => SelectClient(new()))">
                     </RadzenButton>
                     <ValidationMessage For="@(() => Model.FirmClient)" />
                 </RadzenRow>
             }
         </RadzenFieldset>
     </RadzenTemplateForm>
-    <RadzenRow AlignItems="AlignItems.End" class="rz-mt-4">
-        <RadzenColumn Size="12" Offset="0" SizeMD="8" OffsetMD="4">
-            <RadzenButton ButtonType="ButtonType.Button" Text="Close" Click="(() => ds.Close())"></RadzenButton>
-            <RadzenButton ButtonType="ButtonType.Submit" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
-        </RadzenColumn>
-    </RadzenRow>
+    <RadzenStack AlignItems="AlignItems.End">
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Close" Click="(() => ds.Close())"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
 </RadzenStack>
 
 @code
@@ -99,6 +101,11 @@
     {
         _context = new(Model);
         _clients = new();
+    }
+
+    protected override void OnParametersSet()
+    {
+        Model.WorkOrderCost = Model.WorkOrderCost ?? new();
     }
 
     private async Task SearchClient()

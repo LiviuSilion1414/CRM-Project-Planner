@@ -5,6 +5,8 @@
 <h3>Activities</h3>
 <PageTitle>Activities</PageTitle>
 
+<RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+
 <RadzenDataGrid Data="@_activities"
                 TItem="@ActivityDto"
                 AllowSorting="true"
@@ -40,5 +42,10 @@
 
         await ds.OpenAsync<ActivityDialog>("WorkOrder Info",
                new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), _selectedActivity } });
+    }
+
+    private async Task OnAdd()
+    {
+        await ds.OpenAsync<ActivityAddForm>("Add Activity", null, new DialogOptions() { Width = "40vw;" });
     }
 }
