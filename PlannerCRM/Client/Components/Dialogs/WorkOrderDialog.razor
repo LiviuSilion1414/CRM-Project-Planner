@@ -23,9 +23,11 @@
             <RadzenFieldset Text="Activities">
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.Activities">
-                        <RadzenDataGridColumn Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
-                        <RadzenDataGridColumn Property="@nameof(ActivityDto.StartDate)"></RadzenDataGridColumn>
-                        <RadzenDataGridColumn Property="@nameof(ActivityDto.EndDate)"></RadzenDataGridColumn>
+                        <Columns>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.Name)" Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.StartDate)" Property="@nameof(ActivityDto.StartDate)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.EndDate)" Property="@nameof(ActivityDto.EndDate)"></RadzenDataGridColumn>
+                        </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenFieldset>

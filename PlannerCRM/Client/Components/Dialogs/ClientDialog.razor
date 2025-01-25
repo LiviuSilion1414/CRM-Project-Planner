@@ -21,9 +21,11 @@
                     Data="@SelectedClient.WorkOrders"
                     AllowPaging="true"
                     AllowFiltering="true">
-                        <RadzenDataGridColumn Property="@nameof(WorkOrderDto.Name)" />
-                        <RadzenDataGridColumn Property="@nameof(WorkOrderDto.StartDate)" />
-                        <RadzenDataGridColumn Property="@nameof(WorkOrderDto.EndDate)" />
+                        <Columns>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.Name)" Property="@nameof(WorkOrderDto.Name)" />
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.StartDate)" Property="@nameof(WorkOrderDto.StartDate)" />
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.EndDate)" Property="@nameof(WorkOrderDto.EndDate)" />
+                        </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenFieldset>
