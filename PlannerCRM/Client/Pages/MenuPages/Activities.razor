@@ -40,8 +40,10 @@
     {
         _selectedActivity = activity;
 
-        await ds.OpenAsync<ActivityDialog>("WorkOrder Info",
-               new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), _selectedActivity } });
+        await ds.OpenAsync<ActivityDialog>("Activity Info",
+            new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), _selectedActivity } },
+            new DialogOptions() { Width = "40vw;" }            
+        );
     }
 
     private async Task OnAdd()
