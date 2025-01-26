@@ -137,9 +137,9 @@
     {
         if (_context.Validate())
         {
-            await afs.Create(
+            await afs.Update(
                 ControllersNames.ACTIVITY,
-                CrudApiManager.ADD,
+                $"{CrudApiManager.EDIT}/{Model.Id}",
                 Model
             );
             ds.Close();
