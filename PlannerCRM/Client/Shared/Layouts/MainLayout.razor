@@ -3,15 +3,55 @@
 <RadzenComponents @rendermode="RenderMode.InteractiveWebAssembly" />
 <RadzenDialog />
 
-<div class="page">
-    <main>
-        <Navbar />
-        <div class="content-container">
-            <Sidebar />
-            <div class="main-content mx-5">
-                @Body
-            </div>
+<RadzenLayout Style="grid">
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" 
+                     AlignItems="AlignItems.Center" 
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     Style="width: 100%; background-color: lightseagreen;">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                <RadzenSidebarToggle Click="ToggleSidebar" />
+                <RadzenLabel Text="Planner CRM" />
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="16px">
+                <RadzenIcon Icon="notifications" />
+                <RadzenIcon Icon="person" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenHeader>
+
+    <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Icon="house" Path="/home" />
+            <RadzenPanelMenuItem Text="Recently" Icon="schedule" Path="/recently" />
+            <RadzenPanelMenuItem Text="Work Orders" Icon="work" Path="/workOrders" />
+            <RadzenPanelMenuItem Text="Activities" Icon="check_circle" Path="/activities" />
+            <RadzenPanelMenuItem Text="Clients" Icon="groups" Path="/clients" />
+            <RadzenPanelMenuItem Text="Statistics" Icon="bar_chart" Path="/statistics" />
+            <RadzenPanelMenuItem Text="Calendar" Icon="calendar_today" Path="/calendar" />
+            <RadzenPanelMenuItem Text="Invoices" Icon="description" Path="/invoices" />
+            <RadzenPanelMenuItem Text="Settings" Icon="settings" Path="/settings" />
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+    <RadzenFooter Style="background-color: lightseagreen; position: fixed; bottom: 0; width: 100%; height: auto;" Class="text-white py-3 mt-auto">
+        <div class="container text-center">
+            PlannerCRM 2025 ©️ <strong>All rights reserved.</strong>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <RadzenLink Class="text-white text-decoration-none" Path="/terms-and-conditions" Text="Terms and Conditions" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <RadzenLink Class="text-white text-decoration-none" Path="/privacy-policy" Text="Privacy Policy" />
         </div>
-        <Footer />
-    </main>
-</div>
+    </RadzenFooter>
+</RadzenLayout>
+
+@code {
+    private bool sidebarExpanded = true;
+
+    private void ToggleSidebar()
+    {
+        sidebarExpanded = !sidebarExpanded;
+    }
+}
