@@ -1,6 +1,7 @@
 ﻿@page "/clients"
 @inject DialogService ds
 @inject FetchService<FirmClientDto> fs
+@inject FetchService<WorkOrderDto> wfs
 
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
@@ -29,14 +30,31 @@ RowSelect="OnSelect">
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         _clients = await fs.GetAll(
             ControllersNames.FIRM_CLIENT,
             CrudApiManager.GET_WITH_PAGINATION,
             _pg.Limit,
             _pg.Offset
         );
+
+        await LoadRelatedWorkOrders();
     }
 
+    private async Task LoadRelatedWorkOrders()
+    {
+        foreach (var cl in _clients)
+        {
+            cl.WorkOrders = await wfs.GetAll(
+                ControllersNames.FIRM_CLIENT,
+                ClientApiManager.FindAssociatedWorkOrdersByClientId(cl.Id)
+            );
+        }
+    }
 
     private async Task OnSelect(FirmClientDto client)
     {

@@ -13,11 +13,9 @@
             </RadzenFieldset>
         </RadzenRow>
         <RadzenRow>
-            <RadzenFieldset Text="Related Workorders">
+            <RadzenFieldset Text="Related WorkOrders">
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@WorkOrderDto"
-                    LoadData="@LoadRelatedWorkOrders"
-                    AllowVirtualization="true"
                     Data="@SelectedClient.WorkOrders"
                     AllowPaging="true"
                     AllowFiltering="true">
@@ -44,14 +42,6 @@
 @code
 {
     [Parameter] public FirmClientDto SelectedClient { get; set; }
-
-    private async Task LoadRelatedWorkOrders(LoadDataArgs args)
-    {
-        SelectedClient.WorkOrders = await wfs.GetAll(
-            ControllersNames.FIRM_CLIENT,
-            ClientApiManager.FindAssociatedWorkOrdersByClientId(SelectedClient.Id)
-        );
-    }
 
     private async Task OnEdit()
     {

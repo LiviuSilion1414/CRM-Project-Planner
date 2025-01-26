@@ -1,6 +1,7 @@
 ﻿@page "/workOrders"
 @inject DialogService ds
 @inject FetchService<WorkOrderDto> fs
+@inject FetchService<ActivityDto> afs
 
 <h3>Workorders</h3>
 <PageTitle>Workorders</PageTitle>
@@ -28,12 +29,30 @@ RowSelect="OnSelect">
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         _workOrders = await fs.GetAll(
             ControllersNames.WORK_ORDER,
             CrudApiManager.GET_WITH_PAGINATION,
             _pg.Limit,
             _pg.Offset
         );
+
+        await LoadRelatedActivities();
+    }
+
+    private async Task LoadRelatedActivities()
+    {
+        foreach (var wo in _workOrders)
+        {
+            wo.Activities = await afs.GetAll(
+                ControllersNames.WORK_ORDER,
+                WorkOrderApiManager.FindAssociatedActivitiesByWorkOrderId(wo.Id)
+            );
+        }
     }
 
     private async Task OnSelect(WorkOrderDto workOrder)
