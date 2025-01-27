@@ -62,9 +62,9 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID)]
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(int workOrderId)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(int itemId)
     {
-        return await _repo.FindAssociatedActivitiesByWorkOrderId(workOrderId);
+        return await _repo.FindAssociatedActivitiesByWorkOrderId(itemId);
     }
 
     [HttpGet]

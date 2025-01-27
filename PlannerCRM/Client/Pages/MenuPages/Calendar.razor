@@ -1,28 +1,27 @@
 ﻿@page "/calendar"
 
-@inject DialogService DialogService
+@inject DialogService ds
 @inject FetchService<ActivityDto> fs
 
 <RadzenScheduler TItem="ActivityDto"
                  Style="height: 768px;"
                  Data=@_activities
-                 
+                 Culture="CultureInfo.InvariantCulture"
+                 SlotSelect="@OnAdd"
+                 AppointmentSelect="@OnSelect"
                  StartProperty="@nameof(ActivityDto.StartDate)"
                  EndProperty="@nameof(ActivityDto.EndDate)"
                  TextProperty="@nameof(ActivityDto.Name)"
                  SelectedIndex="2">
     <RadzenDayView />
     <RadzenWeekView />
-    <RadzenMultiDayView NumberOfDays="@sliderNumberOfDays" AdvanceDays="@sliderAdvanceDays" />
     <RadzenMonthView />
+    <RadzenYearView />
 </RadzenScheduler>
 
 @code {
     private List<ActivityDto> _activities = new();
     private PaginationHelper _pg = new() { Limit = 100, Offset = 0 };
-
-    int sliderNumberOfDays = 2;
-    int sliderAdvanceDays = 1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,6 +35,26 @@
             EndpointCrudActions.GET_WITH_PAGINATION_ACTION,
             _pg.Limit,
             _pg.Offset
+        );
+    }
+
+    private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
+    {
+        await ds.OpenAsync<ActivityDialog>("Activity Information",
+            new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), args.Data } },
+            new DialogOptions() { Width = "40vw;" }
+        );
+    }
+
+    private async Task OnAdd(SchedulerSlotSelectEventArgs args)
+    {
+        await ds.OpenAsync<ActivityAddForm>("Add Activity",
+            new()
+                {
+                { nameof(ActivityAddForm.StartDate), args.Start },
+                { nameof(ActivityAddForm.EndDate), args.End }
+                },
+            new DialogOptions() { Width = "40vw;" }
         );
     }
 }
