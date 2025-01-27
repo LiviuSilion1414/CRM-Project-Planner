@@ -126,7 +126,7 @@
         {
             await fs.Update(
                 EndpointsNames.WORK_ORDER,
-                $"{EndpointCrudActions.EDIT}/{Model.Id}",
+                EndpointCrudActions.EDIT,
                 Model
             );
             ds.Close();

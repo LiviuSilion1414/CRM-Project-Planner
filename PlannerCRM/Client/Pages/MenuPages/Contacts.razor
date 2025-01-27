@@ -37,7 +37,7 @@ RowSelect="OnSelect">
     {
         _clients = await fs.GetAll(
             EndpointsNames.FIRM_CLIENT,
-            EndpointCrudActions.GET_WITH_PAGINATION,
+            EndpointCrudActions.GET_WITH_PAGINATION_ACTION,
             _pg.Limit,
             _pg.Offset
         );

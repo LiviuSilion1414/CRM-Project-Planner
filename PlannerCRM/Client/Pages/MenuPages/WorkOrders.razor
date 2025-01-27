@@ -36,7 +36,7 @@ RowSelect="OnSelect">
     {
         _workOrders = await fs.GetAll(
             EndpointsNames.WORK_ORDER,
-            EndpointCrudActions.GET_WITH_PAGINATION,
+            EndpointCrudActions.GET_WITH_PAGINATION_ACTION,
             _pg.Limit,
             _pg.Offset
         );

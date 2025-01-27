@@ -12,6 +12,8 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         _context.Attach(model.FirmClient);
 
         await _context.WorkOrders.AddAsync(model);
+        
+        await _context.SaveChangesAsync();
 
         await _context.ClientWorkOrders.AddAsync(
             new ClientWorkOrder

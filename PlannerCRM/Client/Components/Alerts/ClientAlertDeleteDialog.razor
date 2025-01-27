@@ -29,10 +29,10 @@
 
     private async Task OnDeleteConfirmed()
     {
-        await fs.Delete(
+        await fs.Create(
             EndpointsNames.FIRM_CLIENT,
             EndpointCrudActions.DELETE,
-            Model.Id
+            Model
         );
     }
 }

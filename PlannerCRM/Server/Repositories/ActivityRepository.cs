@@ -24,10 +24,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         _context.WorkOrders.Attach(model.WorkOrder);
         _context.Clients.Attach(model.WorkOrder.FirmClient);
 
-        var existingModel = await _context.Activities.SingleAsync(ac => ac.Id == dto.Id);
-        existingModel = model;
-
-        _context.Update(existingModel);
+        _context.Update(model);
 
         await _context.SaveChangesAsync();
     }

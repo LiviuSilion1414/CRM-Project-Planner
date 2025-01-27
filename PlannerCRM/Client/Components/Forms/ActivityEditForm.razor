@@ -139,7 +139,7 @@
         {
             await afs.Update(
                 EndpointsNames.ACTIVITY,
-                $"{EndpointCrudActions.EDIT}/{Model.Id}",
+                EndpointCrudActions.EDIT,
                 Model
             );
             ds.Close();

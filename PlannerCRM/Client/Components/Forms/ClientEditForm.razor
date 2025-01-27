@@ -41,7 +41,7 @@
         {
             await fs.Update(
                 EndpointsNames.FIRM_CLIENT,
-                $"{EndpointCrudActions.EDIT}/{Model.Id}",
+                EndpointCrudActions.EDIT,
                 Model
             );
             ds.Close();
