@@ -7,6 +7,6 @@ public class FirmClient
     public string VatNumber { get; set; }
 
     // Navigation properties
-    public ICollection<WorkOrder> WorkOrders { get; set; }
-    public ICollection<WorkOrderCost> WorkOrderCosts { get; set; }
+    public List<WorkOrder> WorkOrders { get; set; }
+    public List<WorkOrderCost> WorkOrderCosts { get; set; }
 }

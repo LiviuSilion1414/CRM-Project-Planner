@@ -1,3 +1,5 @@
+using PlannerCRM.Server.Profiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();

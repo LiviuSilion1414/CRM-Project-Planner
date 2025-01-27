@@ -1,24 +1,44 @@
-namespace PlannerCRM.Server.Repositories.Specific;
+namespace PlannerCRM.Server.Repositories;
 
 public class FirmClientRepository(AppDbContext context, IMapper mapper)
-    : Repository<FirmClient, FirmClientDto>(context, mapper), IRepository<FirmClient, FirmClientDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public override async Task DeleteAsync(int id)
+    public async Task AddAsync(FirmClientDto dto)
+    {
+        var model = _mapper.Map<FirmClient>(dto);
+
+        await _context.Clients.AddAsync(model);
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task EditAsync(FirmClientDto dto)
+    {
+        var model = _mapper.Map<FirmClient>(dto);
+
+        var existingModel = await _context.Clients.SingleAsync(cl => cl.Id == model.Id);
+        existingModel = model;
+
+        _context.Update(existingModel);
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(FirmClientDto dto)
     {
         var client = await _context.Clients
             .Include(c => c.WorkOrders)
             .Include(c => c.WorkOrderCosts)
-            .SingleAsync(c => c.Id == id);
+            .SingleAsync(c => c.Id == dto.Id);
 
         _context.Remove(client);
 
         await _context.SaveChangesAsync();
     }
 
-    public override async Task<FirmClientDto> GetByIdAsync(int id)
+    public async Task<FirmClientDto> GetByIdAsync(int id)
     {
         var client = await _context.Clients
             .Include(c => c.WorkOrders)
@@ -28,7 +48,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<FirmClientDto>(client);
     }
 
-    public override async Task<ICollection<FirmClientDto>> GetWithPagination(int limit, int offset)
+    public async Task<List<FirmClientDto>> GetWithPagination(int limit, int offset)
     {
         var clients = await _context.Clients
             .OrderBy(c => c.Id)
@@ -38,20 +58,20 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
             .Include(c => c.WorkOrderCosts)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<FirmClientDto>>(clients);
+        return _mapper.Map<List<FirmClientDto>>(clients);
     }
 
-    public async Task<ICollection<FirmClientDto>> SearchClientByName(string clientName)
+    public async Task<List<FirmClientDto>> SearchClientByName(string clientName)
     {
         var foundClients = await _context.Clients
             .Where(cl => EF.Functions.ILike(cl.Name, $"%{clientName}%"))
             .Include(cl => cl.WorkOrders)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<FirmClientDto>>(foundClients);
+        return _mapper.Map<List<FirmClientDto>>(foundClients);
     }
 
-    public async Task<ICollection<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
     {
         var foundWorkOrders = await _context.WorkOrders
             .Include(wo => wo.FirmClient)
@@ -60,6 +80,6 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
             .Where(wo => wo.FirmClientId == clientId)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<WorkOrderDto>>(foundWorkOrders);
+        return _mapper.Map<List<WorkOrderDto>>(foundWorkOrders);
     }
 }

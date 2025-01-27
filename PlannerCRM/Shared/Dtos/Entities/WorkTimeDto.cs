@@ -13,5 +13,5 @@ public class WorkTimeDto
     //public WorkOrderDto WorkOrder { get; set; }
     //public EmployeeDto Employee { get; set; }
     //public ActivityDto Activity { get; set; }
-    //public ICollection<ActivityWorkTimeDto> ActivityWorkTimes { get; set; }
+    //public List<ActivityWorkTimeDto> ActivityWorkTimes { get; set; }
 }

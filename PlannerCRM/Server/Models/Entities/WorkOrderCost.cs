@@ -7,13 +7,9 @@ public class WorkOrderCost
     public DateTime CreationDate { get; set; }
     public decimal TotalCost { get; set; }
 
-    [NotMapped]
-    public int WorkOrderId { get; set; }
-    
-    [NotMapped]
-    public int FirmClientId { get; set; }
-
     // Navigation properties
+    public int WorkOrderId { get; set; }
+    public int FirmClientId { get; set; }
     public WorkOrder WorkOrder { get; set; }
     public FirmClient FirmClient { get; set; }
 }

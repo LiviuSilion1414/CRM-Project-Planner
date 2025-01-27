@@ -1,58 +1,57 @@
-namespace PlannerCRM.Server.Repositories.Specific;
+namespace PlannerCRM.Server.Repositories;
 
 public class WorkOrderRepository(AppDbContext context, IMapper mapper)
-    : Repository<WorkOrder, WorkOrderDto>(context, mapper), IRepository<WorkOrder, WorkOrderDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public override async Task AddAsync(WorkOrder model)
+    public async Task AddAsync(WorkOrderDto dto)
     {
+        var model = _mapper.Map<WorkOrder>(dto);
+
         _context.Attach(model.FirmClient);
 
-        await base.AddAsync(model);
+        await _context.WorkOrders.AddAsync(model);
 
         await _context.ClientWorkOrders.AddAsync(
-            new ClientWorkOrder { 
+            new ClientWorkOrder
+            {
                 FirmClientId = model.FirmClientId,
                 WorkOrderId = model.Id
             }
         );
+
         await _context.SaveChangesAsync();
     }
 
-    public override async Task EditAsync(WorkOrder model, int id)
+    public async Task EditAsync(WorkOrderDto dto)
     {
-        _context.Attach(model.FirmClient);
-        _context.Attach(model.WorkOrderCost);
-
-        await base.EditAsync(model, id);
+        var model = _mapper.Map<WorkOrder>(dto);
         
-        var existingClientWorkOrder = await _context.ClientWorkOrders
-            .SingleAsync(x => x.WorkOrderId == id);
+        _context.Attach(model.FirmClient);
 
-        existingClientWorkOrder.FirmClientId = model.FirmClientId;
-        existingClientWorkOrder.WorkOrderId = model.Id;
+        var existingModel = await _context.WorkOrders
+            .SingleAsync(x => x.Id == model.Id);
+        existingModel = model;
 
-        _context.Update(existingClientWorkOrder);
+        _context.Update(existingModel);
 
         await _context.SaveChangesAsync();
-
     }
 
-    public override async Task DeleteAsync(int id)
+    public async Task DeleteAsync(WorkOrderDto dto)
     {
         var workOrder = await _context.WorkOrders
             .Include(w => w.Activities)
             .Include(w => w.WorkOrderCost)
-            .SingleAsync(w => w.Id == id);
+            .SingleAsync(w => w.Id == dto.Id);
 
         _context.Remove(workOrder);
-        
+
         await _context.SaveChangesAsync();
     }
 
-    public override async Task<WorkOrderDto> GetByIdAsync(int id)
+    public async Task<WorkOrderDto> GetByIdAsync(int id)
     {
         var workOrder = await _context.WorkOrders
             .Include(w => w.Activities)
@@ -63,10 +62,10 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<WorkOrderDto>(workOrder);
     }
 
-    public override async Task<ICollection<WorkOrderDto>> GetWithPagination(int limit, int offset)
+    public async Task<List<WorkOrderDto>> GetWithPagination(int limit, int offset)
     {
         var workOrder = await _context.WorkOrders
-            .OrderBy(w => w.Id) 
+            .OrderBy(w => w.Id)
             .Skip(offset)
             .Take(limit)
             .Include(w => w.WorkOrderCost)
@@ -74,11 +73,11 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
             .Include(w => w.Activities)
             .ToListAsync();
 
-        var mapped = _mapper.Map<ICollection<WorkOrderDto>>(workOrder);
+        var mapped = _mapper.Map<List<WorkOrderDto>>(workOrder);
         return mapped;
     }
 
-    public async Task<ICollection<WorkOrderDto>> SearchWorOrderByTitle(string worOrderTitle)
+    public async Task<List<WorkOrderDto>> SearchWorOrderByTitle(string worOrderTitle)
     {
         var foundWorkOrder = await _context.WorkOrders
             .Where(wo => EF.Functions.ILike(wo.Name, $"%{worOrderTitle}%"))
@@ -87,10 +86,10 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
             .Include(wo => wo.Activities)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<WorkOrderDto>>(foundWorkOrder);
+        return _mapper.Map<List<WorkOrderDto>>(foundWorkOrder);
     }
 
-    public async Task<ICollection<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(int workOrderId)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(int workOrderId)
     {
         var foundActivities = await _context.Activities
             .Include(ac => ac.WorkOrder)
@@ -100,10 +99,10 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
             .Where(ac => ac.WorkOrderId == workOrderId)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<ActivityDto>>(foundActivities);
+        return _mapper.Map<List<ActivityDto>>(foundActivities);
     }
 
-    public async Task<ICollection<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
     {
         var foundWorkOrder = await _context.WorkOrders
             .Include(wo => wo.WorkOrderCost)
@@ -112,6 +111,6 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
             .Where(wo => wo.FirmClientId == clientId)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<WorkOrderDto>>(foundWorkOrder);
+        return _mapper.Map<List<WorkOrderDto>>(foundWorkOrder);
     }
 }

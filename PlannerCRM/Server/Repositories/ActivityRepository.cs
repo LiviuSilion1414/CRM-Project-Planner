@@ -1,75 +1,50 @@
-namespace PlannerCRM.Server.Repositories.Specific;
+namespace PlannerCRM.Server.Repositories;
 
 public class ActivityRepository(AppDbContext context, IMapper mapper)
-    : Repository<Activity, ActivityDto>(context, mapper), IRepository<Activity, ActivityDto>
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public override async Task AddAsync(Activity model)
+    public async Task AddAsync(ActivityDto dto)
     {
+        var model = _mapper.Map<ActivityDto, Activity>(dto);
+
         _context.WorkOrders.Attach(model.WorkOrder);
         _context.Clients.Attach(model.WorkOrder.FirmClient);
 
-        await base.AddAsync(model); //may be an issue
-
-        await _context.WorkOrderActivities.AddAsync(
-            new WorkOrderActivity 
-            {
-                ActivityId = model.Id,
-                WorkOrderId = model.WorkOrderId
-            }
-        );
+        await _context.Activities.AddAsync(model);
 
         await _context.SaveChangesAsync();
     }
 
-    public override async Task EditAsync(Activity model, int id)
+    public async Task EditAsync(ActivityDto dto)
     {
+        var model = _mapper.Map<Activity>(dto);
+        
         _context.WorkOrders.Attach(model.WorkOrder);
         _context.Clients.Attach(model.WorkOrder.FirmClient);
 
-        await base.EditAsync(model, id);
-        if (model.Employees is not null)
-        {
-            var existingEmployeeActivity = await _context.EmployeeActivities
-                .Where(a => a.Id == id)
-                .ToListAsync();
+        var existingModel = await _context.Activities.SingleAsync(ac => ac.Id == dto.Id);
+        existingModel = model;
 
-            List<EmployeeActivity> updatedEmployeeActivities = [];
-
-            foreach (var em in model.Employees)
-            {
-                if (!existingEmployeeActivity.Any(ex => ex.EmployeeId == em.Id))
-                {
-                    updatedEmployeeActivities.Add(
-                        new EmployeeActivity()
-                        {
-                            EmployeeId = em.Id
-                        }
-                    );
-                }
-            }
-
-            _context.Update(updatedEmployeeActivities);
-        }
+        _context.Update(existingModel);
 
         await _context.SaveChangesAsync();
     }
 
-    public override async Task DeleteAsync(int id)
+    public async Task DeleteAsync(ActivityDto dto)
     {
         var activity = await _context.Activities
             .Include(a => a.EmployeeActivities)
             .Include(a => a.ActivityWorkTimes)
-            .SingleAsync(a => a.Id == id);
+            .SingleAsync(a => a.Id == dto.Id);
 
         _context.Remove(activity);
 
         await _context.SaveChangesAsync();
     }
 
-    public override async Task<ActivityDto> GetByIdAsync(int id)
+    public async Task<ActivityDto> GetByIdAsync(int id)
     {
         var activity = await _context.Activities
             .Include(a => a.EmployeeActivities)
@@ -79,7 +54,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<ActivityDto>(activity);
     }
 
-    public override async Task<ICollection<ActivityDto>> GetWithPagination(int limit, int offset)
+    public async Task<List<ActivityDto>> GetWithPagination(int limit, int offset)
     {
         var activities = await _context.Activities
             .OrderBy(a => a.Id)
@@ -91,10 +66,10 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             .ThenInclude(w => w.FirmClient)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<ActivityDto>>(activities);
+        return _mapper.Map<List<ActivityDto>>(activities);
     }
 
-    public async Task<ICollection<ActivityDto>> SearchActivityByTitle(string activityTitle)
+    public async Task<List<ActivityDto>> SearchActivityByTitle(string activityTitle)
     {
         var foundItem = await _context.Activities
             .Where(ac => EF.Functions.ILike(ac.Name, $"{activityTitle}"))
@@ -102,17 +77,17 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             .ThenInclude(wo => wo.FirmClient)
             .ToListAsync();
 
-        return _mapper?.Map<ICollection<ActivityDto>>(foundItem);
+        return _mapper?.Map<List<ActivityDto>>(foundItem);
     }
 
-    public async Task<ICollection<EmployeeDto>> FindAssociatedEmployeesWithinActivity(int activityId)
+    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(int activityId)
     {
         var foundEmployees = await _context.Employees
             .Include(em => em.Activities)
             .Where(em => em.Activities.Any(ac => ac.Id == activityId))
             .ToListAsync();
 
-        return _mapper.Map<ICollection<EmployeeDto>>(foundEmployees);
+        return _mapper.Map<List<EmployeeDto>>(foundEmployees);
     }
 
     public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(int activityId)
@@ -125,7 +100,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<WorkOrderDto>(foundWorkOrder);
     }
 
-    public async Task<ICollection<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(int activityId)
+    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(int activityId)
     {
         var foundWorkTimes = await _context.WorkTimes
             .Include(wt => wt.Activity)
@@ -135,6 +110,6 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             .Where(wt => wt.Activity.Id == activityId)
             .ToListAsync();
 
-        return _mapper.Map<ICollection<WorkTimeDto>>(foundWorkTimes);
+        return _mapper.Map<List<WorkTimeDto>>(foundWorkTimes);
     }
 }

@@ -8,6 +8,6 @@ public class Role
     public Roles RoleName { get; set; }
 
     // Navigation properties
-    public ICollection<Employee> Employees { get; set; }
-    public ICollection<EmployeeRole> EmployeeRoles { get; set; }
+    public List<Employee> Employees { get; set; }
+    public List<EmployeeRole> EmployeeRoles { get; set; }
 }

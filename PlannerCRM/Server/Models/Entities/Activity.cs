@@ -8,12 +8,10 @@ public class Activity
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
 
-    [NotMapped]
-    public int WorkOrderId { get; set; }
-
     // Navigation properties
+    public int WorkOrderId { get; set; }
     public WorkOrder WorkOrder { get; set; }
-    public ICollection<Employee> Employees { get; set; }
-    public ICollection<EmployeeActivity> EmployeeActivities { get; set; }
-    public ICollection<ActivityWorkTime> ActivityWorkTimes { get; set; }
+    public List<Employee> Employees { get; set; }
+    public List<EmployeeActivity> EmployeeActivities { get; set; }
+    public List<ActivityWorkTime> ActivityWorkTimes { get; set; }
 }

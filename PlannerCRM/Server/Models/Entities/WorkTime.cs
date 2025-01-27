@@ -7,18 +7,12 @@ public class WorkTime
 
     public double WorkedHours { get; set; }
     
-    [NotMapped]
-    public int WorkOrderId { get; set; }
-
-    [NotMapped]
-    public int EmployeeId { get; set; }
-
-    [NotMapped]
-    public int ActivityId { get; set; }
-
     // Navigation properties
+    public int WorkOrderId { get; set; }
+    public int EmployeeId { get; set; }
+    public int ActivityId { get; set; }
     public WorkOrder WorkOrder { get; set; }
     public Employee Employee { get; set; }
     public Activity Activity { get; set; }
-    public ICollection<ActivityWorkTime> ActivityWorkTimes { get; set; }
+    public List<ActivityWorkTime> ActivityWorkTimes { get; set; }
 }

@@ -8,13 +8,9 @@ public class WorkOrder
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
 
-    [NotMapped]
-    public int FirmClientId { get; set; }
-
-    [NotMapped]
-    public int WorkOrderCostId { get; set; }
-
     // Navigation properties
+    public int FirmClientId { get; set; }
+    public int WorkOrderCostId { get; set; }
     public FirmClient FirmClient { get; set; }
     public WorkOrderCost WorkOrderCost { get; set; }
     public List<Activity> Activities { get; set; }
