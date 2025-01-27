@@ -1,4 +1,5 @@
 using PlannerCRM.Server.Repositories;
+using PlannerCRM.Shared.Constants.ApiEndpoints.Routes;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -9,7 +10,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     private readonly FirmClientRepository _repo = repo;
 
     [HttpPost]
-    [Route("add")]
+    [Route(EndpointCrudActions.ADD)]
     public async Task<IActionResult> Add(FirmClientDto client)
     {
         await _repo.AddAsync(client);
@@ -18,7 +19,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route("edit")]
+    [Route(EndpointCrudActions.EDIT)]
     public async Task<IActionResult> Edit(FirmClientDto client)
     {
         await _repo.EditAsync(client);
@@ -27,7 +28,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route("delete")]
+    [Route(EndpointCrudActions.DELETE)]
     public async Task<IActionResult> Delete(FirmClientDto client)
     {
         await _repo.DeleteAsync(client);
@@ -36,7 +37,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("getById/{clientId}")]
+    [Route(EndpointCrudActions.GET_BY_ID)]
     public async Task<ActionResult<FirmClient>> GetById(int clientId)
     {
         var client = await _repo.GetByIdAsync(clientId);
@@ -44,7 +45,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("getWithPagination/{limit}/{offset}")]
+    [Route(EndpointCrudActions.GET_WITH_PAGINATION)]
     public async Task<ActionResult<List<FirmClient>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);
@@ -53,14 +54,14 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("searchClientByName/{clientName}")]
+    [Route(ClientEndpointActions.SEARCH_CLIENT_BY_NAME)]
     public async Task<List<FirmClientDto>> SearchClientByName(string clientName)
     {
         return await _repo.SearchClientByName(clientName);
     }
 
     [HttpGet]
-    [Route("findAssociatedWorkOrdersByClientId/{clientId}")]
+    [Route(ClientEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
     public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
     {
         return await _repo.FindAssociatedWorkOrdersByClientId(clientId);

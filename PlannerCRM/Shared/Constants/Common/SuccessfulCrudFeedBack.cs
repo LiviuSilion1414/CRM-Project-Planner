@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.Feedbacks;
+namespace PlannerCRM.Shared.Constants.Common;
 
 public class SuccessfulCrudFeedBack
 {

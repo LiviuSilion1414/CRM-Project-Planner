@@ -36,8 +36,8 @@ RowSelect="OnSelect">
     private async Task LoadData()
     {
         _clients = await fs.GetAll(
-            ControllersNames.FIRM_CLIENT,
-            CrudApiManager.GET_WITH_PAGINATION,
+            EndpointsNames.FIRM_CLIENT,
+            EndpointCrudActions.GET_WITH_PAGINATION,
             _pg.Limit,
             _pg.Offset
         );
@@ -50,8 +50,8 @@ RowSelect="OnSelect">
         foreach (var cl in _clients)
         {
             cl.WorkOrders = await wfs.GetAll(
-                ControllersNames.FIRM_CLIENT,
-                ClientApiManager.FindAssociatedWorkOrdersByClientId(cl.Id)
+                EndpointsNames.FIRM_CLIENT,
+                ClientEndpointActions.FindAssociatedWorkOrdersByClientId(cl.Id)
             );
         }
     }

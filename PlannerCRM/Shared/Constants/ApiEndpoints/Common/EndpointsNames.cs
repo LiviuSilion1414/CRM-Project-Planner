@@ -1,6 +1,6 @@
-﻿namespace PlannerCRM.Shared.Constants.ApiEndpoints;
+﻿namespace PlannerCRM.Shared.Constants.ApiEndpoints.Common;
 
-public class ControllersNames
+public class EndpointsNames
 {
     public const string EMPLOYEE = "employee";
     public const string FIRM_CLIENT = "client";

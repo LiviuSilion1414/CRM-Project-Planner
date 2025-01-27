@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.Feebacks;
+namespace PlannerCRM.Shared.Constants.Common;
 
 public static class ErrorMessages
 {

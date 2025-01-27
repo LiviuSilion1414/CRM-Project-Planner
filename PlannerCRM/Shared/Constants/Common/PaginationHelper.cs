@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Constants.ApiEndpoints;
+﻿namespace PlannerCRM.Shared.Constants.Common;
 
 public class PaginationHelper
 {

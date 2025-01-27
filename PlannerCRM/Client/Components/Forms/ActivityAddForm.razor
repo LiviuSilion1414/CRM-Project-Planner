@@ -1,4 +1,5 @@
-﻿@inject DialogService ds
+﻿@using PlannerCRM.Shared.Constants.ApiEndpoints.Common
+@inject DialogService ds
 @inject FetchService<ActivityDto> afs
 @inject FetchService<WorkOrderDto> fs
 
@@ -124,8 +125,8 @@
         if (!string.IsNullOrEmpty(_query))
         {
             _workOrders = await fs.GetAll(
-                ControllersNames.WORK_ORDER,
-                WorkOrderApiManager.SearchWorkOrderByTitle(_query)
+                EndpointsNames.WORK_ORDER,
+                WorkOrderEndpointActions.SearchWorkOrderByTitle(_query)
             );
 
         }
@@ -141,8 +142,8 @@
         if (_context.Validate())
         {
             await afs.Create(
-                ControllersNames.ACTIVITY,
-                CrudApiManager.ADD,
+                EndpointsNames.ACTIVITY,
+                EndpointCrudActions.ADD,
                 _model
             );
             ds.Close();

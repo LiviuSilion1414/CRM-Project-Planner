@@ -121,8 +121,8 @@
         if (!string.IsNullOrEmpty(_query))
         {
             _workOrders = await fs.GetAll(
-                ControllersNames.WORK_ORDER,
-                WorkOrderApiManager.SearchWorkOrderByTitle(_query)
+                EndpointsNames.WORK_ORDER,
+                WorkOrderEndpointActions.SearchWorkOrderByTitle(_query)
             );
 
         }
@@ -138,8 +138,8 @@
         if (_context.Validate())
         {
             await afs.Update(
-                ControllersNames.ACTIVITY,
-                $"{CrudApiManager.EDIT}/{Model.Id}",
+                EndpointsNames.ACTIVITY,
+                $"{EndpointCrudActions.EDIT}/{Model.Id}",
                 Model
             );
             ds.Close();

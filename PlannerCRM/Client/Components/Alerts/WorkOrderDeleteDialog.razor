@@ -29,8 +29,8 @@
     private async Task OnDeleteConfirmed()
     {
         await fs.Delete(
-            ControllersNames.WORK_ORDER,
-            CrudApiManager.DELETE,
+            EndpointsNames.WORK_ORDER,
+            EndpointCrudActions.DELETE,
             Model.Id
         );
     }

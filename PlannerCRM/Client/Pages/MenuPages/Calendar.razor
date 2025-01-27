@@ -32,8 +32,8 @@
     private async Task LoadData()
     {
         _activities = await fs.GetAll(
-            ControllersNames.ACTIVITY,
-            CrudApiManager.GET_WITH_PAGINATION,
+            EndpointsNames.ACTIVITY,
+            EndpointCrudActions.GET_WITH_PAGINATION,
             _pg.Limit,
             _pg.Offset
         );

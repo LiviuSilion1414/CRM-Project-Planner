@@ -1,4 +1,4 @@
-namespace PlannerCRM.Shared.Constants;
+namespace PlannerCRM.Shared.Constants.Common;
 
 public class Titles
 {
@@ -16,5 +16,5 @@ public class Titles
 
     public const string REPORT_DETAILS = "Show Report Data";
 
-    public const string NOT_AVAILABLE_ITEMS= "Data Not Available";
+    public const string NOT_AVAILABLE_ITEMS = "Data Not Available";
 }

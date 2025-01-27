@@ -35,8 +35,8 @@ RowSelect="OnSelect">
     private async Task LoadData()
     {
         _workOrders = await fs.GetAll(
-            ControllersNames.WORK_ORDER,
-            CrudApiManager.GET_WITH_PAGINATION,
+            EndpointsNames.WORK_ORDER,
+            EndpointCrudActions.GET_WITH_PAGINATION,
             _pg.Limit,
             _pg.Offset
         );
@@ -49,8 +49,8 @@ RowSelect="OnSelect">
         foreach (var wo in _workOrders)
         {
             wo.Activities = await afs.GetAll(
-                ControllersNames.WORK_ORDER,
-                WorkOrderApiManager.FindAssociatedActivitiesByWorkOrderId(wo.Id)
+                EndpointsNames.WORK_ORDER,
+                WorkOrderEndpointActions.FindAssociatedActivitiesByWorkOrderId(wo.Id)
             );
         }
     }

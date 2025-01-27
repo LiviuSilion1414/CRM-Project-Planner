@@ -108,8 +108,8 @@
         if (!string.IsNullOrEmpty(_query))
         {
             _clients = await cfs.GetAll(
-                ControllersNames.FIRM_CLIENT,
-                ClientApiManager.SearchClientByName(_query)
+                EndpointsNames.FIRM_CLIENT,
+                ClientEndpointActions.SearchClientByName(_query)
             );
 
         }
@@ -125,8 +125,8 @@
         if (_context.Validate())
         {
             await fs.Update(
-                ControllersNames.WORK_ORDER,
-                $"{CrudApiManager.EDIT}/{Model.Id}",
+                EndpointsNames.WORK_ORDER,
+                $"{EndpointCrudActions.EDIT}/{Model.Id}",
                 Model
             );
             ds.Close();

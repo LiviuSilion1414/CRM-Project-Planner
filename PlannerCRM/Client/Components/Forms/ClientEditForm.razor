@@ -40,8 +40,8 @@
         if (_context.Validate())
         {
             await fs.Update(
-                ControllersNames.FIRM_CLIENT,
-                $"{CrudApiManager.EDIT}/{Model.Id}",
+                EndpointsNames.FIRM_CLIENT,
+                $"{EndpointCrudActions.EDIT}/{Model.Id}",
                 Model
             );
             ds.Close();

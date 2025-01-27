@@ -1,4 +1,5 @@
 using PlannerCRM.Server.Repositories;
+using PlannerCRM.Shared.Constants.ApiEndpoints.Routes;
 
 namespace PlannerCRM.Server.Controllers;
 
@@ -9,7 +10,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     private readonly EmployeeRepository _repo = repo;
 
     [HttpPost]
-    [Route("add")]
+    [Route(EndpointCrudActions.ADD)]
     public async Task<IActionResult> Add(EmployeeDto employee)
     {
         await _repo.AddAsync(employee);
@@ -18,7 +19,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route("edit")]
+    [Route(EndpointCrudActions.EDIT)]
     public async Task<IActionResult> Edit(EmployeeDto employee)
     {
         await _repo.EditAsync(employee);
@@ -27,7 +28,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route("delete")]
+    [Route(EndpointCrudActions.DELETE)]
     public async Task<IActionResult> Delete(EmployeeDto employee)
     {
         await _repo.DeleteAsync(employee);
@@ -36,7 +37,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("getById/{employeeId}")]
+    [Route(EndpointCrudActions.GET_BY_ID)]
     public async Task<ActionResult<EmployeeDto>> GetById(int employeeId)
     {
         var employee = await _repo.GetByIdAsync(employeeId);
@@ -44,7 +45,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("getWithPagination/{limit}/{offset}")]
+    [Route(EndpointCrudActions.GET_WITH_PAGINATION)]
     public async Task<ActionResult<List<EmployeeDto>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);
@@ -53,28 +54,28 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("searchEmployeeByName/{employeeName}")]
+    [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME)]
     public async Task<List<EmployeeDto>> SearchEmployeeByName(string employeeName)
     {
         return await _repo.SearchEmployeeByName(employeeName);
     }
 
     [HttpGet]
-    [Route("findAssociatedActivitiesByEmployeeId/{employeeId}")]
+    [Route(EmployeeEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID)]
     public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(int employeeId)
     {
         return await _repo.FindAssociatedActivitiesByEmployeeId(employeeId);
     }
 
     [HttpGet]
-    [Route("findAssociatedWorkTimesByActivityIdAndEmployeeId/{employeeId}/{activityId}")]
+    [Route(EmployeeEndpointActions.FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID)]
     public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(int employeeId, int activityId)
     {
         return await _repo.FindAssociatedWorkTimesByActivityIdAndEmployeeId(employeeId, activityId);
     }
 
     [HttpGet]
-    [Route("findAssociatedSalaryDataByEmployeeId/{employeeId}")]
+    [Route(EmployeeEndpointActions.FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID)]
     public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(int employeeId)
     {
         return await _repo.FindAssociatedSalaryDataByEmployeeId(employeeId);

@@ -112,8 +112,8 @@
         if (!string.IsNullOrEmpty(_query))
         {
             _clients = await cfs.GetAll(
-                ControllersNames.FIRM_CLIENT,
-                ClientApiManager.SearchClientByName(_query)
+                EndpointsNames.FIRM_CLIENT,
+                ClientEndpointActions.SearchClientByName(_query)
             );
 
         }
@@ -129,8 +129,8 @@
         if (_context.Validate())
         {
             await fs.Create(
-                ControllersNames.WORK_ORDER,
-                CrudApiManager.ADD,
+                EndpointsNames.WORK_ORDER,
+                EndpointCrudActions.ADD,
                 _model
             );
             ds.Close();

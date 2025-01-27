@@ -41,8 +41,8 @@
         if (_context.Validate())
         {
             await fs.Create(
-                ControllersNames.FIRM_CLIENT,
-                CrudApiManager.ADD,
+                EndpointsNames.FIRM_CLIENT,
+                EndpointCrudActions.ADD,
                 _model
             );
             ds.Close();
