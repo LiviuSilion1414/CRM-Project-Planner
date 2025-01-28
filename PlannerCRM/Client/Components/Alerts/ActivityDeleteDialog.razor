@@ -8,16 +8,16 @@
     <RadzenText>End Date: @Model.EndDate</RadzenText>
     <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
         <RadzenButton ButtonType="ButtonType.Button"
-                      ButtonStyle="ButtonStyle.Info"
-                      Variant="Variant.Outlined"
-                      Text="Close"
-                      Click="@(() => ds.Close())">
+        ButtonStyle="ButtonStyle.Info"
+        Variant="Variant.Outlined"
+        Text="Close"
+        Click="@(() => ds.Close())">
         </RadzenButton>
         <RadzenButton ButtonType="ButtonType.Button"
-                      ButtonStyle="ButtonStyle.Danger"
-                      Variant="Variant.Outlined"
-                      Text="Delete"
-                      Click="@(async () => await OnDeleteConfirmed())">
+        ButtonStyle="ButtonStyle.Danger"
+        Variant="Variant.Outlined"
+        Text="Delete"
+        Click="@(async () => await OnDeleteConfirmed())">
         </RadzenButton>
     </RadzenStack>
 </RadzenStack>
@@ -33,5 +33,6 @@
             EndpointCrudActions.DELETE,
             Model
         );
+        ds.Close();
     }
 }
