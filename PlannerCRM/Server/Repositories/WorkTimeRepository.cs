@@ -9,6 +9,9 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
     {
         var model = _mapper.Map<WorkTime>(dto);
 
+        _context.WorkOrders.Attach(model.WorkOrder);
+        _context.Activities.Attach(model.Activity);
+
         await _context.WorkTimes.AddAsync(model);
 
         await _context.SaveChangesAsync();

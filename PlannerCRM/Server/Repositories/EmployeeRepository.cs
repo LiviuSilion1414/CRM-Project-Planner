@@ -10,6 +10,30 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         var model = _mapper.Map<Employee>(dto);
 
         await _context.Employees.AddAsync(model);
+        await _context.SaveChangesAsync();
+
+        foreach (var role in model.Roles)
+        {
+            await _context.EmployeeRoles.AddAsync(
+                new EmployeeRole()
+                {
+                    Name = role.RoleName.ToString(),
+                    RoleId = role.Id,
+                    EmployeeId = model.Id
+                }
+            );
+        }
+
+        foreach (var salary in model.Salaries)
+        {
+            await _context.EmployeeSalaries.AddAsync(
+                new EmployeeSalary()
+                {
+                    SalaryId = salary.Id,
+                    EmployeeId = model.Id
+                }
+            );
+        }
 
         await _context.SaveChangesAsync();
     }

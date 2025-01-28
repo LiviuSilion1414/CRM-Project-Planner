@@ -15,6 +15,16 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         await _context.Activities.AddAsync(model);
 
         await _context.SaveChangesAsync();
+
+        await _context.WorkOrderActivities.AddAsync(
+            new()
+            {
+                ActivityId = model.Id,
+                WorkOrderId = model.WorkOrder.Id
+            }
+        );
+
+        await _context.SaveChangesAsync();
     }
 
     public async Task EditAsync(ActivityDto dto)

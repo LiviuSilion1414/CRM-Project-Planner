@@ -12,10 +12,10 @@ public class ActivityDto
     public DateTime CreationDate { get; set; } = DateTime.Now;
 
     [Required]
+    [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
     public DateTime StartDate { get; set; } = DateTime.Now;
 
     [Required]
-    [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
     public DateTime EndDate { get; set; } = DateTime.Now;
 
     [Required]
