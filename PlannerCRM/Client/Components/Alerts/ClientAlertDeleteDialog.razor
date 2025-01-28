@@ -1,5 +1,6 @@
 ﻿@inject DialogService ds
 @inject FetchService<FirmClientDto> fs
+@inject NotificationService ns
 
 <RadzenStack AlignItems="AlignItems.Center">
     <RadzenCard>
@@ -34,6 +35,15 @@
             EndpointCrudActions.DELETE,
             Model
         );
+
+        ns.Notify(new NotificationMessage()
+            {
+                Duration = 3000,
+                Detail = SuccessMessagges.ITEM_DELETE,
+                Summary = Titles.DELETE_ITEM,
+                Severity = NotificationSeverity.Error
+            });
+
         ds.Close();
     }
 }

@@ -1,5 +1,6 @@
 ﻿@inject DialogService ds
 @inject FetchService<FirmClientDto> fs
+@inject NotificationService ns
 
 <RadzenStack>
     <RadzenCard>
@@ -45,6 +46,14 @@
                 EndpointCrudActions.ADD,
                 _model
             );
+
+            ns.Notify(new NotificationMessage()
+            {
+                Duration = 3000,
+                Detail = SuccessMessagges.ITEM_ADD,
+                Summary = Titles.ADD_ITEM
+            });
+
             ds.Close();
         }
     }

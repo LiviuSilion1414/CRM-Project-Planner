@@ -2,6 +2,7 @@
 @inject DialogService ds
 @inject FetchService<ActivityDto> afs
 @inject FetchService<WorkOrderDto> fs
+@inject NotificationService ns
 
 <RadzenStack>
     <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
@@ -151,6 +152,13 @@
                 EndpointCrudActions.ADD,
                 _model
             );
+
+            ns.Notify(new NotificationMessage() {
+                Duration = 3000,
+                Detail = SuccessMessagges.ITEM_ADD,
+                Summary = Titles.ADD_ITEM
+            }); 
+
             ds.Close();
         }
     }

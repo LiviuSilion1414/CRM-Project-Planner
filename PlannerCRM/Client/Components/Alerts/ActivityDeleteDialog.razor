@@ -1,5 +1,6 @@
 ﻿@inject DialogService ds
 @inject FetchService<ActivityDto> fs
+@inject NotificationService ns
 
 <RadzenStack AlignItems="AlignItems.Start">
     <RadzenText Text="Do you confirm this item removal?" />
@@ -33,6 +34,15 @@
             EndpointCrudActions.DELETE,
             Model
         );
+
+        ns.Notify(new NotificationMessage()
+        {
+            Duration = 3000,
+            Detail = SuccessMessagges.ITEM_DELETE,
+            Summary =  Titles.DELETE_ITEM,
+            Severity = NotificationSeverity.Error
+        });
+
         ds.Close();
     }
 }
