@@ -1,7 +1,6 @@
-using PlannerCRM.Server.Repositories;
-
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class WorkTimeController(WorkTimeRepository repo) : ControllerBase

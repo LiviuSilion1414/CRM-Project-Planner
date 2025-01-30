@@ -1,8 +1,6 @@
-using PlannerCRM.Server.Repositories;
-using PlannerCRM.Shared.Constants.ApiEndpoints.Routes;
-
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ActivityController(ActivityRepository specificRepo) : ControllerBase

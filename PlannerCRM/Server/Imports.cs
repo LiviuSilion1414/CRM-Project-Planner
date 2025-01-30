@@ -11,7 +11,8 @@ global using PlannerCRM.Shared.Dtos.JoinEntities;
 global using PlannerCRM.Shared.Constants.ApiEndpoints.Common;
 global using PlannerCRM.Shared.Constants.ApiEndpoints.Routes;
 global using PlannerCRM.Shared.Constants.Common;
-
+global using Microsoft.AspNetCore.Authorization;
+global using PlannerCRM.Server.Repositories;
 
 global using PlannerCRM.Server.DataAccess;
 global using PlannerCRM.Server.Extensions;
