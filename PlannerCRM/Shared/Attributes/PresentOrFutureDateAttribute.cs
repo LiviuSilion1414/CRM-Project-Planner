@@ -7,7 +7,8 @@ public sealed class PresentOrFutureDateAttribute : ValidationAttribute
         if (Convert.ToDateTime(value) >= DateTime.Today)
         {
             return ValidationResult.Success;
-        } else
+        } 
+        else
         {
             return new ValidationResult("Past date not allowed.");
         }

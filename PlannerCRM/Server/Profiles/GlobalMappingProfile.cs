@@ -51,5 +51,7 @@ public class GlobalMappingProfile : Profile
 
         CreateMap<WorkTime, WorkTimeDto>().MaxDepth(1);
         CreateMap<WorkTimeDto, WorkTime>().MaxDepth(1);
+
+        CreateMap<EmployeeLoginDto, EmployeeLogin>().MaxDepth(1);
     }
 }

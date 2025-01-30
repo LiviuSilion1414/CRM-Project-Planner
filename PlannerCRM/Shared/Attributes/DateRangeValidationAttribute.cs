@@ -1,15 +1,9 @@
 ﻿namespace PlannerCRM.Shared.Attributes;
 
-public class DateRangeValidationAttribute : ValidationAttribute
+public class DateRangeValidationAttribute(string startDateProperty, string endDateProperty) : ValidationAttribute
 {
-    private readonly string _startDateProperty;
-    private readonly string _endDateProperty;
-
-    public DateRangeValidationAttribute(string startDateProperty, string endDateProperty)
-    {
-        _startDateProperty = startDateProperty;
-        _endDateProperty = endDateProperty;
-    }
+    private readonly string _startDateProperty = startDateProperty;
+    private readonly string _endDateProperty = endDateProperty;
 
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {

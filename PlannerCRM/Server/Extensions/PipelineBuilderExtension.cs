@@ -20,6 +20,7 @@ public static class PipelineBuilderExtension
             .AddEntityFrameworkStores<AppDbContext>()
             .AddUserManager<UserManager<Employee>>()
             .AddSignInManager<SignInManager<Employee>>()
+            .AddRoleManager<RoleManager<EmployeeRole>>()
             .AddDefaultTokenProviders();
 
         services.Configure<IdentityOptions>(o =>
@@ -47,6 +48,10 @@ public static class PipelineBuilderExtension
 
     public static void RegisterServices(this IServiceCollection services)
     {
+        services.AddScoped<UserManager<Employee>>();
+        services.AddScoped<SignInManager<Employee>>();
+        services.AddScoped<RoleManager<EmployeeRole>>();
+
         services.AddScoped<ActivityRepository>();
         services.AddScoped<EmployeeRepository>();
         services.AddScoped<FirmClientRepository>();
