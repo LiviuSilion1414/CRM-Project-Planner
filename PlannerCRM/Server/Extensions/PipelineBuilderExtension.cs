@@ -19,6 +19,7 @@ public static class PipelineBuilderExtension
             .AddIdentity<Employee, EmployeeRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddUserManager<UserManager<Employee>>()
+            .AddSignInManager<SignInManager<Employee>>()
             .AddDefaultTokenProviders();
 
         services.Configure<IdentityOptions>(o =>

@@ -1,6 +1,7 @@
-using PlannerCRM.Server.Profiles;
-
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -39,6 +40,9 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
