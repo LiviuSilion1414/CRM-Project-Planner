@@ -1,0 +1,68 @@
+﻿@page "/login"
+@inject LoginService ls
+@inject NotificationService ns
+
+<PageTitle>Login Page</PageTitle>
+
+<RadzenStack JustifyContent="JustifyContent.Center">
+    <RadzenCard Style="max-width: 600px;">
+        <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH3">Welcome!</RadzenText>
+        <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH6">Join us and let us do the <strong>BORING</strong> work!</RadzenText>
+        <RadzenFieldset Text="Login">
+            <EditForm EditContext="_editContext" OnSubmit="Login">
+                <DataAnnotationsValidator />
+                <RadzenRow class="form-group py-2 w-100">
+                    <RadzenColumn>
+                        <RadzenLabel Text="Email" />
+                        <InputText class="form-control" type="email" @bind-Value=@_model.Email/>
+                        <ValidationMessage For="@(() => _model.Email)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="form-group py-2 w-100">
+                    <RadzenColumn>
+                        <RadzenLabel Text="Password" />
+                        <InputText class="form-control" type="password" Name="Password" @bind-Value=@_model.Password />
+                        <ValidationMessage For="@(() => _model.Password)" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </EditForm>
+            <RadzenStack AlignItems="AlignItems.End">
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenButton ButtonType="ButtonType.Submit" 
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Variant="Variant.Outlined"
+                                      Text="Sign In"
+                                      Click="Login">
+                        </RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenFieldset>
+    </RadzenCard>
+</RadzenStack>
+
+@code
+{
+    private EmployeeLoginDto _model;
+    private EditContext _editContext;
+
+    protected override void OnInitialized()
+    {
+        _model = new();
+        _editContext = new(_model);
+    }
+
+    private async Task Login()
+    {
+        if (_editContext.Validate())
+        {
+            var res = await ls.LoginAsync(_model);
+            if (!res.IsSuccessStatusCode)
+            {
+                var responseContent = await res.Content.ReadAsStringAsync();
+                ns.Notify(NotificationSeverity.Error, res.ReasonPhrase, responseContent, 4000);
+            }
+        }
+    }
+}
