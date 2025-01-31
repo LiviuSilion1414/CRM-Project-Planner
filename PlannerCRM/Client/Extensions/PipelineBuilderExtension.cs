@@ -6,6 +6,8 @@ public static class PipelineBuilderExtension
 {
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
+        services.AddScoped<LoginService>();
+
         services.AddScoped<DialogService>();
         services.AddScoped<NotificationService>();
         services.AddScoped<TooltipService>();
