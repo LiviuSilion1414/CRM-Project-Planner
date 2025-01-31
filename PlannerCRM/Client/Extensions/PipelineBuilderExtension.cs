@@ -1,11 +1,15 @@
-﻿using Radzen;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Radzen;
 
 namespace PlannerCRM.Client.Extensions;
 
 public static class PipelineBuilderExtension
 {
     public static IServiceCollection RegisterServices(this IServiceCollection services)
-    {
+    {   
+        services.AddSingleton<LocalStorageService>();
+
+        services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
         services.AddScoped<LoginService>();
 
         services.AddScoped<DialogService>();
