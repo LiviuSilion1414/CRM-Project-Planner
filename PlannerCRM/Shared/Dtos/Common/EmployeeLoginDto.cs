@@ -10,4 +10,6 @@ public class EmployeeLoginDto
     [PasswordValidator]
     [Length(8, 16)]
     public string Password { get; set; }
+
+    public bool RememberMe { get; set; }
 }

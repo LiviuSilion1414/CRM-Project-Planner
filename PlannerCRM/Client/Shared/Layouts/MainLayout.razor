@@ -17,15 +17,13 @@
                 JustifyContent="JustifyContent.SpaceBetween"
                 Style="width: 100%; background-color: lightseagreen;">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                        <RadzenSidebarToggle Click="ToggleSidebar" />
-                        <RadzenLabel Text="Planner CRM" />
+                        <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM"/>
                     </RadzenStack>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="16px">
                         <RadzenButton Text="Login"
                         Icon="person"
                         ButtonStyle="ButtonStyle.Info"
-                        Variant="Variant.Outlined"
-                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Text"
                         Click="@(() => nav.NavigateTo("/login"))">
                         </RadzenButton>
                     </RadzenStack>
@@ -34,7 +32,7 @@
         </RadzenLayout>
     </NotAuthorized>
     <Authorized>
-        <RadzenLayout Style="grid">
+        <RadzenLayout>
             <RadzenHeader>
                 <RadzenStack Orientation="Orientation.Horizontal" 
                 AlignItems="AlignItems.Center" 
@@ -42,7 +40,7 @@
                 Style="width: 100%; background-color: lightseagreen;">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                         <RadzenSidebarToggle Click="ToggleSidebar" />
-                        <RadzenLabel Text="Planner CRM" />
+                        <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM" />
                     </RadzenStack>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="16px">
                         <RadzenText>Hello @context.User.Identity.Name!</RadzenText>
@@ -68,13 +66,13 @@
             <RadzenBody>
                 @Body
             </RadzenBody>
-            <RadzenFooter Style="background-color: lightseagreen; position: fixed; bottom: 0; width: 100%; height: auto;" Class="text-white py-3 mt-auto">
+            <RadzenFooter Style="background-color: lightseagreen; position: fixed; bottom: 0; width: 100%; height: auto;" class="text-white py-3 mt-auto">
                 <div class="container text-center">
                     PlannerCRM 2025 ©️ <strong>All rights reserved.</strong>
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    <RadzenLink Class="text-white text-decoration-none" Path="/terms-and-conditions" Text="Terms and Conditions" />
+                    <RadzenLink class="text-white text-decoration-none" Path="/terms-and-conditions" Text="Terms and Conditions" />
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    <RadzenLink Class="text-white text-decoration-none" Path="/privacy-policy" Text="Privacy Policy" />
+                    <RadzenLink class="text-white text-decoration-none" Path="/privacy-policy" Text="Privacy Policy" />
                 </div>
             </RadzenFooter>
         </RadzenLayout>

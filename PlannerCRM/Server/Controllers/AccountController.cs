@@ -29,7 +29,7 @@ public class AccountController
 
         if (foundEmployee is not null)
         {
-            await _signInManager.SignInAsync(foundEmployee, true);
+            await _signInManager.SignInAsync(foundEmployee, model.RememberMe);
 
             return Ok(LoginFeedBack.CONNECTED);
         } 

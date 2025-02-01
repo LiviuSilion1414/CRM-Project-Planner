@@ -1,16 +1,21 @@
-﻿@page "/login"
+﻿@page "/"
+@page "/login"
+
+@layout PublicLayout
+
 @inject LoginService ls
 @inject NotificationService ns
+@inject NavigationManager nav
 @attribute [AllowAnonymous]
 
 <PageTitle>Login Page</PageTitle>
 
-<RadzenStack JustifyContent="JustifyContent.Center">
-    <RadzenCard Style="max-width: 600px;">
+<RadzenStack Style="width: 30vw; margin: 0 auto;">
+    <RadzenCard>
         <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH3">Welcome!</RadzenText>
         <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH6">Join us and let us do the <strong>BORING</strong> work!</RadzenText>
         <RadzenFieldset Text="Login">
-            <EditForm EditContext="_editContext" OnSubmit="Login">
+            <EditForm EditContext="_editContext" OnSubmit="OnLogin">
                 <DataAnnotationsValidator />
                 <RadzenRow class="form-group py-2 w-100">
                     <RadzenColumn>
@@ -22,19 +27,35 @@
                 <RadzenRow class="form-group py-2 w-100">
                     <RadzenColumn>
                         <RadzenLabel Text="Password" />
-                        <InputText class="form-control" type="password" Name="Password" @bind-Value=@_model.Password />
+                        <InputText class="form-control" type="password" @bind-Value=@_model.Password />
                         <ValidationMessage For="@(() => _model.Password)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenLabel Text="Remember Me?"/>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputCheckbox class="form-control" @bind-Value="@_model.RememberMe" />
                     </RadzenColumn>
                 </RadzenRow>
             </EditForm>
             <RadzenStack AlignItems="AlignItems.End">
                 <RadzenRow>
                     <RadzenColumn>
+                        <RadzenButton ButtonType="ButtonType.Button"
+                                      ButtonStyle="ButtonStyle.Info"
+                                      Variant="Variant.Text"
+                                      Text="Forgot Password?"
+                                      Click="OnForgotPassword">
+                        </RadzenButton>
+                    </RadzenColumn>
+                    <RadzenColumn>
                         <RadzenButton ButtonType="ButtonType.Submit" 
                                       ButtonStyle="ButtonStyle.Primary"
                                       Variant="Variant.Outlined"
                                       Text="Sign In"
-                                      Click="Login">
+                                      Click="OnLogin">
                         </RadzenButton>
                     </RadzenColumn>
                 </RadzenRow>
@@ -54,7 +75,7 @@
         _editContext = new(_model);
     }
 
-    private async Task Login()
+    private async Task OnLogin()
     {
         if (_editContext.Validate())
         {
@@ -65,5 +86,10 @@
                 ns.Notify(NotificationSeverity.Error, res.ReasonPhrase, responseContent, 4000);
             }
         }
+    }
+
+    private void OnForgotPassword()
+    {
+        nav.NavigateTo("/forgot-password");
     }
 }

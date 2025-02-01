@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager nav
+
+<RadzenComponents @rendermode="RenderMode.InteractiveWebAssembly" />
+<RadzenDialog />
+<RadzenNotification />
+<RadzenTooltip />
+<RadzenContextMenu />
+
+<RadzenLayout>
+    <RadzenHeader Style="background-color:lightseagreen;">
+                <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM" />
+                <RadzenButton Text="Login"
+                                Icon="person"
+                                ButtonStyle="ButtonStyle.Info"
+                                Variant="Variant.Text"
+                                Click="@(() => nav.NavigateTo("/login"))">
+                </RadzenButton>
+    </RadzenHeader>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+    <RadzenFooter Style="background-color: lightseagreen; position: fixed; bottom: 0; width: 100%; height: auto;" class="text-white py-3 mt-auto">
+        <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
+            <RadzenText>
+                PlannerCRM 2025 ©️ <strong>All rights reserved.</strong>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <RadzenLink class="text-white text-decoration-none" Path="/terms-and-conditions" Text="Terms and Conditions" />
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <RadzenLink class="text-white text-decoration-none" Path="/privacy-policy" Text="Privacy Policy" />
+            </RadzenText>
+        </RadzenStack>
+    </RadzenFooter>
+</RadzenLayout>
+
+
+@code {
+    private bool sidebarExpanded = true;
+
+    private void ToggleSidebar()
+    {
+        sidebarExpanded = !sidebarExpanded;
+    }
+}
