@@ -1,12 +1,12 @@
 namespace PlannerCRM.Server.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class EmployeeController(EmployeeRepository repo) : ControllerBase
 {
     private readonly EmployeeRepository _repo = repo;
 
+    //[Authorize]
     [HttpPost]
     [Route(EndpointCrudActions.ADD)]
     public async Task<IActionResult> Add(EmployeeDto employee)
@@ -16,6 +16,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return Ok();
     }
 
+    [Authorize]
     [HttpPut]
     [Route(EndpointCrudActions.EDIT)]
     public async Task<IActionResult> Edit(EmployeeDto employee)
@@ -25,6 +26,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return Ok();
     }
 
+    [Authorize]
     [HttpPost]
     [Route(EndpointCrudActions.DELETE)]
     public async Task<IActionResult> Delete(EmployeeDto employee)
@@ -34,6 +36,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return Ok();
     }
 
+    [Authorize]
     [HttpGet]
     [Route(EndpointCrudActions.GET_BY_ID)]
     public async Task<ActionResult<EmployeeDto>> GetById(int employeeId)
@@ -42,6 +45,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return Ok(employee);
     }
 
+    [Authorize]
     [HttpGet]
     [Route(EndpointCrudActions.GET_WITH_PAGINATION)]
     public async Task<ActionResult<List<EmployeeDto>>> GetWithPagination(int limit, int offset)
@@ -51,6 +55,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return Ok(entities);
     }
 
+    [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME)]
     public async Task<List<EmployeeDto>> SearchEmployeeByName(string employeeName)
@@ -58,6 +63,15 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return await _repo.SearchEmployeeByName(employeeName);
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY)]
+    public async Task<List<EmployeeLoginRecoveryDto>> SearchEmployeeByNameForRecovery(string name, string email, string phone)
+    {
+        return await _repo.SearchEmployeeByName(name, email, phone);
+    }
+
+    [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID)]
     public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(int employeeId)
@@ -65,6 +79,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return await _repo.FindAssociatedActivitiesByEmployeeId(employeeId);
     }
 
+    [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID)]
     public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(int employeeId, int activityId)
@@ -72,6 +87,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         return await _repo.FindAssociatedWorkTimesByActivityIdAndEmployeeId(employeeId, activityId);
     }
 
+    [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID)]
     public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(int employeeId)

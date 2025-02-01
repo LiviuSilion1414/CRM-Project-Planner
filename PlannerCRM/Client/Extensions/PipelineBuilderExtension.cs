@@ -25,6 +25,7 @@ public static class PipelineBuilderExtension
         services.AddScoped<FetchService<WorkOrderDto>>();
         services.AddScoped<FetchService<WorkOrderCostDto>>();
         services.AddScoped<FetchService<WorkTimeDto>>();
+        services.AddScoped<FetchService<EmployeeLoginRecoveryDto>>();
 
         return services;
     }

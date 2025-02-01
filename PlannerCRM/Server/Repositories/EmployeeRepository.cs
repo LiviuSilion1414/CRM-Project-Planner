@@ -12,27 +12,30 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         await _context.Employees.AddAsync(model);
         await _context.SaveChangesAsync();
 
-        foreach (var role in model.Roles)
+        if (model.Roles is not null && model.Salaries is not null)
         {
-            await _context.EmployeeRoles.AddAsync(
-                new EmployeeRole()
-                {
-                    Name = role.RoleName.ToString(),
-                    RoleId = role.Id,
-                    EmployeeId = model.Id
-                }
-            );
-        }
+            foreach (var role in model.Roles)
+            {
+                await _context.EmployeeRoles.AddAsync(
+                    new EmployeeRole()
+                    {
+                        Name = role.RoleName.ToString(),
+                        RoleId = role.Id,
+                        EmployeeId = model.Id
+                    }
+                );
+            }
 
-        foreach (var salary in model.Salaries)
-        {
-            await _context.EmployeeSalaries.AddAsync(
-                new EmployeeSalary()
-                {
-                    SalaryId = salary.Id,
-                    EmployeeId = model.Id
-                }
-            );
+            foreach (var salary in model.Salaries)
+            {
+                await _context.EmployeeSalaries.AddAsync(
+                    new EmployeeSalary()
+                    {
+                        SalaryId = salary.Id,
+                        EmployeeId = model.Id
+                    }
+                );
+            }
         }
 
         await _context.SaveChangesAsync();
@@ -102,6 +105,18 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             .ToListAsync();
 
         return _mapper.Map<List<EmployeeDto>>(foundEmployee);
+    }
+
+    public async Task<List<EmployeeLoginRecoveryDto>> SearchEmployeeByName(string employeeName, string email = "", string phone="")
+    {
+        var foundEmployee = await _context.Employees
+            .Where(em => 
+                EF.Functions.ILike(em.Name, $"{employeeName}") || 
+                EF.Functions.ILike(em.Email, $"{email}") ||
+                EF.Functions.ILike(em.PhoneNumber, $"{phone}"))
+            .ToListAsync();
+
+        return _mapper.Map<List<EmployeeLoginRecoveryDto>>(foundEmployee);
     }
 
     public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(int employeeId)
