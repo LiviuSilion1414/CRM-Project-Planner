@@ -9,8 +9,9 @@ public static class PipelineBuilderExtension
     {   
         services.AddSingleton<LocalStorageService>();
 
-        services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-        services.AddScoped<LoginService>();
+        services.AddScoped<AuthenticationStateProvider, AuthService>();
+        services.AddScoped<AuthService>();
+        services.AddScoped<AuthService>();
 
         services.AddScoped<DialogService>();
         services.AddScoped<NotificationService>();

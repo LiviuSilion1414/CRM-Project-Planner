@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+
 namespace PlannerCRM.Server.Repositories;
 
 public class EmployeeRepository(AppDbContext context, IMapper mapper)
@@ -9,8 +11,20 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     {
         var model = _mapper.Map<Employee>(dto);
 
-        await _context.Employees.AddAsync(model);
-        await _context.SaveChangesAsync();
+        if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email == dto.Email)) == null)
+        {
+            byte[] salt = new byte[128 / 8];
+            string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.Password,
+                                                                            salt: salt,
+                                                                            prf: KeyDerivationPrf.HMACSHA256,
+                                                                            iterationCount: 10000,
+                                                                            numBytesRequested: 256 / 8));
+
+            model.PasswordHash = cryptedPwd;
+            
+            await _context.Employees.AddAsync(model);
+            await _context.SaveChangesAsync();
+        }
 
         if (model.Roles is not null && model.Salaries is not null)
         {
@@ -19,7 +33,6 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                 await _context.EmployeeRoles.AddAsync(
                     new EmployeeRole()
                     {
-                        Name = role.RoleName.ToString(),
                         RoleId = role.Id,
                         EmployeeId = model.Id
                     }
@@ -112,8 +125,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         var foundEmployee = await _context.Employees
             .Where(em => 
                 EF.Functions.ILike(em.Name, $"{employeeName}") || 
-                EF.Functions.ILike(em.Email, $"{email}") ||
-                EF.Functions.ILike(em.PhoneNumber, $"{phone}"))
+                EF.Functions.ILike(em.Email, $"{email}"))
             .ToListAsync();
 
         return _mapper.Map<List<EmployeeLoginRecoveryDto>>(foundEmployee);

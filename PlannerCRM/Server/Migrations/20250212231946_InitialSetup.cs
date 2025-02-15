@@ -7,40 +7,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PlannerCRM.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class RegenSetup : Migration
+    public partial class InitialSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:roles", "account_manager,operation_manager,project_manager,senior_developer,junior_developer");
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
 
             migrationBuilder.CreateTable(
                 name: "Clients",
@@ -57,6 +30,38 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClientWorkOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FirmClientId = table.Column<int>(type: "integer", nullable: false),
+                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientWorkOrders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    Phone = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Role",
                 columns: table => new
                 {
@@ -67,89 +72,6 @@ namespace PlannerCRM.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Role", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    ProviderKey = table.Column<string>(type: "text", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Salaries",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    HourlyRate = table.Column<decimal>(type: "numeric", nullable: false),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Salaries", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Salaries_AspNetUsers_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,30 +99,44 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "EmployeeLoginData",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    RoleId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
+                    LastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: true),
+                    EmployeeId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeLoginData", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoles_AspNetUsers_EmployeeId",
+                        name: "FK_EmployeeLoginData_Employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Salaries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    HourlyRate = table.Column<decimal>(type: "numeric", nullable: false),
+                    EmployeeId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Salaries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoles_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
+                        name: "FK_Salaries_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -216,9 +152,9 @@ namespace PlannerCRM.Server.Migrations
                 {
                     table.PrimaryKey("PK_EmployeeRole", x => new { x.EmployeesId, x.RolesId });
                     table.ForeignKey(
-                        name: "FK_EmployeeRole_AspNetUsers_EmployeesId",
+                        name: "FK_EmployeeRole_Employees_EmployeesId",
                         column: x => x.EmployeesId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -230,27 +166,28 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeSalaries",
+                name: "EmployeeRoles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleName = table.Column<string>(type: "text", nullable: true),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    SalaryId = table.Column<int>(type: "integer", nullable: false)
+                    RoleId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeSalaries", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeeSalaries_AspNetUsers_EmployeeId",
+                        name: "FK_EmployeeRoles_Employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeeSalaries_Salaries_SalaryId",
-                        column: x => x.SalaryId,
-                        principalTable: "Salaries",
+                        name: "FK_EmployeeRoles_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -272,32 +209,6 @@ namespace PlannerCRM.Server.Migrations
                     table.PrimaryKey("PK_Activities", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Activities_WorkOrders_WorkOrderId",
-                        column: x => x.WorkOrderId,
-                        principalTable: "WorkOrders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientWorkOrders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirmClientId = table.Column<int>(type: "integer", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientWorkOrders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientWorkOrders_Clients_FirmClientId",
-                        column: x => x.FirmClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ClientWorkOrders_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
                         principalTable: "WorkOrders",
                         principalColumn: "Id",
@@ -334,46 +245,27 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "EmployeeSalaries",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<int>(type: "integer", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
+                    SalaryId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeSalaries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    RoleId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        name: "FK_EmployeeSalaries_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_EmployeeSalaries_Salaries_SalaryId",
+                        column: x => x.SalaryId,
+                        principalTable: "Salaries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -395,9 +287,9 @@ namespace PlannerCRM.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ActivityEmployee_AspNetUsers_EmployeesId",
+                        name: "FK_ActivityEmployee_Employees_EmployeesId",
                         column: x => x.EmployeesId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -421,9 +313,9 @@ namespace PlannerCRM.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeeActivities_AspNetUsers_EmployeeId",
+                        name: "FK_EmployeeActivities_Employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -476,9 +368,9 @@ namespace PlannerCRM.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WorkTimes_AspNetUsers_EmployeeId",
+                        name: "FK_WorkTimes_Employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -554,9 +446,9 @@ namespace PlannerCRM.Server.Migrations
                 {
                     table.PrimaryKey("PK_EmployeeWorkTimes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeeWorkTimes_AspNetUsers_EmployeeId",
+                        name: "FK_EmployeeWorkTimes_Employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -588,53 +480,6 @@ namespace PlannerCRM.Server.Migrations
                 column: "WorkTimeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoles_EmployeeId",
-                table: "AspNetRoles",
-                column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoles_RoleId",
-                table: "AspNetRoles",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "AspNetRoles",
-                column: "NormalizedName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
-                table: "AspNetUserClaims",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
-                table: "AspNetUserLogins",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers",
-                column: "NormalizedUserName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ClientWorkOrderCosts_FirmClientId",
                 table: "ClientWorkOrderCosts",
                 column: "FirmClientId");
@@ -643,16 +488,6 @@ namespace PlannerCRM.Server.Migrations
                 name: "IX_ClientWorkOrderCosts_WorkOrderCostId",
                 table: "ClientWorkOrderCosts",
                 column: "WorkOrderCostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClientWorkOrders_FirmClientId",
-                table: "ClientWorkOrders",
-                column: "FirmClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClientWorkOrders_WorkOrderId",
-                table: "ClientWorkOrders",
-                column: "WorkOrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeActivities_ActivityId",
@@ -665,9 +500,24 @@ namespace PlannerCRM.Server.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeLoginData_EmployeeId",
+                table: "EmployeeLoginData",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmployeeRole_RolesId",
                 table: "EmployeeRole",
                 column: "RolesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeRoles_EmployeeId",
+                table: "EmployeeRoles",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeRoles_RoleId",
+                table: "EmployeeRoles",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeSalaries_EmployeeId",
@@ -746,21 +596,6 @@ namespace PlannerCRM.Server.Migrations
                 name: "ActivityWorkTimes");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
                 name: "ClientWorkOrderCosts");
 
             migrationBuilder.DropTable(
@@ -770,7 +605,13 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeActivities");
 
             migrationBuilder.DropTable(
+                name: "EmployeeLoginData");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeRole");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeRoles");
 
             migrationBuilder.DropTable(
                 name: "EmployeeSalaries");
@@ -782,10 +623,10 @@ namespace PlannerCRM.Server.Migrations
                 name: "WorkOrderActivities");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "WorkOrderCosts");
 
             migrationBuilder.DropTable(
-                name: "WorkOrderCosts");
+                name: "Role");
 
             migrationBuilder.DropTable(
                 name: "Salaries");
@@ -794,13 +635,10 @@ namespace PlannerCRM.Server.Migrations
                 name: "WorkTimes");
 
             migrationBuilder.DropTable(
-                name: "Role");
-
-            migrationBuilder.DropTable(
                 name: "Activities");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "WorkOrders");

@@ -45,6 +45,7 @@ public static class ModelBuilderExtensions
         ConfigureEmployeeActivities(modelBuilder);
         ConfigureEmployeesRoles(modelBuilder);
         ConfigureEmployeesSalaries(modelBuilder);
+        ConfigureEmployeeLogins(modelBuilder);
     }
 
     private static void ConfigureFirmClientWorkOrders(ModelBuilder modelBuilder)
@@ -162,5 +163,16 @@ public static class ModelBuilderExtensions
             .WithMany(s => s.EmployeeSalaries)
             .HasForeignKey(es => es.SalaryId)
             .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    private static void ConfigureEmployeeLogins(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<EmployeeLoginData>()
+            .HasKey(eld => eld.Id);
+
+        modelBuilder.Entity<EmployeeLoginData>()
+            .HasOne(eld => eld.Employee)
+            .WithMany(e => e.LoginData)
+            .HasForeignKey(els => els.EmployeeId);
     }
 }

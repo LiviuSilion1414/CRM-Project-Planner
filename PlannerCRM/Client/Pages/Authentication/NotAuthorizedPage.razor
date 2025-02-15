@@ -1,0 +1,20 @@
+@page "/not-authorized"
+
+@inject AuthService auth
+
+<AuthorizeView>
+    <NotAuthorized>
+        <RadzenStack>
+            <RadzenRow>
+                <RadzenColumn>
+                    <RadzenText TextStyle="TextStyle.DisplayH4">ALT. You do not seem to be authorized to view this page.</RadzenText>
+                    <RadzenText TextStyle="TextStyle.DisplayH4">Go to 
+                        <RadzenLink Icon="login" Path="./login">
+                            <b>login page.</b>
+                        </RadzenLink>
+                    </RadzenText>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </NotAuthorized>
+</AuthorizeView>

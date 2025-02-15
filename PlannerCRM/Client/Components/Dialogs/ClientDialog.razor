@@ -55,11 +55,13 @@
 
     private async Task OnDelete()
     {
-        await ds.OpenAsync<ClientAlertDeleteDialog>("Delete item",
-            new Dictionary<string, object>()
-                {
-                { nameof(ClientAlertDeleteDialog.Model), SelectedClient }
-                }
-        );
+        if ((await ds.Confirm("Confirm this item removal", "Delete client", new() { OkButtonText = "Delete" })).Value)
+        {
+            await fs.Create(
+                EndpointsNames.ACTIVITY,
+                EndpointCrudActions.DELETE,
+                SelectedClient
+            );
+        }
     }
 }

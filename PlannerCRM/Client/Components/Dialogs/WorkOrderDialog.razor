@@ -1,4 +1,5 @@
 ﻿@inject DialogService ds
+@inject FetchService<WorkOrderDto> fs
 
 <RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
     <RadzenStack>
@@ -47,16 +48,6 @@
 {
     [Parameter] public WorkOrderDto SelectedWorkOrder { get; set; }
 
-    private async Task OnDelete()
-    {
-        await ds.OpenAsync<WorkOrderDeleteDialog>("Delete WorkOrder",
-            new Dictionary<string, object>() 
-            { 
-                { nameof(WorkOrderDeleteDialog.Model), SelectedWorkOrder }
-            }
-        );
-    }
-
     private async Task OnEdit()
     {
         await ds.OpenAsync<WorkOrderEditForm>("Edit WorkOrder",
@@ -66,5 +57,17 @@
             },
             new DialogOptions() { Width="40vw;" }            
         );
+    }
+
+    private async Task OnDelete()
+    {
+        if ((await ds.Confirm("Confirm this item removal", "Delete workorder", new() { OkButtonText = "Delete" })).Value)
+        {
+            await fs.Create(
+                EndpointsNames.ACTIVITY,
+                EndpointCrudActions.DELETE,
+                SelectedWorkOrder
+            );
+        }
     }
 }

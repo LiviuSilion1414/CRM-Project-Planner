@@ -1,0 +1,22 @@
+﻿@page "/email-sent"
+
+@layout PublicLayout
+@inject NavigationManager nav
+
+<RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Style="width: 40vw; margin: 0 auto;">
+    <RadzenCard>
+        <RadzenText>
+            If the email you provided is associated with an existing account, you will find the link we sent you.
+            Please, check your email inbox for reset link. <b>(See also spam)</b> 
+        </RadzenText>
+        <RadzenLink Path="./login" Text="Go to login page"></RadzenLink>
+    </RadzenCard>
+</RadzenStack>
+
+@code
+{
+    void GoToLogin()
+    {
+        nav.NavigateTo("/login", true);
+    }
+}

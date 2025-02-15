@@ -1,13 +1,8 @@
 namespace PlannerCRM.Server.DataAccess;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) 
-    : IdentityDbContext<
-        Employee, EmployeeRole, int, 
-        IdentityUserClaim<int>, IdentityUserRole<int>, 
-        IdentityUserLogin<int>, IdentityRoleClaim<int>, 
-        IdentityUserToken<int>>(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder) 
     {
         modelBuilder.ApplyUtcDateTimeConversion();
         modelBuilder.ConfigureEnums();
@@ -24,6 +19,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<WorkOrderCost> WorkOrderCosts { get; set; }
     public DbSet<WorkTime> WorkTimes { get; set; }
 
+    public DbSet<EmployeeLoginData> EmployeeLoginData { get; set; }
     public DbSet<ActivityWorkTime> ActivityWorkTimes { get; set; }
     public DbSet<ClientWorkOrderCost> ClientWorkOrderCosts { get; set; }
     public DbSet<ClientWorkOrder> ClientWorkOrders { get; set; }

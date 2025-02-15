@@ -10,13 +10,17 @@
 
 <RadzenLayout>
     <RadzenHeader Style="background-color:lightseagreen;">
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     Style="width: 100%; background-color: lightseagreen;">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                 <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM" />
-                <RadzenButton Text="Login"
-                                Icon="person"
-                                ButtonStyle="ButtonStyle.Info"
-                                Variant="Variant.Text"
-                                Click="@(() => nav.NavigateTo("/login"))">
-                </RadzenButton>
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/login" Text="Sign in" />
+            </RadzenStack>
+        </RadzenStack>
     </RadzenHeader>
     <RadzenBody>
         @Body
@@ -33,13 +37,3 @@
         </RadzenStack>
     </RadzenFooter>
 </RadzenLayout>
-
-
-@code {
-    private bool sidebarExpanded = true;
-
-    private void ToggleSidebar()
-    {
-        sidebarExpanded = !sidebarExpanded;
-    }
-}

@@ -4,16 +4,12 @@ public class EmployeeLoginRecoveryDto
 {
     public int Id { get; set; }
 
-    [Required]
-    [MinLength(3)]
     public string Name { get; set; }
 
     [Required]
     [EmailAddress]
     public string Email { get; set; }
-    
-    [Required]
-    [Phone]
+
     public string Phone { get; set; }
 
     public string Password { get; set; }

@@ -8,11 +8,9 @@ builder.Services.AddRazorPages();
 
 builder.ConfigureDbConnectionString();
 
+builder.ConfigureJWTTokenAuthentication();
+
 builder.Services.AddHttpClient();
-
-builder.Services.ConfigureIdentityOptions();
-
-builder.Services.ConfigureCookiePolicy();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -22,7 +20,7 @@ builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
 
-//app.UseMiddleware<CustomExceptionMiddleware>();
+//app.UseExceptionHandler();
 
 if (!app.Environment.IsDevelopment()) 
 {

@@ -1,4 +1,5 @@
 ﻿@inject DialogService ds
+@inject FetchService<ActivityDto> fs
 
 <RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
     <RadzenStack>
@@ -54,12 +55,13 @@
 
     private async Task OnDelete()
     {
-        await ds.OpenAsync<ActivityDeleteDialog>("Delete Activity",
-            new Dictionary<string, object>()
-                {
-                { nameof(ActivityDeleteDialog.Model), SelectedActivity }
-                },
-            new DialogOptions() { Width = "40vw;" }
-        );
+        if ((await ds.Confirm("Confirm this item removal", "Delete activity", new() { OkButtonText = "Delete" })).Value)
+        {
+            await fs.Create(
+                EndpointsNames.ACTIVITY,
+                EndpointCrudActions.DELETE,
+                SelectedActivity
+            );
+        }
     }
 }

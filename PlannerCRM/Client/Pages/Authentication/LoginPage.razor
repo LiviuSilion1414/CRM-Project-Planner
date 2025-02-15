@@ -1,0 +1,119 @@
+﻿@page "/"
+@page "/login"
+
+@layout PublicLayout
+
+@inject AuthService auth
+@inject AuthService ls
+@inject NotificationService ns
+@inject NavigationManager nav
+@inject DialogService ds
+
+@attribute [AllowAnonymous]
+
+<PageTitle>Login Page</PageTitle>
+<AuthorizeView>
+    <NotAuthorized Context="notAuthorized">
+        <RadzenStack Style="width: 30vw; margin: 0 auto;">
+            <RadzenCard>
+                <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH3">Welcome!</RadzenText>
+                <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH6">Join us and let us do the <strong>BORING</strong> work!</RadzenText>
+                <RadzenFieldset Text="Login">
+                    <EditForm EditContext="_editContext" OnSubmit="OnLogin">
+                        <DataAnnotationsValidator />
+                        <RadzenRow class="form-group py-2 w-100">
+                            <RadzenColumn>
+                                <RadzenLabel Text="Email" />
+                                <InputText class="form-control" type="email" @bind-Value=@_model.Email/>
+                                <ValidationMessage For="@(() => _model.Email)" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow class="form-group py-2 w-100">
+                            <RadzenColumn>
+                                <RadzenLabel Text="Password" />
+                                <InputText class="form-control" type="password" @bind-Value=@_model.Password />
+                                <ValidationMessage For="@(() => _model.Password)" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                            <RadzenColumn>
+                                <RadzenLabel>Remember me?</RadzenLabel>
+                                <RadzenCheckBox @bind-Value="@_model.RememberMe"></RadzenCheckBox>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </EditForm>
+                    <RadzenStack AlignItems="AlignItems.End">
+                        <RadzenRow>
+                            <RadzenColumn>
+                                <RadzenButton ButtonType="ButtonType.Button"
+                                              ButtonStyle="ButtonStyle.Info"
+                                              Variant="Variant.Text"
+                                              Text="Forgot Password?"
+                                              Click="OnForgotPassword">
+                                </RadzenButton>
+                            </RadzenColumn>
+                            <RadzenColumn>
+                                <RadzenButton ButtonType="ButtonType.Submit" 
+                                              ButtonStyle="ButtonStyle.Primary"
+                                              Variant="Variant.Outlined"
+                                              Text="Sign In"
+                                              Click="OnLogin">
+                                </RadzenButton>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenStack>
+                </RadzenFieldset>
+            </RadzenCard>
+        </RadzenStack>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+    private EmployeeLoginDto _model;
+    private EditContext _editContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = new();
+        _editContext = new(_model);
+
+        await CheckIfLoggedIn();
+    }
+
+    private async Task CheckIfLoggedIn()
+    {
+        var result = await auth.GetAuthenticationStateAsync();
+
+        if (result.User is not null && result.User.Identity.IsAuthenticated)
+        {
+            nav.NavigateTo("home", true);
+        }
+    }
+
+    private async Task OnLogin()
+    {
+        if (_editContext.Validate())
+        {
+            var res = await ls.LoginAsync(_model);
+            var user = await auth.GetCurrentUserAsync();
+
+            if (res.IsSuccessStatusCode)
+            {
+                var responseContent = await res.Content.ReadAsStringAsync();
+                ns.Notify(NotificationSeverity.Success, $"Welcome back, {user.Name}!" , responseContent, 4000);
+                nav.NavigateTo("/home", true);
+            }
+            else
+            {
+                var responseContent = await res.Content.ReadAsStringAsync();
+                ns.Notify(NotificationSeverity.Error, "Something went wrong!", responseContent, 4000);
+            }
+        }
+    }
+
+    private void OnForgotPassword()
+    {
+        nav.NavigateTo("/forgot-password");
+    }
+}

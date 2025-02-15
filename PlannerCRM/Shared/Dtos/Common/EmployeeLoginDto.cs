@@ -7,7 +7,6 @@ public class EmployeeLoginDto
     public string Email { get; set; }
 
     [Required]
-    [PasswordValidator]
     [Length(8, 16)]
     public string Password { get; set; }
 

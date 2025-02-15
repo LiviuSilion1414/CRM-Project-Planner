@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 @inject NavigationManager nav
+@inject LocalStorageService localStorage
 
 <RadzenComponents @rendermode="RenderMode.InteractiveWebAssembly" />
 <RadzenDialog />
@@ -9,7 +10,7 @@
 <RadzenContextMenu />
 
 <AuthorizeView>
-    <NotAuthorized>
+    <Authorized>
         <RadzenLayout>
             <RadzenHeader>
                 <RadzenStack Orientation="Orientation.Horizontal"
@@ -17,39 +18,28 @@
                 JustifyContent="JustifyContent.SpaceBetween"
                 Style="width: 100%; background-color: lightseagreen;">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                        <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM"/>
-                    </RadzenStack>
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="16px">
-                        <RadzenButton Text="Login"
-                        Icon="person"
-                        ButtonStyle="ButtonStyle.Info"
-                        Variant="Variant.Text"
-                        Click="@(() => nav.NavigateTo("/login"))">
-                        </RadzenButton>
-                    </RadzenStack>
-                </RadzenStack>
-            </RadzenHeader>
-        </RadzenLayout>
-    </NotAuthorized>
-    <Authorized>
-        <RadzenLayout>
-            <RadzenHeader>
-                <RadzenStack Orientation="Orientation.Horizontal" 
-                AlignItems="AlignItems.Center" 
-                JustifyContent="JustifyContent.SpaceBetween"
-                Style="width: 100%; background-color: lightseagreen;">
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                         <RadzenSidebarToggle Click="ToggleSidebar" />
                         <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM" />
                     </RadzenStack>
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="16px">
-                        <RadzenText>Hello @context.User.Identity.Name!</RadzenText>
-                        <RadzenIcon Icon="notifications" />
-                        <RadzenIcon Icon="person" />
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px">
+                        <RadzenText TextStyle="TextStyle.Overline" TextAlign="TextAlign.Center">Hi, @context.User.Identity.Name!</RadzenText>
+                        <RadzenLink Path="notifications">
+                            <RadzenIcon Style="font-size: x-large;" Icon="notifications"></RadzenIcon>
+                        </RadzenLink>
+                        <RadzenLink Path="profile">
+                            <RadzenProfileMenu Click="Logout">
+                                <Template>
+                                    <RadzenGravatar Email="@context.User.Identity.Name">
+                                    </RadzenGravatar>
+                                </Template>
+                                <ChildContent>
+                                    <RadzenProfileMenuItem Text="Logout" Icon="logout" IconColor="@Colors.Danger"></RadzenProfileMenuItem>
+                                </ChildContent>
+                            </RadzenProfileMenu>
+                        </RadzenLink>
                     </RadzenStack>
                 </RadzenStack>
             </RadzenHeader>
-
             <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
                 <RadzenPanelMenu>
                     <RadzenPanelMenuItem Text="Home" Icon="house" Path="/home" />
@@ -77,6 +67,9 @@
             </RadzenFooter>
         </RadzenLayout>
     </Authorized>
+    <NotAuthorized>
+        <RedirectToNotAuthorized />
+    </NotAuthorized>
 </AuthorizeView>
 
 @code {
@@ -85,5 +78,11 @@
     private void ToggleSidebar()
     {
         sidebarExpanded = !sidebarExpanded;
+    }
+
+    async Task Logout()
+    {
+        await localStorage.ClearAsync();
+        nav.NavigateTo("/login", true);
     }
 }

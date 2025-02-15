@@ -1,4 +1,6 @@
-﻿using PlannerCRM.Server.Repositories;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace PlannerCRM.Server.Extensions;
 
@@ -13,44 +15,36 @@ public static class PipelineBuilderExtension
                         ?? throw new InvalidOperationException(""" "DefaultDbString" not found!""")));
     }
 
-    public static void ConfigureIdentityOptions(this IServiceCollection services)
+    public static void ConfigureJWTTokenAuthentication(this WebApplicationBuilder builder)
     {
-        services
-            .AddIdentity<Employee, EmployeeRole>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddUserManager<UserManager<Employee>>()
-            .AddSignInManager<SignInManager<Employee>>()
-            .AddRoleManager<RoleManager<EmployeeRole>>()
-            .AddDefaultTokenProviders();
+        //JWToken
+        IConfigurationSection appSettingsSection = builder.Configuration.GetSection("AppSettings");
+        builder.Services.Configure<AppSettings>(appSettingsSection);
+        AppSettings appSettings = appSettingsSection.Get<AppSettings>();
+        byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
-        services.Configure<IdentityOptions>(o =>
+        builder.Services.AddAuthentication(options =>
         {
-            o.User.RequireUniqueEmail = true;
-            o.SignIn.RequireConfirmedEmail = false;
-            o.Password.RequireNonAlphanumeric = false;
-            o.Password.RequireDigit = false;
-            o.Password.RequiredLength = 8;
-            o.Lockout.AllowedForNewUsers = true;
-            o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            o.Lockout.MaxFailedAccessAttempts = 5;
-        });
-    }
-
-    public static void ConfigureCookiePolicy(this IServiceCollection services)
-    {
-        services.Configure<CookiePolicyOptions>(options =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(x =>
         {
-            options.CheckConsentNeeded = context => true;
-            options.MinimumSameSitePolicy = SameSiteMode.None;
+            x.RequireHttpsMetadata = false;
+            x.SaveToken = true;
+            x.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
         });
-
     }
 
     public static void RegisterServices(this IServiceCollection services)
     {
-        services.AddScoped<UserManager<Employee>>();
-        services.AddScoped<SignInManager<Employee>>();
-        services.AddScoped<RoleManager<EmployeeRole>>();
+        services.AddScoped<AppSettings>();
 
         services.AddScoped<ActivityRepository>();
         services.AddScoped<EmployeeRepository>();

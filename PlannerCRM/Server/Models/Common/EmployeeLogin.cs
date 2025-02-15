@@ -1,7 +1,4 @@
-﻿using PlannerCRM.Shared.Attributes;
-using System.ComponentModel.DataAnnotations;
-
-namespace PlannerCRM.Server.Models.Common;
+﻿namespace PlannerCRM.Server.Models.Common;
 
 public class EmployeeLogin
 {

@@ -1,0 +1,97 @@
+﻿@page "/employee-add"
+
+@layout PublicLayout
+
+@attribute [AllowAnonymous]
+
+@inject FetchService<EmployeeDto> fs
+@inject NotificationService ns
+
+<RadzenStack JustifyContent="JustifyContent.Center">
+    <RadzenCard>
+        <RadzenFieldset Text="Employee">
+            <EditForm EditContext="context" OnSubmit="Submit">
+                <DataAnnotationsValidator />
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenLabel>Name</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@model.Name"/>
+                        <ValidationMessage For="@(() => model.Name)"/>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenLabel>Email</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@model.Email" />
+                        <ValidationMessage For="@(() => model.Email)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenLabel>Phone</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@model.PhoneNumber" />
+                        <ValidationMessage For="@(() => model.PhoneNumber)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenLabel>Username</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@model.UserName" />
+                        <ValidationMessage For="@(() => model.UserName)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenLabel>Password</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@model.Password" />
+                       <ValidationMessage For="@(() => model.Password)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" Click="Submit"></RadzenButton>
+            </EditForm>
+        </RadzenFieldset>
+    </RadzenCard>
+</RadzenStack>
+
+@code 
+{
+    EmployeeDto model;
+    EditContext context;
+
+    protected override void OnInitialized()
+    {
+        model = new();
+        context = new(model);
+    }
+
+    async Task Submit()
+    {
+        if (context.Validate())
+        {
+            await fs.Create(
+                EndpointsNames.EMPLOYEE,
+                EndpointCrudActions.ADD,
+                model
+            );
+
+            ns.Notify(new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Success,
+                Duration = 3000,
+                Detail = SuccessMessagges.ITEM_ADD,
+                Summary = Titles.ADD_ITEM
+            });
+        }
+
+    }
+}
