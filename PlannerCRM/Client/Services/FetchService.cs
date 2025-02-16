@@ -32,6 +32,8 @@ public class FetchService<TItem>(LocalStorageService localStorage, HttpClient ht
     public async Task<List<TItem>> GetAll(string controllerName, string parameterizedUrl)
         => await _http.GetFromJsonAsync<List<TItem>>($"api/{controllerName}/{parameterizedUrl}");
 
+
+
     async Task<string> GetBearerToken()
     {
         return (await _localStorage.GetItemAsync("token")).ToString();

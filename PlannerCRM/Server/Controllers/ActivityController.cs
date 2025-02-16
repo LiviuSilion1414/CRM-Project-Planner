@@ -8,7 +8,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     private readonly ActivityRepository _repo = specificRepo;
 
     [HttpPost]
-    [Route(EndpointCrudActions.ADD)]
+    [Route(EndpointsCrudActions.ADD)]
     public async Task<IActionResult> Add(ActivityDto activity)
     {
         await _repo.AddAsync(activity);
@@ -17,7 +17,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPut]
-    [Route(EndpointCrudActions.EDIT)]
+    [Route(EndpointsCrudActions.EDIT)]
     public async Task<IActionResult> Edit(ActivityDto activity)
     {
         await _repo.EditAsync(activity);
@@ -26,7 +26,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPost]
-    [Route(EndpointCrudActions.DELETE)]
+    [Route(EndpointsCrudActions.DELETE)]
     public async Task<IActionResult> Delete(ActivityDto activity)
     {
         await _repo.DeleteAsync(activity);
@@ -35,7 +35,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpGet]
-    [Route(EndpointCrudActions.GET_BY_ID)]
+    [Route(EndpointsCrudActions.GET_BY_ID)]
     public async Task<ActionResult<ActivityDto>> GetById(int activityId)
     {
         var activity = await _repo.GetByIdAsync(activityId);
@@ -43,7 +43,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpGet]
-    [Route(EndpointCrudActions.GET_WITH_PAGINATION)]
+    [Route(EndpointsCrudActions.GET_WITH_PAGINATION)]
     public async Task<ActionResult<List<ActivityDto>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);

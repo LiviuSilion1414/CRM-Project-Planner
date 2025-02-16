@@ -80,7 +80,7 @@
         {
             await fs.Create(
                 EndpointsNames.EMPLOYEE,
-                EndpointCrudActions.ADD,
+                EndpointsCrudActions.ADD,
                 model
             );
 
@@ -88,8 +88,8 @@
             {
                 Severity = NotificationSeverity.Success,
                 Duration = 3000,
-                Detail = SuccessMessagges.ITEM_ADD,
-                Summary = Titles.ADD_ITEM
+                Detail = "Item has been added",
+                Summary = "Operation succeeded"
             });
         }
 

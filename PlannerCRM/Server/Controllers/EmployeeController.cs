@@ -8,7 +8,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     //[Authorize]
     [HttpPost]
-    [Route(EndpointCrudActions.ADD)]
+    [Route(EndpointsCrudActions.ADD)]
     public async Task<IActionResult> Add(EmployeeDto employee)
     {
         await _repo.AddAsync(employee);
@@ -18,7 +18,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpPut]
-    [Route(EndpointCrudActions.EDIT)]
+    [Route(EndpointsCrudActions.EDIT)]
     public async Task<IActionResult> Edit(EmployeeDto employee)
     {
         await _repo.EditAsync(employee);
@@ -28,7 +28,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route(EndpointCrudActions.DELETE)]
+    [Route(EndpointsCrudActions.DELETE)]
     public async Task<IActionResult> Delete(EmployeeDto employee)
     {
         await _repo.DeleteAsync(employee);
@@ -38,7 +38,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route(EndpointCrudActions.GET_BY_ID)]
+    [Route(EndpointsCrudActions.GET_BY_ID)]
     public async Task<ActionResult<EmployeeDto>> GetById(int employeeId)
     {
         var employee = await _repo.GetByIdAsync(employeeId);
@@ -47,7 +47,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route(EndpointCrudActions.GET_WITH_PAGINATION)]
+    [Route(EndpointsCrudActions.GET_WITH_PAGINATION)]
     public async Task<ActionResult<List<EmployeeDto>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);

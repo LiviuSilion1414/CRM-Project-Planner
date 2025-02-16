@@ -140,15 +140,15 @@
         {
             await afs.Update(
                 EndpointsNames.ACTIVITY,
-                EndpointCrudActions.EDIT,
+                EndpointsCrudActions.EDIT,
                 Model
             );
 
             ns.Notify(new NotificationMessage()
             {
                 Duration = 3000,
-                Detail = SuccessMessagges.ITEM_EDIT,
-                Summary = Titles.EDIT_ITEM
+                Detail = "Item has been updated",
+                Summary = "Operation succeeded"
             });
 
             ds.Close();

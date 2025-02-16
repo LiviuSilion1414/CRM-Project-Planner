@@ -8,7 +8,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     private readonly FirmClientRepository _repo = repo;
 
     [HttpPost]
-    [Route(EndpointCrudActions.ADD)]
+    [Route(EndpointsCrudActions.ADD)]
     public async Task<IActionResult> Add(FirmClientDto client)
     {
         await _repo.AddAsync(client);
@@ -17,7 +17,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(EndpointCrudActions.EDIT)]
+    [Route(EndpointsCrudActions.EDIT)]
     public async Task<IActionResult> Edit(FirmClientDto client)
     {
         await _repo.EditAsync(client);
@@ -26,7 +26,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(EndpointCrudActions.DELETE)]
+    [Route(EndpointsCrudActions.DELETE)]
     public async Task<IActionResult> Delete(FirmClientDto client)
     {
         await _repo.DeleteAsync(client);
@@ -35,7 +35,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointCrudActions.GET_BY_ID)]
+    [Route(EndpointsCrudActions.GET_BY_ID)]
     public async Task<ActionResult<FirmClient>> GetById(int clientId)
     {
         var client = await _repo.GetByIdAsync(clientId);
@@ -43,7 +43,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointCrudActions.GET_WITH_PAGINATION)]
+    [Route(EndpointsCrudActions.GET_WITH_PAGINATION)]
     public async Task<ActionResult<List<FirmClient>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);

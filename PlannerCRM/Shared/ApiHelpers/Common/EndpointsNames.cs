@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Constants.ApiEndpoints.Common;
+﻿namespace PlannerCRM.Shared.ApiHelpers.Common;
 
 public class EndpointsNames
 {

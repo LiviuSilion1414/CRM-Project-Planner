@@ -1,4 +1,5 @@
-﻿@inject DialogService ds
+﻿@using PlannerCRM.Shared.Constants.ApiHelpers.Common
+@inject DialogService ds
 @inject FetchService<ActivityDto> fs
 
 <RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
@@ -59,7 +60,7 @@
         {
             await fs.Create(
                 EndpointsNames.ACTIVITY,
-                EndpointCrudActions.DELETE,
+                EndpointsCrudActions.DELETE,
                 SelectedActivity
             );
         }

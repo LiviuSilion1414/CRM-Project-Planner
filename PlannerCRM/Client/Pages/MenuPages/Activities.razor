@@ -30,7 +30,7 @@
     {
         _activities = await fs.GetAll(
             EndpointsNames.ACTIVITY,
-            EndpointCrudActions.GET_WITH_PAGINATION_ACTION,
+            EndpointsCrudActions.GET_WITH_PAGINATION_ACTION,
             _pg.Limit,
             _pg.Offset
         );

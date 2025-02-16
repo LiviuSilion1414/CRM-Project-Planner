@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Constants.ApiEndpoints.Routes;
+﻿namespace PlannerCRM.Shared.ApiHelpers.Endpoints;
 
 public class WorkOrderEndpointActions
 {

@@ -8,7 +8,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     private readonly WorkOrderRepository _repo = repo;
 
     [HttpPost]
-    [Route(EndpointCrudActions.ADD)]
+    [Route(EndpointsCrudActions.ADD)]
     public async Task<IActionResult> Add(WorkOrderDto workOrder)
     {
         await _repo.AddAsync(workOrder);
@@ -17,7 +17,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(EndpointCrudActions.EDIT)]
+    [Route(EndpointsCrudActions.EDIT)]
     public async Task<IActionResult> Edit(WorkOrderDto workOrder)
     {
         await _repo.EditAsync(workOrder);
@@ -26,7 +26,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(EndpointCrudActions.DELETE)]
+    [Route(EndpointsCrudActions.DELETE)]
     public async Task<IActionResult> Delete(WorkOrderDto workOrder)
     {
         await _repo.DeleteAsync(workOrder);
@@ -35,7 +35,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointCrudActions.GET_BY_ID)]
+    [Route(EndpointsCrudActions.GET_BY_ID)]
     public async Task<ActionResult<WorkOrderDto>> GetById(int workOrderId)
     {
         var workOrder = await _repo.GetByIdAsync(workOrderId);
@@ -43,7 +43,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointCrudActions.GET_WITH_PAGINATION)]
+    [Route(EndpointsCrudActions.GET_WITH_PAGINATION)]
     public async Task<ActionResult<List<WorkOrderDto>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);

@@ -24,32 +24,33 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             
             await _context.Employees.AddAsync(model);
             await _context.SaveChangesAsync();
+            
+            if (model.Roles is not null && model.Salaries is not null)
+            {
+                foreach (var role in model.Roles)
+                {
+                    await _context.EmployeeRoles.AddAsync(
+                        new EmployeeRole()
+                        {
+                            RoleId = role.Id,
+                            EmployeeId = model.Id
+                        }
+                    );
+                }
+
+                foreach (var salary in model.Salaries)
+                {
+                    await _context.EmployeeSalaries.AddAsync(
+                        new EmployeeSalary()
+                        {
+                            SalaryId = salary.Id,
+                            EmployeeId = model.Id
+                        }
+                    );
+                }
+            }
         }
 
-        if (model.Roles is not null && model.Salaries is not null)
-        {
-            foreach (var role in model.Roles)
-            {
-                await _context.EmployeeRoles.AddAsync(
-                    new EmployeeRole()
-                    {
-                        RoleId = role.Id,
-                        EmployeeId = model.Id
-                    }
-                );
-            }
-
-            foreach (var salary in model.Salaries)
-            {
-                await _context.EmployeeSalaries.AddAsync(
-                    new EmployeeSalary()
-                    {
-                        SalaryId = salary.Id,
-                        EmployeeId = model.Id
-                    }
-                );
-            }
-        }
 
         await _context.SaveChangesAsync();
     }
