@@ -18,6 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<WorkOrder> WorkOrders { get; set; }
     public DbSet<WorkOrderCost> WorkOrderCosts { get; set; }
     public DbSet<WorkTime> WorkTimes { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
     public DbSet<EmployeeLoginData> EmployeeLoginData { get; set; }
     public DbSet<ActivityWorkTime> ActivityWorkTimes { get; set; }

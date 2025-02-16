@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Shared.Dtos.Entities;
+﻿using PlannerCRM.Shared.Dtos.JoinEntities;
+
+namespace PlannerCRM.Shared.Dtos.Entities;
 
 public class EmployeeDto
 {
@@ -17,9 +19,6 @@ public class EmployeeDto
     public string Email { get; set; }
     
     [Required]
-    public string UserName { get; set; }
-    
-    [Required]
     [PasswordValidator]
     public string Password { get; set; }
 
@@ -28,7 +27,7 @@ public class EmployeeDto
     //public List<ActivityDto> Activities { get; set; }
     //public List<RoleDto> Roles { get; set; }
     //public List<SalaryDto> Salaries { get; set; }
-    //public List<EmployeeRoleDto> EmployeeRoles { get; set; }
+    public List<EmployeeRoleDto> EmployeeRoles { get; set; }
     //public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
     //public List<EmployeeActivityDto> EmployeeActivities { get; set; }
 }

@@ -140,12 +140,12 @@ namespace PlannerCRM.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("RoleName")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Guid");
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Salary", b =>
@@ -359,7 +359,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("RoleName")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Guid");

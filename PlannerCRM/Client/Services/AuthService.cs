@@ -68,8 +68,11 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
+            Claim[] claims = [new Claim(ClaimTypes.Name, currentUser.Name)];
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(currentUser.ClaimsOk, authenticationType: nameof(AuthService))));
+            claims = currentUser.Roles.Select(x => new Claim(ClaimTypes.Role, x)).ToArray();
+
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: nameof(AuthService))));
         }
         catch (Exception ex) 
         {
@@ -100,7 +103,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                                                                                                 .Split(',')
                                                                                                 .ToDictionary(k => k, v => v);
 
-                return new CurrentUser()
+                var user = new CurrentUser()
                 {
                     Guid = guid,
                     Name = name,
@@ -111,6 +114,8 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                     Claims = claims,
                     ClaimsOk = claimsOk
                 };
+
+                return user;
             }
             return null;
         } 

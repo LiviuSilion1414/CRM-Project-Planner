@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250216164205_RegenerateDb")]
-    partial class RegenerateDb
+    [Migration("20250216174225_AddRolesTable")]
+    partial class AddRolesTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,7 +148,7 @@ namespace PlannerCRM.Server.Migrations
 
                     b.HasKey("Guid");
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Salary", b =>

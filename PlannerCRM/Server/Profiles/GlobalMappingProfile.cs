@@ -4,57 +4,67 @@ public class GlobalMappingProfile : Profile
 {
     public GlobalMappingProfile()
     {
-        CreateMap<Activity, ActivityDto>().MaxDepth(1);
-        CreateMap<ActivityDto, Activity>().MaxDepth(1);
+        CreateMap<Activity, ActivityDto>().PreserveReferences().ReverseMap();
+        //CreateMap<ActivityDto, Activity>().PreserveReferences().ReverseMap();
 
-        CreateMap<ActivityWorkTime, ActivityWorkTimeDto>().MaxDepth(1);
-        CreateMap<ActivityWorkTimeDto, ActivityWorkTime>().MaxDepth(1);
+        CreateMap<ActivityWorkTime, ActivityWorkTimeDto>().PreserveReferences().ReverseMap();
+        //CreateMap<ActivityWorkTimeDto, ActivityWorkTime>().PreserveReferences().ReverseMap();
 
-        CreateMap<ClientWorkOrder, ClientWorkOrderCostDto>().MaxDepth(1);
-        CreateMap<ClientWorkOrderDto, ClientWorkOrderCost>().MaxDepth(1);
+        CreateMap<ClientWorkOrder, ClientWorkOrderCostDto>().PreserveReferences().ReverseMap();
+        //CreateMap<ClientWorkOrderDto, ClientWorkOrderCost>().PreserveReferences().ReverseMap();
 
-        CreateMap<ClientWorkOrder, ClientWorkOrderDto>().MaxDepth(1);
-        CreateMap<ClientWorkOrderDto, ClientWorkOrder>().MaxDepth(1);
+        CreateMap<ClientWorkOrder, ClientWorkOrderDto>().PreserveReferences().ReverseMap();
+        //CreateMap<ClientWorkOrderDto, ClientWorkOrder>().PreserveReferences().ReverseMap();
 
-        CreateMap<EmployeeActivity, EmployeeActivityDto>().MaxDepth(1);
-        CreateMap<EmployeeActivityDto, EmployeeActivity>().MaxDepth(1);
+        CreateMap<EmployeeActivity, EmployeeActivityDto>().PreserveReferences().ReverseMap();
+        //CreateMap<EmployeeActivityDto, EmployeeActivity>().PreserveReferences().ReverseMap();
 
-        CreateMap<Employee, EmployeeDto>().MaxDepth(1);
-        CreateMap<EmployeeDto, Employee>().MaxDepth(1);
+        CreateMap<Employee, EmployeeDto>()
+            .ForMember(x => x.PhoneNumber, y => y.MapFrom(z => z.Phone))
+            .ForMember(x => x.Password, y => y.MapFrom(z => z.PasswordHash))
+            .ForMember(x => x.EmployeeRoles, y => y.MapFrom(z => z.EmployeeRoles))
+            .PreserveReferences()
+            .ReverseMap();
 
-        CreateMap<EmployeeRole, EmployeeRoleDto>().MaxDepth(1);
-        CreateMap<EmployeeRoleDto, EmployeeRole>().MaxDepth(1);
+        //CreateMap<EmployeeDto, Employee>()
+        //    .ForMember(x => x.Phone, y => y.MapFrom(z => z.PhoneNumber))
+        //    .ForMember(x => x.PasswordHash, y => y.MapFrom(z => z.Password))
+        //    .PreserveReferences()
+        //    .ReverseMap();
 
-        CreateMap<EmployeeSalary, EmployeeSalaryDto>().MaxDepth(1);
-        CreateMap<EmployeeSalaryDto, EmployeeSalary>().MaxDepth(1);
+        CreateMap<EmployeeRole, EmployeeRoleDto>().PreserveReferences().ReverseMap();
+        //CreateMap<EmployeeRoleDto, EmployeeRole>().PreserveReferences().ReverseMap();
 
-        CreateMap<EmployeeWorkTime, EmployeeWorkTimeDto>().MaxDepth(1);
-        CreateMap<EmployeeWorkTimeDto, EmployeeWorkTime>().MaxDepth(1);
+        CreateMap<EmployeeSalary, EmployeeSalaryDto>().PreserveReferences().ReverseMap();
+        //CreateMap<EmployeeSalaryDto, EmployeeSalary>().PreserveReferences().ReverseMap();
 
-        CreateMap<FirmClient, FirmClientDto>().MaxDepth(1);
-        CreateMap<FirmClientDto, FirmClient>().MaxDepth(1);
+        CreateMap<EmployeeWorkTime, EmployeeWorkTimeDto>().PreserveReferences().ReverseMap();
+        //CreateMap<EmployeeWorkTimeDto, EmployeeWorkTime>().PreserveReferences().ReverseMap();
 
-        CreateMap<Role, RoleDto>().MaxDepth(1);
-        CreateMap<RoleDto, Role>().MaxDepth(1);
+        CreateMap<FirmClient, FirmClientDto>().PreserveReferences().ReverseMap();
+        //CreateMap<FirmClientDto, FirmClient>().PreserveReferences().ReverseMap();
 
-        CreateMap<Salary, SalaryDto>().MaxDepth(1);
-        CreateMap<SalaryDto, Salary>().MaxDepth(1);
+        //CreateMap<Role, RoleDto>().PreserveReferences().ReverseMap();
+        CreateMap<RoleDto, Role>().PreserveReferences().ReverseMap();
 
-        CreateMap<WorkOrderActivity, WorkOrderActivityDto>().MaxDepth(1);
-        CreateMap<WorkOrderActivityDto, WorkOrderActivity>().MaxDepth(1);
+        //CreateMap<Salary, SalaryDto>().PreserveReferences().ReverseMap();
+        CreateMap<SalaryDto, Salary>().PreserveReferences().ReverseMap();
 
-        CreateMap<WorkOrderCost, WorkOrderCostDto>().MaxDepth(1);
-        CreateMap<WorkOrderCostDto, WorkOrderCost>().MaxDepth(1);
+        CreateMap<WorkOrderActivity, WorkOrderActivityDto>().PreserveReferences().ReverseMap();
+        //CreateMap<WorkOrderActivityDto, WorkOrderActivity>().PreserveReferences().ReverseMap();
 
-        CreateMap<WorkOrder, WorkOrderDto>().MaxDepth(1);
-        CreateMap<WorkOrderDto, WorkOrder>().MaxDepth(1);
+        CreateMap<WorkOrderCost, WorkOrderCostDto>().PreserveReferences().ReverseMap();
+        //CreateMap<WorkOrderCostDto, WorkOrderCost>().PreserveReferences().ReverseMap();
 
-        CreateMap<WorkTime, WorkTimeDto>().MaxDepth(1);
-        CreateMap<WorkTimeDto, WorkTime>().MaxDepth(1);
+        CreateMap<WorkOrder, WorkOrderDto>().PreserveReferences().ReverseMap();
+        //CreateMap<WorkOrderDto, WorkOrder>().PreserveReferences().ReverseMap();
 
-        CreateMap<EmployeeLogin, EmployeeLoginDto>().MaxDepth(1);
-        CreateMap<EmployeeLoginDto, EmployeeLogin>().MaxDepth(1);
+        CreateMap<WorkTime, WorkTimeDto>().PreserveReferences().ReverseMap();
+        //CreateMap<WorkTimeDto, WorkTime>().PreserveReferences().ReverseMap();
 
-        CreateMap<Employee, EmployeeLoginRecoveryDto>().MaxDepth(1);
+        CreateMap<EmployeeLogin, EmployeeLoginDto>().PreserveReferences().ReverseMap();
+        //CreateMap<EmployeeLoginDto, EmployeeLogin>().PreserveReferences().ReverseMap();
+
+        CreateMap<Employee, EmployeeLoginRecoveryDto>().PreserveReferences().ReverseMap();
     }
 }

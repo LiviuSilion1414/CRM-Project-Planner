@@ -6,7 +6,17 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 {
     private readonly EmployeeRepository _repo = repo;
 
-    //[Authorize]
+    [Authorize]
+    [HttpPost]
+    [Route(EmployeeEndpointActions.ASSIGN_ROLE)]
+    public async Task<IActionResult> AssignRole(EmployeeDto dto, string roleName)
+    {
+        await _repo.AssignRole(dto, roleName);
+
+        return Ok();
+    }
+
+    [Authorize]
     [HttpPost]
     [Route(EndpointsCrudActions.ADD)]
     public async Task<IActionResult> Add(EmployeeDto employee)

@@ -55,6 +55,37 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         await _context.SaveChangesAsync();
     }
 
+    public async Task AssignRole(EmployeeDto dto, string role)
+    {
+        try
+        {
+            if (!(await _context.Roles.AnyAsync(x => x.RoleName.Contains(role))))
+            {
+                var roleCreated = new Role()
+                {
+                    RoleName = role,
+                };
+                
+                await _context.Roles.AddAsync(roleCreated);
+
+                await _context.SaveChangesAsync();
+
+                await _context.EmployeeRoles.AddAsync(
+                    new EmployeeRole 
+                    {
+                        RoleName = role,
+                        RoleId = roleCreated.Guid,
+                        EmployeeId = dto.Guid
+                    }
+                );
+
+                await _context.SaveChangesAsync();
+            }
+        } catch
+        {
+            throw;
+        }
+    }
     public async Task EditAsync(EmployeeDto dto)
     {
         var model = _mapper.Map<Employee>(dto);
@@ -99,13 +130,16 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             .OrderBy(e => e.Guid)
             .Skip(offset)
             .Take(limit)
+            .Include(e => e.EmployeeRoles)
             .Include(e => e.Activities)
             .Include(e => e.WorkTimes)
             .Include(e => e.Salaries)
             .Include(e => e.EmployeeRoles)
             .ToListAsync();
 
-        return _mapper.Map<List<EmployeeDto>>(employees);
+        var mapped = _mapper.Map<List<EmployeeDto>>(employees);
+
+        return mapped;
     }
 
     public async Task<List<EmployeeDto>> SearchEmployeeByName(string employeeName)
