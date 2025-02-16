@@ -13,14 +13,20 @@
 
 <body>
     <div id="app">
-        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only"></span>
+        <div class="text-center" style="position: absolute; top: 50%; left: 50%;">
+            <div class="spinner-grow text-primary" role="status"></div>
+            <div class="spinner-grow text-secondary" role="status"></div>
+            <div class="spinner-grow text-danger" role="status"></div>
+            <div class="spinner-grow text-warning" role="status"></div>
+            <div class="spinner-grow text-info" role="status"></div>
+            <div class="spinner-grow text-success" role="status"></div>
+            <h4>Loading...</h4>
         </div>
     </div>
 
     <div id="blazor-error-ui">
-       Qualcosa è andato storto.
-        <a href="" class="reload">Ricarica la pagina.</a>
+       Something went wrong, please try again.
+        <a href="" class="reload">Reload the page.</a>
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
