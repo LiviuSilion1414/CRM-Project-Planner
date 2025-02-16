@@ -15,8 +15,8 @@
                 <RadzenColumn>
                     <RadzenText TextStyle="TextStyle.DisplayH6" Text="WorkOrder"></RadzenText>
                     <RadzenText>Name: @SelectedWorkOrder.Name</RadzenText>
-                    <RadzenText>Start Date: @SelectedWorkOrder.StartDate</RadzenText>
-                    <RadzenText>End Date: @SelectedWorkOrder.EndDate</RadzenText>
+                    <RadzenText>Start Date: @SelectedWorkOrder.StartDateString</RadzenText>
+                    <RadzenText>End Date: @SelectedWorkOrder.EndDateString</RadzenText>
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
@@ -26,8 +26,8 @@
                     <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.Activities">
                         <Columns>
                             <RadzenDataGridColumn Title="@nameof(WorkOrderDto.Name)" Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.StartDate)" Property="@nameof(ActivityDto.StartDate)"></RadzenDataGridColumn>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.EndDate)" Property="@nameof(ActivityDto.EndDate)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.StartDate)" Property="@nameof(ActivityDto.StartDateString)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.EndDate)" Property="@nameof(ActivityDto.EndDateString)"></RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>

@@ -10,13 +10,16 @@ public class ActivityDto
 
     [Required]
     public DateTime CreationDate { get; set; } = DateTime.Now;
+    public string CreationDateString { get => string.Format("{0:dd/MM/yyyy}", CreationDate); }
 
     [Required]
     [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
     public DateTime StartDate { get; set; } = DateTime.Now;
+    public string StartDateString { get => string.Format("{0:dd/MM/yyyy}", StartDate); }
 
     [Required]
     public DateTime EndDate { get; set; } = DateTime.Now;
+    public string EndDateString { get => string.Format("{0:dd/MM/yyyy}", EndDate); }
 
     [Required]
     public int WorkOrderId { get; set; }

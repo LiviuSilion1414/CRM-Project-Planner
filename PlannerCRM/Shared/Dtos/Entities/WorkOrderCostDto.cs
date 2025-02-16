@@ -5,6 +5,7 @@ public class WorkOrderCostDto
     public int Id { get; set; }
     public string Name { get; set; }
     public DateTime CreationDate { get; set; } = DateTime.Now;
+    public string CreationDateString { get => string.Format("{0:dd/MM/yyyy}", CreationDate); }
     public decimal TotalCost { get; set; }
     public int WorkOrderId { get; set; }
     public int FirmClientId { get; set; }

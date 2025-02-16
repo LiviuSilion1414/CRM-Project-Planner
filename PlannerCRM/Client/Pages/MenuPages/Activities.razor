@@ -16,8 +16,8 @@
                 RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@ActivityDto" Property="Name" Title="Name" />
-        <RadzenDataGridColumn TItem="@ActivityDto" Property="StartDate" Title="Start Date" />
-        <RadzenDataGridColumn TItem="@ActivityDto" Property="EndDate" Title="End Date" />
+        <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.StartDateString)" Title="Start Date" />
+        <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.EndDateString)" Title="End Date" />
     </Columns>
 </RadzenDataGrid>
 

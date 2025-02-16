@@ -17,8 +17,8 @@ SelectionMode="DataGridSelectionMode.Single"
 RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
-        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="StartDate" Title="Start Date" />
-        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="EndDate" Title="End Date" />
+        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.StartDateString)" Title="Start Date" />
+        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.EndDateString)" Title="End Date" />
     </Columns>
 </RadzenDataGrid>
 
