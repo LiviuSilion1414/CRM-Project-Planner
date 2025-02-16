@@ -3,8 +3,7 @@
 public class EmployeeLoginDto
 {
     [Required]
-    [EmailAddress]
-    public string Email { get; set; }
+    public string EmailOrUsername { get; set; }
 
     [Required]
     [Length(8, 16)]

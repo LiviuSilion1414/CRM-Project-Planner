@@ -12,7 +12,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
         _context.Attach(model.Employee);
 
         await _context.Salaries.AddAsync(model);
-        await _context.EmployeeSalaries.AddAsync(new() { EmployeeId = model.EmployeeId, SalaryId = model.Id });
+        await _context.EmployeeSalaries.AddAsync(new() { EmployeeId = model.EmployeeId, SalaryId = model.Guid });
 
         await _context.SaveChangesAsync();
     }
@@ -23,14 +23,14 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
 
         _context.Attach(model.Employee);
 
-        var existingSalary = await _context.Salaries.SingleAsync(sl => sl.Id == model.Id);
+        var existingSalary = await _context.Salaries.SingleAsync(sl => sl.Guid == model.Guid);
 
         _context.Update(existingSalary);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeeId(int employeeId)
+    public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeeId(Guid employeeId)
     {
         var foundSalaries = await _context.Salaries
             .Include(s => s.EmployeeSalaries)
@@ -40,7 +40,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<List<SalaryDto>>(foundSalaries);
     }
 
-    public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeesIds(params int[] employeesId)
+    public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeesIds(params Guid[] employeesId)
     {
         var foundSalaries = await _context.Salaries
             .Include(s => s.EmployeeSalaries)
@@ -51,7 +51,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<List<SalaryDto>>(foundSalaries);
     }
 
-    public async Task<SalaryDto> FindLatestSalaryAssignedByEmployeeId(int employeeId)
+    public async Task<SalaryDto> FindLatestSalaryAssignedByEmployeeId(Guid employeeId)
     {
         var foundSalaries = await _context.Salaries
             .Include(s => s.EmployeeSalaries)

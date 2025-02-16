@@ -18,7 +18,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
     {
         var model = _mapper.Map<WorkOrderCost>(dto);
 
-        var existingModel = await _context.WorkOrderCosts.SingleAsync(wo => wo.Id == model.Id);
+        var existingModel = await _context.WorkOrderCosts.SingleAsync(wo => wo.Guid == model.Guid);
         existingModel = model;
 
         _context.Update(existingModel);
@@ -31,19 +31,19 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
         var client = await _context.Clients
             .Include(c => c.WorkOrders)
             .Include(c => c.WorkOrderCosts)
-            .SingleAsync(c => c.Id == dto.Id);
+            .SingleAsync(c => c.Guid == dto.Guid);
 
         _context.Remove(client);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task<WorkOrderCostDto> GetByIdAsync(int id)
+    public async Task<WorkOrderCostDto> GetByIdAsync(Guid id)
     {
         var client = await _context.Clients
             .Include(c => c.WorkOrders)
             .Include(c => c.WorkOrderCosts)
-            .SingleAsync(c => c.Id == id);
+            .SingleAsync(c => c.Guid == id);
 
         return _mapper.Map<WorkOrderCostDto>(client);
     }
@@ -51,7 +51,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
     public async Task<List<WorkOrderCostDto>> GetWithPagination(int limit, int offset)
     {
         var clients = await _context.Clients
-            .OrderBy(c => c.Id)
+            .OrderBy(c => c.Guid)
             .Skip(offset)
             .Take(limit)
             .Include(c => c.WorkOrders)

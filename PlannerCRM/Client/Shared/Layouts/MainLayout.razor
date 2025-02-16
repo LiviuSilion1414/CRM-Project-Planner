@@ -44,9 +44,13 @@
                 <RadzenPanelMenu>
                     <RadzenPanelMenuItem Text="Home" Icon="house" Path="/home" />
                     <RadzenPanelMenuItem Text="Recently" Icon="schedule" Path="/recently" />
-                    <RadzenPanelMenuItem Text="Work Orders" Icon="work" Path="/workOrders" />
-                    <RadzenPanelMenuItem Text="Activities" Icon="check_circle" Path="/activities" />
-                    <RadzenPanelMenuItem Text="Clients" Icon="groups" Path="/clients" />
+                    <AuthorizeView Roles="Admin">
+                        <Authorized Context="authorized">
+                            <RadzenPanelMenuItem Text="Work Orders" Icon="work" Path="/workOrders" />
+                            <RadzenPanelMenuItem Text="Activities" Icon="check_circle" Path="/activities" />
+                            <RadzenPanelMenuItem Text="Clients" Icon="groups" Path="/clients" />
+                        </Authorized>
+                    </AuthorizeView>
                     <RadzenPanelMenuItem Text="Statistics" Icon="bar_chart" Path="/statistics" />
                     <RadzenPanelMenuItem Text="Calendar" Icon="calendar_today" Path="/calendar" />
                     <RadzenPanelMenuItem Text="Invoices" Icon="description" Path="/invoices" />

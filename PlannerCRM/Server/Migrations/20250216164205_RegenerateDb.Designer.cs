@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250212231946_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20250216164205_RegenerateDb")]
+    partial class RegenerateDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,41 +28,24 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("ActivityEmployee", b =>
                 {
-                    b.Property<int>("ActivitiesId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ActivitiesGuid")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("EmployeesId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("EmployeesGuid")
+                        .HasColumnType("uuid");
 
-                    b.HasKey("ActivitiesId", "EmployeesId");
+                    b.HasKey("ActivitiesGuid", "EmployeesGuid");
 
-                    b.HasIndex("EmployeesId");
+                    b.HasIndex("EmployeesGuid");
 
                     b.ToTable("ActivityEmployee");
                 });
 
-            modelBuilder.Entity("EmployeeRole", b =>
-                {
-                    b.Property<int>("EmployeesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RolesId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("EmployeesId", "RolesId");
-
-                    b.HasIndex("RolesId");
-
-                    b.ToTable("EmployeeRole");
-                });
-
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Activity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
@@ -76,10 +59,10 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkOrderId")
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("WorkOrderId");
 
@@ -88,11 +71,9 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Employee", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -112,21 +93,19 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.EmployeeLoginData", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("LastSeen")
                         .HasColumnType("timestamp with time zone");
@@ -134,7 +113,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("Token")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("EmployeeId");
 
@@ -143,11 +122,9 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.FirmClient", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -155,37 +132,33 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<string>("VatNumber")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Role", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("RoleName")
+                        .HasColumnType("text");
 
-                    b.Property<int>("RoleName")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.ToTable("Role");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Salary", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp with time zone");
@@ -196,7 +169,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("EmployeeId");
 
@@ -205,11 +178,9 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.WorkOrder", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");
@@ -217,8 +188,8 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("FirmClientId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("FirmClientId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -226,10 +197,10 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("WorkOrderCostId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkOrderCostId")
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("FirmClientId");
 
@@ -238,17 +209,15 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.WorkOrderCost", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("FirmClientId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("FirmClientId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -256,10 +225,10 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkOrderId")
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("FirmClientId");
 
@@ -271,28 +240,26 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.WorkTime", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActivityId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkOrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<double>("WorkedHours")
                         .HasColumnType("double precision");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("ActivityId");
 
@@ -305,19 +272,17 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ActivityWorkTime", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("ActivityId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkTimeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("WorkTimeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("ActivityId");
 
@@ -328,38 +293,34 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ClientWorkOrder", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("FirmClientId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("FirmClientId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkOrderId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.ToTable("ClientWorkOrders");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ClientWorkOrderCost", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("FirmClientId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("FirmClientId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkOrderCostId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("WorkOrderCostId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("FirmClientId");
 
@@ -370,19 +331,17 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeActivity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("ActivityId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("ActivityId");
 
@@ -393,22 +352,20 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeRole", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("RoleName")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("EmployeeId");
 
@@ -419,19 +376,17 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeSalary", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("SalaryId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("SalaryId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("EmployeeId");
 
@@ -442,19 +397,17 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeWorkTime", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkTimeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("WorkTimeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("EmployeeId");
 
@@ -465,19 +418,17 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.WorkOrderActivity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("ActivityId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("WorkOrderId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("WorkOrderId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.HasIndex("ActivityId");
 
@@ -490,28 +441,13 @@ namespace PlannerCRM.Server.Migrations
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Activity", null)
                         .WithMany()
-                        .HasForeignKey("ActivitiesId")
+                        .HasForeignKey("ActivitiesGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", null)
                         .WithMany()
-                        .HasForeignKey("EmployeesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EmployeeRole", b =>
-                {
-                    b.HasOne("PlannerCRM.Server.Models.Entities.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlannerCRM.Server.Models.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
+                        .HasForeignKey("EmployeesGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

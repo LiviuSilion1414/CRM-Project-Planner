@@ -39,7 +39,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EndpointsCrudActions.GET_BY_ID)]
-    public async Task<ActionResult<EmployeeDto>> GetById(int employeeId)
+    public async Task<ActionResult<EmployeeDto>> GetById(Guid employeeId)
     {
         var employee = await _repo.GetByIdAsync(employeeId);
         return Ok(employee);
@@ -74,7 +74,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID)]
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(int employeeId)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(Guid employeeId)
     {
         return await _repo.FindAssociatedActivitiesByEmployeeId(employeeId);
     }
@@ -82,7 +82,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID)]
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(int employeeId, int activityId)
+    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(Guid employeeId, Guid activityId)
     {
         return await _repo.FindAssociatedWorkTimesByActivityIdAndEmployeeId(employeeId, activityId);
     }
@@ -90,7 +90,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID)]
-    public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(int employeeId)
+    public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(Guid employeeId)
     {
         return await _repo.FindAssociatedSalaryDataByEmployeeId(employeeId);
     }

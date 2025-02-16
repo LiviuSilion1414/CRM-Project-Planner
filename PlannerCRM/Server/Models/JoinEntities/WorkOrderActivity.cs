@@ -2,9 +2,9 @@
 
 public class WorkOrderActivity
 {
-    public int Id { get; set; }
-    public int WorkOrderId { get; set; }
-    public int ActivityId { get; set; }
+    public Guid Guid { get; set; }
+    public Guid WorkOrderId { get; set; }
+    public Guid ActivityId { get; set; }
 
     // Navigation properties
     public WorkOrder WorkOrder { get; set; }

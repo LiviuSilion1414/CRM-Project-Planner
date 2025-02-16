@@ -5,7 +5,7 @@ namespace PlannerCRM.Shared.Models;
 public class ResultDto<TItem>
     where TItem : class, new()
 {
-    public int Id { get; set; }
+    public Guid  Guid { get; set; }
     public string Message { get; set; }
     public MessageType MessageType { get; set; }
     public HttpStatusCode StatusCode { get; set; }

@@ -8,8 +8,8 @@ public class WorkOrderEndpointActions
 
     public static string SearchWorkOrderByTitle(string query) => 
         $"searchWorkOrderByTitle/{query}";
-    public static string FindAssociatedActivitiesByWorkOrderId(int workorderid) => 
+    public static string FindAssociatedActivitiesByWorkOrderId(Guid workorderid) => 
         $"findAssociatedActivitiesByWorkOrderId/{workorderid}";
-    public static string FindAssociatedWorkordersByClientid(int workorderid) => 
+    public static string FindAssociatedWorkordersByClientid(Guid workorderid) => 
         $"findAssociatedWorkOrdersByClientId/{workorderid}";
 }

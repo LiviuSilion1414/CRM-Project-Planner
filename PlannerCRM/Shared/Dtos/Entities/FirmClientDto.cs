@@ -2,7 +2,7 @@
 
 public class FirmClientDto
 {
-    public int Id { get; set; }
+    public Guid  Guid { get; set; }
 
     [Required]
     [MinLength(4)]

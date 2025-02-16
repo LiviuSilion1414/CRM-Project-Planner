@@ -36,7 +36,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
 
     [HttpGet]
     [Route("getById/{workTimeId}")]
-    public async Task<ActionResult<WorkTimeDto>> GetById(int workTimeId)
+    public async Task<ActionResult<WorkTimeDto>> GetById(Guid workTimeId)
     {
         var workTime = await _repo.GetByIdAsync(workTimeId);
         return Ok(workTime);

@@ -6,5 +6,5 @@ public class ClientEndpointActions
     public const string FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID = "findAssociatedWorkOrdersByClientId/{clientId}";
 
     public static string SearchClientByName(string query) => $"searchClientByName/{query}";
-    public static string FindAssociatedWorkOrdersByClientId(int clientId) => $"findAssociatedWorkOrdersByClientId/{clientId}";
+    public static string FindAssociatedWorkOrdersByClientId(Guid clientId) => $"findAssociatedWorkOrdersByClientId/{clientId}";
 }

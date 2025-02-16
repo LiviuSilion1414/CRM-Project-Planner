@@ -36,7 +36,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(EndpointsCrudActions.GET_BY_ID)]
-    public async Task<ActionResult<WorkOrderDto>> GetById(int workOrderId)
+    public async Task<ActionResult<WorkOrderDto>> GetById(Guid workOrderId)
     {
         var workOrder = await _repo.GetByIdAsync(workOrderId);
         return Ok(workOrder);
@@ -60,14 +60,14 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID)]
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(int itemId)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(Guid itemId)
     {
         return await _repo.FindAssociatedActivitiesByWorkOrderId(itemId);
     }
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(Guid clientId)
     {
         return await _repo.FindAssociatedWorkOrdersByClientId(clientId);
     }

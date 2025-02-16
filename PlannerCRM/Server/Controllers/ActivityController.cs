@@ -36,7 +36,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(EndpointsCrudActions.GET_BY_ID)]
-    public async Task<ActionResult<ActivityDto>> GetById(int activityId)
+    public async Task<ActionResult<ActivityDto>> GetById(Guid activityId)
     {
         var activity = await _repo.GetByIdAsync(activityId);
         return Ok(activity);
@@ -60,21 +60,21 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID)]
-    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(int itemId)
+    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(Guid itemId)
     {
         return await _repo.FindAssociatedEmployeesWithinActivity(itemId);
     }
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID)]
-    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(int itemId)
+    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(Guid itemId)
     {
         return await _repo.FindAssociatedWorkOrderByActivityId(itemId);
     }
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY)]
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(int itemId)
+    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(Guid itemId)
     {
         return await _repo.FindAssociatedWorkTimesWithinActivity(itemId);
     }

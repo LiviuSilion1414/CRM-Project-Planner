@@ -23,9 +23,9 @@
                         <DataAnnotationsValidator />
                         <RadzenRow class="form-group py-2 w-100">
                             <RadzenColumn>
-                                <RadzenLabel Text="Email" />
-                                <InputText class="form-control" type="email" @bind-Value=@_model.Email/>
-                                <ValidationMessage For="@(() => _model.Email)" />
+                                <RadzenLabel Text="Email/Username" />
+                                <InputText class="form-control" type="email" @bind-Value=@_model.EmailOrUsername/>
+                                <ValidationMessage For="@(() => _model.EmailOrUsername)" />
                             </RadzenColumn>
                         </RadzenRow>
                         <RadzenRow class="form-group py-2 w-100">

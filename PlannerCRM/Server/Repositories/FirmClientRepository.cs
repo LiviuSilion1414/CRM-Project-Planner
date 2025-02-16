@@ -18,7 +18,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         var model = _mapper.Map<FirmClient>(dto);
 
-        var existingModel = await _context.Clients.SingleAsync(cl => cl.Id == model.Id);
+        var existingModel = await _context.Clients.SingleAsync(cl => cl.Guid == model.Guid);
         existingModel = model;
 
         _context.Update(existingModel);
@@ -31,19 +31,19 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         var client = await _context.Clients
             .Include(c => c.WorkOrders)
             .Include(c => c.WorkOrderCosts)
-            .SingleAsync(c => c.Id == dto.Id);
+            .SingleAsync(c => c.Guid == dto.Guid);
 
         _context.Remove(client);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task<FirmClientDto> GetByIdAsync(int id)
+    public async Task<FirmClientDto> GetByIdAsync(Guid id)
     {
         var client = await _context.Clients
             .Include(c => c.WorkOrders)
             .Include(c => c.WorkOrderCosts)
-            .SingleAsync(c => c.Id == id);
+            .SingleAsync(c => c.Guid == id);
 
         return _mapper.Map<FirmClientDto>(client);
     }
@@ -51,7 +51,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     public async Task<List<FirmClientDto>> GetWithPagination(int limit, int offset)
     {
         var clients = await _context.Clients
-            .OrderBy(c => c.Id)
+            .OrderBy(c => c.Guid)
             .Skip(offset)
             .Take(limit)
             .Include(c => c.WorkOrders)
@@ -71,7 +71,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         return _mapper.Map<List<FirmClientDto>>(foundClients);
     }
 
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(Guid clientId)
     {
         var foundWorkOrders = await _context.WorkOrders
             .Include(wo => wo.FirmClient)

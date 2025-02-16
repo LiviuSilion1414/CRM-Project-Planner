@@ -24,15 +24,14 @@
 @code {
     private ActivityDto _selectedActivity = null;
     private List<ActivityDto> _activities = new();
-    private PaginationHelper _pg = new() { Limit = 100, Offset = 0 };
 
     protected override async Task OnInitializedAsync()
     {
         _activities = await fs.GetAll(
             EndpointsNames.ACTIVITY,
-            EndpointsCrudActions.GET_WITH_PAGINATION_ACTION,
-            _pg.Limit,
-            _pg.Offset
+            EndpointsCrudActions.GET_WITH_PAGINATION,
+            100,
+            0
         );
     }
 

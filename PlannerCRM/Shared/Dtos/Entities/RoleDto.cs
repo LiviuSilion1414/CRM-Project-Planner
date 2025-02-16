@@ -2,7 +2,7 @@
 
 public class RoleDto
 {
-    public int Id { get; set; }
+    public Guid  Guid { get; set; }
     public Roles RoleName { get; set; }
 
     // Navigation properties

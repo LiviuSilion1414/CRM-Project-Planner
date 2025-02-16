@@ -27,11 +27,13 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                 return new HttpResponseMessage() { StatusCode = res.StatusCode };
             }
 
-            await _localStorage.SetItem("id", user.Id);
+            await _localStorage.SetItem("id", user.Guid);
             await _localStorage.SetItem("token", user.Token);
             await _localStorage.SetItem("name", user.Name);
             await _localStorage.SetItem("email", user.Email);
             await _localStorage.SetItem("roles", user.Roles);
+            await _localStorage.SetItem("claims", user.Claims);
+            await _localStorage.SetItem("claimsOk", user.ClaimsOk);
             await _localStorage.SetItem("isAuthenticated", user.IsAuthenticated);
 
             return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.OK };
@@ -67,13 +69,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
-            Claim[] claims = [
-                new Claim(ClaimTypes.NameIdentifier, currentUser.Id!.ToString()!),
-                    new Claim(ClaimTypes.Email, currentUser.Email),
-                    new Claim(ClaimTypes.Name, currentUser.Name),
-            ];
-
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: nameof(AuthService))));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(currentUser.ClaimsOk, authenticationType: nameof(AuthService))));
         }
         catch (Exception ex) 
         {
@@ -88,21 +84,32 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             object? token = await _localStorage.GetItemAsync("token");
 
             if (token is not null)
-            {
-                object? id = await _localStorage.GetItemAsync("id");
-                object? name = await _localStorage.GetItemAsync("name");
-                object? email = await _localStorage.GetItemAsync("email");
-                object? isAuthenticated = await _localStorage.GetItemAsync("isAuthenticated");
+            {   
+                string tokenString = token.ToString();
+                Guid guid = Guid.Parse((await _localStorage.GetItemAsync("id")).ToString());
+                string name = (await _localStorage.GetItemAsync("name")).ToString();
+                string email = (await _localStorage.GetItemAsync("email")).ToString();
+                bool isAuthenticated =bool.Parse((await _localStorage.GetItemAsync("isAuthenticated")).ToString());
+
+                List<string> roles = (await _localStorage.GetItemAsync("roles")).ToString().Split(',').ToList();
+                List<Claim> claimsOk = (await _localStorage.GetItemAsync("claimsOk")).ToString()
+                                                                                     .Split(',')
+                                                                                     .Select(x => new Claim(ClaimTypes.Role, x))
+                                                                                     .ToList();
+                Dictionary<string, string> claims = (await _localStorage.GetItemAsync("claims")).ToString()
+                                                                                                .Split(',')
+                                                                                                .ToDictionary(k => k, v => v);
 
                 return new CurrentUser()
                 {
-                    Id = int.Parse(id.ToString()),
-                    Name = name.ToString(),
-                    Email = email.ToString(),
-                    Token = token.ToString(),
-                    IsAuthenticated = bool.Parse(isAuthenticated.ToString()),
-                    Roles = [],
-                    Claims = []
+                    Guid = guid,
+                    Name = name,
+                    Email = email,
+                    Token = tokenString,
+                    IsAuthenticated = isAuthenticated,
+                    Roles = roles,
+                    Claims = claims,
+                    ClaimsOk = claimsOk
                 };
             }
             return null;

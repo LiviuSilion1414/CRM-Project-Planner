@@ -21,7 +21,7 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
     {
         var model = _mapper.Map<WorkTime>(dto);
 
-        var existingModel = await _context.WorkTimes.SingleAsync(wt => wt.Id == model.Id);
+        var existingModel = await _context.WorkTimes.SingleAsync(wt => wt.Guid == model.Guid);
         existingModel = model;
 
         _context.Update(existingModel);
@@ -35,20 +35,20 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
             .Include(w => w.Activity)
             .Include(w => w.WorkOrder)
             .ThenInclude(w => w.FirmClient)
-            .SingleAsync(w => w.Id == dto.Id);
+            .SingleAsync(w => w.Guid == dto.Guid);
 
         _context.Remove(client);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task<WorkTimeDto> GetByIdAsync(int id)
+    public async Task<WorkTimeDto> GetByIdAsync(Guid id)
     {
         var client = await _context.WorkTimes
             .Include(w => w.Activity)
             .Include(w => w.WorkOrder)
             .ThenInclude(w => w.FirmClient)
-            .SingleAsync(w => w.Id == id);
+            .SingleAsync(w => w.Guid == id);
 
         return _mapper.Map<WorkTimeDto>(client);
     }
@@ -56,7 +56,7 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
     public async Task<List<WorkTimeDto>> GetWithPagination(int limit, int offset)
     {
         var clients = await _context.WorkTimes
-            .OrderBy(w => w.Id)
+            .OrderBy(w => w.Guid)
             .Skip(offset)
             .Take(limit)
             .Include(w => w.Activity)

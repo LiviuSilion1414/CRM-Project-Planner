@@ -4,10 +4,9 @@ namespace PlannerCRM.Server.Models.Entities;
 
 public class Role
 {
-    public int Id { get; set; }
-    public Roles RoleName { get; set; }
+    public Guid Guid { get; set; }
+    public string RoleName { get; set; }
 
     // Navigation properties
-    public List<Employee> Employees { get; set; }
     public List<EmployeeRole> EmployeeRoles { get; set; }
 }

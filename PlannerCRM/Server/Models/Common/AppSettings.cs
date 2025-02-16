@@ -3,7 +3,7 @@
 public class AppSettings
 {
     //JWT
-    public string? Secret { get; set; }
+    public string Secret { get; set; }
 
     //email
     public string EmailHost { get; set; }

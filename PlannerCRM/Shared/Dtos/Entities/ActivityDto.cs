@@ -2,7 +2,7 @@
 
 public class ActivityDto
 {
-    public int Id { get; set; }
+    public Guid  Guid { get; set; }
 
     [Required]
     [MinLength(5)]
@@ -22,7 +22,7 @@ public class ActivityDto
     public string EndDateString { get => string.Format("{0:dd/MM/yyyy}", EndDate); }
 
     [Required]
-    public int WorkOrderId { get; set; }
+    public Guid WorkOrderId { get; set; }
     
     [Required]
     public WorkOrderDto WorkOrder { get; set; }

@@ -19,8 +19,8 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         await _context.WorkOrderActivities.AddAsync(
             new()
             {
-                ActivityId = model.Id,
-                WorkOrderId = model.WorkOrder.Id
+                ActivityId = model.Guid,
+                WorkOrderId = model.WorkOrder.Guid
             }
         );
 
@@ -44,19 +44,19 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         var activity = await _context.Activities
             .Include(a => a.EmployeeActivities)
             .Include(a => a.ActivityWorkTimes)
-            .SingleAsync(a => a.Id == dto.Id);
+            .SingleAsync(a => a.Guid == dto.Guid);
 
         _context.Remove(activity);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task<ActivityDto> GetByIdAsync(int id)
+    public async Task<ActivityDto> GetByIdAsync(Guid id)
     {
         var activity = await _context.Activities
             .Include(a => a.EmployeeActivities)
             .Include(a => a.ActivityWorkTimes)
-            .SingleAsync(a => a.Id == id);
+            .SingleAsync(a => a.Guid == id);
 
         return _mapper.Map<ActivityDto>(activity);
     }
@@ -64,7 +64,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     public async Task<List<ActivityDto>> GetWithPagination(int limit, int offset)
     {
         var activities = await _context.Activities
-            .OrderBy(a => a.Id)
+            .OrderBy(a => a.Guid)
             .Skip(offset)
             .Take(limit)
             .Include(a => a.EmployeeActivities)
@@ -87,34 +87,34 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         return _mapper?.Map<List<ActivityDto>>(foundItem);
     }
 
-    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(int activityId)
+    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(Guid activityId)
     {
         var foundEmployees = await _context.Employees
             .Include(em => em.Activities)
-            .Where(em => em.Activities.Any(ac => ac.Id == activityId))
+            .Where(em => em.Activities.Any(ac => ac.Guid == activityId))
             .ToListAsync();
 
         return _mapper.Map<List<EmployeeDto>>(foundEmployees);
     }
 
-    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(int activityId)
+    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(Guid activityId)
     {
         var foundWorkOrder = await _context.WorkOrders
             .Include(wo => wo.Activities)
             .Include(wo => wo.FirmClient)
-            .SingleAsync(em => em.Activities.Any(ac => ac.Id == activityId));
+            .SingleAsync(em => em.Activities.Any(ac => ac.Guid == activityId));
 
         return _mapper.Map<WorkOrderDto>(foundWorkOrder);
     }
 
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(int activityId)
+    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(Guid activityId)
     {
         var foundWorkTimes = await _context.WorkTimes
             .Include(wt => wt.Activity)
             .Include(wt => wt.Employee)
             .Include(wt => wt.WorkOrder)
             .ThenInclude(wo => wo.FirmClient)
-            .Where(wt => wt.Activity.Id == activityId)
+            .Where(wt => wt.Activity.Guid == activityId)
             .ToListAsync();
 
         return _mapper.Map<List<WorkTimeDto>>(foundWorkTimes);

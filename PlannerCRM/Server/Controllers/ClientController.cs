@@ -36,7 +36,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(EndpointsCrudActions.GET_BY_ID)]
-    public async Task<ActionResult<FirmClient>> GetById(int clientId)
+    public async Task<ActionResult<FirmClient>> GetById(Guid clientId)
     {
         var client = await _repo.GetByIdAsync(clientId);
         return Ok(client);
@@ -60,7 +60,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(ClientEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(int clientId)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(Guid clientId)
     {
         return await _repo.FindAssociatedWorkOrdersByClientId(clientId);
     }

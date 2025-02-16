@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
-using PlannerCRM.Server.Models.Common;
+using NuGet.Packaging;
 using PlannerCRM.Shared.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -28,11 +28,20 @@ public class AccountController
     [Route("login")]
     public async Task<ActionResult<CurrentUser?>> Login(EmployeeLoginDto dto)
     {
+
+        var guid = Guid.NewGuid();
         var model = _mapper.Map<EmployeeLogin>(dto);
-
         var foundEmployee = await _context.Employees
-                                          .SingleOrDefaultAsync(em => em.Email == model.Email);
-
+                                          .Include(x => x.EmployeeRoles)
+                                          .SingleOrDefaultAsync(em => 
+                                            em.Email.Contains(dto.EmailOrUsername) ||
+                                            em.Name.Contains(dto.EmailOrUsername));
+        byte[] salt1 = new byte[128 / 8];
+        string cryptedPwd1 = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.Password,
+                                                                        salt: salt1,
+                                                                        prf: KeyDerivationPrf.HMACSHA256,
+                                                                        iterationCount: 10000,
+                                                                        numBytesRequested: 256 / 8));
         if (foundEmployee is not null)
         {
             byte[] salt = new byte[128 / 8];
@@ -60,7 +69,7 @@ public class AccountController
                 {
                     new Claim(ClaimTypes.Name, foundEmployee.Name),
                     new Claim(ClaimTypes.Email, foundEmployee.Email),
-                    new Claim(ClaimTypes.NameIdentifier, foundEmployee.Id.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, foundEmployee.Guid.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -71,37 +80,39 @@ public class AccountController
             var tokenAsString = tokenHandler.WriteToken(token);
 
             var foundLoginData = await _context.EmployeeLoginData.OrderBy(em => em.LastSeen.Day) 
-                                                                 .Where(e => e.EmployeeId == foundEmployee.Id)
+                                                                 .Where(e => e.EmployeeId == foundEmployee.Guid)
                                                                  .Include(e => e.Employee)
                                                                  .ToListAsync();
 
             await _context.EmployeeLoginData.AddAsync(new()
             {
-                EmployeeId = foundEmployee.Id,
+                EmployeeId = foundEmployee.Guid,
                 LastSeen = DateTime.UtcNow,
                 Token = tokenAsString
             });
 
             await _context.SaveChangesAsync();
 
-            return Ok(new CurrentUser 
-                { 
-                    Id = foundEmployee.Id,
-                    Email = foundEmployee.Email, 
-                    IsAuthenticated = true, 
+            List<Claim> newClaims = foundEmployee.EmployeeRoles
+                                                 .Select(x => new Claim(ClaimTypes.Role, x.RoleName.ToString()))
+                                                 .ToList();
+
+            return Ok(new CurrentUser
+                {
+                    Guid = foundEmployee.Guid,
+                    Email = foundEmployee.Email,
+                    IsAuthenticated = true,
                     Name = foundEmployee.Name,
                     Token = tokenAsString,
-                    Roles = new() { "Admin", "Staff" },
-                    Claims = new ()
-                    {
-                        { "IsAuthenticated", "true" }
-                    }
+                    Roles = foundEmployee.EmployeeRoles.Select(x => x.ToString()).ToList(),
+                    ClaimsOk = newClaims,
+                    Claims = []
                 }
             );
         } 
         else
         {
-            return NotFound(LoginFeedBack.USER_NOT_FOUND);
+            return NotFound("User not found");
         }
     }
 }

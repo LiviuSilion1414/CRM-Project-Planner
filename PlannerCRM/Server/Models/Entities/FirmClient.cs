@@ -2,7 +2,7 @@
 
 public class FirmClient
 {
-    public int Id { get; set; }
+    public Guid Guid { get; set; }
     public string Name { get; set; }
     public string VatNumber { get; set; }
 

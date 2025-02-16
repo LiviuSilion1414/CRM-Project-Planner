@@ -23,7 +23,6 @@ RowSelect="OnSelect">
 
 @code {
     private List<FirmClientDto> _clients = new();
-    private PaginationHelper _pg = new() { Limit = 100, Offset = 0 };
 
     private bool _isSelected = false;
     private FirmClientDto _selectedClient = null;
@@ -37,9 +36,9 @@ RowSelect="OnSelect">
     {
         _clients = await fs.GetAll(
             EndpointsNames.FIRM_CLIENT,
-            EndpointsCrudActions.GET_WITH_PAGINATION_ACTION,
-            _pg.Limit,
-            _pg.Offset
+            EndpointsCrudActions.GET_WITH_PAGINATION,
+            100,
+            0
         );
 
         await LoadRelatedWorkOrders();
@@ -51,7 +50,7 @@ RowSelect="OnSelect">
         {
             cl.WorkOrders = await wfs.GetAll(
                 EndpointsNames.FIRM_CLIENT,
-                ClientEndpointActions.FindAssociatedWorkOrdersByClientId(cl.Id)
+                ClientEndpointActions.FindAssociatedWorkOrdersByClientId(cl.Guid)
             );
         }
     }

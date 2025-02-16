@@ -2,9 +2,9 @@
 
 public class ActivityWorkTimeDto
 {
-    public int Id { get; set; }
-    public int ActivityId { get; set; }
-    public int WorkTimeId { get; set; }
+    public Guid  Guid { get; set; }
+    public Guid ActivityId { get; set; }
+    public Guid WorkTimeId { get; set; }
 
     // Navigation properties
     public ActivityDto Activity { get; set; }

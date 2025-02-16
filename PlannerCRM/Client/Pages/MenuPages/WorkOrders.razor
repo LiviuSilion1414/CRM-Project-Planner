@@ -25,7 +25,6 @@ RowSelect="OnSelect">
 @code {
     private WorkOrderDto _selectedWorkOrder = null;
     private List<WorkOrderDto> _workOrders = new();
-    private PaginationHelper _pg = new() { Limit = 100, Offset = 0 };
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,9 +35,9 @@ RowSelect="OnSelect">
     {
         _workOrders = await fs.GetAll(
             EndpointsNames.WORK_ORDER,
-            EndpointsCrudActions.GET_WITH_PAGINATION_ACTION,
-            _pg.Limit,
-            _pg.Offset
+            EndpointsCrudActions.GET_WITH_PAGINATION,
+            100,
+            0
         );
 
         await LoadRelatedActivities();
@@ -50,7 +49,7 @@ RowSelect="OnSelect">
         {
             wo.Activities = await afs.GetAll(
                 EndpointsNames.WORK_ORDER,
-                WorkOrderEndpointActions.FindAssociatedActivitiesByWorkOrderId(wo.Id)
+                WorkOrderEndpointActions.FindAssociatedActivitiesByWorkOrderId(wo.Guid)
             );
         }
     }

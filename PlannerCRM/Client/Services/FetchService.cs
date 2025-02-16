@@ -9,13 +9,13 @@ public class FetchService<TItem>(LocalStorageService localStorage, HttpClient ht
     public async Task Create(string controllerName, string action, TItem item)
         => await _http.PostAsJsonAsync($"api/{controllerName}/{action}", item);
 
-    public async Task<TItem> Read(string controllerName, string action, int itemId)
+    public async Task<TItem> Read(string controllerName, string action, Guid itemId)
         => await _http.GetFromJsonAsync<TItem>($"api/{controllerName}/{action}");
 
     public async Task Update(string controllerName, string action, TItem item)
         => await _http.PutAsJsonAsync($"api/{controllerName}/{action}", item);
 
-    public async Task Delete(string controllerName, string action, int itemId)
+    public async Task Delete(string controllerName, string action, Guid itemId)
         => await _http.DeleteAsync($"api/{controllerName}/{action}/{itemId}");
 
     public async Task<List<TItem>> GetAll(string controllerName, string action, int limit, int offset)

@@ -2,7 +2,7 @@
 
 public class Employee
 {
-    public int Id { get; set; }
+    public Guid Guid { get; set; }
     public string Email { get; set; }
     public string Name { get; set; }
     public string PasswordHash { get; set; }
@@ -14,7 +14,6 @@ public class Employee
     public List<EmployeeLoginData> LoginData { get; set; }
     public List<WorkTime> WorkTimes { get; set; }
     public List<Activity> Activities { get; set; }
-    public List<Role> Roles { get; set; }
     public List<Salary> Salaries { get; set; }
     public List<EmployeeRole> EmployeeRoles { get; set; }
     public List<EmployeeSalary> EmployeeSalaries { get; set; }

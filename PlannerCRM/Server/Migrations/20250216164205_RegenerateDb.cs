@@ -1,13 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace PlannerCRM.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class RegenerateDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,36 +18,33 @@ namespace PlannerCRM.Server.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     VatNumber = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.PrimaryKey("PK_Clients", x => x.Guid);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ClientWorkOrders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirmClientId = table.Column<int>(type: "integer", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirmClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    WorkOrderId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientWorkOrders", x => x.Id);
+                    table.PrimaryKey("PK_ClientWorkOrders", x => x.Guid);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: true),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
@@ -58,43 +54,41 @@ namespace PlannerCRM.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.PrimaryKey("PK_Employees", x => x.Guid);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Role",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleName = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Role", x => x.Id);
+                    table.PrimaryKey("PK_Role", x => x.Guid);
                 });
 
             migrationBuilder.CreateTable(
                 name: "WorkOrders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FirmClientId = table.Column<int>(type: "integer", nullable: false),
-                    WorkOrderCostId = table.Column<int>(type: "integer", nullable: false)
+                    FirmClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    WorkOrderCostId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkOrders", x => x.Id);
+                    table.PrimaryKey("PK_WorkOrders", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_WorkOrders_Clients_FirmClientId",
                         column: x => x.FirmClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -102,20 +96,19 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeLoginData",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     LastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Token = table.Column<string>(type: "text", nullable: true),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false)
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeLoginData", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeLoginData", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_EmployeeLoginData_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -123,45 +116,20 @@ namespace PlannerCRM.Server.Migrations
                 name: "Salaries",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     HourlyRate = table.Column<decimal>(type: "numeric", nullable: false),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false)
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Salaries", x => x.Id);
+                    table.PrimaryKey("PK_Salaries", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_Salaries_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeRole",
-                columns: table => new
-                {
-                    EmployeesId = table.Column<int>(type: "integer", nullable: false),
-                    RolesId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeRole", x => new { x.EmployeesId, x.RolesId });
-                    table.ForeignKey(
-                        name: "FK_EmployeeRole_Employees_EmployeesId",
-                        column: x => x.EmployeesId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeeRole_Role_RolesId",
-                        column: x => x.RolesId,
-                        principalTable: "Role",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -169,26 +137,25 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleName = table.Column<string>(type: "text", nullable: true),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    RoleId = table.Column<int>(type: "integer", nullable: false)
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeRoles", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeRoles", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_EmployeeRoles_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeRoles_Role_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Role",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -196,22 +163,21 @@ namespace PlannerCRM.Server.Migrations
                 name: "Activities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false)
+                    WorkOrderId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Activities", x => x.Id);
+                    table.PrimaryKey("PK_Activities", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_Activities_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
                         principalTable: "WorkOrders",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -219,28 +185,27 @@ namespace PlannerCRM.Server.Migrations
                 name: "WorkOrderCosts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     TotalCost = table.Column<decimal>(type: "numeric", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false),
-                    FirmClientId = table.Column<int>(type: "integer", nullable: false)
+                    WorkOrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirmClientId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkOrderCosts", x => x.Id);
+                    table.PrimaryKey("PK_WorkOrderCosts", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_WorkOrderCosts_Clients_FirmClientId",
                         column: x => x.FirmClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_WorkOrderCosts_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
                         principalTable: "WorkOrders",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -248,25 +213,24 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeSalaries",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    SalaryId = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SalaryId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeSalaries", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeSalaries", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_EmployeeSalaries_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeSalaries_Salaries_SalaryId",
                         column: x => x.SalaryId,
                         principalTable: "Salaries",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -274,23 +238,23 @@ namespace PlannerCRM.Server.Migrations
                 name: "ActivityEmployee",
                 columns: table => new
                 {
-                    ActivitiesId = table.Column<int>(type: "integer", nullable: false),
-                    EmployeesId = table.Column<int>(type: "integer", nullable: false)
+                    ActivitiesGuid = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeesGuid = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActivityEmployee", x => new { x.ActivitiesId, x.EmployeesId });
+                    table.PrimaryKey("PK_ActivityEmployee", x => new { x.ActivitiesGuid, x.EmployeesGuid });
                     table.ForeignKey(
-                        name: "FK_ActivityEmployee_Activities_ActivitiesId",
-                        column: x => x.ActivitiesId,
+                        name: "FK_ActivityEmployee_Activities_ActivitiesGuid",
+                        column: x => x.ActivitiesGuid,
                         principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ActivityEmployee_Employees_EmployeesId",
-                        column: x => x.EmployeesId,
+                        name: "FK_ActivityEmployee_Employees_EmployeesGuid",
+                        column: x => x.EmployeesGuid,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -298,25 +262,24 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeActivities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    ActivityId = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ActivityId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeActivities", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeActivities", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_EmployeeActivities_Activities_ActivityId",
                         column: x => x.ActivityId,
                         principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeActivities_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -324,25 +287,24 @@ namespace PlannerCRM.Server.Migrations
                 name: "WorkOrderActivities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false),
-                    ActivityId = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    WorkOrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ActivityId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkOrderActivities", x => x.Id);
+                    table.PrimaryKey("PK_WorkOrderActivities", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_WorkOrderActivities_Activities_ActivityId",
                         column: x => x.ActivityId,
                         principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_WorkOrderActivities_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
                         principalTable: "WorkOrders",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -350,34 +312,33 @@ namespace PlannerCRM.Server.Migrations
                 name: "WorkTimes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     WorkedHours = table.Column<double>(type: "double precision", nullable: false),
-                    WorkOrderId = table.Column<int>(type: "integer", nullable: false),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    ActivityId = table.Column<int>(type: "integer", nullable: false)
+                    WorkOrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ActivityId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkTimes", x => x.Id);
+                    table.PrimaryKey("PK_WorkTimes", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_WorkTimes_Activities_ActivityId",
                         column: x => x.ActivityId,
                         principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_WorkTimes_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_WorkTimes_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
                         principalTable: "WorkOrders",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -385,25 +346,24 @@ namespace PlannerCRM.Server.Migrations
                 name: "ClientWorkOrderCosts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FirmClientId = table.Column<int>(type: "integer", nullable: false),
-                    WorkOrderCostId = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirmClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    WorkOrderCostId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientWorkOrderCosts", x => x.Id);
+                    table.PrimaryKey("PK_ClientWorkOrderCosts", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_ClientWorkOrderCosts_Clients_FirmClientId",
                         column: x => x.FirmClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ClientWorkOrderCosts_WorkOrderCosts_WorkOrderCostId",
                         column: x => x.WorkOrderCostId,
                         principalTable: "WorkOrderCosts",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -411,25 +371,24 @@ namespace PlannerCRM.Server.Migrations
                 name: "ActivityWorkTimes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ActivityId = table.Column<int>(type: "integer", nullable: false),
-                    WorkTimeId = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    ActivityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    WorkTimeId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActivityWorkTimes", x => x.Id);
+                    table.PrimaryKey("PK_ActivityWorkTimes", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_ActivityWorkTimes_Activities_ActivityId",
                         column: x => x.ActivityId,
                         principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ActivityWorkTimes_WorkTimes_WorkTimeId",
                         column: x => x.WorkTimeId,
                         principalTable: "WorkTimes",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -437,25 +396,24 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeWorkTimes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    WorkTimeId = table.Column<int>(type: "integer", nullable: false)
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    WorkTimeId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeWorkTimes", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeWorkTimes", x => x.Guid);
                     table.ForeignKey(
                         name: "FK_EmployeeWorkTimes_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeWorkTimes_WorkTimes_WorkTimeId",
                         column: x => x.WorkTimeId,
                         principalTable: "WorkTimes",
-                        principalColumn: "Id",
+                        principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -465,9 +423,9 @@ namespace PlannerCRM.Server.Migrations
                 column: "WorkOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ActivityEmployee_EmployeesId",
+                name: "IX_ActivityEmployee_EmployeesGuid",
                 table: "ActivityEmployee",
-                column: "EmployeesId");
+                column: "EmployeesGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityWorkTimes_ActivityId",
@@ -503,11 +461,6 @@ namespace PlannerCRM.Server.Migrations
                 name: "IX_EmployeeLoginData_EmployeeId",
                 table: "EmployeeLoginData",
                 column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EmployeeRole_RolesId",
-                table: "EmployeeRole",
-                column: "RolesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeRoles_EmployeeId",
@@ -606,9 +559,6 @@ namespace PlannerCRM.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmployeeLoginData");
-
-            migrationBuilder.DropTable(
-                name: "EmployeeRole");
 
             migrationBuilder.DropTable(
                 name: "EmployeeRoles");

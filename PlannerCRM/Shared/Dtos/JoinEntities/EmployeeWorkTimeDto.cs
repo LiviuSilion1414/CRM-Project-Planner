@@ -2,9 +2,9 @@
 
 public class EmployeeWorkTimeDto
 {
-    public int Id { get; set; }
-    public int EmployeeId { get; set; }
-    public int WorkTimeId { get; set; }
+    public Guid  Guid { get; set; }
+    public Guid EmployeeId { get; set; }
+    public Guid WorkTimeId { get; set; }
 
     // Navigation properties
     public EmployeeDto Employee { get; set; }

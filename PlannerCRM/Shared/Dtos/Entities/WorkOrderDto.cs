@@ -2,7 +2,7 @@
 
 public class WorkOrderDto
 {
-    public int Id { get; set; }
+    public Guid  Guid { get; set; }
     
 
     [Required]
@@ -25,9 +25,9 @@ public class WorkOrderDto
 
     // Navigation properties
     [Required]
-    public int FirmClientId { get; set; }
+    public Guid FirmClientId { get; set; }
     
-    public int WorkOrderCostId { get; set; }
+    public Guid WorkOrderCostId { get; set; }
    
     [Required]
     public FirmClientDto FirmClient { get; set; }

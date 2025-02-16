@@ -2,9 +2,9 @@
 
 public class EmployeeActivityDto
 {
-    public int Id { get; set; }
-    public int EmployeeId { get; set; }
-    public int ActivityId { get; set; }
+    public Guid  Guid { get; set; }
+    public Guid EmployeeId { get; set; }
+    public Guid ActivityId { get; set; }
 
     // Navigation properties
     public EmployeeDto Employee { get; set; }
