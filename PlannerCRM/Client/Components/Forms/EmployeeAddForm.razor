@@ -73,18 +73,24 @@
 
     async Task Submit()
     {
-        if (context.Validate())
+        try
         {
-            await fetch.ExecuteAsync(EmployeeEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
-
-            notification.Notify(new NotificationMessage()
+            if (context.Validate())
             {
-                Severity = NotificationSeverity.Success,
-                Duration = 3000,
-                Detail = "Item has been added",
-                Summary = "Operation succeeded"
-            });
-        }
+                await fetch.ExecuteAsync(EmployeeEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
 
+                notification.Notify(new NotificationMessage()
+                {
+                    Severity = NotificationSeverity.Success,
+                    Duration = 3000,
+                    Detail = "Item has been added",
+                    Summary = "Operation succeeded"
+                });
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 }

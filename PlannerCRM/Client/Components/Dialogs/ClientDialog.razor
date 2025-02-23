@@ -51,9 +51,16 @@
 
     private async Task OnDelete()
     {
-        if ((await dialog.Confirm("Confirm this item removal", "Delete client", new() { OkButtonText = "Delete" })).Value)
+        try
         {
-            await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
+            if ((await dialog.Confirm("Confirm this item removal", "Delete client", new() { OkButtonText = "Delete" })).Value)
+            {
+                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 }

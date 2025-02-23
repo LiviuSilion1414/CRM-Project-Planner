@@ -69,31 +69,44 @@
 
     private async Task CheckIfLoggedIn()
     {
-        var result = await auth.GetAuthenticationStateAsync();
-
-        if (result.User is not null && result.User.Identity.IsAuthenticated)
+        try
         {
-            navigation.NavigateTo("home", true);
+            var result = await auth.GetAuthenticationStateAsync();
+            if (result.User is not null && result.User.Identity.IsAuthenticated)
+            {
+                navigation.NavigateTo("home", true);
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Success, $"Oops, something went wrong, please retry!", null, 4000);
         }
     }
 
     private async Task OnLogin()
     {
-        if (_editContext.Validate())
+        try
         {
-            var res = await auth.LoginAsync(_model);
+            if (_editContext.Validate())
+            {
+                var res = await auth.LoginAsync(_model);
 
-            if (res.IsSuccessStatusCode)
-            {
-                var authenticationState = await auth.GetAuthenticationStateAsync();
-                notification.Notify(NotificationSeverity.Success, $"Welcome back, {authenticationState.User.Identity.Name}!", null, 4000);
-                navigation.NavigateTo("/home", true);
+                if (res.IsSuccessStatusCode)
+                {
+                    var authenticationState = await auth.GetAuthenticationStateAsync();
+                    notification.Notify(NotificationSeverity.Success, $"Welcome back, {authenticationState.User.Identity.Name}!", null, 4000);
+                    navigation.NavigateTo("/home", true);
+                }
+                else
+                {
+                    var responseContent = await res.Content.ReadAsStringAsync();
+                    notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", responseContent, 4000);
+                }
             }
-            else
-            {
-                var responseContent = await res.Content.ReadAsStringAsync();
-                notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", responseContent, 4000);
-            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 

@@ -35,18 +35,25 @@
 
     private async Task OnValidSubmit()
     {
-        if (_context.Validate())
+        try
         {
-            await fetch.ExecuteAsync(ClientEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
-
-            notification.Notify(new NotificationMessage()
+            if (_context.Validate())
             {
-                Duration = 3000,
-                Detail = "Item has been added",
-                Summary = "Operation succeeded"
-            });
+                await fetch.ExecuteAsync(ClientEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
 
-            dialog.Close();
+                notification.Notify(new NotificationMessage()
+                {
+                    Duration = 3000,
+                    Detail = "Item has been added",
+                    Summary = "Operation succeeded"
+                });
+
+                dialog.Close();
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 }

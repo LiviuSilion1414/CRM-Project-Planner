@@ -32,16 +32,30 @@
 
     private async Task LoadData()
     {
-        var result = await fetch.ExecuteAsync(ClientEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
-        _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+        try
+        {
+            var result = await fetch.ExecuteAsync(ClientEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
+            _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task LoadRelatedWorkOrders()
     {
-        foreach (var cl in _clients)
+        try
         {
-            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
-            cl.WorkOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+            foreach (var cl in _clients)
+            {
+                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
+                cl.WorkOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 

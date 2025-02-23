@@ -35,22 +35,22 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                    Placeholder="Search workorder.."
-                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                                   Placeholder="Search workorder.."
+                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Primary"
-                    Icon="Search"
-                    Click="@SearchWorkOrder">
+                                  Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Icon="Search"
+                                  Click="@SearchWorkOrder">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@WorkOrderDto"
-                    Data="@_workOrders"
-                    AllowFiltering="true"
-                    AllowSorting="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
+                                    Data="@_workOrders"
+                                    AllowFiltering="true"
+                                    AllowSorting="true"
+                                    SelectionMode="DataGridSelectionMode.Single"
+                                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
                         <Columns>
                             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
                         </Columns>
@@ -76,10 +76,10 @@
                             <RadzenTextBox @bind-Value="@Model.WorkOrder.Name" Disabled="true"></RadzenTextBox>
                         </RadzenColumn>
                         <RadzenButton ButtonType="ButtonType.Button"
-                        Variant="Variant.Outlined"
-                        ButtonStyle="ButtonStyle.Danger"
-                        Icon="Delete"
-                        Click="@(() => SelectWorkOrder(null))">
+                                      Variant="Variant.Outlined"
+                                      ButtonStyle="ButtonStyle.Danger"
+                                      Icon="Delete"
+                                      Click="@(() => SelectWorkOrder(null))">
                         </RadzenButton>
                     </RadzenRow>
                 </RadzenFieldset>
@@ -114,10 +114,17 @@
 
     private async Task SearchWorkOrder()
     {
-        if (!string.IsNullOrEmpty(_query))
+        try
         {
-            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
-            _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+            if (!string.IsNullOrEmpty(_query))
+            {
+                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
+                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 
@@ -128,18 +135,25 @@
 
     private async Task OnSubmit()
     {
-        if (_context.Validate())
+        try
         {
-            await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
-
-            notification.Notify(new NotificationMessage()
+            if (_context.Validate())
             {
-                Duration = 3000,
-                Detail = "Item has been updated",
-                Summary = "Operation succeeded"
-            });
+                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
 
-            dialog.Close();
+                notification.Notify(new NotificationMessage()
+                    {
+                        Duration = 3000,
+                        Detail = "Item has been updated",
+                        Summary = "Operation succeeded"
+                    });
+
+                dialog.Close();
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 }

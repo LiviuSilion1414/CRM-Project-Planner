@@ -101,10 +101,17 @@
 
     private async Task SearchClient()
     {
-        if (!string.IsNullOrEmpty(_query))
+        try
         {
-            var result = await fetch.ExecuteAsync(ActivityEndpointActions.SearchByTitle(_query), new SearchFilter(), ApiType.Post);
-            _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+            if (!string.IsNullOrEmpty(_query))
+            {
+                var result = await fetch.ExecuteAsync(ActivityEndpointActions.SearchByTitle(_query), new SearchFilter(), ApiType.Post);
+                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 
@@ -115,18 +122,25 @@
 
     private async Task OnSubmit()
     {
-        if (_context.Validate())
+        try
         {
-            await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
+            if (_context.Validate())
+            {
+                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
 
-            notification.Notify(new NotificationMessage()
-                {
-                    Duration = 3000,
-                    Detail = "Item has been updated",
-                    Summary = "Operation succeeded"
-                });
+                notification.Notify(new NotificationMessage()
+                    {
+                        Duration = 3000,
+                        Detail = "Item has been updated",
+                        Summary = "Operation succeeded"
+                    });
 
-            dialog.Close();
+                dialog.Close();
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 }

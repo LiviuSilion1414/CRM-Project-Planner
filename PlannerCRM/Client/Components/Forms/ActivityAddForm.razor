@@ -35,22 +35,22 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                    Placeholder="Search workorder.."
-                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                                   Placeholder="Search workorder.."
+                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Primary"
-                    Icon="Search"
-                    Click="@SearchWorkOrder">
+                                  Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Icon="Search"
+                                  Click="@SearchWorkOrder">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@WorkOrderDto"
-                    Data="@_workOrders"
-                    AllowFiltering="true"
-                    AllowSorting="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
+                                    Data="@_workOrders"
+                                    AllowFiltering="true"
+                                    AllowSorting="true"
+                                    SelectionMode="DataGridSelectionMode.Single"
+                                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
                         <Columns>
                             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
                         </Columns>
@@ -76,10 +76,10 @@
                             <RadzenTextBox @bind-Value="@_model.WorkOrder.Name" Disabled="true"></RadzenTextBox>
                         </RadzenColumn>
                         <RadzenButton ButtonType="ButtonType.Button"
-                        Variant="Variant.Outlined"
-                        ButtonStyle="ButtonStyle.Danger"
-                        Icon="Delete"
-                        Click="@(() => SelectWorkOrder(null))">
+                                      Variant="Variant.Outlined"
+                                      ButtonStyle="ButtonStyle.Danger"
+                                      Icon="Delete"
+                                      Click="@(() => SelectWorkOrder(null))">
                         </RadzenButton>
                     </RadzenRow>
                 </RadzenFieldset>
@@ -111,24 +111,31 @@
     protected override void OnInitialized()
     {
         _model = new()
-        {
-            StartDate = StartDate,
-            EndDate = EndDate,
-            WorkOrder = new()
-        };
+            {
+                StartDate = StartDate,
+                EndDate = EndDate,
+                WorkOrder = new()
+            };
         _context = new(_model);
         _workOrders = new();
     }
 
     private async Task SearchWorkOrder()
     {
-        if (!string.IsNullOrEmpty(_query))
+        try
         {
-            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
-            if (result.HasCompleted)
+            if (!string.IsNullOrEmpty(_query))
             {
-                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
+                if (result.HasCompleted)
+                {
+                    _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+                }
             }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 
@@ -139,17 +146,25 @@
 
     private async Task OnSubmit()
     {
-        if (_context.Validate())
+        try
         {
-            await fetch.ExecuteAsync(ActivityEndpointActions.Add(), new SearchFilter(), ApiType.Post);
+            if (_context.Validate())
+            {
+                await fetch.ExecuteAsync(ActivityEndpointActions.Add(), new SearchFilter(), ApiType.Post);
 
-            notification.Notify(new NotificationMessage() {
-                Duration = 3000,
-                Detail = "Item has been added",
-                Summary = "Operation succeeded"
-            }); 
+                notification.Notify(new NotificationMessage()
+                    {
+                        Duration = 3000,
+                        Detail = "Item has been added",
+                        Summary = "Operation succeeded"
+                    });
 
-            dialog.Close();
+                dialog.Close();
+            }
+        }
+        catch(Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 }
