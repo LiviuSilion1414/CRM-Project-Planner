@@ -6,5 +6,5 @@ public class EndpointsCrudPlaceholders
     public const string EDIT_PLACEHOLDER = "edit";
     public const string DELETE_PLACEHOLDER = "delete";
     public const string GET_BY_ID_PLACEHOLDER = "getById/{itemId}";
-    public const string GET_WITH_PAGINATION_PLACEHOLDER = "getWithPagination}/{limit}/{offset}";
+    public const string GET_WITH_PAGINATION_PLACEHOLDER = "getWithPagination/{limit}/{offset}";
 }
