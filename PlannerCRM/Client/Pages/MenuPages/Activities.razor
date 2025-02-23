@@ -6,12 +6,12 @@
 <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
 <RadzenDataGrid Data="@_activities"
-                TItem="@ActivityDto"
-                AllowSorting="true"
-                AllowPaging="true"
-                AllowFiltering="true"
-                SelectionMode="DataGridSelectionMode.Single"
-                RowSelect="OnSelect">
+TItem="@ActivityDto"
+AllowSorting="true"
+AllowPaging="true"
+AllowFiltering="true"
+SelectionMode="DataGridSelectionMode.Single"
+RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@ActivityDto" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.StartDateString)" Title="Start Date" />
@@ -25,7 +25,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
         _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
     }
 

@@ -43,9 +43,9 @@
     {
         await dialog.OpenAsync<ClientEditForm>("Edit client",
             new Dictionary<string, object>()
-                {
+            {
                 { nameof(ClientEditForm.Model), SelectedClient }
-                }
+            }
         );
     }
 

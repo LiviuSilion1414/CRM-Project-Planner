@@ -18,11 +18,11 @@ public class ActivityEndpointActions
     public const string FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID_PLACEHOLDER = "findAssociatedWorkOrdersByActivityId/{itemId}";
     public const string FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY_PLACEHOLDER = "findAssociatedWorkTimesWithinActivity/{itemId}";
 
-    public string Add() => ADD_BASE;
-    public string Edit() => EDIT_BASE;
-    public string Delete() => DELETE_BASE;
-    public string Get(Guid guid) => $"{GET_BY_ID_BASE}/{guid}";
-    public string GetWithPagination(int limit, int offset) => $"{GET_WITH_PAGINATION_BASE}/{limit}/{offset}";
+    public static string Add() => ADD_BASE;
+    public static string Edit() => EDIT_BASE;
+    public static string Delete() => DELETE_BASE;
+    public static string Get(Guid guid) => $"{GET_BY_ID_BASE}/{guid}";
+    public static string GetWithPagination(int limit, int offset) => $"{GET_WITH_PAGINATION_BASE}/{limit}/{offset}";
 
     public static string SearchByTitle(string query) => $"{SEARCH_BY_TITLE_BASE}/{query}";
     public static string FindAssociatedEmployeesByActivityId(int activityId) => $"{FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID_BASE}/{activityId}";

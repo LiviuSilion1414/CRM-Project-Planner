@@ -1,5 +1,4 @@
-﻿@using System.Text.Json
-<RadzenStack>
+﻿<RadzenStack>
     <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -142,7 +141,7 @@
     {
         if (_context.Validate())
         {
-            await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
+            await fetch.ExecuteAsync(ActivityEndpointActions.Add(), new SearchFilter(), ApiType.Post);
 
             notification.Notify(new NotificationMessage() {
                 Duration = 3000,

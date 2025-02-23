@@ -26,7 +26,7 @@
 
     private async Task LoadData()
     {
-        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
         _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
     }
 
@@ -41,11 +41,11 @@
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
         await dialog.OpenAsync<ActivityAddForm>("Add Activity",
-            new()
-                {
+            new() 
+            {
                 { nameof(ActivityAddForm.StartDate), args.Start },
                 { nameof(ActivityAddForm.EndDate), args.End }
-                },
+            },
             new DialogOptions() { Width = "40vw;" }
         );
     }

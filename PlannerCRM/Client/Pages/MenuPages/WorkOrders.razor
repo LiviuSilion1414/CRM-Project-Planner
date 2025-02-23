@@ -6,12 +6,12 @@
 <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
 <RadzenDataGrid Data="@_workOrders"
-TItem="@WorkOrderDto"
-AllowSorting="true"
-AllowPaging="true"
-AllowFiltering="true"
-SelectionMode="DataGridSelectionMode.Single"
-RowSelect="OnSelect">
+                TItem="@WorkOrderDto"
+                AllowSorting="true"
+                AllowPaging="true"
+                AllowFiltering="true"
+                SelectionMode="DataGridSelectionMode.Single"
+                RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.StartDateString)" Title="Start Date" />
@@ -30,7 +30,7 @@ RowSelect="OnSelect">
 
     private async Task LoadData()
     {
-        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
         _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
 
         await LoadRelatedActivities();
@@ -40,7 +40,7 @@ RowSelect="OnSelect">
     {
         foreach (var wo in _workOrders)
         {
-            var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
             wo.Activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
         }
     }
@@ -51,12 +51,12 @@ RowSelect="OnSelect">
 
         await dialog.OpenAsync<WorkOrderDialog>("WorkOrder Info",
             new Dictionary<string, object>() { { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } },
-            new DialogOptions() { Width="50vw;" }       
+            new DialogOptions() { Width = "50vw;" }
         );
     }
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width="40vw;" });
+        await dialog.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width = "40vw;" });
     }
 }

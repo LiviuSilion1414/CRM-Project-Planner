@@ -6,12 +6,12 @@
 <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
 <RadzenDataGrid Data="@_clients"
-TItem="@FirmClientDto"
-AllowSorting="true"
-AllowPaging="true"
-AllowFiltering="true"
-SelectionMode="DataGridSelectionMode.Single"
-RowSelect="OnSelect">
+                TItem="@FirmClientDto"
+                AllowSorting="true"
+                AllowPaging="true"
+                AllowFiltering="true"
+                SelectionMode="DataGridSelectionMode.Single"
+                RowSelect="OnSelect">
     <Columns>
         <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
         <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
@@ -27,21 +27,20 @@ RowSelect="OnSelect">
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
+        await LoadRelatedWorkOrders();
     }
 
     private async Task LoadData()
     {
-        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        var result = await fetch.ExecuteAsync(ClientEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
         _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
-
-        await LoadRelatedWorkOrders();
     }
 
     private async Task LoadRelatedWorkOrders()
     {
         foreach (var cl in _clients)
         {
-            var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
             cl.WorkOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
         }
     }
@@ -51,8 +50,8 @@ RowSelect="OnSelect">
         _selectedClient = client;
 
         await dialog.OpenAsync<ClientDialog>("Client Info",
-            new Dictionary<string, object>() 
-            { 
+            new Dictionary<string, object>()
+            {
                 { nameof(ClientDialog.SelectedClient), _selectedClient },
             }
         );

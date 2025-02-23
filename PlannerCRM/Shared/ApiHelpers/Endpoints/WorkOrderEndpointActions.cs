@@ -16,11 +16,11 @@ public class WorkOrderEndpointActions
     public const string FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID_PLACEHOLDER = "workOrder/findAssociatedActivitiesByWorkOrderId/{itemId}";
     public const string FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER = "workOrder/findAssociatedWorkOrdersByClientId/{itemId}";
 
-    public string Add() => ADD_BASE;
-    public string Edit() => EDIT_BASE;
-    public string Delete() => DELETE_BASE;
-    public string Get(Guid guid) => $"{GET_BY_ID_BASE}/{guid}";
-    public string GetWithPagination(int limit, int offset) => $"{GET_WITH_PAGINATION_BASE}/{limit}/{offset}";
+    public static string Add() => ADD_BASE;
+    public static string Edit() => EDIT_BASE;
+    public static string Delete() => DELETE_BASE;
+    public static string Get(Guid guid) => $"{GET_BY_ID_BASE}/{guid}";
+    public static string GetWithPagination(int limit, int offset) => $"{GET_WITH_PAGINATION_BASE}/{limit}/{offset}";
 
     public static string SearchWorkOrderByTitle(string query) => $"{SEARCH_WORKORDER_BY_TITLE_BASE}/{query}";
     public static string FindAssociatedActivitiesByWorkOrderId(Guid workorderid) => $"{FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID_BASE}/{workorderid}";

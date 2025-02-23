@@ -117,7 +117,6 @@
         if (!string.IsNullOrEmpty(_query))
         {
             var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
-
             _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
         }
     }

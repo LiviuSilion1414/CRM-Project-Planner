@@ -34,24 +34,24 @@
         <RadzenFieldset Text="Client Info">
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
-                    <RadzenTextBox @bind-Value="@_query" 
-                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    <RadzenTextBox @bind-Value="@_query"
+                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Primary"
-                    Icon="Search"
-                    Click="@SearchClient">
+                                  Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Icon="Search"
+                                  Click="@SearchClient">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@FirmClientDto"
-                    Data="@_clients"
-                    AllowFiltering="true"
-                    AllowSorting="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                                    Data="@_clients"
+                                    AllowFiltering="true"
+                                    AllowSorting="true"
+                                    SelectionMode="DataGridSelectionMode.Single"
+                                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
-                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name"/>
+                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
@@ -64,10 +64,10 @@
                         <RadzenTextBox @bind-Value="@_model.FirmClient.VatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Danger"
-                    Icon="Delete"
-                    Click="@(() => SelectClient(new()))">
+                                  Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Danger"
+                                  Icon="Delete"
+                                  Click="@(() => SelectClient(new()))">
                     </RadzenButton>
                     <ValidationMessage For="@(() => _model.FirmClient)" />
                 </RadzenRow>
@@ -107,7 +107,7 @@
     {
         if (!string.IsNullOrEmpty(_query))
         {
-            var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(ActivityEndpointActions.SearchByTitle(_query), new SearchFilter(), ApiType.Post);
             _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
         }
     }
@@ -124,11 +124,11 @@
             await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
 
             notification.Notify(new NotificationMessage()
-            {
-                Duration = 3000,
-                Detail = "Item has been added",
-                Summary = "Operation succeeded"
-            });
+                {
+                    Duration = 3000,
+                    Detail = "Item has been added",
+                    Summary = "Operation succeeded"
+                });
 
             dialog.Close();
         }
