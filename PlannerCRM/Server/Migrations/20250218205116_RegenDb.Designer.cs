@@ -12,8 +12,8 @@ using PlannerCRM.Server.DataAccess;
 namespace PlannerCRM.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250216164205_RegenerateDb")]
-    partial class RegenerateDb
+    [Migration("20250218205116_RegenDb")]
+    partial class RegenDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,6 +81,9 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("LastSeen")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("LockoutEnd")
                         .HasColumnType("boolean");
 
@@ -96,28 +99,6 @@ namespace PlannerCRM.Server.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("Employees");
-                });
-
-            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.EmployeeLoginData", b =>
-                {
-                    b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("LastSeen")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Token")
-                        .HasColumnType("text");
-
-                    b.HasKey("Guid");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("EmployeeLoginData");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.FirmClient", b =>
@@ -143,12 +124,12 @@ namespace PlannerCRM.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("RoleName")
                         .HasColumnType("text");
 
                     b.HasKey("Guid");
 
-                    b.ToTable("Role");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Salary", b =>
@@ -362,7 +343,7 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("RoleName")
                         .HasColumnType("text");
 
                     b.HasKey("Guid");
@@ -461,17 +442,6 @@ namespace PlannerCRM.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkOrder");
-                });
-
-            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.EmployeeLoginData", b =>
-                {
-                    b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
-                        .WithMany("LoginData")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Salary", b =>
@@ -689,8 +659,6 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("EmployeeRoles");
 
                     b.Navigation("EmployeeSalaries");
-
-                    b.Navigation("LoginData");
 
                     b.Navigation("Salaries");
 

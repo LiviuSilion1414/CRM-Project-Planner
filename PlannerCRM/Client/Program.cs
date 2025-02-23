@@ -1,4 +1,5 @@
 using Radzen;
+using System.Text.Json;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

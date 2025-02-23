@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PlannerCRM.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class RegenerateDb : Migration
+    public partial class RegenDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,7 +50,8 @@ namespace PlannerCRM.Server.Migrations
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
                     Phone = table.Column<string>(type: "text", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<bool>(type: "boolean", nullable: false)
+                    LockoutEnd = table.Column<bool>(type: "boolean", nullable: false),
+                    LastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,7 +59,7 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Role",
+                name: "Roles",
                 columns: table => new
                 {
                     Guid = table.Column<Guid>(type: "uuid", nullable: false),
@@ -66,7 +67,7 @@ namespace PlannerCRM.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Role", x => x.Guid);
+                    table.PrimaryKey("PK_Roles", x => x.Guid);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,26 +89,6 @@ namespace PlannerCRM.Server.Migrations
                         name: "FK_WorkOrders_Clients_FirmClientId",
                         column: x => x.FirmClientId,
                         principalTable: "Clients",
-                        principalColumn: "Guid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeLoginData",
-                columns: table => new
-                {
-                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
-                    LastSeen = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Token = table.Column<string>(type: "text", nullable: true),
-                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeLoginData", x => x.Guid);
-                    table.ForeignKey(
-                        name: "FK_EmployeeLoginData_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
                         principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -152,9 +133,9 @@ namespace PlannerCRM.Server.Migrations
                         principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeeRoles_Role_RoleId",
+                        name: "FK_EmployeeRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Role",
+                        principalTable: "Roles",
                         principalColumn: "Guid",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -458,11 +439,6 @@ namespace PlannerCRM.Server.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeLoginData_EmployeeId",
-                table: "EmployeeLoginData",
-                column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EmployeeRoles_EmployeeId",
                 table: "EmployeeRoles",
                 column: "EmployeeId");
@@ -558,9 +534,6 @@ namespace PlannerCRM.Server.Migrations
                 name: "EmployeeActivities");
 
             migrationBuilder.DropTable(
-                name: "EmployeeLoginData");
-
-            migrationBuilder.DropTable(
                 name: "EmployeeRoles");
 
             migrationBuilder.DropTable(
@@ -576,7 +549,7 @@ namespace PlannerCRM.Server.Migrations
                 name: "WorkOrderCosts");
 
             migrationBuilder.DropTable(
-                name: "Role");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Salaries");

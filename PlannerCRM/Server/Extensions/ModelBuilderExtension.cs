@@ -44,7 +44,6 @@ public static class ModelBuilderExtensions
         ConfigureEmployeeActivities(modelBuilder);
         ConfigureEmployeesRoles(modelBuilder);
         ConfigureEmployeesSalaries(modelBuilder);
-        ConfigureEmployeeLogins(modelBuilder);
     }
 
     private static void ConfigurePrimaryKeys(ModelBuilder modelBuilder)
@@ -67,15 +66,6 @@ public static class ModelBuilderExtensions
             .ValueGeneratedOnAdd();
         #endregion
 
-        #region EmployeeLoginData
-        modelBuilder.Entity<EmployeeLoginData>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<EmployeeLoginData>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-        
         #region FirmClient
         modelBuilder.Entity<FirmClient>()
             .HasKey(x=> x.Guid);
@@ -306,13 +296,5 @@ public static class ModelBuilderExtensions
             .WithMany(s => s.EmployeeSalaries)
             .HasForeignKey(es => es.SalaryId)
             .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureEmployeeLogins(this ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<EmployeeLoginData>()
-            .HasOne(eld => eld.Employee)
-            .WithMany(e => e.LoginData)
-            .HasForeignKey(els => els.EmployeeId);
     }
 }

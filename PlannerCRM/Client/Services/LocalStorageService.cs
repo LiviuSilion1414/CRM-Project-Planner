@@ -14,12 +14,9 @@ public class LocalStorageService(IJSRuntime js)
         {
             var result = await _js.InvokeAsync<object?>("localStorage.getItem", key);
 
-            if (result is not null)
-            {
-                return JsonSerializer.Deserialize<object?>(result.ToString());
-            }
+            if (result == null) return null;
 
-            return null;
+            return JsonSerializer.Deserialize<object?>(result.ToString());
         } 
         catch (Exception ex)
         {

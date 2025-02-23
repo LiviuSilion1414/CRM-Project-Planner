@@ -12,66 +12,54 @@
 @attribute [AllowAnonymous]
 
 <PageTitle>Login Page</PageTitle>
-<AuthorizeView>
-    <NotAuthorized Context="notAuthorized">
-        <RadzenStack Style="width: 30vw; margin: 0 auto;">
-            <RadzenCard>
-                <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH3">Welcome!</RadzenText>
-                <RadzenText Style="color: lightseagreen;" TextStyle="TextStyle.DisplayH6">Join us and let us do the <strong>BORING</strong> work!</RadzenText>
-                <RadzenFieldset Text="Login">
-                    <EditForm EditContext="_editContext" OnSubmit="OnLogin">
-                        <DataAnnotationsValidator />
-                        <RadzenRow class="form-group py-2 w-100">
-                            <RadzenColumn>
-                                <RadzenLabel Text="Email/Username" />
-                                <InputText class="form-control" type="email" @bind-Value=@_model.EmailOrUsername/>
-                                <ValidationMessage For="@(() => _model.EmailOrUsername)" />
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow class="form-group py-2 w-100">
-                            <RadzenColumn>
-                                <RadzenLabel Text="Password" />
-                                <InputText class="form-control" type="password" @bind-Value=@_model.Password />
-                                <ValidationMessage For="@(() => _model.Password)" />
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow>
-                            <RadzenColumn>
-                                <RadzenLabel>Remember me?</RadzenLabel>
-                                <RadzenCheckBox @bind-Value="@_model.RememberMe"></RadzenCheckBox>
-                            </RadzenColumn>
-                        </RadzenRow>
-                    </EditForm>
-                    <RadzenStack AlignItems="AlignItems.End">
-                        <RadzenRow>
-                            <RadzenColumn>
-                                <RadzenButton ButtonType="ButtonType.Button"
-                                              ButtonStyle="ButtonStyle.Info"
-                                              Variant="Variant.Text"
-                                              Text="Forgot Password?"
-                                              Click="OnForgotPassword">
-                                </RadzenButton>
-                            </RadzenColumn>
-                            <RadzenColumn>
-                                <RadzenButton ButtonType="ButtonType.Submit" 
-                                              ButtonStyle="ButtonStyle.Primary"
-                                              Variant="Variant.Outlined"
-                                              Text="Sign In"
-                                              Click="OnLogin">
-                                </RadzenButton>
-                            </RadzenColumn>
-                        </RadzenRow>
+<RadzenStack JustifyContent="Radzen.JustifyContent.Center" Class="rz-mx-auto rz-p-4" Style="max-width: 1440px; height: 100%;">
+    <RadzenCard class="rz-shadow-5 rz-border-radius-4" style="padding: 0; overflow: hidden">
+        <RadzenRow Gap="0">
+            <RadzenColumn Size="12" SizeSM="6" Class="rz-background-color-primary rz-p-12">
+                <RadzenText TextStyle="TextStyle.H5" style="color:#fff; margin-top:30px;" Text="Entra nella tua area privata" />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeSM="6" class="rz-p-12">
+                <PageTitle>Login</PageTitle>
+                <RadzenText Text="@("Login all'area riservata")" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
+                <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenFormField Text="Username" Variant="@Variant.Outlined" class="w-100">
+                            <RadzenTextBox Name="Username" @bind-Value="@_model.EmailOrUsername" class="w-100" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenFormField Text="Password" Variant="Variant.Outlined" class="w-100">
+                            <ChildContent>
+                                <RadzenTextBox Name="Password" @bind-Value="@_model.Password" Visible="@(!showPassword)" class="w-100" />
+                                <RadzenPassword Name="Password" @bind-Value="@_model.Password" Visible="@showPassword" class="w-100" />
+                            </ChildContent>
+                            <End>
+                                <RadzenButton Icon="@(showPassword ? "visibility" : "visibility_off")" Click="TogglePassword" Variant="Variant.Text" Size="ButtonSize.Small" />
+                            </End>
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+                <br />
+                <br />
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                        <RadzenButton ButtonType="ButtonType.Button" Click="@(OnLogin)" Text="Login" />
+                        <RadzenButton Variant="Variant.Text" Text="Reset Password" Click="@(OnForgotPassword)" />
                     </RadzenStack>
-                </RadzenFieldset>
-            </RadzenCard>
-        </RadzenStack>
-    </NotAuthorized>
-</AuthorizeView>
+                </RadzenColumn>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+    <RadzenText Text="PlannerCRM v1.0, Copyright Ⓒ 2025" TextStyle="Radzen.Blazor.TextStyle.Caption" TextAlign="Radzen.TextAlign.Center" Style="width: 100%; margin-top: 20px;" TagName="Radzen.Blazor.TagName.P" />
+</RadzenStack>
 
 @code
 {
     private EmployeeLoginDto _model;
     private EditContext _editContext;
+    bool showPassword = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,6 +67,11 @@
         _editContext = new(_model);
 
         await CheckIfLoggedIn();
+    }
+
+    void TogglePassword()
+    {
+        showPassword = !showPassword;
     }
 
     private async Task CheckIfLoggedIn()
@@ -96,18 +89,17 @@
         if (_editContext.Validate())
         {
             var res = await ls.LoginAsync(_model);
-            var user = await auth.GetCurrentUserAsync();
 
             if (res.IsSuccessStatusCode)
             {
-                var responseContent = await res.Content.ReadAsStringAsync();
-                ns.Notify(NotificationSeverity.Success, $"Welcome back, {user.Name}!" , responseContent, 4000);
+                var authenticationState = await auth.GetAuthenticationStateAsync();
+                ns.Notify(NotificationSeverity.Success, $"Welcome back, {authenticationState.User.Identity.Name}!", null, 4000);
                 nav.NavigateTo("/home", true);
             }
             else
             {
                 var responseContent = await res.Content.ReadAsStringAsync();
-                ns.Notify(NotificationSeverity.Error, "Something went wrong!", responseContent, 4000);
+                ns.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", responseContent, 4000);
             }
         }
     }

@@ -9,9 +9,9 @@ public class Employee
     public string Phone { get; set; }
     public bool IsActive { get; set; }
     public bool LockoutEnd { get; set; }
+    public DateTime LastSeen { get; set; }
 
     // Navigation properties
-    public List<EmployeeLoginData> LoginData { get; set; }
     public List<WorkTime> WorkTimes { get; set; }
     public List<Activity> Activities { get; set; }
     public List<Salary> Salaries { get; set; }

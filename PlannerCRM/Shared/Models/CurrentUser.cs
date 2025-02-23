@@ -10,6 +10,6 @@ public class CurrentUser
     public string? Token { get; set; }
     public bool IsAuthenticated { get; set; }
     public List<string> Roles { get; set; }
-    public Dictionary<string, string> Claims { get; set; }
-    public List<Claim> ClaimsOk { get; set; }
+
+    public List<Claim> Claims { get; set; }
 }

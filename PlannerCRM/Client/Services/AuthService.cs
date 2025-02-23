@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using Newtonsoft.Json.Linq;
 using PlannerCRM.Shared.Models;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
+using System.Xml.Linq;
 namespace PlannerCRM.Client.Services;
 
 public class AuthService(HttpClient http, LocalStorageService localStorage) : AuthenticationStateProvider
@@ -14,31 +17,19 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
         try
         {
             var res = await _http.PostAsJsonAsync("api/account/login", dto);
-            var str = await res.Content.ReadAsStringAsync();
-            var user = JsonSerializer.Deserialize<CurrentUser>(str, 
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
 
             if (!res.IsSuccessStatusCode)
             {
                 return new HttpResponseMessage() { StatusCode = res.StatusCode };
             }
 
-            await _localStorage.SetItem("id", user.Guid);
-            await _localStorage.SetItem("token", user.Token);
-            await _localStorage.SetItem("name", user.Name);
-            await _localStorage.SetItem("email", user.Email);
-            await _localStorage.SetItem("roles", user.Roles);
-            await _localStorage.SetItem("claims", user.Claims);
-            await _localStorage.SetItem("claimsOk", user.ClaimsOk);
-            await _localStorage.SetItem("isAuthenticated", user.IsAuthenticated);
+            var token = await res.Content.ReadAsStringAsync();
+
+            await _localStorage.SetItem(CustomClaimTypes.Token, token);
 
             return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.OK };
-        }
-        catch (Exception ex) 
+        } 
+        catch (Exception ex)
         {
             throw;
         }
@@ -51,8 +42,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             await _localStorage.ClearAsync();
 
             return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.OK };
-        }
-        catch (Exception ex) 
+        } catch (Exception ex)
         {
             throw;
         }
@@ -62,64 +52,83 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
     {
         try
         {
-            var currentUser = await GetCurrentUserAsync();
+            var anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
-            if (currentUser == null)
+            object token = await _localStorage.GetItemAsync(CustomClaimTypes.Token);
+
+            if (token == null) return anonymous;
+
+            var claims = ParseClaimsFromJwt(token.ToString());
+
+            if (claims == null)
             {
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                return anonymous;
             }
-            Claim[] claims = [new Claim(ClaimTypes.Name, currentUser.Name)];
 
-            claims = currentUser.Roles.Select(x => new Claim(ClaimTypes.Role, x)).ToArray();
-
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: nameof(AuthService))));
-        }
-        catch (Exception ex) 
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Bearer", CustomClaimTypes.Name, CustomClaimTypes.Role)));
+        } 
+        catch (Exception ex)
         {
             throw;
         }
     }
 
-    public async Task<CurrentUser?> GetCurrentUserAsync()
+    private IEnumerable<Claim>? ParseClaimsFromJwt(string jwt)
     {
         try
         {
-            object? token = await _localStorage.GetItemAsync("token");
+            var claims = new List<Claim>();
+            var payload = jwt.Split('.')[1];
+            var jsonBytes = ParseBase64WithoutPadding(payload);
+            var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            if (token is not null)
-            {   
-                string tokenString = token.ToString();
-                Guid guid = Guid.Parse((await _localStorage.GetItemAsync("id")).ToString());
-                string name = (await _localStorage.GetItemAsync("name")).ToString();
-                string email = (await _localStorage.GetItemAsync("email")).ToString();
-                bool isAuthenticated =bool.Parse((await _localStorage.GetItemAsync("isAuthenticated")).ToString());
+            keyValuePairs.TryGetValue(CustomClaimTypes.Role, out object roles);
 
-                List<string> roles = (await _localStorage.GetItemAsync("roles")).ToString().Split(',').ToList();
-                List<Claim> claimsOk = (await _localStorage.GetItemAsync("claimsOk")).ToString()
-                                                                                     .Split(',')
-                                                                                     .Select(x => new Claim(ClaimTypes.Role, x))
-                                                                                     .ToList();
-                Dictionary<string, string> claims = (await _localStorage.GetItemAsync("claims")).ToString()
-                                                                                                .Split(',')
-                                                                                                .ToDictionary(k => k, v => v);
-
-                var user = new CurrentUser()
+            if (roles != null)
+            {
+                if (roles.ToString().Trim().StartsWith("["))
                 {
-                    Guid = guid,
-                    Name = name,
-                    Email = email,
-                    Token = tokenString,
-                    IsAuthenticated = isAuthenticated,
-                    Roles = roles,
-                    Claims = claims,
-                    ClaimsOk = claimsOk
-                };
+                    var parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString());
 
-                return user;
+                    foreach (var parsedRole in parsedRoles)
+                    {
+                        claims.Add(new Claim(CustomClaimTypes.Role, parsedRole));
+                    }
+                } else
+                {
+                    claims.Add(new Claim(CustomClaimTypes.Role, roles.ToString()));
+                }
+
+                keyValuePairs.Remove(CustomClaimTypes.Role);
             }
-            return null;
+
+            claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
+            claims.Add(new Claim(CustomClaimTypes.Token, jwt));
+
+            return claims;
         } 
-        catch (Exception ex)
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private byte[] ParseBase64WithoutPadding(string base64)
+    {
+        try
+        {
+            switch (base64.Length % 4)
+            {
+                case 2:
+                    base64 += "==";
+                    break;
+                case 3:
+                    base64 += "=";
+                    break;
+            }
+            return Convert.FromBase64String(base64);
+        } 
+        catch (Exception)
         {
             throw;
         }
