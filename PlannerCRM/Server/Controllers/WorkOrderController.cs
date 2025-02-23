@@ -8,7 +8,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     private readonly WorkOrderRepository _repo = repo;
 
     [HttpPost]
-    [Route(EndpointsCrudActions.ADD)]
+    [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
     public async Task<IActionResult> Add(WorkOrderDto workOrder)
     {
         await _repo.AddAsync(workOrder);
@@ -17,7 +17,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(EndpointsCrudActions.EDIT)]
+    [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
     public async Task<IActionResult> Edit(WorkOrderDto workOrder)
     {
         await _repo.EditAsync(workOrder);
@@ -26,7 +26,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(EndpointsCrudActions.DELETE)]
+    [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
     public async Task<IActionResult> Delete(WorkOrderDto workOrder)
     {
         await _repo.DeleteAsync(workOrder);
@@ -35,7 +35,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointsCrudActions.GET_BY_ID)]
+    [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
     public async Task<ActionResult<WorkOrderDto>> GetById(Guid workOrderId)
     {
         var workOrder = await _repo.GetByIdAsync(workOrderId);
@@ -43,7 +43,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointsCrudActions.GET_WITH_PAGINATION)]
+    [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
     public async Task<ActionResult<List<WorkOrderDto>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);
@@ -52,21 +52,21 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(WorkOrderEndpointActions.SEARCH_WORKORDER_BY_TITLE)]
+    [Route(WorkOrderEndpointActions.SEARCH_WORKORDER_BY_TITLE_PLACEHOLDER)]
     public async Task<List<WorkOrderDto>> SearchWorOrderByTitle(string worOrderTitle)
     {
         return await _repo.SearchWorOrderByTitle(worOrderTitle);
     }
 
     [HttpGet]
-    [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID)]
+    [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID_PLACEHOLDER)]
     public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(Guid itemId)
     {
         return await _repo.FindAssociatedActivitiesByWorkOrderId(itemId);
     }
 
     [HttpGet]
-    [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
+    [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
     public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(Guid clientId)
     {
         return await _repo.FindAssociatedWorkOrdersByClientId(clientId);

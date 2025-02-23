@@ -1,9 +1,4 @@
-﻿@inject DialogService ds
-@inject FetchService<ActivityDto> afs
-@inject FetchService<WorkOrderDto> fs
-@inject NotificationService ns
-
-<RadzenStack>
+﻿<RadzenStack>
     <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -40,22 +35,22 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                                   Placeholder="Search workorder.."
-                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    Placeholder="Search workorder.."
+                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Icon="Search"
-                                  Click="@SearchWorkOrder">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="Search"
+                    Click="@SearchWorkOrder">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@WorkOrderDto"
-                                    Data="@_workOrders"
-                                    AllowFiltering="true"
-                                    AllowSorting="true"
-                                    SelectionMode="DataGridSelectionMode.Single"
-                                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
+                    Data="@_workOrders"
+                    AllowFiltering="true"
+                    AllowSorting="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
                         <Columns>
                             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
                         </Columns>
@@ -81,10 +76,10 @@
                             <RadzenTextBox @bind-Value="@Model.WorkOrder.Name" Disabled="true"></RadzenTextBox>
                         </RadzenColumn>
                         <RadzenButton ButtonType="ButtonType.Button"
-                                      Variant="Variant.Outlined"
-                                      ButtonStyle="ButtonStyle.Danger"
-                                      Icon="Delete"
-                                      Click="@(() => SelectWorkOrder(null))">
+                        Variant="Variant.Outlined"
+                        ButtonStyle="ButtonStyle.Danger"
+                        Icon="Delete"
+                        Click="@(() => SelectWorkOrder(null))">
                         </RadzenButton>
                     </RadzenRow>
                 </RadzenFieldset>
@@ -95,7 +90,7 @@
     <RadzenStack AlignItems="AlignItems.End">
         <RadzenRow>
             <RadzenColumn>
-                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="(() => ds.Close())"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="(() => dialog.Close())"></RadzenButton>
                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
@@ -121,11 +116,9 @@
     {
         if (!string.IsNullOrEmpty(_query))
         {
-            _workOrders = await fs.GetAll(
-                EndpointsNames.WORK_ORDER,
-                WorkOrderEndpointActions.SearchWorkOrderByTitle(_query)
-            );
+            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
 
+            _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
         }
     }
 
@@ -138,20 +131,16 @@
     {
         if (_context.Validate())
         {
-            await afs.Update(
-                EndpointsNames.ACTIVITY,
-                EndpointsCrudActions.EDIT,
-                Model
-            );
+            await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
 
-            ns.Notify(new NotificationMessage()
+            notification.Notify(new NotificationMessage()
             {
                 Duration = 3000,
                 Detail = "Item has been updated",
                 Summary = "Operation succeeded"
             });
 
-            ds.Close();
+            dialog.Close();
         }
     }
 }

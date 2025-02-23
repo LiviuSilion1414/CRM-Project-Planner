@@ -25,7 +25,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
 
             var token = await res.Content.ReadAsStringAsync();
 
-            await _localStorage.SetItem(CustomClaimTypes.Token, token);
+            await _localStorage.SetItemAsync(CustomClaimTypes.Token, token);
 
             return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.OK };
         } 

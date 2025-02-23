@@ -1,9 +1,4 @@
-﻿@inject DialogService ds
-@inject FetchService<WorkOrderDto> fs
-@inject FetchService<FirmClientDto> cfs
-@inject NotificationService ns
-
-<RadzenStack>
+﻿<RadzenStack>
     <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -40,21 +35,21 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query" 
-                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Icon="Search"
-                                  Click="@SearchClient">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="Search"
+                    Click="@SearchClient">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@FirmClientDto"
-                                    Data="@_clients"
-                                    AllowFiltering="true"
-                                    AllowSorting="true"
-                                    SelectionMode="DataGridSelectionMode.Single"
-                                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                    Data="@_clients"
+                    AllowFiltering="true"
+                    AllowSorting="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
                             <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name"/>
                         </Columns>
@@ -69,10 +64,10 @@
                         <RadzenTextBox @bind-Value="@_model.FirmClient.VatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Danger"
-                                  Icon="Delete"
-                                  Click="@(() => SelectClient(new()))">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Danger"
+                    Icon="Delete"
+                    Click="@(() => SelectClient(new()))">
                     </RadzenButton>
                     <ValidationMessage For="@(() => _model.FirmClient)" />
                 </RadzenRow>
@@ -82,7 +77,7 @@
     <RadzenStack AlignItems="AlignItems.End">
         <RadzenRow>
             <RadzenColumn>
-                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="(() => ds.Close())"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="(() => dialog.Close())"></RadzenButton>
                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
@@ -112,11 +107,8 @@
     {
         if (!string.IsNullOrEmpty(_query))
         {
-            _clients = await cfs.GetAll(
-                EndpointsNames.FIRM_CLIENT,
-                ClientEndpointActions.SearchClientByName(_query)
-            );
-
+            var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+            _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
         }
     }
 
@@ -129,20 +121,16 @@
     {
         if (_context.Validate())
         {
-            await fs.Create(
-                EndpointsNames.WORK_ORDER,
-                EndpointsCrudActions.ADD,
-                _model
-            );
+            await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
 
-            ns.Notify(new NotificationMessage()
+            notification.Notify(new NotificationMessage()
             {
                 Duration = 3000,
                 Detail = "Item has been added",
                 Summary = "Operation succeeded"
             });
 
-            ds.Close();
+            dialog.Close();
         }
     }
 }

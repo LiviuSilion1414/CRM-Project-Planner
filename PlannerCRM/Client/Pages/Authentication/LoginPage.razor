@@ -2,13 +2,6 @@
 @page "/login"
 
 @layout PublicLayout
-
-@inject AuthService auth
-@inject AuthService ls
-@inject NotificationService ns
-@inject NavigationManager nav
-@inject DialogService ds
-
 @attribute [AllowAnonymous]
 
 <PageTitle>Login Page</PageTitle>
@@ -80,7 +73,7 @@
 
         if (result.User is not null && result.User.Identity.IsAuthenticated)
         {
-            nav.NavigateTo("home", true);
+            navigation.NavigateTo("home", true);
         }
     }
 
@@ -88,24 +81,24 @@
     {
         if (_editContext.Validate())
         {
-            var res = await ls.LoginAsync(_model);
+            var res = await auth.LoginAsync(_model);
 
             if (res.IsSuccessStatusCode)
             {
                 var authenticationState = await auth.GetAuthenticationStateAsync();
-                ns.Notify(NotificationSeverity.Success, $"Welcome back, {authenticationState.User.Identity.Name}!", null, 4000);
-                nav.NavigateTo("/home", true);
+                notification.Notify(NotificationSeverity.Success, $"Welcome back, {authenticationState.User.Identity.Name}!", null, 4000);
+                navigation.NavigateTo("/home", true);
             }
             else
             {
                 var responseContent = await res.Content.ReadAsStringAsync();
-                ns.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", responseContent, 4000);
+                notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", responseContent, 4000);
             }
         }
     }
 
     private void OnForgotPassword()
     {
-        nav.NavigateTo("/forgot-password");
+        navigation.NavigateTo("/forgot-password");
     }
 }

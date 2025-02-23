@@ -4,9 +4,6 @@
 
 @attribute [AllowAnonymous]
 
-@inject FetchService<EmployeeDto> fs
-@inject NotificationService ns
-
 <RadzenStack JustifyContent="JustifyContent.Center">
     <RadzenCard>
         <RadzenFieldset Text="Employee">
@@ -78,13 +75,9 @@
     {
         if (context.Validate())
         {
-            await fs.Create(
-                EndpointsNames.EMPLOYEE,
-                EndpointsCrudActions.ADD,
-                model
-            );
+            await fetch.ExecuteAsync(EmployeeEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
 
-            ns.Notify(new NotificationMessage()
+            notification.Notify(new NotificationMessage()
             {
                 Severity = NotificationSeverity.Success,
                 Duration = 3000,

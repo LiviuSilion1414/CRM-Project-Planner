@@ -4,11 +4,11 @@ namespace PlannerCRM.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
-{ 
+{
     private readonly WorkTimeRepository _repo = repo;
 
     [HttpPost]
-    [Route("add")]
+    [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
     public async Task<IActionResult> Add(WorkTimeDto workTime)
     {
         await _repo.AddAsync(workTime);
@@ -17,7 +17,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route("edit")]
+    [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
     public async Task<IActionResult> Edit(WorkTimeDto workTime)
     {
         await _repo.EditAsync(workTime);
@@ -26,7 +26,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route("delete")]
+    [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
     public async Task<IActionResult> Delete(WorkTimeDto workTime)
     {
         await _repo.DeleteAsync(workTime);
@@ -35,7 +35,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("getById/{workTimeId}")]
+    [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
     public async Task<ActionResult<WorkTimeDto>> GetById(Guid workTimeId)
     {
         var workTime = await _repo.GetByIdAsync(workTimeId);
@@ -43,18 +43,11 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route("getWithPagination/{limit}/{offset}")]
+    [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
     public async Task<ActionResult<List<WorkTimeDto>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);
 
         return Ok(entities);
-    }
-
-    [HttpGet]
-    [Route("searchWorkTimeByEmployeeName/{employeeName}")]
-    public async Task<List<WorkTimeDto>> SearchWorkTimeByEmployeeName(string employeeName)
-    {
-        return await _repo.SearchWorkTimeByEmployeeName(employeeName);
     }
 }

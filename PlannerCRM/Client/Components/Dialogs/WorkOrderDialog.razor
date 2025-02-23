@@ -1,7 +1,4 @@
-﻿@inject DialogService ds
-@inject FetchService<WorkOrderDto> fs
-
-<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
+﻿<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
     <RadzenStack>
         <RadzenRow>
             <RadzenFieldset Text="Client Info">
@@ -50,7 +47,7 @@
 
     private async Task OnEdit()
     {
-        await ds.OpenAsync<WorkOrderEditForm>("Edit WorkOrder",
+        await dialog.OpenAsync<WorkOrderEditForm>("Edit WorkOrder",
             new Dictionary<string, object>()
             {
                 { nameof(WorkOrderEditForm.Model), SelectedWorkOrder }
@@ -61,13 +58,9 @@
 
     private async Task OnDelete()
     {
-        if ((await ds.Confirm("Confirm this item removal", "Delete workorder", new() { OkButtonText = "Delete" })).Value)
+        if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", new() { OkButtonText = "Delete" })).Value)
         {
-            await fs.Create(
-                EndpointsNames.ACTIVITY,
-                EndpointsCrudActions.DELETE,
-                SelectedWorkOrder
-            );
+            await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
         }
     }
 }

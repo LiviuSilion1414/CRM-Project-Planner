@@ -2,131 +2,103 @@
 
 namespace PlannerCRM.Client.Services;
 
-public class FetchService<TItem>(LocalStorageService localStorage, HttpClient http)
-    where TItem : class, new()
+public class FetchService(LocalStorageService localStorage, HttpClient http)
 {
     private readonly HttpClient _http = http;
     private readonly LocalStorageService _localStorage = localStorage;
 
-    public async Task Create(string controllerName, string action, TItem item)
+    public async Task<ResultDto> ExecuteAsync(string endpoint, SearchFilter filter, ApiType apiType)
     {
         try
         {
-            var token = await GetBearerToken();
-            var containsToken = _http.DefaultRequestHeaders.Contains("Authorization");
-            if (!containsToken)
+            if (!_http.DefaultRequestHeaders.Contains("Authorization"))
             {
-                _http.DefaultRequestHeaders.Add("Authorization", token);
+                var jwt = GetBearerToken() ?? throw new InvalidOperationException("Jwt token was not found. Please login and retry");
+                _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
             }
-            await _http.PostAsJsonAsync($"api/{controllerName}/{action}", item);
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
 
-    public async Task<TItem> Read(string controllerName, string action, Guid itemId)
-    {
-        try
-        {
-            var token = await GetBearerToken();
-            var containsToken = _http.DefaultRequestHeaders.Contains("Authorization");
-            if (!containsToken)
+            var result = new ResultDto();
+            var response = new HttpResponseMessage();
+
+            switch (apiType)
             {
-                _http.DefaultRequestHeaders.Add("Authorization", token);
+                case ApiType.Get:
+                    response = await _http.GetAsync(endpoint);
+                    break;
+                case ApiType.Post:
+                    response = await _http.PostAsJsonAsync(endpoint, filter);
+                    break;
+                case ApiType.Put:
+                    response = await _http.PutAsJsonAsync(endpoint, filter);
+                    break;
             }
-            return await _http.GetFromJsonAsync<TItem>($"api/{controllerName}/{action}");
-        } 
-        catch (Exception)
-        {
 
-            throw;
-        }
-    }
-
-    public async Task Update(string controllerName, string action, TItem item)
-    {
-        try
-        {
-            var token = await GetBearerToken();
-            var containsToken = _http.DefaultRequestHeaders.Contains("Authorization");
-            if (!containsToken)
+            if (!response.IsSuccessStatusCode)
             {
-                _http.DefaultRequestHeaders.Add("Authorization", token);
-            }
-            await _http.PutAsJsonAsync($"api/{controllerName}/{action}", item);
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
+                if (((int)response.StatusCode) == 500 || ((int)response.StatusCode) == 400)
+                {
+                    var errorMessage = response.Content.ReadFromJsonAsync<ResultDto>().Result.Message;
+                    result.MessageType = MessageType.Error;
+                    result.HasCompleted = false;
+                    result.Message = !string.IsNullOrEmpty(errorMessage) || !string.IsNullOrWhiteSpace(errorMessage)
+                                     ? errorMessage
+                                     : "Something went wrong, please retry!";
+                    return result;
+                }
 
-    public async Task Delete(string controllerName, string action, Guid itemId)
-    {
-        try
-        {
-            var token = await GetBearerToken();
-            var containsToken = _http.DefaultRequestHeaders.Contains("Authorization");
-            if (!containsToken)
+                //Method not allowed
+                if (((int)response.StatusCode) == 405)
+                {
+                    result.MessageType = MessageType.Warning;
+                    result.HasCompleted = false;
+                    result.Message = "Method not allowed";
+                    return result;
+
+                }
+
+                //Not found
+                if (((int)response.StatusCode) == 404)
+                {
+                    result.MessageType = MessageType.Warning;
+                    result.HasCompleted = false;
+                    result.Message = "Data not found";
+                    return result;
+
+                }
+
+                //Unauthorized
+                if (((int)response.StatusCode) == 401)
+                {
+                    result.MessageType = MessageType.Warning;
+                    result.HasCompleted = false;
+                    result.Message = "Unauthorized";
+                    return result;
+                }
+            } 
+            else
             {
-                _http.DefaultRequestHeaders.Add("Authorization", token);
+                result.MessageType = MessageType.Success;
+                result.HasCompleted = true;
+                result.Message = "Operation completed";
+                return result;
             }
-            await _http.DeleteAsync($"api/{controllerName}/{action}/{itemId}");
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
 
-    public async Task<List<TItem>> GetAll(string controllerName, string action, int limit, int offset)
-    {
-        try
-        {
-            var token = await GetBearerToken();
-            var containsToken = _http.DefaultRequestHeaders.Contains("Authorization");
-            if (!containsToken)
-            {
-                var res = _http.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
-                if (!res)
-                    Console.WriteLine("Something went wrong");
-            }
-            var data = await _http.GetFromJsonAsync<List<TItem>>($"api/{controllerName}/{action}/{limit}/{offset}");
-
-            return data;
+            result.MessageType = MessageType.Error;
+            result.HasCompleted = false;
+            result.Message = "Something went wrong, please retry!";
+            return result;
         } 
         catch (Exception ex)
         {
-
             throw;
         }
     }
 
-    public async Task<List<TItem>> GetAll(string controllerName, string parameterizedUrl)
+    public string? GetBearerToken()
     {
         try
         {
-            var token = await GetBearerToken();
-            var containsToken = _http.DefaultRequestHeaders.Contains("Authorization");
-            if (!containsToken)
-            {
-                _http.DefaultRequestHeaders.Add("Authorization", token);
-            }
-            return await _http.GetFromJsonAsync<List<TItem>>($"api/{controllerName}/{parameterizedUrl}");
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public async Task<string> GetBearerToken()
-    {
-        try
-        {
-            return (await _localStorage.GetItemAsync(CustomClaimTypes.Token)).ToString();
+            return _localStorage.GetItemAsync(CustomClaimTypes.Token).Result.ToString();
         } 
         catch (Exception)
         {

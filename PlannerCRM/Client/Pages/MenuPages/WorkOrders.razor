@@ -1,7 +1,4 @@
 ﻿@page "/workOrders"
-@inject DialogService ds
-@inject FetchService<WorkOrderDto> fs
-@inject FetchService<ActivityDto> afs
 
 <h3>Workorders</h3>
 <PageTitle>Workorders</PageTitle>
@@ -33,12 +30,8 @@ RowSelect="OnSelect">
 
     private async Task LoadData()
     {
-        _workOrders = await fs.GetAll(
-            EndpointsNames.WORK_ORDER,
-            EndpointsCrudActions.GET_WITH_PAGINATION,
-            100,
-            0
-        );
+        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
 
         await LoadRelatedActivities();
     }
@@ -47,10 +40,8 @@ RowSelect="OnSelect">
     {
         foreach (var wo in _workOrders)
         {
-            wo.Activities = await afs.GetAll(
-                EndpointsNames.WORK_ORDER,
-                WorkOrderEndpointActions.FindAssociatedActivitiesByWorkOrderId(wo.Guid)
-            );
+            var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+            wo.Activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
         }
     }
 
@@ -58,7 +49,7 @@ RowSelect="OnSelect">
     {
         _selectedWorkOrder = workOrder;
 
-        await ds.OpenAsync<WorkOrderDialog>("WorkOrder Info",
+        await dialog.OpenAsync<WorkOrderDialog>("WorkOrder Info",
             new Dictionary<string, object>() { { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } },
             new DialogOptions() { Width="50vw;" }       
         );
@@ -66,6 +57,6 @@ RowSelect="OnSelect">
 
     private async Task OnAdd()
     {
-        await ds.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width="40vw;" });
+        await dialog.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width="40vw;" });
     }
 }

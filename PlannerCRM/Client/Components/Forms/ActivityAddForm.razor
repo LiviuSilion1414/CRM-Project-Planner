@@ -1,8 +1,4 @@
-﻿@inject DialogService ds
-@inject FetchService<ActivityDto> afs
-@inject FetchService<WorkOrderDto> fs
-@inject NotificationService ns
-
+﻿@using System.Text.Json
 <RadzenStack>
     <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
         <DataAnnotationsValidator />
@@ -95,7 +91,7 @@
     <RadzenStack AlignItems="AlignItems.End">
         <RadzenRow>
             <RadzenColumn>
-                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="(() => ds.Close())"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="(() => dialog.Close())"></RadzenButton>
                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
@@ -129,11 +125,11 @@
     {
         if (!string.IsNullOrEmpty(_query))
         {
-            _workOrders = await fs.GetAll(
-                EndpointsNames.WORK_ORDER,
-                WorkOrderEndpointActions.SearchWorkOrderByTitle(_query)
-            );
-
+            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
+            if (result.HasCompleted)
+            {
+                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+            }
         }
     }
 
@@ -146,19 +142,15 @@
     {
         if (_context.Validate())
         {
-            await afs.Create(
-                EndpointsNames.ACTIVITY,
-                EndpointsCrudActions.ADD,
-                _model
-            );
+            await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
 
-            ns.Notify(new NotificationMessage() {
+            notification.Notify(new NotificationMessage() {
                 Duration = 3000,
                 Detail = "Item has been added",
                 Summary = "Operation succeeded"
             }); 
 
-            ds.Close();
+            dialog.Close();
         }
     }
 }

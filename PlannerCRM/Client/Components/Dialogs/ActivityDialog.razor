@@ -1,7 +1,4 @@
-﻿@inject DialogService ds
-@inject FetchService<ActivityDto> fs
-
-<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
+﻿<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
     <RadzenStack>
         <RadzenRow>
             <RadzenFieldset Text="Client Information">
@@ -44,7 +41,7 @@
 
     private async Task OnEdit()
     {
-        await ds.OpenAsync<ActivityEditForm>("Edit Activity",
+        await dialog.OpenAsync<ActivityEditForm>("Edit Activity",
             new Dictionary<string, object>()
             {
                 { nameof(ActivityEditForm.Model), SelectedActivity }
@@ -55,13 +52,9 @@
 
     private async Task OnDelete()
     {
-        if ((await ds.Confirm("Confirm this item removal", "Delete activity", new() { OkButtonText = "Delete" })).Value)
+        if ((await dialog.Confirm("Confirm this item removal", "Delete activity", new() { OkButtonText = "Delete" })).Value)
         {
-            await fs.Create(
-                EndpointsNames.ACTIVITY,
-                EndpointsCrudActions.DELETE,
-                SelectedActivity
-            );
+            await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
         }
     }
 }

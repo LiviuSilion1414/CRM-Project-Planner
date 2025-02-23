@@ -1,8 +1,4 @@
-﻿@inject DialogService ds
-@inject FetchService<FirmClientDto> fs
-@inject NotificationService ns
-
-<RadzenStack>
+﻿<RadzenStack>
     <RadzenCard>
         <EditForm EditContext="@_context" OnSubmit="@OnValidSubmit">
             <DataAnnotationsValidator />
@@ -20,7 +16,7 @@
         </EditForm>
     </RadzenCard>
     <RadzenStack AlignItems="AlignItems.End" Orientation="Orientation.Horizontal">
-        <button class="btn btn-outline-info" type="button" @onclick="(() => ds.Close())">Close</button>
+        <button class="btn btn-outline-info" type="button" @onclick="(() => dialog.Close())">Close</button>
         <button class="btn btn-outline-primary" type="submit" @onclick="(() => OnValidSubmit())">Confirm</button>
     </RadzenStack>
 </RadzenStack>
@@ -41,20 +37,16 @@
     {
         if (_context.Validate())
         {
-            await fs.Create(
-                EndpointsNames.FIRM_CLIENT,
-                EndpointsCrudActions.ADD,
-                _model
-            );
+            await fetch.ExecuteAsync(ClientEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
 
-            ns.Notify(new NotificationMessage()
+            notification.Notify(new NotificationMessage()
             {
                 Duration = 3000,
                 Detail = "Item has been added",
                 Summary = "Operation succeeded"
             });
 
-            ds.Close();
+            dialog.Close();
         }
     }
 }

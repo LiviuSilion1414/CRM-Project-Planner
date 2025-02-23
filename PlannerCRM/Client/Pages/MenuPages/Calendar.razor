@@ -1,8 +1,5 @@
 ﻿@page "/calendar"
 
-@inject DialogService ds
-@inject FetchService<ActivityDto> fs
-
 <RadzenScheduler TItem="ActivityDto"
                  Style="height: 90vh;"
                  Data=@_activities
@@ -29,17 +26,13 @@
 
     private async Task LoadData()
     {
-        _activities = await fs.GetAll(
-            EndpointsNames.ACTIVITY,
-            EndpointsCrudActions.GET_WITH_PAGINATION,
-            100,
-            0
-        );
+        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
     }
 
     private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
     {
-        await ds.OpenAsync<ActivityDialog>("Activity Information",
+        await dialog.OpenAsync<ActivityDialog>("Activity Information",
             new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), args.Data } },
             new DialogOptions() { Width = "40vw;" }
         );
@@ -47,7 +40,7 @@
 
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
-        await ds.OpenAsync<ActivityAddForm>("Add Activity",
+        await dialog.OpenAsync<ActivityAddForm>("Add Activity",
             new()
                 {
                 { nameof(ActivityAddForm.StartDate), args.Start },

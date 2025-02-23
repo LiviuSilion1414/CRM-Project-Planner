@@ -1,7 +1,4 @@
 ﻿@page "/clients"
-@inject DialogService ds
-@inject FetchService<FirmClientDto> fs
-@inject FetchService<WorkOrderDto> wfs
 
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
@@ -34,12 +31,8 @@ RowSelect="OnSelect">
 
     private async Task LoadData()
     {
-        _clients = await fs.GetAll(
-            EndpointsNames.FIRM_CLIENT,
-            EndpointsCrudActions.GET_WITH_PAGINATION,
-            100,
-            0
-        );
+        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
 
         await LoadRelatedWorkOrders();
     }
@@ -48,10 +41,8 @@ RowSelect="OnSelect">
     {
         foreach (var cl in _clients)
         {
-            cl.WorkOrders = await wfs.GetAll(
-                EndpointsNames.FIRM_CLIENT,
-                ClientEndpointActions.FindAssociatedWorkOrdersByClientId(cl.Guid)
-            );
+            var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+            cl.WorkOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
         }
     }
 
@@ -59,7 +50,7 @@ RowSelect="OnSelect">
     {
         _selectedClient = client;
 
-        await ds.OpenAsync<ClientDialog>("Client Info",
+        await dialog.OpenAsync<ClientDialog>("Client Info",
             new Dictionary<string, object>() 
             { 
                 { nameof(ClientDialog.SelectedClient), _selectedClient },
@@ -69,6 +60,6 @@ RowSelect="OnSelect">
 
     private async Task OnAdd()
     {
-        await ds.OpenAsync<ClientAddForm>("Add Client", null, new DialogOptions() { Width = "40vw;" });
+        await dialog.OpenAsync<ClientAddForm>("Add Client", null, new DialogOptions() { Width = "40vw;" });
     }
 }

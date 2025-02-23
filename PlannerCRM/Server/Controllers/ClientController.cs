@@ -8,7 +8,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     private readonly FirmClientRepository _repo = repo;
 
     [HttpPost]
-    [Route(EndpointsCrudActions.ADD)]
+    [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
     public async Task<IActionResult> Add(FirmClientDto client)
     {
         await _repo.AddAsync(client);
@@ -17,7 +17,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(EndpointsCrudActions.EDIT)]
+    [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
     public async Task<IActionResult> Edit(FirmClientDto client)
     {
         await _repo.EditAsync(client);
@@ -26,7 +26,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(EndpointsCrudActions.DELETE)]
+    [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
     public async Task<IActionResult> Delete(FirmClientDto client)
     {
         await _repo.DeleteAsync(client);
@@ -35,7 +35,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointsCrudActions.GET_BY_ID)]
+    [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
     public async Task<ActionResult<FirmClient>> GetById(Guid clientId)
     {
         var client = await _repo.GetByIdAsync(clientId);
@@ -43,7 +43,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointsCrudActions.GET_WITH_PAGINATION)]
+    [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
     public async Task<ActionResult<List<FirmClient>>> GetWithPagination(int limit, int offset)
     {
         var entities = await _repo.GetWithPagination(limit, offset);
@@ -52,14 +52,14 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(ClientEndpointActions.SEARCH_CLIENT_BY_NAME)]
+    [Route(ClientEndpointActions.SEARCH_CLIENT_BY_NAME_PLACEHOLDER)]
     public async Task<List<FirmClientDto>> SearchClientByName(string clientName)
     {
         return await _repo.SearchClientByName(clientName);
     }
 
     [HttpGet]
-    [Route(ClientEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
+    [Route(ClientEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
     public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(Guid clientId)
     {
         return await _repo.FindAssociatedWorkOrdersByClientId(clientId);

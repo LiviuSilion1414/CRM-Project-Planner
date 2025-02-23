@@ -18,15 +18,7 @@ public static class PipelineBuilderExtension
         services.AddScoped<TooltipService>();
         services.AddScoped<ContextMenuService>();
 
-        services.AddScoped<FetchService<ActivityDto>>();
-        services.AddScoped<FetchService<EmployeeDto>>();
-        services.AddScoped<FetchService<FirmClientDto>>();
-        services.AddScoped<FetchService<RoleDto>, FetchService<RoleDto>>();
-        services.AddScoped<FetchService<SalaryDto>>();
-        services.AddScoped<FetchService<WorkOrderDto>>();
-        services.AddScoped<FetchService<WorkOrderCostDto>>();
-        services.AddScoped<FetchService<WorkTimeDto>>();
-        services.AddScoped<FetchService<EmployeeLoginRecoveryDto>>();
+        services.AddScoped<FetchService>();
 
         return services;
     }

@@ -24,7 +24,7 @@ public class LocalStorageService(IJSRuntime js)
         }
     }
 
-    public async Task SetItem(string key, object value)
+    public async Task SetItemAsync(string key, object value)
     {
         try
         {

@@ -2,8 +2,7 @@
 
 namespace PlannerCRM.Shared.Models;
 
-public class ResultDto<TItem>
-    where TItem : class, new()
+public class ResultDto
 {
     public Guid  Guid { get; set; }
     public string Message { get; set; }
@@ -11,7 +10,7 @@ public class ResultDto<TItem>
     public HttpStatusCode StatusCode { get; set; }
     public bool HasCompleted { get; set; }
 
-    public TItem Data { get; set; }
+    public object Data { get; set; }
 }
 
 public enum MessageType

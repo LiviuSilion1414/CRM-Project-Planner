@@ -1,6 +1,4 @@
 ﻿@page "/activities"
-@inject DialogService ds
-@inject FetchService<ActivityDto> fs
 
 <h3>Activities</h3>
 <PageTitle>Activities</PageTitle>
@@ -27,19 +25,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _activities = await fs.GetAll(
-            EndpointsNames.ACTIVITY,
-            EndpointsCrudActions.GET_WITH_PAGINATION,
-            100,
-            0
-        );
+        var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Post);
+        _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
     }
 
     private async Task OnSelect(ActivityDto activity)
     {
         _selectedActivity = activity;
 
-        await ds.OpenAsync<ActivityDialog>("Activity Info",
+        await dialog.OpenAsync<ActivityDialog>("Activity Info",
             new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), _selectedActivity } },
             new DialogOptions() { Width = "40vw;" }            
         );
@@ -47,6 +41,6 @@
 
     private async Task OnAdd()
     {
-        await ds.OpenAsync<ActivityAddForm>("Add Activity", null, new DialogOptions() { Width = "40vw;" });
+        await dialog.OpenAsync<ActivityAddForm>("Add Activity", null, new DialogOptions() { Width = "40vw;" });
     }
 }

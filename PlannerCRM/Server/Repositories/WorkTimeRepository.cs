@@ -66,17 +66,4 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
 
         return _mapper.Map<List<WorkTimeDto>>(clients);
     }
-
-    public async Task<List<WorkTimeDto>> SearchWorkTimeByEmployeeName(string employeeName)
-    {
-        var foundWorkTime = await _context.WorkTimes
-            .Include(wt => wt.WorkOrder)
-            .Include(wt => wt.ActivityWorkTimes)
-            .Include(wt => wt.Activity)
-            .Include(wt => wt.Employee)
-            .Where(wt => EF.Functions.ILike(wt.Employee.Name, $"%{employeeName}%"))
-            .ToListAsync();
-
-        return _mapper.Map<List<WorkTimeDto>>(foundWorkTime);
-    }
 }

@@ -2,18 +2,36 @@
 
 public class EmployeeEndpointActions
 {
-    public const string ASSIGN_ROLE = "assignRole/{roleName}";
-    public const string SEARCH_EMPLOYEE_BY_NAME = "searchEmployeeByName/{title}";
-    public const string SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY = "searchEmployeeByNameForRecovery/{name}/{email}/{phone}";
-    public const string FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID = "findAssociatedActivitiesByEmployeeId/{itemId}";
-    public const string FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID = "findAssociatedWorkTimesByActivityIdAndEmployeeId/{itemId}/{item2}";
-    public const string FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID ="findAssociatedSalaryDataByEmployeeId/{itemId}";
+    public const string ADD_BASE = "employee/add";
+    public const string EDIT_BASE = "employee/edit";
+    public const string DELETE_BASE = "employee/delete";
+    public const string GET_BY_ID_BASE = "employee/getById";
+    public const string GET_WITH_PAGINATION_BASE = "employee/getWithPagination";
 
-    public static string SearchEmployeeByName(string query) =>$"searchEmployeeByName/{query}";
-    public static string AssignRole(string roleName) => $"searchEmployeeByName/{roleName}";
+    public const string ASSIGN_ROLE_BASE = "employee/assignRole";
+    public const string SEARCH_EMPLOYEE_BY_NAME_BASE = "employee/searchEmployeeByName";
+    public const string SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_BASE = "employee/searchEmployeeByNameForRecovery";
+    public const string FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_BASE = "employee/findAssociatedActivitiesByEmployeeId";
+    public const string FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_BASE = "employee/findAssociatedWorkTimesByActivityIdAndEmployeeId";
+    public const string FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_BASE = "employee/findAssociatedSalaryDataByEmployeeId";
 
-    public static string SearchEmployeeByName(string name, string email = "", string phone = "") => $"searchEmployeeByNameForRecovery/{name}/{email}/{phone}";
-    public static string FindAssociatedActivitiesByEmployeeId(string employeeId) =>$"findAssociatedActivitiesByEmployeeId/{employeeId}";
-    public static string FindAssociatedWorktimesByActivityIdAndEmployeeid(string employeeId, string activityId) =>$"findAssociatedWorkTimesByActivityIdAndEmployeeId/{employeeId}/{activityId}";
-    public static string FindAssociatedSalaryDataByEmployeeId(string employeeId) =>$"findAssociatedSalaryDataByEmployeeId/{employeeId}";
+    public const string ASSIGN_ROLE_PLACEHOLDER = "employee/assignRole/{roleName}";
+    public const string SEARCH_EMPLOYEE_BY_NAME_PLACEHOLDER = "employee/searchEmployeeByName/{title}";
+    public const string SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_PLACEHOLDER = "employee/searchEmployeeByNameForRecovery/{name}/{email}/{phone}";
+    public const string FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_PLACEHOLDER = "employee/findAssociatedActivitiesByEmployeeId/{itemId}";
+    public const string FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_PLACEHOLDER = "employee/findAssociatedWorkTimesByActivityIdAndEmployeeId/{itemId}/{item2}";
+    public const string FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_PLACEHOLDER = "employee/findAssociatedSalaryDataByEmployeeId/{itemId}";
+
+    public string Add() => ADD_BASE;
+    public string Edit() => EDIT_BASE;
+    public string Delete() => DELETE_BASE;
+    public string Get(Guid guid) => $"{GET_BY_ID_BASE}/{guid}";
+    public string GetWithPagination(int limit, int offset) => $"{GET_WITH_PAGINATION_BASE}/{limit}/{offset}";
+
+    public static string SearchEmployeeByName(string query) =>$"{SEARCH_EMPLOYEE_BY_NAME_BASE}/{query}";
+    public static string AssignRole(string roleName) => $"{ASSIGN_ROLE_BASE}/{roleName}";
+    public static string SearchEmployeeByName(string name, string email = "", string phone = "") => $"{SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_BASE}/{name}/{email}/{phone}";
+    public static string FindAssociatedActivitiesByEmployeeId(string employeeId) =>$"{FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_BASE}/{employeeId}";
+    public static string FindAssociatedWorktimesByActivityIdAndEmployeeId(string employeeId, string activityId) =>$"{FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_BASE}/{employeeId}/{activityId}";
+    public static string FindAssociatedSalaryDataByEmployeeId(string employeeId) =>$"{FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_BASE}/{employeeId}";
 }
