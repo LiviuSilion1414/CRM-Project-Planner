@@ -80,7 +80,18 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
 
             await _context.SaveChangesAsync();
 
-            return Ok(tokenAsString);
+            return Ok(
+                new ResultDto 
+                {
+                    Data = tokenAsString,
+                    Guid = foundEmployee.Guid,
+                    HasCompleted = true,
+                    Message = "Logged in",
+                    MessageType = MessageType.Success,
+                    StatusCode = HttpStatusCode.OK,
+                    
+                }
+            );
         } 
         else
         {

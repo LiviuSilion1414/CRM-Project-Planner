@@ -12,22 +12,38 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
     private readonly HttpClient _http = http;
     private readonly LocalStorageService _localStorage = localStorage;
 
-    public async Task<HttpResponseMessage> LoginAsync(EmployeeLoginDto dto)
+    public async Task<ResultDto> LoginAsync(EmployeeLoginDto dto)
     {
         try
         {
-            var res = await _http.PostAsJsonAsync("api/account/login", dto);
+            var response = await _http.PostAsJsonAsync("api/account/login", dto);
 
-            if (!res.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                return new HttpResponseMessage() { StatusCode = res.StatusCode };
+                return new ResultDto() 
+                { 
+                    StatusCode = response.StatusCode,
+                    Data = null,
+                    HasCompleted = false,
+                    Message = "Login failed",
+                    MessageType = MessageType.Warning,
+                    Guid = null
+                };
             }
 
-            var token = await res.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadFromJsonAsync<ResultDto>();
 
-            await _localStorage.SetItemAsync(CustomClaimTypes.Token, token);
+            await _localStorage.SetItemAsync(CustomClaimTypes.Token, result.Data.ToString());
 
-            return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.OK };
+            return new ResultDto()
+            {
+                StatusCode = HttpStatusCode.OK,
+                Data = result.Data,
+                HasCompleted = true,
+                Message = result.Message,
+                MessageType = MessageType.Success,
+                Guid = result.Guid
+            };
         } 
         catch (Exception ex)
         {
@@ -35,14 +51,23 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
         }
     }
 
-    public async Task<HttpResponseMessage> LogoutAsync()
+    public async Task<ResultDto> LogoutAsync()
     {
         try
         {
             await _localStorage.ClearAsync();
 
-            return new HttpResponseMessage() { StatusCode = System.Net.HttpStatusCode.OK };
-        } catch (Exception ex)
+            return new ResultDto()
+            {
+                StatusCode = HttpStatusCode.OK,
+                Data = null,
+                HasCompleted = true,
+                Message = string.Empty,
+                MessageType = MessageType.Success,
+                Guid = null
+            };
+        } 
+        catch (Exception ex)
         {
             throw;
         }

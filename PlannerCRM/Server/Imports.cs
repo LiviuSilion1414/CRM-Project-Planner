@@ -4,6 +4,7 @@ global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Mvc;
+global using System.Net;
 
 global using AutoMapper;
 
