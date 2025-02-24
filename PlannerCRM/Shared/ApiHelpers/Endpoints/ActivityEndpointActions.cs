@@ -7,7 +7,6 @@ public class ActivityEndpointActions
     public const string DELETE_BASE = "activity/delete";
     public const string GET_BY_ID_BASE = "activity/getById";
     public const string GET_WITH_PAGINATION_BASE = "activity/getWithPagination";
-
     private const string SEARCH_BY_TITLE_BASE = "activity/searchByTitle";
     private const string FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID_BASE = "activity/findAssociatedEmployeesByActivityId";
     private const string FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID_BASE = "activity/findAssociatedWorkOrdersByActivityId";

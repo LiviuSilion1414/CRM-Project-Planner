@@ -7,7 +7,6 @@ public class EmployeeEndpointActions
     public const string DELETE_BASE = "employee/delete";
     public const string GET_BY_ID_BASE = "employee/getById";
     public const string GET_WITH_PAGINATION_BASE = "employee/getWithPagination";
-
     public const string ASSIGN_ROLE_BASE = "employee/assignRole";
     public const string SEARCH_EMPLOYEE_BY_NAME_BASE = "employee/searchEmployeeByName";
     public const string SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_BASE = "employee/searchEmployeeByNameForRecovery";
@@ -15,12 +14,12 @@ public class EmployeeEndpointActions
     public const string FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_BASE = "employee/findAssociatedWorkTimesByActivityIdAndEmployeeId";
     public const string FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_BASE = "employee/findAssociatedSalaryDataByEmployeeId";
 
-    public const string ASSIGN_ROLE_PLACEHOLDER = "employee/assignRole/{roleName}";
-    public const string SEARCH_EMPLOYEE_BY_NAME_PLACEHOLDER = "employee/searchEmployeeByName/{title}";
-    public const string SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_PLACEHOLDER = "employee/searchEmployeeByNameForRecovery/{name}/{email}/{phone}";
-    public const string FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_PLACEHOLDER = "employee/findAssociatedActivitiesByEmployeeId/{itemId}";
-    public const string FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_PLACEHOLDER = "employee/findAssociatedWorkTimesByActivityIdAndEmployeeId/{itemId}/{item2}";
-    public const string FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_PLACEHOLDER = "employee/findAssociatedSalaryDataByEmployeeId/{itemId}";
+    public const string ASSIGN_ROLE_PLACEHOLDER = "assignRole/{roleName}";
+    public const string SEARCH_EMPLOYEE_BY_NAME_PLACEHOLDER = "searchEmployeeByName/{title}";
+    public const string SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_PLACEHOLDER = "searchEmployeeByNameForRecovery/{name}/{email}/{phone}";
+    public const string FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_PLACEHOLDER = "findAssociatedActivitiesByEmployeeId/{itemId}";
+    public const string FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_PLACEHOLDER = "findAssociatedWorkTimesByActivityIdAndEmployeeId/{itemId}/{item2}";
+    public const string FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_PLACEHOLDER = "findAssociatedSalaryDataByEmployeeId/{itemId}";
 
     public static string Add() => ADD_BASE;
     public static string Edit() => EDIT_BASE;
