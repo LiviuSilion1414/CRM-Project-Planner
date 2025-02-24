@@ -114,7 +114,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(Guid clientId)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(SearchFilterDto filter)
     {
         try
         {
@@ -122,7 +122,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
                                                 .Include(wo => wo.FirmClient)
                                                 .Include(wo => wo.Activities)
                                                 .Include(wo => wo.WorkOrderCost)
-                                                .Where(wo => wo.FirmClientId == clientId)
+                                                .Where(wo => wo.FirmClientId == filter.Guid)
                                                 .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(foundWorkOrders);

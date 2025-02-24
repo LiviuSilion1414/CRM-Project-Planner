@@ -9,132 +9,280 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<IActionResult> Add([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Add([FromBody] SearchFilterDto filter)
     {
         try
         {
             await _repo.AddAsync(filter);
-            return Ok();
+            return new ResultDto() 
+            { 
+                Guid = null, 
+                Data = null, 
+                HasCompleted = true, 
+                Message = "Operation completed", 
+                MessageType = MessageType.Success, 
+                StatusCode = HttpStatusCode.OK 
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.BadRequest
+            };
         }
     }
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<IActionResult> Edit([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Edit([FromBody] SearchFilterDto filter)
     {
         try
         {
             await _repo.EditAsync(filter);
-            return Ok();
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.BadRequest
+            };
         }
     }
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<IActionResult> Delete([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] SearchFilterDto filter)
     {
         try
         {
             await _repo.DeleteAsync(filter);
-            return Ok();
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.BadRequest
+            };
         }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ActionResult<ActivityDto>> GetById([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetById([FromBody] SearchFilterDto filter)
     {
         try
         {
             var activity = await _repo.GetByIdAsync(filter);
-            return Ok(activity);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = activity,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ActionResult<List<ActivityDto>>> GetWithPagination([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetWithPagination([FromBody] SearchFilterDto filter)
     {
         try
         {
             var entities = await _repo.GetWithPagination(filter);
-            return Ok(entities);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = entities,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(ActivityEndpointActions.SEARCH_BY_TITLE_PLACEHOLDER)]
-    public async Task<List<ActivityDto>> SearchActivityByTitle([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> SearchActivityByTitle([FromBody] SearchFilterDto filter)
     {
         try
         {
-            return await _repo.SearchActivityByTitle(filter);
+            var activities = await _repo.SearchActivityByTitle(filter);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = activities,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID_PLACEHOLDER)]
-    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedEmployeesWithinActivity([FromBody] SearchFilterDto filter)
     {
         try
         {
-            return await _repo.FindAssociatedEmployeesWithinActivity(filter);
+            var employees = await _repo.FindAssociatedEmployeesWithinActivity(filter);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = employees,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID_PLACEHOLDER)]
-    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkOrderByActivityId([FromBody] SearchFilterDto filter)
     {
         try
         {
-            return await _repo.FindAssociatedWorkOrderByActivityId(filter);
+            var workOrder = await _repo.FindAssociatedWorkOrderByActivityId(filter);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = workOrder,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY_PLACEHOLDER)]
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkTimesWithinActivity([FromBody] SearchFilterDto filter)
     {
         try
         {
-            return await _repo.FindAssociatedWorkTimesWithinActivity(filter);
+            var workTimes = await _repo.FindAssociatedWorkTimesWithinActivity(filter);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = workTimes,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 }

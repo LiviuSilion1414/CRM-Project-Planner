@@ -9,97 +9,218 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<IActionResult> Add([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Add([FromBody] SearchFilterDto filter)
     {
         try
         {
             await _repo.AddAsync(filter);
-            return Ok();
-        } catch (Exception ex)
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
+        } 
+        catch (Exception ex)
         {
-            throw;
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<IActionResult> Edit([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Edit([FromBody] SearchFilterDto filter)
     {
         try
         {
             await _repo.EditAsync(filter);
-            return Ok();
-        } catch (Exception ex)
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
+        } 
+        catch (Exception ex)
         {
-            throw;
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<IActionResult> Delete([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] SearchFilterDto filter)
     {
         try
         {
             await _repo.DeleteAsync(filter);
-            return Ok();
-        } catch (Exception ex)
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
+        } 
+        catch (Exception ex)
         {
-            throw;
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ActionResult<FirmClient>> GetById([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetById([FromBody] SearchFilterDto filter)
     {
         try
         {
             var client = await _repo.GetByIdAsync(filter);
-            return Ok(client);
-        } catch (Exception ex)
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = client,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
+        } 
+        catch (Exception ex)
         {
-            throw;
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ActionResult<List<FirmClient>>> GetWithPagination([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetWithPagination([FromBody] SearchFilterDto filter)
     {
         try
         {
             var entities = await _repo.GetWithPagination(filter);
-            return Ok(entities);
-        } catch (Exception ex)
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = entities,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
+        } 
+        catch (Exception ex)
         {
-            throw;
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(ClientEndpointActions.SEARCH_CLIENT_BY_NAME_PLACEHOLDER)]
-    public async Task<List<FirmClientDto>> SearchClientByName([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> SearchClientByName([FromBody] SearchFilterDto filter)
     {
         try
         {
-            return await _repo.SearchClientByName(filter);
-        } catch (Exception ex)
+            var client = await _repo.SearchClientByName(filter);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = client,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
+        } 
+        catch (Exception ex)
         {
-            throw;
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 
     [HttpGet]
     [Route(ClientEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] SearchFilterDto filter)
     {
         try
         {
-            return await _repo.FindAssociatedWorkOrdersByClientId(filter);
-        } catch (Exception ex)
+            var workOrders = await _repo.FindAssociatedWorkOrdersByClientId(filter);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = workOrders,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
+        } 
+        catch (Exception ex)
         {
-            throw;
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = null,
+                HasCompleted = false,
+                Message = "Operation failed",
+                MessageType = MessageType.Error,
+                StatusCode = HttpStatusCode.NotFound
+            };
         }
     }
 }
