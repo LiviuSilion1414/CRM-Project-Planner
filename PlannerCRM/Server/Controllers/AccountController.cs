@@ -50,7 +50,7 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
 
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
 
-            var appSettings = _config.GetSection("AppSettings").Get<Models.Common.AppSettings>();
+            var appSettings = _config.GetSection("ClientAppSettings").Get<Models.Common.ServerAppSettings>();
 
             byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
 

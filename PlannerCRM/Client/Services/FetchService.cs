@@ -7,7 +7,7 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
     private readonly HttpClient _http = http;
     private readonly LocalStorageService _localStorage = localStorage;
 
-    public async Task<ResultDto> ExecuteAsync(string endpoint, SearchFilter filter, ApiType apiType)
+    public async Task<ResultDto> ExecuteAsync(string endpoint, SearchFilterDto filter, ApiType apiType)
     {
         try
         {

@@ -38,7 +38,7 @@
         {
             if (_context.Validate())
             {
-                await fetch.ExecuteAsync(ClientEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
+                await fetch.ExecuteAsync(ClientEndpointActions.EDIT_BASE, new SearchFilterDto(), ApiType.Put);
 
                 notification.Notify(new NotificationMessage()
                 {

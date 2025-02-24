@@ -5,70 +5,112 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(WorkOrderCostDto dto)
+    public async Task AddAsync(SearchFilterDto filter)
     {
-        var model = _mapper.Map<WorkOrderCost>(dto);
+        try
+        {
+            var model = _mapper.Map<WorkOrderCost>((WorkOrderCostDto)filter.Data);
 
-        await _context.WorkOrderCosts.AddAsync(model);
+            await _context.WorkOrderCosts.AddAsync(model);
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task EditAsync(WorkOrderCostDto dto)
+    public async Task EditAsync(SearchFilterDto filter)
     {
-        var model = _mapper.Map<WorkOrderCost>(dto);
+        try
+        {
+            var model = _mapper.Map<WorkOrderCost>((WorkOrderCostDto)filter.Data);
 
-        var existingModel = await _context.WorkOrderCosts.SingleAsync(wo => wo.Guid == model.Guid);
-        existingModel = model;
+            var existingModel = await _context.WorkOrderCosts.SingleAsync(wo => wo.Guid == model.Guid);
+            existingModel = model;
 
-        _context.Update(existingModel);
+            _context.Update(existingModel);
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task DeleteAsync(WorkOrderCostDto dto)
+    public async Task DeleteAsync(SearchFilterDto filter)
     {
-        var client = await _context.Clients
-            .Include(c => c.WorkOrders)
-            .Include(c => c.WorkOrderCosts)
-            .SingleAsync(c => c.Guid == dto.Guid);
+        try
+        {
+            var client = await _context.Clients
+                                       .Include(c => c.WorkOrders)
+                                       .Include(c => c.WorkOrderCosts)
+                                       .SingleAsync(c => c.Guid == filter.Guid);
 
-        _context.Remove(client);
+            _context.Remove(client);
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<WorkOrderCostDto> GetByIdAsync(Guid id)
+    public async Task<WorkOrderCostDto> GetByIdAsync(SearchFilterDto filter)
     {
-        var client = await _context.Clients
-            .Include(c => c.WorkOrders)
-            .Include(c => c.WorkOrderCosts)
-            .SingleAsync(c => c.Guid == id);
+        try
+        {
+            var client = await _context.Clients
+                                       .Include(c => c.WorkOrders)
+                                       .Include(c => c.WorkOrderCosts)
+                                       .SingleAsync(c => c.Guid == filter.Guid);
 
-        return _mapper.Map<WorkOrderCostDto>(client);
+            return _mapper.Map<WorkOrderCostDto>(client);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<WorkOrderCostDto>> GetWithPagination(int limit, int offset)
+    public async Task<List<WorkOrderCostDto>> GetWithPagination(SearchFilterDto filter)
     {
-        var clients = await _context.Clients
-            .OrderBy(c => c.Guid)
-            .Skip(offset)
-            .Take(limit)
-            .Include(c => c.WorkOrders)
-            .Include(c => c.WorkOrderCosts)
-            .ToListAsync();
+        try
+        {
+            var clients = await _context.Clients
+                                        .OrderBy(c => c.Guid)
+                                        .Skip(filter.Offset)
+                                        .Take(filter.Limit)
+                                        .Include(c => c.WorkOrders)
+                                        .Include(c => c.WorkOrderCosts)
+                                        .ToListAsync();
 
-        return _mapper.Map<List<WorkOrderCostDto>>(clients);
+            return _mapper.Map<List<WorkOrderCostDto>>(clients);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<List<WorkOrderCostDto>> SearchWorOrderCostByWorkOrderTitle(string worOrderTitle)
     {
-        var foundWorkOrder = await _context.WorkOrderCosts
-            .Where(w => EF.Functions.ILike(w.Name, $"%{worOrderTitle}%"))
-            .Include(w => w.WorkOrder)
-            .Include(w => w.FirmClient)
-            .ToListAsync();
+        try
+        {
+            var foundWorkOrder = await _context.WorkOrderCosts
+                                               .Where(w => EF.Functions.ILike(w.Name, $"%{worOrderTitle}%"))
+                                               .Include(w => w.WorkOrder)
+                                               .Include(w => w.FirmClient)
+                                               .ToListAsync();
 
-        return _mapper.Map<List<WorkOrderCostDto>>(foundWorkOrder);
+            return _mapper.Map<List<WorkOrderCostDto>>(foundWorkOrder);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

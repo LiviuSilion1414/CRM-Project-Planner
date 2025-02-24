@@ -126,7 +126,7 @@
         {
             if (!string.IsNullOrEmpty(_query))
             {
-                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilter(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SearchWorkOrderByTitle(_query), new SearchFilterDto(), ApiType.Post);
                 if (result.HasCompleted)
                 {
                     _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
@@ -150,7 +150,7 @@
         {
             if (_context.Validate())
             {
-                await fetch.ExecuteAsync(ActivityEndpointActions.Add(), new SearchFilter(), ApiType.Post);
+                await fetch.ExecuteAsync(ActivityEndpointActions.Add(), new SearchFilterDto(), ApiType.Post);
 
                 notification.Notify(new NotificationMessage()
                     {

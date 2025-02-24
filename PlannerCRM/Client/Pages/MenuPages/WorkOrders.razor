@@ -32,7 +32,7 @@
     {
         try
         {
-            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GetWithPagination(100, 0), new SearchFilterDto(), ApiType.Post);
             _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
 
             await LoadRelatedActivities();
@@ -50,7 +50,7 @@
 
             foreach (var wo in _workOrders)
             {
-                var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilterDto(), ApiType.Post);
                 wo.Activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
             }
         }

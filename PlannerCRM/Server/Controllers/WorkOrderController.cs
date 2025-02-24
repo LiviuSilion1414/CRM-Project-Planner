@@ -9,66 +9,120 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<IActionResult> Add(WorkOrderDto workOrder)
+    public async Task<IActionResult> Add([FromBody] SearchFilterDto filter)
     {
-        await _repo.AddAsync(workOrder);
-
-        return Ok();
+        try
+        {
+            await _repo.AddAsync(filter);
+            return Ok();
+        }
+        catch (Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<IActionResult> Edit(WorkOrderDto workOrder)
+    public async Task<IActionResult> Edit([FromBody] SearchFilterDto filter)
     {
-        await _repo.EditAsync(workOrder);
-
-        return Ok();
+        try
+        {
+            await _repo.EditAsync(filter);
+            return Ok();
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<IActionResult> Delete(WorkOrderDto workOrder)
+    public async Task<IActionResult> Delete([FromBody] SearchFilterDto filter)
     {
-        await _repo.DeleteAsync(workOrder);
-
-        return Ok();
+        try
+        {
+            await _repo.DeleteAsync(filter);
+            return Ok();
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ActionResult<WorkOrderDto>> GetById(Guid workOrderId)
+    public async Task<ActionResult<WorkOrderDto>> GetById([FromBody] SearchFilterDto filter)
     {
-        var workOrder = await _repo.GetByIdAsync(workOrderId);
-        return Ok(workOrder);
+        try
+        {
+            var workOrder = await _repo.GetByIdAsync(filter);
+            return Ok(workOrder);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ActionResult<List<WorkOrderDto>>> GetWithPagination(int limit, int offset)
+    public async Task<ActionResult<List<WorkOrderDto>>> GetWithPagination([FromBody] SearchFilterDto filter)
     {
-        var entities = await _repo.GetWithPagination(limit, offset);
 
-        return Ok(entities);
+        try
+        {
+            var entities = await _repo.GetWithPagination(filter);
+            return Ok(entities);
+
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.SEARCH_WORKORDER_BY_TITLE_PLACEHOLDER)]
-    public async Task<List<WorkOrderDto>> SearchWorOrderByTitle(string worOrderTitle)
+    public async Task<ActionResult<List<WorkOrderDto>>> SearchWorOrderByTitle([FromBody] SearchFilterDto filter)
     {
-        return await _repo.SearchWorOrderByTitle(worOrderTitle);
+        try
+        {
+            return await _repo.SearchWorOrderByTitle(filter);
+        }
+        catch(Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID_PLACEHOLDER)]
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(Guid itemId)
+    public async Task<ActionResult<List<ActivityDto>>> FindAssociatedActivitiesByWorkOrderId([FromBody] SearchFilterDto filter)
     {
-        return await _repo.FindAssociatedActivitiesByWorkOrderId(itemId);
+        try
+        {
+            return await _repo.FindAssociatedActivitiesByWorkOrderId(filter);
+        }
+        catch(Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(Guid clientId)
+    public async Task<ActionResult<List<WorkOrderDto>>> FindAssociatedWorkOrdersByClientId([FromBody] SearchFilterDto filter)
     {
-        return await _repo.FindAssociatedWorkOrdersByClientId(clientId);
+        try
+        {
+            return await _repo.FindAssociatedWorkOrdersByClientId(filter);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 }

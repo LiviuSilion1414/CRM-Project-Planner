@@ -32,7 +32,7 @@
     {
         try
         {
-            var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilter(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilterDto(), ApiType.Post);
             _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
         }
         catch(Exception ex)

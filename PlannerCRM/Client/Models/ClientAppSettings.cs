@@ -1,6 +1,6 @@
-﻿namespace PlannerCRM.Shared.Models;
+﻿namespace PlannerCRM.Client.Models;
 
-public class AppSettings
+public class ClientAppSettings
 {
     public string EmailHost { get; set; }
     public string EmailPort { get; set; }

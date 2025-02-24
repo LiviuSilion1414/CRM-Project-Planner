@@ -55,7 +55,7 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete client", new() { OkButtonText = "Delete" })).Value)
             {
-                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilter(), ApiType.Put);
+                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilterDto(), ApiType.Put);
             }
         }
         catch(Exception ex)

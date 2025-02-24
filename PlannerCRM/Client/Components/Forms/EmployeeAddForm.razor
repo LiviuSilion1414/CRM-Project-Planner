@@ -77,7 +77,7 @@
         {
             if (context.Validate())
             {
-                await fetch.ExecuteAsync(EmployeeEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
+                await fetch.ExecuteAsync(EmployeeEndpointActions.ADD_BASE, new SearchFilterDto(), ApiType.Post);
 
                 notification.Notify(new NotificationMessage()
                 {

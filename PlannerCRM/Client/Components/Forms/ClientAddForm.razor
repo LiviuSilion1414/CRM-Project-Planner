@@ -39,7 +39,7 @@
         {
             if (_context.Validate())
             {
-                await fetch.ExecuteAsync(ClientEndpointActions.ADD_BASE, new SearchFilter(), ApiType.Post);
+                await fetch.ExecuteAsync(ClientEndpointActions.ADD_BASE, new SearchFilterDto(), ApiType.Post);
 
                 notification.Notify(new NotificationMessage()
                 {

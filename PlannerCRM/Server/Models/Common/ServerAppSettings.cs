@@ -1,6 +1,6 @@
 ﻿namespace PlannerCRM.Server.Models.Common;
 
-public class AppSettings
+public class ServerAppSettings
 {
     //JWT
     public string Secret { get; set; }

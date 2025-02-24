@@ -1,4 +1,6 @@
+using Humanizer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using PdfSharp.Pdf.Filters;
 
 namespace PlannerCRM.Server.Repositories;
 
@@ -7,198 +9,262 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(EmployeeDto dto)
-    {
-        var model = _mapper.Map<Employee>(dto);
-
-        if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email == dto.Email)) == null)
-        {
-            byte[] salt = new byte[128 / 8];
-            string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.Password,
-                                                                            salt: salt,
-                                                                            prf: KeyDerivationPrf.HMACSHA256,
-                                                                            iterationCount: 10000,
-                                                                            numBytesRequested: 256 / 8));
-
-            model.PasswordHash = cryptedPwd;
-            
-            await _context.Employees.AddAsync(model);
-            await _context.SaveChangesAsync();
-            
-            if (model.EmployeeRoles is not null && model.Salaries is not null)
-            {
-                foreach (var role in model.EmployeeRoles)
-                {
-                    await _context.EmployeeRoles.AddAsync(
-                        new EmployeeRole()
-                        {
-                            RoleId = role.Guid,
-                            EmployeeId = model.Guid
-                        }
-                    );
-                }
-
-                foreach (var salary in model.Salaries)
-                {
-                    await _context.EmployeeSalaries.AddAsync(
-                        new EmployeeSalary()
-                        {
-                            SalaryId = salary.Guid,
-                            EmployeeId = model.Guid
-                        }
-                    );
-                }
-            }
-        }
-
-
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task AssignRole(EmployeeDto dto, string role)
+    public async Task AddAsync(SearchFilterDto filter)
     {
         try
         {
-            if (!(await _context.Roles.AnyAsync(x => x.RoleName.Contains(role))))
+            var model = _mapper.Map<Employee>((EmployeeDto)filter.Data);
+
+            if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email == ((EmployeeDto)filter.Data).Email)) == null)
             {
-                var roleCreated = new Role()
+                byte[] salt = new byte[128 / 8];
+                string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: ((EmployeeDto)filter.Data).Password,
+                                                                                salt: salt,
+                                                                                prf: KeyDerivationPrf.HMACSHA256,
+                                                                                iterationCount: 10000,
+                                                                                numBytesRequested: 256 / 8));
+
+                model.PasswordHash = cryptedPwd;
+
+                await _context.Employees.AddAsync(model);
+                await _context.SaveChangesAsync();
+
+                if (model.EmployeeRoles is not null && model.Salaries is not null)
                 {
-                    RoleName = role,
-                };
-                
-                await _context.Roles.AddAsync(roleCreated);
-
-                await _context.SaveChangesAsync();
-
-                await _context.EmployeeRoles.AddAsync(
-                    new EmployeeRole 
+                    foreach (var role in model.EmployeeRoles)
                     {
-                        RoleName = role,
-                        RoleId = roleCreated.Guid,
-                        EmployeeId = dto.Guid
+                        await _context.EmployeeRoles.AddAsync(
+                            new EmployeeRole()
+                            {
+                                RoleId = role.Guid,
+                                EmployeeId = model.Guid
+                            }
+                        );
                     }
-                );
 
-                await _context.SaveChangesAsync();
+                    foreach (var salary in model.Salaries)
+                    {
+                        await _context.EmployeeSalaries.AddAsync(
+                            new EmployeeSalary()
+                            {
+                                SalaryId = salary.Guid,
+                                EmployeeId = model.Guid
+                            }
+                        );
+                    }
+                }
             }
-        } catch
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception)
         {
             throw;
         }
     }
-    public async Task EditAsync(EmployeeDto dto)
+
+    public async Task AssignRole(SearchFilterDto filter)
     {
-        var model = _mapper.Map<Employee>(dto);
+        try
+        {
+            if (!(await _context.Roles.Where(x => filter.Roles.Any(y => x.RoleName.Contains(y))).AnyAsync()))
+            {
+                foreach (var role in filter.Roles)
+                {
+                    await _context.Roles.AddAsync(new Role { RoleName = role });
+                }
 
-        var existingModel = await _context.Employees.SingleAsync(em => em.Guid == model.Guid);
-        existingModel = model;
+                await _context.SaveChangesAsync();
+            }
 
-        _context.Update(existingModel);
+            var roles = new List<Role>();
 
-        await _context.SaveChangesAsync();
+            foreach (var role in filter.Roles)
+            {
+                await _context.Roles
+                              .Include(x => x.EmployeeRoles)
+                              .Where(x => x.RoleName == role)
+                              .ToListAsync();
+            }
+
+            foreach (var role in roles)
+            {
+                await _context.EmployeeRoles.AddAsync(
+                    new EmployeeRole
+                    {
+                        RoleName = role.RoleName,
+                        RoleId = role.Guid,
+                        EmployeeId = roles.First().EmployeeRoles.First().EmployeeId
+                    }
+                );
+            }
+
+            await _context.SaveChangesAsync();
+        } 
+        catch
+        {
+            throw;
+        }
     }
 
-    public async Task DeleteAsync(EmployeeDto dto)
+    public async Task EditAsync(SearchFilterDto filter)
     {
-        var employee = await _context.Employees
-            .Include(e => e.Activities)
-            .Include(e => e.WorkTimes)
-            .Include(e => e.Salaries)
-            .Include(e => e.EmployeeRoles)
-            .SingleAsync(e => e.Guid == dto.Guid);
+        try
+        {
+            var model = _mapper.Map<Employee>((EmployeeDto)filter.Data);
 
-        _context.Remove(employee);
+            var existingModel = await _context.Employees.SingleAsync(em => em.Guid == model.Guid);
+            existingModel = model;
 
-        await _context.SaveChangesAsync();
+            _context.Update(existingModel);
+
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<EmployeeDto> GetByIdAsync(Guid id)
+    public async Task DeleteAsync(SearchFilterDto filter)
     {
-        var employee = await _context.Employees
-            .Include(e => e.Activities)
-            .Include(e => e.WorkTimes)
-            .Include(e => e.Salaries)
-            .Include(e => e.EmployeeRoles)
-            .SingleAsync(e => e.Guid == id);
+        try
+        {
+            var employee = await _context.Employees
+                                         .Include(e => e.Activities)
+                                         .Include(e => e.WorkTimes)
+                                         .Include(e => e.Salaries)
+                                         .Include(e => e.EmployeeRoles)
+                                         .SingleAsync(e => e.Guid == filter.Guid);
 
-        return _mapper.Map<EmployeeDto>(employee);
+            _context.Remove(employee);
+
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<EmployeeDto>> GetWithPagination(int limit, int offset)
+    public async Task<EmployeeDto> GetByIdAsync(SearchFilterDto filter)
     {
-        var employees = await _context.Employees
-            .OrderBy(e => e.Guid)
-            .Skip(offset)
-            .Take(limit)
-            .Include(e => e.EmployeeRoles)
-            .Include(e => e.Activities)
-            .Include(e => e.WorkTimes)
-            .Include(e => e.Salaries)
-            .Include(e => e.EmployeeRoles)
-            .ToListAsync();
+        try
+        {
+            var employee = await _context.Employees
+                                         .Include(e => e.Activities)
+                                         .Include(e => e.WorkTimes)
+                                         .Include(e => e.Salaries)
+                                         .Include(e => e.EmployeeRoles)
+                                         .SingleAsync(e => e.Guid == filter.Guid);
 
-        var mapped = _mapper.Map<List<EmployeeDto>>(employees);
-
-        return mapped;
+            return _mapper.Map<EmployeeDto>(employee);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<EmployeeDto>> SearchEmployeeByName(string employeeName)
+    public async Task<List<EmployeeDto>> GetWithPagination(SearchFilterDto filter)
     {
-        var foundEmployee = await _context.Employees
-            .Where(em => EF.Functions.ILike(em.Name, $"{employeeName}"))
-            .Include(e => e.Activities)
-            .Include(e => e.WorkTimes)
-            .Include(e => e.Salaries)
-            .Include(e => e.EmployeeRoles)
-            .ToListAsync();
+        try
+        {
+            var employees = await _context.Employees
+                                          .OrderBy(e => e.Guid)
+                                          .Skip(filter.Offset)
+                                          .Take(filter.Limit)
+                                          .Include(e => e.EmployeeRoles)
+                                          .Include(e => e.Activities)
+                                          .Include(e => e.WorkTimes)
+                                          .Include(e => e.Salaries)
+                                          .Include(e => e.EmployeeRoles)
+                                          .ToListAsync();
 
-        return _mapper.Map<List<EmployeeDto>>(foundEmployee);
+            return _mapper.Map<List<EmployeeDto>>(employees);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<EmployeeLoginRecoveryDto>> SearchEmployeeByName(string employeeName, string email = "", string phone="")
+    public async Task<List<EmployeeDto>> SearchEmployeeByName(SearchFilterDto filter)
     {
-        var foundEmployee = await _context.Employees
-            .Where(em => 
-                EF.Functions.ILike(em.Name, $"{employeeName}") || 
-                EF.Functions.ILike(em.Email, $"{email}"))
-            .ToListAsync();
+        try
+        {
+            var foundEmployee = await _context.Employees
+                                              .Where(em => EF.Functions.ILike(em.Name, $"{filter.SearchQuery}"))
+                                              .Include(e => e.Activities)
+                                              .Include(e => e.WorkTimes)
+                                              .Include(e => e.Salaries)
+                                              .Include(e => e.EmployeeRoles)
+                                              .Where(em =>
+                                                  EF.Functions.ILike(em.Name, $"{filter.SearchQuery}") ||
+                                                  EF.Functions.ILike(em.Email, $"{filter.SearchQuery}"))
+                                              .ToListAsync();
 
-        return _mapper.Map<List<EmployeeLoginRecoveryDto>>(foundEmployee);
+            return _mapper.Map<List<EmployeeDto>>(foundEmployee);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(Guid employeeId)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(SearchFilterDto filter)
     {
-        var foundActivities = await _context.Activities
-            .Include(ac => ac.EmployeeActivities)
-            .Include(ac => ac.ActivityWorkTimes)
-            .Include(ac => ac.Employees)
-            .Where(ac => ac.Employees.Any(em => em.Guid == employeeId))
-            .ToListAsync();
+        try
+        {
+            var foundActivities = await _context.Activities
+                                                .Include(ac => ac.EmployeeActivities)
+                                                .Include(ac => ac.ActivityWorkTimes)
+                                                .Include(ac => ac.Employees)
+                                                .Where(ac => ac.Employees.Any(em => em.Guid == filter.Guid))
+                                                .ToListAsync();
 
-        return _mapper.Map<List<ActivityDto>>(foundActivities);
+            return _mapper.Map<List<ActivityDto>>(foundActivities);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(Guid employeeId, Guid activityId)
+    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(SearchFilterDto filter)
     {
-        var foundWorkTimes = await _context.WorkTimes
-            .Include(wt => wt.WorkOrder)
-            .Include(wt => wt.Activity)
-            .Include(wt => wt.ActivityWorkTimes)
-            .Include(wt => wt.Employee)
-            .Where(wt => wt.EmployeeId == employeeId && wt.ActivityId == activityId)
-            .ToListAsync();
+        try
+        {
+            var foundWorkTimes = await _context.WorkTimes
+                                               .Include(wt => wt.WorkOrder)
+                                               .Include(wt => wt.Activity)
+                                               .Include(wt => wt.ActivityWorkTimes)
+                                               .Include(wt => wt.Employee)
+                                               .Where(wt => wt.EmployeeId == filter.Guid && wt.ActivityId ==  filter.Guid2)
+                                               .ToListAsync();
 
-        return _mapper.Map<List<WorkTimeDto>>(foundWorkTimes);
+            return _mapper.Map<List<WorkTimeDto>>(foundWorkTimes);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(Guid employeeId)
+    public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(SearchFilterDto filter)
     {
-        var foundSalaries = await _context.Salaries
-            .Include(em => em.EmployeeSalaries)
-            .Include(em => em.Employee)
-            .Where(sl => sl.EmployeeId == employeeId)
-            .ToListAsync();
+        try
+        {
+            var foundSalaries = await _context.Salaries
+                                              .Include(em => em.EmployeeSalaries)
+                                              .Include(em => em.Employee)
+                                              .Where(sl => sl.EmployeeId == filter.Guid)
+                                              .ToListAsync();
 
-        return _mapper.Map<List<SalaryDto>>(foundSalaries);
+            return _mapper.Map<List<SalaryDto>>(foundSalaries);
+        } 
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

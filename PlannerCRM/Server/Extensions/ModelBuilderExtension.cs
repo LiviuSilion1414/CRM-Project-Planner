@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PlannerCRM.Shared.Models;
 
 namespace PlannerCRM.Server.Extensions;
 

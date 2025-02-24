@@ -18,9 +18,9 @@ public static class PipelineBuilderExtension
     public static void ConfigureJWTTokenAuthentication(this WebApplicationBuilder builder)
     {
         //JWToken
-        IConfigurationSection appSettingsSection = builder.Configuration.GetSection("AppSettings");
-        builder.Services.Configure<AppSettings>(appSettingsSection);
-        AppSettings appSettings = appSettingsSection.Get<AppSettings>();
+        IConfigurationSection appSettingsSection = builder.Configuration.GetSection("ClientAppSettings");
+        builder.Services.Configure<ServerAppSettings>(appSettingsSection);
+        ServerAppSettings appSettings = appSettingsSection.Get<ServerAppSettings>();
         byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
         builder.Services.AddAuthentication(options =>
@@ -44,7 +44,7 @@ public static class PipelineBuilderExtension
 
     public static void RegisterServices(this IServiceCollection services)
     {
-        services.AddScoped<AppSettings>();
+        services.AddScoped<ServerAppSettings>();
 
         services.AddScoped<ActivityRepository>();
         services.AddScoped<EmployeeRepository>();

@@ -1,69 +1,91 @@
 namespace PlannerCRM.Server.Repositories;
-
 public class WorkTimeRepository(AppDbContext context, IMapper mapper)
 {
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
-
-    public async Task AddAsync(WorkTimeDto dto)
+    public async Task AddAsync(SearchFilterDto filter)
     {
-        var model = _mapper.Map<WorkTime>(dto);
-
-        _context.WorkOrders.Attach(model.WorkOrder);
-        _context.Activities.Attach(model.Activity);
-
-        await _context.WorkTimes.AddAsync(model);
-
-        await _context.SaveChangesAsync();
+        try
+        {
+            var model = _mapper.Map<WorkTime>(filter);
+            _context.WorkOrders.Attach(model.WorkOrder);
+            _context.Activities.Attach(model.Activity);
+            await _context.WorkTimes.AddAsync(model);
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
-    public async Task EditAsync(WorkTimeDto dto)
+    public async Task EditAsync(SearchFilterDto filter)
     {
-        var model = _mapper.Map<WorkTime>(dto);
-
-        var existingModel = await _context.WorkTimes.SingleAsync(wt => wt.Guid == model.Guid);
-        existingModel = model;
-
-        _context.Update(existingModel);
-
-        await _context.SaveChangesAsync();
+        try
+        {
+            var model = _mapper.Map<WorkTime>(filter);
+            var existingModel = await _context.WorkTimes.SingleAsync(wt => wt.Guid == model.Guid);
+            _context.Entry(existingModel).CurrentValues.SetValues(model);
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
-    public async Task DeleteAsync(WorkTimeDto dto)
+    public async Task DeleteAsync(SearchFilterDto filter)
     {
-        var client = await _context.WorkTimes
-            .Include(w => w.Activity)
-            .Include(w => w.WorkOrder)
-            .ThenInclude(w => w.FirmClient)
-            .SingleAsync(w => w.Guid == dto.Guid);
-
-        _context.Remove(client);
-
-        await _context.SaveChangesAsync();
+        try
+        {
+            var client = await _context.WorkTimes
+                .Include(w => w.Activity)
+                .Include(w => w.WorkOrder)
+                .ThenInclude(w => w.FirmClient)
+                .SingleAsync(w => w.Guid == filter.Guid);
+            _context.Remove(client);
+            await _context.SaveChangesAsync();
+        } 
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
-    public async Task<WorkTimeDto> GetByIdAsync(Guid id)
+    public async Task<WorkTimeDto> GetByIdAsync(SearchFilterDto filter)
     {
-        var client = await _context.WorkTimes
-            .Include(w => w.Activity)
-            .Include(w => w.WorkOrder)
-            .ThenInclude(w => w.FirmClient)
-            .SingleAsync(w => w.Guid == id);
-
-        return _mapper.Map<WorkTimeDto>(client);
+        try
+        {
+            var client = await _context.WorkTimes
+                .Include(w => w.Activity)
+                .Include(w => w.WorkOrder)
+                .ThenInclude(w => w.FirmClient)
+                .SingleAsync(w => w.Guid == filter.Guid);
+            return _mapper.Map<WorkTimeDto>(client);
+        } 
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
-    public async Task<List<WorkTimeDto>> GetWithPagination(int limit, int offset)
+    public async Task<List<WorkTimeDto>> GetWithPagination(SearchFilterDto filter)
     {
-        var clients = await _context.WorkTimes
-            .OrderBy(w => w.Guid)
-            .Skip(offset)
-            .Take(limit)
-            .Include(w => w.Activity)
-            .Include(w => w.WorkOrder)
-            .ThenInclude(w => w.FirmClient)
-            .ToListAsync();
-
-        return _mapper.Map<List<WorkTimeDto>>(clients);
+        try
+        {
+            var clients = await _context.WorkTimes
+                .OrderBy(w => w.Guid)
+                .Skip(filter.Offset)
+                .Take(filter.Limit)
+                .Include(w => w.Activity)
+                .Include(w => w.WorkOrder)
+                .ThenInclude(w => w.FirmClient)
+                .ToListAsync();
+            return _mapper.Map<List<WorkTimeDto>>(clients);
+        } 
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 }

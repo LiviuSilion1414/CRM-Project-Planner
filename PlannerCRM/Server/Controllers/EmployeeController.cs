@@ -9,99 +9,177 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpPost]
     [Route(EmployeeEndpointActions.ASSIGN_ROLE_PLACEHOLDER)]
-    public async Task<IActionResult> AssignRole(EmployeeDto dto, string roleName)
+    public async Task<IActionResult> AssignRole([FromBody] SearchFilterDto filter)
     {
-        await _repo.AssignRole(dto, roleName);
-
-        return Ok();
+        try
+        {
+            await _repo.AssignRole(filter);
+            return Ok();
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<IActionResult> Add(EmployeeDto employee)
+    public async Task<IActionResult> Add([FromBody] SearchFilterDto filter)
     {
-        await _repo.AddAsync(employee);
-
-        return Ok();
+        try
+        {
+            await _repo.AddAsync(filter);
+            return Ok();
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<IActionResult> Edit(EmployeeDto employee)
+    public async Task<IActionResult> Edit([FromBody] SearchFilterDto filter)
     {
-        await _repo.EditAsync(employee);
-
-        return Ok();
+        try
+        {
+            await _repo.EditAsync(filter);
+            return Ok();
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<IActionResult> Delete(EmployeeDto employee)
+    public async Task<IActionResult> Delete([FromBody] SearchFilterDto filter)
     {
-        await _repo.DeleteAsync(employee);
-
-        return Ok();
+        try
+        {
+            await _repo.DeleteAsync(filter);
+            return Ok();
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ActionResult<EmployeeDto>> GetById(Guid employeeId)
+    public async Task<ActionResult<EmployeeDto>> GetById([FromBody] SearchFilterDto filter)
     {
-        var employee = await _repo.GetByIdAsync(employeeId);
-        return Ok(employee);
+        try
+        {
+            var employee = await _repo.GetByIdAsync(filter);
+            return Ok(employee);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ActionResult<List<EmployeeDto>>> GetWithPagination(int limit, int offset)
+    public async Task<ActionResult<List<EmployeeDto>>> GetWithPagination([FromBody] SearchFilterDto filter)
     {
-        var entities = await _repo.GetWithPagination(limit, offset);
-
-        return Ok(entities);
+        try
+        {
+            var entities = await _repo.GetWithPagination(filter);
+            return Ok(entities);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
+    // Modifica: utilizzo di SearchFilterDto al posto di string employeeName
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME_PLACEHOLDER)]
-    public async Task<List<EmployeeDto>> SearchEmployeeByName(string employeeName)
+    public async Task<ActionResult<List<EmployeeDto>>> SearchEmployeeByName([FromBody] SearchFilterDto filter)
     {
-        return await _repo.SearchEmployeeByName(employeeName);
+        try
+        {
+            var employees = await _repo.SearchEmployeeByName(filter);
+            return Ok(employees);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [AllowAnonymous]
     [HttpGet]
     [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_PLACEHOLDER)]
-    public async Task<List<EmployeeLoginRecoveryDto>> SearchEmployeeByNameForRecovery(string name, string email, string phone)
+    public async Task<ActionResult<List<EmployeeLoginRecoveryDto>>> SearchEmployeeByNameForRecovery([FromBody] SearchFilterDto filter)
     {
-        return await _repo.SearchEmployeeByName(name, email, phone);
+        try
+        {
+            var recoveryEmployees = await _repo.SearchEmployeeByName(filter);
+            return Ok(recoveryEmployees);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_PLACEHOLDER)]
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(Guid employeeId)
+    public async Task<ActionResult<List<ActivityDto>>> FindAssociatedActivitiesByEmployeeId([FromBody] SearchFilterDto filter)
     {
-        return await _repo.FindAssociatedActivitiesByEmployeeId(employeeId);
+        try
+        {
+            var activities = await _repo.FindAssociatedActivitiesByEmployeeId(filter);
+            return Ok(activities);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_PLACEHOLDER)]
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(Guid employeeId, Guid activityId)
+    public async Task<ActionResult<List<WorkTimeDto>>> FindAssociatedWorkTimesByActivityIdAndEmployeeId([FromBody] SearchFilterDto filter)
     {
-        return await _repo.FindAssociatedWorkTimesByActivityIdAndEmployeeId(employeeId, activityId);
+        try
+        {
+            var workTimes = await _repo.FindAssociatedWorkTimesByActivityIdAndEmployeeId(filter);
+            return Ok(workTimes);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_PLACEHOLDER)]
-    public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(Guid employeeId)
+    public async Task<ActionResult<List<SalaryDto>>> FindAssociatedSalaryDataByEmployeeId([FromBody] SearchFilterDto filter)
     {
-        return await _repo.FindAssociatedSalaryDataByEmployeeId(employeeId);
+        try
+        {
+            var salaryData = await _repo.FindAssociatedSalaryDataByEmployeeId(filter);
+            return Ok(salaryData);
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 }

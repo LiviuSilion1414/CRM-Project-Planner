@@ -9,45 +9,77 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<IActionResult> Add(WorkTimeDto workTime)
+    public async Task<IActionResult> Add([FromBody] SearchFilterDto filter)
     {
-        await _repo.AddAsync(workTime);
-
-        return Ok();
+        try
+        {
+            await _repo.AddAsync(filter);
+            return Ok();
+        } 
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<IActionResult> Edit(WorkTimeDto workTime)
+    public async Task<IActionResult> Edit([FromBody] SearchFilterDto filter)
     {
-        await _repo.EditAsync(workTime);
-
-        return Ok();
+        try
+        {
+            await _repo.EditAsync(filter);
+            return Ok();
+        }
+        catch (Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<IActionResult> Delete(WorkTimeDto workTime)
+    public async Task<IActionResult> Delete([FromBody] SearchFilterDto filter)
     {
-        await _repo.DeleteAsync(workTime);
-
-        return Ok();
+        try
+        {
+            await _repo.DeleteAsync(filter);
+            return Ok();
+        } 
+        catch (Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ActionResult<WorkTimeDto>> GetById(Guid workTimeId)
+    public async Task<ActionResult<WorkTimeDto>> GetById([FromBody] SearchFilterDto filter)
     {
-        var workTime = await _repo.GetByIdAsync(workTimeId);
-        return Ok(workTime);
+        try
+        {
+            var workTime = await _repo.GetByIdAsync(filter);
+            return Ok(workTime);
+        }
+        catch (Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ActionResult<List<WorkTimeDto>>> GetWithPagination(int limit, int offset)
+    public async Task<ActionResult<List<WorkTimeDto>>> GetWithPagination([FromBody] SearchFilterDto filter)
     {
-        var entities = await _repo.GetWithPagination(limit, offset);
+        try
+        {
+            var entities = await _repo.GetWithPagination(filter);
+            return Ok(entities);
+        }
+        catch (Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
 
-        return Ok(entities);
     }
 }
