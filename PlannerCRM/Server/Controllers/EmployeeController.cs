@@ -1,3 +1,5 @@
+using PlannerCRM.Server.Models.Entities;
+
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
@@ -334,7 +336,15 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         try
         {
             var salaryData = await _repo.FindAssociatedSalaryDataByEmployeeId(filter);
-            return Ok(salaryData);
+            return new ResultDto()
+            {
+                Guid = null,
+                Data = salaryData,
+                HasCompleted = true,
+                Message = "Operation completed",
+                MessageType = MessageType.Success,
+                StatusCode = HttpStatusCode.OK
+            };
         } 
         catch (Exception ex)
         {

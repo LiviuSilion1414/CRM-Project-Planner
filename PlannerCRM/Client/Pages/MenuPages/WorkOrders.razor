@@ -3,21 +3,28 @@
 <h3>Workorders</h3>
 <PageTitle>Workorders</PageTitle>
 
-<RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+@if (fetch.IsBusy)
+{
+    <Loader/>
+}
+else
+{
+    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
-<RadzenDataGrid Data="@_workOrders"
-                TItem="@WorkOrderDto"
-                AllowSorting="true"
-                AllowPaging="true"
-                AllowFiltering="true"
-                SelectionMode="DataGridSelectionMode.Single"
-                RowSelect="OnSelect">
-    <Columns>
-        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
-        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.StartDateString)" Title="Start Date" />
-        <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.EndDateString)" Title="End Date" />
-    </Columns>
-</RadzenDataGrid>
+    <RadzenDataGrid Data="@_workOrders"
+    TItem="@WorkOrderDto"
+    AllowSorting="true"
+    AllowPaging="true"
+    AllowFiltering="true"
+    SelectionMode="DataGridSelectionMode.Single"
+    RowSelect="OnSelect">
+        <Columns>
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.StartDateString)" Title="Start Date" />
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.EndDateString)" Title="End Date" />
+        </Columns>
+    </RadzenDataGrid>
+}
 
 @code {
     private WorkOrderDto _selectedWorkOrder = null;
@@ -32,12 +39,21 @@
     {
         try
         {
-            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GetWithPagination(100, 0), new SearchFilterDto(), ApiType.Post);
-            _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
-
+            fetch.IsBusy = true;
+            var filter = new SearchFilterDto()
+            {
+                Limit = 100,
+                Offset = 0
+            };
+            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GET_WITH_PAGINATION_BASE, filter, ApiType.Post);
+            if (result.Data is not null)
+            {
+                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+            }
             await LoadRelatedActivities();
+            fetch.IsBusy = false;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -47,14 +63,21 @@
     {
         try
         {
+            fetch.IsBusy = true;
+            var filter = new SearchFilterDto()
+                {
+                    Limit = 10000,
+                    Offset = 0
+                };
 
             foreach (var wo in _workOrders)
             {
-                var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilterDto(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(ActivityEndpointActions.GET_WITH_PAGINATION_BASE, filter, ApiType.Post);
                 wo.Activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
             }
+            fetch.IsBusy = false;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

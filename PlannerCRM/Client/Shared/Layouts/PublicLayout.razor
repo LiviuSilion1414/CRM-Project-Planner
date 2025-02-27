@@ -11,9 +11,9 @@
 <RadzenLayout>
     <RadzenHeader Style="background-color:lightseagreen;">
         <RadzenStack Orientation="Orientation.Horizontal"
-                     AlignItems="AlignItems.Center"
-                     JustifyContent="JustifyContent.SpaceBetween"
-                     Style="width: 100%; background-color: lightseagreen;">
+        AlignItems="AlignItems.Center"
+        JustifyContent="JustifyContent.SpaceBetween"
+        Style="width: 100%; background-color: lightseagreen;">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                 <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM" />
             </RadzenStack>
@@ -26,3 +26,27 @@
         @Body
     </RadzenBody>
 </RadzenLayout>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckIfLoggedIn();
+    }
+
+    private async Task CheckIfLoggedIn()
+    {
+        try
+        {
+            var result = await auth.GetAuthenticationStateAsync();
+            if (result.User is not null && result.User.Identity.IsAuthenticated)
+            {
+                navigation.NavigateTo("home", true);
+            }
+        }
+        catch (Exception ex)
+        {
+            notification.Notify(NotificationSeverity.Success, $"Oops, something went wrong, please retry!", null, 4000);
+        }
+    }
+}

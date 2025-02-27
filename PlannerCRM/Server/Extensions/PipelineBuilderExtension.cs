@@ -18,7 +18,7 @@ public static class PipelineBuilderExtension
     public static void ConfigureJWTTokenAuthentication(this WebApplicationBuilder builder)
     {
         //JWToken
-        IConfigurationSection appSettingsSection = builder.Configuration.GetSection("ClientAppSettings");
+        IConfigurationSection appSettingsSection = builder.Configuration.GetSection("AppSettings");
         builder.Services.Configure<ServerAppSettings>(appSettingsSection);
         ServerAppSettings appSettings = appSettingsSection.Get<ServerAppSettings>();
         byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);

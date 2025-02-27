@@ -131,7 +131,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
     public async Task<ResultDto> GetWithPagination([FromBody] SearchFilterDto filter)
     {

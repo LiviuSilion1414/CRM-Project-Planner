@@ -109,7 +109,12 @@
         {
             if (!string.IsNullOrEmpty(_query))
             {
-                var result = await fetch.ExecuteAsync(ActivityEndpointActions.SearchByTitle(_query), new SearchFilterDto(), ApiType.Post);
+                var filter = new SearchFilterDto()
+                {
+                    SearchQuery = _query
+                };
+
+                var result = await fetch.ExecuteAsync(ActivityEndpointActions.SEARCH_BY_TITLE_BASE, filter, ApiType.Post);
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
             }
         }
@@ -130,7 +135,12 @@
         {
             if (_context.Validate())
             {
-                await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, new SearchFilterDto(), ApiType.Post);
+                var filter = new SearchFilterDto()
+                {
+                    Data = _model
+                };
+
+                await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, filter, ApiType.Post);
 
                 notification.Notify(new NotificationMessage()
                     {

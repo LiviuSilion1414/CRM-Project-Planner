@@ -1,21 +1,30 @@
 ﻿@page "/calendar"
 
-<RadzenScheduler TItem="ActivityDto"
-                 Style="height: 90vh;"
-                 Data=@_activities
-                 Culture="CultureInfo.InvariantCulture"
-                 SlotSelect="@OnAdd"
-                 AppointmentSelect="@OnSelect"
-                 StartProperty="@nameof(ActivityDto.StartDate)"
-                 EndProperty="@nameof(ActivityDto.EndDate)"
-                 TextProperty="@nameof(ActivityDto.Name)"
-                 SelectedIndex="2">
-    <RadzenDayView />
-    <RadzenWeekView />
-    <RadzenMonthView />
-    <RadzenYearView />
-</RadzenScheduler>
+<h4>Calendar</h4>
+<PageTitle>Calendar</PageTitle>
 
+@if (fetch.IsBusy)
+{
+    <Loader />
+}
+else
+{
+    <RadzenScheduler TItem="ActivityDto"
+                     Style="height: 90vh;"
+                     Data=@_activities
+                     Culture="CultureInfo.InvariantCulture"
+                     SlotSelect="@OnAdd"
+                     AppointmentSelect="@OnSelect"
+                     StartProperty="@nameof(ActivityDto.StartDate)"
+                     EndProperty="@nameof(ActivityDto.EndDate)"
+                     TextProperty="@nameof(ActivityDto.Name)"
+                     SelectedIndex="2">
+        <RadzenDayView />
+        <RadzenWeekView />
+        <RadzenMonthView />
+        <RadzenYearView />
+    </RadzenScheduler>
+}
 @code {
     private List<ActivityDto> _activities = new();
 
@@ -28,10 +37,21 @@
     {
         try
         {
-            var result = await fetch.ExecuteAsync(ActivityEndpointActions.GetWithPagination(100, 0), new SearchFilterDto(), ApiType.Post);
-            _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
+            fetch.IsBusy = true;
+            var filter = new SearchFilterDto()
+                {
+                    Limit = 100,
+                    Offset = 0
+                };
+
+            var result = await fetch.ExecuteAsync(ActivityEndpointActions.GET_WITH_PAGINATION_BASE, filter, ApiType.Post);
+            if (result.Data is not null)
+            {
+                _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
+            }
+            fetch.IsBusy = false;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -48,11 +68,11 @@
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
         await dialog.OpenAsync<ActivityAddForm>("Add Activity",
-            new() 
-            {
+            new()
+                {
                 { nameof(ActivityAddForm.StartDate), args.Start },
                 { nameof(ActivityAddForm.EndDate), args.End }
-            },
+                },
             new DialogOptions() { Width = "40vw;" }
         );
     }

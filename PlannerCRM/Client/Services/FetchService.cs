@@ -7,13 +7,15 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
     private readonly HttpClient _http = http;
     private readonly LocalStorageService _localStorage = localStorage;
 
+    public bool IsBusy { get; set; }
+
     public async Task<ResultDto> ExecuteAsync(string endpoint, SearchFilterDto filter, ApiType apiType)
     {
         try
         {
             if (!_http.DefaultRequestHeaders.Contains("Authorization"))
             {
-                var jwt = GetBearerToken() ?? throw new InvalidOperationException("Jwt token was not found. Please login and retry");
+                var jwt = await GetBearerToken() ?? throw new InvalidOperationException("Jwt token was not found. Please login and retry");
                 _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
             }
 
@@ -23,13 +25,13 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
             switch (apiType)
             {
                 case ApiType.Get:
-                    response = await _http.GetAsync(endpoint);
+                    response = await _http.GetAsync($"api/{endpoint}");
                     break;
                 case ApiType.Post:
-                    response = await _http.PostAsJsonAsync(endpoint, filter);
+                    response = await _http.PostAsJsonAsync($"api/{endpoint}", filter);
                     break;
                 case ApiType.Put:
-                    response = await _http.PutAsJsonAsync(endpoint, filter);
+                    response = await _http.PutAsJsonAsync($"api/{endpoint}", filter);
                     break;
             }
 
@@ -37,7 +39,7 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
             {
                 if (((int)response.StatusCode) == 500 || ((int)response.StatusCode) == 400)
                 {
-                    var errorMessage = response.Content.ReadFromJsonAsync<ResultDto>().Result.Message;
+                    var errorMessage = (await response.Content.ReadFromJsonAsync<ResultDto>()).Message;
                     result.MessageType = MessageType.Error;
                     result.HasCompleted = false;
                     result.Message = !string.IsNullOrEmpty(errorMessage) || !string.IsNullOrWhiteSpace(errorMessage)
@@ -94,11 +96,11 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
         }
     }
 
-    public string? GetBearerToken()
+    public async Task<string?> GetBearerToken()
     {
         try
         {
-            return _localStorage.GetItemAsync(CustomClaimTypes.Token).Result.ToString();
+            return (await _localStorage.GetItemAsync(CustomClaimTypes.Token)).ToString();
         } 
         catch (Exception)
         {
