@@ -115,7 +115,14 @@
                 };
 
                 var result = await fetch.ExecuteAsync(ActivityEndpointActions.SEARCH_BY_TITLE_BASE, filter, ApiType.Post);
-                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                {
+                    _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                }
             }
         }
         catch(Exception ex)
@@ -140,16 +147,18 @@
                     Data = _model
                 };
 
-                await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, filter, ApiType.Post);
+                var result = await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, filter, ApiType.Post);
 
-                notification.Notify(new NotificationMessage()
-                    {
-                        Duration = 3000,
-                        Detail = "Item has been added",
-                        Summary = "Operation succeeded"
-                    });
+                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
 
-                dialog.Close();
+                    dialog.Close();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                }
             }
         }
         catch(Exception ex)

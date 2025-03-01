@@ -35,21 +35,21 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Icon="Search"
-                                  Click="@SearchClient">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="Search"
+                    Click="@SearchClient">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@FirmClientDto"
-                                    Data="@_clients"
-                                    AllowFiltering="true"
-                                    AllowSorting="true"
-                                    SelectionMode="DataGridSelectionMode.Single"
-                                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                    Data="@_clients"
+                    AllowFiltering="true"
+                    AllowSorting="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
                             <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
                         </Columns>
@@ -64,10 +64,10 @@
                         <RadzenTextBox @bind-Value="@Model.FirmClient.VatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Danger"
-                                  Icon="Delete"
-                                  Click="@(() => SelectClient(new()))">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Danger"
+                    Icon="Delete"
+                    Click="@(() => SelectClient(new()))">
                     </RadzenButton>
                     <ValidationMessage For="@(() => Model.FirmClient)" />
                 </RadzenRow>
@@ -111,7 +111,14 @@
                 };
 
                 var result = await fetch.ExecuteAsync(ActivityEndpointActions.SEARCH_BY_TITLE_BASE, filter, ApiType.Post);
-                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                {
+                    _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                }
             }
         }
         catch(Exception ex)
@@ -136,16 +143,18 @@
                     Data = Model
                 };
 
-                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, filter, ApiType.Put);
+                var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, filter, ApiType.Put);
 
-                notification.Notify(new NotificationMessage()
-                    {
-                        Duration = 3000,
-                        Detail = "Item has been updated",
-                        Summary = "Operation succeeded"
-                    });
+                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
 
-                dialog.Close();
+                    dialog.Close();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                }
             }
         }
         catch(Exception ex)

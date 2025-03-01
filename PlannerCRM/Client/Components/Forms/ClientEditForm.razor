@@ -38,16 +38,18 @@
         {
             if (_context.Validate())
             {
-                await fetch.ExecuteAsync(ClientEndpointActions.EDIT_BASE, new SearchFilterDto(), ApiType.Put);
+                var result = await fetch.ExecuteAsync(ClientEndpointActions.EDIT_BASE, new SearchFilterDto(), ApiType.Put);
 
-                notification.Notify(new NotificationMessage()
+                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {
-                    Duration = 3000,
-                    Detail = "Item has been updated",
-                    Summary = "Operation succeeded"
-                });
-
-                dialog.Close();
+                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
+                    
+                    dialog.Close();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                }
             }
         }
         catch(Exception ex)

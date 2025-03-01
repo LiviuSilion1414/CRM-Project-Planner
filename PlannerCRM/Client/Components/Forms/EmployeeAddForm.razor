@@ -77,15 +77,16 @@
         {
             if (context.Validate())
             {
-                await fetch.ExecuteAsync(EmployeeEndpointActions.ADD_BASE, new SearchFilterDto(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(EmployeeEndpointActions.ADD_BASE, new SearchFilterDto(), ApiType.Post);
 
-                notification.Notify(new NotificationMessage()
+                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {
-                    Severity = NotificationSeverity.Success,
-                    Duration = 3000,
-                    Detail = "Item has been added",
-                    Summary = "Operation succeeded"
-                });
+                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                }
             }
         }
         catch(Exception ex)
