@@ -5,7 +5,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(SearchFilterDto filter)
+    public async Task AddAsync(FilterDto filter)
     {
         try
         {
@@ -33,7 +33,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task EditAsync(SearchFilterDto filter)
+    public async Task EditAsync(FilterDto filter)
     {
         try
         {
@@ -55,7 +55,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task DeleteAsync(SearchFilterDto filter)
+    public async Task DeleteAsync(FilterDto filter)
     {
         try
         {
@@ -74,7 +74,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<WorkOrderDto> GetByIdAsync(SearchFilterDto filter)
+    public async Task<WorkOrderDto> GetByIdAsync(FilterDto filter)
     {
         try
         {
@@ -92,7 +92,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> GetWithPagination(SearchFilterDto filter)
+    public async Task<List<WorkOrderDto>> GetWithPagination(FilterDto filter)
     {
         try
         {
@@ -112,7 +112,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> SearchWorOrderByTitle(SearchFilterDto filter)
+    public async Task<List<WorkOrderDto>> SearchWorOrderByTitle(FilterDto filter)
     {
         try
         {
@@ -131,7 +131,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(SearchFilterDto filter)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(FilterDto filter)
     {
         try
         {
@@ -151,7 +151,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(SearchFilterDto filter)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(FilterDto filter)
     {
         try
         {

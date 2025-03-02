@@ -62,7 +62,7 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", new() { OkButtonText = "Delete" })).Value)
             {
-                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilterDto(), ApiType.Put);
+                await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new FilterDto(), ApiType.Put);
             }
         }
         catch(Exception ex)

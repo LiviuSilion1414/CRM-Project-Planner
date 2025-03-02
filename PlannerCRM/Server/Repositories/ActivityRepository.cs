@@ -5,7 +5,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(SearchFilterDto filter)
+    public async Task AddAsync(FilterDto filter)
     {
         try
         {
@@ -35,7 +35,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task EditAsync(SearchFilterDto filter)
+    public async Task EditAsync(FilterDto filter)
     {
         try
         { 
@@ -54,7 +54,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task DeleteAsync(SearchFilterDto filter)
+    public async Task DeleteAsync(FilterDto filter)
     {
         try
         {
@@ -74,7 +74,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<ActivityDto> GetByIdAsync(SearchFilterDto filter)
+    public async Task<ActivityDto> GetByIdAsync(FilterDto filter)
     {
         try
         {
@@ -91,7 +91,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> GetWithPagination(SearchFilterDto filter)
+    public async Task<List<ActivityDto>> GetWithPagination(FilterDto filter)
     {
         try
         {
@@ -111,7 +111,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> SearchActivityByTitle(SearchFilterDto filter)
+    public async Task<List<ActivityDto>> SearchActivityByTitle(FilterDto filter)
     {
         try
         {
@@ -129,7 +129,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(SearchFilterDto filter)
+    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(FilterDto filter)
     {
         try
         {
@@ -146,7 +146,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(SearchFilterDto filter)
+    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(FilterDto filter)
     {
         try
         {
@@ -163,7 +163,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(SearchFilterDto filter)
+    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(FilterDto filter)
     {
         try
         {

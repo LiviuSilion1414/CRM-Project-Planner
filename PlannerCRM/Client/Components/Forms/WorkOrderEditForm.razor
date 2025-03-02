@@ -105,7 +105,7 @@
         {
             if (!string.IsNullOrEmpty(_query))
             {
-                var filter = new SearchFilterDto()
+                var filter = new FilterDto()
                 {
                     SearchQuery = _query
                 };
@@ -138,7 +138,7 @@
         {
             if (_context.Validate())
             {
-                var filter = new SearchFilterDto()
+                var filter = new FilterDto()
                 {
                     Data = Model
                 };

@@ -5,7 +5,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(SearchFilterDto filter)
+    public async Task AddAsync(FilterDto filter)
     {
         try
         {
@@ -22,7 +22,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task EditAsync(SearchFilterDto filter)
+    public async Task EditAsync(FilterDto filter)
     {
         try
         {
@@ -41,7 +41,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task DeleteAsync(SearchFilterDto filter)
+    public async Task DeleteAsync(FilterDto filter)
     {
         try
         {
@@ -60,7 +60,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<FirmClientDto> GetByIdAsync(SearchFilterDto filter)
+    public async Task<FirmClientDto> GetByIdAsync(FilterDto filter)
     {
         try
         {
@@ -77,7 +77,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<FirmClientDto>> GetWithPagination(SearchFilterDto filter)
+    public async Task<List<FirmClientDto>> GetWithPagination(FilterDto filter)
     {
         try
         {
@@ -95,7 +95,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<FirmClientDto>> SearchClientByName(SearchFilterDto filter)
+    public async Task<List<FirmClientDto>> SearchClientByName(FilterDto filter)
     {
         try
         {
@@ -112,7 +112,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(SearchFilterDto filter)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(FilterDto filter)
     {
         try
         {

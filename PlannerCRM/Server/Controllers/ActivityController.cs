@@ -9,7 +9,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<ResultDto> Add([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Add([FromBody] FilterDto filter)
     {
         try
         {
@@ -40,7 +40,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<ResultDto> Edit([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Edit([FromBody] FilterDto filter)
     {
         try
         {
@@ -71,7 +71,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<ResultDto> Delete([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] FilterDto filter)
     {
         try
         {
@@ -102,7 +102,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ResultDto> GetById([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetById([FromBody] FilterDto filter)
     {
         try
         {
@@ -133,7 +133,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ResultDto> GetWithPagination([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetWithPagination([FromBody] FilterDto filter)
     {
         try
         {
@@ -164,7 +164,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.SEARCH_BY_TITLE_PLACEHOLDER)]
-    public async Task<ResultDto> SearchActivityByTitle([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> SearchActivityByTitle([FromBody] FilterDto filter)
     {
         try
         {
@@ -195,7 +195,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedEmployeesWithinActivity([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedEmployeesWithinActivity([FromBody] FilterDto filter)
     {
         try
         {
@@ -226,7 +226,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkOrderByActivityId([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkOrderByActivityId([FromBody] FilterDto filter)
     {
         try
         {
@@ -257,7 +257,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkTimesWithinActivity([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkTimesWithinActivity([FromBody] FilterDto filter)
     {
         try
         {

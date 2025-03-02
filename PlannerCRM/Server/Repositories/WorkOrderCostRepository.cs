@@ -5,7 +5,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(SearchFilterDto filter)
+    public async Task AddAsync(FilterDto filter)
     {
         try
         {
@@ -21,7 +21,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task EditAsync(SearchFilterDto filter)
+    public async Task EditAsync(FilterDto filter)
     {
         try
         {
@@ -40,7 +40,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task DeleteAsync(SearchFilterDto filter)
+    public async Task DeleteAsync(FilterDto filter)
     {
         try
         {
@@ -59,7 +59,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<WorkOrderCostDto> GetByIdAsync(SearchFilterDto filter)
+    public async Task<WorkOrderCostDto> GetByIdAsync(FilterDto filter)
     {
         try
         {
@@ -76,7 +76,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderCostDto>> GetWithPagination(SearchFilterDto filter)
+    public async Task<List<WorkOrderCostDto>> GetWithPagination(FilterDto filter)
     {
         try
         {

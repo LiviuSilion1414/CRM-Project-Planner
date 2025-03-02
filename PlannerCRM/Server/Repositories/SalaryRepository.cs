@@ -5,7 +5,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(SearchFilterDto filter)
+    public async Task AddAsync(FilterDto filter)
     {
         try
         {
@@ -24,7 +24,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task EditAsync(SearchFilterDto filter)
+    public async Task EditAsync(FilterDto filter)
     {
         try
         {

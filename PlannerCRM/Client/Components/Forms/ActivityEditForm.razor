@@ -118,7 +118,7 @@
         {
             if (!string.IsNullOrEmpty(_query))
             {
-                var filter = new SearchFilterDto()
+                var filter = new FilterDto()
                 {
                     SearchQuery = _query
                 };
@@ -151,7 +151,7 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new SearchFilterDto(), ApiType.Put);
+                var result = await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new FilterDto(), ApiType.Put);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

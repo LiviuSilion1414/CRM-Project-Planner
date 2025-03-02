@@ -9,7 +9,7 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
 
     public bool IsBusy { get; set; }
 
-    public async Task<ResultDto> ExecuteAsync(string endpoint, SearchFilterDto filter, ApiType apiType)
+    public async Task<ResultDto> ExecuteAsync(string endpoint, FilterDto filter, ApiType apiType)
     {
         try
         {

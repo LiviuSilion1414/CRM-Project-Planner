@@ -9,7 +9,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(SearchFilterDto filter)
+    public async Task AddAsync(FilterDto filter)
     {
         try
         {
@@ -62,7 +62,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    //public async Task AssignRole(SearchFilterDto filter)
+    //public async Task AssignRole(FilterDto filter)
     //{
     //    try
     //    {
@@ -106,7 +106,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     //    }
     //}
 
-    public async Task EditAsync(SearchFilterDto filter)
+    public async Task EditAsync(FilterDto filter)
     {
         try
         {
@@ -125,7 +125,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task DeleteAsync(SearchFilterDto filter)
+    public async Task DeleteAsync(FilterDto filter)
     {
         try
         {
@@ -146,7 +146,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<EmployeeDto> GetByIdAsync(SearchFilterDto filter)
+    public async Task<EmployeeDto> GetByIdAsync(FilterDto filter)
     {
         try
         {
@@ -165,7 +165,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<EmployeeDto>> GetWithPagination(SearchFilterDto filter)
+    public async Task<List<EmployeeDto>> GetWithPagination(FilterDto filter)
     {
         try
         {
@@ -186,7 +186,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<EmployeeDto>> SearchEmployeeByName(SearchFilterDto filter)
+    public async Task<List<EmployeeDto>> SearchEmployeeByName(FilterDto filter)
     {
         try
         {
@@ -209,7 +209,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(SearchFilterDto filter)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(FilterDto filter)
     {
         try
         {
@@ -228,7 +228,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(SearchFilterDto filter)
+    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesByActivityIdAndEmployeeId(FilterDto filter)
     {
         try
         {
@@ -248,7 +248,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(SearchFilterDto filter)
+    public async Task<List<SalaryDto>> FindAssociatedSalaryDataByEmployeeId(FilterDto filter)
     {
         try
         {

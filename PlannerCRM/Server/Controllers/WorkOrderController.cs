@@ -9,7 +9,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<ResultDto> Add([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Add([FromBody] FilterDto filter)
     {
         try
         {
@@ -40,7 +40,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<ResultDto> Edit([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Edit([FromBody] FilterDto filter)
     {
         try
         {
@@ -71,7 +71,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<ResultDto> Delete([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] FilterDto filter)
     {
         try
         {
@@ -102,7 +102,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ResultDto> GetById([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetById([FromBody] FilterDto filter)
     {
         try
         {
@@ -133,7 +133,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ResultDto> GetWithPagination([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> GetWithPagination([FromBody] FilterDto filter)
     {
 
         try
@@ -166,7 +166,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.SEARCH_WORKORDER_BY_TITLE_PLACEHOLDER)]
-    public async Task<ResultDto> SearchWorOrderByTitle([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> SearchWorOrderByTitle([FromBody] FilterDto filter)
     {
         try
         {
@@ -197,7 +197,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedActivitiesByWorkOrderId([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedActivitiesByWorkOrderId([FromBody] FilterDto filter)
     {
         try
         {
@@ -228,7 +228,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] SearchFilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] FilterDto filter)
     {
         try
         {
