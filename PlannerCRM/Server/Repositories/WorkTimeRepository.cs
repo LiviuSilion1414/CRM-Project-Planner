@@ -42,7 +42,7 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
                 .Include(w => w.Activity)
                 .Include(w => w.WorkOrder)
                 .ThenInclude(w => w.FirmClient)
-                .SingleAsync(w => w.Guid == filter.Guid);
+                .SingleAsync(w => w.Guid == filter.Id);
             _context.Remove(client);
             await _context.SaveChangesAsync();
         } 
@@ -60,7 +60,7 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
                 .Include(w => w.Activity)
                 .Include(w => w.WorkOrder)
                 .ThenInclude(w => w.FirmClient)
-                .SingleAsync(w => w.Guid == filter.Guid);
+                .SingleAsync(w => w.Guid == filter.Id);
             return _mapper.Map<WorkTimeDto>(client);
         } 
         catch (Exception ex)
@@ -75,8 +75,6 @@ public class WorkTimeRepository(AppDbContext context, IMapper mapper)
         {
             var clients = await _context.WorkTimes
                 .OrderBy(w => w.Guid)
-                .Skip(filter.Offset)
-                .Take(filter.Limit)
                 .Include(w => w.Activity)
                 .Include(w => w.WorkOrder)
                 .ThenInclude(w => w.FirmClient)

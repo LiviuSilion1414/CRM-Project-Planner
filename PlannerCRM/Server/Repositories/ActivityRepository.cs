@@ -61,7 +61,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             var activity = await _context.Activities
                 .Include(a => a.EmployeeActivities)
                 .Include(a => a.ActivityWorkTimes)
-                .SingleAsync(a => a.Guid == filter.Guid);
+                .SingleAsync(a => a.Guid == filter.Id);
 
             _context.Remove(activity);
 
@@ -81,7 +81,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             var activity = await _context.Activities
                 .Include(a => a.EmployeeActivities)
                 .Include(a => a.ActivityWorkTimes)
-                .SingleAsync(a => a.Guid == filter.Guid);
+                .SingleAsync(a => a.Guid == filter.Id);
 
             return _mapper.Map<ActivityDto>(activity);
         } 
@@ -97,8 +97,6 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         {
             var activities = await _context.Activities
                                            .OrderBy(a => a.Guid)
-                                           .Skip(filter.Offset)
-                                           .Take(filter.Limit)
                                            .Include(a => a.EmployeeActivities)
                                            .Include(a => a.ActivityWorkTimes)
                                            .Include(a => a.WorkOrder)
@@ -137,7 +135,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         {
             var foundEmployees = await _context.Employees
                                                .Include(em => em.Activities)
-                                               .Where(em => em.Activities.Any(ac => ac.Guid == filter.Guid))
+                                               .Where(em => em.Activities.Any(ac => ac.Guid == filter.Id))
                                                .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployees);
@@ -155,7 +153,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             var foundWorkOrder = await _context.WorkOrders
                                                .Include(wo => wo.Activities)
                                                .Include(wo => wo.FirmClient)
-                                               .SingleAsync(em => em.Activities.Any(ac => ac.Guid == filter.Guid));
+                                               .SingleAsync(em => em.Activities.Any(ac => ac.Guid == filter.Id));
 
             return _mapper.Map<WorkOrderDto>(foundWorkOrder);
         } 
@@ -174,7 +172,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
                 .Include(wt => wt.Employee)
                 .Include(wt => wt.WorkOrder)
                 .ThenInclude(wo => wo.FirmClient)
-                .Where(wt => wt.Activity.Guid == filter.Guid)
+                .Where(wt => wt.Activity.Guid == filter.Id)
                 .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(foundWorkTimes);

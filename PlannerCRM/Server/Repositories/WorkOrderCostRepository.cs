@@ -47,7 +47,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
                                        .Include(c => c.WorkOrderCosts)
-                                       .SingleAsync(c => c.Guid == filter.Guid);
+                                       .SingleAsync(c => c.Guid == filter.Id);
 
             _context.Remove(client);
 
@@ -66,7 +66,7 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
                                        .Include(c => c.WorkOrderCosts)
-                                       .SingleAsync(c => c.Guid == filter.Guid);
+                                       .SingleAsync(c => c.Guid == filter.Id);
 
             return _mapper.Map<WorkOrderCostDto>(client);
         } 
@@ -82,8 +82,6 @@ public class WorkOrderCostRepository(AppDbContext context, IMapper mapper)
         {
             var clients = await _context.Clients
                                         .OrderBy(c => c.Guid)
-                                        .Skip(filter.Offset)
-                                        .Take(filter.Limit)
                                         .Include(c => c.WorkOrders)
                                         .Include(c => c.WorkOrderCosts)
                                         .ToListAsync();

@@ -42,13 +42,8 @@ else
         try
         {
             fetch.IsBusy = true;
-            var filter = new SearchFilterDto()
-                {
-                    Limit = 100,
-                    Offset = 0
-                };
 
-            var result = await fetch.ExecuteAsync(ClientEndpointActions.GET_WITH_PAGINATION_BASE, filter, ApiType.Post);
+            var result = await fetch.ExecuteAsync(ClientEndpointActions.GET_WITH_PAGINATION_BASE, new(), ApiType.Post);
             if (result.Data is not null)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
@@ -66,15 +61,10 @@ else
         try
         {
             fetch.IsBusy = true;
-            var filter = new SearchFilterDto()
-                {
-                    Limit = 10000,
-                    Offset = 0
-                };
 
             foreach (var cl in _clients)
             {
-                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GET_WITH_PAGINATION_BASE, filter, ApiType.Post);
+                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GET_WITH_PAGINATION_BASE, new(), ApiType.Post);
                 cl.WorkOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
             }
 

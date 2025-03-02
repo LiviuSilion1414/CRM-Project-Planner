@@ -44,7 +44,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    //public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeeId(Guid employeeId)
+    //public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeeId(Id employeeId)
     //{
     //    var foundSalaries = await _context.Salaries
     //        .Include(s => s.EmployeeSalaries)
@@ -54,7 +54,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
     //    return _mapper.Map<List<SalaryDto>>(foundSalaries);
     //}
 
-    //public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeesIds(params Guid[] employeesId)
+    //public async Task<List<SalaryDto>> FindAssociatedSalariesByEmployeesIds(params Id[] employeesId)
     //{
     //    var foundSalaries = await _context.Salaries
     //        .Include(s => s.EmployeeSalaries)
@@ -65,7 +65,7 @@ public class SalaryRepository(AppDbContext context, IMapper mapper)
     //    return _mapper.Map<List<SalaryDto>>(foundSalaries);
     //}
 
-    //public async Task<SalaryDto> FindLatestSalaryAssignedByEmployeeId(Guid employeeId)
+    //public async Task<SalaryDto> FindLatestSalaryAssignedByEmployeeId(Id employeeId)
     //{
     //    var foundSalaries = await _context.Salaries
     //        .Include(s => s.EmployeeSalaries)

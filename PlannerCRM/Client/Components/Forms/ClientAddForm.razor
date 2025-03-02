@@ -39,7 +39,12 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ClientEndpointActions.ADD_BASE, new SearchFilterDto(), ApiType.Post);
+                var filter = new SearchFilterDto()
+                {
+                    Data = _model
+                };
+
+                var result = await fetch.ExecuteAsync(ClientEndpointActions.ADD_BASE, filter, ApiType.Post);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

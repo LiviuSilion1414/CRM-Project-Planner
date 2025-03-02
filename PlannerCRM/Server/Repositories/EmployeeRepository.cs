@@ -62,49 +62,49 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task AssignRole(SearchFilterDto filter)
-    {
-        try
-        {
-            if (!(await _context.Roles.Where(x => filter.Roles.Any(y => x.RoleName.Contains(y))).AnyAsync()))
-            {
-                foreach (var role in filter.Roles)
-                {
-                    await _context.Roles.AddAsync(new Role { RoleName = role });
-                }
+    //public async Task AssignRole(SearchFilterDto filter)
+    //{
+    //    try
+    //    {
+    //        if (!(await _context.Roles.Where(x => filter.Roles.Any(y => x.RoleName.Contains(y))).AnyAsync()))
+    //        {
+    //            foreach (var role in filter.Roles)
+    //            {
+    //                await _context.Roles.AddAsync(new Role { RoleName = role });
+    //            }
 
-                await _context.SaveChangesAsync();
-            }
+    //            await _context.SaveChangesAsync();
+    //        }
 
-            var roles = new List<Role>();
+    //        var roles = new List<Role>();
 
-            foreach (var role in filter.Roles)
-            {
-                await _context.Roles
-                              .Include(x => x.EmployeeRoles)
-                              .Where(x => x.RoleName == role)
-                              .ToListAsync();
-            }
+    //        foreach (var role in filter.Roles)
+    //        {
+    //            await _context.Roles
+    //                          .Include(x => x.EmployeeRoles)
+    //                          .Where(x => x.RoleName == role)
+    //                          .ToListAsync();
+    //        }
 
-            foreach (var role in roles)
-            {
-                await _context.EmployeeRoles.AddAsync(
-                    new EmployeeRole
-                    {
-                        RoleName = role.RoleName,
-                        RoleId = role.Guid,
-                        EmployeeId = roles.First().EmployeeRoles.First().EmployeeId
-                    }
-                );
-            }
+    //        foreach (var role in roles)
+    //        {
+    //            await _context.EmployeeRoles.AddAsync(
+    //                new EmployeeRole
+    //                {
+    //                    RoleName = role.RoleName,
+    //                    RoleId = role.Guid,
+    //                    EmployeeId = roles.First().EmployeeRoles.First().EmployeeId
+    //                }
+    //            );
+    //        }
 
-            await _context.SaveChangesAsync();
-        } 
-        catch
-        {
-            throw;
-        }
-    }
+    //        await _context.SaveChangesAsync();
+    //    } 
+    //    catch
+    //    {
+    //        throw;
+    //    }
+    //}
 
     public async Task EditAsync(SearchFilterDto filter)
     {
@@ -134,7 +134,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                                          .Include(e => e.WorkTimes)
                                          .Include(e => e.Salaries)
                                          .Include(e => e.EmployeeRoles)
-                                         .SingleAsync(e => e.Guid == filter.Guid);
+                                         .SingleAsync(e => e.Guid == filter.Id);
 
             _context.Remove(employee);
 
@@ -155,7 +155,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                                          .Include(e => e.WorkTimes)
                                          .Include(e => e.Salaries)
                                          .Include(e => e.EmployeeRoles)
-                                         .SingleAsync(e => e.Guid == filter.Guid);
+                                         .SingleAsync(e => e.Guid == filter.Id);
 
             return _mapper.Map<EmployeeDto>(employee);
         } 
@@ -171,8 +171,6 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         {
             var employees = await _context.Employees
                                           .OrderBy(e => e.Guid)
-                                          .Skip(filter.Offset)
-                                          .Take(filter.Limit)
                                           .Include(e => e.EmployeeRoles)
                                           .Include(e => e.Activities)
                                           .Include(e => e.WorkTimes)
@@ -219,7 +217,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                                                 .Include(ac => ac.EmployeeActivities)
                                                 .Include(ac => ac.ActivityWorkTimes)
                                                 .Include(ac => ac.Employees)
-                                                .Where(ac => ac.Employees.Any(em => em.Guid == filter.Guid))
+                                                .Where(ac => ac.Employees.Any(em => em.Guid == filter.Id))
                                                 .ToListAsync();
 
             return _mapper.Map<List<ActivityDto>>(foundActivities);
@@ -239,7 +237,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                                                .Include(wt => wt.Activity)
                                                .Include(wt => wt.ActivityWorkTimes)
                                                .Include(wt => wt.Employee)
-                                               .Where(wt => wt.EmployeeId == filter.Guid && wt.ActivityId ==  filter.Guid2)
+                                               .Where(wt => wt.EmployeeId == filter.Id && wt.ActivityId ==  filter.Guid2) //employeeid and worktimeid
                                                .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(foundWorkTimes);
@@ -257,7 +255,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             var foundSalaries = await _context.Salaries
                                               .Include(em => em.EmployeeSalaries)
                                               .Include(em => em.Employee)
-                                              .Where(sl => sl.EmployeeId == filter.Guid)
+                                              .Where(sl => sl.EmployeeId == filter.Id)
                                               .ToListAsync();
 
             return _mapper.Map<List<SalaryDto>>(foundSalaries);

@@ -48,7 +48,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
                                        .Include(c => c.WorkOrderCosts)
-                                       .SingleAsync(c => c.Guid == filter.Guid);
+                                       .SingleAsync(c => c.Guid == filter.Id);
 
             _context.Remove(client);
 
@@ -67,7 +67,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
                                        .Include(c => c.WorkOrderCosts)
-                                       .SingleAsync(c => c.Guid == filter.Guid);
+                                       .SingleAsync(c => c.Guid == filter.Id);
 
             return _mapper.Map<FirmClientDto>(client);
         } 
@@ -83,8 +83,6 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         {
             var clients = await _context.Clients
                                         .OrderBy(c => c.Guid)
-                                        .Skip(filter.Offset)
-                                        .Take(filter.Limit)
                                         .Include(c => c.WorkOrders)
                                         .Include(c => c.WorkOrderCosts)
                                         .ToListAsync();
@@ -122,7 +120,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
                                                 .Include(wo => wo.FirmClient)
                                                 .Include(wo => wo.Activities)
                                                 .Include(wo => wo.WorkOrderCost)
-                                                .Where(wo => wo.FirmClientId == filter.Guid)
+                                                .Where(wo => wo.FirmClientId == filter.Id)
                                                 .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(foundWorkOrders);
