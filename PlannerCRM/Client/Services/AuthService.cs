@@ -45,7 +45,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                 Guid = result.Guid
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }
@@ -67,7 +67,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                 Guid = null
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }
@@ -92,7 +92,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
 
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Bearer", CustomClaimTypes.Name, CustomClaimTypes.Role)));
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }

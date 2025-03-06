@@ -2,7 +2,7 @@
 
 public class Activity
 {
-    public Guid Guid { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public DateTime CreationDate { get; set; }
     public DateTime StartDate { get; set; }
@@ -13,5 +13,4 @@ public class Activity
     public WorkOrder WorkOrder { get; set; }
     public List<Employee> Employees { get; set; }
     public List<EmployeeActivity> EmployeeActivities { get; set; }
-    public List<ActivityWorkTime> ActivityWorkTimes { get; set; }
 }

@@ -4,7 +4,7 @@ namespace PlannerCRM.Server.Models.JoinEntities;
 
 public class ClientWorkOrder
 {
-    public Guid Guid { get; set; }
+    public Guid Id { get; set; }
     public Guid FirmClientId { get; set; }
     public Guid WorkOrderId { get; set; }
 

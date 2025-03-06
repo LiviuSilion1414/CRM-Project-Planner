@@ -2,7 +2,7 @@
 
 public class EmployeeActivity
 {
-    public Guid Guid { get; set; }
+    public Guid Id { get; set; }
     public Guid EmployeeId { get; set; }
     public Guid ActivityId { get; set; }
 

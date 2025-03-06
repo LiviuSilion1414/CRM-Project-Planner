@@ -4,7 +4,7 @@ namespace PlannerCRM.Server.Models.Entities;
 
 public class Role
 {
-    public Guid Guid { get; set; }
+    public Guid Id { get; set; }
     public string RoleName { get; set; }
 
     // Navigation properties

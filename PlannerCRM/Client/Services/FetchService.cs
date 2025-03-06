@@ -90,7 +90,7 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
             result.Message = "Something went wrong, please retry!";
             return result;
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }

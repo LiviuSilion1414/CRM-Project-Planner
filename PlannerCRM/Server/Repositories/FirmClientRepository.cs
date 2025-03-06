@@ -5,11 +5,11 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(FilterDto filter)
+    public async Task Insert(FirmClientDto dto)
     {
         try
         {
-            var model = _mapper.Map<FirmClient>((FirmClientDto)filter.Data);
+            var model = _mapper.Map<FirmClient>(dto);
 
             await _context.Clients.AddAsync(model);
 
@@ -22,13 +22,13 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task EditAsync(FilterDto filter)
+    public async Task Update(FirmClientDto dto)
     {
         try
         {
-            var model = _mapper.Map<FirmClient>((FirmClientDto)filter.Data);
+            var model = _mapper.Map<FirmClient>(dto);
 
-            var existingModel = await _context.Clients.SingleAsync(cl => cl.Guid == model.Guid);
+            var existingModel = await _context.Clients.SingleAsync(cl => cl.Id == model.Id);
             existingModel = model;
 
             _context.Update(existingModel);
@@ -41,14 +41,13 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task DeleteAsync(FilterDto filter)
+    public async Task Delete(FirmClientFilterDto filter)
     {
         try
         {
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
-                                       .Include(c => c.WorkOrderCosts)
-                                       .SingleAsync(c => c.Guid == filter.Id);
+                                       .SingleAsync(c => c.Id == filter.FirmClientId);
 
             _context.Remove(client);
 
@@ -60,14 +59,13 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<FirmClientDto> GetByIdAsync(FilterDto filter)
+    public async Task<FirmClientDto> Get(FirmClientFilterDto filter)
     {
         try
         {
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
-                                       .Include(c => c.WorkOrderCosts)
-                                       .SingleAsync(c => c.Guid == filter.Id);
+                                       .SingleAsync(c => c.Id == filter.FirmClientId);
 
             return _mapper.Map<FirmClientDto>(client);
         } 
@@ -77,14 +75,13 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<FirmClientDto>> GetWithPagination(FilterDto filter)
+    public async Task<List<FirmClientDto>> List(FirmClientFilterDto filter)
     {
         try
         {
             var clients = await _context.Clients
-                                        .OrderBy(c => c.Guid)
+                                        .OrderBy(c => c.Id)
                                         .Include(c => c.WorkOrders)
-                                        .Include(c => c.WorkOrderCosts)
                                         .ToListAsync();
 
             return _mapper.Map<List<FirmClientDto>>(clients);
@@ -95,7 +92,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<FirmClientDto>> SearchClientByName(FilterDto filter)
+    public async Task<List<FirmClientDto>> Search(FirmClientFilterDto filter)
     {
         try
         {
@@ -112,15 +109,14 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(FilterDto filter)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(FirmClientFilterDto filter)
     {
         try
         {
             var foundWorkOrders = await _context.WorkOrders
                                                 .Include(wo => wo.FirmClient)
                                                 .Include(wo => wo.Activities)
-                                                .Include(wo => wo.WorkOrderCost)
-                                                .Where(wo => wo.FirmClientId == filter.Id)
+                                                .Where(wo => wo.FirmClientId == filter.FirmClientId)
                                                 .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(foundWorkOrders);

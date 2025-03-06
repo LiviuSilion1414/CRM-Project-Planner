@@ -28,7 +28,5 @@ public class EmployeeEndpointActions
     public const string SEARCH_EMPLOYEE_BY_NAME_PLACEHOLDER = "searchEmployeeByName";
     public const string SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_PLACEHOLDER = "searchEmployeeByNameForRecovery";
     public const string FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_PLACEHOLDER = "findAssociatedActivitiesByEmployeeId";
-    public const string FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_PLACEHOLDER = "findAssociatedWorkTimesByActivityIdAndEmployeeId";
-    public const string FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_PLACEHOLDER = "findAssociatedSalaryDataByEmployeeId";
     #endregion
 }

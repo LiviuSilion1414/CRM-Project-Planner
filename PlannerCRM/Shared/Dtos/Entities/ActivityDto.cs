@@ -26,10 +26,11 @@ public class ActivityDto
     
     [Required]
     public WorkOrderDto WorkOrder { get; set; }
+}
 
-    // Navigation properties
-
-    //public List<EmployeeDto> Employees { get; set; }
-    //public List<EmployeeActivityDto> EmployeeActivities { get; set; }
-    //public List<ActivityWorkTimeDto> ActivityWorkTimes { get; set; }
+public class ActivityFilterDto : FilterDto 
+{
+    public Guid ActivityId { get; set; }
+    public Guid WorkOrderId { get; set; }
+    public Guid ClientId { get; set; }
 }

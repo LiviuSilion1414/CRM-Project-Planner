@@ -2,7 +2,7 @@
 
 public class EmployeeRole
 {
-    public Guid Guid { get; set; }
+    public Guid Id { get; set; }
     public string RoleName { get; set; }
 
     public Guid EmployeeId { get; set; }

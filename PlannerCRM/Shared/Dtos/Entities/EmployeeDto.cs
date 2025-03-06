@@ -1,6 +1,4 @@
-﻿using PlannerCRM.Shared.Dtos.JoinEntities;
-
-namespace PlannerCRM.Shared.Dtos.Entities;
+﻿namespace PlannerCRM.Shared.Dtos.Entities;
 
 public class EmployeeDto
 {
@@ -21,13 +19,12 @@ public class EmployeeDto
     [Required]
     [PasswordValidator]
     public string Password { get; set; }
+}
 
-    // Navigation properties
-    //public List<WorkTimeDto> WorkTimes { get; set; }
-    //public List<ActivityDto> Activities { get; set; }
-    //public List<RoleDto> Roles { get; set; }
-    //public List<SalaryDto> Salaries { get; set; }
-    public List<EmployeeRoleDto> EmployeeRoles { get; set; }
-    //public List<EmployeeSalaryDto> EmployeeSalaries { get; set; }
-    //public List<EmployeeActivityDto> EmployeeActivities { get; set; }
+public class EmployeeFilterDto : FilterDto
+{
+    public Guid EmployeeId { get; set; }
+    public Guid ActivityId { get; set; }
+    public Guid WorkTimeId { get; set; }
+    public Guid SalaryId { get; set; }
 }

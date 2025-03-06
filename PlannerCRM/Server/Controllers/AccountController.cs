@@ -36,7 +36,6 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
 
         if (foundEmployee is not null)
         {
-            var model = _mapper.Map<EmployeeLogin>(dto);
             byte[] salt = new byte[128 / 8];
             string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.Password,
                                                                             salt: salt,
@@ -60,7 +59,7 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
                 {
                     new Claim(CustomClaimTypes.Name, foundEmployee.Name),
                     new Claim(CustomClaimTypes.Email, foundEmployee.Email),
-                    new Claim(CustomClaimTypes.Guid, foundEmployee.Guid.ToString()),
+                    new Claim(CustomClaimTypes.Guid, foundEmployee.Id.ToString()),
                     new Claim(CustomClaimTypes.IsAuthenticated, true.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(30),
@@ -84,7 +83,7 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
                 new ResultDto 
                 {
                     Data = tokenAsString,
-                    Guid = foundEmployee.Guid,
+                    Guid = foundEmployee.Id,
                     HasCompleted = true,
                     Message = "Logged in",
                     MessageType = MessageType.Success,

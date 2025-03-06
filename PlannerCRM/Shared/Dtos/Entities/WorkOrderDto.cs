@@ -22,8 +22,6 @@ public class WorkOrderDto
     public DateTime EndDate { get; set; } = DateTime.Now;
     public string EndDateString { get => string.Format("{0:dd/MM/yyyy}", EndDate); }
 
-
-    // Navigation properties
     [Required]
     public Guid FirmClientId { get; set; }
     
@@ -31,6 +29,11 @@ public class WorkOrderDto
    
     [Required]
     public FirmClientDto FirmClient { get; set; }
-    //public WorkOrderCostDto WorkOrderCost { get; set; }
     public List<ActivityDto> Activities { get; set; }
+}
+
+public class WorkOrderFilterDto : FilterDto
+{
+    public Guid WorkOrderId { get; set; }
+    public Guid FirmClientId { get; set; }
 }

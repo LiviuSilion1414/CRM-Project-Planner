@@ -18,7 +18,7 @@ public class LocalStorageService(IJSRuntime js)
 
             return JsonSerializer.Deserialize<object?>(result.ToString());
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }
@@ -30,7 +30,7 @@ public class LocalStorageService(IJSRuntime js)
         {
             await _js.InvokeVoidAsync("localStorage.setItem", key, JsonSerializer.Serialize(value));
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }
@@ -42,7 +42,7 @@ public class LocalStorageService(IJSRuntime js)
         {
             await _js.InvokeVoidAsync("localStorage.removeItem", key);
         }
-        catch (Exception ex) 
+        catch  
         {
             throw;
         }
@@ -54,7 +54,7 @@ public class LocalStorageService(IJSRuntime js)
         {
             await _js.InvokeVoidAsync("localStorage.clear");
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }

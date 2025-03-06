@@ -9,11 +9,11 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<ResultDto> Add([FromBody] FilterDto filter)
+    public async Task<ResultDto> Insert(FirmClientDto dto)
     {
         try
         {
-            await _repo.AddAsync(filter);
+            await _repo.Insert(dto);
             return new ResultDto()
             {
                 Guid = null,
@@ -24,7 +24,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -40,11 +40,11 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<ResultDto> Edit([FromBody] FilterDto filter)
+    public async Task<ResultDto> Update(FirmClientDto dto)
     {
         try
         {
-            await _repo.EditAsync(filter);
+            await _repo.Update(dto);
             return new ResultDto()
             {
                 Guid = null,
@@ -55,7 +55,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -71,11 +71,11 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<ResultDto> Delete([FromBody] FilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] FirmClientFilterDto filter)
     {
         try
         {
-            await _repo.DeleteAsync(filter);
+            await _repo.Delete(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -86,7 +86,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -102,11 +102,11 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ResultDto> GetById([FromBody] FilterDto filter)
+    public async Task<ResultDto> Get([FromBody] FirmClientFilterDto filter)
     {
         try
         {
-            var client = await _repo.GetByIdAsync(filter);
+            var client = await _repo.Get(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -117,7 +117,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -133,11 +133,11 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ResultDto> GetWithPagination([FromBody] FilterDto filter)
+    public async Task<ResultDto> List([FromBody] FirmClientFilterDto filter)
     {
         try
         {
-            var entities = await _repo.GetWithPagination(filter);
+            var entities = await _repo.List(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -148,7 +148,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -164,11 +164,11 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(ClientEndpointActions.SEARCH_CLIENT_BY_NAME_PLACEHOLDER)]
-    public async Task<ResultDto> SearchClientByName([FromBody] FilterDto filter)
+    public async Task<ResultDto> SearchClientByName([FromBody] FirmClientFilterDto filter)
     {
         try
         {
-            var client = await _repo.SearchClientByName(filter);
+            var client = await _repo.Search(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -179,7 +179,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -195,7 +195,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(ClientEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] FilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] FirmClientFilterDto filter)
     {
         try
         {
@@ -210,7 +210,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {

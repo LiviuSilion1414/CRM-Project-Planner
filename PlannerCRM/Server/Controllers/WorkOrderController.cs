@@ -9,11 +9,11 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<ResultDto> Add([FromBody] FilterDto filter)
+    public async Task<ResultDto> Insert(WorkOrderDto dto)
     {
         try
         {
-            await _repo.AddAsync(filter);
+            await _repo.Insert(dto);
             return new ResultDto()
             {
                 Guid = null,
@@ -24,7 +24,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         }
-        catch (Exception ex) 
+        catch  
         {
             return new ResultDto()
             {
@@ -40,11 +40,11 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<ResultDto> Edit([FromBody] FilterDto filter)
+    public async Task<ResultDto> Update(WorkOrderDto dto)
     {
         try
         {
-            await _repo.EditAsync(filter);
+            await _repo.Update(dto);
             return new ResultDto() 
             { 
                 Guid = null, 
@@ -55,7 +55,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK 
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -71,11 +71,11 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<ResultDto> Delete([FromBody] FilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] WorkOrderFilterDto filter)
     {
         try
         {
-            await _repo.DeleteAsync(filter);
+            await _repo.Delete(filter);
             return new ResultDto() 
             { 
                 Guid = null, 
@@ -86,7 +86,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK 
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -102,11 +102,11 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ResultDto> GetById([FromBody] FilterDto filter)
+    public async Task<ResultDto> Get([FromBody] WorkOrderFilterDto filter)
     {
         try
         {
-            var workOrder = await _repo.GetByIdAsync(filter);
+            var workOrder = await _repo.Get(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -117,7 +117,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -133,12 +133,12 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ResultDto> GetWithPagination([FromBody] FilterDto filter)
+    public async Task<ResultDto> List([FromBody] WorkOrderFilterDto filter)
     {
 
         try
         {
-            var entities = await _repo.GetWithPagination(filter);
+            var entities = await _repo.List(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -150,7 +150,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
             };
 
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -166,11 +166,11 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.SEARCH_WORKORDER_BY_TITLE_PLACEHOLDER)]
-    public async Task<ResultDto> SearchWorOrderByTitle([FromBody] FilterDto filter)
+    public async Task<ResultDto> Search([FromBody] WorkOrderFilterDto filter)
     {
         try
         {
-            var workOrder = await _repo.SearchWorOrderByTitle(filter);
+            var workOrder = await _repo.Search(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -181,7 +181,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         }
-        catch(Exception ex) 
+        catch 
         {
             return new ResultDto()
             {
@@ -197,7 +197,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedActivitiesByWorkOrderId([FromBody] FilterDto filter)
+    public async Task<ResultDto> FindAssociatedActivitiesByWorkOrderId([FromBody] WorkOrderFilterDto filter)
     {
         try
         {
@@ -212,7 +212,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         }
-        catch(Exception ex) 
+        catch 
         {
             return new ResultDto()
             {
@@ -228,7 +228,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpGet]
     [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] FilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] WorkOrderFilterDto filter)
     {
         try
         {
@@ -243,7 +243,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {

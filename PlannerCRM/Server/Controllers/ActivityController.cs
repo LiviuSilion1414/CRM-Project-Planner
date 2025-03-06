@@ -9,11 +9,11 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<ResultDto> Add([FromBody] FilterDto filter)
+    public async Task<ResultDto> Insert(ActivityDto dto)
     {
         try
         {
-            await _repo.AddAsync(filter);
+            await _repo.Insert(dto);
             return new ResultDto() 
             { 
                 Guid = null, 
@@ -24,7 +24,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK 
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -40,11 +40,11 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<ResultDto> Edit([FromBody] FilterDto filter)
+    public async Task<ResultDto> Update(ActivityDto dto)
     {
         try
         {
-            await _repo.EditAsync(filter);
+            await _repo.Update(dto);
             return new ResultDto()
             {
                 Guid = null,
@@ -55,7 +55,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -71,11 +71,11 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<ResultDto> Delete([FromBody] FilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] ActivityFilterDto filter)
     {
         try
         {
-            await _repo.DeleteAsync(filter);
+            await _repo.Delete(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -86,7 +86,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -102,11 +102,11 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ResultDto> GetById([FromBody] FilterDto filter)
+    public async Task<ResultDto> GetById([FromBody] ActivityFilterDto filter)
     {
         try
         {
-            var activity = await _repo.GetByIdAsync(filter);
+            var activity = await _repo.Get(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -117,7 +117,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -133,11 +133,11 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ResultDto> GetWithPagination([FromBody] FilterDto filter)
+    public async Task<ResultDto> List([FromBody] ActivityFilterDto filter)
     {
         try
         {
-            var entities = await _repo.GetWithPagination(filter);
+            var entities = await _repo.List(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -148,7 +148,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -164,11 +164,11 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.SEARCH_BY_TITLE_PLACEHOLDER)]
-    public async Task<ResultDto> SearchActivityByTitle([FromBody] FilterDto filter)
+    public async Task<ResultDto> SearchActivityByTitle([FromBody] ActivityFilterDto filter)
     {
         try
         {
-            var activities = await _repo.SearchActivityByTitle(filter);
+            var activities = await _repo.Search(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -179,7 +179,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -195,7 +195,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedEmployeesWithinActivity([FromBody] FilterDto filter)
+    public async Task<ResultDto> FindAssociatedEmployeesWithinActivity([FromBody] ActivityFilterDto filter)
     {
         try
         {
@@ -210,7 +210,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -226,7 +226,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
 
     [HttpGet]
     [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkOrderByActivityId([FromBody] FilterDto filter)
+    public async Task<ResultDto> FindAssociatedWorkOrderByActivityId([FromBody] ActivityFilterDto filter)
     {
         try
         {
@@ -241,38 +241,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
-        {
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
-            };
-        }
-    }
-
-    [HttpGet]
-    [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkTimesWithinActivity([FromBody] FilterDto filter)
-    {
-        try
-        {
-            var workTimes = await _repo.FindAssociatedWorkTimesWithinActivity(filter);
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = workTimes,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
-            };
-        } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {

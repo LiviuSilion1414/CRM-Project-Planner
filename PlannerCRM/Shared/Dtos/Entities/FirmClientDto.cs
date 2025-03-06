@@ -13,7 +13,11 @@ public class FirmClientDto
     [Required]
     public string VatNumber { get; set; }
     public List<WorkOrderDto> WorkOrders { get; set; }
+}
 
-    // Navigation properties
-    //public List<WorkOrderCostDto> WorkOrderCosts { get; set; }
+public class FirmClientFilterDto : FilterDto
+{
+    public Guid FirmClientId { get; set; }
+    public Guid WorkOrderId { get; set; }
+    public Guid WorkOrderCostId { get; set; }
 }

@@ -58,7 +58,7 @@
                 await fetch.ExecuteAsync(ActivityEndpointActions.EDIT_BASE, new FilterDto(), ApiType.Put);
             }
         }
-        catch(Exception ex)
+        catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

@@ -1,15 +1,12 @@
-global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.EntityFrameworkCore;
-global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Mvc;
 global using System.Net;
 
 global using AutoMapper;
 
 global using PlannerCRM.Shared.Dtos.Entities;
-global using PlannerCRM.Shared.Dtos.JoinEntities;
 global using PlannerCRM.Shared.Dtos.Common;
 global using PlannerCRM.Shared.Models;
 global using PlannerCRM.Shared.ApiHelpers.Placeholders;

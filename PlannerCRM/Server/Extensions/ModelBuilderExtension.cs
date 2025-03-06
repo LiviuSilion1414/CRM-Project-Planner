@@ -35,159 +35,91 @@ public static class ModelBuilderExtensions
     {
         ConfigurePrimaryKeys(modelBuilder);
         ConfigureFirmClientWorkOrders(modelBuilder);
-        ConfigureWorkOrderCost(modelBuilder);
-        ConfigureFirmClientWorkOrderCosts(modelBuilder);
         ConfigureWorkOrderActivities(modelBuilder);
-        ConfigureEmployeeWorkTimes(modelBuilder);
-        ConfigureActivitiesWorkTime(modelBuilder);
         ConfigureEmployeeActivities(modelBuilder);
         ConfigureEmployeesRoles(modelBuilder);
-        ConfigureEmployeesSalaries(modelBuilder);
     }
 
     private static void ConfigurePrimaryKeys(ModelBuilder modelBuilder)
     {
         #region Activity
         modelBuilder.Entity<Activity>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<Activity>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region Employee
         modelBuilder.Entity<Employee>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<Employee>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region FirmClient
         modelBuilder.Entity<FirmClient>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<FirmClient>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region Role
         modelBuilder.Entity<Role>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<Role>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-
-        #region Salary
-        modelBuilder.Entity<Salary>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<Salary>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region WorkOrder
         modelBuilder.Entity<WorkOrder>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<WorkOrder>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-
-        #region WorkOrderCost
-        modelBuilder.Entity<WorkOrderCost>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<WorkOrderCost>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-
-        #region WorkTime
-        modelBuilder.Entity<WorkTime>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<WorkTime>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-
-        #region ActivityWorkTime
-        modelBuilder.Entity<ActivityWorkTime>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<ActivityWorkTime>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-
-        #region ClientWorkOrderCost
-        modelBuilder.Entity<ClientWorkOrderCost>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<ClientWorkOrderCost>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region ClientWorkOrder
         modelBuilder.Entity<ClientWorkOrder>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<ClientWorkOrder>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region EmployeeActivity
         modelBuilder.Entity<EmployeeActivity>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<EmployeeActivity>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region EmployeeRole
         modelBuilder.Entity<EmployeeRole>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<EmployeeRole>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-
-        #region EmployeeSalary
-        modelBuilder.Entity<EmployeeSalary>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<EmployeeSalary>()
-            .Property(x => x.Guid)
-            .ValueGeneratedOnAdd();
-        #endregion
-
-        #region EmployeeWorkTime
-        modelBuilder.Entity<EmployeeWorkTime>()
-            .HasKey(x=> x.Guid);
-
-        modelBuilder.Entity<EmployeeWorkTime>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
 
         #region WorkOrderActivity
         modelBuilder.Entity<WorkOrderActivity>()
-            .HasKey(x=> x.Guid);
+            .HasKey(x=> x.Id);
 
         modelBuilder.Entity<WorkOrderActivity>()
-            .Property(x => x.Guid)
+            .Property(x => x.Id)
             .ValueGeneratedOnAdd();
         #endregion
     }
@@ -201,54 +133,12 @@ public static class ModelBuilderExtensions
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    private static void ConfigureWorkOrderCost(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<WorkOrder>()
-            .HasOne(w => w.WorkOrderCost)
-            .WithOne(c => c.WorkOrder)
-            .HasForeignKey<WorkOrderCost>(c => c.WorkOrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureFirmClientWorkOrderCosts(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<FirmClient>()
-            .HasMany(c => c.WorkOrderCosts)
-            .WithOne(wc => wc.FirmClient)
-            .HasForeignKey(wc => wc.FirmClientId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
     private static void ConfigureWorkOrderActivities(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<WorkOrder>()
             .HasMany(w => w.Activities)
             .WithOne(a => a.WorkOrder)
             .HasForeignKey(a => a.WorkOrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureEmployeeWorkTimes(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Employee>()
-            .HasMany(e => e.WorkTimes)
-            .WithOne(wt => wt.Employee)
-            .HasForeignKey(wt => wt.EmployeeId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureActivitiesWorkTime(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<ActivityWorkTime>()
-            .HasOne(awt => awt.Activity)
-            .WithMany(a => a.ActivityWorkTimes)
-            .HasForeignKey(awt => awt.ActivityId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ActivityWorkTime>()
-            .HasOne(awt => awt.WorkTime)
-            .WithMany(wt => wt.ActivityWorkTimes)
-            .HasForeignKey(awt => awt.WorkTimeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 
@@ -279,21 +169,6 @@ public static class ModelBuilderExtensions
             .HasOne(er => er.Role)
             .WithMany(e => e.EmployeeRoles)
             .HasForeignKey(er => er.RoleId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    private static void ConfigureEmployeesSalaries(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<EmployeeSalary>()
-            .HasOne(es => es.Employee)
-            .WithMany(e => e.EmployeeSalaries)
-            .HasForeignKey(es => es.EmployeeId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<EmployeeSalary>()
-            .HasOne(es => es.Salary)
-            .WithMany(s => s.EmployeeSalaries)
-            .HasForeignKey(es => es.SalaryId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

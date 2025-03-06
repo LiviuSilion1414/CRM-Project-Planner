@@ -5,11 +5,11 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task AddAsync(FilterDto filter)
+    public async Task Insert(ActivityDto dto)
     {
         try
         {
-            var model = _mapper.Map<ActivityDto, Activity>((ActivityDto)filter.Data);
+            var model = _mapper.Map<ActivityDto, Activity>(dto);
 
 
             _context.WorkOrders.Attach(model.WorkOrder);
@@ -22,24 +22,24 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             await _context.WorkOrderActivities.AddAsync(
                 new()
                 {
-                    ActivityId = model.Guid,
-                    WorkOrderId = model.WorkOrder.Guid
+                    ActivityId = model.Id,
+                    WorkOrderId = model.WorkOrder.Id
                 }
             );
 
             await _context.SaveChangesAsync();
         } 
-        catch (Exception ex)
+        catch 
         {
             throw;
         }
     }
 
-    public async Task EditAsync(FilterDto filter)
+    public async Task Update(ActivityDto dto)
     {
         try
         { 
-            var model = _mapper.Map<Activity>((ActivityDto)filter.Data);
+            var model = _mapper.Map<Activity>(dto);
         
             _context.WorkOrders.Attach(model.WorkOrder);
             _context.Clients.Attach(model.WorkOrder.FirmClient);
@@ -48,20 +48,19 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
 
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex) 
+        catch  
         {
             throw;
         }
     }
 
-    public async Task DeleteAsync(FilterDto filter)
+    public async Task Delete(ActivityFilterDto filter)
     {
         try
         {
             var activity = await _context.Activities
                 .Include(a => a.EmployeeActivities)
-                .Include(a => a.ActivityWorkTimes)
-                .SingleAsync(a => a.Guid == filter.Id);
+                .SingleAsync(a => a.Id == filter.ActivityId);
 
             _context.Remove(activity);
 
@@ -74,14 +73,13 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<ActivityDto> GetByIdAsync(FilterDto filter)
+    public async Task<ActivityDto> Get(ActivityFilterDto filter)
     {
         try
         {
             var activity = await _context.Activities
                 .Include(a => a.EmployeeActivities)
-                .Include(a => a.ActivityWorkTimes)
-                .SingleAsync(a => a.Guid == filter.Id);
+                .SingleAsync(a => a.Id == filter.ActivityId);
 
             return _mapper.Map<ActivityDto>(activity);
         } 
@@ -91,14 +89,13 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> GetWithPagination(FilterDto filter)
+    public async Task<List<ActivityDto>> List(ActivityFilterDto filter)
     {
         try
         {
             var activities = await _context.Activities
-                                           .OrderBy(a => a.Guid)
+                                           .OrderBy(a => a.Id)
                                            .Include(a => a.EmployeeActivities)
-                                           .Include(a => a.ActivityWorkTimes)
                                            .Include(a => a.WorkOrder)
                                            .ThenInclude(w => w.FirmClient)
                                            .ToListAsync();
@@ -111,7 +108,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> SearchActivityByTitle(FilterDto filter)
+    public async Task<List<ActivityDto>> Search(ActivityFilterDto filter)
     {
         try
         {
@@ -129,13 +126,13 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(FilterDto filter)
+    public async Task<List<EmployeeDto>> FindAssociatedEmployeesWithinActivity(ActivityFilterDto filter)
     {
         try
         {
             var foundEmployees = await _context.Employees
                                                .Include(em => em.Activities)
-                                               .Where(em => em.Activities.Any(ac => ac.Guid == filter.Id))
+                                               .Where(em => em.Activities.Any(ac => ac.Id == filter.ActivityId))
                                                .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployees);
@@ -146,36 +143,16 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(FilterDto filter)
+    public async Task<WorkOrderDto> FindAssociatedWorkOrderByActivityId(ActivityFilterDto filter)
     {
         try
         {
             var foundWorkOrder = await _context.WorkOrders
                                                .Include(wo => wo.Activities)
                                                .Include(wo => wo.FirmClient)
-                                               .SingleAsync(em => em.Activities.Any(ac => ac.Guid == filter.Id));
+                                               .SingleAsync(em => em.Activities.Any(ac => ac.Id == filter.ActivityId));
 
             return _mapper.Map<WorkOrderDto>(foundWorkOrder);
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<WorkTimeDto>> FindAssociatedWorkTimesWithinActivity(FilterDto filter)
-    {
-        try
-        {
-            var foundWorkTimes = await _context.WorkTimes
-                .Include(wt => wt.Activity)
-                .Include(wt => wt.Employee)
-                .Include(wt => wt.WorkOrder)
-                .ThenInclude(wo => wo.FirmClient)
-                .Where(wt => wt.Activity.Guid == filter.Id)
-                .ToListAsync();
-
-            return _mapper.Map<List<WorkTimeDto>>(foundWorkTimes);
         } 
         catch (Exception)
         {

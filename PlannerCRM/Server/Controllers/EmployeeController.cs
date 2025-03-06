@@ -10,44 +10,12 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route(EmployeeEndpointActions.ASSIGN_ROLE_PLACEHOLDER)]
-    public async Task<ResultDto> AssignRole([FromBody] FilterDto filter)
-    {
-        try
-        {
-            await _repo.AssignRole(filter);
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = null,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
-            };
-        } 
-        catch (Exception ex)
-        {
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
-            };
-        }
-    }
-
-    [Authorize]
-    [HttpPost]
     [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
-    public async Task<ResultDto> Add([FromBody] FilterDto filter)
+    public async Task<ResultDto> Insert(EmployeeDto dto)
     {
         try
         {
-            await _repo.AddAsync(filter);
+            await _repo.Insert(dto);
             return new ResultDto() 
             { 
                 Guid = null, 
@@ -58,7 +26,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK 
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -75,11 +43,11 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpPut]
     [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
-    public async Task<ResultDto> Edit([FromBody] FilterDto filter)
+    public async Task<ResultDto> Update(EmployeeDto dto)
     {
         try
         {
-            await _repo.EditAsync(filter);
+            await _repo.Update(dto);
             return new ResultDto() 
             { 
                 Guid = null, 
@@ -90,7 +58,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK 
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -107,11 +75,11 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpPost]
     [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
-    public async Task<ResultDto> Delete([FromBody] FilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] EmployeeFilterDto filter)
     {
         try
         {
-            await _repo.DeleteAsync(filter);
+            await _repo.Delete(filter);
             return new ResultDto() 
             { 
                 Guid = null, 
@@ -122,7 +90,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK 
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -139,11 +107,11 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
-    public async Task<ResultDto> GetById([FromBody] FilterDto filter)
+    public async Task<ResultDto> Get([FromBody] EmployeeFilterDto filter)
     {
         try
         {
-            var employee = await _repo.GetByIdAsync(filter);
+            var employee = await _repo.Get(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -154,7 +122,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -171,11 +139,11 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
-    public async Task<ResultDto> GetWithPagination([FromBody] FilterDto filter)
+    public async Task<ResultDto> List([FromBody] EmployeeFilterDto filter)
     {
         try
         {
-            var entities = await _repo.GetWithPagination(filter);
+            var entities = await _repo.List(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -186,7 +154,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -203,11 +171,11 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME_PLACEHOLDER)]
-    public async Task<ResultDto> SearchEmployeeByName([FromBody] FilterDto filter)
+    public async Task<ResultDto> Search([FromBody] EmployeeFilterDto filter)
     {
         try
         {
-            var employees = await _repo.SearchEmployeeByName(filter);
+            var employees = await _repo.Search(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -218,7 +186,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -235,11 +203,11 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_PLACEHOLDER)]
-    public async Task<ResultDto> SearchEmployeeByNameForRecovery([FromBody] FilterDto filter)
+    public async Task<ResultDto> SearchEmployeeByNameForRecovery([FromBody] EmployeeFilterDto filter)
     {
         try
         {
-            var recoveryEmployees = await _repo.SearchEmployeeByName(filter);
+            var recoveryEmployees = await _repo.Search(filter);
             return new ResultDto()
             {
                 Guid = null,
@@ -250,7 +218,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
@@ -267,7 +235,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     [Authorize]
     [HttpGet]
     [Route(EmployeeEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedActivitiesByEmployeeId([FromBody] FilterDto filter)
+    public async Task<ResultDto> FindAssociatedActivitiesByEmployeeId([FromBody] EmployeeFilterDto filter)
     {
         try
         {
@@ -282,71 +250,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 StatusCode = HttpStatusCode.OK
             };
         } 
-        catch (Exception ex)
-        {
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
-            };
-        }
-    }
-
-    [Authorize]
-    [HttpGet]
-    [Route(EmployeeEndpointActions.FIND_ASSOCIATED_WORKTIMES_BY_ACTIVITYID_AND_EMPLOYEEID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedWorkTimesByActivityIdAndEmployeeId([FromBody] FilterDto filter)
-    {
-        try
-        {
-            var workTimes = await _repo.FindAssociatedWorkTimesByActivityIdAndEmployeeId(filter);
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = workTimes,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
-            };
-        } 
-        catch (Exception ex)
-        {
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
-            };
-        }
-    }
-
-    [Authorize]
-    [HttpGet]
-    [Route(EmployeeEndpointActions.FIND_ASSOCIATED_SALARY_DATA_BY_EMPLOYEEID_PLACEHOLDER)]
-    public async Task<ResultDto> FindAssociatedSalaryDataByEmployeeId([FromBody] FilterDto filter)
-    {
-        try
-        {
-            var salaryData = await _repo.FindAssociatedSalaryDataByEmployeeId(filter);
-            return new ResultDto()
-            {
-                Guid = null,
-                Data = salaryData,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
-            };
-        } 
-        catch (Exception ex)
+        catch 
         {
             return new ResultDto()
             {
