@@ -19,6 +19,6 @@ public class GlobalMappingProfile : Profile
 
         CreateMap<WorkOrder, WorkOrderDto>().PreserveReferences().ReverseMap();
 
-        CreateMap<Employee, EmployeeLoginRecoveryDto>().PreserveReferences().ReverseMap();
+        CreateMap<Employee, LoginRecoveryDto>().PreserveReferences().ReverseMap();
     }
 }

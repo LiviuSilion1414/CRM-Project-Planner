@@ -2,13 +2,13 @@ namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route(ApiUrl.CLIENT_CONTROLLER)]
 public class ClientController(FirmClientRepository repo) : ControllerBase
 {
     private readonly FirmClientRepository _repo = repo;
 
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
+    [Route(ApiUrl.CLIENT_INSERT)]
     public async Task<ResultDto> Insert(FirmClientDto dto)
     {
         try
@@ -39,7 +39,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
+    [Route(ApiUrl.CLIENT_UPDATE)]
     public async Task<ResultDto> Update(FirmClientDto dto)
     {
         try
@@ -70,7 +70,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
+    [Route(ApiUrl.CLIENT_DELETE)]
     public async Task<ResultDto> Delete([FromBody] FirmClientFilterDto filter)
     {
         try
@@ -101,7 +101,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
+    [Route(ApiUrl.CLIENT_GET)]
     public async Task<ResultDto> Get([FromBody] FirmClientFilterDto filter)
     {
         try
@@ -132,7 +132,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
+    [Route(ApiUrl.CLIENT_LIST)]
     public async Task<ResultDto> List([FromBody] FirmClientFilterDto filter)
     {
         try
@@ -163,7 +163,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(ClientEndpointActions.SEARCH_CLIENT_BY_NAME_PLACEHOLDER)]
+    [Route(ApiUrl.CLIENT_SEARCH)]
     public async Task<ResultDto> SearchClientByName([FromBody] FirmClientFilterDto filter)
     {
         try
@@ -194,7 +194,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(ClientEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
+    [Route(ApiUrl.CLIENT_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
     public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] FirmClientFilterDto filter)
     {
         try

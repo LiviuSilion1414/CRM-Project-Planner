@@ -2,13 +2,13 @@ namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route(ApiUrl.ACTIVITY_CONTROLLER)]
 public class ActivityController(ActivityRepository specificRepo) : ControllerBase
 {
     private readonly ActivityRepository _repo = specificRepo;
 
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_INSERT)]
     public async Task<ResultDto> Insert(ActivityDto dto)
     {
         try
@@ -39,7 +39,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPut]
-    [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_UPDATE)]
     public async Task<ResultDto> Update(ActivityDto dto)
     {
         try
@@ -70,7 +70,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_DELETE)]
     public async Task<ResultDto> Delete([FromBody] ActivityFilterDto filter)
     {
         try
@@ -101,7 +101,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpGet]
-    [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_GET)]
     public async Task<ResultDto> GetById([FromBody] ActivityFilterDto filter)
     {
         try
@@ -132,7 +132,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpGet]
-    [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_LIST)]
     public async Task<ResultDto> List([FromBody] ActivityFilterDto filter)
     {
         try
@@ -163,7 +163,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpGet]
-    [Route(ActivityEndpointActions.SEARCH_BY_TITLE_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_SEARCH)]
     public async Task<ResultDto> SearchActivityByTitle([FromBody] ActivityFilterDto filter)
     {
         try
@@ -194,7 +194,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpGet]
-    [Route(ActivityEndpointActions.FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID)]
     public async Task<ResultDto> FindAssociatedEmployeesWithinActivity([FromBody] ActivityFilterDto filter)
     {
         try
@@ -225,7 +225,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpGet]
-    [Route(ActivityEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID_PLACEHOLDER)]
+    [Route(ApiUrl.ACTIVITY_FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID)]
     public async Task<ResultDto> FindAssociatedWorkOrderByActivityId([FromBody] ActivityFilterDto filter)
     {
         try

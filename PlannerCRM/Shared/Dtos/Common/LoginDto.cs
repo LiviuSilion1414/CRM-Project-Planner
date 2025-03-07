@@ -1,6 +1,6 @@
 ﻿namespace PlannerCRM.Shared.Dtos.Common;
 
-public class EmployeeLoginDto
+public class LoginDto
 {
     [Required]
     public string EmailOrUsername { get; set; }

@@ -41,7 +41,7 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.GET_WITH_PAGINATION_BASE, new(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
             if (result.Data is not null)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
@@ -63,7 +63,7 @@ else
 
             foreach (var wo in _workOrders)
             {
-                var result = await fetch.ExecuteAsync(ActivityEndpointActions.GET_WITH_PAGINATION_BASE, new(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_LIST, new WorkOrderFilterDto(), ApiType.Post);
                 wo.Activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
             }
             fetch.IsBusy = false;

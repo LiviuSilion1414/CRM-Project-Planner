@@ -131,7 +131,7 @@
                     SearchQuery = _query
                 };
 
-                var result = await fetch.ExecuteAsync(WorkOrderEndpointActions.SEARCH_WORKORDER_BY_TITLE_BASE, filter, ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_SEARCH, filter, ApiType.Post);
                 if (result.HasCompleted)
                 {
                     _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
@@ -160,7 +160,7 @@
                     Data = _model
                 };
 
-                var result = await fetch.ExecuteAsync(ActivityEndpointActions.ADD_BASE, filter, ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_INSERT, filter, ApiType.Post);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

@@ -34,3 +34,19 @@ public class ActivityFilterDto : FilterDto
     public Guid WorkOrderId { get; set; }
     public Guid ClientId { get; set; }
 }
+
+public partial class ApiUrl
+{
+    public const string ACTIVITY_CONTROLLER = "activity";
+
+    public const string ACTIVITY_INSERT = "activity/insert";
+    public const string ACTIVITY_UPDATE = "activity/update";
+    public const string ACTIVITY_DELETE = "activity/delete";
+    public const string ACTIVITY_GET = "activity/get";
+    public const string ACTIVITY_LIST = "activity/list";
+
+    public const string ACTIVITY_SEARCH = "activity/search";
+    public const string ACTIVITY_FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID = "activity/findAssociatedEmployeesByActivityId";
+    public const string ACTIVITY_FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID = "activity/findAssociatedWorkOrdersByActivityId";
+    public const string ACTIVITY_FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY = "activity/findAssociatedWorkTimesWithinActivity";
+}

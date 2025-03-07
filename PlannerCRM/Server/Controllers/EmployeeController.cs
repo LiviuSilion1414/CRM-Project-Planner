@@ -3,14 +3,14 @@ using PlannerCRM.Server.Models.Entities;
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route(ApiUrl.EMPLOYEE_CONTROLLER)]
 public class EmployeeController(EmployeeRepository repo) : ControllerBase
 {
     private readonly EmployeeRepository _repo = repo;
 
     [Authorize]
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_INSERT)]
     public async Task<ResultDto> Insert(EmployeeDto dto)
     {
         try
@@ -42,7 +42,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpPut]
-    [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_UPDATE)]
     public async Task<ResultDto> Update(EmployeeDto dto)
     {
         try
@@ -74,7 +74,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_DELETE)]
     public async Task<ResultDto> Delete([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -106,7 +106,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_GET)]
     public async Task<ResultDto> Get([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -138,7 +138,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_LIST)]
     public async Task<ResultDto> List([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -170,7 +170,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_SEARCH)]
     public async Task<ResultDto> Search([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -202,7 +202,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    [Route(EmployeeEndpointActions.SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY)]
     public async Task<ResultDto> SearchEmployeeByNameForRecovery([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -234,7 +234,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route(EmployeeEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID_PLACEHOLDER)]
+    [Route(ApiUrl.EMPLOYEE_FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID)]
     public async Task<ResultDto> FindAssociatedActivitiesByEmployeeId([FromBody] EmployeeFilterDto filter)
     {
         try

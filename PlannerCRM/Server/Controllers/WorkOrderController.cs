@@ -2,13 +2,13 @@ namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route(ApiUrl.WORKORDER_CONTROLLER)]
 public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 { 
     private readonly WorkOrderRepository _repo = repo;
 
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.ADD_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_INSERT)]
     public async Task<ResultDto> Insert(WorkOrderDto dto)
     {
         try
@@ -39,7 +39,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(EndpointsCrudPlaceholders.EDIT_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_UPDATE)]
     public async Task<ResultDto> Update(WorkOrderDto dto)
     {
         try
@@ -70,7 +70,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.DELETE_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_DELETE)]
     public async Task<ResultDto> Delete([FromBody] WorkOrderFilterDto filter)
     {
         try
@@ -101,7 +101,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(EndpointsCrudPlaceholders.GET_BY_ID_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_GET)]
     public async Task<ResultDto> Get([FromBody] WorkOrderFilterDto filter)
     {
         try
@@ -132,7 +132,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(EndpointsCrudPlaceholders.GET_WITH_PAGINATION_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_LIST)]
     public async Task<ResultDto> List([FromBody] WorkOrderFilterDto filter)
     {
 
@@ -165,7 +165,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(WorkOrderEndpointActions.SEARCH_WORKORDER_BY_TITLE_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_SEARCH)]
     public async Task<ResultDto> Search([FromBody] WorkOrderFilterDto filter)
     {
         try
@@ -196,7 +196,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID)]
     public async Task<ResultDto> FindAssociatedActivitiesByWorkOrderId([FromBody] WorkOrderFilterDto filter)
     {
         try
@@ -227,7 +227,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpGet]
-    [Route(WorkOrderEndpointActions.FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID_PLACEHOLDER)]
+    [Route(ApiUrl.WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
     public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] WorkOrderFilterDto filter)
     {
         try

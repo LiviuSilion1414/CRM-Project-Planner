@@ -1,6 +1,6 @@
 ﻿namespace PlannerCRM.Shared.Dtos.Common;
 
-public class EmployeeLoginRecoveryDto
+public class LoginRecoveryDto
 {
     public Guid  Guid { get; set; }
 

@@ -37,3 +37,18 @@ public class WorkOrderFilterDto : FilterDto
     public Guid WorkOrderId { get; set; }
     public Guid FirmClientId { get; set; }
 }
+
+public partial class ApiUrl
+{
+    public const string WORKORDER_CONTROLLER = "api/workorder";
+
+    public const string WORKORDER_INSERT = "insert";
+    public const string WORKORDER_UPDATE = "update";
+    public const string WORKORDER_DELETE = "delete";
+    public const string WORKORDER_GET = "get";
+    public const string WORKORDER_LIST = "list";
+
+    public const string WORKORDER_SEARCH = "search";
+    public const string WORKORDER_FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID = "findAssociatedActivitiesByWorkOrderId";
+    public const string WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID = "findAssociatedWorkOrdersByClientId";
+}

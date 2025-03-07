@@ -39,7 +39,7 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ActivityEndpointActions.GET_WITH_PAGINATION_BASE, new(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_LIST, new ActivityFilterDto(), ApiType.Post);
             if (result.Data is not null)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
@@ -64,10 +64,10 @@ else
     {
         await dialog.OpenAsync<ActivityAddForm>("Add Activity",
             new()
-                {
+            {
                 { nameof(ActivityAddForm.StartDate), args.Start },
                 { nameof(ActivityAddForm.EndDate), args.End }
-                },
+            },
             new DialogOptions() { Width = "40vw;" }
         );
     }

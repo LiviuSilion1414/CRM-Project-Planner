@@ -38,7 +38,7 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ClientEndpointActions.EDIT_BASE, new FilterDto(), ApiType.Put);
+                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_UPDATE, new FilterDto(), ApiType.Put);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

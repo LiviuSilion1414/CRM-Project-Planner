@@ -9,6 +9,5 @@ global using PlannerCRM.Client.Services;
 global using PlannerCRM.Client.Extensions;
 
 global using PlannerCRM.Shared.Dtos.Entities;
-global using PlannerCRM.Shared.ApiHelpers.Endpoints;
 
 global using PlannerCRM.Shared.Dtos.Common;

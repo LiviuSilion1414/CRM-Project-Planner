@@ -9,8 +9,6 @@ global using AutoMapper;
 global using PlannerCRM.Shared.Dtos.Entities;
 global using PlannerCRM.Shared.Dtos.Common;
 global using PlannerCRM.Shared.Models;
-global using PlannerCRM.Shared.ApiHelpers.Placeholders;
-global using PlannerCRM.Shared.ApiHelpers.Endpoints;
 
 global using PlannerCRM.Server.Repositories;
 global using PlannerCRM.Server.DataAccess;

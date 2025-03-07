@@ -19,20 +19,13 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
     [AllowAnonymous]
     [HttpPost]
     [Route("login")]
-    public async Task<ActionResult> Login(EmployeeLoginDto dto)
+    public async Task<ActionResult> Login(LoginDto dto)
     {
         var foundEmployee = await _context.Employees
                                           .Include(x => x.EmployeeRoles)
                                             .ThenInclude(x => x.Role)
                                           .SingleOrDefaultAsync(em => em.Email.Contains(dto.EmailOrUsername) ||
                                                                       em.Name.Contains(dto.EmailOrUsername));
-
-        byte[] salt1 = new byte[128 / 8];
-        string cryptedPwd1 = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.Password,
-                                                                        salt: salt1,
-                                                                        prf: KeyDerivationPrf.HMACSHA256,
-                                                                        iterationCount: 10000,
-                                                                        numBytesRequested: 256 / 8));
 
         if (foundEmployee is not null)
         {

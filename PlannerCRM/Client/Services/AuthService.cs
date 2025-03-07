@@ -12,7 +12,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
     private readonly HttpClient _http = http;
     private readonly LocalStorageService _localStorage = localStorage;
 
-    public async Task<ResultDto> LoginAsync(EmployeeLoginDto dto)
+    public async Task<ResultDto> LoginAsync(LoginDto dto)
     {
         try
         {
