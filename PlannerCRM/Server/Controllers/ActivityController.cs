@@ -100,7 +100,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.ACTIVITY_GET)]
     public async Task<ResultDto> GetById([FromBody] ActivityFilterDto filter)
     {
@@ -131,7 +131,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.ACTIVITY_LIST)]
     public async Task<ResultDto> List([FromBody] ActivityFilterDto filter)
     {
@@ -162,7 +162,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.ACTIVITY_SEARCH)]
     public async Task<ResultDto> SearchActivityByTitle([FromBody] ActivityFilterDto filter)
     {
@@ -193,7 +193,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.ACTIVITY_FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID)]
     public async Task<ResultDto> FindAssociatedEmployeesWithinActivity([FromBody] ActivityFilterDto filter)
     {
@@ -224,7 +224,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.ACTIVITY_FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID)]
     public async Task<ResultDto> FindAssociatedWorkOrderByActivityId([FromBody] ActivityFilterDto filter)
     {

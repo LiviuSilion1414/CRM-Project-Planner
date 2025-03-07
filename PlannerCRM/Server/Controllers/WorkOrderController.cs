@@ -100,7 +100,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.WORKORDER_GET)]
     public async Task<ResultDto> Get([FromBody] WorkOrderFilterDto filter)
     {
@@ -164,7 +164,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.WORKORDER_SEARCH)]
     public async Task<ResultDto> Search([FromBody] WorkOrderFilterDto filter)
     {
@@ -195,7 +195,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.WORKORDER_FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID)]
     public async Task<ResultDto> FindAssociatedActivitiesByWorkOrderId([FromBody] WorkOrderFilterDto filter)
     {
@@ -226,7 +226,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
     public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] WorkOrderFilterDto filter)
     {

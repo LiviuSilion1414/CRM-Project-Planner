@@ -41,7 +41,7 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_LIST, new WorkOrderFilterDto(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, new WorkOrderFilterDto(), ApiType.Post);
             if (result.Data is not null)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());

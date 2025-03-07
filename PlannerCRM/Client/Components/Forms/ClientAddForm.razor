@@ -39,7 +39,7 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_INSERT, _model, ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_INSERT, _model, ApiType.Post);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

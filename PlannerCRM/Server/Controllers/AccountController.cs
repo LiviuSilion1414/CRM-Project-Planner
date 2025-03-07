@@ -9,7 +9,7 @@ using System.Text;
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route(ApiUrl.ACCOUNT_CONTROLLER)]
 public class AccountController(IMapper mapper, AppDbContext context, IConfiguration config) : ControllerBase
 {
     private readonly IMapper _mapper = mapper;
@@ -18,7 +18,7 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
 
     [AllowAnonymous]
     [HttpPost]
-    [Route("login")]
+    [Route(ApiUrl.ACCOUNT_LOGIN)]
     public async Task<ActionResult> Login(LoginDto dto)
     {
         var foundEmployee = await _context.Employees

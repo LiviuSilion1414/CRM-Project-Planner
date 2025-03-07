@@ -77,7 +77,7 @@
         {
             if (context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_INSERT, new FilterDto(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_INSERT, new FilterDto(), ApiType.Post);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

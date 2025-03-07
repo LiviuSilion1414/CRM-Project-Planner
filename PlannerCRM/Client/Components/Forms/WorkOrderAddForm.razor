@@ -114,7 +114,7 @@
                     SearchQuery = _query
                 };
 
-                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_SEARCH, filter, ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_SEARCH, filter, ApiType.Post);
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {
                     _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
@@ -147,7 +147,7 @@
                     Data = _model
                 };
 
-                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_INSERT, filter, ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_INSERT, filter, ApiType.Post);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

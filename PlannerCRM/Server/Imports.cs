@@ -7,7 +7,6 @@ global using System.Net;
 global using AutoMapper;
 
 global using PlannerCRM.Shared.Dtos.Entities;
-global using PlannerCRM.Shared.Dtos.Common;
 global using PlannerCRM.Shared.Models;
 
 global using PlannerCRM.Server.Repositories;

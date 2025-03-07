@@ -123,7 +123,7 @@
                     SearchQuery = _query
                 };
 
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_SEARCH, filter, ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_SEARCH, filter, ApiType.Post);
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {
                     _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
@@ -151,7 +151,7 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_UPDATE, new FilterDto(), ApiType.Put);
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_UPDATE, new FilterDto(), ApiType.Put);
 
                 if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
                 {

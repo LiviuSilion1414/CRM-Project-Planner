@@ -9,7 +9,7 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
 
     public bool IsBusy { get; set; }
 
-    public async Task<ResultDto> ExecuteAsync<TItem>(string endpoint, TItem data, ApiType apiType)
+    public async Task<ResultDto> ExecuteAsync<TItem>(string controllerName, string endpoint, TItem data, ApiType apiType)
         where TItem : class
     {
         try
@@ -26,13 +26,13 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
             switch (apiType)
             {
                 case ApiType.Get:
-                    response = await _http.GetAsync($"api/{endpoint}");
+                    response = await _http.GetAsync($"{controllerName}/{endpoint}");
                     break;
                 case ApiType.Post:
-                    response = await _http.PostAsJsonAsync($"api/{endpoint}", data);
+                    response = await _http.PostAsJsonAsync($"{controllerName}/{endpoint}", data);
                     break;
                 case ApiType.Put:
-                    response = await _http.PutAsJsonAsync($"api/{endpoint}", data);
+                    response = await _http.PutAsJsonAsync($"{controllerName}/{endpoint}", data);
                     break;
             }
 

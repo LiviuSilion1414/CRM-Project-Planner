@@ -100,7 +100,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.CLIENT_GET)]
     public async Task<ResultDto> Get([FromBody] FirmClientFilterDto filter)
     {
@@ -131,7 +131,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.CLIENT_LIST)]
     public async Task<ResultDto> List([FromBody] FirmClientFilterDto filter)
     {
@@ -162,7 +162,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.CLIENT_SEARCH)]
     public async Task<ResultDto> SearchClientByName([FromBody] FirmClientFilterDto filter)
     {
@@ -193,7 +193,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.CLIENT_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID)]
     public async Task<ResultDto> FindAssociatedWorkOrdersByClientId([FromBody] FirmClientFilterDto filter)
     {

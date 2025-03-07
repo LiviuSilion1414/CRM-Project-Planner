@@ -62,7 +62,7 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", new() { OkButtonText = "Delete" })).Value)
             {
-                await fetch.ExecuteAsync(ApiUrl.WORKORDER_DELETE, new FilterDto(), ApiType.Put);
+                await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_DELETE, new FilterDto(), ApiType.Put);
             }
         }
         catch

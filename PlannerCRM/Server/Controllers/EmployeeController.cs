@@ -105,7 +105,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.EMPLOYEE_GET)]
     public async Task<ResultDto> Get([FromBody] EmployeeFilterDto filter)
     {
@@ -137,7 +137,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.EMPLOYEE_LIST)]
     public async Task<ResultDto> List([FromBody] EmployeeFilterDto filter)
     {
@@ -169,7 +169,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.EMPLOYEE_SEARCH)]
     public async Task<ResultDto> Search([FromBody] EmployeeFilterDto filter)
     {
@@ -201,7 +201,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.EMPLOYEE_SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY)]
     public async Task<ResultDto> SearchEmployeeByNameForRecovery([FromBody] EmployeeFilterDto filter)
     {
@@ -233,7 +233,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpPost]
     [Route(ApiUrl.EMPLOYEE_FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID)]
     public async Task<ResultDto> FindAssociatedActivitiesByEmployeeId([FromBody] EmployeeFilterDto filter)
     {

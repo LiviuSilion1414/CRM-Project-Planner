@@ -43,7 +43,7 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
             if (result.Data is not null)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
@@ -64,7 +64,7 @@ else
 
             foreach (var cl in _clients)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_LIST, new FirmClientFilterDto(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new FirmClientFilterDto(), ApiType.Post);
                 cl.WorkOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
             }
 
