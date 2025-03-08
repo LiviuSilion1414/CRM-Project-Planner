@@ -19,7 +19,7 @@ else
     SelectionMode="DataGridSelectionMode.Single"
     RowSelect="OnSelect">
         <Columns>
-            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.startDateString)" Title="Start Date" />
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.endDateString)" Title="End Date" />
         </Columns>

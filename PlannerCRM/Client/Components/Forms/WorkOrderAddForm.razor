@@ -51,7 +51,7 @@
                                     SelectionMode="DataGridSelectionMode.Single"
                                     RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
-                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="name" Title="Name" />
+                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>

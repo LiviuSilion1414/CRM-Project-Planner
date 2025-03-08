@@ -1,21 +1,21 @@
 ﻿@page "/employee-add"
 
-@layout PublicLayout
+@layout MainLayout
 
 @attribute [AllowAnonymous]
 
 <RadzenStack JustifyContent="JustifyContent.Center">
     <RadzenCard>
         <RadzenFieldset Text="Employee">
-            <EditForm EditContext="context" OnSubmit="Submit">
+            <EditForm EditContext="_context" OnSubmit="Submit">
                 <DataAnnotationsValidator />
                 <RadzenRow>
                     <RadzenColumn>
                         <RadzenLabel>Name</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.name"/>
-                        <ValidationMessage For="@(() => model.name)"/>
+                        <InputText class="form-control" @bind-Value="@_model.name"/>
+                        <ValidationMessage For="@(() => _model.name)"/>
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -23,8 +23,8 @@
                         <RadzenLabel>Email</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.email" />
-                        <ValidationMessage For="@(() => model.email)" />
+                        <InputText class="form-control" @bind-Value="@_model.email" />
+                        <ValidationMessage For="@(() => _model.email)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -32,8 +32,8 @@
                         <RadzenLabel>Phone</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.phone" />
-                        <ValidationMessage For="@(() => model.phone)" />
+                        <InputText class="form-control" @bind-Value="@_model.phone" />
+                        <ValidationMessage For="@(() => _model.phone)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -41,8 +41,8 @@
                         <RadzenLabel>Username</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.name" />
-                        <ValidationMessage For="@(() => model.name)" />
+                        <InputText class="form-control" @bind-Value="@_model.name" />
+                        <ValidationMessage For="@(() => _model.name)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -50,8 +50,8 @@
                         <RadzenLabel>Password</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.password" />
-                       <ValidationMessage For="@(() => model.password)" />
+                        <InputText class="form-control" @bind-Value="@_model.password" />
+                       <ValidationMessage For="@(() => _model.password)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" Click="Submit"></RadzenButton>
@@ -62,22 +62,22 @@
 
 @code 
 {
-    EmployeeDto model;
-    EditContext context;
+    EmployeeDto _model;
+    EditContext _context;
 
     protected override void OnInitialized()
     {
-        model = new();
-        context = new(model);
+        _model = new();
+        _context = new(_model);
     }
 
     async Task Submit()
     {
         try
         {
-            if (context.Validate())
+            if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_INSERT, new FilterDto(), ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_INSERT, _model, ApiType.Post);
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {

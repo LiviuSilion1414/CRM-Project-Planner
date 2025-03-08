@@ -12,15 +12,15 @@ else
     <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
     <RadzenDataGrid Data="@_clients"
-    TItem="@FirmClientDto"
-    AllowSorting="true"
-    AllowPaging="true"
-    AllowFiltering="true"
-    SelectionMode="DataGridSelectionMode.Single"
-    RowSelect="OnSelect">
+                    TItem="@FirmClientDto"
+                    AllowSorting="true"
+                    AllowPaging="true"
+                    AllowFiltering="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="OnSelect">
         <Columns>
-            <RadzenDataGridColumn TItem="@FirmClientDto" Property="name" Title="Name" />
-            <RadzenDataGridColumn TItem="@FirmClientDto" Property="vatNumber" Title="Vat Number" />
+            <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
+            <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.vatNumber)" Title="Vat Number" />
         </Columns>
     </RadzenDataGrid>
 }
@@ -71,7 +71,7 @@ else
 
             fetch.IsBusy = false;
         }
-        catch 
+        catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -83,9 +83,9 @@ else
 
         await dialog.OpenAsync<ClientDialog>("Client Info",
             new Dictionary<string, object>()
-            {
+                {
                 { nameof(ClientDialog.SelectedClient), _selectedClient },
-            }
+                }
         );
     }
 

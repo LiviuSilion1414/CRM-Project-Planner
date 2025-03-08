@@ -35,23 +35,23 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Primary"
-                    Icon="Search"
-                    Click="@SearchClient">
+                                  Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Icon="Search"
+                                  Click="@SearchClient">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@FirmClientDto"
-                    Data="@_clients"
-                    AllowFiltering="true"
-                    AllowSorting="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                                    Data="@_clients"
+                                    AllowFiltering="true"
+                                    AllowSorting="true"
+                                    SelectionMode="DataGridSelectionMode.Single"
+                                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
-                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
+                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
@@ -64,10 +64,10 @@
                         <RadzenTextBox @bind-Value="@Model.firmClient.vatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Danger"
-                    Icon="Delete"
-                    Click="@(() => SelectClient(new()))">
+                                  Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Danger"
+                                  Icon="Delete"
+                                  Click="@(() => SelectClient(new()))">
                     </RadzenButton>
                     <ValidationMessage For="@(() => Model.firmClient)" />
                 </RadzenRow>
@@ -106,9 +106,9 @@
             if (!string.IsNullOrEmpty(_query))
             {
                 var filter = new FilterDto()
-                {
-                    searchQuery = _query
-                };
+                    {
+                        searchQuery = _query
+                    };
 
                 var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_SEARCH, filter, ApiType.Post);
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
@@ -138,12 +138,7 @@
         {
             if (_context.Validate())
             {
-                var filter = new FilterDto()
-                {
-                    data = Model
-                };
-
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_UPDATE, filter, ApiType.Put);
+                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_UPDATE, Model, ApiType.Put);
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {

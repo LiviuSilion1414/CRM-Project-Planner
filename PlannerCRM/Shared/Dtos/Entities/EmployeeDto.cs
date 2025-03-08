@@ -17,7 +17,6 @@ public class EmployeeDto
     public string email { get; set; }
     
     [Required]
-    [PasswordValidator]
     public string password { get; set; }
 }
 

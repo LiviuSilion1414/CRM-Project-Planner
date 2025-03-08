@@ -52,7 +52,7 @@
                                     SelectionMode="DataGridSelectionMode.Single"
                                     RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
                         <Columns>
-                            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
+                            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
@@ -151,7 +151,7 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_UPDATE, new FilterDto(), ApiType.Put);
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_UPDATE, Model, ApiType.Put);
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
