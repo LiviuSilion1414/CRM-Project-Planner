@@ -8,8 +8,8 @@
                     <RadzenLabel Text="Name" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenTextBox Name="Name" @bind-Value=@_model.Name />
-                    <ValidationMessage For="@(() => _model.Name)" />
+                    <RadzenTextBox Name="Name" @bind-Value=@_model.name />
+                    <ValidationMessage For="@(() => _model.name)" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow Style="margin-bottom: 5px;">
@@ -17,8 +17,8 @@
                     <RadzenLabel Text="StartDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="StartDate" @bind-Value=@_model.StartDate />
-                    <ValidationMessage For="@(() => _model.StartDate)" />
+                    <RadzenDatePicker Name="StartDate" @bind-Value=@_model.startDate />
+                    <ValidationMessage For="@(() => _model.startDate)" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow Style="margin-bottom: 5px;">
@@ -26,8 +26,8 @@
                     <RadzenLabel Text="EndDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="EndDate" @bind-Value=@_model.EndDate />
-                    <ValidationMessage For="@(() => _model.EndDate)" />
+                    <RadzenDatePicker Name="EndDate" @bind-Value=@_model.endDate />
+                    <ValidationMessage For="@(() => _model.endDate)" />
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
@@ -51,17 +51,17 @@
                                     SelectionMode="DataGridSelectionMode.Single"
                                     RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
-                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
+                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="name" Title="Name" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenRow>
-            @if (!string.IsNullOrEmpty(_model.FirmClient.Name))
+            @if (!string.IsNullOrEmpty(_model.firmClient.name))
             {
                 <RadzenRow Style="margin-top: 20px;">
                     <RadzenColumn>
-                        <RadzenTextBox @bind-Value="@_model.FirmClient.Name" Disabled="true" />
-                        <RadzenTextBox @bind-Value="@_model.FirmClient.VatNumber" Disabled="true" />
+                        <RadzenTextBox @bind-Value="@_model.firmClient.name" Disabled="true" />
+                        <RadzenTextBox @bind-Value="@_model.firmClient.vatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
                                   Variant="Variant.Outlined"
@@ -69,7 +69,7 @@
                                   Icon="Delete"
                                   Click="@(() => SelectClient(new()))">
                     </RadzenButton>
-                    <ValidationMessage For="@(() => _model.FirmClient)" />
+                    <ValidationMessage For="@(() => _model.firmClient)" />
                 </RadzenRow>
             }
         </RadzenFieldset>
@@ -96,8 +96,8 @@
     {
         _model = new()
             {
-                FirmClient = new(),
-                Activities = []
+                firmClient = new(),
+                activities = []
             };
         _context = new(_model);
         _clients = new();
@@ -111,17 +111,17 @@
             {
                 var filter = new FilterDto()
                 {
-                    SearchQuery = _query
+                    searchQuery = _query
                 };
 
                 var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_SEARCH, filter, ApiType.Post);
-                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
-                    _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+                    _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
         }
@@ -133,7 +133,7 @@
 
     private void SelectClient(FirmClientDto client)
     {
-        _model.FirmClient = client;
+        _model.firmClient = client;
     }
 
     private async Task OnSubmit()
@@ -142,22 +142,17 @@
         {
             if (_context.Validate())
             {
-                var filter = new FilterDto()
-                {
-                    Data = _model
-                };
+                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_INSERT, _model, ApiType.Post);
 
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_INSERT, filter, ApiType.Post);
-
-                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
-                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
         }

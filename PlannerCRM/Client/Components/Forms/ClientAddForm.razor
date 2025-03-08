@@ -5,13 +5,13 @@
             <ValidationSummary />
             <div class="form-control">
                 <label>Name</label>
-                <InputText class="form-control" @bind-Value="@_model.Name" />
-                <ValidationMessage For="@(() => _model.Name)" />
+                <InputText class="form-control" @bind-Value="@_model.name" />
+                <ValidationMessage For="@(() => _model.name)" />
             </div>
             <div class="form-control">
                 <label>Vat Number</label>
-                <InputText class="form-control" @bind-Value="@_model.VatNumber" />
-                <ValidationMessage For="@(() => _model.VatNumber)" />
+                <InputText class="form-control" @bind-Value="@_model.vatNumber" />
+                <ValidationMessage For="@(() => _model.vatNumber)" />
             </div>
         </EditForm>
     </RadzenCard>
@@ -41,15 +41,15 @@
             {
                 var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_INSERT, _model, ApiType.Post);
 
-                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
-                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
         }

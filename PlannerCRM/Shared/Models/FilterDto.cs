@@ -2,7 +2,7 @@
 
 public partial class FilterDto
 {
-    public Guid Id { get; set; }
-    public string SearchQuery { get; set; }
-    public object Data { get; set; }
+    public Guid id { get; set; }
+    public string searchQuery { get; set; }
+    public object data { get; set; }
 }

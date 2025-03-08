@@ -60,7 +60,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         {
             var activity = await _context.Activities
                 .Include(a => a.EmployeeActivities)
-                .SingleAsync(a => a.Id == filter.ActivityId);
+                .SingleAsync(a => a.Id == filter.activityId);
 
             _context.Remove(activity);
 
@@ -79,7 +79,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         {
             var activity = await _context.Activities
                 .Include(a => a.EmployeeActivities)
-                .SingleAsync(a => a.Id == filter.ActivityId);
+                .SingleAsync(a => a.Id == filter.activityId);
 
             return _mapper.Map<ActivityDto>(activity);
         } 
@@ -113,7 +113,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         try
         {
             var foundItem = await _context.Activities
-                                          .Where(ac => EF.Functions.ILike(ac.Name, $"%{filter.SearchQuery}%"))
+                                          .Where(ac => EF.Functions.ILike(ac.Name, $"%{filter.searchQuery}%"))
                                           .Include(ac => ac.WorkOrder)
                                           .ThenInclude(wo => wo.FirmClient)
                                           .ToListAsync();
@@ -132,7 +132,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         {
             var foundEmployees = await _context.Employees
                                                .Include(em => em.Activities)
-                                               .Where(em => em.Activities.Any(ac => ac.Id == filter.ActivityId))
+                                               .Where(em => em.Activities.Any(ac => ac.Id == filter.activityId))
                                                .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployees);
@@ -150,7 +150,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             var foundWorkOrder = await _context.WorkOrders
                                                .Include(wo => wo.Activities)
                                                .Include(wo => wo.FirmClient)
-                                               .SingleAsync(em => em.Activities.Any(ac => ac.Id == filter.ActivityId));
+                                               .SingleAsync(em => em.Activities.Any(ac => ac.Id == filter.activityId));
 
             return _mapper.Map<WorkOrderDto>(foundWorkOrder);
         } 

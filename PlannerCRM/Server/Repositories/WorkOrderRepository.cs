@@ -61,7 +61,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         {
             var workOrder = await _context.WorkOrders
                 .Include(w => w.Activities)
-                .SingleAsync(w => w.Id == filter.Id);
+                .SingleAsync(w => w.Id == filter.id);
 
             _context.Remove(workOrder);
 
@@ -80,7 +80,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
             var workOrder = await _context.WorkOrders
                 .Include(w => w.Activities)
                 .Include(w => w.FirmClient)
-                .SingleAsync(w => w.Id == filter.Id);
+                .SingleAsync(w => w.Id == filter.id);
 
             return _mapper.Map<WorkOrderDto>(workOrder);
         }
@@ -114,7 +114,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         try
         {
             var foundWorkOrder = await _context.WorkOrders
-                .Where(wo => EF.Functions.ILike(wo.Name, $"%{filter.SearchQuery}%"))
+                .Where(wo => EF.Functions.ILike(wo.Name, $"%{filter.searchQuery}%"))
                 .Include(wo => wo.FirmClient)
                 .Include(wo => wo.Activities)
                 .ToListAsync();
@@ -135,7 +135,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
                 .Include(ac => ac.WorkOrder)
                 .Include(ac => ac.EmployeeActivities)
                 .Include(ac => ac.Employees)
-                .Where(ac => ac.WorkOrderId == filter.Id)
+                .Where(ac => ac.WorkOrderId == filter.id)
                 .ToListAsync();
 
             return _mapper.Map<List<ActivityDto>>(foundActivities);
@@ -153,7 +153,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
             var foundWorkOrder = await _context.WorkOrders
                 .Include(wo => wo.FirmClient)
                 .Include(wo => wo.Activities)
-                .Where(wo => wo.FirmClientId == filter.Id)
+                .Where(wo => wo.FirmClientId == filter.id)
                 .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(foundWorkOrder);

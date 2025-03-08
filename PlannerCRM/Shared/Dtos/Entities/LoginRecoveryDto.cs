@@ -2,19 +2,19 @@
 
 public class LoginRecoveryDto
 {
-    public Guid Guid { get; set; }
+    public Guid id { get; set; }
 
-    public string Name { get; set; }
+    public string name { get; set; }
 
     [Required]
     [EmailAddress]
-    public string Email { get; set; }
+    public string email { get; set; }
 
-    public string Phone { get; set; }
+    public string phone { get; set; }
 
-    public string Password { get; set; }
+    public string password { get; set; }
 
-    public string NewPassword { get; set; }
+    public string newPassword { get; set; }
 
-    public string ConfirmNewPassword { get; set; }
+    public string confirmNewPassword { get; set; }
 }

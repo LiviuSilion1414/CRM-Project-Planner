@@ -15,10 +15,10 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         {
             var model = _mapper.Map<Employee>(dto);
 
-            if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email == dto.Email)) == null)
+            if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email == dto.email)) == null)
             {
                 byte[] salt = new byte[128 / 8];
-                string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.Password,
+                string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.password,
                                                                                 salt: salt,
                                                                                 prf: KeyDerivationPrf.HMACSHA256,
                                                                                 iterationCount: 10000,
@@ -63,7 +63,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             var employee = await _context.Employees
                                          .Include(e => e.Activities)
                                          .Include(e => e.EmployeeRoles)
-                                         .SingleAsync(e => e.Id == filter.EmployeeId);
+                                         .SingleAsync(e => e.Id == filter.employeeId);
 
             _context.Remove(employee);
 
@@ -82,7 +82,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             var employee = await _context.Employees
                                          .Include(e => e.Activities)
                                          .Include(e => e.EmployeeRoles)
-                                         .SingleAsync(e => e.Id == filter.EmployeeId);
+                                         .SingleAsync(e => e.Id == filter.employeeId);
 
             return _mapper.Map<EmployeeDto>(employee);
         } 
@@ -116,12 +116,12 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         try
         {
             var foundEmployee = await _context.Employees
-                                              .Where(em => EF.Functions.ILike(em.Name, $"{filter.SearchQuery}"))
+                                              .Where(em => EF.Functions.ILike(em.Name, $"{filter.searchQuery}"))
                                               .Include(e => e.Activities)
                                               .Include(e => e.EmployeeRoles)
                                               .Where(em =>
-                                                  EF.Functions.ILike(em.Name, $"{filter.SearchQuery}") ||
-                                                  EF.Functions.ILike(em.Email, $"{filter.SearchQuery}"))
+                                                  EF.Functions.ILike(em.Name, $"{filter.searchQuery}") ||
+                                                  EF.Functions.ILike(em.Email, $"{filter.searchQuery}"))
                                               .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployee);
@@ -139,7 +139,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             var foundActivities = await _context.Activities
                                                 .Include(ac => ac.EmployeeActivities)
                                                 .Include(ac => ac.Employees)
-                                                .Where(ac => ac.Employees.Any(em => em.Id == filter.EmployeeId))
+                                                .Where(ac => ac.Employees.Any(em => em.Id == filter.employeeId))
                                                 .ToListAsync();
 
             return _mapper.Map<List<ActivityDto>>(foundActivities);

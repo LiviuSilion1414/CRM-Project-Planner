@@ -12,15 +12,15 @@ else
     <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
     <RadzenDataGrid Data="@_clients"
-                    TItem="@FirmClientDto"
-                    AllowSorting="true"
-                    AllowPaging="true"
-                    AllowFiltering="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="OnSelect">
+    TItem="@FirmClientDto"
+    AllowSorting="true"
+    AllowPaging="true"
+    AllowFiltering="true"
+    SelectionMode="DataGridSelectionMode.Single"
+    RowSelect="OnSelect">
         <Columns>
-            <RadzenDataGridColumn TItem="@FirmClientDto" Property="Name" Title="Name" />
-            <RadzenDataGridColumn TItem="@FirmClientDto" Property="VatNumber" Title="Vat Number" />
+            <RadzenDataGridColumn TItem="@FirmClientDto" Property="name" Title="Name" />
+            <RadzenDataGridColumn TItem="@FirmClientDto" Property="vatNumber" Title="Vat Number" />
         </Columns>
     </RadzenDataGrid>
 }
@@ -44,13 +44,14 @@ else
             fetch.IsBusy = true;
 
             var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
-            if (result.Data is not null)
+            if (result.data is not null)
             {
-                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+                Console.WriteLine(result.data.ToString());
+                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
             fetch.IsBusy = false;
         }
-        catch 
+        catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -65,7 +66,7 @@ else
             foreach (var cl in _clients)
             {
                 var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new FirmClientFilterDto(), ApiType.Post);
-                cl.WorkOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+                cl.workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
 
             fetch.IsBusy = false;

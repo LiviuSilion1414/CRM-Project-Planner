@@ -7,18 +7,29 @@ public class GlobalMappingProfile : Profile
         CreateMap<Activity, ActivityDto>().PreserveReferences().ReverseMap();
 
         CreateMap<Employee, EmployeeDto>()
-            .ForMember(x => x.PhoneNumber, y => y.MapFrom(z => z.Phone))
-            .ForMember(x => x.Password, y => y.MapFrom(z => z.PasswordHash))
-            //.ForMember(x => x.EmployeeRoles, y => y.MapFrom(z => z.EmployeeRoles))
+            .MaxDepth(1)
+            .ForMember(x => x.phone, y => y.MapFrom(z => z.Phone))
+            .ForMember(x => x.password, y => y.MapFrom(z => z.PasswordHash))
             .PreserveReferences()
             .ReverseMap();
 
-        CreateMap<FirmClient, FirmClientDto>().PreserveReferences().ReverseMap();
+        CreateMap<FirmClient, FirmClientDto>()
+            .MaxDepth(1)
+            .PreserveReferences().ReverseMap();
 
-        CreateMap<RoleDto, Role>().PreserveReferences().ReverseMap();
+        CreateMap<RoleDto, Role>()
+            .MaxDepth(1)
+            .PreserveReferences()
+            .ReverseMap();
 
-        CreateMap<WorkOrder, WorkOrderDto>().PreserveReferences().ReverseMap();
+        CreateMap<WorkOrder, WorkOrderDto>()
+            .MaxDepth(1)
+            .PreserveReferences()
+            .ReverseMap();
 
-        CreateMap<Employee, LoginRecoveryDto>().PreserveReferences().ReverseMap();
+        CreateMap<Employee, LoginRecoveryDto>()
+            .MaxDepth(1)
+            .PreserveReferences()
+            .ReverseMap();
     }
 }

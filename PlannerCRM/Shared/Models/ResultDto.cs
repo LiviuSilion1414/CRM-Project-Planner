@@ -4,13 +4,13 @@ namespace PlannerCRM.Shared.Models;
 
 public class ResultDto
 {
-    public Guid?  Guid { get; set; }
-    public string? Message { get; set; }
-    public MessageType MessageType { get; set; }
-    public HttpStatusCode StatusCode { get; set; }
-    public bool HasCompleted { get; set; }
+    public Guid? id { get; set; }
+    public string? message { get; set; }
+    public MessageType messageType { get; set; }
+    public HttpStatusCode statusCode { get; set; }
+    public bool hasCompleted { get; set; }
 
-    public object? Data { get; set; }
+    public object? data { get; set; }
 }
 
 public enum MessageType

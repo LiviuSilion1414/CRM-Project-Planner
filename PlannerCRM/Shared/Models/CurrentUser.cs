@@ -4,12 +4,12 @@ namespace PlannerCRM.Shared.Models;
 
 public class CurrentUser
 {
-    public Guid  Guid { get; set; }
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public string? Token { get; set; }
-    public bool IsAuthenticated { get; set; }
-    public List<string> Roles { get; set; }
+    public Guid id { get; set; }
+    public string name { get; set; }
+    public string email { get; set; }
+    public string? token { get; set; }
+    public bool isAuthenticated { get; set; }
+    public List<string> roles { get; set; }
 
-    public List<Claim> Claims { get; set; }
+    public List<Claim> claims { get; set; }
 }

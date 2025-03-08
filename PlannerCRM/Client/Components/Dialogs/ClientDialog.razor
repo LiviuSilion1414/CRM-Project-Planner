@@ -3,8 +3,8 @@
         <RadzenRow>
             <RadzenFieldset Text="Client Info">
                 <RadzenColumn>
-                    <RadzenText TextStyle="TextStyle.H6">Name: @SelectedClient.Name</RadzenText>
-                    <RadzenText TextStyle="TextStyle.H6">Vat Number: @SelectedClient.VatNumber</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H6">Name: @SelectedClient.name</RadzenText>
+                    <RadzenText TextStyle="TextStyle.H6">Vat Number: @SelectedClient.vatNumber</RadzenText>
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
@@ -12,13 +12,13 @@
             <RadzenFieldset Text="Related WorkOrders">
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@WorkOrderDto"
-                    Data="@SelectedClient.WorkOrders"
+                    Data="@SelectedClient.workOrders"
                     AllowPaging="true"
                     AllowFiltering="true">
                         <Columns>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.Name)" Property="@nameof(WorkOrderDto.Name)" />
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.StartDate)" Property="@nameof(WorkOrderDto.StartDateString)" />
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.EndDate)" Property="@nameof(WorkOrderDto.EndDateString)" />
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.name)" Property="@nameof(WorkOrderDto.name)" />
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.startDate)" Property="@nameof(WorkOrderDto.startDateString)" />
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.endDate)" Property="@nameof(WorkOrderDto.endDateString)" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>

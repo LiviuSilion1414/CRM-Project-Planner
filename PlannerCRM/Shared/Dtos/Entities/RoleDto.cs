@@ -2,11 +2,11 @@
 
 public class RoleDto
 {
-    public Guid  Guid { get; set; }
-    public Roles RoleName { get; set; }
+    public Guid id { get; set; }
+    public Roles roleName { get; set; }
 }
 
 public class RoleFilterDto : FilterDto
 {
-    public Guid RoleId { get; set; }
+    public Guid roleId { get; set; }
 }

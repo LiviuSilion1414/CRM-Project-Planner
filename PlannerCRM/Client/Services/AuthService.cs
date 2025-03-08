@@ -22,27 +22,27 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             {
                 return new ResultDto() 
                 { 
-                    StatusCode = response.StatusCode,
-                    Data = null,
-                    HasCompleted = false,
-                    Message = "Login failed",
-                    MessageType = MessageType.Warning,
-                    Guid = null
+                    statusCode = response.StatusCode,
+                    data = null,
+                    hasCompleted = false,
+                    message = "Login failed",
+                    messageType = MessageType.Warning,
+                    id = null
                 };
             }
 
             var result = await response.Content.ReadFromJsonAsync<ResultDto>();
 
-            await _localStorage.SetItemAsync(CustomClaimTypes.Token, result.Data.ToString());
+            await _localStorage.SetItemAsync(CustomClaimTypes.Token, result.data.ToString());
 
             return new ResultDto()
             {
-                StatusCode = HttpStatusCode.OK,
-                Data = result.Data,
-                HasCompleted = true,
-                Message = result.Message,
-                MessageType = MessageType.Success,
-                Guid = result.Guid
+                statusCode = HttpStatusCode.OK,
+                data = result.data,
+                hasCompleted = true,
+                message = result.message,
+                messageType = MessageType.Success,
+                id = result.id
             };
         } 
         catch 
@@ -59,12 +59,12 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
 
             return new ResultDto()
             {
-                StatusCode = HttpStatusCode.OK,
-                Data = null,
-                HasCompleted = true,
-                Message = string.Empty,
-                MessageType = MessageType.Success,
-                Guid = null
+                statusCode = HttpStatusCode.OK,
+                data = null,
+                hasCompleted = true,
+                message = string.Empty,
+                messageType = MessageType.Success,
+                id = null
             };
         } 
         catch 

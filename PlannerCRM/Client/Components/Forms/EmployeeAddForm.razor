@@ -14,8 +14,8 @@
                         <RadzenLabel>Name</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.Name"/>
-                        <ValidationMessage For="@(() => model.Name)"/>
+                        <InputText class="form-control" @bind-Value="@model.name"/>
+                        <ValidationMessage For="@(() => model.name)"/>
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -23,8 +23,8 @@
                         <RadzenLabel>Email</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.Email" />
-                        <ValidationMessage For="@(() => model.Email)" />
+                        <InputText class="form-control" @bind-Value="@model.email" />
+                        <ValidationMessage For="@(() => model.email)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -32,8 +32,8 @@
                         <RadzenLabel>Phone</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.PhoneNumber" />
-                        <ValidationMessage For="@(() => model.PhoneNumber)" />
+                        <InputText class="form-control" @bind-Value="@model.phone" />
+                        <ValidationMessage For="@(() => model.phone)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -41,8 +41,8 @@
                         <RadzenLabel>Username</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.Name" />
-                        <ValidationMessage For="@(() => model.Name)" />
+                        <InputText class="form-control" @bind-Value="@model.name" />
+                        <ValidationMessage For="@(() => model.name)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -50,8 +50,8 @@
                         <RadzenLabel>Password</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@model.Password" />
-                       <ValidationMessage For="@(() => model.Password)" />
+                        <InputText class="form-control" @bind-Value="@model.password" />
+                       <ValidationMessage For="@(() => model.password)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" Click="Submit"></RadzenButton>
@@ -79,13 +79,13 @@
             {
                 var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_INSERT, new FilterDto(), ApiType.Post);
 
-                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
-                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
         }

@@ -8,7 +8,7 @@ public partial class PasswordValidatorAttribute : ValidationAttribute
             return ValidationResult.Success;
         }
             
-        return new ValidationResult("Password should contain at least ONE lowercase letter, ONE uppercase letter and at least ONE digit");        
+        return new ValidationResult("password should contain at least ONE lowercase letter, ONE uppercase letter and at least ONE digit");        
     }
 
     [GeneratedRegex("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])")]

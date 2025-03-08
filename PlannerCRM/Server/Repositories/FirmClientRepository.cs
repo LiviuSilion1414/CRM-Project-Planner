@@ -47,7 +47,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         {
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
-                                       .SingleAsync(c => c.Id == filter.FirmClientId);
+                                       .SingleAsync(c => c.Id == filter.firmClientId);
 
             _context.Remove(client);
 
@@ -65,7 +65,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         {
             var client = await _context.Clients
                                        .Include(c => c.WorkOrders)
-                                       .SingleAsync(c => c.Id == filter.FirmClientId);
+                                       .SingleAsync(c => c.Id == filter.firmClientId);
 
             return _mapper.Map<FirmClientDto>(client);
         } 
@@ -97,7 +97,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         try
         {
             var foundClients = await _context.Clients
-                                             .Where(cl => EF.Functions.ILike(cl.Name, $"%{filter.SearchQuery}%"))
+                                             .Where(cl => EF.Functions.ILike(cl.Name, $"%{filter.searchQuery}%"))
                                              .Include(cl => cl.WorkOrders)
                                              .ToListAsync();
 
@@ -116,7 +116,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
             var foundWorkOrders = await _context.WorkOrders
                                                 .Include(wo => wo.FirmClient)
                                                 .Include(wo => wo.Activities)
-                                                .Where(wo => wo.FirmClientId == filter.FirmClientId)
+                                                .Where(wo => wo.FirmClientId == filter.firmClientId)
                                                 .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(foundWorkOrders);

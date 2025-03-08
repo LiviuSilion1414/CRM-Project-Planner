@@ -2,31 +2,30 @@
 
 public class EmployeeDto
 {
-    public Guid  Guid { get; set; }
+    public Guid id { get; set; }
 
     [Required]
     [MinLength(5, ErrorMessage = "The name should be at least {0} characters")]
-    public string Name { get; set; }
+    public string name { get; set; }
 
     [Required]
     [Phone]
-    public string PhoneNumber { get; set; }
+    public string phone { get; set; }
     
     [Required]
     [EmailAddress]
-    public string Email { get; set; }
+    public string email { get; set; }
     
     [Required]
     [PasswordValidator]
-    public string Password { get; set; }
+    public string password { get; set; }
 }
 
 public class EmployeeFilterDto : FilterDto
 {
-    public Guid EmployeeId { get; set; }
-    public Guid ActivityId { get; set; }
-    public Guid WorkTimeId { get; set; }
-    public Guid SalaryId { get; set; }
+    public Guid employeeId { get; set; }
+    public Guid activityId { get; set; }
+    public Guid workTimeId { get; set; }
 }
 
 public partial class ApiUrl

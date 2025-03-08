@@ -24,13 +24,13 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
         var foundEmployee = await _context.Employees
                                           .Include(x => x.EmployeeRoles)
                                             .ThenInclude(x => x.Role)
-                                          .SingleOrDefaultAsync(em => em.Email.Contains(dto.EmailOrUsername) ||
-                                                                      em.Name.Contains(dto.EmailOrUsername));
+                                          .SingleOrDefaultAsync(em => em.Email.Contains(dto.emailOrUsername) ||
+                                                                      em.Name.Contains(dto.emailOrUsername));
 
         if (foundEmployee is not null)
         {
             byte[] salt = new byte[128 / 8];
-            string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.Password,
+            string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.password,
                                                                             salt: salt,
                                                                             prf: KeyDerivationPrf.HMACSHA256,
                                                                             iterationCount: 10000,
@@ -75,12 +75,12 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
             return Ok(
                 new ResultDto 
                 {
-                    Data = tokenAsString,
-                    Guid = foundEmployee.Id,
-                    HasCompleted = true,
-                    Message = "Logged in",
-                    MessageType = MessageType.Success,
-                    StatusCode = HttpStatusCode.OK,
+                    data = tokenAsString,
+                    id = foundEmployee.Id,
+                    hasCompleted = true,
+                    message = "Logged in",
+                    messageType = MessageType.Success,
+                    statusCode = HttpStatusCode.OK,
                     
                 }
             );

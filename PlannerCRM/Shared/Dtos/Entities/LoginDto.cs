@@ -3,12 +3,12 @@
 public class LoginDto
 {
     [Required]
-    public string EmailOrUsername { get; set; }
+    public string emailOrUsername { get; set; }
 
     [Required]
-    public string Password { get; set; }
+    public string password { get; set; }
 
-    public bool RememberMe { get; set; }
+    public bool rememberMe { get; set; }
 }
 
 

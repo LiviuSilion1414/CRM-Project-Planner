@@ -17,7 +17,7 @@
                 <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
                     <RadzenColumn Size="12" SizeMD="12">
                         <RadzenFormField Text="Username" Variant="@Variant.Outlined" class="w-100">
-                            <RadzenTextBox Name="Username" @bind-Value="@_model.EmailOrUsername" class="w-100" />
+                            <RadzenTextBox Name="Username" @bind-Value="@_model.emailOrUsername" class="w-100" />
                         </RadzenFormField>
                     </RadzenColumn>
                 </RadzenRow>
@@ -25,8 +25,8 @@
                     <RadzenColumn Size="12" SizeMD="12">
                         <RadzenFormField Text="Password" Variant="Variant.Outlined" class="w-100">
                             <ChildContent>
-                                <RadzenTextBox Name="Password" @bind-Value="@_model.Password" Visible="@(!showPassword)" class="w-100" />
-                                <RadzenPassword Name="Password" @bind-Value="@_model.Password" Visible="@showPassword" class="w-100" />
+                                <RadzenTextBox Name="Password" @bind-Value="@_model.password" Visible="@(!showPassword)" class="w-100" />
+                                <RadzenPassword Name="Password" @bind-Value="@_model.password" Visible="@showPassword" class="w-100" />
                             </ChildContent>
                             <End>
                                 <RadzenButton Icon="@(showPassword ? "visibility" : "visibility_off")" Click="TogglePassword" Variant="Variant.Text" Size="ButtonSize.Small" />
@@ -73,7 +73,7 @@
             {
                 ResultDto result = await auth.LoginAsync(_model);
 
-                if (result.HasCompleted)
+                if (result.hasCompleted)
                 {
                     var authenticationState = await auth.GetAuthenticationStateAsync();
                     notification.Notify(NotificationSeverity.Success, $"Welcome back, {authenticationState.User.Identity.Name}!", null, 4000);
@@ -81,7 +81,7 @@
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", result.Message, 4000);
+                    notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", result.message, 4000);
                 }
             }
         }

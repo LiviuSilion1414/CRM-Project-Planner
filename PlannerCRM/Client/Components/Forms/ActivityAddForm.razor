@@ -8,8 +8,8 @@
                     <RadzenLabel Text="Name" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenTextBox Name="Name" @bind-Value=@_model.Name />
-                    <ValidationMessage For="@(() => _model.Name)" />
+                    <RadzenTextBox Name="Name" @bind-Value=@_model.name />
+                    <ValidationMessage For="@(() => _model.name)" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow Style="margin-bottom: 5px;">
@@ -17,8 +17,8 @@
                     <RadzenLabel Text="StartDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="StartDate" @bind-Value=@_model.StartDate />
-                    <ValidationMessage For="@(() => _model.StartDate)" />
+                    <RadzenDatePicker Name="StartDate" @bind-Value=@_model.startDate />
+                    <ValidationMessage For="@(() => _model.startDate)" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow Style="margin-bottom: 5px;">
@@ -26,8 +26,8 @@
                     <RadzenLabel Text="EndDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="EndDate" @bind-Value=@_model.EndDate />
-                    <ValidationMessage For="@(() => _model.EndDate)" />
+                    <RadzenDatePicker Name="EndDate" @bind-Value=@_model.endDate />
+                    <ValidationMessage For="@(() => _model.endDate)" />
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
@@ -57,7 +57,7 @@
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenRow>
-            @if (_model.WorkOrder is not null && _model.WorkOrder.FirmClient is not null)
+            @if (_model.workOrder is not null && _model.workOrder.firmClient is not null)
             {
                 <RadzenFieldset Text="Current Selected WorkOrder">
                     <RadzenRow AlignItems="AlignItems.Start">
@@ -70,10 +70,10 @@
                     </RadzenRow>
                     <RadzenRow Style="margin-top: 20px;">
                         <RadzenColumn>
-                            <RadzenTextBox @bind-Value="@_model.WorkOrder.FirmClient.Name" Disabled="true"></RadzenTextBox>
+                            <RadzenTextBox @bind-Value="@_model.workOrder.firmClient.name" Disabled="true"></RadzenTextBox>
                         </RadzenColumn>
                         <RadzenColumn>
-                            <RadzenTextBox @bind-Value="@_model.WorkOrder.Name" Disabled="true"></RadzenTextBox>
+                            <RadzenTextBox @bind-Value="@_model.workOrder.name" Disabled="true"></RadzenTextBox>
                         </RadzenColumn>
                         <RadzenButton ButtonType="ButtonType.Button"
                         Variant="Variant.Outlined"
@@ -84,7 +84,7 @@
                     </RadzenRow>
                 </RadzenFieldset>
             }
-            <ValidationMessage For="@(() => _model.WorkOrder.FirmClient)" />
+            <ValidationMessage For="@(() => _model.workOrder.firmClient)" />
         </RadzenFieldset>
     </RadzenTemplateForm>
     <RadzenStack AlignItems="AlignItems.End">
@@ -112,9 +112,9 @@
     {
         _model = new()
             {
-                StartDate = StartDate,
-                EndDate = EndDate,
-                WorkOrder = new()
+                startDate = StartDate,
+                endDate = EndDate,
+                workOrder = new()
             };
         _context = new(_model);
         _workOrders = new();
@@ -128,13 +128,13 @@
             {
                 var filter = new FilterDto()
                 {
-                    SearchQuery = _query
+                    searchQuery = _query
                 };
 
                 var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_SEARCH, filter, ApiType.Post);
-                if (result.HasCompleted)
+                if (result.hasCompleted)
                 {
-                    _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+                    _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
                 }
             }
         }
@@ -146,7 +146,7 @@
 
     private void SelectWorkOrder(WorkOrderDto workOrder)
     {
-        _model.WorkOrder = workOrder;
+        _model.workOrder = workOrder;
     }
 
     private async Task OnSubmit()
@@ -157,20 +157,20 @@
             {
                 var filter = new FilterDto()
                 {
-                    Data = _model
+                    data = _model
                 };
 
                 var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_INSERT, filter, ApiType.Post);
 
-                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
-                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
         }

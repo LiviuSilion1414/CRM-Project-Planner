@@ -2,37 +2,37 @@
 
 public class ActivityDto
 {
-    public Guid  Guid { get; set; }
+    public Guid id { get; set; }
 
     [Required]
     [MinLength(5)]
-    public string Name { get; set; }
+    public string name { get; set; }
 
     [Required]
-    public DateTime CreationDate { get; set; } = DateTime.Now;
-    public string CreationDateString { get => string.Format("{0:dd/MM/yyyy}", CreationDate); }
+    public DateTime creationDate { get; set; } = DateTime.Now;
+    public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }
 
     [Required]
-    [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
-    public DateTime StartDate { get; set; } = DateTime.Now;
-    public string StartDateString { get => string.Format("{0:dd/MM/yyyy}", StartDate); }
+    [DateRangeValidation(nameof(startDate), nameof(endDate))]
+    public DateTime startDate { get; set; } = DateTime.Now;
+    public string startDateString { get => string.Format("{0:dd/MM/yyyy}", startDate); }
 
     [Required]
-    public DateTime EndDate { get; set; } = DateTime.Now;
-    public string EndDateString { get => string.Format("{0:dd/MM/yyyy}", EndDate); }
+    public DateTime endDate { get; set; } = DateTime.Now;
+    public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
 
     [Required]
-    public Guid WorkOrderId { get; set; }
+    public Guid workOrderId { get; set; }
     
     [Required]
-    public WorkOrderDto WorkOrder { get; set; }
+    public WorkOrderDto workOrder { get; set; }
 }
 
 public class ActivityFilterDto : FilterDto 
 {
-    public Guid ActivityId { get; set; }
-    public Guid WorkOrderId { get; set; }
-    public Guid ClientId { get; set; }
+    public Guid activityId { get; set; }
+    public Guid workOrderId { get; set; }
+    public Guid clientId { get; set; }
 }
 
 public partial class ApiUrl

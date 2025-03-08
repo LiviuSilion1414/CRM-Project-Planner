@@ -4,27 +4,27 @@
             <RadzenFieldset Text="Client Info">
                 <RadzenColumn>
                     <RadzenText TextStyle="TextStyle.DisplayH6" Text="Client"></RadzenText>
-                    <RadzenText>Name: @SelectedWorkOrder.FirmClient.Name</RadzenText>
-                    <RadzenText>Vat Number: @SelectedWorkOrder.FirmClient.VatNumber</RadzenText>
+                    <RadzenText>Name: @SelectedWorkOrder.firmClient.name</RadzenText>
+                    <RadzenText>Vat Number: @SelectedWorkOrder.firmClient.vatNumber</RadzenText>
                 </RadzenColumn>
             </RadzenFieldset>
             <RadzenFieldset Text="WorkOrder Info">
                 <RadzenColumn>
                     <RadzenText TextStyle="TextStyle.DisplayH6" Text="WorkOrder"></RadzenText>
-                    <RadzenText>Name: @SelectedWorkOrder.Name</RadzenText>
-                    <RadzenText>Start Date: @SelectedWorkOrder.StartDateString</RadzenText>
-                    <RadzenText>End Date: @SelectedWorkOrder.EndDateString</RadzenText>
+                    <RadzenText>Name: @SelectedWorkOrder.name</RadzenText>
+                    <RadzenText>Start Date: @SelectedWorkOrder.startDateString</RadzenText>
+                    <RadzenText>End Date: @SelectedWorkOrder.endDateString</RadzenText>
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
         <RadzenRow>
             <RadzenFieldset Text="Related Activities">
                 <RadzenColumn>
-                    <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.Activities">
+                    <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.activities">
                         <Columns>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.Name)" Property="@nameof(ActivityDto.Name)"></RadzenDataGridColumn>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.StartDate)" Property="@nameof(ActivityDto.StartDateString)"></RadzenDataGridColumn>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.EndDate)" Property="@nameof(ActivityDto.EndDateString)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.name)" Property="@nameof(ActivityDto.name)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.startDate)" Property="@nameof(ActivityDto.startDateString)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.endDate)" Property="@nameof(ActivityDto.endDateString)"></RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
@@ -47,7 +47,7 @@
 
     private async Task OnEdit()
     {
-        await dialog.OpenAsync<WorkOrderEditForm>("Edit WorkOrder",
+        await dialog.OpenAsync<WorkOrderEditForm>("Edit workOrder",
             new Dictionary<string, object>()
             {
                 { nameof(WorkOrderEditForm.Model), SelectedWorkOrder }

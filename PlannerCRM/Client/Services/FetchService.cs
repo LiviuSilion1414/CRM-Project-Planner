@@ -20,7 +20,6 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
                 _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {jwt}");
             }
 
-            var result = new ResultDto();
             var response = new HttpResponseMessage();
 
             switch (apiType)
@@ -36,60 +35,7 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
                     break;
             }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                if (((int)response.StatusCode) == 500 || ((int)response.StatusCode) == 400)
-                {
-                    var errorMessage = (await response.Content.ReadFromJsonAsync<ResultDto>()).Message;
-                    result.MessageType = MessageType.Error;
-                    result.HasCompleted = false;
-                    result.Message = !string.IsNullOrEmpty(errorMessage) || !string.IsNullOrWhiteSpace(errorMessage)
-                                     ? errorMessage
-                                     : "Something went wrong, please retry!";
-                    return result;
-                }
-
-                //Method not allowed
-                if (((int)response.StatusCode) == 405)
-                {
-                    result.MessageType = MessageType.Warning;
-                    result.HasCompleted = false;
-                    result.Message = "Method not allowed";
-                    return result;
-
-                }
-
-                //Not found
-                if (((int)response.StatusCode) == 404)
-                {
-                    result.MessageType = MessageType.Warning;
-                    result.HasCompleted = false;
-                    result.Message = "Data not found";
-                    return result;
-
-                }
-
-                //Unauthorized
-                if (((int)response.StatusCode) == 401)
-                {
-                    result.MessageType = MessageType.Warning;
-                    result.HasCompleted = false;
-                    result.Message = "Unauthorized";
-                    return result;
-                }
-            } 
-            else
-            {
-                result.MessageType = MessageType.Success;
-                result.HasCompleted = true;
-                result.Message = "Operation completed";
-                return result;
-            }
-
-            result.MessageType = MessageType.Error;
-            result.HasCompleted = false;
-            result.Message = "Something went wrong, please retry!";
-            return result;
+            return await response.Content.ReadFromJsonAsync<ResultDto>();
         } 
         catch 
         {

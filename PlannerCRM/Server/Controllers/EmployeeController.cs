@@ -18,24 +18,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             await _repo.Insert(dto);
             return new ResultDto() 
             { 
-                Guid = null, 
-                Data = null, 
-                HasCompleted = true, 
-                Message = "Operation completed", 
-                MessageType = MessageType.Success, 
-                StatusCode = HttpStatusCode.OK 
+                id = null, 
+                data = null, 
+                hasCompleted = true, 
+                message = "Operation completed", 
+                messageType = MessageType.Success, 
+                statusCode = HttpStatusCode.OK 
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }
@@ -50,24 +50,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             await _repo.Update(dto);
             return new ResultDto() 
             { 
-                Guid = null, 
-                Data = null, 
-                HasCompleted = true, 
-                Message = "Operation completed", 
-                MessageType = MessageType.Success, 
-                StatusCode = HttpStatusCode.OK 
+                id = null, 
+                data = null, 
+                hasCompleted = true, 
+                message = "Operation completed", 
+                messageType = MessageType.Success, 
+                statusCode = HttpStatusCode.OK 
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }
@@ -82,24 +82,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             await _repo.Delete(filter);
             return new ResultDto() 
             { 
-                Guid = null, 
-                Data = null, 
-                HasCompleted = true, 
-                Message = "Operation completed", 
-                MessageType = MessageType.Success, 
-                StatusCode = HttpStatusCode.OK 
+                id = null, 
+                data = null, 
+                hasCompleted = true, 
+                message = "Operation completed", 
+                messageType = MessageType.Success, 
+                statusCode = HttpStatusCode.OK 
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }
@@ -114,24 +114,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             var employee = await _repo.Get(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = employee,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = employee,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }
@@ -146,24 +146,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             var entities = await _repo.List(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = entities,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = entities,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }
@@ -178,24 +178,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             var employees = await _repo.Search(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = employees,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = employees,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }
@@ -210,24 +210,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             var recoveryEmployees = await _repo.Search(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = recoveryEmployees,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = recoveryEmployees,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }
@@ -242,24 +242,24 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
             var activities = await _repo.FindAssociatedActivitiesByEmployeeId(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = activities,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = activities,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.BadRequest
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
             };
         }
     }

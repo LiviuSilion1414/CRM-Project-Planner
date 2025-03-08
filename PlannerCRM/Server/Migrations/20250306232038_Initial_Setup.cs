@@ -59,7 +59,7 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "roles",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -71,7 +71,7 @@ namespace PlannerCRM.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WorkOrders",
+                name: "workOrders",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -89,7 +89,7 @@ namespace PlannerCRM.Server.Migrations
                         name: "FK_WorkOrders_Clients_FirmClientId",
                         column: x => x.FirmClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -109,18 +109,18 @@ namespace PlannerCRM.Server.Migrations
                         name: "FK_EmployeeRoles_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
+                        principalTable: "roles",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Activities",
+                name: "activities",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -136,8 +136,8 @@ namespace PlannerCRM.Server.Migrations
                     table.ForeignKey(
                         name: "FK_Activities_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
-                        principalTable: "WorkOrders",
-                        principalColumn: "Id",
+                        principalTable: "workOrders",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -154,14 +154,14 @@ namespace PlannerCRM.Server.Migrations
                     table.ForeignKey(
                         name: "FK_ActivityEmployee_Activities_ActivitiesId",
                         column: x => x.ActivitiesId,
-                        principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalTable: "activities",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ActivityEmployee_Employees_EmployeesId",
                         column: x => x.EmployeesId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -179,14 +179,14 @@ namespace PlannerCRM.Server.Migrations
                     table.ForeignKey(
                         name: "FK_EmployeeActivities_Activities_ActivityId",
                         column: x => x.ActivityId,
-                        principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalTable: "activities",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeActivities_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -204,21 +204,21 @@ namespace PlannerCRM.Server.Migrations
                     table.ForeignKey(
                         name: "FK_WorkOrderActivities_Activities_ActivityId",
                         column: x => x.ActivityId,
-                        principalTable: "Activities",
-                        principalColumn: "Id",
+                        principalTable: "activities",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_WorkOrderActivities_WorkOrders_WorkOrderId",
                         column: x => x.WorkOrderId,
-                        principalTable: "WorkOrders",
-                        principalColumn: "Id",
+                        principalTable: "workOrders",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Activities_WorkOrderId",
-                table: "Activities",
-                column: "WorkOrderId");
+                table: "activities",
+                column: "workOrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityEmployee_EmployeesId",
@@ -228,37 +228,37 @@ namespace PlannerCRM.Server.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeActivities_ActivityId",
                 table: "EmployeeActivities",
-                column: "ActivityId");
+                column: "activityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeActivities_EmployeeId",
                 table: "EmployeeActivities",
-                column: "EmployeeId");
+                column: "employeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeRoles_EmployeeId",
                 table: "EmployeeRoles",
-                column: "EmployeeId");
+                column: "employeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeRoles_RoleId",
                 table: "EmployeeRoles",
-                column: "RoleId");
+                column: "roleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkOrderActivities_ActivityId",
                 table: "WorkOrderActivities",
-                column: "ActivityId");
+                column: "activityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkOrderActivities_WorkOrderId",
                 table: "WorkOrderActivities",
-                column: "WorkOrderId");
+                column: "workOrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkOrders_FirmClientId",
-                table: "WorkOrders",
-                column: "FirmClientId");
+                table: "workOrders",
+                column: "firmClientId");
         }
 
         /// <inheritdoc />
@@ -283,13 +283,13 @@ namespace PlannerCRM.Server.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "roles");
 
             migrationBuilder.DropTable(
-                name: "Activities");
+                name: "activities");
 
             migrationBuilder.DropTable(
-                name: "WorkOrders");
+                name: "workOrders");
 
             migrationBuilder.DropTable(
                 name: "Clients");

@@ -20,8 +20,8 @@ else
     RowSelect="OnSelect">
         <Columns>
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="Name" Title="Name" />
-            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.StartDateString)" Title="Start Date" />
-            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.EndDateString)" Title="End Date" />
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.startDateString)" Title="Start Date" />
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.endDateString)" Title="End Date" />
         </Columns>
     </RadzenDataGrid>
 }
@@ -42,9 +42,9 @@ else
             fetch.IsBusy = true;
 
             var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
-            if (result.Data is not null)
+            if (result.data is not null)
             {
-                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.Data.ToString());
+                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
             await LoadRelatedActivities();
             fetch.IsBusy = false;
@@ -64,7 +64,7 @@ else
             foreach (var wo in _workOrders)
             {
                 var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, new WorkOrderFilterDto(), ApiType.Post);
-                wo.Activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
+                wo.activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
             fetch.IsBusy = false;
         }
@@ -78,7 +78,7 @@ else
     {
         _selectedWorkOrder = workOrder;
 
-        await dialog.OpenAsync<WorkOrderDialog>("WorkOrder Info",
+        await dialog.OpenAsync<WorkOrderDialog>("workOrder Info",
             new Dictionary<string, object>() { { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } },
             new DialogOptions() { Width = "50vw;" }
         );
@@ -86,6 +86,6 @@ else
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<WorkOrderAddForm>("Add WorkOrder", null, new DialogOptions() { Width = "40vw;" });
+        await dialog.OpenAsync<WorkOrderAddForm>("Add workOrder", null, new DialogOptions() { Width = "40vw;" });
     }
 }

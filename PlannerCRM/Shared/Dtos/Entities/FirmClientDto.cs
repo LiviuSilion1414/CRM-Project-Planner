@@ -2,24 +2,24 @@
 
 public class FirmClientDto
 {
-    public Guid  Guid { get; set; }
+    public Guid id { get; set; }
 
     [Required]
     [MinLength(4)]
     [MaxLength(50)]
-    public string Name { get; set; }
+    public string name { get; set; }
     
     [Length(8, 15)]
     [Required]
-    public string VatNumber { get; set; }
-    public List<WorkOrderDto> WorkOrders { get; set; }
+    public string vatNumber { get; set; }
+    public List<WorkOrderDto> workOrders { get; set; }
 }
 
 public class FirmClientFilterDto : FilterDto
 {
-    public Guid FirmClientId { get; set; }
-    public Guid WorkOrderId { get; set; }
-    public Guid WorkOrderCostId { get; set; }
+    public Guid firmClientId { get; set; }
+    public Guid workOrderId { get; set; }
+    public Guid workOrderCostId { get; set; }
 }
 
 public partial class ApiUrl

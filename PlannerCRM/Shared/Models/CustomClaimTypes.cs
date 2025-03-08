@@ -2,10 +2,10 @@
 
 public class CustomClaimTypes
 {
-    public const string Guid = "Guid";
-    public const string Name = "Name";
-    public const string Email = "Email";
+    public const string Guid = "id";
+    public const string Name = "name";
+    public const string Email = "email";
     public const string Role = "Role";
-    public const string IsAuthenticated = "IsAuthenticated";
-    public const string Token = "Token";
+    public const string IsAuthenticated = "isAuthenticated";
+    public const string Token = "token";
 }

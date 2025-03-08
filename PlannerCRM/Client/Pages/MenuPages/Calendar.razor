@@ -15,9 +15,9 @@ else
                      Culture="CultureInfo.InvariantCulture"
                      SlotSelect="@OnAdd"
                      AppointmentSelect="@OnSelect"
-                     StartProperty="@nameof(ActivityDto.StartDate)"
-                     EndProperty="@nameof(ActivityDto.EndDate)"
-                     TextProperty="@nameof(ActivityDto.Name)"
+                     StartProperty="@nameof(ActivityDto.startDate)"
+                     EndProperty="@nameof(ActivityDto.endDate)"
+                     TextProperty="@nameof(ActivityDto.name)"
                      SelectedIndex="2">
         <RadzenDayView />
         <RadzenWeekView />
@@ -40,9 +40,9 @@ else
             fetch.IsBusy = true;
 
             var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, new ActivityFilterDto(), ApiType.Post);
-            if (result.Data is not null)
+            if (result.data is not null)
             {
-                _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.Data.ToString());
+                _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
             fetch.IsBusy = false;
         }

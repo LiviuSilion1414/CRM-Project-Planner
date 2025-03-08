@@ -8,8 +8,8 @@
                     <RadzenLabel Text="Name" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenTextBox Name="Name" @bind-Value=@Model.Name />
-                    <ValidationMessage For="@(() => Model.Name)" />
+                    <RadzenTextBox Name="Name" @bind-Value=@Model.name />
+                    <ValidationMessage For="@(() => Model.name)" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow Style="margin-bottom: 5px;">
@@ -17,8 +17,8 @@
                     <RadzenLabel Text="StartDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.StartDate />
-                    <ValidationMessage For="@(() => Model.StartDate)" />
+                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.startDate />
+                    <ValidationMessage For="@(() => Model.startDate)" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow Style="margin-bottom: 5px;">
@@ -26,8 +26,8 @@
                     <RadzenLabel Text="EndDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.EndDate />
-                    <ValidationMessage For="@(() => Model.EndDate)" />
+                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.endDate />
+                    <ValidationMessage For="@(() => Model.endDate)" />
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
@@ -56,12 +56,12 @@
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenRow>
-            @if (!string.IsNullOrEmpty(Model.FirmClient.Name))
+            @if (!string.IsNullOrEmpty(Model.firmClient.name))
             {
                 <RadzenRow Style="margin-top: 20px;">
                     <RadzenColumn>
-                        <RadzenTextBox @bind-Value="@Model.FirmClient.Name" Disabled="true" />
-                        <RadzenTextBox @bind-Value="@Model.FirmClient.VatNumber" Disabled="true" />
+                        <RadzenTextBox @bind-Value="@Model.firmClient.name" Disabled="true" />
+                        <RadzenTextBox @bind-Value="@Model.firmClient.vatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
                     Variant="Variant.Outlined"
@@ -69,7 +69,7 @@
                     Icon="Delete"
                     Click="@(() => SelectClient(new()))">
                     </RadzenButton>
-                    <ValidationMessage For="@(() => Model.FirmClient)" />
+                    <ValidationMessage For="@(() => Model.firmClient)" />
                 </RadzenRow>
             }
         </RadzenFieldset>
@@ -107,17 +107,17 @@
             {
                 var filter = new FilterDto()
                 {
-                    SearchQuery = _query
+                    searchQuery = _query
                 };
 
                 var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_SEARCH, filter, ApiType.Post);
-                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
-                    _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.Data.ToString());
+                    _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
         }
@@ -129,7 +129,7 @@
 
     private void SelectClient(FirmClientDto client)
     {
-        Model.FirmClient = client;
+        Model.firmClient = client;
     }
 
     private async Task OnSubmit()
@@ -140,20 +140,20 @@
             {
                 var filter = new FilterDto()
                 {
-                    Data = Model
+                    data = Model
                 };
 
                 var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_UPDATE, filter, ApiType.Put);
 
-                if (result.HasCompleted && result.StatusCode == HttpStatusCode.OK)
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
-                    notification.Notify(NotificationSeverity.Success, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Error, result.Message, null, 4000);
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
         }

@@ -2,40 +2,39 @@
 
 public class WorkOrderDto
 {
-    public Guid  Guid { get; set; }
+    public Guid id { get; set; }
     
-
     [Required]
     [MinLength(8)]
-    public string Name { get; set; }
+    public string name { get; set; }
 
-    public DateTime CreationDate { get => DateTime.UtcNow; }
-    public string CreationDateString { get => string.Format("{0:dd/MM/yyyy}", CreationDate); }
-
-    [Required]
-    public DateTime StartDate { get; set; } = DateTime.Now;
-    public string StartDateString { get => string.Format("{0:dd/MM/yyyy}", StartDate); }
-
+    public DateTime creationDate { get => DateTime.UtcNow; }
+    public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }
 
     [Required]
-    [DateRangeValidation(nameof(StartDate), nameof(EndDate))]
-    public DateTime EndDate { get; set; } = DateTime.Now;
-    public string EndDateString { get => string.Format("{0:dd/MM/yyyy}", EndDate); }
+    public DateTime startDate { get; set; } = DateTime.Now;
+    public string startDateString { get => string.Format("{0:dd/MM/yyyy}", startDate); }
+
 
     [Required]
-    public Guid FirmClientId { get; set; }
+    [DateRangeValidation(nameof(startDate), nameof(endDate))]
+    public DateTime endDate { get; set; } = DateTime.Now;
+    public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
+
+    [Required]
+    public Guid firmClientId { get; set; }
     
-    public Guid WorkOrderCostId { get; set; }
+    public Guid workOrderCostId { get; set; }
    
     [Required]
-    public FirmClientDto FirmClient { get; set; }
-    public List<ActivityDto> Activities { get; set; }
+    public FirmClientDto firmClient { get; set; }
+    public List<ActivityDto> activities { get; set; }
 }
 
 public class WorkOrderFilterDto : FilterDto
 {
-    public Guid WorkOrderId { get; set; }
-    public Guid FirmClientId { get; set; }
+    public Guid workOrderId { get; set; }
+    public Guid firmClientId { get; set; }
 }
 
 public partial class ApiUrl

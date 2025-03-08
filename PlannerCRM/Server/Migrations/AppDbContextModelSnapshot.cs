@@ -40,39 +40,39 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Activity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime>("creationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime>("endDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime>("startDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("WorkOrderId")
+                    b.Property<Guid>("workOrderId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("WorkOrderId");
+                    b.HasIndex("workOrderId");
 
-                    b.ToTable("Activities");
+                    b.ToTable("activities");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Employee", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("email")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsActive")
@@ -84,161 +84,161 @@ namespace PlannerCRM.Server.Migrations
                     b.Property<bool>("LockoutEnd")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
-                    b.Property<string>("Phone")
+                    b.Property<string>("phone")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.FirmClient", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.firmClient", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .HasColumnType("text");
 
-                    b.Property<string>("VatNumber")
+                    b.Property<string>("vatNumber")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Role", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("RoleName")
+                    b.Property<string>("roleName")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("roles");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.WorkOrder", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.workOrder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime>("endDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("FirmClientId")
+                    b.Property<Guid>("firmClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateTime>("startDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("WorkOrderCostId")
+                    b.Property<Guid>("workOrderCostId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("FirmClientId");
+                    b.HasIndex("firmClientId");
 
-                    b.ToTable("WorkOrders");
+                    b.ToTable("workOrders");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.ClientWorkOrder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("FirmClientId")
+                    b.Property<Guid>("firmClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("WorkOrderId")
+                    b.Property<Guid>("workOrderId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("ClientWorkOrders");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeActivity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ActivityId")
+                    b.Property<Guid>("activityId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid>("employeeId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("ActivityId");
+                    b.HasIndex("activityId");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("employeeId");
 
                     b.ToTable("EmployeeActivities");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeRole", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid>("employeeId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<Guid>("roleId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("RoleName")
+                    b.Property<string>("roleName")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("employeeId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("roleId");
 
                     b.ToTable("EmployeeRoles");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.WorkOrderActivity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ActivityId")
+                    b.Property<Guid>("activityId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("WorkOrderId")
+                    b.Property<Guid>("workOrderId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("ActivityId");
+                    b.HasIndex("activityId");
 
-                    b.HasIndex("WorkOrderId");
+                    b.HasIndex("workOrderId");
 
                     b.ToTable("WorkOrderActivities");
                 });
@@ -260,37 +260,37 @@ namespace PlannerCRM.Server.Migrations
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Activity", b =>
                 {
-                    b.HasOne("PlannerCRM.Server.Models.Entities.WorkOrder", "WorkOrder")
-                        .WithMany("Activities")
-                        .HasForeignKey("WorkOrderId")
+                    b.HasOne("PlannerCRM.Server.Models.Entities.workOrder", "workOrder")
+                        .WithMany("activities")
+                        .HasForeignKey("workOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("WorkOrder");
+                    b.Navigation("workOrder");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.WorkOrder", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.workOrder", b =>
                 {
-                    b.HasOne("PlannerCRM.Server.Models.Entities.FirmClient", "FirmClient")
-                        .WithMany("WorkOrders")
-                        .HasForeignKey("FirmClientId")
+                    b.HasOne("PlannerCRM.Server.Models.Entities.firmClient", "firmClient")
+                        .WithMany("workOrders")
+                        .HasForeignKey("firmClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("FirmClient");
+                    b.Navigation("firmClient");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.JoinEntities.EmployeeActivity", b =>
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Activity", "Activity")
                         .WithMany("EmployeeActivities")
-                        .HasForeignKey("ActivityId")
+                        .HasForeignKey("activityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
                         .WithMany("EmployeeActivities")
-                        .HasForeignKey("EmployeeId")
+                        .HasForeignKey("employeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -303,13 +303,13 @@ namespace PlannerCRM.Server.Migrations
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Employee", "Employee")
                         .WithMany("EmployeeRoles")
-                        .HasForeignKey("EmployeeId")
+                        .HasForeignKey("employeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlannerCRM.Server.Models.Entities.Role", "Role")
                         .WithMany("EmployeeRoles")
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("roleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -322,19 +322,19 @@ namespace PlannerCRM.Server.Migrations
                 {
                     b.HasOne("PlannerCRM.Server.Models.Entities.Activity", "Activity")
                         .WithMany()
-                        .HasForeignKey("ActivityId")
+                        .HasForeignKey("activityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlannerCRM.Server.Models.Entities.WorkOrder", "WorkOrder")
+                    b.HasOne("PlannerCRM.Server.Models.Entities.workOrder", "workOrder")
                         .WithMany()
-                        .HasForeignKey("WorkOrderId")
+                        .HasForeignKey("workOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Activity");
 
-                    b.Navigation("WorkOrder");
+                    b.Navigation("workOrder");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Activity", b =>
@@ -349,9 +349,9 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("EmployeeRoles");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.FirmClient", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.firmClient", b =>
                 {
-                    b.Navigation("WorkOrders");
+                    b.Navigation("workOrders");
                 });
 
             modelBuilder.Entity("PlannerCRM.Server.Models.Entities.Role", b =>
@@ -359,9 +359,9 @@ namespace PlannerCRM.Server.Migrations
                     b.Navigation("EmployeeRoles");
                 });
 
-            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.WorkOrder", b =>
+            modelBuilder.Entity("PlannerCRM.Server.Models.Entities.workOrder", b =>
                 {
-                    b.Navigation("Activities");
+                    b.Navigation("activities");
                 });
 #pragma warning restore 612, 618
         }

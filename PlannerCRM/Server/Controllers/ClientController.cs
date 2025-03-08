@@ -16,24 +16,24 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
             await _repo.Insert(dto);
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
             };
         }
     }
@@ -47,24 +47,24 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
             await _repo.Update(dto);
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
             };
         }
     }
@@ -78,24 +78,24 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
             await _repo.Delete(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
             };
         }
     }
@@ -109,24 +109,24 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
             var client = await _repo.Get(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = client,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = client,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
             };
         }
     }
@@ -140,24 +140,24 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
             var entities = await _repo.List(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = entities,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = entities,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
             };
         }
     }
@@ -171,24 +171,24 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
             var client = await _repo.Search(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = client,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = client,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
             };
         }
     }
@@ -202,24 +202,24 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
             var workOrders = await _repo.FindAssociatedWorkOrdersByClientId(filter);
             return new ResultDto()
             {
-                Guid = null,
-                Data = workOrders,
-                HasCompleted = true,
-                Message = "Operation completed",
-                MessageType = MessageType.Success,
-                StatusCode = HttpStatusCode.OK
+                id = null,
+                data = workOrders,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
         } 
         catch 
         {
             return new ResultDto()
             {
-                Guid = null,
-                Data = null,
-                HasCompleted = false,
-                Message = "Operation failed",
-                MessageType = MessageType.Error,
-                StatusCode = HttpStatusCode.NotFound
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
             };
         }
     }
