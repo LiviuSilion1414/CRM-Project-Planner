@@ -34,7 +34,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
-        await LoadRelatedWorkOrders();
     }
 
     private async Task LoadData()
@@ -46,9 +45,9 @@ else
             var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
             if (result.data is not null)
             {
-                Console.WriteLine(result.data.ToString());
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
+            await LoadRelatedWorkOrders();
             fetch.IsBusy = false;
         }
         catch
@@ -83,14 +82,19 @@ else
 
         await dialog.OpenAsync<ClientDialog>("Client Info",
             new Dictionary<string, object>()
-                {
+            {
                 { nameof(ClientDialog.SelectedClient), _selectedClient },
-                }
+            }
         );
     }
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<ClientAddForm>("Add Client", null, new DialogOptions() { Width = "40vw;" });
+        await dialog.OpenAsync<ClientAddForm>("Add Client",
+            new Dictionary<string, object>()
+            {
+                { nameof(ClientAddForm.OnReloadList), LoadData() }
+            },
+            new DialogOptions() { Width = "40vw;" });
     }
 }

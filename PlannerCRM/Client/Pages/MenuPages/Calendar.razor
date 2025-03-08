@@ -63,12 +63,10 @@ else
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
         await dialog.OpenAsync<ActivityAddForm>("Add Activity",
-            new()
+            new Dictionary<string, object>()
             {
-                { nameof(ActivityAddForm.StartDate), args.Start },
-                { nameof(ActivityAddForm.EndDate), args.End }
+                { nameof(ActivityAddForm.OnReloadList), LoadData() }
             },
-            new DialogOptions() { Width = "40vw;" }
-        );
+            new DialogOptions() { Width = "40vw;" });
     }
 }

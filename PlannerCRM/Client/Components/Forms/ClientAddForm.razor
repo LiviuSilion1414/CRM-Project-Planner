@@ -23,6 +23,8 @@
 
 @code
 {
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
     private FirmClientDto _model;
 
     private EditContext _context;
@@ -46,6 +48,7 @@
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
+                    await OnReloadList.InvokeAsync();
                 }
                 else
                 {

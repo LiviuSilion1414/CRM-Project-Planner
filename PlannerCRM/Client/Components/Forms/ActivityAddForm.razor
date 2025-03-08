@@ -35,22 +35,22 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                                   Placeholder="Search workorder.."
-                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    Placeholder="Search workorder.."
+                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Icon="Search"
-                                  Click="@SearchWorkOrder">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="Search"
+                    Click="@SearchWorkOrder">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@WorkOrderDto"
-                                    Data="@_workOrders"
-                                    AllowFiltering="true"
-                                    AllowSorting="true"
-                                    SelectionMode="DataGridSelectionMode.Single"
-                                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
+                    Data="@_workOrders"
+                    AllowFiltering="true"
+                    AllowSorting="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
                         <Columns>
                             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
                         </Columns>
@@ -76,10 +76,10 @@
                             <RadzenTextBox @bind-Value="@_model.workOrder.name" Disabled="true"></RadzenTextBox>
                         </RadzenColumn>
                         <RadzenButton ButtonType="ButtonType.Button"
-                                      Variant="Variant.Outlined"
-                                      ButtonStyle="ButtonStyle.Danger"
-                                      Icon="Delete"
-                                      Click="@(() => SelectWorkOrder(null))">
+                        Variant="Variant.Outlined"
+                        ButtonStyle="ButtonStyle.Danger"
+                        Icon="Delete"
+                        Click="@(() => SelectWorkOrder(null))">
                         </RadzenButton>
                     </RadzenRow>
                 </RadzenFieldset>
@@ -101,6 +101,7 @@
 {
     [Parameter] public DateTime StartDate { get; set; }
     [Parameter] public DateTime EndDate { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
 
     private ActivityDto _model;
     private string _query = string.Empty;
@@ -162,6 +163,7 @@
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
+                    await OnReloadList.InvokeAsync();
                 }
                 else
                 {

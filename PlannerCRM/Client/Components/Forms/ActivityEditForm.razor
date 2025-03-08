@@ -100,6 +100,7 @@
 @code
 {
     [Parameter] public ActivityDto Model { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
 
     private string _query = string.Empty;
 
@@ -158,6 +159,8 @@
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
+
+                    await OnReloadList.InvokeAsync();
                 }
                 else
                 {

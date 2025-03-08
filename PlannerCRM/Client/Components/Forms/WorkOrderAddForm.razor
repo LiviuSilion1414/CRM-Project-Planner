@@ -86,6 +86,8 @@
 
 @code
 {
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
     private WorkOrderDto _model;
     private string _query = string.Empty;
 
@@ -149,6 +151,7 @@
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
 
                     dialog.Close();
+                    await OnReloadList.InvokeAsync();
                 }
                 else
                 {

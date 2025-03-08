@@ -12,12 +12,12 @@ else
     <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
     <RadzenDataGrid Data="@_activities"
-                    TItem="@ActivityDto"
-                    AllowSorting="true"
-                    AllowPaging="true"
-                    AllowFiltering="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="OnSelect">
+    TItem="@ActivityDto"
+    AllowSorting="true"
+    AllowPaging="true"
+    AllowFiltering="true"
+    SelectionMode="DataGridSelectionMode.Single"
+    RowSelect="OnSelect">
         <Columns>
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
@@ -59,13 +59,21 @@ else
         _selectedActivity = activity;
 
         await dialog.OpenAsync<ActivityDialog>("Activity Info",
-            new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), _selectedActivity } },
+            new Dictionary<string, object>() 
+            { 
+                { nameof(ActivityDialog.SelectedActivity), _selectedActivity } 
+            },
             new DialogOptions() { Width = "40vw;" }
         );
     }
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<ActivityAddForm>("Add Activity", null, new DialogOptions() { Width = "40vw;" });
+        await dialog.OpenAsync<ActivityAddForm>("Add Activity", 
+            new Dictionary<string, object>()
+            { 
+                { nameof(ActivityAddForm.OnReloadList), LoadData() }
+            },
+            new DialogOptions() { Width = "40vw;" });
     }
 }

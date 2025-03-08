@@ -79,13 +79,21 @@ else
         _selectedWorkOrder = workOrder;
 
         await dialog.OpenAsync<WorkOrderDialog>("workOrder Info",
-            new Dictionary<string, object>() { { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } },
+            new Dictionary<string, object>() 
+            { 
+                { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } 
+            },
             new DialogOptions() { Width = "50vw;" }
         );
     }
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<WorkOrderAddForm>("Add workOrder", null, new DialogOptions() { Width = "40vw;" });
+        await dialog.OpenAsync<WorkOrderAddForm>("Add WorkOrder",
+            new Dictionary<string, object>()
+            {
+                { nameof(WorkOrderAddForm.OnReloadList), LoadData() }
+            },
+            new DialogOptions() { Width = "40vw;" });
     }
 }
