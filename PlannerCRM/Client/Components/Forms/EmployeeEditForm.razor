@@ -14,8 +14,8 @@
                         <RadzenLabel>Name</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@_model.name"/>
-                        <ValidationMessage For="@(() => _model.name)"/>
+                        <InputText class="form-control" @bind-Value="@Model.name"/>
+                        <ValidationMessage For="@(() => Model.name)"/>
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -23,8 +23,8 @@
                         <RadzenLabel>Email</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@_model.email" />
-                        <ValidationMessage For="@(() => _model.email)" />
+                        <InputText class="form-control" @bind-Value="@Model.email" />
+                        <ValidationMessage For="@(() => Model.email)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -32,8 +32,8 @@
                         <RadzenLabel>Phone</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@_model.phone" />
-                        <ValidationMessage For="@(() => _model.phone)" />
+                        <InputText class="form-control" @bind-Value="@Model.phone" />
+                        <ValidationMessage For="@(() => Model.phone)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -41,8 +41,8 @@
                         <RadzenLabel>Password</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@_model.password" />
-                       <ValidationMessage For="@(() => _model.password)" />
+                        <InputText class="form-control" @bind-Value="@Model.password" />
+                       <ValidationMessage For="@(() => Model.password)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow>
@@ -61,10 +61,10 @@
                     <RadzenFieldset Text="Roles">
                         <RadzenColumn>
                             <RadzenDataGrid TItem="RoleDto"
-                                            Data="_model.roles"
+                                            Data="Model.roles"
                                             AllowSorting="true">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Ruolo"/>
+                                    <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Ruolo" />
                                     <RadzenDataGridColumn>
                                         <Template Context="data">
                                             <RadzenButton Icon="delete" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>
@@ -83,35 +83,35 @@
 
 @code 
 {
+    [Parameter] public EmployeeDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
 
-    EmployeeDto _model;
     EditContext _context;
 
     [Required]
     string roleName = string.Empty;
-
+    
     protected override void OnInitialized()
     {
-        _model = new();
-        _context = new(_model);
+        Model = new();
+        _context = new(Model);
     }
 
     void AssignRole()
     {
-        if (_model.roles.Where(x => x.roleName.Equals(roleName)).Any())
+        if (Model.roles.Where(x => x.roleName.Equals(roleName)).Any())
         {
             notification.Notify(NotificationSeverity.Warning, "Role already present", null, 4000);
         }
         else
         {
-            _model.roles.Add(new RoleDto() { roleName = roleName });
+            Model.roles.Add(new RoleDto() { roleName = roleName });
         }
     }
 
     void RemoveRole(RoleDto role)
     {
-        _model.roles.Remove(role);
+        Model.roles.Remove(role);
     }
 
     async Task Submit()
@@ -120,7 +120,7 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_INSERT, _model, ApiType.Put);
+                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE, Model, ApiType.Put);
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {

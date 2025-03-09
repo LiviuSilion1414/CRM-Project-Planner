@@ -27,9 +27,13 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                 model.PasswordHash = cryptedPwd;
 
                 await _context.Employees.AddAsync(model);
+
+                var mappedRoles = _mapper.Map<List<Role>>(dto.roles);
+
+                _context.EmployeeRoles.AddRange(mappedRoles.Select(x => new EmployeeRole() { EmployeeId = model.Id, RoleId = x.Id }));
+
                 await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
         } 
         catch (Exception)
         {
@@ -43,8 +47,20 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         {
             var model = _mapper.Map<Employee>(dto);
 
-            var existingModel = await _context.Employees.SingleAsync(em => em.Id == model.Id);
+            var existingModel = await _context.Employees
+                                              .Include(x => x.EmployeeRoles)
+                                              .SingleAsync(em => em.Id == model.Id);
+            
             existingModel = model;
+
+            var rolesExists = existingModel.EmployeeRoles.Where(x => dto.roles.Where(y => x.RoleName.Equals(y.roleName)).Any()).Any();
+
+            if (!rolesExists)
+            {
+                var mappedRoles = _mapper.Map<List<Role>>(dto.roles);
+
+                _context.EmployeeRoles.AddRange(mappedRoles.Select(x => new EmployeeRole() { EmployeeId = model.Id, RoleId = x.Id }));
+            }
 
             _context.Update(existingModel);
 

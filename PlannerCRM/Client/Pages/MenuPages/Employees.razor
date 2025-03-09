@@ -1,0 +1,81 @@
+﻿@page "/clients"
+
+<h3>Employees</h3>
+<PageTitle>Employees</PageTitle>
+
+@if (fetch.IsBusy)
+{
+    <Loader />
+}
+else
+{
+    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+
+    <RadzenDataGrid Data="@_employees"
+    TItem="@EmployeeDto"
+    AllowSorting="true"
+    AllowPaging="true"
+    AllowFiltering="true"
+    SelectionMode="DataGridSelectionMode.Single"
+    RowSelect="OnSelect">
+        <Columns>
+            <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
+            <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
+            <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
+        </Columns>
+    </RadzenDataGrid>
+}
+
+@code {
+    private List<EmployeeDto> _employees = new();
+
+    private bool _isSelected = false;
+    private EmployeeDto _selectedClient = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_LIST, new EmployeeFilterDto(), ApiType.Post);
+            if (result.data is not null)
+            {
+                _employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task OnSelect(EmployeeDto client)
+    {
+        _selectedClient = client;
+
+        await dialog.OpenAsync<ClientDialog>("Client Info",
+            new Dictionary<string, object>()
+            {
+                { nameof(ClientDialog.SelectedClient), _selectedClient },
+            },
+            new DialogOptions() { Width = "90vw;", Height = "90vh" }
+        );
+    }
+
+    private async Task OnAdd()
+    {
+        await dialog.OpenAsync<ClientAddForm>("Add Client",
+            new Dictionary<string, object>()
+            {
+                { nameof(ClientAddForm.OnReloadList), LoadData() }
+            },
+            new DialogOptions() { Width = "90vw;", Height = "90vh" });
+    }
+}

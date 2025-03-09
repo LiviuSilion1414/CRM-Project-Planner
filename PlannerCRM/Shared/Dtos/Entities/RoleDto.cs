@@ -3,7 +3,7 @@
 public class RoleDto
 {
     public Guid id { get; set; }
-    public Roles roleName { get; set; }
+    public string roleName { get; set; }
 }
 
 public class RoleFilterDto : FilterDto

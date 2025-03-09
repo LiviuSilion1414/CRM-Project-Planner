@@ -18,6 +18,8 @@ public class EmployeeDto
     
     [Required]
     public string password { get; set; }
+
+    public List<RoleDto> roles { get; set; }
 }
 
 public class EmployeeFilterDto : FilterDto

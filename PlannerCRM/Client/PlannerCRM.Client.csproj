@@ -27,4 +27,10 @@
     <None Include="wwwroot\images\person.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Components\Forms\EmployeeEditForm.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

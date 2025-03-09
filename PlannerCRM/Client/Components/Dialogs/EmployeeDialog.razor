@@ -1,0 +1,63 @@
+﻿<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenFieldset Text="Employee Info">
+                <RadzenColumn>
+                    <RadzenText>Name: @SelectedEmployee.name</RadzenText>
+                    <RadzenText>Email: @SelectedEmployee.email</RadzenText>
+                    <RadzenText>Phone: @SelectedEmployee.phone</RadzenText>
+                </RadzenColumn>
+            </RadzenFieldset>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenFieldset Text="Current Roles">
+                <RadzenColumn>
+                    <RadzenDataGrid TItem="@RoleDto" Data="@SelectedEmployee.roles">
+                        <Columns>
+                            <RadzenDataGridColumn Property="@nameof(RoleDto.roleName)" Title="Ruolo" />
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenColumn>
+            </RadzenFieldset>
+        </RadzenRow>
+    </RadzenStack>
+    <RadzenStack AlignItems="AlignItems.End">
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit" Click="OnEdit"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenStack>
+
+@code
+{
+    [Parameter] public EmployeeDto SelectedEmployee { get; set; }
+
+    private async Task OnEdit()
+    {
+        await dialog.OpenAsync<EmployeeEditForm>("Edit employee",
+            new Dictionary<string, object>()
+            {
+                { nameof(EmployeeEditForm.), SelectedEmployee }
+            },
+            new DialogOptions() { Width = "80vw;", Height = "90vh" }
+        );
+    }
+
+    private async Task OnDelete()
+    {
+        try
+        {
+            if ((await dialog.Confirm("Confirm this item removal", "Delete employee", new() { OkButtonText = "Delete" })).Value)
+            {
+                await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_DELETE, new FilterDto(), ApiType.Put);
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+}
