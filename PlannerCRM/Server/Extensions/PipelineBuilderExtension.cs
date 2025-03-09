@@ -50,5 +50,6 @@ public static class PipelineBuilderExtension
         services.AddScoped<EmployeeRepository>();
         services.AddScoped<FirmClientRepository>();
         services.AddScoped<WorkOrderRepository>();
+        services.AddScoped<RoleRepository>();
     }
 }

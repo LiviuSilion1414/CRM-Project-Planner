@@ -1,0 +1,166 @@
+﻿@page "/roles"
+
+<h3>Roles</h3>
+<PageTitle>Roles</PageTitle>
+
+<EditForm EditContext="editContext" OnValidSubmit="AddRole">
+    <DataAnnotationsValidator />
+    <RadzenRow class="mb-2">
+        <RadzenColumn Size="8">
+            <RadzenFormField Text="Role Name">
+                <InputText class="form-control w-100" @bind-Value="model.roleName" />
+            </RadzenFormField>
+            <ValidationMessage For="@(() => model.roleName)" />
+        </RadzenColumn>
+        <RadzenColumn Size="4">
+            @if (isUpdate)
+            {
+                <RadzenButton ButtonType="ButtonType.Reset"
+                              Icon="cancel"
+                              Text="Cancel"
+                              ButtonStyle="ButtonStyle.Secondary"
+                              Variant="Variant.Flat"
+                              Click="@(() => ToggleUpdate(new()))">
+                </RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Submit"
+                              Icon="send"
+                              Text="Save changes"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Variant="Variant.Flat"
+                              Click="UpdateRole">
+                </RadzenButton>
+            }
+            else
+            {
+                <RadzenButton ButtonType="ButtonType.Submit"
+                              Icon="add_circle_outline"
+                              IconColor="@Colors.Success"
+                              Text="Add Role"
+                              Click="AddRole">
+                </RadzenButton>
+            }
+        </RadzenColumn>
+    </RadzenRow>
+</EditForm>
+
+<RadzenDataGrid @ref="grid"
+                TItem="RoleDto"
+                Data="roles"
+                SelectionMode="DataGridSelectionMode.Single"
+                AllowSorting="true"
+                AllowAlternatingRows="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.id)" Title="Identifier" />
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
+        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+            <Template Context="data">
+                <RadzenButton Variant="Variant.Filled" Icon="edit" ButtonStyle="ButtonStyle.Info" Click="@(() => ToggleUpdate(data))"></RadzenButton>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+            <Template Context="data">
+                <RadzenButton Variant="Variant.Filled" Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="@(() => DeleteRole(data))"></RadzenButton>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code
+{
+    RadzenDataGrid<RoleDto> grid;
+    List<RoleDto> roles = new();
+    RoleDto model;
+    EditContext editContext;
+
+    bool isUpdate = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = new();
+        editContext = new(model);
+        await LoadData();
+    }
+
+    void ToggleUpdate(RoleDto role)
+    {
+        isUpdate = !isUpdate;
+        model = role;
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, new RoleFilterDto(), ApiType.Post);
+            if (result.data is not null)
+            {
+                roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task AddRole()
+    {
+        try
+        {
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_INSERT, model, ApiType.Post);
+            if (result.hasCompleted)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await LoadData();
+                await grid.Reload();
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task UpdateRole()
+    {
+        try
+        {
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_UPDATE, model, ApiType.Put);
+            if (result.hasCompleted)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await LoadData();
+                await grid.Reload();
+                ToggleUpdate(new RoleDto());
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task DeleteRole(RoleDto role)
+    {
+        try
+        {
+            if ((await dialog.Confirm("Confirm this item removal?", "Delete role")).Value)
+            {
+                var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_DELETE, new RoleFilterDto() { roleId = role.id }, ApiType.Post);
+                if (result.hasCompleted)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadData();
+                    await grid.Reload();
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+}

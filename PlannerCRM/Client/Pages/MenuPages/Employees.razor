@@ -1,4 +1,4 @@
-﻿@page "/clients"
+﻿@page "/employees"
 
 <h3>Employees</h3>
 <PageTitle>Employees</PageTitle>
@@ -30,7 +30,7 @@ else
     private List<EmployeeDto> _employees = new();
 
     private bool _isSelected = false;
-    private EmployeeDto _selectedClient = null;
+    private EmployeeDto _selectedEmployee = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,12 +58,12 @@ else
 
     private async Task OnSelect(EmployeeDto client)
     {
-        _selectedClient = client;
+        _selectedEmployee = client;
 
-        await dialog.OpenAsync<ClientDialog>("Client Info",
+        await dialog.OpenAsync<EmployeeDialog>("Employee Info",
             new Dictionary<string, object>()
             {
-                { nameof(ClientDialog.SelectedClient), _selectedClient },
+                { nameof(EmployeeDialog.SelectedEmployee), _selectedEmployee },
             },
             new DialogOptions() { Width = "90vw;", Height = "90vh" }
         );
@@ -71,10 +71,10 @@ else
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<ClientAddForm>("Add Client",
+        await dialog.OpenAsync<EmployeeAddForm>("Add Employee",
             new Dictionary<string, object>()
             {
-                { nameof(ClientAddForm.OnReloadList), LoadData() }
+                { nameof(EmployeeAddForm.OnReloadList), LoadData() }
             },
             new DialogOptions() { Width = "90vw;", Height = "90vh" });
     }

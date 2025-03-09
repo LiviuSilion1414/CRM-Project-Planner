@@ -1,6 +1,4 @@
-﻿@page "/employee-add"
-
-@layout MainLayout
+﻿@layout MainLayout
 
 @attribute [Authorize]
 
@@ -64,7 +62,7 @@
                                             Data="_model.roles"
                                             AllowSorting="true">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Ruolo"/>
+                                    <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role Name"/>
                                     <RadzenDataGridColumn>
                                         <Template Context="data">
                                             <RadzenButton Icon="delete" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>

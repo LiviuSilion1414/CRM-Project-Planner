@@ -164,11 +164,5 @@ public static class ModelBuilderExtensions
             .WithMany(e => e.EmployeeRoles)
             .HasForeignKey(er => er.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<EmployeeRole>()
-            .HasOne(er => er.Role)
-            .WithMany(e => e.EmployeeRoles)
-            .HasForeignKey(er => er.RoleId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

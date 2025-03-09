@@ -40,7 +40,7 @@
         await dialog.OpenAsync<EmployeeEditForm>("Edit employee",
             new Dictionary<string, object>()
             {
-                { nameof(EmployeeEditForm.), SelectedEmployee }
+                { nameof(EmployeeEditForm.Model), SelectedEmployee }
             },
             new DialogOptions() { Width = "80vw;", Height = "90vh" }
         );
