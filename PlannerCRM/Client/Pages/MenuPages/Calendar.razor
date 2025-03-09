@@ -54,9 +54,9 @@ else
 
     private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
     {
-        await dialog.OpenAsync<ActivityDialog>("Activity Information",
+        await dialog.OpenAsync<ActivityDialog>("Activity Info",
             new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), args.Data } },
-            new DialogOptions() { Width = "40vw;" }
+            new DialogOptions() { Width = "90vw;", Height = "90vh" }
         );
     }
 
@@ -67,6 +67,6 @@ else
             {
                 { nameof(ActivityAddForm.OnReloadList), LoadData() }
             },
-            new DialogOptions() { Width = "40vw;" });
+            new DialogOptions() { Width = "90vw;", Height = "90vh" });
     }
 }

@@ -12,12 +12,12 @@ else
     <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
     <RadzenDataGrid Data="@_clients"
-                    TItem="@FirmClientDto"
-                    AllowSorting="true"
-                    AllowPaging="true"
-                    AllowFiltering="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="OnSelect">
+    TItem="@FirmClientDto"
+    AllowSorting="true"
+    AllowPaging="true"
+    AllowFiltering="true"
+    SelectionMode="DataGridSelectionMode.Single"
+    RowSelect="OnSelect">
         <Columns>
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.vatNumber)" Title="Vat Number" />
@@ -47,27 +47,6 @@ else
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
-            await LoadRelatedWorkOrders();
-            fetch.IsBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadRelatedWorkOrders()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            foreach (var cl in _clients)
-            {
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new FirmClientFilterDto(), ApiType.Post);
-                cl.workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
-            }
-
             fetch.IsBusy = false;
         }
         catch
@@ -84,7 +63,8 @@ else
             new Dictionary<string, object>()
             {
                 { nameof(ClientDialog.SelectedClient), _selectedClient },
-            }
+            },
+            new DialogOptions() { Width = "90vw;", Height = "90vh" }
         );
     }
 
@@ -95,6 +75,6 @@ else
             {
                 { nameof(ClientAddForm.OnReloadList), LoadData() }
             },
-            new DialogOptions() { Width = "40vw;" });
+            new DialogOptions() { Width = "90vw;", Height = "90vh" });
     }
 }

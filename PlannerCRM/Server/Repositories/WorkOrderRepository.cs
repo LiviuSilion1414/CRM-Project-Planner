@@ -94,14 +94,13 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var workOrder = await _context.WorkOrders
+            var workOrders = await _context.WorkOrders
                 .OrderBy(w => w.Id)
                 .Include(w => w.FirmClient)
                 .Include(w => w.Activities)
                 .ToListAsync();
 
-            var mapped = _mapper.Map<List<WorkOrderDto>>(workOrder);
-            return mapped;
+            return _mapper.Map<List<WorkOrderDto>>(workOrders);
         }
         catch 
         {

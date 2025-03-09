@@ -46,26 +46,6 @@ else
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
-            await LoadRelatedActivities();
-            fetch.IsBusy = false;
-        }
-        catch 
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadRelatedActivities()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            foreach (var wo in _workOrders)
-            {
-                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, new WorkOrderFilterDto(), ApiType.Post);
-                wo.activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
-            }
             fetch.IsBusy = false;
         }
         catch 
@@ -83,7 +63,7 @@ else
             { 
                 { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } 
             },
-            new DialogOptions() { Width = "50vw;" }
+            new DialogOptions() { Width = "90vw;", Height = "90vh" }
         );
     }
 
@@ -94,6 +74,6 @@ else
             {
                 { nameof(WorkOrderAddForm.OnReloadList), LoadData() }
             },
-            new DialogOptions() { Width = "40vw;" });
+            new DialogOptions() { Width = "90vw;", Height = "90vh" });
     }
 }
