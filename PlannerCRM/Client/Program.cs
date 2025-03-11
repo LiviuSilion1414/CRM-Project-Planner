@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 using System.Text.Json;
 
@@ -8,7 +9,14 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddAuthorizationCore();
 
-builder.Services.RegisterServices();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<LocalStorageService>();
+builder.Services.AddScoped<FetchService>();
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<TooltipService>();
+builder.Services.AddScoped<ContextMenuService>();
 
 builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();

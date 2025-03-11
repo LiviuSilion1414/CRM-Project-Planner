@@ -5,19 +5,19 @@
 
 @if (fetch.IsBusy)
 {
-    <Loader/>
+    <Loader />
 }
 else
 {
     <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
 
     <RadzenDataGrid Data="@_workOrders"
-    TItem="@WorkOrderDto"
-    AllowSorting="true"
-    AllowPaging="true"
-    AllowFiltering="true"
-    SelectionMode="DataGridSelectionMode.Single"
-    RowSelect="OnSelect">
+                    TItem="@WorkOrderDto"
+                    AllowSorting="true"
+                    AllowPaging="true"
+                    AllowFiltering="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="OnSelect">
         <Columns>
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.startDateString)" Title="Start Date" />
@@ -27,7 +27,6 @@ else
 }
 
 @code {
-    private WorkOrderDto _selectedWorkOrder = null;
     private List<WorkOrderDto> _workOrders = new();
 
     protected override async Task OnInitializedAsync()
@@ -42,13 +41,13 @@ else
             fetch.IsBusy = true;
 
             var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
-            if (result.data is not null)
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
             fetch.IsBusy = false;
         }
-        catch 
+        catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -56,24 +55,24 @@ else
 
     private async Task OnSelect(WorkOrderDto workOrder)
     {
-        _selectedWorkOrder = workOrder;
-
         await dialog.OpenAsync<WorkOrderDialog>("workOrder Info",
-            new Dictionary<string, object>() 
-            { 
-                { nameof(WorkOrderDialog.SelectedWorkOrder), _selectedWorkOrder } 
+            new Dictionary<string, object>()
+            {
+                { nameof(WorkOrderDialog.SelectedWorkOrder), workOrder },
+                { nameof(WorkOrderDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
             },
-            new DialogOptions() { Width = "90vw;", Height = "90vh" }
+            new DialogOptions() { Width = "40vw;", Height = "50vh" }
         );
     }
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<WorkOrderAddForm>("Add WorkOrder",
+        await dialog.OpenAsync<WorkOrderForm>("Add WorkOrder",
             new Dictionary<string, object>()
             {
-                { nameof(WorkOrderAddForm.OnReloadList), LoadData() }
+                { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(WorkOrderForm.IsInsert), true }
             },
-            new DialogOptions() { Width = "90vw;", Height = "90vh" });
+            new DialogOptions() { Width = "40vw;", Height = "50vh" });
     }
 }

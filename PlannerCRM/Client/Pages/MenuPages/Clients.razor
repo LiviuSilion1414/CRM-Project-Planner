@@ -28,9 +28,6 @@ else
 @code {
     private List<FirmClientDto> _clients = new();
 
-    private bool _isSelected = false;
-    private FirmClientDto _selectedClient = null;
-
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
@@ -43,7 +40,7 @@ else
             fetch.IsBusy = true;
 
             var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
-            if (result.data is not null)
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
@@ -57,24 +54,24 @@ else
 
     private async Task OnSelect(FirmClientDto client)
     {
-        _selectedClient = client;
-
         await dialog.OpenAsync<ClientDialog>("Client Info",
             new Dictionary<string, object>()
             {
-                { nameof(ClientDialog.SelectedClient), _selectedClient },
+                { nameof(ClientDialog.SelectedClient), client },
+                { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
             },
-            new DialogOptions() { Width = "90vw;", Height = "90vh" }
+            new DialogOptions() { Width = "40vw;", Height = "50vh" }
         );
     }
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<ClientAddForm>("Add Client",
+        await dialog.OpenAsync<ClientForm>("Add Client",
             new Dictionary<string, object>()
             {
-                { nameof(ClientAddForm.OnReloadList), LoadData() }
+                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(ClientForm.IsInsert), true }
             },
-            new DialogOptions() { Width = "90vw;", Height = "90vh" });
+            new DialogOptions() { Width = "40vw;", Height = "50vh" });
     }
 }

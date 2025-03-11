@@ -47,22 +47,17 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         {
             var model = _mapper.Map<Employee>(dto);
 
-            var existingModel = await _context.Employees
-                                              .Include(x => x.EmployeeRoles)
-                                              .SingleAsync(em => em.Id == model.Id);
-            
-            existingModel = model;
-
-            var rolesExists = existingModel.EmployeeRoles.Where(x => dto.roles.Where(y => x.RoleName.Equals(y.roleName)).Any()).Any();
-
-            if (!rolesExists)
+            if (model.EmployeeRoles != null && model.EmployeeRoles.Any())
             {
-                var mappedRoles = _mapper.Map<List<Role>>(dto.roles);
-
-                _context.EmployeeRoles.AddRange(mappedRoles.Select(x => new EmployeeRole() { EmployeeId = model.Id, RoleId = x.Id }));
+                model.EmployeeRoles.AddRange(dto.roles.Where(x => model.EmployeeRoles.Where(y => y.RoleId != x.id).Any()).Select(x => new EmployeeRole() { EmployeeId = model.Id, RoleId = x.id }));
+            }
+            else
+            {
+                model.EmployeeRoles = new List<EmployeeRole>();
+                model.EmployeeRoles.AddRange(dto.roles.Select(x => new EmployeeRole { RoleId = x.id, RoleName = x.roleName }).ToList());
             }
 
-            _context.Update(existingModel);
+            _context.Update(model);
 
             await _context.SaveChangesAsync();
         } 
@@ -116,7 +111,6 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                                           .OrderBy(e => e.Id)
                                           .Include(e => e.EmployeeRoles)
                                           .Include(e => e.Activities)
-                                          .Include(e => e.EmployeeRoles)
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);

@@ -40,7 +40,7 @@ else
             fetch.IsBusy = true;
 
             var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, new ActivityFilterDto(), ApiType.Post);
-            if (result.data is not null)
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
@@ -55,18 +55,23 @@ else
     private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
     {
         await dialog.OpenAsync<ActivityDialog>("Activity Info",
-            new Dictionary<string, object>() { { nameof(ActivityDialog.SelectedActivity), args.Data } },
-            new DialogOptions() { Width = "90vw;", Height = "90vh" }
+            new Dictionary<string, object>() { 
+                { nameof(ActivityDialog.SelectedActivity), args.Data },
+                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
+            },
+            new DialogOptions() { Width = "40vw;", Height = "50vh" }
         );
     }
 
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
-        await dialog.OpenAsync<ActivityAddForm>("Add Activity",
+        await dialog.OpenAsync<ActivityForm>("Add Activity",
             new Dictionary<string, object>()
             {
-                { nameof(ActivityAddForm.OnReloadList), LoadData() }
+                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(ActivityForm.IsInsert), true }
+
             },
-            new DialogOptions() { Width = "90vw;", Height = "90vh" });
+            new DialogOptions() { Width = "40vw;", Height = "50vh" });
     }
 }

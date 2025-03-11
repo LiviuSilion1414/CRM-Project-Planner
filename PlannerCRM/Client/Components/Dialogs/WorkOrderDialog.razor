@@ -22,9 +22,9 @@
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@ActivityDto" Data="@SelectedWorkOrder.activities">
                         <Columns>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.name)" Property="@nameof(ActivityDto.name)"></RadzenDataGridColumn>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.startDate)" Property="@nameof(ActivityDto.startDateString)"></RadzenDataGridColumn>
-                            <RadzenDataGridColumn Title="@nameof(WorkOrderDto.endDate)" Property="@nameof(ActivityDto.endDateString)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="Name" Property="@nameof(ActivityDto.name)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="Start Date" Property="@nameof(ActivityDto.startDateString)"></RadzenDataGridColumn>
+                            <RadzenDataGridColumn Title="End Date" Property="@nameof(ActivityDto.endDateString)"></RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
@@ -43,14 +43,17 @@
 
 @code
 {
+    [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public WorkOrderDto SelectedWorkOrder { get; set; }
 
     private async Task OnEdit()
     {
-        await dialog.OpenAsync<WorkOrderEditForm>("Edit workOrder",
+        await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
             new Dictionary<string, object>()
             {
-                { nameof(WorkOrderEditForm.Model), SelectedWorkOrder }
+                { nameof(WorkOrderForm.Model), SelectedWorkOrder },
+                { nameof(WorkOrderForm.IsInsert), false },
+                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
             },
             new DialogOptions() { Width="40vw;" }            
         );
@@ -60,14 +63,30 @@
     {
         try
         {
-            if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", new() { OkButtonText = "Delete" })).Value)
+            if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", null)).Value)
             {
-                await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_DELETE, new FilterDto(), ApiType.Put);
+                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_DELETE,
+                                                      new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id }, 
+                                                      ApiType.Put);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await InvokeReloadList();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
             }
         }
         catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task InvokeReloadList()
+    {
+        await OnReloadList.InvokeAsync();
     }
 }

@@ -5,13 +5,13 @@
             <ValidationSummary />
             <div class="form-control">
                 <label>Name</label>
-                <InputText class="form-control" @bind-Value="@_model.name" />
-                <ValidationMessage For="@(() => _model.name)" />
+                <InputText class="form-control" @bind-Value="@Model.name" />
+                <ValidationMessage For="@(() => Model.name)" />
             </div>
             <div class="form-control">
                 <label>Vat Number</label>
-                <InputText class="form-control" @bind-Value="@_model.vatNumber" />
-                <ValidationMessage For="@(() => _model.vatNumber)" />
+                <InputText class="form-control" @bind-Value="@Model.vatNumber" />
+                <ValidationMessage For="@(() => Model.vatNumber)" />
             </div>
         </EditForm>
     </RadzenCard>
@@ -23,16 +23,22 @@
 
 @code
 {
+    [Parameter] public bool IsInsert { get; set; }
+    [Parameter] public FirmClientDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
-
-    private FirmClientDto _model;
 
     private EditContext _context;
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        _model = new();
-        _context = new(_model);
+        if (IsInsert)
+        {
+            Model = new FirmClientDto()
+            {
+                workOrders = new List<WorkOrderDto>()
+            };
+        }
+        _context = new(Model);
     }
 
     private async Task OnValidSubmit()
@@ -41,12 +47,20 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_INSERT, _model, ApiType.Post);
+                ResultDto result = new ResultDto();
+                if (IsInsert)
+                {
+                    result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_INSERT, Model, ApiType.Post);
+                }
+                else
+                {
+                    result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_UPDATE, Model, ApiType.Put);
+                }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-
+                    
                     dialog.Close();
                     await OnReloadList.InvokeAsync();
                 }

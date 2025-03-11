@@ -5,9 +5,9 @@
 <RadzenStack JustifyContent="JustifyContent.Center">
     <RadzenCard>
         <RadzenFieldset Text="Employee">
-            <EditForm EditContext="_context" OnSubmit="Submit">
+            <EditForm EditContext="@_context" OnSubmit="Submit">
                 <DataAnnotationsValidator />
-                <RadzenRow>
+                <RadzenRow class="mt-3">
                     <RadzenColumn>
                         <RadzenLabel>Name</RadzenLabel>
                     </RadzenColumn>
@@ -16,7 +16,7 @@
                         <ValidationMessage For="@(() => Model.name)"/>
                     </RadzenColumn>
                 </RadzenRow>
-                <RadzenRow>
+                <RadzenRow class="mt-3">
                     <RadzenColumn>
                         <RadzenLabel>Email</RadzenLabel>
                     </RadzenColumn>
@@ -25,7 +25,7 @@
                         <ValidationMessage For="@(() => Model.email)" />
                     </RadzenColumn>
                 </RadzenRow>
-                <RadzenRow>
+                <RadzenRow class="mt-3">
                     <RadzenColumn>
                         <RadzenLabel>Phone</RadzenLabel>
                     </RadzenColumn>
@@ -34,7 +34,7 @@
                         <ValidationMessage For="@(() => Model.phone)" />
                     </RadzenColumn>
                 </RadzenRow>
-                <RadzenRow>
+                <RadzenRow class="mt-3">
                     <RadzenColumn>
                         <RadzenLabel>Password</RadzenLabel>
                     </RadzenColumn>
@@ -43,27 +43,24 @@
                        <ValidationMessage For="@(() => Model.password)" />
                     </RadzenColumn>
                 </RadzenRow>
-                <RadzenRow>
+                <RadzenRow class="mt-3">
                     <RadzenColumn>
                         <RadzenLabel>Assign Roles</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@roleName" />
-                        <ValidationMessage For="@(() => roleName)" />
-                    </RadzenColumn>
-                    <RadzenColumn>
-                        <RadzenButton Icon="add_circle_outline" Click="AssignRole"></RadzenButton>
+                        <RadzenDropDown TValue="RoleDto" Data="@roles" TextProperty="@nameof(RoleDto.roleName)" Change="@((role) => AssignRole(role))" AllowFiltering="true" Style="width: 40vw;"/>
                     </RadzenColumn>
                 </RadzenRow>
-                <RadzenRow>
+                <RadzenRow class="mt-3">
                     <RadzenFieldset Text="Roles">
                         <RadzenColumn>
-                            <RadzenDataGrid TItem="RoleDto"
-                                            Data="Model.roles"
+                            <RadzenDataGrid @ref="grid"
+                                            TItem="RoleDto"
+                                            Data="@Model.roles"
                                             AllowSorting="true">
                                 <Columns>
                                     <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role Name" />
-                                    <RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="RoleDto" Width="64px">
                                         <Template Context="data">
                                             <RadzenButton Icon="delete" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>
                                         </Template>
@@ -73,7 +70,7 @@
                         </RadzenColumn>
                     </RadzenFieldset>
                 </RadzenRow>
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" Click="Submit"></RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
             </EditForm>
         </RadzenFieldset>
     </RadzenCard>
@@ -81,35 +78,60 @@
 
 @code 
 {
+    [Parameter] public bool IsInsert { get; set; }
     [Parameter] public EmployeeDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
 
     EditContext _context;
+    List<RoleDto> roles = new();
+    RadzenDataGrid<RoleDto> grid;
 
-    [Required]
-    string roleName = string.Empty;
-    
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Model = new();
+        if (IsInsert)
+        {
+            Model = new EmployeeDto()
+            {
+                roles = new List<RoleDto>()
+            };
+        }
         _context = new(Model);
+        await LoadData();
     }
 
-    void AssignRole()
+    void AssignRole(object role)
     {
-        if (Model.roles.Where(x => x.roleName.Equals(roleName)).Any())
+        if (!Model.roles.Contains((RoleDto)role))
         {
-            notification.Notify(NotificationSeverity.Warning, "Role already present", null, 4000);
-        }
-        else
-        {
-            Model.roles.Add(new RoleDto() { roleName = roleName });
+            Model.roles.Add(new RoleDto() {  id = ((RoleDto)role).id, roleName = ((RoleDto)role).roleName });
+            grid.Reload();
         }
     }
 
     void RemoveRole(RoleDto role)
     {
         Model.roles.Remove(role);
+        grid.Reload();
+        notification.Notify(NotificationSeverity.Success, "Role removed", null, 4000);
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, new RoleFilterDto(), ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     async Task Submit()
@@ -118,7 +140,15 @@
         {
             if (_context.Validate())
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE, Model, ApiType.Put);
+                ResultDto result = new ResultDto();
+                if (IsInsert)
+                {
+                    result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_INSERT, Model, ApiType.Post);
+                }
+                else
+                {
+                    result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE, Model, ApiType.Put);
+                }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {

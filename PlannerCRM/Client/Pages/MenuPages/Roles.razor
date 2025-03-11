@@ -94,7 +94,7 @@
             fetch.IsBusy = true;
 
             var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, new RoleFilterDto(), ApiType.Post);
-            if (result.data is not null)
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }

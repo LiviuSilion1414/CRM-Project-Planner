@@ -13,10 +13,9 @@ public class EmployeeDto
     public string phone { get; set; }
     
     [Required]
-    [EmailAddress]
+    //[EmailAddress]
     public string email { get; set; }
     
-    [Required]
     public string password { get; set; }
 
     public List<RoleDto> roles { get; set; }

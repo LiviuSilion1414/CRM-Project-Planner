@@ -37,14 +37,17 @@
 
 @code
 {
+    [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public ActivityDto SelectedActivity { get; set; }
 
     private async Task OnEdit()
     {
-        await dialog.OpenAsync<ActivityEditForm>("Edit Activity",
+        await dialog.OpenAsync<ActivityForm>("Edit Activity",
             new Dictionary<string, object>()
             {
-                { nameof(ActivityEditForm.Model), SelectedActivity }
+                { nameof(ActivityForm.Model), SelectedActivity },
+                { nameof(ActivityForm.IsInsert), false },
+                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
             },
             new DialogOptions() { Width="40vw;" }
         );
@@ -54,14 +57,30 @@
     {
         try
         {
-            if ((await dialog.Confirm("Confirm this item removal", "Delete activity", new() { OkButtonText = "Delete" })).Value)
+            if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
             {
-                await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE, new FilterDto(), ApiType.Put);
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE, 
+                                                      new ActivityFilterDto() { activityId = SelectedActivity.id }, 
+                                                      ApiType.Post);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await InvokeReloadList();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
             }
         }
         catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task InvokeReloadList()
+    {
+        await OnReloadList.InvokeAsync();
     }
 }

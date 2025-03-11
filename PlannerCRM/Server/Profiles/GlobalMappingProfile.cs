@@ -9,6 +9,7 @@ public class GlobalMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<Employee, EmployeeDto>()
+            .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeeRoles.Select(x => new RoleDto() { id = x.RoleId, roleName= x.RoleName } )))
             .PreserveReferences()
             .ReverseMap();
 
