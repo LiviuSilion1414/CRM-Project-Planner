@@ -67,22 +67,25 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                                       .Include(x => x.EmployeeRoles)
                                       .SingleOrDefaultAsync(x => x.Id == filter.employeeId);
 
-            if (existingModel.EmployeeRoles.Any(x => x.RoleId == filter.roleId))
+            if (existingModel != null)
             {
-                if (filter.isRemoveRole)
+                if (existingModel.EmployeeRoles.Any(x => x.RoleId == filter.roleId))
                 {
-                    existingModel.EmployeeRoles.Remove(existingModel.EmployeeRoles.Single(x => x.RoleId == filter.roleId));
+                    if (filter.isRemoveRole)
+                    {
+                        existingModel.EmployeeRoles.Remove(existingModel.EmployeeRoles.Single(x => x.RoleId == filter.roleId));
+                    }
                 }
-            }
 
-            if (!existingModel.EmployeeRoles.Any())
-            { 
-                if (!filter.isRemoveRole)
-                {
-                    existingModel.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName });
+                if (!existingModel.EmployeeRoles.Any() || existingModel.EmployeeRoles.Any(x => x.RoleId != filter.roleId))
+                { 
+                    if (!filter.isRemoveRole)
+                    {
+                        existingModel.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName });
+                    }
                 }
+                await _context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
         }
         catch
         {

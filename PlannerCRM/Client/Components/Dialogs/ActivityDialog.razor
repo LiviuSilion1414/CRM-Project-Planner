@@ -49,8 +49,29 @@
                 { nameof(ActivityForm.IsInsert), false },
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
             },
-            new DialogOptions() { Width="40vw;" }
+            new DialogOptions() { Width = "80vw;", Height = "90vh" }
         );
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_GET,
+                                                  new ActivityFilterDto() { activityId = SelectedActivity.id },
+                                                  ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                SelectedActivity = JsonSerializer.Deserialize<ActivityDto>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task OnDelete()
@@ -82,5 +103,6 @@
     async Task InvokeReloadList()
     {
         await OnReloadList.InvokeAsync();
+        await LoadData();
     }
 }

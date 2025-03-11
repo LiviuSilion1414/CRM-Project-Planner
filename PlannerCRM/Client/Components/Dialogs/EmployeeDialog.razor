@@ -54,6 +54,27 @@
         );
     }
 
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_GET,
+                                                  new EmployeeFilterDto() { employeeId = SelectedEmployee.id },
+                                                  ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                SelectedEmployee = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
     private async Task OnDelete()
     {
         try
@@ -83,5 +104,6 @@
     async Task InvokeReloadList()
     {
         await OnReloadList.InvokeAsync();
+        await LoadData();
     }
 }

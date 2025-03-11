@@ -5,7 +5,6 @@ public class EmployeeDto
     public Guid id { get; set; }
 
     [Required]
-    [MinLength(5, ErrorMessage = "The name should be at least {0} characters")]
     public string name { get; set; }
 
     [Required]
