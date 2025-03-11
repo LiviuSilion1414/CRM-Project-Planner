@@ -9,9 +9,15 @@ public class GlobalMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<Employee, EmployeeDto>()
-            .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeeRoles.Select(x => new RoleDto() { id = x.RoleId, roleName= x.RoleName } )))
-            .PreserveReferences()
-            .ReverseMap();
+            .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeeRoles.Select(x => new RoleDto() { id = x.RoleId, roleName= x.RoleName })))
+            .PreserveReferences();
+        //.ReverseMap();
+
+        CreateMap<EmployeeDto, Employee>()
+            .ForMember(dest => dest.EmployeeRoles, cfg => cfg.MapFrom(src => src.roles.Select(x => new EmployeeRole() { RoleId = x.id, RoleName = x.roleName })))
+            .ForMember(dest => dest.PasswordHash, cfg => cfg.Ignore())
+            .PreserveReferences();
+            //.ReverseMap();
 
         CreateMap<FirmClient, FirmClientDto>()
             .PreserveReferences()

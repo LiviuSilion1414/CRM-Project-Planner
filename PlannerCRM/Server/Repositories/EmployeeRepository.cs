@@ -45,23 +45,46 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var model = _mapper.Map<Employee>(dto);
+            var existingModel = await _context.Employees
+                                              .Include(x => x.EmployeeRoles)
+                                              .SingleOrDefaultAsync(x => x.Id == dto.id);
 
-            if (model.EmployeeRoles != null && model.EmployeeRoles.Any())
-            {
-                model.EmployeeRoles.AddRange(dto.roles.Where(x => model.EmployeeRoles.Where(y => y.RoleId != x.id).Any()).Select(x => new EmployeeRole() { EmployeeId = model.Id, RoleId = x.id }));
-            }
-            else
-            {
-                model.EmployeeRoles = new List<EmployeeRole>();
-                model.EmployeeRoles.AddRange(dto.roles.Select(x => new EmployeeRole { RoleId = x.id, RoleName = x.roleName }).ToList());
-            }
-
-            _context.Update(model);
+            existingModel = _mapper.Map<Employee>(dto);
 
             await _context.SaveChangesAsync();
         } 
         catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task UpdateEmployeeRole(EmployeeFilterDto filter)
+    {
+        try
+        {
+            var existingModel = await _context.Employees
+                                      .Include(x => x.EmployeeRoles)
+                                      .SingleOrDefaultAsync(x => x.Id == filter.employeeId);
+
+            if (existingModel.EmployeeRoles.Any(x => x.RoleId == filter.roleId))
+            {
+                if (filter.isRemoveRole)
+                {
+                    existingModel.EmployeeRoles.Remove(existingModel.EmployeeRoles.Single(x => x.RoleId == filter.roleId));
+                }
+            }
+
+            if (!existingModel.EmployeeRoles.Any())
+            { 
+                if (!filter.isRemoveRole)
+                {
+                    existingModel.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName });
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
+        catch
         {
             throw;
         }

@@ -73,6 +73,37 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [Authorize]
+    [HttpPut]
+    [Route(ApiUrl.EMPLOYEE_UPDATE_ROLE)]
+    public async Task<ResultDto> UpdateRole(EmployeeFilterDto filter)
+    {
+        try
+        {
+            await _repo.UpdateEmployeeRole(filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } catch
+        {
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
+            };
+        }
+    }
+
+    [Authorize]
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_DELETE)]
     public async Task<ResultDto> Delete([FromBody] EmployeeFilterDto filter)

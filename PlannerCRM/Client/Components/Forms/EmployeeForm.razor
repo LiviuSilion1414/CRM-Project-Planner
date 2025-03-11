@@ -48,7 +48,13 @@
                         <RadzenLabel>Assign Roles</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <RadzenDropDown TValue="RoleDto" Data="@roles" TextProperty="@nameof(RoleDto.roleName)" Change="@((role) => AssignRole(role))" AllowFiltering="true" Style="width: 40vw;"/>
+                        <RadzenDropDown TValue="RoleDto" 
+                                        Data="@roles" 
+                                        AllowFiltering="true" 
+                                        TextProperty="@nameof(RoleDto.roleName)" 
+                                        Change="@AssignRole" 
+                                        @bind-Value="@assignedRole"
+                                        Style="width: 40vw;"/>
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow class="mt-3">
@@ -85,6 +91,7 @@
     EditContext _context;
     List<RoleDto> roles = new();
     RadzenDataGrid<RoleDto> grid;
+    RoleDto assignedRole = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,20 +106,55 @@
         await LoadData();
     }
 
-    void AssignRole(object role)
+    async Task AssignRole()
     {
-        if (!Model.roles.Contains((RoleDto)role))
+        try
         {
-            Model.roles.Add(new RoleDto() {  id = ((RoleDto)role).id, roleName = ((RoleDto)role).roleName });
-            grid.Reload();
+            if (!Model.roles.Contains(assignedRole))
+            {
+                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE,
+                                                      new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.id, role = assignedRole, employeeId = Model.id },
+                                                      ApiType.Put);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    Model.roles.Add(new RoleDto() { id = assignedRole.id, roleName = assignedRole.roleName });
+                    grid.Reload();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Success, "Something went wrong, please retry", null, 4000);
         }
     }
 
-    void RemoveRole(RoleDto role)
+    async Task RemoveRole(RoleDto role)
     {
-        Model.roles.Remove(role);
-        grid.Reload();
-        notification.Notify(NotificationSeverity.Success, "Role removed", null, 4000);
+        try
+        {
+            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE, 
+                                                  new EmployeeFilterDto() { isRemoveRole = true, roleId = role.id, role = role, employeeId = Model.id }, 
+                                                  ApiType.Put);
+            if (result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                Model.roles.Remove(role);
+                grid.Reload();
+            }
+            else
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Success, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task LoadData()
