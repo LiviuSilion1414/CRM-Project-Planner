@@ -15,13 +15,18 @@
                     <RadzenDataGrid TItem="@RoleDto" Data="@SelectedEmployee.roles">
                         <Columns>
                             <RadzenDataGridColumn TItem="@RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
+                            <RadzenDataGridColumn TItem="@RoleDto" Width="64px">
+                                <Template Context="data">
+                                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="open_in_new" Click="@OnEdit"></RadzenButton>
+                                </Template>
+                            </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
     </RadzenStack>
-    <RadzenStack AlignItems="AlignItems.End">
+    <RadzenStack AlignItems="AlignItems.Center">
         <RadzenRow>
             <RadzenColumn>
                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
@@ -50,7 +55,7 @@
                 { nameof(EmployeeForm.IsInsert), false },
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "90vh" }
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
 

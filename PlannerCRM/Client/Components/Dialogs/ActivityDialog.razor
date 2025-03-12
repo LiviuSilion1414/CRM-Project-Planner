@@ -1,10 +1,21 @@
 ﻿<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
     <RadzenStack>
-        <RadzenRow>
+        <RadzenRow class="mt-3">
+            <RadzenFieldset Text="Activity Information">
+                <RadzenColumn>
+                    <RadzenText>Name: @SelectedActivity.name</RadzenText>
+                    <RadzenText>Start Date: @SelectedActivity.startDateString</RadzenText>
+                    <RadzenText>End Date: @SelectedActivity.endDateString</RadzenText>
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@OnEdit"></RadzenButton>
+                </RadzenColumn>
+            </RadzenFieldset>
+        </RadzenRow>
+        <RadzenRow class="mt-3">
             <RadzenFieldset Text="Client Information">
                 <RadzenColumn>
                     <RadzenText>Name: @SelectedActivity.workOrder.firmClient.name</RadzenText>
                     <RadzenText>Vat Number: @SelectedActivity.workOrder.firmClient.vatNumber</RadzenText>
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedActivity.workOrder.firmClient))"></RadzenButton>
                 </RadzenColumn>
             </RadzenFieldset>
             <RadzenFieldset Text="Work Order Information">
@@ -12,20 +23,12 @@
                     <RadzenText>Name: @SelectedActivity.workOrder.name</RadzenText>
                     <RadzenText>Start Date: @SelectedActivity.workOrder.startDateString</RadzenText>
                     <RadzenText>End Date: @SelectedActivity.workOrder.endDateString</RadzenText>
-                </RadzenColumn>
-            </RadzenFieldset>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenFieldset Text="Activity Information">
-                <RadzenColumn>
-                    <RadzenText>Name: @SelectedActivity.name</RadzenText>
-                    <RadzenText>Start Date: @SelectedActivity.startDateString</RadzenText>
-                    <RadzenText>End Date: @SelectedActivity.endDateString</RadzenText>
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenWorkOrderDetails(SelectedActivity.workOrder))"></RadzenButton>
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
     </RadzenStack>
-    <RadzenStack AlignItems="AlignItems.End">
+    <RadzenStack AlignItems="AlignItems.Center">
         <RadzenRow>
             <RadzenColumn>
                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
@@ -49,7 +52,7 @@
                 { nameof(ActivityForm.IsInsert), false },
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "90vh" }
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
 
@@ -104,5 +107,31 @@
     {
         await OnReloadList.InvokeAsync();
         await LoadData();
+    }
+
+    async Task OpenWorkOrderDetails(WorkOrderDto workOrder)
+    {
+        await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
+            new Dictionary<string, object>()
+            {
+                { nameof(WorkOrderForm.Model), workOrder },
+                { nameof(WorkOrderForm.IsInsert), false },
+                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
+            },
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
+        );
+    }
+
+    private async Task OpenClientDetails(FirmClientDto client)
+    {
+        await dialog.OpenAsync<ClientForm>("Edit client",
+            new Dictionary<string, object>()
+            {
+                { nameof(ClientForm.Model), client },
+                { nameof(ClientForm.IsInsert), false },
+                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
+            },
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true, }
+        );
     }
 }

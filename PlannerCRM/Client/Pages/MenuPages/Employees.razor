@@ -22,6 +22,16 @@ else
             <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
             <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
+            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px">
+                <Template Context="data">
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px">
+                <Template Context="data">
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 }
@@ -61,7 +71,7 @@ else
                 { nameof(EmployeeDialog.SelectedEmployee), client },
                 { nameof(EmployeeDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
             },
-            new DialogOptions() { Width = "40vw;", Height = "50vh" }
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
 
@@ -73,6 +83,32 @@ else
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(EmployeeForm.IsInsert), true }
             },
-            new DialogOptions() { Width = "40vw;", Height = "50vh" });
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
+    }
+
+    private async Task OnDelete(EmployeeDto employee)
+    {
+        try
+        {
+            if ((await dialog.Confirm("Confirm this item removal", "Delete employee", null)).Value)
+            {
+                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_DELETE,
+                                                      new EmployeeFilterDto() { employeeId = employee.id },
+                                                      ApiType.Post);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadData();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 }

@@ -21,6 +21,16 @@ else
         <Columns>
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.vatNumber)" Title="Vat Number" />
+            <RadzenDataGridColumn TItem="@FirmClientDto" Width="64px">
+                <Template Context="data">
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="@FirmClientDto" Width="64px">
+                <Template Context="data">
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 }
@@ -60,7 +70,7 @@ else
                 { nameof(ClientDialog.SelectedClient), client },
                 { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
             },
-            new DialogOptions() { Width = "40vw;", Height = "50vh" }
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
 
@@ -72,6 +82,32 @@ else
                 { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ClientForm.IsInsert), true }
             },
-            new DialogOptions() { Width = "40vw;", Height = "50vh" });
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
+    }
+
+    private async Task OnDelete(FirmClientDto client)
+    {
+        try
+        {
+            if ((await dialog.Confirm("Confirm this item removal", "Delete client", null)).Value)
+            {
+                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_DELETE,
+                                                      new FirmClientFilterDto() { firmClientId = client.id },
+                                                      ApiType.Post);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadData();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 }

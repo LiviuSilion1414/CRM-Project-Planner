@@ -47,10 +47,8 @@
                 {
                     <RadzenFieldset Text="Roles">
                         <RadzenRow class="mt-3">
-                            <RadzenColumn>
+                            <RadzenColumn Size="8">
                                 <RadzenLabel>Assign Roles</RadzenLabel>
-                            </RadzenColumn>
-                            <RadzenColumn>
                                 <RadzenDropDown TValue="RoleDto"
                                                 Data="@roles"
                                                 AllowFiltering="true"
@@ -59,25 +57,24 @@
                                                 @bind-Value="@assignedRole"
                                                 Style="width: 40vw;" />
                             </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow class="mt-3">
-                                <RadzenColumn>
-                                    <RadzenDataGrid @ref="grid"
-                                                    TItem="RoleDto"
-                                                    Data="@Model.roles"
-                                                    PageSize="5"
-                                                    AllowSorting="true">
-                                        <Columns>
-                                            <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role Name" />
-                                            <RadzenDataGridColumn TItem="RoleDto" Width="64px">
-                                                <Template Context="data">
-                                                    <RadzenButton Icon="delete" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>
-                                                </Template>
-                                            </RadzenDataGridColumn>
-                                        </Columns>
-                                    </RadzenDataGrid>
-                                </RadzenColumn>
-                        </RadzenRow>
+                            <RadzenColumn Size="4">
+                                <RadzenDataGrid @ref="grid"
+                                                TItem="RoleDto"
+                                                Data="@Model.roles"
+                                                PageSize="5"
+                                                AllowPaging="true"
+                                                AllowSorting="true">
+                                    <Columns>
+                                        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role Name" />
+                                        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+                                            <Template Context="data">
+                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    </Columns>
+                                </RadzenDataGrid>
+                            </RadzenColumn>
+                    </RadzenRow>
                     </RadzenFieldset>
                 }
             </EditForm>

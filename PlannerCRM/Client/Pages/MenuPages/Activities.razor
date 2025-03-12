@@ -22,12 +22,21 @@ else
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.endDateString)" Title="End Date" />
+            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px">
+                <Template Context="data">
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px">
+                <Template Context="data">
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 }
 
 @code {
-    private ActivityDto _selectedActivity = null;
     private List<ActivityDto> _activities = new();
 
     protected override async Task OnInitializedAsync()
@@ -56,15 +65,13 @@ else
 
     private async Task OnSelect(ActivityDto activity)
     {
-        _selectedActivity = activity;
-
         await dialog.OpenAsync<ActivityDialog>("Activity Info",
             new Dictionary<string, object>() 
             { 
                 { nameof(ActivityDialog.SelectedActivity), _selectedActivity },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
             },
-            new DialogOptions() { Width = "40vw;", Height = "50vh" }
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
 
@@ -76,6 +83,32 @@ else
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ActivityForm.IsInsert), true }
             },
-            new DialogOptions() { Width = "40vw;", Height = "50vh" });
+            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
+    }
+
+    private async Task OnDelete(ActivityDto activity)
+    {
+        try
+        {
+            if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
+            {
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE,
+                                                      new ActivityFilterDto() { activityId = activity.id },
+                                                      ApiType.Post);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadData();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 }
