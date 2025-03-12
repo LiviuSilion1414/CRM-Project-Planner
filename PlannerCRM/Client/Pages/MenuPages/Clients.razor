@@ -9,8 +9,20 @@
 }
 else
 {
-    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
-
+    <RadzenCard class="mb-3">
+        <RadzenRow JustifyContent="JustifyContent.Stretch">
+            <RadzenColumn>
+                <RadzenFormField Text="Client" AllowFloatingLabel="false">
+                    <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@query" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
     <RadzenDataGrid Data="@_clients"
     TItem="@FirmClientDto"
     AllowSorting="true"
@@ -21,12 +33,12 @@ else
         <Columns>
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.vatNumber)" Title="Vat Number" />
-            <RadzenDataGridColumn TItem="@FirmClientDto" Width="64px">
+            <RadzenDataGridColumn TItem="@FirmClientDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@FirmClientDto" Width="64px">
+            <RadzenDataGridColumn TItem="@FirmClientDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
                 </Template>
@@ -38,8 +50,16 @@ else
 @code {
     private List<FirmClientDto> _clients = new();
 
+    private string query = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+    }
+
+    async Task ResetData()
+    {
+        query = string.Empty;
         await LoadData();
     }
 
@@ -49,7 +69,12 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            var filter = new FirmClientFilterDto
+                {
+                    searchQuery = query
+                };
+
+            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, filter, ApiType.Post);
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
@@ -66,10 +91,10 @@ else
     {
         await dialog.OpenAsync<ClientDialog>("Client Info",
             new Dictionary<string, object>()
-            {
+                {
                 { nameof(ClientDialog.SelectedClient), client },
                 { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
-            },
+                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
@@ -78,10 +103,10 @@ else
     {
         await dialog.OpenAsync<ClientForm>("Add Client",
             new Dictionary<string, object>()
-            {
+                {
                 { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ClientForm.IsInsert), true }
-            },
+                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
     }
 

@@ -41,11 +41,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
 
             _context.Attach(model.FirmClient);
 
-            var existingModel = await _context.WorkOrders
-                .SingleAsync(x => x.Id == model.Id);
-            existingModel = model;
-
-            _context.Update(existingModel);
+            _context.Update(model);
 
             await _context.SaveChangesAsync();
         } 
@@ -90,7 +86,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> List(FilterDto filter)
+    public async Task<List<WorkOrderDto>> List(WorkOrderFilterDto filter)
     {
         try
         {
@@ -98,6 +94,8 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
                 .OrderBy(w => w.Id)
                 .Include(w => w.FirmClient)
                 .Include(w => w.Activities)
+                .Where(x => (filter.firmClientId == Guid.Empty || filter.firmClientId == x.FirmClientId) &&
+                            (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                 .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(workOrders);
@@ -108,7 +106,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> Search(FilterDto filter)
+    public async Task<List<WorkOrderDto>> Search(WorkOrderFilterDto filter)
     {
         try
         {
@@ -126,7 +124,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(FilterDto filter)
+    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(WorkOrderFilterDto filter)
     {
         try
         {
@@ -145,7 +143,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(FilterDto filter)
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(WorkOrderFilterDto filter)
     {
         try
         {

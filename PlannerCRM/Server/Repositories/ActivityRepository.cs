@@ -98,6 +98,9 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
                                            .Include(a => a.EmployeeActivities)
                                            .Include(a => a.WorkOrder)
                                            .ThenInclude(w => w.FirmClient)
+                                           .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
+                                                       (filter.clientId == Guid.Empty || x.WorkOrder.FirmClientId == filter.clientId) &&
+                                                       (filter.workOrderId == Guid.Empty || x.WorkOrderId == filter.workOrderId))
                                            .ToListAsync();
 
             return _mapper.Map<List<ActivityDto>>(activities);

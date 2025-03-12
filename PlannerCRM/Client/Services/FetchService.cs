@@ -35,7 +35,8 @@ public class FetchService(LocalStorageService localStorage, HttpClient http)
                     break;
             }
 
-            return await response.Content.ReadFromJsonAsync<ResultDto>();
+            var result = await response.Content.ReadFromJsonAsync<ResultDto>();
+            return result;
         } 
         catch 
         {

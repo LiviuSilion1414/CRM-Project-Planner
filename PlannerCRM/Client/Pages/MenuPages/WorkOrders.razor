@@ -1,7 +1,7 @@
 ﻿@page "/workOrders"
 
-<h3>Workorders</h3>
-<PageTitle>Workorders</PageTitle>
+<h3>Work Orders</h3>
+<PageTitle>Work Orders</PageTitle>
 
 @if (fetch.IsBusy)
 {
@@ -9,7 +9,33 @@
 }
 else
 {
-    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+    <RadzenCard class="mb-3">
+        <RadzenRow JustifyContent="JustifyContent.Stretch">
+            <RadzenColumn>
+                <RadzenFormField Text="Client" AllowFloatingLabel="false">
+                    <RadzenDropDown TValue="Guid?"
+                                    class="form-control" Style="min-width: 20vw;"
+                                    Data="_clients"
+                                    AllowFiltering="true"
+                                    AllowClear="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    TextProperty="@nameof(FirmClientDto.name)"
+                                    ValueProperty="@nameof(FirmClientDto.id)"
+                                    @bind-Value="@clientId" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenFormField Text="WorkOrder" AllowFloatingLabel="false">
+                    <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
 
     <RadzenDataGrid Data="@_workOrders"
                     TItem="@WorkOrderDto"
@@ -20,14 +46,19 @@ else
                     RowSelect="OnSelect">
         <Columns>
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Title="Client">
+                <Template Context="data">
+                    @data.firmClient.name
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.startDateString)" Title="Start Date" />
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.endDateString)" Title="End Date" />
-            <RadzenDataGridColumn TItem="@WorkOrderDto" Width="64px">
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@WorkOrderDto" Width="64px">
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
                 </Template>
@@ -38,9 +69,40 @@ else
 
 @code {
     private List<WorkOrderDto> _workOrders = new();
+    private List<FirmClientDto> _clients = new();
+
+    private Guid? clientId = Guid.Empty;
+    private string query = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadClients();
+        await LoadData();
+    }
+
+    private async Task LoadClients()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task ResetData()
+    {
+        query = string.Empty;
+        clientId = Guid.Empty;
         await LoadData();
     }
 
@@ -50,7 +112,13 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
+            var filter = new WorkOrderFilterDto
+                {
+                    firmClientId = clientId ?? Guid.Empty,
+                    searchQuery = query
+                };
+
+            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, filter, ApiType.Post);
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
@@ -67,10 +135,10 @@ else
     {
         await dialog.OpenAsync<WorkOrderDialog>("workOrder Info",
             new Dictionary<string, object>()
-            {
+                                {
                 { nameof(WorkOrderDialog.SelectedWorkOrder), workOrder },
                 { nameof(WorkOrderDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-            },
+                                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
@@ -79,10 +147,10 @@ else
     {
         await dialog.OpenAsync<WorkOrderForm>("Add WorkOrder",
             new Dictionary<string, object>()
-            {
+                                {
                 { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(WorkOrderForm.IsInsert), true }
-            },
+                                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
     }
 

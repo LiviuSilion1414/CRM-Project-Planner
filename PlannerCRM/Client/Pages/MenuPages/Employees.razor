@@ -9,25 +9,74 @@
 }
 else
 {
-    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+    <RadzenCard class="mb-3">
+        <RadzenRow JustifyContent="JustifyContent.Stretch">
+            <RadzenColumn>
+                <RadzenFormField Text="Role" AllowFloatingLabel="false">
+                    <RadzenDropDown TValue="Guid?"
+                    class="form-control" Style="min-width: 20vw;"
+                    Data="_roles"
+                    AllowFiltering="true"
+                    AllowClear="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    TextProperty="@nameof(RoleDto.roleName)"
+                    ValueProperty="@nameof(RoleDto.id)"
+                    @bind-Value="@roleId" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenFormField Text="Employee" AllowFloatingLabel="false">
+                    <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
 
     <RadzenDataGrid Data="@_employees"
-                    TItem="@EmployeeDto"
-                    AllowSorting="true"
-                    AllowPaging="true"
-                    AllowFiltering="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="OnSelect">
+    TItem="@EmployeeDto"
+    AllowSorting="true"
+    AllowPaging="true"
+    AllowFiltering="true"
+    SelectionMode="DataGridSelectionMode.Single"
+    RowSelect="OnSelect">
         <Columns>
             <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
+            <RadzenDataGridColumn TItem="@EmployeeDto" Title="Role(s)">
+                <Template Context="data">
+                    <p>
+                        @{
+                            var message = "";
+                            @if (data.roles.OrderBy(x => x.id).FirstOrDefault() != null)
+                            {
+                                message = data.roles.OrderBy(x => x.id).FirstOrDefault().roleName;
+                                if (data.roles.Count > 1)
+                                {
+                                    message += $" + {data.roles.Count - 1}";
+                                }
+                                @message
+                            }
+                            else
+                            {
+                                message = "no roles assigned";
+                                <b>@message</b>
+                            }
+                        }
+                    </p>
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
             <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
-            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px">
+            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px">
+            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
                 </Template>
@@ -38,10 +87,41 @@ else
 
 @code {
     private List<EmployeeDto> _employees = new();
+    private List<RoleDto> _roles = new();
+
+    private string query = string.Empty;
+    private Guid? roleId = Guid.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadRoles();
         await LoadData();
+    }
+
+    async Task ResetData()
+    {
+        query = string.Empty;
+        roleId = Guid.Empty;
+        await LoadData();
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, new RoleFilterDto(), ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task LoadData()
@@ -50,7 +130,13 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_LIST, new EmployeeFilterDto(), ApiType.Post);
+            var filter = new EmployeeFilterDto
+            {
+                searchQuery = query ?? string.Empty,
+                roleId = roleId ?? Guid.Empty
+            };
+
+            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_LIST, filter, ApiType.Post);
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
@@ -67,10 +153,10 @@ else
     {
         await dialog.OpenAsync<EmployeeDialog>("Employee Info",
             new Dictionary<string, object>()
-            {
+                {
                 { nameof(EmployeeDialog.SelectedEmployee), client },
                 { nameof(EmployeeDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-            },
+                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
@@ -79,10 +165,10 @@ else
     {
         await dialog.OpenAsync<EmployeeForm>("Add Employee",
             new Dictionary<string, object>()
-            {
+                {
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(EmployeeForm.IsInsert), true }
-            },
+                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
     }
 

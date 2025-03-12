@@ -3,16 +3,52 @@
 <h3>Roles</h3>
 <PageTitle>Roles</PageTitle>
 
+<RadzenCard class="mb-3">
+    <RadzenRow JustifyContent="JustifyContent.Stretch">
+        <RadzenColumn>
+            <RadzenFormField Text="Role Name" AllowFloatingLabel="false">
+                <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@query" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+            <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenDataGrid @ref="grid"
+                TItem="RoleDto"
+                Data="roles"
+                SelectionMode="DataGridSelectionMode.Single"
+                AllowSorting="true"
+                AllowAlternatingRows="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.id)" Title="Identifier" />
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
+        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+            <Template Context="data">
+                <RadzenButton Variant="Variant.Filled" Icon="edit" ButtonStyle="ButtonStyle.Info" Click="@(() => ToggleUpdate(data))"></RadzenButton>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+            <Template Context="data">
+                <RadzenButton Variant="Variant.Filled" Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="@(() => DeleteRole(data))"></RadzenButton>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
 <EditForm EditContext="editContext" OnValidSubmit="AddRole">
     <DataAnnotationsValidator />
-    <RadzenRow class="mb-2">
-        <RadzenColumn Size="8">
+    <RadzenRow class="mt-3">
+        <RadzenColumn Size="10">
             <RadzenFormField Text="Role Name">
-                <InputText class="form-control w-100" @bind-Value="model.roleName" />
+                <InputText class="form-control" @bind-Value="model.roleName" />
             </RadzenFormField>
             <ValidationMessage For="@(() => model.roleName)" />
         </RadzenColumn>
-        <RadzenColumn Size="4">
+        <RadzenColumn Size="2">
             @if (isUpdate)
             {
                 <RadzenButton ButtonType="ButtonType.Reset"
@@ -43,28 +79,6 @@
     </RadzenRow>
 </EditForm>
 
-<RadzenDataGrid @ref="grid"
-                TItem="RoleDto"
-                Data="roles"
-                SelectionMode="DataGridSelectionMode.Single"
-                AllowSorting="true"
-                AllowAlternatingRows="true">
-    <Columns>
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.id)" Title="Identifier" />
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
-        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
-            <Template Context="data">
-                <RadzenButton Variant="Variant.Filled" Icon="edit" ButtonStyle="ButtonStyle.Info" Click="@(() => ToggleUpdate(data))"></RadzenButton>
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
-            <Template Context="data">
-                <RadzenButton Variant="Variant.Filled" Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="@(() => DeleteRole(data))"></RadzenButton>
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
-
 @code
 {
     RadzenDataGrid<RoleDto> grid;
@@ -73,6 +87,7 @@
     EditContext editContext;
 
     bool isUpdate = false;
+    string query = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,13 +102,24 @@
         model = role;
     }
 
+    async Task ResetData()
+    {
+        query = string.Empty;
+        await LoadData();
+    }
+
     private async Task LoadData()
     {
         try
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, new RoleFilterDto(), ApiType.Post);
+            var filter = new RoleFilterDto
+                {
+                    searchQuery = query
+                };
+
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, filter, ApiType.Post);
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());

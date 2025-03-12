@@ -9,7 +9,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
 
     [HttpPost]
     [Route(ApiUrl.WORKORDER_INSERT)]
-    public async Task<ResultDto> Insert(WorkOrderDto dto)
+    public async Task<ResultDto> Insert([FromBody] WorkOrderDto dto)
     {
         try
         {

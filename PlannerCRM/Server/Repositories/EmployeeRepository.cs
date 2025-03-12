@@ -130,6 +130,8 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
                                           .OrderBy(e => e.Id)
                                           .Include(e => e.EmployeeRoles)
                                           .Include(e => e.Activities)
+                                          .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
+                                                      (filter.roleId == Guid.Empty || x.EmployeeRoles.Where(y => y.RoleId == filter.roleId).Any()))
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);

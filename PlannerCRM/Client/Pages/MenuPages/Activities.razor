@@ -9,7 +9,46 @@
 }
 else
 {
-    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Add" Click="@OnAdd"></RadzenButton>
+    <RadzenCard class="mb-3">
+        <RadzenRow JustifyContent="JustifyContent.Stretch">
+            <RadzenColumn>
+                <RadzenFormField Text="Client" AllowFloatingLabel="false">
+                    <RadzenDropDown TValue="Guid?"
+                    class="form-control" Style="min-width: 20vw;"
+                    Data="_clients"
+                    AllowFiltering="true"
+                    AllowClear="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    TextProperty="@nameof(FirmClientDto.name)"
+                    ValueProperty="@nameof(FirmClientDto.id)"
+                    @bind-Value="@clientId" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
+                    <RadzenDropDown TValue="Guid?"
+                    class="form-control" Style="min-width: 20vw;"
+                    Data="_workOrders"
+                    AllowFiltering="true"
+                    AllowClear="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    TextProperty="@nameof(WorkOrderDto.name)"
+                    ValueProperty="@nameof(WorkOrderDto.id)"
+                    @bind-Value="@workOrderId" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenFormField Text="Activity" AllowFloatingLabel="false">
+                    <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
 
     <RadzenDataGrid Data="@_activities"
     TItem="@ActivityDto"
@@ -20,14 +59,24 @@ else
     RowSelect="OnSelect">
         <Columns>
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
+            <RadzenDataGridColumn TItem="@ActivityDto" Title="Work Order" >
+                <Template Context="data">
+                    @data.workOrder.name
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="@ActivityDto" Title="Client">
+                <Template Context="data">
+                    @data.workOrder.firmClient.name
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.endDateString)" Title="End Date" />
-            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px">
+            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px">
+            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
                 </Template>
@@ -38,10 +87,64 @@ else
 
 @code {
     private List<ActivityDto> _activities = new();
+    private List<WorkOrderDto> _workOrders = new();
+    private List<FirmClientDto> _clients = new();
+
+    private string query = string.Empty;
+    private Guid? clientId = Guid.Empty;
+    private Guid? workOrderId = Guid.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadClients();
+        await LoadWorkOrders();
         await LoadData();
+    }
+
+    async Task ResetData()
+    {
+        query = string.Empty;
+        clientId = Guid.Empty;
+        workOrderId = Guid.Empty;
+        await LoadData();
+    }
+
+    private async Task LoadClients()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task LoadWorkOrders()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task LoadData()
@@ -50,14 +153,21 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, new ActivityFilterDto(), ApiType.Post);
+            var filter = new ActivityFilterDto
+            {
+                workOrderId = workOrderId ?? Guid.Empty,
+                clientId = clientId ?? Guid.Empty,
+                searchQuery = query
+            };
+
+            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, filter, ApiType.Post);
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
             fetch.IsBusy = false;
         }
-        catch 
+        catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -66,23 +176,23 @@ else
     private async Task OnSelect(ActivityDto activity)
     {
         await dialog.OpenAsync<ActivityDialog>("Activity Info",
-            new Dictionary<string, object>() 
-            { 
-                { nameof(ActivityDialog.SelectedActivity), _selectedActivity },
+            new Dictionary<string, object>()
+                {
+                { nameof(ActivityDialog.SelectedActivity), activity },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
-            },
+                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
 
     private async Task OnAdd()
     {
-        await dialog.OpenAsync<ActivityForm>("Add Activity", 
+        await dialog.OpenAsync<ActivityForm>("Add Activity",
             new Dictionary<string, object>()
-            { 
+                {
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ActivityForm.IsInsert), true }
-            },
+                },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
     }
 

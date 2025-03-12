@@ -5,7 +5,7 @@ public class WorkOrderDto
     public Guid id { get; set; }
     
     [Required]
-    [MinLength(8)]
+    [MinLength(5)]
     public string name { get; set; }
 
     public DateTime creationDate { get => DateTime.UtcNow; }
@@ -26,7 +26,6 @@ public class WorkOrderDto
     
     public Guid workOrderCostId { get; set; }
    
-    [Required]
     public FirmClientDto firmClient { get; set; }
     public List<ActivityDto> activities { get; set; }
 }

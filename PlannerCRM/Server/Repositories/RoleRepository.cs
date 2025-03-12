@@ -71,6 +71,7 @@ public class RoleRepository(AppDbContext context, IMapper mapper)
         {
             var roles = await _context.Roles
                                       .OrderBy(x => x.Id)
+                                      .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.RoleName.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                       .ToListAsync();
 
             return _mapper.Map<List<RoleDto>>(roles);
