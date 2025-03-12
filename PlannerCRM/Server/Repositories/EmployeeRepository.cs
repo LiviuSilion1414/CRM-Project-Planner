@@ -69,20 +69,13 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
 
             if (existingModel != null)
             {
-                if (existingModel.EmployeeRoles.Any(x => x.RoleId == filter.roleId))
+                if (filter.isRemoveRole)
                 {
-                    if (filter.isRemoveRole)
-                    {
-                        existingModel.EmployeeRoles.Remove(existingModel.EmployeeRoles.Single(x => x.RoleId == filter.roleId));
-                    }
+                    existingModel.EmployeeRoles.Remove(existingModel.EmployeeRoles.Single(x => x.RoleId == filter.roleId));
                 }
-
-                if (!existingModel.EmployeeRoles.Any() || existingModel.EmployeeRoles.Any(x => x.RoleId != filter.roleId))
-                { 
-                    if (!filter.isRemoveRole)
-                    {
-                        existingModel.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName });
-                    }
+                else
+                {
+                    existingModel.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName });
                 }
                 await _context.SaveChangesAsync();
             }
