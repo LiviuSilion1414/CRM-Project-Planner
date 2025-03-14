@@ -32,7 +32,6 @@ else
             <RadzenColumn>
                 <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
                 <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
-                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
     </RadzenCard>
@@ -44,6 +43,9 @@ else
                     AllowFiltering="true"
                     SelectionMode="DataGridSelectionMode.Single"
                     RowSelect="OnSelect">
+        <HeaderTemplate>
+            <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+        </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@WorkOrderDto" Title="Client">

@@ -14,27 +14,27 @@ else
             <RadzenColumn>
                 <RadzenFormField Text="Client" AllowFloatingLabel="false">
                     <RadzenDropDown TValue="Guid?"
-                    class="form-control" Style="min-width: 20vw;"
-                    Data="_clients"
-                    AllowFiltering="true"
-                    AllowClear="true"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                    TextProperty="@nameof(FirmClientDto.name)"
-                    ValueProperty="@nameof(FirmClientDto.id)"
-                    @bind-Value="@clientId" />
+                                    class="form-control" Style="min-width: 20vw;"
+                                    Data="_clients"
+                                    AllowFiltering="true"
+                                    AllowClear="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    TextProperty="@nameof(FirmClientDto.name)"
+                                    ValueProperty="@nameof(FirmClientDto.id)"
+                                    @bind-Value="@clientId" />
                 </RadzenFormField>
             </RadzenColumn>
             <RadzenColumn>
                 <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
                     <RadzenDropDown TValue="Guid?"
-                    class="form-control" Style="min-width: 20vw;"
-                    Data="_workOrders"
-                    AllowFiltering="true"
-                    AllowClear="true"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                    TextProperty="@nameof(WorkOrderDto.name)"
-                    ValueProperty="@nameof(WorkOrderDto.id)"
-                    @bind-Value="@workOrderId" />
+                                    class="form-control" Style="min-width: 20vw;"
+                                    Data="_workOrders"
+                                    AllowFiltering="true"
+                                    AllowClear="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    TextProperty="@nameof(WorkOrderDto.name)"
+                                    ValueProperty="@nameof(WorkOrderDto.id)"
+                                    @bind-Value="@workOrderId" />
                 </RadzenFormField>
             </RadzenColumn>
             <RadzenColumn>
@@ -45,21 +45,23 @@ else
             <RadzenColumn>
                 <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
                 <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
-                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
     </RadzenCard>
 
     <RadzenDataGrid Data="@_activities"
-    TItem="@ActivityDto"
-    AllowSorting="true"
-    AllowPaging="true"
-    AllowFiltering="true"
-    SelectionMode="DataGridSelectionMode.Single"
-    RowSelect="OnSelect">
+                    TItem="@ActivityDto"
+                    AllowSorting="true"
+                    AllowPaging="true"
+                    AllowFiltering="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="OnSelect">
+        <HeaderTemplate>
+            <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+        </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
-            <RadzenDataGridColumn TItem="@ActivityDto" Title="Work Order" >
+            <RadzenDataGridColumn TItem="@ActivityDto" Title="Work Order">
                 <Template Context="data">
                     @data.workOrder.name
                 </Template>
@@ -154,11 +156,11 @@ else
             fetch.IsBusy = true;
 
             var filter = new ActivityFilterDto
-            {
-                workOrderId = workOrderId ?? Guid.Empty,
-                clientId = clientId ?? Guid.Empty,
-                searchQuery = query
-            };
+                {
+                    workOrderId = workOrderId ?? Guid.Empty,
+                    clientId = clientId ?? Guid.Empty,
+                    searchQuery = query
+                };
 
             var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, filter, ApiType.Post);
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
@@ -177,10 +179,10 @@ else
     {
         await dialog.OpenAsync<ActivityDialog>("Activity Info",
             new Dictionary<string, object>()
-                {
+                    {
                 { nameof(ActivityDialog.SelectedActivity), activity },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
-                },
+                    },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
@@ -189,10 +191,10 @@ else
     {
         await dialog.OpenAsync<ActivityForm>("Add Activity",
             new Dictionary<string, object>()
-                {
+                    {
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ActivityForm.IsInsert), true }
-                },
+                    },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
     }
 

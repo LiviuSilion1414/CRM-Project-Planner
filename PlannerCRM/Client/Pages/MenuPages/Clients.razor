@@ -19,17 +19,19 @@ else
             <RadzenColumn>
                 <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
                 <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
-                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
     </RadzenCard>
     <RadzenDataGrid Data="@_clients"
-    TItem="@FirmClientDto"
-    AllowSorting="true"
-    AllowPaging="true"
-    AllowFiltering="true"
-    SelectionMode="DataGridSelectionMode.Single"
-    RowSelect="OnSelect">
+                    TItem="@FirmClientDto"
+                    AllowSorting="true"
+                    AllowPaging="true"
+                    AllowFiltering="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="OnSelect">
+        <HeaderTemplate>
+            <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+        </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.vatNumber)" Title="Vat Number" />
@@ -91,10 +93,10 @@ else
     {
         await dialog.OpenAsync<ClientDialog>("Client Info",
             new Dictionary<string, object>()
-                {
+                    {
                 { nameof(ClientDialog.SelectedClient), client },
                 { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
-                },
+                    },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }
@@ -103,10 +105,10 @@ else
     {
         await dialog.OpenAsync<ClientForm>("Add Client",
             new Dictionary<string, object>()
-                {
+                    {
                 { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ClientForm.IsInsert), true }
-                },
+                    },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
     }
 

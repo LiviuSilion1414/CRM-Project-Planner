@@ -23,6 +23,47 @@
                 SelectionMode="DataGridSelectionMode.Single"
                 AllowSorting="true"
                 AllowAlternatingRows="true">
+    <HeaderTemplate>
+        <EditForm EditContext="editContext" OnValidSubmit="AddRole">
+            <DataAnnotationsValidator />
+            <RadzenRow class="mt-3" JustifyContent="JustifyContent.Stretch">
+                <RadzenColumn>
+                    <RadzenFormField Text="Role Name">
+                        <InputText class="form-control" @bind-Value="model.roleName" style="min-width: 30vw;" />
+                    </RadzenFormField>
+                    <ValidationMessage For="@(() => model.roleName)" />
+                </RadzenColumn>
+                <RadzenColumn>
+                    @if (isUpdate)
+                    {
+                        <RadzenButton ButtonType="ButtonType.Reset"
+                                      Icon="cancel"
+                                      Text="Cancel"
+                                      ButtonStyle="ButtonStyle.Secondary"
+                                      Variant="Variant.Flat"
+                                      Click="@(() => ToggleUpdate(new()))">
+                        </RadzenButton>
+                        <RadzenButton ButtonType="ButtonType.Submit"
+                                      Icon="send"
+                                      Text="Save changes"
+                                      ButtonStyle="ButtonStyle.Primary"
+                                      Variant="Variant.Flat"
+                                      Click="UpdateRole">
+                        </RadzenButton>
+                    }
+                    else
+                    {
+                        <RadzenButton ButtonType="ButtonType.Submit"
+                                      Icon="add_circle_outline"
+                                      IconColor="@Colors.Success"
+                                      Text="Add Role"
+                                      Click="AddRole">
+                        </RadzenButton>
+                    }
+                </RadzenColumn>
+            </RadzenRow>
+        </EditForm>
+    </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.id)" Title="Identifier" />
         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
@@ -38,46 +79,6 @@
         </RadzenDataGridColumn>
     </Columns>
 </RadzenDataGrid>
-
-<EditForm EditContext="editContext" OnValidSubmit="AddRole">
-    <DataAnnotationsValidator />
-    <RadzenRow class="mt-3">
-        <RadzenColumn Size="10">
-            <RadzenFormField Text="Role Name">
-                <InputText class="form-control" @bind-Value="model.roleName" />
-            </RadzenFormField>
-            <ValidationMessage For="@(() => model.roleName)" />
-        </RadzenColumn>
-        <RadzenColumn Size="2">
-            @if (isUpdate)
-            {
-                <RadzenButton ButtonType="ButtonType.Reset"
-                              Icon="cancel"
-                              Text="Cancel"
-                              ButtonStyle="ButtonStyle.Secondary"
-                              Variant="Variant.Flat"
-                              Click="@(() => ToggleUpdate(new()))">
-                </RadzenButton>
-                <RadzenButton ButtonType="ButtonType.Submit"
-                              Icon="send"
-                              Text="Save changes"
-                              ButtonStyle="ButtonStyle.Primary"
-                              Variant="Variant.Flat"
-                              Click="UpdateRole">
-                </RadzenButton>
-            }
-            else
-            {
-                <RadzenButton ButtonType="ButtonType.Submit"
-                              Icon="add_circle_outline"
-                              IconColor="@Colors.Success"
-                              Text="Add Role"
-                              Click="AddRole">
-                </RadzenButton>
-            }
-        </RadzenColumn>
-    </RadzenRow>
-</EditForm>
 
 @code
 {
@@ -99,7 +100,7 @@
     void ToggleUpdate(RoleDto role)
     {
         isUpdate = !isUpdate;
-        model = role;
+        model = isUpdate ? role : new();
     }
 
     async Task ResetData()
