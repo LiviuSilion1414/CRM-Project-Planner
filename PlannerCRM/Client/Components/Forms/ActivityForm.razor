@@ -17,7 +17,7 @@
                     <RadzenLabel Text="StartDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.startDate />
+                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.startDate DateFormat="dd/MM/yyyy" />
                     <ValidationMessage For="@(() => Model.startDate)" />
                 </RadzenColumn>
             </RadzenRow>
@@ -26,7 +26,7 @@
                     <RadzenLabel Text="EndDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.endDate />
+                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.endDate DateFormat="dd/MM/yyyy" />
                     <ValidationMessage For="@(() => Model.endDate)" />
                 </RadzenColumn>
             </RadzenRow>
@@ -35,22 +35,22 @@
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                    Placeholder="Search workorder.."
-                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                                   Placeholder="Search workorder.."
+                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Primary"
-                    Icon="Search"
-                    Click="@SearchWorkOrder">
+                                  Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  Icon="Search"
+                                  Click="@SearchWorkOrder">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@WorkOrderDto"
-                    Data="@_workOrders"
-                    AllowFiltering="true"
-                    AllowSorting="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
+                                    Data="@_workOrders"
+                                    AllowFiltering="true"
+                                    AllowSorting="true"
+                                    SelectionMode="DataGridSelectionMode.Single"
+                                    RowSelect="@SelectWorkOrder" RowDeselect="@SelectWorkOrder">
                         <Columns>
                             <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
                         </Columns>
@@ -76,10 +76,10 @@
                             <RadzenTextBox @bind-Value="@Model.workOrder.name" Disabled="true"></RadzenTextBox>
                         </RadzenColumn>
                         <RadzenButton ButtonType="ButtonType.Button"
-                        Variant="Variant.Outlined"
-                        ButtonStyle="ButtonStyle.Danger"
-                        Icon="Delete"
-                        Click="@(() => SelectWorkOrder(null))">
+                                      Variant="Variant.Outlined"
+                                      ButtonStyle="ButtonStyle.Danger"
+                                      Icon="Delete"
+                                      Click="@(() => SelectWorkOrder(null))">
                         </RadzenButton>
                     </RadzenRow>
                 </RadzenFieldset>
@@ -113,12 +113,12 @@
         if (IsInsert)
         {
             Model = new ActivityDto()
-            {
-                workOrder = new WorkOrderDto()
                 {
-                    firmClient = new FirmClientDto()
-                },
-            };
+                    workOrder = new WorkOrderDto()
+                    {
+                        firmClient = new FirmClientDto()
+                    },
+                };
         }
         _context = new(Model);
         _workOrders = new();
@@ -131,9 +131,9 @@
             if (!string.IsNullOrEmpty(_query))
             {
                 var filter = new FilterDto()
-                {
-                    searchQuery = _query
-                };
+                    {
+                        searchQuery = _query
+                    };
 
                 var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_SEARCH, filter, ApiType.Post);
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)

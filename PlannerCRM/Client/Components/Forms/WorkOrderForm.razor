@@ -17,7 +17,7 @@
                     <RadzenLabel Text="StartDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.startDate />
+                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.startDate DateFormat="dd/MM/yyyy" />
                     <ValidationMessage For="@(() => Model.startDate)" />
                 </RadzenColumn>
             </RadzenRow>
@@ -26,7 +26,7 @@
                     <RadzenLabel Text="EndDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.endDate />
+                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.endDate DateFormat="dd/MM/yyyy" />
                     <ValidationMessage For="@(() => Model.endDate)" />
                 </RadzenColumn>
             </RadzenRow>
