@@ -1,32 +1,37 @@
 ﻿<RadzenStack>
-    <RadzenCard>
-        <EditForm EditContext="@_context" OnSubmit="@OnValidSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="form-control">
-                <label>Name</label>
-                <InputText class="form-control" @bind-Value="@Model.name" />
+    <EditForm EditContext="@_context" OnSubmit="@OnValidSubmit">
+        <DataAnnotationsValidator />
+        <RadzenRow class="mt-3">
+            <RadzenColumn>
+                <RadzenLabel>Name</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenTextBox class="form-control" @bind-Value="@Model.name" />
                 <ValidationMessage For="@(() => Model.name)" />
-            </div>
-            <div class="form-control">
-                <label>Vat Number</label>
-                <InputText class="form-control" @bind-Value="@Model.vatNumber" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow class="mt-3">
+            <RadzenColumn>
+                <RadzenLabel>Vat Number</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenTextBox class="form-control" @bind-Value="@Model.vatNumber" />
                 <ValidationMessage For="@(() => Model.vatNumber)" />
-            </div>
-        </EditForm>
-    </RadzenCard>
-    <RadzenCard>
-        <RadzenStack AlignItems="AlignItems.Center">
-            <RadzenRow>
-                <RadzenColumn Size="6">
-                    <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
-                </RadzenColumn>
-                <RadzenColumn Size="6">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenStack>
-    </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow class="mt-3" AlignItems="AlignItems.End">
+            <RadzenStack AlignItems="AlignItems.Center">
+                <RadzenRow>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
+                    </RadzenColumn>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenRow>
+    </EditForm>
 </RadzenStack>
 
 @code
@@ -34,17 +39,19 @@
     [Parameter] public bool IsInsert { get; set; }
     [Parameter] public FirmClientDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
+    [Parameter] public EventCallback OnCloseSide { get; set; }
 
     private EditContext _context;
 
-    protected override void OnParametersSet()
+    protected override async Task OnInitializedAsync()
     {
+        await OnCloseSide.InvokeAsync();
         if (IsInsert)
         {
             Model = new FirmClientDto()
-            {
-                workOrders = new List<WorkOrderDto>()
-            };
+                {
+                    workOrders = new List<WorkOrderDto>()
+                };
         }
         _context = new(Model);
     }
@@ -68,7 +75,7 @@
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                    
+
                     dialog.Close();
                     await OnReloadList.InvokeAsync();
                 }

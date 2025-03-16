@@ -59,7 +59,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
         {
             var workOrder = await _context.WorkOrders
                 .Include(w => w.Activities)
-                .SingleAsync(w => w.Id == filter.id);
+                .SingleAsync(w => w.Id == filter.workOrderId);
 
             _context.Remove(workOrder);
 

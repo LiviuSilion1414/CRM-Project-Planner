@@ -59,7 +59,7 @@ else
                 { nameof(ActivityDialog.SelectedActivity), args.Data },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
+            new DialogOptions() { Width = "80vw;", Height = "70vh" }
         );
     }
 
@@ -72,6 +72,6 @@ else
                 { nameof(ActivityForm.IsInsert), true }
 
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true });
+            new DialogOptions() { Width = "40vw;", Height = "40vh" });
     }
 }

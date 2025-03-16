@@ -42,8 +42,15 @@
 
 @code
 {
-    [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public FirmClientDto SelectedClient { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
+    [Parameter] public EventCallback OnCloseSide { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await OnCloseSide.InvokeAsync();
+        await LoadData();
+    }
 
     private async Task OnEdit()
     {
@@ -52,9 +59,10 @@
             {
                 { nameof(ClientForm.Model), SelectedClient },
                 { nameof(ClientForm.IsInsert), false },
-                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
+                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
+                { nameof(ClientForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true, }
+            new DialogOptions() { Width = "80vw;", Height = "70vh", }
         );
     }
 
@@ -118,7 +126,7 @@
                 { nameof(WorkOrderForm.IsInsert), false },
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
+            new DialogOptions() { Width = "80vw;", Height = "70vh" }
         );
     }
 }

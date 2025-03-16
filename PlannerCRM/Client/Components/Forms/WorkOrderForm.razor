@@ -90,9 +90,7 @@
                     <RadzenDataGrid TItem="@FirmClientDto"
                     Data="@_clients"
                     AllowFiltering="true"
-                    AllowSorting="true"
-                    SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                    AllowSorting="true">
                         <Columns>
                             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
                         </Columns>
@@ -132,6 +130,7 @@
     [Parameter] public bool IsInsert { get; set; }
     [Parameter] public WorkOrderDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
+    [Parameter] public EventCallback OnCloseSide { get; set; }
 
     private string _query = string.Empty;
 
@@ -140,8 +139,9 @@
     private ActivityDto activityModel = new();
     private RadzenDataGrid<ActivityDto> grid = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await OnCloseSide.InvokeAsync();
         if (IsInsert)
         {
             Model = new WorkOrderDto()

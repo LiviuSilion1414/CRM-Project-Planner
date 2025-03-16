@@ -14,7 +14,7 @@
                     <RadzenText TextStyle="TextStyle.DisplayH6" Text="Client"></RadzenText>
                     <RadzenText>Name: @SelectedWorkOrder.firmClient.name</RadzenText>
                     <RadzenText>Vat Number: @SelectedWorkOrder.firmClient.vatNumber</RadzenText>
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedWorkOrder.firmClient))"></RadzenButton>
+                   @*  <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedWorkOrder.firmClient))"></RadzenButton> *@
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
@@ -28,7 +28,7 @@
                             <RadzenDataGridColumn Title="End Date" Property="@nameof(ActivityDto.endDateString)"></RadzenDataGridColumn>
                             <RadzenDataGridColumn TItem="@ActivityDto" Width="64px">
                                 <Template Context="data">
-                                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
+                                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="edit" Click="@(() => OnEdit(data))"></RadzenButton>
                                 </Template>
                             </RadzenDataGridColumn>
                         </Columns>
@@ -49,8 +49,9 @@
 
 @code
 {
-    [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public WorkOrderDto SelectedWorkOrder { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
+    [Parameter] public EventCallback OnCloseSide { get; set; }
 
     private async Task OnEdit()
     {
@@ -59,9 +60,10 @@
             {
                 { nameof(WorkOrderForm.Model), SelectedWorkOrder },
                 { nameof(WorkOrderForm.IsInsert), false },
-                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
+                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
+                { nameof(EmployeeForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
+            new DialogOptions() { Width = "80vw;", Height = "70vh" }
         );
     }
 
@@ -118,29 +120,31 @@
         await LoadData();
     }
 
-    private async Task OpenClientDetails(FirmClientDto client)
-    {
-        await dialog.OpenAsync<ClientForm>("Edit client",
-            new Dictionary<string, object>()
-            {
-                { nameof(ClientForm.Model), client },
-                { nameof(ClientForm.IsInsert), false },
-                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
-            },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true, }
-        );
-    }
+    // private async Task OpenClientDetails(FirmClientDto client)
+    // {
+    //     await dialog.OpenAsync<ClientDialog>("Client Info",
+    //         new Dictionary<string, object>()
+    //         {
+    //             { nameof(ClientDialog.SelectedClient), client },
+    //             { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
+    //             { nameof(ClientDialog.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
+    //         },
+    //         new DialogOptions() { Width = "80vw;", Height = "70vh", }
+    //     );
+    // }
 
-    private async Task OnSelect(ActivityDto activity)
+    private async Task OnEdit(ActivityDto activity)
     {
         // activity.workOrder = SelectedWorkOrder;
-        await dialog.OpenAsync<ActivityDialog>("Activity Info",
+        await dialog.OpenAsync<ActivityForm>("Activity Info",
             new Dictionary<string, object>()
             {
-                { nameof(ActivityDialog.SelectedActivity), activity },
-                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
+                { nameof(ActivityForm.Model), activity },
+                { nameof(ActivityForm.IsInsert), false },
+                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
+            new DialogOptions() { Width = "80vw;", Height = "70vh" }
         );
     }
 }

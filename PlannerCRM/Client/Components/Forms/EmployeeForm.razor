@@ -99,6 +99,7 @@
     [Parameter] public bool IsInsert { get; set; }
     [Parameter] public EmployeeDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
+    [Parameter] public EventCallback OnCloseSide { get; set; }
 
     EditContext _context;
     List<RoleDto> roles = new();
@@ -107,6 +108,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await OnCloseSide.InvokeAsync();
         if (IsInsert)
         {
             Model = new EmployeeDto()
