@@ -15,10 +15,18 @@
             </div>
         </EditForm>
     </RadzenCard>
-    <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal">
-        <button class="btn btn-outline-info" type="button" @onclick="(() => dialog.Close())">Close</button>
-        <button class="btn btn-outline-primary" type="submit" @onclick="(() => OnValidSubmit())">Confirm</button>
-    </RadzenStack>
+    <RadzenCard>
+        <RadzenStack AlignItems="AlignItems.Center">
+            <RadzenRow>
+                <RadzenColumn Size="6">
+                    <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
+                </RadzenColumn>
+                <RadzenColumn Size="6">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenCard>
 </RadzenStack>
 
 @code
@@ -74,5 +82,11 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task Close()
+    {
+        await OnReloadList.InvokeAsync();
+        dialog.Close();
     }
 }

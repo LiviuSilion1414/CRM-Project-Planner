@@ -1,5 +1,5 @@
 ﻿<RadzenStack>
-    <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
+    <EditForm EditContext="@_context" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <RadzenFieldset Text="Activity Info">
@@ -86,12 +86,12 @@
             }
             <ValidationMessage For="@(() => Model.workOrder)" />
         </RadzenFieldset>
-    </RadzenTemplateForm>
+    </EditForm>
     <RadzenStack AlignItems="AlignItems.Center">
         <RadzenRow>
             <RadzenColumn>
-                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="(() => dialog.Close())"></RadzenButton>
-                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="Close"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
     </RadzenStack>
@@ -194,5 +194,11 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task Close()
+    {
+        await OnReloadList.InvokeAsync();
+        dialog.Close();
     }
 }

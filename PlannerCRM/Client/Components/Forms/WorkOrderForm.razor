@@ -119,8 +119,8 @@
         <RadzenStack AlignItems="AlignItems.Center">
             <RadzenRow>
                 <RadzenColumn>
-                    <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Close" Click="(() => dialog.Close())"></RadzenButton>
-                    <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
+                    <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Close" Click="Close"></RadzenButton>
+                    <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit"></RadzenButton>
                 </RadzenColumn>
             </RadzenRow>
         </RadzenStack>
@@ -300,5 +300,11 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task Close()
+    {
+        await OnReloadList.InvokeAsync();
+        dialog.Close();
     }
 }
