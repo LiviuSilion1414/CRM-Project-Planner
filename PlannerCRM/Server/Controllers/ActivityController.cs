@@ -13,18 +13,9 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     {
         try
         {
-            await _repo.Insert(dto);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
-            };
-        } 
-        catch 
+            return await _repo.Insert(dto);
+        }
+        catch
         {
             return new ResultDto()
             {
@@ -44,16 +35,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     {
         try
         {
-            await _repo.Update(dto);
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = true,
-                message = "Operation completed",
-                messageType = MessageType.Success,
-                statusCode = HttpStatusCode.OK
-            };
+            return await _repo.Update(dto);
         } 
         catch 
         {

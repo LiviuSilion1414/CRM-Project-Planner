@@ -8,7 +8,7 @@ public class EmployeeDto
     public string name { get; set; }
 
     [Required]
-    [Phone]
+    //[Phone]
     public string phone { get; set; }
     
     [Required]

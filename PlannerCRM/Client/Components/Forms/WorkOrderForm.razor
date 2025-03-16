@@ -1,5 +1,5 @@
 ﻿<RadzenStack>
-    <RadzenTemplateForm TItem="@WorkOrderDto" EditContext="@_context">
+    <EditForm EditContext="@_context" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <RadzenFieldset Text="WorkOrder Info">
@@ -31,25 +31,68 @@
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
+        @if (!IsInsert)
+        {
+            <RadzenFieldset Text="Related Activities">
+                <RadzenRow>
+                    <RadzenColumn>
+                        Name
+                        <InputText @bind-Value="@activityModel.name"/>
+                        <ValidationMessage For="@(() => activityModel.name)"/>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        Start Date
+                        <RadzenDatePicker @bind-Value="@activityModel.startDate" DateFormat="dd/MM/yyyy"/>
+                        <ValidationMessage For="@(() => activityModel.endDate)" />
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        End Date
+                        <RadzenDatePicker @bind-Value="@activityModel.endDate" DateFormat="dd/MM/yyyy"/>
+                        <ValidationMessage For="@(() => activityModel.endDate)" />
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenButton Icon="add_circle_outline" IconColor="@Colors.InfoLight" Click="AddActivity"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenDataGrid TItem="ActivityDto"
+                    @ref="grid"
+                    Data="Model.activities"
+                    AllowPaging="true"
+                    PageSize="5">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
+                            <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
+                            <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.endDateString)" Title="End Date" />
+                            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
+                                <Template Context="data">
+                                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => DeleteActivity(data))"></RadzenButton>
+                                </Template>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenRow>
+            </RadzenFieldset>
+        }
         <RadzenFieldset Text="Client Info">
             <RadzenRow>
                 <RadzenColumn Style="display:inline-block;">
                     <RadzenTextBox @bind-Value="@_query"
-                                   @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
+                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Primary"
-                                  Icon="Search"
-                                  Click="@SearchClient">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Primary"
+                    Icon="Search"
+                    Click="@SearchClient">
                     </RadzenButton>
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@FirmClientDto"
-                                    Data="@_clients"
-                                    AllowFiltering="true"
-                                    AllowSorting="true"
-                                    SelectionMode="DataGridSelectionMode.Single"
-                                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
+                    Data="@_clients"
+                    AllowFiltering="true"
+                    AllowSorting="true"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="@SelectClient" RowDeselect="@SelectClient">
                         <Columns>
                             <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
                         </Columns>
@@ -64,24 +107,24 @@
                         <RadzenTextBox @bind-Value="@Model.firmClient.vatNumber" Disabled="true" />
                     </RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button"
-                                  Variant="Variant.Outlined"
-                                  ButtonStyle="ButtonStyle.Danger"
-                                  Icon="Delete"
-                                  Click="@(() => SelectClient(new()))">
+                    Variant="Variant.Outlined"
+                    ButtonStyle="ButtonStyle.Danger"
+                    Icon="Delete"
+                    Click="@(() => SelectClient(new()))">
                     </RadzenButton>
                     <ValidationMessage For="@(() => Model.firmClient)" />
                 </RadzenRow>
             }
         </RadzenFieldset>
-    </RadzenTemplateForm>
-    <RadzenStack AlignItems="AlignItems.Center">
-        <RadzenRow>
-            <RadzenColumn>
-                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Close" Click="(() => dialog.Close())"></RadzenButton>
-                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenStack>
+        <RadzenStack AlignItems="AlignItems.Center">
+            <RadzenRow>
+                <RadzenColumn>
+                    <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Close" Click="(() => dialog.Close())"></RadzenButton>
+                    <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="(() => OnSubmit())"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </EditForm>
 </RadzenStack>
 
 @code
@@ -92,8 +135,10 @@
 
     private string _query = string.Empty;
 
-    private List<FirmClientDto> _clients;
+    private List<FirmClientDto> _clients = new();
     private EditContext _context;
+    private ActivityDto activityModel = new();
+    private RadzenDataGrid<ActivityDto> grid = new();
 
     protected override void OnInitialized()
     {
@@ -105,7 +150,62 @@
                 };
         }
         _context = new(Model);
-        _clients = new();
+    }
+
+    async Task AddActivity()
+    {
+        try
+        {
+            if (!Model.activities.Contains(activityModel))
+            {
+                activityModel.workOrder = Model;
+                activityModel.workOrderId = Model.id;
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_INSERT,
+                                                      activityModel,
+                                                      ApiType.Post);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadData();
+                    await grid.Reload();
+                    await OnReloadList.InvokeAsync();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Success, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task DeleteActivity(ActivityDto activity)
+    {
+        try
+        {
+            if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
+            {
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE,
+                                                      new ActivityFilterDto() { activityId = activity.id },
+                                                      ApiType.Post);
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadData();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task SearchClient()
@@ -136,6 +236,30 @@
         }
     }
 
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var filter = new WorkOrderFilterDto
+                {
+                    workOrderId = Model.id
+                };
+
+            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_GET, filter, ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                Model = JsonSerializer.Deserialize<WorkOrderDto>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
     private void SelectClient(FirmClientDto client)
     {
         Model.firmClient = client;
@@ -154,6 +278,8 @@
                 }
                 else
                 {
+                    activityModel.workOrderId = Model.id;
+
                     result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_UPDATE, Model, ApiType.Put);
                 }
 

@@ -43,6 +43,11 @@
     [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public ActivityDto SelectedActivity { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
     private async Task OnEdit()
     {
         await dialog.OpenAsync<ActivityForm>("Edit Activity",

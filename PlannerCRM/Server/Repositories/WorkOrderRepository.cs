@@ -37,9 +37,11 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
+            var existingClient = await _context.Clients.FindAsync(dto.id);
+
             var model = _mapper.Map<WorkOrder>(dto);
 
-            _context.Attach(model.FirmClient);
+            model.FirmClient = existingClient;
 
             _context.Update(model);
 

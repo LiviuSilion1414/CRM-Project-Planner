@@ -133,12 +133,13 @@
 
     private async Task OnSelect(ActivityDto activity)
     {
+        // activity.workOrder = SelectedWorkOrder;
         await dialog.OpenAsync<ActivityDialog>("Activity Info",
             new Dictionary<string, object>()
-                {
+            {
                 { nameof(ActivityDialog.SelectedActivity), activity },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
-                },
+            },
             new DialogOptions() { Width = "80vw;", Height = "70vh", Draggable = true, Resizable = true }
         );
     }

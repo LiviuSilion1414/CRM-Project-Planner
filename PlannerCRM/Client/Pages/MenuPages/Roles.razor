@@ -24,7 +24,7 @@
                 AllowSorting="true"
                 AllowAlternatingRows="true">
     <HeaderTemplate>
-        <EditForm EditContext="editContext" OnValidSubmit="AddRole">
+        <EditForm EditContext="editContext" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <RadzenRow class="mt-3" JustifyContent="JustifyContent.Stretch">
                 <RadzenColumn>
@@ -47,8 +47,7 @@
                                       Icon="send"
                                       Text="Save changes"
                                       ButtonStyle="ButtonStyle.Primary"
-                                      Variant="Variant.Flat"
-                                      Click="UpdateRole">
+                                      Variant="Variant.Flat">
                         </RadzenButton>
                     }
                     else
@@ -56,8 +55,7 @@
                         <RadzenButton ButtonType="ButtonType.Submit"
                                       Icon="add_circle_outline"
                                       IconColor="@Colors.Success"
-                                      Text="Add Role"
-                                      Click="AddRole">
+                                      Text="Add Role">
                         </RadzenButton>
                     }
                 </RadzenColumn>
@@ -84,7 +82,7 @@
 {
     RadzenDataGrid<RoleDto> grid;
     List<RoleDto> roles = new();
-    RoleDto model;
+    RoleDto model = new();
     EditContext editContext;
 
     bool isUpdate = false;
@@ -92,7 +90,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        model = new();
         editContext = new(model);
         await LoadData();
     }
@@ -143,6 +140,7 @@
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadData();
                 await grid.Reload();
+                model = new();
             }
         }
         catch
@@ -188,6 +186,18 @@
         catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (isUpdate)
+        {
+            await UpdateRole();
+        }
+        else
+        {
+            await AddRole();
         }
     }
 }

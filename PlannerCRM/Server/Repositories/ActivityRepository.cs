@@ -5,50 +5,79 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     private readonly AppDbContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task Insert(ActivityDto dto)
+    public async Task<ResultDto> Insert(ActivityDto dto)
     {
         try
         {
-            var model = _mapper.Map<ActivityDto, Activity>(dto);
+            var model = _mapper.Map<Activity>(dto);
 
+            var existingWorkOrder = await _context.WorkOrders.FindAsync(model.WorkOrder.Id);
+            if (existingWorkOrder == null)
+            {
+                return new ResultDto()
+                {
+                    id = null,
+                    data = null,
+                    hasCompleted = false,
+                    message = "Operation failed",
+                    messageType = MessageType.Error,
+                    statusCode = HttpStatusCode.BadRequest
+                };
+            }
 
-            _context.WorkOrders.Attach(model.WorkOrder);
-            _context.Clients.Attach(model.WorkOrder.FirmClient);
+            model.WorkOrder = existingWorkOrder;
+
+            var workOrderActivity = new WorkOrderActivity
+            {
+                Activity = model,
+                WorkOrderId = model.WorkOrder.Id
+            };
 
             await _context.Activities.AddAsync(model);
+            await _context.WorkOrderActivities.AddAsync(workOrderActivity);
 
             await _context.SaveChangesAsync();
 
-            await _context.WorkOrderActivities.AddAsync(
-                new()
-                {
-                    ActivityId = model.Id,
-                    WorkOrderId = model.WorkOrder.Id
-                }
-            );
-
-            await _context.SaveChangesAsync();
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
         } 
-        catch 
+        catch
         {
             throw;
         }
     }
 
-    public async Task Update(ActivityDto dto)
+    public async Task<ResultDto> Update(ActivityDto dto)
     {
         try
-        { 
-            var model = _mapper.Map<Activity>(dto);
-        
-            _context.WorkOrders.Attach(model.WorkOrder);
-            _context.Clients.Attach(model.WorkOrder.FirmClient);
+        {
+            var model = await _context.Activities.FindAsync(dto.id);
 
-            _context.Update(model);
+            model = _mapper.Map<Activity>(dto);
+
+            _context.Activities.Update(model);
 
             await _context.SaveChangesAsync();
-        }
-        catch  
+
+
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } 
+        catch
         {
             throw;
         }
@@ -78,6 +107,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         try
         {
             var activity = await _context.Activities
+                .Include(a => a.WorkOrder).ThenInclude(x => x.FirmClient)
                 .Include(a => a.EmployeeActivities)
                 .SingleAsync(a => a.Id == filter.activityId);
 
@@ -96,8 +126,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             var activities = await _context.Activities
                                            .OrderBy(a => a.Id)
                                            .Include(a => a.EmployeeActivities)
-                                           .Include(a => a.WorkOrder)
-                                           .ThenInclude(w => w.FirmClient)
+                                           .Include(a => a.WorkOrder).ThenInclude(x => x.FirmClient)
                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
                                                        (filter.clientId == Guid.Empty || x.WorkOrder.FirmClientId == filter.clientId) &&
                                                        (filter.workOrderId == Guid.Empty || x.WorkOrderId == filter.workOrderId))

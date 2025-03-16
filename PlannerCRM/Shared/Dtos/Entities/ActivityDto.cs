@@ -6,14 +6,14 @@ public class ActivityDto
 
     [Required]
     [MinLength(5)]
-    public string name { get; set; }
+    public string name { get; set; } = string.Empty;
 
     [Required]
     public DateTime creationDate { get; set; } = DateTime.Now;
     public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }
 
     [Required]
-    [DateRangeValidation(nameof(startDate), nameof(endDate))]
+    //[DateRangeValidation(nameof(startDate), nameof(endDate))]
     public DateTime startDate { get; set; } = DateTime.Now;
     public string startDateString { get => string.Format("{0:dd/MM/yyyy}", startDate); }
 
@@ -24,7 +24,6 @@ public class ActivityDto
     [Required]
     public Guid workOrderId { get; set; }
     
-    [Required]
     public WorkOrderDto workOrder { get; set; }
 }
 

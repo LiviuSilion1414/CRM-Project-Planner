@@ -15,7 +15,9 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         {
             var model = _mapper.Map<Employee>(dto);
 
-            if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email == dto.email)) == null)
+            if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email.ToLower().Trim().Equals(dto.email.ToLower().Trim()) || 
+                                                                     em.Name.ToLower().Trim().Equals(dto.email.ToLower().Trim()) ||
+                                                                     em.Phone.ToLower().Trim().Equals(dto.phone.ToLower().Trim()))) == null)
             {
                 byte[] salt = new byte[128 / 8];
                 string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.password,
@@ -45,11 +47,9 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await _context.Employees
-                                              .Include(x => x.EmployeeRoles)
-                                              .SingleOrDefaultAsync(x => x.Id == dto.id);
-
-            existingModel = _mapper.Map<Employee>(dto);
+            var model = _mapper.Map<Employee>(dto);
+            
+            _context.Employees.Update(model);
 
             await _context.SaveChangesAsync();
         } 
