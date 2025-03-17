@@ -1,0 +1,98 @@
+﻿
+<EditForm EditContext="@editContext" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <RadzenCard>
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenLabel>RoleName</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenTextBox @bind-Value="Model.roleName" />
+                <ValidationMessage For="@(() => Model.roleName)" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenLabel>Is Removeable?</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenCheckBox @bind-Value="Model.isRemoveable"/>
+                <ValidationMessage For="@(() => Model.isRemoveable)" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow class="mt-3" AlignItems="AlignItems.End">
+            <RadzenStack AlignItems="AlignItems.Center">
+                <RadzenRow>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="@dialog.Close"></RadzenButton>
+                    </RadzenColumn>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenRow>
+    </RadzenCard>
+</EditForm>
+
+@code
+{
+    [Parameter] public bool IsInsert { get; set; }
+    [Parameter] public RoleDto Model { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
+    EditContext editContext;
+
+    protected override void OnInitialized()
+    {
+        editContext = new(Model);
+    }
+
+    private async Task AddRole()
+    {
+        try
+        {
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_INSERT, Model, ApiType.Post);
+            if (result.hasCompleted)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await OnReloadList.InvokeAsync();
+                dialog.Close();
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task UpdateRole()
+    {
+        try
+        {
+            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_UPDATE, Model, ApiType.Put);
+            if (result.hasCompleted)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await OnReloadList.InvokeAsync();
+                dialog.Close();
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (IsInsert)
+        {
+            await AddRole();
+        }
+        else
+        {
+            await UpdateRole();
+        }
+    }
+}

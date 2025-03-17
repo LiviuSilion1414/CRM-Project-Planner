@@ -6,6 +6,9 @@ public class RoleDto
 
     [Required(ErrorMessage = "The role name is required")]
     public string roleName { get; set; }
+    
+    [Required(ErrorMessage = "Please specify if this item can be deleted")]
+    public bool? isRemoveable { get; set; }
 }
 
 public class RoleFilterDto : FilterDto

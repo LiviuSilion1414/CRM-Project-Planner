@@ -40,7 +40,7 @@ public class RoleRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var activity = await _context.Roles.SingleAsync(a => a.Id == filter.roleId);
+            var activity = await _context.Roles.SingleAsync(a => a.Id == filter.roleId && a.IsRemoveable);
 
             _context.Remove(activity);
 

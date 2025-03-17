@@ -18,61 +18,25 @@
 </RadzenCard>
 
 <RadzenDataGrid @ref="grid"
-                TItem="RoleDto"
-                Data="roles"
-                SelectionMode="DataGridSelectionMode.Single"
-                AllowSorting="true"
-                AllowAlternatingRows="true">
+TItem="RoleDto"
+Data="roles"
+SelectionMode="DataGridSelectionMode.Single"
+AllowSorting="true"
+AllowAlternatingRows="true">
     <HeaderTemplate>
-        <EditForm EditContext="editContext" OnValidSubmit="HandleSubmit">
-            <DataAnnotationsValidator />
-            <RadzenRow class="mt-3" JustifyContent="JustifyContent.Stretch">
-                <RadzenColumn>
-                    <RadzenFormField Text="Role Name">
-                        <InputText class="form-control" @bind-Value="model.roleName" style="min-width: 30vw;" />
-                    </RadzenFormField>
-                    <ValidationMessage For="@(() => model.roleName)" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    @if (isUpdate)
-                    {
-                        <RadzenButton ButtonType="ButtonType.Reset"
-                                      Icon="cancel"
-                                      Text="Cancel"
-                                      ButtonStyle="ButtonStyle.Secondary"
-                                      Variant="Variant.Flat"
-                                      Click="@(() => ToggleUpdate(new()))">
-                        </RadzenButton>
-                        <RadzenButton ButtonType="ButtonType.Submit"
-                                      Icon="send"
-                                      Text="Save changes"
-                                      ButtonStyle="ButtonStyle.Primary"
-                                      Variant="Variant.Flat">
-                        </RadzenButton>
-                    }
-                    else
-                    {
-                        <RadzenButton ButtonType="ButtonType.Submit"
-                                      Icon="add_circle_outline"
-                                      IconColor="@Colors.Success"
-                                      Text="Add Role">
-                        </RadzenButton>
-                    }
-                </RadzenColumn>
-            </RadzenRow>
-        </EditForm>
+        <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@(() => OnAddEdit(new RoleDto()))"></RadzenButton>
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.id)" Title="Identifier" />
         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
         <RadzenDataGridColumn TItem="RoleDto" Width="64px">
             <Template Context="data">
-                <RadzenButton Variant="Variant.Filled" Icon="edit" ButtonStyle="ButtonStyle.Info" Click="@(() => ToggleUpdate(data))"></RadzenButton>
+                <RadzenButton Variant="Variant.Filled" Icon="edit" ButtonStyle="ButtonStyle.Info" Click="@(() => OnAddEdit(data))"></RadzenButton>
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Width="64px">
             <Template Context="data">
-                <RadzenButton Variant="Variant.Filled" Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="@(() => DeleteRole(data))"></RadzenButton>
+                <RadzenButton Variant="Variant.Filled" Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="@(() => DeleteRole(data))" Disabled="!data.isRemoveable.Value"></RadzenButton>
             </Template>
         </RadzenDataGridColumn>
     </Columns>
@@ -82,22 +46,12 @@
 {
     RadzenDataGrid<RoleDto> grid;
     List<RoleDto> roles = new();
-    RoleDto model = new();
-    EditContext editContext;
 
-    bool isUpdate = false;
     string query = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        editContext = new(model);
         await LoadData();
-    }
-
-    void ToggleUpdate(RoleDto role)
-    {
-        isUpdate = !isUpdate;
-        model = isUpdate ? role : new();
     }
 
     async Task ResetData()
@@ -130,42 +84,14 @@
         }
     }
 
-    private async Task AddRole()
+    private async Task OnAddEdit(RoleDto role)
     {
-        try
-        {
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_INSERT, model, ApiType.Post);
-            if (result.hasCompleted)
+        await dialog.OpenAsync<RoleForm>("Add/UpdateRole",
+            new Dictionary<string, object>()
             {
-                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                await LoadData();
-                await grid.Reload();
-                model = new();
-            }
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task UpdateRole()
-    {
-        try
-        {
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_UPDATE, model, ApiType.Put);
-            if (result.hasCompleted)
-            {
-                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                await LoadData();
-                await grid.Reload();
-                ToggleUpdate(new RoleDto());
-            }
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
+                { nameof(RoleForm.Model), role },
+                { nameof(RoleForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
+            });
     }
 
     private async Task DeleteRole(RoleDto role)
@@ -179,7 +105,6 @@
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                     await LoadData();
-                    await grid.Reload();
                 }
             }
         }
@@ -189,15 +114,4 @@
         }
     }
 
-    async Task HandleSubmit()
-    {
-        if (isUpdate)
-        {
-            await UpdateRole();
-        }
-        else
-        {
-            await AddRole();
-        }
-    }
 }
