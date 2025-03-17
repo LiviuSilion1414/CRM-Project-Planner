@@ -44,11 +44,6 @@
     [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public EventCallback OnCloseSide { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-
     private async Task OnEdit()
     {
         await dialog.OpenAsync<ActivityForm>("Edit Activity",
@@ -59,29 +54,8 @@
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
                 { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" }
+            new DialogOptions() { Width = "40vw;" }
         );
-    }
-
-    private async Task LoadData()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_GET,
-                                                  new ActivityFilterDto() { activityId = SelectedActivity.id },
-                                                  ApiType.Post);
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                SelectedActivity = JsonSerializer.Deserialize<ActivityDto>(result.data.ToString());
-            }
-            fetch.IsBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
     }
 
     private async Task OnDelete()
@@ -113,7 +87,6 @@
     async Task InvokeReloadList()
     {
         await OnReloadList.InvokeAsync();
-        await LoadData();
     }
 
     async Task OpenWorkOrderDetails(WorkOrderDto workOrder)

@@ -2,97 +2,75 @@
     <EditForm EditContext="@_context" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
+        <RadzenFieldset Text="Client & WorkOrder Info">
+            <RadzenRow class="mt-3">
+                <RadzenColumn>
+                    <RadzenLabel>WorkOrder</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenDropDown TValue="Guid?"
+                                    Data="_workOrders"
+                                    AllowFiltering="true"
+                                    Placeholder="Select workOrder"
+                                    AllowClear="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    TextProperty="@nameof(WorkOrderDto.name)"
+                                    ValueProperty="@nameof(WorkOrderDto.id)"
+                                    @bind-Value="@Model.workOrderId"
+                                    Change="@((object? guid) => SelectWorkOrder(guid))" />
+                    <ValidationMessage For="@(() => Model.workOrderId)" />
+                </RadzenColumn>
+            </RadzenRow>
+            @if (Model.workOrderId != null && Model.workOrderId != Guid.Empty)
+            {
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenLabel Text="Client" />
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenTextBox Name="Name" @bind-Value=@Model.workOrder.firmClient.name Disabled="true" />
+                    </RadzenColumn>
+                </RadzenRow>
+            }
+        </RadzenFieldset>
         <RadzenFieldset Text="Activity Info">
-            <RadzenRow Style="margin-bottom: 5px;">
+            <RadzenRow class="mt-3">
                 <RadzenColumn>
                     <RadzenLabel Text="Name" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenTextBox Name="Name" @bind-Value=@Model.name />
+                    <RadzenTextBox @bind-Value=@Model.name />
                     <ValidationMessage For="@(() => Model.name)" />
                 </RadzenColumn>
             </RadzenRow>
-            <RadzenRow Style="margin-bottom: 5px;">
+            <RadzenRow class="mt-3">
                 <RadzenColumn>
                     <RadzenLabel Text="StartDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.startDate DateFormat="dd/MM/yyyy" />
+                    <RadzenDatePicker @bind-Value=@Model.startDate DateFormat="dd/MM/yyyy" />
                     <ValidationMessage For="@(() => Model.startDate)" />
                 </RadzenColumn>
             </RadzenRow>
-            <RadzenRow Style="margin-bottom: 5px;">
+            <RadzenRow class="mt-3">
                 <RadzenColumn>
                     <RadzenLabel Text="EndDate" />
                 </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.endDate DateFormat="dd/MM/yyyy" />
+                    <RadzenDatePicker @bind-Value=@Model.endDate DateFormat="dd/MM/yyyy" />
                     <ValidationMessage For="@(() => Model.endDate)" />
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
-        <RadzenFieldset Text="Client and WorkOrder Info">
+        <RadzenStack class="mt-3" AlignItems="AlignItems.Center">
             <RadzenRow>
-                <RadzenColumn Style="display:inline-block;">
-                    <RadzenTextBox @bind-Value="@_query"
-                    Placeholder="Search workorder.."
-                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
-                    <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Primary"
-                    Icon="Search"
-                    Click="@SearchWorkOrder">
-                    </RadzenButton>
-                </RadzenColumn>
                 <RadzenColumn>
-                    <RadzenDataGrid TItem="@WorkOrderDto"
-                    Data="@_workOrders"
-                    AllowFiltering="true"
-                    AllowSorting="true">
-                        <Columns>
-                            <RadzenDataGridColumn TItem="@WorkOrderDto" Property="@nameof(WorkOrderDto.name)" Title="Name" />
-                        </Columns>
-                    </RadzenDataGrid>
+                    <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="Close"></RadzenButton>
+                    <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit"></RadzenButton>
                 </RadzenColumn>
             </RadzenRow>
-            @if (Model.workOrder is not null && Model.workOrder.firmClient is not null)
-            {
-                <RadzenFieldset Text="Current Selected WorkOrder">
-                    <RadzenRow AlignItems="AlignItems.Start">
-                        <RadzenColumn>
-                            <RadzenLabel Text="Client"></RadzenLabel>
-                        </RadzenColumn>
-                        <RadzenColumn>
-                            <RadzenLabel Text="WorkOrder"></RadzenLabel>
-                        </RadzenColumn>
-                    </RadzenRow>
-                    <RadzenRow Style="margin-top: 20px;">
-                        <RadzenColumn>
-                            <RadzenTextBox @bind-Value="@Model.workOrder.firmClient.name" Disabled="true"></RadzenTextBox>
-                        </RadzenColumn>
-                        <RadzenColumn>
-                            <RadzenTextBox @bind-Value="@Model.workOrder.name" Disabled="true"></RadzenTextBox>
-                        </RadzenColumn>
-                        <RadzenButton ButtonType="ButtonType.Button"
-                        Variant="Variant.Outlined"
-                        ButtonStyle="ButtonStyle.Danger"
-                        Icon="Delete"
-                        Click="@(() => SelectWorkOrder(null))">
-                        </RadzenButton>
-                    </RadzenRow>
-                </RadzenFieldset>
-            }
-            <ValidationMessage For="@(() => Model.workOrder)" />
-        </RadzenFieldset>
+        </RadzenStack>
     </EditForm>
-    <RadzenStack AlignItems="AlignItems.Center">
-        <RadzenRow>
-            <RadzenColumn>
-                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="Close"></RadzenButton>
-                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit"></RadzenButton>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenStack>
 </RadzenStack>
 
 @code
@@ -104,7 +82,7 @@
 
     private string _query = string.Empty;
 
-    private List<WorkOrderDto> _workOrders;
+    private List<WorkOrderDto> _workOrders = new();
     private EditContext _context;
 
     protected override async Task OnInitializedAsync()
@@ -121,41 +99,34 @@
                 };
         }
         _context = new(Model);
-        _workOrders = new();
+        await LoadWorkOrders();
     }
 
-    private async Task SearchWorkOrder()
+
+    private async Task LoadWorkOrders()
     {
         try
         {
-            if (!string.IsNullOrEmpty(_query))
-            {
-                var filter = new FilterDto()
-                    {
-                        searchQuery = _query
-                    };
+            fetch.IsBusy = true;
 
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_SEARCH, filter, ApiType.Post);
-                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
-                {
-                    _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
-                }
-                else
-                {
-                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
-                }
+            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
+            fetch.IsBusy = false;
         }
         catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
-
-    private void SelectWorkOrder(WorkOrderDto workOrder)
+    private void SelectWorkOrder(object? guid)
     {
-        Model.workOrder = workOrder;
-        Model.workOrderId = workOrder.id;
+        if (guid != null && (Guid)guid != Guid.Empty)
+        {
+            Model.workOrder = _workOrders.SingleOrDefault(x => x.id == (Guid)guid);
+        }
     }
 
     private async Task OnSubmit()
@@ -171,7 +142,7 @@
                 }
                 else
                 {
-                    // Model.workOrder = 
+                    // Model.workOrder =
                     result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_UPDATE, Model, ApiType.Put);
                 }
 

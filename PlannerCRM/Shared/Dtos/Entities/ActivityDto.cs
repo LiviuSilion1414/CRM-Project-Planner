@@ -21,8 +21,8 @@ public class ActivityDto
     public DateTime endDate { get; set; } = DateTime.Now;
     public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
 
-    [Required]
-    public Guid workOrderId { get; set; }
+    [Required(ErrorMessage = "The workorder field is required")]
+    public Guid? workOrderId { get; set; }
     
     public WorkOrderDto workOrder { get; set; }
 }

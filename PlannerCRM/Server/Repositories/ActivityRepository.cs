@@ -58,9 +58,12 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var model = await _context.Activities.FindAsync(dto.id);
+            var existingWorkOrder = await _context.WorkOrders.FindAsync(dto.workOrderId);
+            var model = _mapper.Map<ActivityDto, Activity>(dto);
 
-            model = _mapper.Map<Activity>(dto);
+            model.WorkOrder = existingWorkOrder;
+            model.Employees = [];
+            model.EmployeeActivities = [];
 
             _context.Activities.Update(model);
 

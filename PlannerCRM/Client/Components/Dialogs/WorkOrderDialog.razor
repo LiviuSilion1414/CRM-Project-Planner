@@ -63,7 +63,7 @@
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
                 { nameof(EmployeeForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" }
+            new DialogOptions() { Width = "40vw" }
         );
     }
 
@@ -120,22 +120,8 @@
         await LoadData();
     }
 
-    // private async Task OpenClientDetails(FirmClientDto client)
-    // {
-    //     await dialog.OpenAsync<ClientDialog>("Client Info",
-    //         new Dictionary<string, object>()
-    //         {
-    //             { nameof(ClientDialog.SelectedClient), client },
-    //             { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
-    //             { nameof(ClientDialog.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
-    //         },
-    //         new DialogOptions() { Width = "80vw;", Height = "70vh", }
-    //     );
-    // }
-
     private async Task OnEdit(ActivityDto activity)
     {
-        // activity.workOrder = SelectedWorkOrder;
         await dialog.OpenAsync<ActivityForm>("Activity Info",
             new Dictionary<string, object>()
             {
