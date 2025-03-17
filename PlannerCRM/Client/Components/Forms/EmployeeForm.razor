@@ -36,15 +36,15 @@
                 </RadzenRow>
                 @if (IsInsert)
                 {
-                <RadzenRow class="mt-3">
-                    <RadzenColumn>
-                        <RadzenLabel>Password</RadzenLabel>
-                    </RadzenColumn>
-                    <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@Model.password" />
-                        <ValidationMessage For="@(() => Model.password)" />
-                    </RadzenColumn>
-                </RadzenRow>
+                    <RadzenRow class="mt-3">
+                        <RadzenColumn>
+                            <RadzenLabel>Password</RadzenLabel>
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <InputText class="form-control" @bind-Value="@Model.password" />
+                            <ValidationMessage For="@(() => Model.password)" />
+                        </RadzenColumn>
+                    </RadzenRow>
                     <RadzenRow class="mt-3">
                         <RadzenColumn>
                             <RadzenLabel>Is removeable?</RadzenLabel>
@@ -62,20 +62,20 @@
                             <RadzenColumn Size="8">
                                 <RadzenLabel>Assign Roles</RadzenLabel>
                                 <RadzenDropDown TValue="RoleDto"
-                                                Data="@roles"
-                                                AllowFiltering="true"
-                                                TextProperty="@nameof(RoleDto.roleName)"
-                                                Change="@AssignRole"
-                                                @bind-Value="@assignedRole"
-                                                Style="width: 40vw;" />
+                                Data="@roles"
+                                AllowFiltering="true"
+                                TextProperty="@nameof(RoleDto.roleName)"
+                                Change="@AssignRole"
+                                @bind-Value="@assignedRole"
+                                Style="width: 40vw;" />
                             </RadzenColumn>
                             <RadzenColumn Size="4">
                                 <RadzenDataGrid @ref="grid"
-                                                TItem="RoleDto"
-                                                Data="@Model.roles"
-                                                PageSize="5"
-                                                AllowPaging="true"
-                                                AllowSorting="true">
+                                TItem="RoleDto"
+                                Data="@Model.roles"
+                                PageSize="5"
+                                AllowPaging="true"
+                                AllowSorting="true">
                                     <Columns>
                                         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role Name" />
                                         <RadzenDataGridColumn TItem="RoleDto" Width="64px">
@@ -86,7 +86,7 @@
                                     </Columns>
                                 </RadzenDataGrid>
                             </RadzenColumn>
-                    </RadzenRow>
+                        </RadzenRow>
                     </RadzenFieldset>
                 }
                 <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
@@ -189,6 +189,7 @@
     {
         try
         {
+            Model.roles = Model.roles.Select(x => new RoleDto { id = x.id, roleName = x.roleName, isRemoveable = true }).ToList();
             var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE, 
                                                   new EmployeeFilterDto() { isRemoveRole = true, roleId = role.id, role = role, employeeId = Model.id }, 
                                                   ApiType.Put);
@@ -242,6 +243,7 @@
                 }
                 else
                 {
+                    Model.roles = Model.roles.Select(x => new RoleDto { id = x.id, roleName = x.roleName, isRemoveable = true }).ToList();
                     result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE, Model, ApiType.Put);
                 }
 
