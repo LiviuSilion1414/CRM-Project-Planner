@@ -42,11 +42,6 @@
     [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public EventCallback OnCloseSide { get; set; }
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
-
     private async Task OnEdit()
     {
         await dialog.OpenAsync<EmployeeForm>("Edit employee",
@@ -57,7 +52,7 @@
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
                 { nameof(EmployeeForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" }
+            new DialogOptions() { Width = "40vw;", Height = "60vh" }
         );
     }
 

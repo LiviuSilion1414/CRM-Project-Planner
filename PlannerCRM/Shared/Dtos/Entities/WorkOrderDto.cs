@@ -21,8 +21,8 @@ public class WorkOrderDto
     public DateTime endDate { get; set; } = DateTime.Now;
     public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
 
-    [Required]
-    public Guid firmClientId { get; set; }
+    [Required(ErrorMessage = "The firm client is required")]
+    public Guid? firmClientId { get; set; }
     
     public Guid workOrderCostId { get; set; }
    

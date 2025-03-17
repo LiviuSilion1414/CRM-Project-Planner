@@ -10,6 +10,7 @@ public class Employee
     public bool IsActive { get; set; }
     public bool LockoutEnd { get; set; }
     public DateTime LastSeen { get; set; }
+    public bool IsRemoveable { get; set; }
 
     // Navigation properties
     public List<Activity> Activities { get; set; }

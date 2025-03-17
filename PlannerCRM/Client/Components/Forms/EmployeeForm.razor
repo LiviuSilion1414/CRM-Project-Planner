@@ -3,9 +3,9 @@
 @attribute [Authorize]
 
 <RadzenStack JustifyContent="JustifyContent.Center">
-    <RadzenCard>
-        <RadzenFieldset Text="Employee">
-            <EditForm EditContext="@_context" OnSubmit="Submit">
+    <EditForm EditContext="@_context" OnValidSubmit="Submit">
+        <RadzenCard>
+            <RadzenFieldset Text="Employee">
                 <DataAnnotationsValidator />
                 <RadzenRow class="mt-3">
                     <RadzenColumn>
@@ -34,16 +34,28 @@
                         <ValidationMessage For="@(() => Model.phone)" />
                     </RadzenColumn>
                 </RadzenRow>
+                @if (IsInsert)
+                {
                 <RadzenRow class="mt-3">
                     <RadzenColumn>
                         <RadzenLabel>Password</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
                         <InputText class="form-control" @bind-Value="@Model.password" />
-                       <ValidationMessage For="@(() => Model.password)" />
+                        <ValidationMessage For="@(() => Model.password)" />
                     </RadzenColumn>
                 </RadzenRow>
-                @if (!IsInsert)
+                    <RadzenRow class="mt-3">
+                        <RadzenColumn>
+                            <RadzenLabel>Is removeable?</RadzenLabel>
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenCheckBox @bind-Value="@Model.isRemoveable" />
+                            <ValidationMessage For="@(() => Model.isRemoveable)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                }
+                else
                 {
                     <RadzenFieldset Text="Roles">
                         <RadzenRow class="mt-3">
@@ -77,21 +89,19 @@
                     </RadzenRow>
                     </RadzenFieldset>
                 }
-            </EditForm>
-        </RadzenFieldset>
-    </RadzenCard>
-    <RadzenCard>
-        <RadzenStack AlignItems="AlignItems.Center">
-            <RadzenRow>
-                <RadzenColumn Size="6">
-                    <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
-                </RadzenColumn>
-                <RadzenColumn Size="6">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenStack>
-    </RadzenCard>
+                <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+                    <RadzenRow>
+                        <RadzenColumn Size="6">
+                            <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
+                        </RadzenColumn>
+                        <RadzenColumn Size="6">
+                            <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenStack>
+            </RadzenFieldset>
+        </RadzenCard>
+    </EditForm>
 </RadzenStack>
 
 @code 
@@ -191,12 +201,12 @@
             }
             else
             {
-                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
             }
         }
         catch
         {
-            notification.Notify(NotificationSeverity.Success, "Something went wrong, please retry", null, 4000);
+            notification.Notify(NotificationSeverity.Error, "Something went wrong, please retry", null, 4000);
         }
     }
 

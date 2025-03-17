@@ -10,14 +10,13 @@ public class GlobalMappingProfile : Profile
 
         CreateMap<Employee, EmployeeDto>()
             .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeeRoles.Select(x => new RoleDto() { id = x.RoleId, roleName= x.RoleName })))
+            .ForMember(dest => dest.password, cfg => cfg.MapFrom(src => src.PasswordHash))
             .PreserveReferences();
-        //.ReverseMap();
 
         CreateMap<EmployeeDto, Employee>()
             .ForMember(dest => dest.EmployeeRoles, cfg => cfg.MapFrom(src => src.roles.Select(x => new EmployeeRole() { RoleId = x.id, RoleName = x.roleName })))
-            .ForMember(dest => dest.PasswordHash, cfg => cfg.Ignore())
+            .ForMember(dest => dest.PasswordHash, cfg => cfg.MapFrom(src => src.password))
             .PreserveReferences();
-            //.ReverseMap();
 
         CreateMap<FirmClient, FirmClientDto>()
             .PreserveReferences()

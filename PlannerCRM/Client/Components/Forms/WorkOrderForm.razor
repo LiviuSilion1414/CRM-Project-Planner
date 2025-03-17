@@ -2,52 +2,110 @@
     <EditForm EditContext="@_context" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
-        <RadzenFieldset Text="WorkOrder Info">
-            <RadzenRow Style="margin-bottom: 5px;">
-                <RadzenColumn>
-                    <RadzenLabel Text="Name" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenTextBox Name="Name" @bind-Value=@Model.name />
-                    <ValidationMessage For="@(() => Model.name)" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow Style="margin-bottom: 5px;">
-                <RadzenColumn>
-                    <RadzenLabel Text="StartDate" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenDatePicker Name="StartDate" @bind-Value=@Model.startDate DateFormat="dd/MM/yyyy" />
-                    <ValidationMessage For="@(() => Model.startDate)" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow Style="margin-bottom: 5px;">
-                <RadzenColumn>
-                    <RadzenLabel Text="EndDate" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenDatePicker Name="EndDate" @bind-Value=@Model.endDate DateFormat="dd/MM/yyyy" />
-                    <ValidationMessage For="@(() => Model.endDate)" />
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenFieldset>
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenFieldset Text="WorkOrder Info">
+                    <RadzenRow class="mb-3">
+                        <RadzenColumn>
+                            <RadzenLabel Text="Name" />
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenTextBox class="w-100" @bind-Value=@Model.name />
+                            <ValidationMessage For="@(() => Model.name)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="mb-3">
+                        <RadzenColumn>
+                            <RadzenLabel Text="StartDate" />
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenDatePicker class="w-100" @bind-Value=@Model.startDate DateFormat="dd/MM/yyyy" />
+                            <ValidationMessage For="@(() => Model.startDate)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="mb-3">
+                        <RadzenColumn>
+                            <RadzenLabel Text="EndDate" />
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenDatePicker class="w-100" @bind-Value=@Model.endDate DateFormat="dd/MM/yyyy" />
+                            <ValidationMessage For="@(() => Model.endDate)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenFieldset>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenFieldset Text="Client Info">
+                    <RadzenDropDown TValue="Guid?"
+                                    class="form-control" Style="min-width: 20vw;"
+                                    Data="_clients"
+                                    AllowFiltering="true"
+                                    Placeholder="Select client"
+                                    AllowClear="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    TextProperty="@nameof(FirmClientDto.name)"
+                                    ValueProperty="@nameof(FirmClientDto.id)"
+                                    @bind-Value="@Model.firmClientId"
+                                    Change="@((object? guid) => SelectClient(guid))" />
+                    @if (Model.firmClient == null || Model.firmClientId == Guid.Empty || Model.firmClient.id == Guid.Empty)
+                    {
+                        <RadzenRow>
+                            <RadzenColumn>
+                                <b>Please select a client from the list</b>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    }
+                    else
+                    {
+                        <RadzenRow class="mb-3">
+                            <RadzenColumn>
+                                <RadzenLabel Text="Name" />
+                            </RadzenColumn>
+                            <RadzenColumn>
+                                <RadzenText Text=@Model.firmClient.name />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow class="mb-3">
+                            <RadzenColumn>
+                                <RadzenLabel Text="Vat Number" />
+                            </RadzenColumn>
+                            <RadzenColumn>
+                                <RadzenText Text=@Model.firmClient.vatNumber />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="1">
+                                <RadzenButton IconColor="@Colors.Danger" 
+                                              Icon="delete" 
+                                              ButtonStyle="ButtonStyle.Primary" 
+                                              Variant="Variant.Text"
+                                              Text="Remove"
+                                              Click="@(() => SelectClient(Guid.Empty))"></RadzenButton>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    }
+                    <ValidationMessage For="@(() => Model.firmClientId)" />
+                </RadzenFieldset>
+            </RadzenColumn>
+        </RadzenRow>
+
         @if (!IsInsert)
         {
             <RadzenFieldset Text="Related Activities">
                 <RadzenRow>
                     <RadzenColumn>
                         Name
-                        <InputText @bind-Value="@activityModel.name"/>
-                        <ValidationMessage For="@(() => activityModel.name)"/>
+                        <InputText @bind-Value="@activityModel.name" />
+                        <ValidationMessage For="@(() => activityModel.name)" />
                     </RadzenColumn>
                     <RadzenColumn>
                         Start Date
-                        <RadzenDatePicker @bind-Value="@activityModel.startDate" DateFormat="dd/MM/yyyy"/>
+                        <RadzenDatePicker @bind-Value="@activityModel.startDate" DateFormat="dd/MM/yyyy" />
                         <ValidationMessage For="@(() => activityModel.endDate)" />
                     </RadzenColumn>
                     <RadzenColumn>
                         End Date
-                        <RadzenDatePicker @bind-Value="@activityModel.endDate" DateFormat="dd/MM/yyyy"/>
+                        <RadzenDatePicker @bind-Value="@activityModel.endDate" DateFormat="dd/MM/yyyy" />
                         <ValidationMessage For="@(() => activityModel.endDate)" />
                     </RadzenColumn>
                     <RadzenColumn>
@@ -56,10 +114,10 @@
                 </RadzenRow>
                 <RadzenRow>
                     <RadzenDataGrid TItem="ActivityDto"
-                    @ref="grid"
-                    Data="Model.activities"
-                    AllowPaging="true"
-                    PageSize="5">
+                                    @ref="grid"
+                                    Data="Model.activities"
+                                    AllowPaging="true"
+                                    PageSize="5">
                         <Columns>
                             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
                             <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
@@ -74,47 +132,7 @@
                 </RadzenRow>
             </RadzenFieldset>
         }
-        <RadzenFieldset Text="Client Info">
-            <RadzenRow>
-                <RadzenColumn Style="display:inline-block;">
-                    <RadzenTextBox @bind-Value="@_query"
-                    @attributes="@(new Dictionary<string, object>() { { "type", "search" }})" />
-                    <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Primary"
-                    Icon="Search"
-                    Click="@SearchClient">
-                    </RadzenButton>
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenDataGrid TItem="@FirmClientDto"
-                    Data="@_clients"
-                    AllowFiltering="true"
-                    AllowSorting="true">
-                        <Columns>
-                            <RadzenDataGridColumn TItem="@FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
-                        </Columns>
-                    </RadzenDataGrid>
-                </RadzenColumn>
-            </RadzenRow>
-            @if (!string.IsNullOrEmpty(Model.firmClient.name))
-            {
-                <RadzenRow Style="margin-top: 20px;">
-                    <RadzenColumn>
-                        <RadzenTextBox @bind-Value="@Model.firmClient.name" Disabled="true" />
-                        <RadzenTextBox @bind-Value="@Model.firmClient.vatNumber" Disabled="true" />
-                    </RadzenColumn>
-                    <RadzenButton ButtonType="ButtonType.Button"
-                    Variant="Variant.Outlined"
-                    ButtonStyle="ButtonStyle.Danger"
-                    Icon="Delete"
-                    Click="@(() => SelectClient(new()))">
-                    </RadzenButton>
-                    <ValidationMessage For="@(() => Model.firmClient)" />
-                </RadzenRow>
-            }
-        </RadzenFieldset>
-        <RadzenStack AlignItems="AlignItems.Center">
+        <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
             <RadzenRow>
                 <RadzenColumn>
                     <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Close" Click="Close"></RadzenButton>
@@ -150,6 +168,7 @@
                 };
         }
         _context = new(Model);
+        await LoadClients();
     }
 
     async Task AddActivity()
@@ -208,27 +227,18 @@
         }
     }
 
-    private async Task SearchClient()
+    private async Task LoadClients()
     {
         try
         {
-            if (!string.IsNullOrEmpty(_query))
-            {
-                var filter = new FilterDto()
-                    {
-                        searchQuery = _query
-                    };
+            fetch.IsBusy = true;
 
-                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_SEARCH, filter, ApiType.Post);
-                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
-                {
-                    _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
-                }
-                else
-                {
-                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
-                }
+            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
+            fetch.IsBusy = false;
         }
         catch
         {
@@ -260,9 +270,26 @@
         }
     }
 
-    private void SelectClient(FirmClientDto client)
+    private void SelectClient(object? clientId)
     {
-        Model.firmClient = client;
+        if (clientId != null)
+        {
+            if ((Guid)clientId != Guid.Empty)
+            {
+                Model.firmClient = _clients.SingleOrDefault(x => x.id == (Guid)clientId) ?? new();
+                Model.firmClientId = _clients.SingleOrDefault(x => x.id == (Guid)clientId).id;
+            }
+            else
+            {
+                Model.firmClient = null;
+                Model.firmClientId = null;
+            }
+        }
+        else
+        {
+            Model.firmClient = null;
+            Model.firmClientId = null;
+        }
     }
 
     private async Task OnSubmit()

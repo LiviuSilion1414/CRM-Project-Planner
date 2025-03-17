@@ -98,7 +98,8 @@ else
             new Dictionary<string, object>()
             {
                 { nameof(ClientDialog.SelectedClient), client },
-                { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
+                { nameof(ClientDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
             },
             new SideDialogOptions() { Width="40vw" }
         );

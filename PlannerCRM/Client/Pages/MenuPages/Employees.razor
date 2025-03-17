@@ -65,7 +65,7 @@ else
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                 <Template Context="data">
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
+                    <RadzenButton Disabled="@(!data.isRemoveable)" Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -142,8 +142,10 @@ else
             new Dictionary<string, object>()
             {
                 { nameof(EmployeeDialog.SelectedEmployee), employee },
-                { nameof(EmployeeDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
-            });
+                { nameof(EmployeeDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(EmployeeDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
+            },
+            new SideDialogOptions() { Width="30vw" });
     }
 
     private async Task OnEdit(EmployeeDto employee)
@@ -155,7 +157,7 @@ else
                     { nameof(EmployeeForm.IsInsert), false },
                     { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
             },
-            new DialogOptions() { Width = "30vw;", Height = "40vh" });
+            new DialogOptions() { Width = "70vw;", Height = "80vh" });
     }
 
     private async Task OnAdd()
@@ -166,7 +168,7 @@ else
                     { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                     { nameof(EmployeeForm.IsInsert), true }
                             },
-            new DialogOptions() { Width = "40vw;", Height = "30vh" });
+            new DialogOptions() { Width = "40vw;", Height = "50vh" });
     }
 
     private async Task OnDelete(EmployeeDto employee)

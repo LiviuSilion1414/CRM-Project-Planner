@@ -47,7 +47,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var model = _mapper.Map<Employee>(dto);
+            var model = _mapper.Map<EmployeeDto, Employee>(dto);
             
             _context.Employees.Update(model);
 
@@ -69,13 +69,13 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
 
             if (existingModel != null)
             {
-                if (filter.isRemoveRole)
+                if (filter.isRemoveRole && existingModel.EmployeeRoles.Any(x => x.RoleId == filter.roleId))
                 {
-                    existingModel.EmployeeRoles.Remove(existingModel.EmployeeRoles.Single(x => x.RoleId == filter.roleId));
+                    _context.EmployeeRoles.Remove(existingModel.EmployeeRoles.Where(x => x.RoleId == filter.roleId).FirstOrDefault());
                 }
                 else
                 {
-                    existingModel.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName });
+                    _context.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName, EmployeeId = filter.employeeId });
                 }
                 await _context.SaveChangesAsync();
             }
@@ -93,7 +93,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
             var employee = await _context.Employees
                                          .Include(e => e.Activities)
                                          .Include(e => e.EmployeeRoles)
-                                         .SingleAsync(e => e.Id == filter.employeeId);
+                                         .SingleAsync(e => e.Id == filter.employeeId && e.IsRemoveable);
 
             _context.Remove(employee);
 

@@ -17,6 +17,9 @@ public class EmployeeDto
     
     public string password { get; set; }
 
+    [Required]
+    public bool isRemoveable { get; set; }
+
     public List<RoleDto> roles { get; set; }
 }
 

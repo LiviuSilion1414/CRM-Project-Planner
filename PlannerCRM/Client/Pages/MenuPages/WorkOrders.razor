@@ -144,7 +144,8 @@ else
                 { nameof(WorkOrderDialog.SelectedWorkOrder), workOrder },
                 { nameof(WorkOrderDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(WorkOrderDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            }
+            },
+            new SideDialogOptions() { Width="40vw" }
         );
     }
 
@@ -168,7 +169,7 @@ else
                 { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(WorkOrderForm.IsInsert), true }
                                 },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" });
+            new DialogOptions() { Width = "80vw;", Height = "40vh" });
     }
 
     private async Task OnDelete(WorkOrderDto workOrder)
