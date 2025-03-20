@@ -26,16 +26,14 @@
                         <RadzenLink Path="notifications">
                             <RadzenIcon Style="font-size: xx-large;" Icon="notifications"></RadzenIcon>
                         </RadzenLink>
-                        <RadzenLink Path="profile">
-                            <RadzenProfileMenu Click="Logout">
-                                <Template>
-                                    <RadzenGravatar/>
-                                </Template>
-                                <ChildContent>
-                                    <RadzenProfileMenuItem Text="Logout" Icon="logout" IconColor="@Colors.Danger"></RadzenProfileMenuItem>
-                                </ChildContent>
-                            </RadzenProfileMenu>
-                        </RadzenLink>
+                        <RadzenProfileMenu Click="Logout">
+                            <Template>
+                                <RadzenGravatar/>
+                            </Template>
+                            <ChildContent>
+                                <RadzenProfileMenuItem Text="Logout" Icon="logout" IconColor="@Colors.Danger"></RadzenProfileMenuItem>
+                            </ChildContent>
+                        </RadzenProfileMenu>
                     </RadzenStack>
                 </RadzenStack>
             </RadzenHeader>

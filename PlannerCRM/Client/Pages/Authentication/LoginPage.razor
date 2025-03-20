@@ -7,43 +7,42 @@
 <PageTitle>Login Page</PageTitle>
 <RadzenStack JustifyContent="Radzen.JustifyContent.Center" Class="rz-mx-auto rz-p-4" Style="max-width: 1440px; height: 100%;">
     <RadzenCard class="rz-shadow-5 rz-border-radius-4" style="padding: 0; overflow: hidden">
-        <RadzenRow Gap="0">
-            <RadzenColumn Size="12" SizeSM="6" Class="rz-background-color-primary rz-p-12">
-                <RadzenText TextStyle="TextStyle.H5" style="color:#fff; margin-top:30px;" Text="Entra nella tua area privata" />
-            </RadzenColumn>
-            <RadzenColumn Size="12" SizeSM="6" class="rz-p-12">
-                <PageTitle>Login</PageTitle>
-                <RadzenText Text="@("Login all'area riservata")" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
-                <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
-                    <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenFormField Text="Username" Variant="@Variant.Outlined" class="w-100">
-                            <RadzenTextBox Name="Username" @bind-Value="@_model.emailOrUsername" class="w-100" />
-                        </RadzenFormField>
-                    </RadzenColumn>
-                </RadzenRow>
-                <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
-                    <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenFormField Text="Password" Variant="Variant.Outlined" class="w-100">
-                            <ChildContent>
-                                <RadzenTextBox Name="Password" @bind-Value="@_model.password" Visible="@(!showPassword)" class="w-100" />
-                                <RadzenPassword Name="Password" @bind-Value="@_model.password" Visible="@showPassword" class="w-100" />
-                            </ChildContent>
-                            <End>
-                                <RadzenButton IconColor="@Colors.Danger" Icon="@(showPassword ? "visibility" : "visibility_off")" Click="TogglePassword" Variant="Variant.Text" Size="ButtonSize.Small" />
-                            </End>
-                        </RadzenFormField>
-                    </RadzenColumn>
-                </RadzenRow>
-                <br />
-                <br />
-                <RadzenColumn Size="12" SizeMD="12">
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                        <RadzenButton ButtonType="ButtonType.Button" Click="@(OnLogin)" Text="Login" />
-                        <RadzenButton Variant="Variant.Text" Text="Reset Password" Click="@(OnForgotPassword)" />
-                    </RadzenStack>
+        <EditForm EditContext="_editContext" OnValidSubmit="OnLogin">
+            <DataAnnotationsValidator />
+            <RadzenRow Gap="0">
+                <RadzenColumn Size="12" SizeSM="6" Class="rz-background-color-primary rz-p-12">
+                    <RadzenText TextStyle="TextStyle.H5" style="color:#fff; margin-top:30px;" Text="Entra nella tua area privata" />
                 </RadzenColumn>
-            </RadzenColumn>
-        </RadzenRow>
+                <RadzenColumn Size="12" SizeSM="6" class="rz-p-12">
+                    <PageTitle>Login</PageTitle>
+                    <RadzenText Text="Login all'area riservata" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
+                    <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
+                        <RadzenColumn Size="12" SizeMD="12">
+                            <RadzenFormField Text="Username" Variant="@Variant.Outlined" class="w-100">
+                                <RadzenTextBox Name="Username" @bind-Value="@_model.emailOrUsername" class="w-100" />
+                            </RadzenFormField>
+                            <ValidationMessage For="@(() => _model.emailOrUsername)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center" RowGap="0.25rem">
+                        <RadzenColumn Size="12" SizeMD="12">
+                            <RadzenFormField Text="Password" Variant="Variant.Outlined" class="w-100">
+                                <RadzenPassword Name="Password" @bind-Value="@_model.password" class="w-100" />
+                            </RadzenFormField>
+                            <ValidationMessage For="@(() => _model.password)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <br />
+                    <br />
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                            <RadzenButton ButtonType="ButtonType.Button" Click="@(OnLogin)" Text="Login" />
+                            <RadzenButton Variant="Variant.Text" Text="Reset Password" Click="@(OnForgotPassword)" />
+                        </RadzenStack>
+                    </RadzenColumn>
+                </RadzenColumn>
+            </RadzenRow>
+        </EditForm>
     </RadzenCard>
     <RadzenText Text="PlannerCRM v1.0, Copyright Ⓒ 2025" TextStyle="Radzen.Blazor.TextStyle.Caption" TextAlign="Radzen.TextAlign.Center" Style="width: 100%; margin-top: 20px;" TagName="Radzen.Blazor.TagName.P" />
 </RadzenStack>
@@ -52,17 +51,11 @@
 {
     private LoginDto _model;
     private EditContext _editContext;
-    bool showPassword = false;
 
     protected override async Task OnInitializedAsync()
     {
         _model = new();
         _editContext = new(_model);
-    }
-
-    void TogglePassword()
-    {
-        showPassword = !showPassword;
     }
 
     private async Task OnLogin()
@@ -81,7 +74,7 @@
                 }
                 else
                 {
-                    notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", result.message, 4000);
+                    notification.Notify(NotificationSeverity.Warning, result.message, result.message, 4000);
                 }
             }
         }

@@ -26,10 +26,10 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var model = _mapper.Map<FirmClient>(dto);
+            var existingModel = await _context.Clients.SingleAsync(cl => cl.Id == dto.id);
 
-            var existingModel = await _context.Clients.SingleAsync(cl => cl.Id == model.Id);
-            existingModel = model;
+            existingModel.Name = dto.name;
+            existingModel.VatNumber = dto.vatNumber;
 
             _context.Update(existingModel);
 

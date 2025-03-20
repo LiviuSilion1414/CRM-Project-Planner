@@ -8,13 +8,12 @@ public class EmployeeDto
     public string name { get; set; }
 
     [Required]
-    //[Phone]
     public string phone { get; set; }
     
     [Required]
-    //[EmailAddress]
     public string email { get; set; }
-    
+
+    [Required]
     public string password { get; set; }
 
     [Required]

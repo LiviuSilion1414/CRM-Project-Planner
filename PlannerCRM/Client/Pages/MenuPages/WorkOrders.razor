@@ -153,11 +153,12 @@ else
     {
         await dialog.OpenAsync<WorkOrderForm>("Edit WorkOrder",
             new Dictionary<string, object>()
-                                {
+            {
                 { nameof(WorkOrderForm.Model), workOrder },
                 { nameof(WorkOrderForm.IsInsert), false },
                 { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                                },
+                { nameof(WorkOrderForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
+            },
             new DialogOptions() { Width = "80vw;", Height = "70vh" });
     }
 
@@ -167,6 +168,7 @@ else
             new Dictionary<string, object>()
                                 {
                 { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(WorkOrderForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) },
                 { nameof(WorkOrderForm.IsInsert), true }
                                 },
             new DialogOptions() { Width = "80vw;", Height = "40vh" });

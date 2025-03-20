@@ -14,7 +14,7 @@
                     <RadzenText TextStyle="TextStyle.DisplayH6" Text="Client"></RadzenText>
                     <RadzenText>Name: @SelectedWorkOrder.firmClient.name</RadzenText>
                     <RadzenText>Vat Number: @SelectedWorkOrder.firmClient.vatNumber</RadzenText>
-                   @*  <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedWorkOrder.firmClient))"></RadzenButton> *@
+                    @*  <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedWorkOrder.firmClient))"></RadzenButton> *@
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
@@ -122,6 +122,7 @@
 
     private async Task OnEdit(ActivityDto activity)
     {
+        activity.workOrder = SelectedWorkOrder;
         await dialog.OpenAsync<ActivityForm>("Activity Info",
             new Dictionary<string, object>()
             {
@@ -130,7 +131,9 @@
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" }
+            new DialogOptions() { Width = "40vw" }
         );
+
+        dialog.OnClose += dialog.CloseSide;
     }
 }

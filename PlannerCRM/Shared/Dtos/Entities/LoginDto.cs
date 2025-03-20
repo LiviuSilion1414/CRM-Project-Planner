@@ -2,10 +2,10 @@
 
 public class LoginDto
 {
-    [Required]
+    [Required(ErrorMessage = "Email/Username field is required")]
     public string emailOrUsername { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Password is required")]
     public string password { get; set; }
 
     public bool rememberMe { get; set; }

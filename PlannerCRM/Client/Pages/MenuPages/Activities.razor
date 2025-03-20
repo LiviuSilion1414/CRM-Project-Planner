@@ -197,7 +197,8 @@ else
             {
                 { nameof(ActivityForm.Model), activity },
                 { nameof(ActivityForm.IsInsert), false },
-                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
+                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
             },
             new DialogOptions() { Width = "40vw;", }
         );
@@ -208,8 +209,9 @@ else
         await dialog.OpenAsync<ActivityForm>("Add Activity",
             new Dictionary<string, object>()
                     {
+                { nameof(ActivityForm.IsInsert), true },
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(ActivityForm.IsInsert), true }
+                { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
                     },
             new DialogOptions() { Width = "40vw;" });
     }

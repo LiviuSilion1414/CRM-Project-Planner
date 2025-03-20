@@ -9,16 +9,16 @@ public class ActivityDto
     public string name { get; set; } = string.Empty;
 
     [Required]
-    public DateTime creationDate { get; set; } = DateTime.Now;
+    public DateTime creationDate { get; set; }
     public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }
 
     [Required]
     //[DateRangeValidation(nameof(startDate), nameof(endDate))]
-    public DateTime startDate { get; set; } = DateTime.Now;
+    public DateTime? startDate { get; set; }
     public string startDateString { get => string.Format("{0:dd/MM/yyyy}", startDate); }
 
     [Required]
-    public DateTime endDate { get; set; } = DateTime.Now;
+    public DateTime? endDate { get; set; }
     public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
 
     [Required(ErrorMessage = "The workorder field is required")]
