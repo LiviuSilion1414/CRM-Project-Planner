@@ -81,7 +81,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         {
             var clients = await _context.Clients
                                         .OrderBy(c => c.Id)
-                                        .Include(c => c.WorkOrders)
+                                        .Include(c => c.WorkOrders).ThenInclude(w => w.Activities)
                                         .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                         .ToListAsync();
 
