@@ -9,44 +9,51 @@ else
             <RadzenColumn>
                 <RadzenFormField Text="Client" AllowFloatingLabel="false">
                     <RadzenTextBox class="form-control" Style="min-width: 30vw;"
-                                   @bind-Value="@query"/>
+                                   @bind-Value="@query" />
                 </RadzenFormField>
             </RadzenColumn>
             <RadzenColumn>
-                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetFilters"></RadzenButton>
                 <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
     </RadzenCard>
 
+    <RadzenCard class="mb-3">
+        <RadzenRow JustifyContent="JustifyContent.End">
+            <RadzenColumn SizeLG="12">
+                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@AddClient"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
     <RadzenRow Gap="1rem">
-        <RadzenColumn Size="4" SizeMD="4">
-            <RadzenDataGrid TItem="FirmClientDto"
-            Data="@Clients"
-            ColumnWidth="200px"
-            AllowFiltering="true"
-            AllowPaging="true"
-            AllowSorting="true"
-            AllowColumnReorder ="true"
-            ValueChanged="@OnClientChanged"
-            PageSize="5">
-                <Columns>
-                    <RadzenDataGridColumn TItem="FirmClientDto" Property="@nameof(FirmClientDto.name)" Title="Name" />
-                    <RadzenDataGridColumn TItem="FirmClientDto" Property="@nameof(FirmClientDto.vatNumber)" Title="VAT N°" />
-                </Columns>
-            </RadzenDataGrid>
+        <RadzenColumn SizeLG="4" SizeMD="6">
+            <RadzenListBox TValue="Guid"
+                           Data="@Clients"
+                           AllowClear="true"
+                           AllowFiltering="true"
+                           AllowSelectAll="true"
+                           ValueChanged="OnClientChanged"
+                           TextProperty="@nameof(FirmClientDto.name)"
+                           ValueProperty="@nameof(FirmClientDto.id)"
+                           FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                           TabIndex="-1"
+                           class="w-100">
+            </RadzenListBox>
         </RadzenColumn>
-        <RadzenColumn Size="8" SizeMD="8">
+
+        <RadzenColumn SizeLG="8" SizeMD="6">
             <RadzenCard Variant="Variant.Outlined" Style="height: 100%;">
                 <RadzenStack Gap="1rem">
-                    @if (Clients == null || SelectedClients == null || !SelectedClients.Any())
+                    @if (Clients == null || !Clients.Any())
                     {
                         <p>Select a client from the list</p>
                     }
                     else
                     {
                         <RadzenCard Variant="Variant.Text" class="rz-background-color-primary-lighter rz-color-on-primary-lighter">
-                            Client: <b>@SelectedClients.SingleOrDefault()?.name</b>
+                            Client: <b>@clientDto.name</b>
                         </RadzenCard>
 
                         <RadzenTabs SelectedIndex="0">
@@ -54,20 +61,27 @@ else
                                 <RadzenTabsItem Text="General Details">
                                     <RadzenRow>
                                         <RadzenColumn>
-                                            Name: @SelectedClients.SingleOrDefault().name
+                                            Name: @clientDto.name
                                         </RadzenColumn>
                                         <RadzenColumn>
-                                            Name: @SelectedClients.SingleOrDefault().vatNumber
+                                            Vat Number: @clientDto.vatNumber
+                                        </RadzenColumn>
+                                    </RadzenRow>
+                                    <RadzenRow class="mt-5">
+                                        <RadzenColumn SizeLG="6">
+                                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Primary" Text="Edit" Click="EditClient"></RadzenButton>
+                                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Secondary" Text="Delete" Click="DeleteClient"></RadzenButton>
                                         </RadzenColumn>
                                     </RadzenRow>
                                 </RadzenTabsItem>
                                 <RadzenTabsItem Text="Related WorkOrders">
                                     <RadzenDataGrid TItem="@WorkOrderDto"
-                                    Data="@SelectedClients.SingleOrDefault()?.workOrders"
-                                    @bind-Value="@SelectedWorkOrders"
-                                    AllowFiltering="true"
-                                    AllowPaging="true"
-                                    AllowSorting="true">
+                                                    Data="@clientDto.workOrders"
+                                                    AllowRowSelectOnRowClick="true"
+                                                    RowSelect="OnWorkOrderChanged"
+                                                    AllowFiltering="true"
+                                                    AllowPaging="true"
+                                                    AllowSorting="true">
                                         <Columns>
                                             <RadzenDataGridColumn TItem="@WorkOrderDto" Filterable="false" Sortable="false" Property="@nameof(WorkOrderDto.name)" Title="Name" />
                                             <RadzenDataGridColumn TItem="@WorkOrderDto" Filterable="false" Sortable="false" Property="@nameof(WorkOrderDto.startDateString)" Title="Start Date" />
@@ -75,16 +89,16 @@ else
 
                                             <RadzenDataGridColumn TItem="@WorkOrderDto" Filterable="false" Sortable="false" Width="64px">
                                                 <Template Context="detail">
-                                                    <RadzenButton Icon="edit" IconColor="@Colors.Primary" Variant="Variant.Text" Click="OnEditWorkOrder"></RadzenButton>
+                                                    <RadzenButton Icon="open_in_new" IconColor="@Colors.Primary" Variant="Variant.Text" Click="@(() => WorkOrderOverview(detail))"></RadzenButton>
                                                 </Template>
                                             </RadzenDataGridColumn>
                                         </Columns>
                                     </RadzenDataGrid>
                                 </RadzenTabsItem>
-                                @if (SelectedWorkOrders != null && SelectedWorkOrders.Any())
+                                @if (workOrderDto != null && workOrderDto.firmClientId == clientDto.id)
                                 {
                                     <RadzenTabsItem Text="Activities">
-                                        <RadzenDataList TItem="ActivityDto" WrapItems="true" AllowPaging="true" Data="@(SelectedWorkOrders.SingleOrDefault()?.activities)" PageSize="10">
+                                        <RadzenDataList TItem="ActivityDto" WrapItems="true" AllowPaging="true" Data="@(workOrderDto.activities)" PageSize="10">
                                             <Template Context="detail">
                                                 <RadzenCard Variant="Variant.Outlined" Style="width:100px; height:100px">
                                                     <RadzenBadge Shade="Shade.Lighter" BadgeStyle="BadgeStyle.Info" Text="Activity" class="rz-mb-1" />
@@ -105,11 +119,15 @@ else
 
 @code {
     [Parameter] public List<FirmClientDto> Clients { get; set; }
-    [Parameter] public EventCallback<string> OnSearch { get; set; }
     [Parameter] public EventCallback OnReset { get; set; }
+    [Parameter] public EventCallback<string> OnSearch { get; set; }
+    [Parameter] public EventCallback<FirmClientDto> OnAddClient { get; set; }
+    [Parameter] public EventCallback<FirmClientDto> OnEditClient { get; set; }
+    [Parameter] public EventCallback<FirmClientDto> OnDeleteClient { get; set; }
+    [Parameter] public EventCallback<WorkOrderDto> OnWorkOrderOverview { get; set; }
 
-    IList<FirmClientDto> SelectedClients { get; set; } = new List<FirmClientDto>();
-    IList<WorkOrderDto> SelectedWorkOrders { get; set; } = new List<WorkOrderDto>();
+    WorkOrderDto workOrderDto = new WorkOrderDto();
+    FirmClientDto clientDto = new FirmClientDto();
 
     string query = string.Empty;
 
@@ -117,8 +135,13 @@ else
     {
         if (Clients != null && Clients.Any())
         {
-            SelectedClients.Add(Clients.FirstOrDefault());
+            clientDto = Clients.FirstOrDefault();
         }
+    }
+
+    async Task ResetFilters()
+    {
+        await OnReset.InvokeAsync();
     }
 
     async Task LoadData()
@@ -126,16 +149,35 @@ else
         await OnSearch.InvokeAsync(query);
     }
 
-    async Task ResetData()
+    async Task AddClient()
     {
-        await OnReset.InvokeAsync();
+        await OnAddClient.InvokeAsync();
     }
 
-    void OnEditWorkOrder() { }
-
-    void OnClientChanged(IList<FirmClientDto> clients)
+    async Task EditClient()
     {
-        SelectedClients = clients.ToList();
-        SelectedWorkOrders.Clear();
+        await OnEditClient.InvokeAsync(clientDto);
+    }
+
+    async Task DeleteClient()
+    {
+        await OnDeleteClient.InvokeAsync(clientDto);
+    }
+
+    void OnWorkOrderChanged(WorkOrderDto workOrder)
+    {
+        workOrderDto = workOrder;
+    }
+
+    async Task WorkOrderOverview(WorkOrderDto workOrder)
+    {
+        workOrderDto = workOrder;
+        workOrder.firmClient = clientDto;
+        await OnWorkOrderOverview.InvokeAsync(workOrder);
+    }
+
+    void OnClientChanged(Guid clientId)
+    {
+        clientDto = Clients.SingleOrDefault(x => x.id == clientId);
     }
 }

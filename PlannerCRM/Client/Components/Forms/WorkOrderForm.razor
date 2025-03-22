@@ -340,9 +340,8 @@
         }
     }
 
-    async Task Close()
+    void Close()
     {
-        await OnReloadList.InvokeAsync();
         dialog.Close();
     }
 }
