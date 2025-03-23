@@ -52,7 +52,7 @@
                 { nameof(ActivityForm.Model), SelectedActivity },
                 { nameof(ActivityForm.IsInsert), false },
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
-                { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
+                { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
             },
             new DialogOptions() { Width = "40vw;" }
         );
@@ -78,7 +78,7 @@
                 }
             }
         }
-        catch
+        catch(Exception exception)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

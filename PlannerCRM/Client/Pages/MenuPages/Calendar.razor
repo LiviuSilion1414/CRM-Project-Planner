@@ -57,7 +57,7 @@ else
         await dialog.OpenAsync<ActivityDialog>("Activity Info",
             new Dictionary<string, object>() { 
                 { nameof(ActivityDialog.SelectedActivity), args.Data },
-                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
+                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) }
             },
             new DialogOptions() { Width = "80vw;", Height = "70vh" }
         );
