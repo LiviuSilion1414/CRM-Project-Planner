@@ -9,7 +9,7 @@ else
             <RadzenColumn>
                 <RadzenFormField Text="Client" AllowFloatingLabel="false">
                     <RadzenTextBox class="form-control" Style="min-width: 30vw;"
-                                   @bind-Value="@query" />
+                    @bind-Value="@query" />
                 </RadzenFormField>
             </RadzenColumn>
             <RadzenColumn>
@@ -30,16 +30,16 @@ else
     <RadzenRow Gap="1rem">
         <RadzenColumn SizeLG="4" SizeMD="6">
             <RadzenListBox TValue="Guid"
-                           Data="@Clients"
-                           AllowClear="true"
-                           AllowFiltering="true"
-                           AllowSelectAll="true"
-                           ValueChanged="OnClientChanged"
-                           TextProperty="@nameof(FirmClientDto.name)"
-                           ValueProperty="@nameof(FirmClientDto.id)"
-                           FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                           TabIndex="-1"
-                           class="w-100">
+            Data="@Clients"
+            AllowClear="true"
+            AllowFiltering="true"
+            AllowSelectAll="true"
+            ValueChanged="OnClientChanged"
+            TextProperty="@nameof(FirmClientDto.name)"
+            ValueProperty="@nameof(FirmClientDto.id)"
+            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            TabIndex="-1"
+            class="w-100">
             </RadzenListBox>
         </RadzenColumn>
 
@@ -76,12 +76,12 @@ else
                                 </RadzenTabsItem>
                                 <RadzenTabsItem Text="Related WorkOrders">
                                     <RadzenDataGrid TItem="@WorkOrderDto"
-                                                    Data="@clientDto.workOrders"
-                                                    AllowRowSelectOnRowClick="true"
-                                                    RowSelect="OnWorkOrderChanged"
-                                                    AllowFiltering="true"
-                                                    AllowPaging="true"
-                                                    AllowSorting="true">
+                                    Data="@clientDto.workOrders"
+                                    AllowRowSelectOnRowClick="true"
+                                    RowSelect="OnWorkOrderChanged"
+                                    AllowFiltering="true"
+                                    AllowPaging="true"
+                                    AllowSorting="true">
                                         <Columns>
                                             <RadzenDataGridColumn TItem="@WorkOrderDto" Filterable="false" Sortable="false" Property="@nameof(WorkOrderDto.name)" Title="Name" />
                                             <RadzenDataGridColumn TItem="@WorkOrderDto" Filterable="false" Sortable="false" Property="@nameof(WorkOrderDto.startDateString)" Title="Start Date" />
@@ -95,19 +95,19 @@ else
                                         </Columns>
                                     </RadzenDataGrid>
                                 </RadzenTabsItem>
-                                @if (workOrderDto != null && workOrderDto.firmClientId == clientDto.id)
-                                {
-                                    <RadzenTabsItem Text="Activities">
-                                        <RadzenDataList TItem="ActivityDto" WrapItems="true" AllowPaging="true" Data="@(workOrderDto.activities)" PageSize="10">
-                                            <Template Context="detail">
-                                                <RadzenCard Variant="Variant.Outlined" Style="width:100px; height:100px">
-                                                    <RadzenBadge Shade="Shade.Lighter" BadgeStyle="BadgeStyle.Info" Text="Activity" class="rz-mb-1" />
-                                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.P">@detail.name</RadzenText>
-                                                </RadzenCard>
-                                            </Template>
-                                        </RadzenDataList>
-                                    </RadzenTabsItem>
-                                }
+                                    @if (workOrderDto != null && workOrderDto.firmClientId == clientDto.id)
+                                    {
+                                        <RadzenTabsItem Text="Activities">
+                                                <RadzenDataList TItem="ActivityDto" WrapItems="true" AllowPaging="true" Data="@(workOrderDto.activities)" PageSize="10">
+                                                    <Template Context="detail">
+                                                        <RadzenCard Variant="Variant.Outlined" Style="width:100px; height:100px">
+                                                            <RadzenBadge Shade="Shade.Lighter" BadgeStyle="BadgeStyle.Info" Text="Activity" class="rz-mb-1" />
+                                                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.P">@detail.name</RadzenText>
+                                                        </RadzenCard>
+                                                    </Template>
+                                                </RadzenDataList>
+                                        </RadzenTabsItem>
+                                    }
                             </Tabs>
                         </RadzenTabs>
                     }
