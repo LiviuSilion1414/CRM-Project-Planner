@@ -17,14 +17,14 @@ else
             <RadzenColumn>
                 <RadzenFormField Text="Role" AllowFloatingLabel="false">
                     <RadzenDropDown TValue="Guid?"
-                                    class="form-control" Style="min-width: 20vw;"
-                                    Data="_roles"
-                                    AllowFiltering="true"
-                                    AllowClear="true"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                    TextProperty="@nameof(RoleDto.roleName)"
-                                    ValueProperty="@nameof(RoleDto.id)"
-                                    @bind-Value="@roleId" />
+                    class="form-control" Style="min-width: 20vw;"
+                    Data="_roles"
+                    AllowFiltering="true"
+                    AllowClear="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    TextProperty="@nameof(RoleDto.roleName)"
+                    ValueProperty="@nameof(RoleDto.id)"
+                    @bind-Value="@roleId" />
                 </RadzenFormField>
             </RadzenColumn>
             <RadzenColumn>
@@ -40,10 +40,10 @@ else
     </RadzenCard>
 
     <RadzenDataGrid Data="@_employees"
-                    TItem="@EmployeeDto"
-                    AllowSorting="true"
-                    AllowPaging="true"
-                    AllowFiltering="true">
+    TItem="@EmployeeDto"
+    AllowSorting="true"
+    AllowPaging="true"
+    AllowFiltering="true">
         <HeaderTemplate>
             <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
         </HeaderTemplate>
@@ -84,6 +84,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+       // var user = await auth.GetAuthenticationStateAsync(); 
         await LoadRoles();
         await LoadData();
     }
@@ -159,19 +160,17 @@ else
                     { nameof(EmployeeForm.Model), employee },
                     { nameof(EmployeeForm.IsInsert), false },
                     { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-            },
-            new DialogOptions() { Width = "70vw;", Height = "80vh" });
+            });
     }
 
     private async Task OnAdd()
     {
         await dialog.OpenAsync<EmployeeForm>("Add Employee",
             new Dictionary<string, object>()
-                            {
-                    { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                    { nameof(EmployeeForm.IsInsert), true }
-                            },
-            new DialogOptions() { Width = "40vw;", Height = "50vh" });
+            {
+                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+                { nameof(EmployeeForm.IsInsert), true }
+            });
     }
 
     private async Task OnDelete(EmployeeDto employee)

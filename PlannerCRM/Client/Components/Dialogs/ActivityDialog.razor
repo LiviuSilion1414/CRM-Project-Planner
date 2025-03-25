@@ -53,8 +53,7 @@
                 { nameof(ActivityForm.IsInsert), false },
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
                 { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            },
-            new DialogOptions() { Width = "40vw;" }
+            }
         );
     }
 
@@ -97,8 +96,7 @@
                 { nameof(WorkOrderForm.Model), workOrder },
                 { nameof(WorkOrderForm.IsInsert), false },
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
-            },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" }
+            }
         );
     }
 
@@ -110,8 +108,7 @@
                 { nameof(ClientForm.Model), client },
                 { nameof(ClientForm.IsInsert), false },
                 { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
-            },
-            new DialogOptions() { Width = "80vw;", Height = "70vh", }
+            }
         );
     }
 }

@@ -55,8 +55,7 @@
                 { nameof(ClientForm.IsInsert), false },
                 { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
                 { nameof(ClientForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
-            },
-            new DialogOptions() { Width = "40vw;" }
+            }
         );
     }
 
@@ -100,8 +99,7 @@
                 { nameof(WorkOrderForm.Model), workOrder },
                 { nameof(WorkOrderForm.IsInsert), false },
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
-            },
-            new DialogOptions() { Width = "40vw;" }
+            }
         );
     }
 }

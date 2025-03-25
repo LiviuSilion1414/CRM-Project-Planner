@@ -10,15 +10,15 @@
 else
 {
     <RadzenScheduler TItem="ActivityDto"
-                     Style="height: 90vh;"
-                     Data=@_activities
-                     Culture="CultureInfo.InvariantCulture"
-                     SlotSelect="@OnAdd"
-                     AppointmentSelect="@OnSelect"
-                     StartProperty="@nameof(ActivityDto.startDate)"
-                     EndProperty="@nameof(ActivityDto.endDate)"
-                     TextProperty="@nameof(ActivityDto.name)"
-                     SelectedIndex="2">
+    Style="height: 90vh;"
+    Data=@_activities
+    Culture="CultureInfo.InvariantCulture"
+    SlotSelect="@OnAdd"
+    AppointmentSelect="@OnSelect"
+    StartProperty="@nameof(ActivityDto.startDate)"
+    EndProperty="@nameof(ActivityDto.endDate)"
+    TextProperty="@nameof(ActivityDto.name)"
+    SelectedIndex="2">
         <RadzenDayView />
         <RadzenWeekView />
         <RadzenMonthView />
@@ -54,12 +54,12 @@ else
 
     private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
     {
-        await dialog.OpenAsync<ActivityDialog>("Activity Info",
+        await dialog.OpenSideAsync<ActivityDialog>("Activity Info",
             new Dictionary<string, object>() { 
                 { nameof(ActivityDialog.SelectedActivity), args.Data },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) }
             },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" }
+            new SideDialogOptions() { Width = "40vw;" }
         );
     }
 
@@ -70,8 +70,6 @@ else
             {
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ActivityForm.IsInsert), true }
-
-            },
-            new DialogOptions() { Width = "40vw;", Height = "40vh" });
+            });
     }
 }

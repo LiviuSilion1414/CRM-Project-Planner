@@ -77,9 +77,7 @@ else
                 { nameof(ClientForm.Model), client },
                 { nameof(ClientForm.IsInsert), false },
                 { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) }
-            },
-            new DialogOptions() { Width = "40vw;", Height = "30vh" }
-        );
+            });
     }
 
     private async Task OnAdd()
@@ -89,8 +87,7 @@ else
             {
                 { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) },
                 { nameof(ClientForm.IsInsert), true }
-            },
-            new DialogOptions() { Width = "40vw;", Height = "30vh" });
+            });
     }
 
     private async Task OnDelete(FirmClientDto client)

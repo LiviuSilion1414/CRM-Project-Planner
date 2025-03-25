@@ -42,8 +42,12 @@
                     <RadzenPanelMenuItem Text="Home" Icon="house" Path="/home" />
                     <RadzenPanelMenuItem Text="Recently" Icon="schedule" Path="/recently" />
                     <RadzenPanelMenuItem Text="WorkOrders" Icon="work" Path="/workOrders" />
-                    <RadzenPanelMenuItem Text="Employees" Icon="people" Path="/employees" />
-                    <RadzenPanelMenuItem Text="Roles" Icon="work" Path="/roles" />
+                    <AuthorizeView Context="authState" Roles="admin">
+                        <Authorized>
+                            <RadzenPanelMenuItem Text="Employees" Icon="people" Path="/employees" />
+                            <RadzenPanelMenuItem Text="Roles" Icon="work" Path="/roles" />
+                        </Authorized>
+                    </AuthorizeView>
                     <RadzenPanelMenuItem Text="Activities" Icon="check_circle" Path="/activities" />
                     <RadzenPanelMenuItem Text="Clients" Icon="groups" Path="/clients" />
                     <RadzenPanelMenuItem Text="Statistics" Icon="bar_chart" Path="/statistics" />
@@ -68,6 +72,11 @@
 
 @code {
     private bool sidebarExpanded = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await auth.GetAuthenticationStateAsync();
+    }
 
     private void ToggleSidebar()
     {

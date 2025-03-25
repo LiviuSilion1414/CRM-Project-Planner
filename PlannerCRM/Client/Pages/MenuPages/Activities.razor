@@ -199,8 +199,7 @@ else
                 { nameof(ActivityForm.IsInsert), false },
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            },
-            new DialogOptions() { Width = "40vw;", }
+            }
         );
     }
 
@@ -208,12 +207,11 @@ else
     {
         await dialog.OpenAsync<ActivityForm>("Add Activity",
             new Dictionary<string, object>()
-                    {
+            {
                 { nameof(ActivityForm.IsInsert), true },
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
                 { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-                    },
-            new DialogOptions() { Width = "40vw;" });
+            });
     }
 
     private async Task OnDelete(ActivityDto activity)

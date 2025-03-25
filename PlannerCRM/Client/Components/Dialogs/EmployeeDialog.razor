@@ -51,8 +51,7 @@
                 { nameof(EmployeeForm.IsInsert), false },
                 { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
                 { nameof(EmployeeForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
-            },
-            new DialogOptions() { Width = "40vw;" }
+            }
         );
     }
 

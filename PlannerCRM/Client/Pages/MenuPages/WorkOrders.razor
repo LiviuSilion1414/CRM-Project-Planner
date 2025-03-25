@@ -95,20 +95,18 @@ else
                 { nameof(WorkOrderForm.IsInsert), false },
                 { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData(new WorkOrderFilterDto())) },
                 { nameof(WorkOrderForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            },
-            new DialogOptions() { Width = "80vw;", Height = "70vh" });
+            });
     }
 
     private async Task OnAdd()
     {
         await dialog.OpenAsync<WorkOrderForm>("Add WorkOrder",
             new Dictionary<string, object>()
-                                {
+            {
                 { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData(new WorkOrderFilterDto())) },
                 { nameof(WorkOrderForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) },
                 { nameof(WorkOrderForm.IsInsert), true }
-                                },
-            new DialogOptions() { Width = "80vw;", Height = "40vh" });
+            });
     }
 
     private async Task OnDelete(WorkOrderDto workOrder)
