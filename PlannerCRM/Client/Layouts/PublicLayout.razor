@@ -41,7 +41,7 @@
             var result = await auth.GetAuthenticationStateAsync();
             if (result.User is not null && result.User.Identity.IsAuthenticated)
             {
-                navigation.NavigateTo("home", true);
+                navigation.NavigateTo("home");
             }
         }
         catch 
