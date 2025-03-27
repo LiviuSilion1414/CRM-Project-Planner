@@ -163,17 +163,17 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         }
     }
 
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByEmployeeId(EmployeeFilterDto filter)
+    public async Task<List<EmployeeActivityDto>> FindAssociatedActivitiesByEmployeeId(EmployeeFilterDto filter)
     {
         try
         {
-            var foundActivities = await _context.Activities
-                                                .Include(ac => ac.EmployeeActivities)
-                                                .Include(ac => ac.Employees)
-                                                .Where(ac => ac.Employees.Any(em => em.Id == filter.employeeId))
+            var foundActivities = await _context.EmployeeActivities
+                                                .Include(ac => ac.Activity)
+                                                .Include(ac => ac.Employee)
+                                                .Where(x => x.EmployeeId == filter.employeeId)
                                                 .ToListAsync();
 
-            return _mapper.Map<List<ActivityDto>>(foundActivities);
+            return _mapper.Map<List<EmployeeActivityDto>>(foundActivities);
         } 
         catch (Exception)
         {

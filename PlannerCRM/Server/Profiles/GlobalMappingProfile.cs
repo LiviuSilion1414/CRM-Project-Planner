@@ -5,12 +5,13 @@ public class GlobalMappingProfile : Profile
     public GlobalMappingProfile()
     {
         CreateMap<Activity, ActivityDto>()
+            .ForMember(dest => dest.employees, cfg => cfg.MapFrom(src => src.EmployeeActivities.Select(x => x.Employee)))
             .PreserveReferences()
             .ReverseMap();
 
         CreateMap<Employee, EmployeeDto>()
             .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeeRoles.Select(x => new RoleDto() { id = x.RoleId, roleName= x.RoleName })))
-            .ForMember(dest => dest.password, cfg => cfg.MapFrom(src => src.PasswordHash))
+            .ForMember(dest => dest.password, cfg => cfg.Ignore())
             .PreserveReferences();
 
         CreateMap<EmployeeDto, Employee>()
@@ -31,6 +32,10 @@ public class GlobalMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<Employee, LoginRecoveryDto>()
+            .PreserveReferences()
+            .ReverseMap();
+
+        CreateMap<EmployeeActivity, EmployeeActivityDto>()
             .PreserveReferences()
             .ReverseMap();
     }

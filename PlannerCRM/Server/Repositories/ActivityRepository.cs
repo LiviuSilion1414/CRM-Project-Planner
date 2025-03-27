@@ -128,7 +128,7 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
         {
             var activities = await _context.Activities
                                            .OrderBy(a => a.Id)
-                                           .Include(a => a.EmployeeActivities)
+                                           .Include(a => a.EmployeeActivities).ThenInclude(x => x.Employee)
                                            .Include(a => a.WorkOrder).ThenInclude(x => x.FirmClient)
                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
                                                        (filter.clientId == Guid.Empty || x.WorkOrder.FirmClientId == filter.clientId) &&
@@ -190,6 +190,51 @@ public class ActivityRepository(AppDbContext context, IMapper mapper)
             return _mapper.Map<WorkOrderDto>(foundWorkOrder);
         } 
         catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task AssignActivityToEmployee(ActivityFilterDto filter)
+    {
+        try
+        {
+            var employeeActivity = await _context.EmployeeActivities
+                                                 .Where(x => x.ActivityId == filter.activityId && x.EmployeeId == filter.employeeId)
+                                                 .SingleOrDefaultAsync();
+
+            if (employeeActivity != null)
+            {
+                return;
+            }
+
+            await _context.EmployeeActivities.AddAsync(new EmployeeActivity { ActivityId = filter.activityId, EmployeeId = filter.employeeId });
+
+            await _context.SaveChangesAsync();
+        } 
+        catch 
+        {
+            throw;
+        }
+    }
+
+    public async Task RemoveAssignedEmployeeFromActivity(ActivityFilterDto filter)
+    {
+        try
+        {
+            var employeeActivity = await _context.EmployeeActivities
+                                                 .Where(x => x.ActivityId == filter.activityId && x.EmployeeId == filter.employeeId)
+                                                 .SingleOrDefaultAsync();
+
+            if (employeeActivity == null)
+            {
+                return;
+            }
+
+            _context.EmployeeActivities.Remove(employeeActivity);
+
+            await _context.SaveChangesAsync();
+        } catch
         {
             throw;
         }

@@ -236,4 +236,64 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
             };
         }
     }
+
+    [HttpPost]
+    [Route(ApiUrl.ACTIVITY_ASSIGN_ACTIVITY)]
+    public async Task<ResultDto> AssignActivity([FromBody] ActivityFilterDto filter)
+    {
+        try
+        {
+            await _repo.AssignActivityToEmployee(filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } catch
+        {
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
+            };
+        }
+    }
+
+    [HttpPost]
+    [Route(ApiUrl.ACTIVITY_REMOVE_ASSIGNED_EMPLOYEE)]
+    public async Task<ResultDto> RemoveAssignedEmployeeFromActivity([FromBody] ActivityFilterDto filter)
+    {
+        try
+        {
+            await _repo.RemoveAssignedEmployeeFromActivity(filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } catch
+        {
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
+            };
+        }
+    }
 }

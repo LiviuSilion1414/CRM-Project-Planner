@@ -1,0 +1,496 @@
+{
+	"info": {
+		"_postman_id": "3abed9f0-11c7-4772-9040-83d86cbb64e1",
+		"name": "PlannerCRM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "25512474"
+	},
+	"item": [
+		{
+			"name": "Employees",
+			"item": [
+				{
+					"name": "Read - List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/employee/list"
+					},
+					"response": []
+				},
+				{
+					"name": "GetAssociatedActivities",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"employeeId\": \"90c9c900-5c44-4ca8-a6f8-605db47b886a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/employee/findAssociatedActivitiesByEmployeeId"
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"jkkkhhj\",\r\n    \"phone\": \"jkkkhhj\",\r\n    \"email\": \"jkkkhhj\",\r\n    \"password\": \"1\",\r\n    \"isRemoveable\": true,\r\n    \"roles\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/employee/insert"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Role",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbiIsIm5hbWVpZCI6IjE3ZTA0NDBkLTRlMzktNGVkYy1iYzhlLTMzZjVkMmRlOTQxOSIsIm5iZiI6MTczOTcyODM3MCwiZXhwIjoxNzQyMzIwMzcwLCJpYXQiOjE3Mzk3MjgzNzB9.DurpDd6urfGxhy0nMXcF669D9zRQZkKOQxYztiuDr0I"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"guid\": \"cee2906b-6393-4cb0-8b27-a1c9b86d56af\",\r\n    \"name\": \"liviu\",\r\n    \"phoneNumber\": \"35665565566\",\r\n    \"email\": \"silionliviu001@gmail.com\",\r\n    \"password\": \"MGekcTX/LDe8+PZ/lGzgFwvg1z+iY780IsUBpoTupv4=\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/employee/assignRole/clown"
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"68579866-cbbe-4c64-a103-56dcb15b4f3a\",\r\n    \"name\": \"pampam\",\r\n    \"phone\": \"pampam\",\r\n    \"email\": \"pampam\",\r\n    \"password\": \"zTdOM8W+9O4N6t92uYXXiPemdI9Oz+TuY809+IWoY/Y=\",\r\n    \"isRemoveable\": true,\r\n    \"roles\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/employee/update"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Read - Single",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "Read - List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbiIsIm5hbWVpZCI6IjE3ZTA0NDBkLTRlMzktNGVkYy1iYzhlLTMzZjVkMmRlOTQxOSIsIm5iZiI6MTczOTcyNDUwNywiZXhwIjoxNzQyMzE2NTA3LCJpYXQiOjE3Mzk3MjQ1MDd9.Sn6OidixcC9zwAAEGT9wcRdFgDNLAYRmoM6RmakLMbI"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost:5030/api/client/getwithpagination/100/0"
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Read - Single",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WorkOrders",
+			"item": [
+				{
+					"name": "Read - List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiYWRtaW4iLCJFbWFpbCI6IjEiLCJHdWlkIjoiMjY1Nzk5OWUtOTBkMS00OWRiLTkwMDItNmZjOTRkNDg5Y2Q3IiwiSXNBdXRoZW50aWNhdGVkIjoiVHJ1ZSIsIlJvbGUiOlsiYWRtaW4iLCJzdGFmZiJdLCJuYmYiOjE3NDA2MTkwODcsImV4cCI6MTc0MzIxMTA4NywiaWF0IjoxNzQwNjE5MDg3fQ.I1XKho0SxUk4Hd2_jhdG2-cqdB32wHclF3Q203RO5mg"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"limit\": 100,\r\n    \"offset\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/workOrder/getWithPagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Read - Single",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Activities",
+			"item": [
+				{
+					"name": "Read - List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/activity/list"
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Read - Single",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Activity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"activityId\": \"0b5e20f5-ebc9-4632-a335-73c538471b5d\",\r\n    \"employeeId\": \"90c9c900-5c44-4ca8-a6f8-605db47b886a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/activity/assignActivity"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Assigned Activity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"activityId\": \"0b5e20f5-ebc9-4632-a335-73c538471b5d\",\r\n    \"employeeId\": \"90c9c900-5c44-4ca8-a6f8-605db47b886a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/activity/removeAssignedEmployee"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WorkTimes",
+			"item": [
+				{
+					"name": "Read - List",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Read - Single",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailOrUsername\": \"admin\",\r\n    \"password\": \"533::109As?\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:5030/api/account/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost:5030/api/account/logout"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
