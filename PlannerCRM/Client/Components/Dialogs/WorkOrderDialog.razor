@@ -55,15 +55,15 @@
 
     private async Task OnEdit()
     {
-        await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
-            new Dictionary<string, object>()
-            {
-                { nameof(WorkOrderForm.Model), SelectedWorkOrder },
-                { nameof(WorkOrderForm.IsInsert), false },
-                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
-                { nameof(EmployeeForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
-            }
-        );
+        // await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
+        //     new Dictionary<string, object>()
+        //     {
+        //         { nameof(WorkOrderForm.Model), SelectedWorkOrder },
+        //         { nameof(WorkOrderForm.IsInsert), false },
+        //         { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
+        //         { nameof(EmployeeForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
+        //     }
+        // );
     }
 
     private async Task LoadData()
@@ -121,17 +121,15 @@
 
     private async Task OnEdit(ActivityDto activity)
     {
-        activity.workOrder = SelectedWorkOrder;
-        await dialog.OpenAsync<ActivityForm>("Activity Info",
-            new Dictionary<string, object>()
-            {
-                { nameof(ActivityForm.Model), activity },
-                { nameof(ActivityForm.IsInsert), false },
-                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
-            }
-        );
-
-        dialog.OnClose += dialog.CloseSide;
+        //activity.workOrder = SelectedWorkOrder;
+        // await dialog.OpenAsync<ActivityForm>("Activity Info",
+        //     new Dictionary<string, object>()
+        //     {
+        //         { nameof(ActivityForm.Model), activity },
+        //         { nameof(ActivityForm.IsInsert), false },
+        //         { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
+        //         { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
+        //     }
+        // );
     }
 }

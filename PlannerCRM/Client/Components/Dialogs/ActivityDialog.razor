@@ -1,42 +1,68 @@
-﻿<RadzenStack AlignItems="AlignItems.Start" Orientation="Orientation.Vertical">
-    <RadzenStack>
-        <RadzenRow class="mt-3">
-            <RadzenFieldset Text="Activity Information">
-                <RadzenColumn>
-                    <RadzenText>Name: @SelectedActivity.name</RadzenText>
-                    <RadzenText>Start Date: @SelectedActivity.startDateString</RadzenText>
-                    <RadzenText>End Date: @SelectedActivity.endDateString</RadzenText>
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@OnEdit"></RadzenButton>
-                </RadzenColumn>
-            </RadzenFieldset>
-        </RadzenRow>
-        <RadzenRow class="mt-3">
-            <RadzenFieldset Text="Client Information">
-                <RadzenColumn>
-                    <RadzenText>Name: @SelectedActivity.workOrder.firmClient.name</RadzenText>
-                    <RadzenText>Vat Number: @SelectedActivity.workOrder.firmClient.vatNumber</RadzenText>
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedActivity.workOrder.firmClient))"></RadzenButton>
-                </RadzenColumn>
-            </RadzenFieldset>
-            <RadzenFieldset Text="Work Order Information">
-                <RadzenColumn>
-                    <RadzenText>Name: @SelectedActivity.workOrder.name</RadzenText>
-                    <RadzenText>Start Date: @SelectedActivity.workOrder.startDateString</RadzenText>
-                    <RadzenText>End Date: @SelectedActivity.workOrder.endDateString</RadzenText>
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenWorkOrderDetails(SelectedActivity.workOrder))"></RadzenButton>
-                </RadzenColumn>
-            </RadzenFieldset>
-        </RadzenRow>
-    </RadzenStack>
-    <RadzenStack AlignItems="AlignItems.Center">
-        <RadzenRow>
-            <RadzenColumn>
-                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
-                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit" Click="OnEdit"></RadzenButton>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenStack>
-</RadzenStack>
+﻿<RadzenCard>
+    <RadzenTabs SelectedIndex="0" TabPosition="TabPosition.Left">
+        <Tabs>
+            <RadzenTabsItem Text="General info">
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenFieldset Text="Activity Information">
+                            <RadzenColumn>
+                                <RadzenText>Name: @SelectedActivity.name</RadzenText>
+                                <RadzenText>Start Date: @SelectedActivity.startDateString</RadzenText>
+                                <RadzenText>End Date: @SelectedActivity.endDateString</RadzenText>
+                                <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@OnEdit"></RadzenButton>
+                            </RadzenColumn>
+                        </RadzenFieldset>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenFieldset Text="Client Information">
+                            <RadzenColumn>
+                                <RadzenText>Name: @SelectedActivity.workOrder.firmClient.name</RadzenText>
+                                <RadzenText>Vat Number: @SelectedActivity.workOrder.firmClient.vatNumber</RadzenText>
+                                <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedActivity.workOrder.firmClient))"></RadzenButton>
+                            </RadzenColumn>
+                        </RadzenFieldset>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenFieldset Text="Work Order Information">
+                            <RadzenColumn>
+                                <RadzenText>Name: @SelectedActivity.workOrder.name</RadzenText>
+                                <RadzenText>Start Date: @SelectedActivity.workOrder.startDateString</RadzenText>
+                                <RadzenText>End Date: @SelectedActivity.workOrder.endDateString</RadzenText>
+                                <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenWorkOrderDetails(SelectedActivity.workOrder))"></RadzenButton>
+                            </RadzenColumn>
+                        </RadzenFieldset>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenStack AlignItems="AlignItems.Center">
+                    <RadzenRow>
+                        <RadzenColumn>
+                            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Outlined" Text="Delete" Click="OnDelete"></RadzenButton>
+                            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Edit" Click="OnEdit"></RadzenButton>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenStack>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Employees">
+                <RadzenDataGrid Data="@SelectedActivity.employees"
+                TItem="@EmployeeDto"
+                AllowSorting="true"
+                AllowPaging="true"
+                AllowFiltering="true">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
+                        <RadzenDataGridColumn TItem="@EmployeeDto" Title="Role(s)">
+                            <Template Context="data">
+                                @ShowRoles(data)
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
+                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+</RadzenCard>
 
 @code
 {
@@ -44,17 +70,22 @@
     [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public EventCallback OnCloseSide { get; set; }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
     private async Task OnEdit()
     {
-        await dialog.OpenAsync<ActivityForm>("Edit Activity",
-            new Dictionary<string, object>()
-            {
-                { nameof(ActivityForm.Model), SelectedActivity },
-                { nameof(ActivityForm.IsInsert), false },
-                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
-                { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            }
-        );
+    //     await dialog.OpenAsync<ActivityForm>("Edit Activity",
+    //     new Dictionary<string, object>()
+    //                 {
+    //             { nameof(ActivityForm.Model), SelectedActivity },
+    //             { nameof(ActivityForm.IsInsert), false },
+    //             { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
+    //             { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
+    //                 }
+    // );
     }
 
     private async Task OnDelete()
@@ -63,9 +94,9 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE, 
-                                                      new ActivityFilterDto() { activityId = SelectedActivity.id }, 
-                                                      ApiType.Post);
+                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE,
+                                                  new ActivityFilterDto() { activityId = SelectedActivity.id },
+                                                  ApiType.Post);
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -77,7 +108,7 @@
                 }
             }
         }
-        catch(Exception exception)
+        catch (Exception exception)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -90,25 +121,48 @@
 
     async Task OpenWorkOrderDetails(WorkOrderDto workOrder)
     {
-        await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
-            new Dictionary<string, object>()
-            {
-                { nameof(WorkOrderForm.Model), workOrder },
-                { nameof(WorkOrderForm.IsInsert), false },
-                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
-            }
-        );
+    //     await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
+    //     new Dictionary<string, object>()
+    //                 {
+    //             { nameof(WorkOrderForm.Model), workOrder },
+    //             { nameof(WorkOrderForm.IsInsert), false },
+    //             { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
+    //                 }
+    // );
     }
 
     private async Task OpenClientDetails(FirmClientDto client)
     {
-        await dialog.OpenAsync<ClientForm>("Edit client",
-            new Dictionary<string, object>()
-            {
-                { nameof(ClientForm.Model), client },
-                { nameof(ClientForm.IsInsert), false },
-                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
-            }
-        );
+    //     await dialog.OpenAsync<ClientForm>("Edit client",
+    //     new Dictionary<string, object>()
+    //                 {
+    //             { nameof(ClientForm.Model), client },
+    //             { nameof(ClientForm.IsInsert), false },
+    //             { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
+    //                 }
+    // );
     }
+
+    RenderFragment ShowRoles(EmployeeDto employee)
+    {
+        return
+    @<div>
+        @if (employee.roles.OrderBy(x => x.id).FirstOrDefault() != null)
+    {
+    if (employee.roles.OrderBy(x => x.id).ToList().Count == 1)
+    {
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName}")
+    }
+    else
+    {
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.roles.Count - 1}")
+    }
+    }
+    else
+    {
+        <b>no roles assigned</b>
+    }
+    </div>;
+    }
+
 }

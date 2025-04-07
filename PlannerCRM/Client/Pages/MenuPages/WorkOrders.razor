@@ -9,20 +9,59 @@
 }
 else
 {
-    <WorkOrders_MasterDetail Clients="_clients"
-    WorkOrders="_workOrders"
-    OnSearch="LoadData"
-    OnReset="ResetData"
-    OnActivityOverview="OnSelect"
-    OnAddWorkOrder="OnAdd"
-    OnEditWorkOrder="OnEdit"
-    OnDeleteWorkOrder="OnDelete">
-    </WorkOrders_MasterDetail>
+    <RadzenCard>
+        @if ((isInsert || isEdit || isView || isActivityView) && (_selectedWorkOrder is not null || _selectedActivity is not null))
+        {
+            <RadzenRow>
+                <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12">
+                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="ResetFlags"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+        }
+
+        @if (isInsert && _selectedWorkOrder is not null)
+        {
+            <WorkOrderForm Model="@_selectedWorkOrder" IsInsert="true" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
+        }
+        else if (isEdit && _selectedWorkOrder is not null)
+        {
+            <WorkOrderForm Model="@_selectedWorkOrder" IsInsert="false" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
+        }
+        else if (isView && _selectedWorkOrder is not null)
+        {
+            <WorkOrderDialog SelectedWorkOrder="_selectedWorkOrder" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
+        }
+        else if (isActivityView && _selectedActivity is not null)
+        {
+            <ActivityDialog SelectedActivity="_selectedActivity" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
+        }
+        else
+        {
+            <WorkOrders_MasterDetail Clients="_clients"
+                                     WorkOrders="_workOrders"
+                                     OnSearch="LoadData"
+                                     OnReset="ResetData"
+                                     OnActivityOverview="OnSelectActivity"
+                                     OnAddWorkOrder="OnAdd"
+                                     OnEditWorkOrder="OnEdit"
+                                     OnDeleteWorkOrder="OnDelete">
+            </WorkOrders_MasterDetail>
+        }
+    </RadzenCard>
 }
 
-@code {
+@code
+{
     private List<WorkOrderDto> _workOrders = new();
     private List<FirmClientDto> _clients = new();
+
+    WorkOrderDto? _selectedWorkOrder = new WorkOrderDto();
+    ActivityDto? _selectedActivity = new ActivityDto();
+
+    private bool isInsert = false;
+    private bool isView = false;
+    private bool isEdit = false;
+    private bool isActivityView = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,40 +112,38 @@ else
         }
     }
 
-    private async Task OnSelect(ActivityDto activity)
+    private void ResetFlags()
     {
-        await dialog.OpenSideAsync<ActivityDialog>("Activity Info",
-            new Dictionary<string, object>()
-            {
-                { nameof(ActivityDialog.SelectedActivity), activity },
-                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadData(new WorkOrderFilterDto())) },
-                { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            },
-            new SideDialogOptions() { Width="40vw" }
-        );
+        isActivityView = false;
+        isView = false;
+        isEdit = false;
+        isInsert = false;
+        _selectedWorkOrder = null;
+        _selectedActivity = null;
     }
 
-    private async Task OnEdit(WorkOrderDto workOrder)
+    void OnAdd()
     {
-        await dialog.OpenAsync<WorkOrderForm>("Edit WorkOrder",
-            new Dictionary<string, object>()
-            {
-                { nameof(WorkOrderForm.Model), workOrder },
-                { nameof(WorkOrderForm.IsInsert), false },
-                { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData(new WorkOrderFilterDto())) },
-                { nameof(WorkOrderForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            });
+        _selectedWorkOrder = new();
+        isInsert = !isInsert;
     }
 
-    private async Task OnAdd()
+    void OnEdit(WorkOrderDto workOrder)
     {
-        await dialog.OpenAsync<WorkOrderForm>("Add WorkOrder",
-            new Dictionary<string, object>()
-            {
-                { nameof(WorkOrderForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData(new WorkOrderFilterDto())) },
-                { nameof(WorkOrderForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) },
-                { nameof(WorkOrderForm.IsInsert), true }
-            });
+        _selectedWorkOrder = workOrder;
+        isEdit = !isEdit;
+    }
+
+    void OnSelect(WorkOrderDto workOrder)
+    {
+        _selectedWorkOrder = workOrder;
+        isView = !isView;
+    }
+
+    void OnSelectActivity(ActivityDto activity)
+    {
+        _selectedActivity = activity;
+        isActivityView = !isActivityView;
     }
 
     private async Task OnDelete(WorkOrderDto workOrder)

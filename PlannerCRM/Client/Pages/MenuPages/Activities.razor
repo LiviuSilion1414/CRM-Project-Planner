@@ -9,85 +9,111 @@
 }
 else
 {
-    <RadzenCard class="mb-3">
-        <RadzenRow JustifyContent="JustifyContent.Stretch">
-            <RadzenColumn>
-                <RadzenFormField Text="Client" AllowFloatingLabel="false">
-                    <RadzenDropDown TValue="Guid?"
-                                    class="form-control" Style="min-width: 20vw;"
-                                    Data="_clients"
-                                    AllowFiltering="true"
-                                    AllowClear="true"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                    TextProperty="@nameof(FirmClientDto.name)"
-                                    ValueProperty="@nameof(FirmClientDto.id)"
-                                    @bind-Value="@clientId" />
-                </RadzenFormField>
-            </RadzenColumn>
-            <RadzenColumn>
-                <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
-                    <RadzenDropDown TValue="Guid?"
-                                    class="form-control" Style="min-width: 20vw;"
-                                    Data="_workOrders"
-                                    AllowFiltering="true"
-                                    AllowClear="true"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                    TextProperty="@nameof(WorkOrderDto.name)"
-                                    ValueProperty="@nameof(WorkOrderDto.id)"
-                                    @bind-Value="@workOrderId" />
-                </RadzenFormField>
-            </RadzenColumn>
-            <RadzenColumn>
-                <RadzenFormField Text="Activity" AllowFloatingLabel="false">
-                    <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
-                </RadzenFormField>
-            </RadzenColumn>
-            <RadzenColumn>
-                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
-                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenCard>
+    <RadzenCard>
+        @if ((isInsert || isEdit || isView) && _selectedActivity is not null)
+        {
+            <RadzenRow>
+                <RadzenColumn SizeLG="12">
+                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="ResetFlags"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+        }
 
-    <RadzenDataGrid Data="@_activities"
-                    TItem="@ActivityDto"
-                    AllowSorting="true"
-                    AllowPaging="true"
-                    AllowFiltering="true">
-        <HeaderTemplate>
-            <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
-        </HeaderTemplate>
-        <Columns>
-            <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
-            <RadzenDataGridColumn TItem="@ActivityDto" Title="Work Order">
-                <Template Context="data">
-                    @data.workOrder.name
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@ActivityDto" Title="Client">
-                <Template Context="data">
-                    @data.workOrder.firmClient.name
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
-            <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.endDateString)" Title="End Date" />
-            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
-                <Template Context="data">
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
-                <Template Context="data">
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="edit" Click="@(() => OnEdit(data))"></RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
-                <Template Context="data">
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>
+        @if (isInsert && _selectedActivity is not null)
+        {
+            <ActivityForm Model="@_selectedActivity" IsInsert="true" OnReloadList="LoadData"/>
+        }
+        else if (isEdit && _selectedActivity is not null)
+        {
+            <ActivityForm Model="@_selectedActivity" IsInsert="false" OnReloadList="LoadData" />
+        }    
+        else if (isView && _selectedActivity is not null)
+        {
+            <ActivityDialog SelectedActivity="_selectedActivity" OnReloadList="LoadData"/>
+        }
+        else
+        {
+            <RadzenCard class="mb-3">
+                <RadzenRow JustifyContent="JustifyContent.Stretch">
+                    <RadzenColumn>
+                        <RadzenFormField Text="Client" AllowFloatingLabel="false">
+                            <RadzenDropDown TValue="Guid?"
+                                            class="form-control" Style="min-width: 20vw;"
+                                            Data="_clients"
+                                            AllowFiltering="true"
+                                            AllowClear="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            TextProperty="@nameof(FirmClientDto.name)"
+                                            ValueProperty="@nameof(FirmClientDto.id)"
+                                            @bind-Value="@clientId" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
+                            <RadzenDropDown TValue="Guid?"
+                                            class="form-control" Style="min-width: 20vw;"
+                                            Data="_workOrders"
+                                            AllowFiltering="true"
+                                            AllowClear="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            TextProperty="@nameof(WorkOrderDto.name)"
+                                            ValueProperty="@nameof(WorkOrderDto.id)"
+                                            @bind-Value="@workOrderId" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenFormField Text="Activity" AllowFloatingLabel="false">
+                            <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                        <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenCard>
+
+            <RadzenDataGrid Data="@_activities"
+                            TItem="@ActivityDto"
+                            AllowSorting="true"
+                            AllowPaging="true"
+                            AllowFiltering="true">
+                <HeaderTemplate>
+                    <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+                </HeaderTemplate>
+                <Columns>
+                    <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
+                    <RadzenDataGridColumn TItem="@ActivityDto" Title="Work Order">
+                        <Template Context="data">
+                            @data.workOrder.name
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="@ActivityDto" Title="Client">
+                        <Template Context="data">
+                            @data.workOrder.firmClient.name
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
+                    <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.endDateString)" Title="End Date" />
+                    <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
+                        <Template Context="data">
+                            <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
+                        <Template Context="data">
+                            <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="edit" Click="@(() => OnEdit(data))"></RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
+                        <Template Context="data">
+                            <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        }
+    </RadzenCard>
 }
 
 @code {
@@ -95,9 +121,15 @@ else
     private List<WorkOrderDto> _workOrders = new();
     private List<FirmClientDto> _clients = new();
 
+    private ActivityDto? _selectedActivity = new();
+
     private string query = string.Empty;
     private Guid? clientId = Guid.Empty;
     private Guid? workOrderId = Guid.Empty;
+
+    private bool isInsert = false;
+    private bool isView = false;
+    private bool isEdit = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -178,40 +210,29 @@ else
         }
     }
 
-    private async Task OnSelect(ActivityDto activity)
+    private void ResetFlags()
     {
-        await dialog.OpenSideAsync<ActivityDialog>("Activity Info",
-            new Dictionary<string, object>()
-            {
-                { nameof(ActivityDialog.SelectedActivity), activity },
-                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            }
-        );
+        isView = false;
+        isEdit = false;
+        isInsert = false;
+        _selectedActivity = null;
     }
 
-    private async Task OnEdit(ActivityDto activity)
+    void OnAdd()
     {
-        await dialog.OpenAsync<ActivityForm>("Edit Activity",
-            new Dictionary<string, object>()
-            {
-                { nameof(ActivityForm.Model), activity },
-                { nameof(ActivityForm.IsInsert), false },
-                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            }
-        );
+        _selectedActivity = new();
+        isInsert = !isInsert;
+    }
+    void OnEdit(ActivityDto activity)
+    {
+        _selectedActivity = activity;
+        isEdit = !isEdit;
     }
 
-    private async Task OnAdd()
+    void OnSelect(ActivityDto activity)
     {
-        await dialog.OpenAsync<ActivityForm>("Add Activity",
-            new Dictionary<string, object>()
-            {
-                { nameof(ActivityForm.IsInsert), true },
-                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(ActivityDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            });
+        _selectedActivity = activity;
+        isView = !isView;
     }
 
     private async Task OnDelete(ActivityDto activity)

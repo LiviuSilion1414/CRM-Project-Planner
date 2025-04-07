@@ -1,6 +1,5 @@
 ﻿@page "/employees"
 
-@attribute [Authorize(Roles = "admin")]
 @layout MainLayout
 
 <h3>Employees</h3>
@@ -12,79 +11,112 @@
 }
 else
 {
-    <RadzenCard class="mb-3">
-        <RadzenRow JustifyContent="JustifyContent.Stretch">
-            <RadzenColumn>
-                <RadzenFormField Text="Role" AllowFloatingLabel="false">
-                    <RadzenDropDown TValue="Guid?"
-                    class="form-control" Style="min-width: 20vw;"
-                    Data="_roles"
-                    AllowFiltering="true"
-                    AllowClear="true"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                    TextProperty="@nameof(RoleDto.roleName)"
-                    ValueProperty="@nameof(RoleDto.id)"
-                    @bind-Value="@roleId" />
-                </RadzenFormField>
-            </RadzenColumn>
-            <RadzenColumn>
-                <RadzenFormField Text="Employee" AllowFloatingLabel="false">
-                    <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
-                </RadzenFormField>
-            </RadzenColumn>
-            <RadzenColumn>
-                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
-                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenCard>
+    <RadzenCard>
 
-    <RadzenDataGrid Data="@_employees"
-    TItem="@EmployeeDto"
-    AllowSorting="true"
-    AllowPaging="true"
-    AllowFiltering="true">
-        <HeaderTemplate>
-            <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
-        </HeaderTemplate>
-        <Columns>
-            <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
-            <RadzenDataGridColumn TItem="@EmployeeDto" Title="Role(s)">
-                <Template Context="data">
-                    @ShowRoles(data)
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
-            <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
-            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
-                <Template Context="data">
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
-                <Template Context="data">
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="edit" Click="@(() => OnEdit(data))"></RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
-                <Template Context="data">
-                    <RadzenButton Disabled="@(!data.isRemoveable)" Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
-                </Template>
-            </RadzenDataGridColumn>
-        </Columns>
-    </RadzenDataGrid>
+        @if ((isInsert || isEdit || isView) && _selectedEmployee is not null)
+        {
+            <RadzenRow>
+                <RadzenColumn SizeLG="12">
+                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="ResetFlags"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+        }
+
+        @if (isInsert && _selectedEmployee is not null)
+        {
+            <EmployeeForm Model="@_selectedEmployee" IsInsert="true" OnReloadList="LoadData" />
+        }
+        else if (isEdit && _selectedEmployee is not null)
+        {
+            <EmployeeForm Model="@_selectedEmployee" IsInsert="false" OnReloadList="LoadData" />
+        }
+        else if (isView && _selectedEmployee is not null)
+        {
+            <EmployeeDialog SelectedEmployee="_selectedEmployee" OnReloadList="LoadData" />
+        }
+        else
+        {
+            <RadzenCard class="mb-3">
+                <RadzenRow JustifyContent="JustifyContent.Stretch">
+                    <RadzenColumn>
+                        <RadzenFormField Text="Role" AllowFloatingLabel="false">
+                            <RadzenDropDown TValue="Guid?"
+                                            class="form-control" Style="min-width: 20vw;"
+                                            Data="_roles"
+                                            AllowFiltering="true"
+                                            AllowClear="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            TextProperty="@nameof(RoleDto.roleName)"
+                                            ValueProperty="@nameof(RoleDto.id)"
+                                            @bind-Value="@roleId" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenFormField Text="Employee" AllowFloatingLabel="false">
+                            <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                        <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenCard>
+
+            <RadzenDataGrid Data="@_employees"
+                            TItem="@EmployeeDto"
+                            AllowSorting="true"
+                            AllowPaging="true"
+                            AllowFiltering="true">
+                <HeaderTemplate>
+                    <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+                </HeaderTemplate>
+                <Columns>
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Title="Role(s)">
+                        <Template Context="data">
+                            @ShowRoles(data)
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
+                        <Template Context="data">
+                            <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
+                        <Template Context="data">
+                            <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="edit" Click="@(() => OnEdit(data))"></RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
+                        <Template Context="data">
+                            <RadzenButton Disabled="@(!data.isRemoveable)" Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        }
+    </RadzenCard>
 }
 
-@code {
+@code
+{
     private List<EmployeeDto> _employees = new();
     private List<RoleDto> _roles = new();
+
+    EmployeeDto? _selectedEmployee = new EmployeeDto();
 
     private string query = string.Empty;
     private Guid? roleId = Guid.Empty;
 
+    private bool isInsert = false;
+    private bool isView = false;
+    private bool isEdit = false;
+
     protected override async Task OnInitializedAsync()
     {
-       // var user = await auth.GetAuthenticationStateAsync(); 
         await LoadRoles();
         await LoadData();
     }
@@ -140,37 +172,30 @@ else
         }
     }
 
-    private async Task OnSelect(EmployeeDto employee)
+    private void ResetFlags()
     {
-        await dialog.OpenSideAsync<EmployeeDialog>("Employee Info",
-            new Dictionary<string, object>()
-            {
-                { nameof(EmployeeDialog.SelectedEmployee), employee },
-                { nameof(EmployeeDialog.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(EmployeeDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            },
-            new SideDialogOptions() { Width="30vw" });
+        isView = false;
+        isEdit = false;
+        isInsert = false;
+        _selectedEmployee = null;
     }
 
-    private async Task OnEdit(EmployeeDto employee)
+    void OnAdd()
     {
-        await dialog.OpenAsync<EmployeeForm>("Edit Employee",
-            new Dictionary<string, object>()
-            {
-                    { nameof(EmployeeForm.Model), employee },
-                    { nameof(EmployeeForm.IsInsert), false },
-                    { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-            });
+        _selectedEmployee = new();
+        isInsert = !isInsert;
     }
 
-    private async Task OnAdd()
+    void OnEdit(EmployeeDto employee)
     {
-        await dialog.OpenAsync<EmployeeForm>("Add Employee",
-            new Dictionary<string, object>()
-            {
-                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(EmployeeForm.IsInsert), true }
-            });
+        _selectedEmployee = employee;
+        isEdit = !isEdit;
+    }
+
+    void OnSelect(EmployeeDto employee)
+    {
+        _selectedEmployee = employee;
+        isView = !isView;
     }
 
     private async Task OnDelete(EmployeeDto employee)
@@ -180,8 +205,8 @@ else
             if ((await dialog.Confirm("Confirm this item removal", "Delete employee", null)).Value)
             {
                 var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_DELETE,
-                                                  new EmployeeFilterDto() { employeeId = employee.id },
-                                                  ApiType.Post);
+                                          new EmployeeFilterDto() { employeeId = employee.id },
+                                          ApiType.Post);
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -202,22 +227,22 @@ else
     RenderFragment ShowRoles(EmployeeDto employee)
     {
         return
-        @<div>
-            @if (employee.roles.OrderBy(x => x.id).FirstOrDefault() != null)
-            {
-                if (employee.roles.OrderBy(x => x.id).ToList().Count == 1)
-                {
-                    @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName}")
-                }
-                else
-                {
-                    @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.roles.Count - 1}")
-                }
-            }
-            else
-            {
-                <b>no roles assigned</b>
-            }
-        </div>;
+    @<div>
+        @if (employee.roles.OrderBy(x => x.id).FirstOrDefault() != null)
+    {
+    if (employee.roles.OrderBy(x => x.id).ToList().Count == 1)
+    {
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName}")
+    }
+    else
+    {
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.roles.Count - 1}")
+    }
+    }
+    else
+    {
+        <b>no roles assigned</b>
+    }
+    </div>;
     }
 }

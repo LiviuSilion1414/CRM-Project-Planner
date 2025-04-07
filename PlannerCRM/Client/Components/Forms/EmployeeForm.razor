@@ -188,7 +188,6 @@
     {
         try
         {
-            Model.roles = Model.roles.Select(x => new RoleDto { id = x.id, roleName = x.roleName, isRemoveable = true }).ToList();
             var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE, 
                                                   new EmployeeFilterDto() { isRemoveRole = true, roleId = role.id, role = role, employeeId = Model.id }, 
                                                   ApiType.Put);

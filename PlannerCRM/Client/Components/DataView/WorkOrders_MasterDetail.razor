@@ -20,7 +20,7 @@ else
                 </RadzenFormField>
             </RadzenColumn>
             <RadzenColumn>
-                <RadzenFormField Text="Client" AllowFloatingLabel="false">
+                <RadzenFormField Text="WorkOrder" AllowFloatingLabel="false">
                     <RadzenTextBox class="form-control" Style="min-width: 30vw;"
                                    @bind-Value="@query" />
                 </RadzenFormField>
@@ -59,14 +59,14 @@ else
         <RadzenColumn SizeLG="8" SizeMD="6">
             <RadzenCard Variant="Variant.Outlined" Style="height: 100%;">
                 <RadzenStack Gap="1rem">
-                    @if (Clients == null || !Clients.Any())
+                    @if (workOrderDto == null || workOrderDto.id == Guid.Empty)
                     {
-                        <p>Select a client from the list</p>
+                        <p>Select a workorder from the list</p>
                     }
                     else
                     {
                         <RadzenCard Variant="Variant.Text" class="rz-background-color-primary-lighter rz-color-on-primary-lighter">
-                            Client: <b>@clientDto.name</b>
+                            Client: <b>@workOrderDto.firmClient.name</b>
                         </RadzenCard>
 
                         <RadzenTabs SelectedIndex="0">
@@ -88,10 +88,10 @@ else
                                     <RadzenFieldset Text="Client">
                                         <RadzenRow>
                                             <RadzenColumn>
-                                                Name: @clientDto.name
+                                                Name: @workOrderDto.firmClient.name
                                             </RadzenColumn>
                                             <RadzenColumn>
-                                                Vat Number: @clientDto.vatNumber
+                                                Vat Number: @workOrderDto.firmClient.vatNumber
                                             </RadzenColumn>
                                         </RadzenRow>
                                     </RadzenFieldset>
@@ -142,7 +142,6 @@ else
     [Parameter] public EventCallback<WorkOrderDto> OnDeleteWorkOrder { get; set; }
     [Parameter] public EventCallback<ActivityDto> OnActivityOverview { get; set; }
 
-    FirmClientDto clientDto = new FirmClientDto();
     ActivityDto activityDto = new ActivityDto();
     WorkOrderDto workOrderDto = new WorkOrderDto();
 
@@ -151,10 +150,7 @@ else
 
     protected override void OnInitialized()
     {
-        if (Clients != null && Clients.Any())
-        {
-            clientDto = Clients.FirstOrDefault();
-        }
+        workOrderDto = WorkOrders.FirstOrDefault();
     }
 
     async Task ResetFilters()
@@ -191,7 +187,8 @@ else
     {
         activityDto = activity;
         activityDto.workOrder = workOrderDto;
-        await OnActivityOverview.InvokeAsync(activity);
+        activityDto.workOrder.firmClient = workOrderDto.firmClient;
+        await OnActivityOverview.InvokeAsync(activityDto);
     }
 
     void OnWorkOrderChanged(Guid clientId)

@@ -46,7 +46,7 @@ else
         <RadzenColumn SizeLG="8" SizeMD="6">
             <RadzenCard Variant="Variant.Outlined" Style="height: 100%;">
                 <RadzenStack Gap="1rem">
-                    @if (Clients == null || !Clients.Any())
+                    @if (clientDto == null || clientDto.id == Guid.Empty)
                     {
                         <p>Select a client from the list</p>
                     }
@@ -95,19 +95,19 @@ else
                                         </Columns>
                                     </RadzenDataGrid>
                                 </RadzenTabsItem>
-                                    @if (workOrderDto != null && workOrderDto.firmClientId == clientDto.id)
-                                    {
-                                        <RadzenTabsItem Text="Activities">
-                                                <RadzenDataList TItem="ActivityDto" WrapItems="true" AllowPaging="true" Data="@(workOrderDto.activities)" PageSize="10">
-                                                    <Template Context="detail">
-                                                        <RadzenCard Variant="Variant.Outlined" Style="width:100px; height:100px">
-                                                            <RadzenBadge Shade="Shade.Lighter" BadgeStyle="BadgeStyle.Info" Text="Activity" class="rz-mb-1" />
-                                                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.P">@detail.name</RadzenText>
-                                                        </RadzenCard>
-                                                    </Template>
-                                                </RadzenDataList>
-                                        </RadzenTabsItem>
-                                    }
+                                @if (workOrderDto != null && workOrderDto.firmClientId == clientDto.id)
+                                {
+                                    <RadzenTabsItem Text="Activities">
+                                        <RadzenDataList TItem="ActivityDto" WrapItems="true" AllowPaging="true" Data="@(workOrderDto.activities)" PageSize="10">
+                                            <Template Context="detail">
+                                                <RadzenCard Variant="Variant.Outlined" Style="width:100px; height:100px">
+                                                    <RadzenBadge Shade="Shade.Lighter" BadgeStyle="BadgeStyle.Info" Text="Activity" class="rz-mb-1" />
+                                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.P">@detail.name</RadzenText>
+                                                </RadzenCard>
+                                            </Template>
+                                        </RadzenDataList>
+                                    </RadzenTabsItem>
+                                }
                             </Tabs>
                         </RadzenTabs>
                     }
@@ -133,10 +133,7 @@ else
 
     protected override void OnInitialized()
     {
-        if (Clients != null && Clients.Any())
-        {
-            clientDto = Clients.FirstOrDefault();
-        }
+        clientDto = Clients.FirstOrDefault();
     }
 
     async Task ResetFilters()

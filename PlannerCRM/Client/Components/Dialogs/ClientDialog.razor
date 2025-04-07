@@ -48,15 +48,15 @@
 
     private async Task OnEdit()
     {
-        await dialog.OpenAsync<ClientForm>("Edit client",
-            new Dictionary<string, object>()
-            {
-                { nameof(ClientForm.Model), SelectedClient },
-                { nameof(ClientForm.IsInsert), false },
-                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
-                { nameof(ClientForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
-            }
-        );
+        // await dialog.OpenAsync<ClientForm>("Edit client",
+        //     new Dictionary<string, object>()
+        //     {
+        //         { nameof(ClientForm.Model), SelectedClient },
+        //         { nameof(ClientForm.IsInsert), false },
+        //         { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
+        //         { nameof(ClientForm.OnCloseSide), EventCallback.Factory.Create(this, OnCloseSide) }
+        //     }
+        // );
     }
 
     private async Task OnDelete()
@@ -93,13 +93,13 @@
 
     async Task OpenWorkOrderDetails(WorkOrderDto workOrder)
     {
-        await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
-            new Dictionary<string, object>()
-            {
-                { nameof(WorkOrderForm.Model), workOrder },
-                { nameof(WorkOrderForm.IsInsert), false },
-                { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
-            }
-        );
+        // await dialog.OpenAsync<WorkOrderForm>("Edit workOrder",
+        //     new Dictionary<string, object>()
+        //     {
+        //         { nameof(WorkOrderForm.Model), workOrder },
+        //         { nameof(WorkOrderForm.IsInsert), false },
+        //         { nameof(EmployeeForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) }
+        //     }
+        // );
     }
 }

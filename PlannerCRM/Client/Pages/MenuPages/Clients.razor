@@ -9,18 +9,57 @@
 }
 else
 {
-    <Clients_MasterDetail Clients="_clients"
-                  OnSearch="LoadData"
-                  OnReset="ResetData"
-                  OnAddClient="OnAdd"
-                  OnEditClient="OnEdit"
-                  OnDeleteClient="OnDelete"
-                  OnWorkOrderOverview="OnWorkOrderOverview"/>
+    <RadzenCard>
+        @if ((isInsert || isEdit || isView || isWorkOrderView) && (_selectedClient is not null || _selectedWorkOrder is not null))
+        {
+            <RadzenRow>
+                <RadzenColumn SizeLG="12">
+                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="ResetFlags"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+        }
+
+        @if (isInsert && _selectedClient is not null)
+        {
+            <ClientForm Model="@_selectedClient" IsInsert="true" OnReloadList="@LoadData" />
+        }
+        else if (isEdit && _selectedClient is not null)
+        {
+            <ClientForm Model="@_selectedClient" IsInsert="false" OnReloadList=@LoadData />
+        }
+        else if (isView && _selectedClient is not null)
+        {
+            <ClientDialog SelectedClient="_selectedClient" />
+        }
+        else if (isWorkOrderView && _selectedWorkOrder is not null)
+        {
+            <WorkOrderDialog SelectedWorkOrder="_selectedWorkOrder" />
+        }
+        else
+        {
+            <Clients_MasterDetail Clients="_clients"
+                                  OnSearch="LoadData"
+                                  OnReset="ResetData"
+                                  OnAddClient="OnAdd"
+                                  OnEditClient="OnEdit"
+                                  OnDeleteClient="OnDelete"
+                                  OnWorkOrderOverview="OnWorkOrderSelect" />
+        }
+    </RadzenCard>
 }
 
+@code
+{
+    private List<FirmClientDto> _clients = new List<FirmClientDto>();
 
-@code {
-    private List<FirmClientDto> _clients = new();
+    WorkOrderDto? _selectedWorkOrder = new WorkOrderDto();
+    FirmClientDto? _selectedClient = new FirmClientDto();
+
+    private bool isInsert = false;
+    private bool isView = false;
+    private bool isEdit = false;
+    private bool isWorkOrderView = false;
+    string query = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -32,7 +71,13 @@ else
         await LoadData();
     }
 
-    private async Task LoadData(string query = "")
+    async Task Search(string query)
+    {
+        this.query = query;
+        await LoadData();
+    }
+
+    private async Task LoadData()
     {
         try
         {
@@ -56,38 +101,38 @@ else
         }
     }
 
-    private async Task OnWorkOrderOverview(WorkOrderDto workOrder)
+    private void ResetFlags()
     {
-        await dialog.OpenSideAsync<WorkOrderDialog>("WorkOrder Info",
-            new Dictionary<string, object>()
-            {
-                { nameof(WorkOrderDialog.SelectedWorkOrder), workOrder },
-                { nameof(WorkOrderDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) },
-                { nameof(WorkOrderDialog.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-            },
-            new SideDialogOptions() { Width="40vw" }
-        );
+        isWorkOrderView = false;
+        isView = false;
+        isEdit = false;
+        isInsert = false;
+        _selectedWorkOrder = null;
+        _selectedClient = null;
     }
 
-    private async Task OnEdit(FirmClientDto client)
+    void OnAdd()
     {
-        await dialog.OpenAsync<ClientForm>("Edit Client",
-            new Dictionary<string, object>()
-            {
-                { nameof(ClientForm.Model), client },
-                { nameof(ClientForm.IsInsert), false },
-                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) }
-            });
+        _selectedClient = new();
+        isInsert = !isInsert;
     }
 
-    private async Task OnAdd()
+    void OnEdit(FirmClientDto client)
     {
-        await dialog.OpenAsync<ClientForm>("Add Client",
-            new Dictionary<string, object>()
-            {
-                { nameof(ClientForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) },
-                { nameof(ClientForm.IsInsert), true }
-            });
+        _selectedClient = client;
+        isEdit = !isEdit;
+    }
+
+    void OnSelect(FirmClientDto client)
+    {
+        _selectedClient = client;
+        isView = !isView;
+    }
+
+    void OnWorkOrderSelect(WorkOrderDto workOrder)
+    {
+        _selectedWorkOrder = workOrder;
+        isWorkOrderView = !isWorkOrderView;
     }
 
     private async Task OnDelete(FirmClientDto client)

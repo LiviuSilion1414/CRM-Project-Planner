@@ -65,7 +65,7 @@ public class EmployeeRepository(AppDbContext context, IMapper mapper)
         {
             var existingModel = await _context.Employees
                                       .Include(x => x.EmployeeRoles)
-                                      .SingleOrDefaultAsync(x => x.Id == filter.employeeId);
+                                      .FirstOrDefaultAsync(x => x.Id == filter.employeeId);
 
             if (existingModel != null)
             {
