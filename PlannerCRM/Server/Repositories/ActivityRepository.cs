@@ -1,8 +1,10 @@
+using PlannerCRM.Server.Models;
+
 namespace PlannerCRM.Server.Repositories;
 
-public class ActivityRepository(AppDbContext context, IMapper mapper)
+public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
 {
-    private readonly AppDbContext _context = context;
+    private readonly DevPlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task<ResultDto> Insert(ActivityDto dto)

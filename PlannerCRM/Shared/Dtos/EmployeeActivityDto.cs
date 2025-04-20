@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Shared.Dtos.Entities;
+﻿using PlannerCRM.Shared.Dtos;
+
+namespace PlannerCRM.Shared.Dtos;
 
 public class EmployeeActivityDto
 {

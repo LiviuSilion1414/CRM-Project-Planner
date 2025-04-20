@@ -1,3 +1,5 @@
+//Scaffold-DbContext “Host=localhost;Database=DEV-PLANNER-CRM;Username=postgres;Password=101201” Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -f
+
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);

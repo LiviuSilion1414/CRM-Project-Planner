@@ -1,4 +1,7 @@
-﻿namespace PlannerCRM.Server.Profiles;
+﻿using PlannerCRM.Server.Models;
+using PlannerCRM.Shared.Dtos;
+
+namespace PlannerCRM.Server.Profiles;
 
 public class GlobalMappingProfile : Profile
 {
@@ -28,6 +31,10 @@ public class GlobalMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<WorkOrder, WorkOrderDto>()
+            .PreserveReferences()
+            .ReverseMap();
+
+        CreateMap<WorkTime, WorkTimeDto>()
             .PreserveReferences()
             .ReverseMap();
 

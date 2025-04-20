@@ -1,5 +1,3 @@
-using PlannerCRM.Server.Models.Entities;
-
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]

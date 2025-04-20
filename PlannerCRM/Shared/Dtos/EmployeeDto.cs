@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Dtos.Entities;
+﻿namespace PlannerCRM.Shared.Dtos;
 
 public class EmployeeDto
 {
@@ -25,6 +25,7 @@ public class EmployeeDto
 public class EmployeeFilterDto : FilterDto
 {
     public Guid employeeId { get; set; }
+    public Guid workOrderId { get; set; }
     public Guid activityId { get; set; }
     public Guid roleId { get; set; }
     public bool isRemoveRole { get; set; }

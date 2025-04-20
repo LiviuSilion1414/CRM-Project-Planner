@@ -7,4 +7,4 @@ global using System.Net;
 global using PlannerCRM.Client;
 global using PlannerCRM.Client.Services;
 
-global using PlannerCRM.Shared.Dtos.Entities;
+global using PlannerCRM.Shared.Dtos;

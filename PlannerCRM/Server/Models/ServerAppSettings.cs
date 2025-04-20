@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Server.Models.Common;
+﻿namespace PlannerCRM.Server.Models;
 
 public class ServerAppSettings
 {

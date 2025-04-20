@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Dtos.Entities;
+﻿namespace PlannerCRM.Shared.Dtos;
 
 public class LoginDto
 {

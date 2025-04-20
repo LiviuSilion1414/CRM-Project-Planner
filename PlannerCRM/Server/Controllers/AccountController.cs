@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Packaging;
+using PlannerCRM.Server.Models;
 using PlannerCRM.Shared.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,11 +11,11 @@ namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
 [Route(ApiUrl.ACCOUNT_CONTROLLER)]
-public class AccountController(IMapper mapper, AppDbContext context, IConfiguration config) : ControllerBase
+public class AccountController(IMapper mapper, DevPlannerCrmContext context, IConfiguration config) : ControllerBase
 {
     private readonly IMapper _mapper = mapper;
     private readonly IConfiguration _config = config;
-    private readonly AppDbContext _context = context;
+    private readonly DevPlannerCrmContext _context = context;
 
     [AllowAnonymous]
     [HttpPost]
@@ -42,7 +43,7 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
 
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
 
-            var appSettings = _config.GetSection("AppSettings").Get<Models.Common.ServerAppSettings>();
+            var appSettings = _config.GetSection("AppSettings").Get<ServerAppSettings>();
 
             byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
@@ -68,7 +69,7 @@ public class AccountController(IMapper mapper, AppDbContext context, IConfigurat
 
             var tokenAsString = tokenHandler.WriteToken(token);
 
-            foundEmployee.LastSeen = DateTime.UtcNow;
+            foundEmployee.LastSeen = DateOnly.FromDateTime(DateTime.UtcNow);
 
             await _context.SaveChangesAsync();
 

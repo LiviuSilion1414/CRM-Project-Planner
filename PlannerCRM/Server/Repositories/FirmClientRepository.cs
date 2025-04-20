@@ -1,8 +1,10 @@
+using PlannerCRM.Server.Models;
+
 namespace PlannerCRM.Server.Repositories;
 
-public class FirmClientRepository(AppDbContext context, IMapper mapper)
+public class FirmClientRepository(DevPlannerCrmContext context, IMapper mapper)
 {
-    private readonly AppDbContext _context = context;
+    private readonly DevPlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task Insert(FirmClientDto dto)
@@ -11,7 +13,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
         {
             var model = _mapper.Map<FirmClient>(dto);
 
-            await _context.Clients.AddAsync(model);
+            await _context.FirmClients.AddAsync(model);
 
             await _context.SaveChangesAsync();
         } 
@@ -26,7 +28,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await _context.Clients.SingleAsync(cl => cl.Id == dto.id);
+            var existingModel = await _context.FirmClients.SingleAsync(cl => cl.Id == dto.id);
 
             existingModel.Name = dto.name;
             existingModel.VatNumber = dto.vatNumber;
@@ -45,7 +47,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var client = await _context.Clients
+            var client = await _context.FirmClients
                                        .Include(c => c.WorkOrders)
                                        .SingleAsync(c => c.Id == filter.firmClientId);
 
@@ -63,7 +65,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var client = await _context.Clients
+            var client = await _context.FirmClients
                                        .Include(c => c.WorkOrders)
                                        .SingleAsync(c => c.Id == filter.firmClientId);
 
@@ -79,13 +81,13 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var clients = await _context.Clients
+            var firmClients = await _context.FirmClients
                                         .OrderBy(c => c.Id)
                                         .Include(c => c.WorkOrders).ThenInclude(w => w.Activities)
                                         .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                         .ToListAsync();
 
-            return _mapper.Map<List<FirmClientDto>>(clients);
+            return _mapper.Map<List<FirmClientDto>>(firmClients);
         } 
         catch (Exception)
         {
@@ -97,7 +99,7 @@ public class FirmClientRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var foundClients = await _context.Clients
+            var foundClients = await _context.FirmClients
                                              .Where(cl => EF.Functions.ILike(cl.Name, $"%{filter.searchQuery}%"))
                                              .Include(cl => cl.WorkOrders)
                                              .ToListAsync();

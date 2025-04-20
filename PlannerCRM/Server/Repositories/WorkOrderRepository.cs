@@ -1,8 +1,10 @@
+using PlannerCRM.Server.Models;
+
 namespace PlannerCRM.Server.Repositories;
 
-public class WorkOrderRepository(AppDbContext context, IMapper mapper)
+public class WorkOrderRepository(DevPlannerCrmContext context, IMapper mapper)
 {
-    private readonly AppDbContext _context = context;
+    private readonly DevPlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task Insert(WorkOrderDto dto)
@@ -37,7 +39,7 @@ public class WorkOrderRepository(AppDbContext context, IMapper mapper)
     {
         try
         {
-            var existingClient = await _context.Clients.FindAsync(dto.id);
+            var existingClient = await _context.FirmClients.FindAsync(dto.id);
 
             var model = _mapper.Map<WorkOrder>(dto);
 

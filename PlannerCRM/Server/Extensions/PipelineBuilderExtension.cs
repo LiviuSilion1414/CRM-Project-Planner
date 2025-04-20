@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PlannerCRM.Server.Models;
 using System.Text;
 
 namespace PlannerCRM.Server.Extensions;
@@ -8,7 +9,7 @@ public static class PipelineBuilderExtension
 {
     public static void ConfigureDbConnectionString(this WebApplicationBuilder builder)
     {
-        builder.Services.AddDbContext<AppDbContext>(options =>
+        builder.Services.AddDbContext<DevPlannerCrmContext>(options =>
             options.UseNpgsql(
                 builder.Configuration
                     .GetConnectionString("DefaultDbString")
@@ -50,6 +51,7 @@ public static class PipelineBuilderExtension
         services.AddScoped<EmployeeRepository>();
         services.AddScoped<FirmClientRepository>();
         services.AddScoped<WorkOrderRepository>();
+        services.AddScoped<WorkTimeRepository>();
         services.AddScoped<RoleRepository>();
     }
 }

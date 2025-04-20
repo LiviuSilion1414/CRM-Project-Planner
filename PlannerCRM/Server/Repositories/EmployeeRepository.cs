@@ -1,12 +1,14 @@
 using Humanizer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using PdfSharp.Pdf.Filters;
+using PlannerCRM.Server.Models;
+using PlannerCRM.Shared.Dtos;
 
 namespace PlannerCRM.Server.Repositories;
 
-public class EmployeeRepository(AppDbContext context, IMapper mapper)
+public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
 {
-    private readonly AppDbContext _context = context;
+    private readonly DevPlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task Insert(EmployeeDto dto)
