@@ -1,4 +1,4 @@
-//Scaffold-DbContext “Host=localhost;Database=DEV-PLANNER-CRM;Username=postgres;Password=101201” Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -f
+//Scaffold-DbContext “Host=localhost;Database=DEV-PLANNER-CRM;Username=postgres;Password=101201” Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models2 -f
 
 using System.Text.Json.Serialization;
 
