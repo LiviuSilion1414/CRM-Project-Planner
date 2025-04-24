@@ -2,9 +2,9 @@ using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
 
-public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
+public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
 {
-    private readonly DevPlannerCrmContext _context = context;
+    private readonly PlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task<ResultDto> Insert(ActivityDto dto)
@@ -13,7 +13,7 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<Activity>(dto);
 
-            var existingWorkOrder = await _context.WorkOrders.FindAsync(model.WorkOrder.Id);
+            var existingWorkOrder = await _context.WorkOrders.FindAsync(model.FkIdWorkOrderNavigation.Id);
             if (existingWorkOrder == null)
             {
                 return new ResultDto()
@@ -27,16 +27,16 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
                 };
             }
 
-            model.WorkOrder = existingWorkOrder;
+            model.FkIdWorkOrderNavigation = existingWorkOrder;
 
-            var workOrderActivity = new WorkOrderActivity
+            var workOrderActivity = new WorkOrdersActivity
             {
-                Activity = model,
-                WorkOrderId = model.WorkOrder.Id
+                FkIdActivityNavigation = model,
+                FkIdWorkOrder = model.FkIdWorkOrderNavigation.Id
             };
 
             await _context.Activities.AddAsync(model);
-            await _context.WorkOrderActivities.AddAsync(workOrderActivity);
+            await _context.WorkOrdersActivities.AddAsync(workOrderActivity);
 
             await _context.SaveChangesAsync();
 
@@ -49,8 +49,7 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch
+        } catch
         {
             throw;
         }
@@ -63,8 +62,8 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
             var existingWorkOrder = await _context.WorkOrders.FindAsync(dto.workOrderId);
             var model = _mapper.Map<ActivityDto, Activity>(dto);
 
-            model.WorkOrder = existingWorkOrder;
-            model.Employees = [];
+            model.FkIdWorkOrderNavigation = existingWorkOrder;
+            model.EmployeeWorkTimes = [];
             model.EmployeeActivities = [];
 
             _context.Activities.Update(model);
@@ -81,8 +80,7 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch
+        } catch
         {
             throw;
         }
@@ -93,14 +91,13 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var activity = await _context.Activities
-                .Include(a => a.EmployeeActivities)
-                .SingleAsync(a => a.Id == filter.activityId);
+                                         .Include(a => a.EmployeeActivities)
+                                         .SingleAsync(a => a.Id == filter.activityId);
 
             _context.Remove(activity);
 
             await _context.SaveChangesAsync();
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
 
             throw;
@@ -112,13 +109,14 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var activity = await _context.Activities
-                .Include(a => a.WorkOrder).ThenInclude(x => x.FirmClient)
-                .Include(a => a.EmployeeActivities)
-                .SingleAsync(a => a.Id == filter.activityId);
+                                         .AsNoTracking()
+                                         .AsSplitQuery()
+                                         .Include(a => a.FkIdWorkOrderNavigation).ThenInclude(x => x.FkIdFirmClientNavigation)
+                                         .Include(a => a.EmployeeActivities)
+                                         .SingleAsync(a => a.Id == filter.activityId);
 
             return _mapper.Map<ActivityDto>(activity);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -129,17 +127,18 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var activities = await _context.Activities
+                                           .AsNoTracking()
+                                           .AsSplitQuery()
                                            .OrderBy(a => a.Id)
-                                           .Include(a => a.EmployeeActivities).ThenInclude(x => x.Employee)
-                                           .Include(a => a.WorkOrder).ThenInclude(x => x.FirmClient)
+                                           .Include(a => a.EmployeeActivities).ThenInclude(x => x.FkIdEmployeeNavigation)
+                                           .Include(a => a.FkIdWorkOrderNavigation).ThenInclude(x => x.FkIdFirmClientNavigation)
                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                       (filter.clientId == Guid.Empty || x.WorkOrder.FirmClientId == filter.clientId) &&
-                                                       (filter.workOrderId == Guid.Empty || x.WorkOrderId == filter.workOrderId))
+                                                       (filter.clientId == Guid.Empty || x.FkIdWorkOrderNavigation.FkIdFirmClient == filter.clientId) &&
+                                                       (filter.workOrderId == Guid.Empty || x.FkIdWorkOrderNavigation.Id == filter.workOrderId))
                                            .ToListAsync();
 
             return _mapper.Map<List<ActivityDto>>(activities);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -150,14 +149,13 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var foundItem = await _context.Activities
-                                          .Where(ac => EF.Functions.ILike(ac.Name, $"%{filter.searchQuery}%"))
-                                          .Include(ac => ac.WorkOrder)
-                                          .ThenInclude(wo => wo.FirmClient)
+                                          .Where(ac => EF.Functions.Like(ac.Name, $"%{filter.searchQuery}%"))
+                                          .Include(ac => ac.FkIdWorkOrderNavigation)
+                                          .ThenInclude(wo => wo.FkIdFirmClientNavigation)
                                           .ToListAsync();
 
             return _mapper?.Map<List<ActivityDto>>(foundItem);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -168,13 +166,14 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var foundEmployees = await _context.Employees
-                                               .Include(em => em.Activities)
-                                               .Where(em => em.Activities.Any(ac => ac.Id == filter.activityId))
+                                               .AsNoTracking()
+                                               .AsSplitQuery()
+                                               .Include(em => em.EmployeeActivities)
+                                               .Where(em => em.EmployeeActivities.Any(ac => ac.FkIdActivity == filter.activityId))
                                                .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployees);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -185,13 +184,14 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var foundWorkOrder = await _context.WorkOrders
+                                               .AsNoTracking()
+                                               .AsSplitQuery()
                                                .Include(wo => wo.Activities)
-                                               .Include(wo => wo.FirmClient)
+                                               .Include(wo => wo.FkIdFirmClientNavigation)
                                                .SingleAsync(em => em.Activities.Any(ac => ac.Id == filter.activityId));
 
             return _mapper.Map<WorkOrderDto>(foundWorkOrder);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -202,7 +202,7 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var employeeActivity = await _context.EmployeeActivities
-                                                 .Where(x => x.ActivityId == filter.activityId && x.EmployeeId == filter.employeeId)
+                                                 .Where(x => x.FkIdActivity == filter.activityId && x.FkIdEmployee == filter.employeeId)
                                                  .SingleOrDefaultAsync();
 
             if (employeeActivity != null)
@@ -210,11 +210,10 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
                 return;
             }
 
-            await _context.EmployeeActivities.AddAsync(new EmployeeActivity { ActivityId = filter.activityId, EmployeeId = filter.employeeId });
+            await _context.EmployeeActivities.AddAsync(new EmployeeActivity { FkIdActivity = filter.activityId, FkIdEmployee = filter.employeeId });
 
             await _context.SaveChangesAsync();
-        } 
-        catch 
+        } catch
         {
             throw;
         }
@@ -225,7 +224,7 @@ public class ActivityRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var employeeActivity = await _context.EmployeeActivities
-                                                 .Where(x => x.ActivityId == filter.activityId && x.EmployeeId == filter.employeeId)
+                                                 .Where(x => x.FkIdActivity == filter.activityId && x.FkIdEmployee == filter.employeeId)
                                                  .SingleOrDefaultAsync();
 
             if (employeeActivity == null)

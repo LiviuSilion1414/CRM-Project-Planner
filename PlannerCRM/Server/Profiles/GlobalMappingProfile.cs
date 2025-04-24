@@ -1,5 +1,4 @@
 ﻿using PlannerCRM.Server.Models;
-using PlannerCRM.Shared.Dtos;
 
 namespace PlannerCRM.Server.Profiles;
 
@@ -8,17 +7,17 @@ public class GlobalMappingProfile : Profile
     public GlobalMappingProfile()
     {
         CreateMap<Activity, ActivityDto>()
-            .ForMember(dest => dest.employees, cfg => cfg.MapFrom(src => src.EmployeeActivities.Select(x => x.Employee)))
+            .ForMember(dest => dest.employees, cfg => cfg.MapFrom(src => src.EmployeeActivities.Select(x => x.FkIdEmployeeNavigation)))
             .PreserveReferences()
             .ReverseMap();
 
         CreateMap<Employee, EmployeeDto>()
-            .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeeRoles.Select(x => new RoleDto() { id = x.RoleId, roleName= x.RoleName })))
+            .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeesRoles.Select(x => new RoleDto() { id = x.FkIdRole/*, roleName= x.RoleName*/ })))
             .ForMember(dest => dest.password, cfg => cfg.Ignore())
             .PreserveReferences();
 
         CreateMap<EmployeeDto, Employee>()
-            .ForMember(dest => dest.EmployeeRoles, cfg => cfg.MapFrom(src => src.roles.Select(x => new EmployeeRole() { RoleId = x.id, RoleName = x.roleName })))
+            .ForMember(dest => dest.EmployeesRoles, cfg => cfg.MapFrom(src => src.roles.Select(x => new EmployeesRole() { FkIdRole = x.id/*, RoleName = x.roleName*/ })))
             .ForMember(dest => dest.PasswordHash, cfg => cfg.MapFrom(src => src.password))
             .PreserveReferences();
 

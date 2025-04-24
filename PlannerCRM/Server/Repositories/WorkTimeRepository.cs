@@ -1,11 +1,10 @@
-﻿using PdfSharp.Pdf.Filters;
-using PlannerCRM.Server.Models;
+﻿using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
 
-public class WorkTimeRepository(DevPlannerCrmContext context, IMapper mapper)
+public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
 {
-    private readonly DevPlannerCrmContext _context = context;
+    private readonly PlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task Insert(WorkTimeDto dto)
@@ -19,15 +18,14 @@ public class WorkTimeRepository(DevPlannerCrmContext context, IMapper mapper)
             {
                 var model = _mapper.Map<WorkTime>(dto);
 
-                model.WorkOrder = await _context.WorkOrders.FindAsync(dto.workOrderId);
-                model.Activity = await _context.Activities.FindAsync(dto.activityId);
-               // model.Employee = await _context.Employees.Where(x);
+                model.FkIdWorkOrderNavigation = await _context.WorkOrders.FindAsync(dto.workOrderId);
+                model.FkIdActivityNavigation = await _context.Activities.FindAsync(dto.activityId);
+                // model.Employee = await _context.Employees.Where(x);
                 await _context.AddAsync(model);
 
                 await context.SaveChangesAsync();
             }
-        } 
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw;
         }
@@ -47,8 +45,7 @@ public class WorkTimeRepository(DevPlannerCrmContext context, IMapper mapper)
 
                 await context.SaveChangesAsync();
             }
-        } 
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw;
         }
@@ -57,7 +54,7 @@ public class WorkTimeRepository(DevPlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x =>x.CreationDate >= filter.startDate && x.Id == filter.id);
+            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
 
             _context.Remove(existingModel);
 
@@ -72,14 +69,16 @@ public class WorkTimeRepository(DevPlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.Include(x => x.Employee)
-                                                       .Include(x => x.WorkOrder)
-                                                       .Include(x => x.Activity)
-                                                       .FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
+            var existingModel = await context.WorkTimes
+                                             .AsNoTracking()
+                                             .AsSplitQuery()
+                                             .Include(x => x.EmployeeWorkTimes)
+                                             .Include(x => x.FkIdWorkOrderNavigation)
+                                             .Include(x => x.FkIdActivityNavigation)
+                                             .FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
 
             return _mapper.Map<WorkTimeDto>(existingModel);
-        } 
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw;
         }
@@ -89,16 +88,17 @@ public class WorkTimeRepository(DevPlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.Where(x => x.CreationDate >= filter.startDate)
-                                                       .Include(x => x.Employee)
-                                                       .Include(x => x.WorkOrder)
-                                                       .Include(x => x.Activity)
-                                                       .AsSplitQuery()
-                                                       .ToListAsync();
+            var existingModel = await context.WorkTimes
+                                             .AsNoTracking()
+                                             .AsSplitQuery()
+                                             .Where(x => x.CreationDate >= filter.startDate)
+                                             .Include(x => x.EmployeeWorkTimes)
+                                             .Include(x => x.FkIdWorkOrderNavigation)
+                                             .Include(x => x.FkIdActivityNavigation)
+                                             .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);
-        } 
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw;
         }
@@ -108,12 +108,14 @@ public class WorkTimeRepository(DevPlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.Include(x => x.Employee)
-                                                       .Include(x => x.WorkOrder)
-                                                       .Include(x => x.Activity)
-                                                       .AsSplitQuery()
-                                                       .Where(x => x.CreationDate >= filter.startDate && x.EmployeeId == filter.employeeId)
-                                                       .ToListAsync();
+            var existingModel = await context.WorkTimes
+                                             .AsNoTracking()
+                                             .AsSplitQuery()
+                                             .Include(x => x.EmployeeWorkTimes)
+                                             .Include(x => x.FkIdWorkOrderNavigation)
+                                             .Include(x => x.FkIdActivityNavigation)
+                                             .Where(x => x.CreationDate >= filter.startDate && x.EmployeeWorkTimes.Any(y => y.FkIdEmployee == filter.employeeId))
+                                             .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);
         } catch (Exception ex)

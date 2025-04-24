@@ -1,14 +1,13 @@
 using Humanizer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using PdfSharp.Pdf.Filters;
 using PlannerCRM.Server.Models;
 using PlannerCRM.Shared.Dtos;
 
 namespace PlannerCRM.Server.Repositories;
 
-public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
+public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 {
-    private readonly DevPlannerCrmContext _context = context;
+    private readonly PlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task Insert(EmployeeDto dto)
@@ -17,9 +16,7 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<Employee>(dto);
 
-            if ((await _context.Employees.SingleOrDefaultAsync(em => em.Email.ToLower().Trim().Equals(dto.email.ToLower().Trim()) || 
-                                                                     em.Name.ToLower().Trim().Equals(dto.email.ToLower().Trim()) ||
-                                                                     em.Phone.ToLower().Trim().Equals(dto.phone.ToLower().Trim()))) == null)
+            if (await _context.Employees.AnyAsync(em => em.Username.ToLower().Trim().Equals(dto.email.ToLower().Trim())))
             {
                 byte[] salt = new byte[128 / 8];
                 string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.password,
@@ -34,7 +31,7 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
 
                 var mappedRoles = _mapper.Map<List<Role>>(dto.roles);
 
-                _context.EmployeeRoles.AddRange(mappedRoles.Select(x => new EmployeeRole() { EmployeeId = model.Id, RoleId = x.Id }));
+                _context.EmployeesRoles.AddRange(mappedRoles.Select(x => new EmployeesRole() { FkIdEmployee  = model.Id, FkIdRole = x.Id }));
 
                 await _context.SaveChangesAsync();
             }
@@ -50,7 +47,7 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var model = _mapper.Map<EmployeeDto, Employee>(dto);
-            
+
             _context.Employees.Update(model);
 
             await _context.SaveChangesAsync();
@@ -66,18 +63,17 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var existingModel = await _context.Employees
-                                      .Include(x => x.EmployeeRoles)
+                                      .Include(x => x.EmployeesRoles)
                                       .FirstOrDefaultAsync(x => x.Id == filter.employeeId);
 
             if (existingModel != null)
             {
-                if (filter.isRemoveRole && existingModel.EmployeeRoles.Any(x => x.RoleId == filter.roleId))
+                if (filter.isRemoveRole && existingModel.EmployeesRoles.Any(x => x.FkIdRole == filter.roleId))
                 {
-                    _context.EmployeeRoles.Remove(existingModel.EmployeeRoles.Where(x => x.RoleId == filter.roleId).FirstOrDefault());
-                }
-                else
+                    _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.roleId).FirstOrDefault());
+                } else
                 {
-                    _context.EmployeeRoles.Add(new EmployeeRole { RoleId = filter.roleId, RoleName = filter.role.roleName, EmployeeId = filter.employeeId });
+                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = filter.roleId, /*Name = filter.role.roleName */ FkIdEmployee = filter.employeeId });
                 }
                 await _context.SaveChangesAsync();
             }
@@ -93,9 +89,9 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var employee = await _context.Employees
-                                         .Include(e => e.Activities)
-                                         .Include(e => e.EmployeeRoles)
-                                         .SingleAsync(e => e.Id == filter.employeeId && e.IsRemoveable);
+                                         .Include(e => e.EmployeeActivities)
+                                         .Include(e => e.EmployeesRoles)
+                                         .SingleAsync(e => e.Id == filter.employeeId /*&& e.IsRemoveable*/);
 
             _context.Remove(employee);
 
@@ -112,8 +108,10 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var employee = await _context.Employees
-                                         .Include(e => e.Activities)
-                                         .Include(e => e.EmployeeRoles)
+                                         .AsNoTracking()
+                                         .AsSplitQuery()
+                                         .Include(e => e.EmployeeActivities)
+                                         .Include(e => e.EmployeesRoles)
                                          .SingleAsync(e => e.Id == filter.employeeId);
 
             return _mapper.Map<EmployeeDto>(employee);
@@ -129,15 +127,17 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var employees = await _context.Employees
+                                          .AsNoTracking()
+                                          .AsSplitQuery()
                                           .OrderBy(e => e.Id)
-                                          .Include(e => e.EmployeeRoles)
-                                          .Include(e => e.Activities)
+                                          .Include(e => e.EmployeesRoles)
+                                          .Include(e => e.EmployeeActivities)
                                           .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                      (filter.roleId == Guid.Empty || x.EmployeeRoles.Where(y => y.RoleId == filter.roleId).Any()))
+                                                      (filter.roleId == Guid.Empty || x.EmployeesRoles.Where(y => y.FkIdRole == filter.roleId).Any()))
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);
-        } 
+        }
         catch (Exception)
         {
             throw;
@@ -149,16 +149,18 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var foundEmployee = await _context.Employees
-                                              .Where(em => EF.Functions.ILike(em.Name, $"{filter.searchQuery}"))
-                                              .Include(e => e.Activities)
-                                              .Include(e => e.EmployeeRoles)
+                                              .AsNoTracking()
+                                              .AsSplitQuery()
+                                              .Where(em => EF.Functions.Like(em.Name, $"{filter.searchQuery}"))
+                                              .Include(e => e.EmployeeActivities)
+                                              .Include(e => e.EmployeesRoles)
                                               .Where(em =>
-                                                  EF.Functions.ILike(em.Name, $"{filter.searchQuery}") ||
-                                                  EF.Functions.ILike(em.Email, $"{filter.searchQuery}"))
+                                                  EF.Functions.Like(em.Name, $"{filter.searchQuery}") ||
+                                                  EF.Functions.Like(em.Username, $"{filter.searchQuery}"))
                                               .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployee);
-        } 
+        }
         catch (Exception)
         {
             throw;
@@ -170,9 +172,11 @@ public class EmployeeRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var foundActivities = await _context.EmployeeActivities
-                                                .Include(ac => ac.Activity)
-                                                .Include(ac => ac.Employee)
-                                                .Where(x => x.EmployeeId == filter.employeeId)
+                                                .AsNoTracking()
+                                                .AsSplitQuery()
+                                                .Include(ac => ac.FkIdActivityNavigation)
+                                                .Include(ac => ac.FkIdEmployeeNavigation)
+                                                .Where(x => x.FkIdEmployee == filter.employeeId)
                                                 .ToListAsync();
 
             return _mapper.Map<List<EmployeeActivityDto>>(foundActivities);

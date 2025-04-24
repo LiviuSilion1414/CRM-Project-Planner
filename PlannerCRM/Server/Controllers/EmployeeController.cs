@@ -14,17 +14,16 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         try
         {
             await _repo.Insert(dto);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -46,17 +45,16 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         try
         {
             await _repo.Update(dto);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -109,17 +107,16 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         try
         {
             await _repo.Delete(filter);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -150,8 +147,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -182,8 +178,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -214,8 +209,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -246,8 +240,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -278,8 +271,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {

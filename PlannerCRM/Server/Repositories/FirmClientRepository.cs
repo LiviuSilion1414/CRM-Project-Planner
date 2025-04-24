@@ -2,9 +2,9 @@ using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
 
-public class FirmClientRepository(DevPlannerCrmContext context, IMapper mapper)
+public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
 {
-    private readonly DevPlannerCrmContext _context = context;
+    private readonly PlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
     public async Task Insert(FirmClientDto dto)
@@ -48,6 +48,7 @@ public class FirmClientRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var client = await _context.FirmClients
+                                       .AsSplitQuery()
                                        .Include(c => c.WorkOrders)
                                        .SingleAsync(c => c.Id == filter.firmClientId);
 
@@ -66,6 +67,8 @@ public class FirmClientRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var client = await _context.FirmClients
+                                       .AsNoTracking()
+                                       .AsSplitQuery()
                                        .Include(c => c.WorkOrders)
                                        .SingleAsync(c => c.Id == filter.firmClientId);
 
@@ -82,10 +85,12 @@ public class FirmClientRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var firmClients = await _context.FirmClients
-                                        .OrderBy(c => c.Id)
-                                        .Include(c => c.WorkOrders).ThenInclude(w => w.Activities)
-                                        .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
-                                        .ToListAsync();
+                                            .AsNoTracking()
+                                            .AsSplitQuery()
+                                            .OrderBy(c => c.Id)
+                                            .Include(c => c.WorkOrders).ThenInclude(w => w.Activities)
+                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
+                                            .ToListAsync();
 
             return _mapper.Map<List<FirmClientDto>>(firmClients);
         } 
@@ -100,8 +105,10 @@ public class FirmClientRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var foundClients = await _context.FirmClients
-                                             .Where(cl => EF.Functions.ILike(cl.Name, $"%{filter.searchQuery}%"))
+                                             .AsNoTracking()
+                                             .AsSplitQuery()
                                              .Include(cl => cl.WorkOrders)
+                                             .Where(cl => EF.Functions.Like(cl.Name, $"%{filter.searchQuery}%"))
                                              .ToListAsync();
 
             return _mapper.Map<List<FirmClientDto>>(foundClients);
@@ -117,9 +124,11 @@ public class FirmClientRepository(DevPlannerCrmContext context, IMapper mapper)
         try
         {
             var foundWorkOrders = await _context.WorkOrders
-                                                .Include(wo => wo.FirmClient)
+                                                .AsNoTracking()
+                                                .AsSplitQuery()
+                                                .Include(wo => wo.FkIdFirmClientNavigation)
                                                 .Include(wo => wo.Activities)
-                                                .Where(wo => wo.FirmClientId == filter.firmClientId)
+                                                .Where(wo => wo.FkIdFirmClient == filter.firmClientId)
                                                 .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(foundWorkOrders);

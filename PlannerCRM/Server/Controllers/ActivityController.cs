@@ -14,8 +14,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         try
         {
             return await _repo.Insert(dto);
-        }
-        catch
+        } catch
         {
             return new ResultDto()
             {
@@ -36,8 +35,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         try
         {
             return await _repo.Update(dto);
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -67,8 +65,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -98,8 +95,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -129,8 +125,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -160,8 +155,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -191,8 +185,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -222,8 +215,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {

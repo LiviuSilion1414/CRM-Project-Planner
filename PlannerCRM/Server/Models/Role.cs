@@ -7,9 +7,7 @@ public partial class Role
 {
     public Guid Id { get; set; }
 
-    public string RoleName { get; set; }
+    public string Name { get; set; }
 
-    public bool? IsRemoveable { get; set; }
-
-    public virtual ICollection<EmployeeRole> EmployeeRoles { get; set; } = new List<EmployeeRole>();
+    public virtual ICollection<EmployeesRole> EmployeesRoles { get; set; } = new List<EmployeesRole>();
 }

@@ -4,7 +4,7 @@ namespace PlannerCRM.Server.Controllers;
 [ApiController]
 [Route(ApiUrl.WORKTIME_CONTROLLER)]
 public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
-{ 
+{
     private readonly WorkTimeRepository _repo = repo;
 
     [HttpPost]
@@ -23,8 +23,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        }
-        catch  
+        } catch
         {
             return new ResultDto()
             {
@@ -45,17 +44,16 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
         try
         {
             await _repo.Update(dto);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -76,17 +74,16 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
         try
         {
             await _repo.Delete(filter);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -116,8 +113,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -149,8 +145,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 statusCode = HttpStatusCode.OK
             };
 
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -180,8 +175,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        }
-        catch 
+        } catch
         {
             return new ResultDto()
             {

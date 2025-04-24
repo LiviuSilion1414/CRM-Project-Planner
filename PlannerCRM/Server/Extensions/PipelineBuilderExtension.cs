@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PlannerCRM.Server.Models;
+using PlannerCRM.Server.Repositories;
 using System.Text;
 
 namespace PlannerCRM.Server.Extensions;
 
 public static class PipelineBuilderExtension
 {
-    public static void ConfigureDbConnectionString(this WebApplicationBuilder builder)
+    public static void ConfigureSqlConnection(this WebApplicationBuilder builder)
     {
-        builder.Services.AddDbContext<DevPlannerCrmContext>(options =>
-            options.UseNpgsql(
+        builder.Services.AddDbContext<PlannerCrmContext>(options =>
+            options.UseSqlServer(
                 builder.Configuration
                     .GetConnectionString("DefaultDbString")
                         ?? throw new InvalidOperationException(""" "DefaultDbString" not found!""")));
     }
 
-    public static void ConfigureJWTTokenAuthentication(this WebApplicationBuilder builder)
+    public static void ConfigureJwtAuth(this WebApplicationBuilder builder)
     {
         //JWToken
         IConfigurationSection appSettingsSection = builder.Configuration.GetSection("AppSettings");

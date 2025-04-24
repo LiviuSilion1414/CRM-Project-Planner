@@ -7,11 +7,19 @@ public partial class EmployeeActivity
 {
     public Guid Id { get; set; }
 
-    public Guid EmployeeId { get; set; }
+    public Guid FkIdActivity { get; set; }
 
-    public Guid ActivityId { get; set; }
+    public Guid FkIdEmployee { get; set; }
 
-    public virtual Activity Activity { get; set; }
+    public Guid FkIdWorkOrder { get; set; }
 
-    public virtual Employee Employee { get; set; }
+    public Guid FkIdFirmClient { get; set; }
+
+    public virtual Activity FkIdActivityNavigation { get; set; }
+
+    public virtual Employee FkIdEmployeeNavigation { get; set; }
+
+    public virtual WorkOrder FkIdWorkOrder1 { get; set; }
+
+    public virtual FirmClient FkIdWorkOrderNavigation { get; set; }
 }

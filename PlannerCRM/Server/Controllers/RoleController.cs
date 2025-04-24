@@ -22,8 +22,7 @@ public class RoleController(RoleRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch
+        } catch
         {
             return new ResultDto()
             {

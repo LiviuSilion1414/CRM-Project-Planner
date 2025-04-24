@@ -4,7 +4,7 @@ namespace PlannerCRM.Server.Controllers;
 [ApiController]
 [Route(ApiUrl.WORKORDER_CONTROLLER)]
 public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
-{ 
+{
     private readonly WorkOrderRepository _repo = repo;
 
     [HttpPost]
@@ -23,8 +23,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        }
-        catch  
+        } catch
         {
             return new ResultDto()
             {
@@ -45,17 +44,16 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
         try
         {
             await _repo.Update(dto);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -76,17 +74,16 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
         try
         {
             await _repo.Delete(filter);
-            return new ResultDto() 
-            { 
-                id = null, 
-                data = null, 
-                hasCompleted = true, 
-                message = "Operation completed", 
-                messageType = MessageType.Success, 
-                statusCode = HttpStatusCode.OK 
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -116,8 +113,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -149,8 +145,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 statusCode = HttpStatusCode.OK
             };
 
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -180,8 +175,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        }
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -211,8 +205,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        }
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -242,8 +235,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {

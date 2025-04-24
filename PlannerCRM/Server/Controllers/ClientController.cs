@@ -23,8 +23,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -54,8 +53,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -85,8 +83,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -116,8 +113,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -147,8 +143,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -178,8 +173,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {
@@ -209,8 +203,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } 
-        catch 
+        } catch
         {
             return new ResultDto()
             {

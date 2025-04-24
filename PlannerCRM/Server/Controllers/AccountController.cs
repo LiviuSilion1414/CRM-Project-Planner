@@ -11,11 +11,11 @@ namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
 [Route(ApiUrl.ACCOUNT_CONTROLLER)]
-public class AccountController(IMapper mapper, DevPlannerCrmContext context, IConfiguration config) : ControllerBase
+public class AccountController(IMapper mapper, PlannerCrmContext context, IConfiguration config) : ControllerBase
 {
     private readonly IMapper _mapper = mapper;
     private readonly IConfiguration _config = config;
-    private readonly DevPlannerCrmContext _context = context;
+    private readonly PlannerCrmContext _context = context;
 
     [AllowAnonymous]
     [HttpPost]
@@ -23,10 +23,9 @@ public class AccountController(IMapper mapper, DevPlannerCrmContext context, ICo
     public async Task<ActionResult> Login(LoginDto dto)
     {
         var foundEmployee = await _context.Employees
-                                          .Include(x => x.EmployeeRoles)
-                                            .ThenInclude(x => x.Role)
-                                          .SingleOrDefaultAsync(em => em.Email.Contains(dto.emailOrUsername) ||
-                                                                      em.Name.Contains(dto.emailOrUsername));
+                                          .Include(x => x.EmployeesRoles)
+                                          .ThenInclude(x => x.FkIdRoleNavigation)
+                                          .SingleOrDefaultAsync(em => em.Username.Contains(dto.emailOrUsername));
 
         if (foundEmployee is not null)
         {
@@ -74,7 +73,7 @@ public class AccountController(IMapper mapper, DevPlannerCrmContext context, ICo
             await _context.SaveChangesAsync();
 
             return Ok(
-                new ResultDto 
+                new ResultDto
                 {
                     data = tokenAsString,
                     id = foundEmployee.Id,
@@ -82,11 +81,10 @@ public class AccountController(IMapper mapper, DevPlannerCrmContext context, ICo
                     message = "Logged in",
                     messageType = MessageType.Success,
                     statusCode = HttpStatusCode.OK,
-                    
+
                 }
             );
-        } 
-        else
+        } else
         {
             return NotFound("User not found");
         }

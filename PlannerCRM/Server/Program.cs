@@ -1,4 +1,4 @@
-//Scaffold-DbContext “Host=localhost;Database=DEV-PLANNER-CRM;Username=postgres;Password=101201” Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models2 -f
+//Scaffold-DbContext "Server=localhost;Database=Planner_crm;Trusted_Connection=true;TrustServerCertificate=true;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -f
 
 using System.Text.Json.Serialization;
 
@@ -17,15 +17,16 @@ builder.Services.AddMvc()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-builder.ConfigureDbConnectionString();
+builder.ConfigureSqlConnection();
 
-builder.ConfigureJWTTokenAuthentication();
+builder.ConfigureJwtAuth();
+
+builder.Services.RegisterServices();
 
 builder.Services.AddHttpClient();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.RegisterServices();
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));

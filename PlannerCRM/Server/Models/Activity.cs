@@ -15,17 +15,21 @@ public partial class Activity
 
     public DateOnly EndDate { get; set; }
 
-    public Guid WorkOrderId { get; set; }
+    public Guid FkIdWorkOrder { get; set; }
+
+    public Guid FkIdFirmClient { get; set; }
+
+    public virtual ICollection<ActivitiesWorkTime> ActivitiesWorkTimes { get; set; } = new List<ActivitiesWorkTime>();
 
     public virtual ICollection<EmployeeActivity> EmployeeActivities { get; set; } = new List<EmployeeActivity>();
 
     public virtual ICollection<EmployeeWorkTime> EmployeeWorkTimes { get; set; } = new List<EmployeeWorkTime>();
 
-    public virtual WorkOrder WorkOrder { get; set; }
+    public virtual FirmClient FkIdFirmClientNavigation { get; set; }
 
-    public virtual ICollection<WorkOrderActivity> WorkOrderActivities { get; set; } = new List<WorkOrderActivity>();
+    public virtual WorkOrder FkIdWorkOrderNavigation { get; set; }
+
+    public virtual ICollection<WorkOrdersActivity> WorkOrdersActivities { get; set; } = new List<WorkOrdersActivity>();
 
     public virtual ICollection<WorkTime> WorkTimes { get; set; } = new List<WorkTime>();
-
-    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }
