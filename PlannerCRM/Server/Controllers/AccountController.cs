@@ -51,7 +51,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(CustomClaimTypes.Name, foundEmployee.Name),
-                    new Claim(CustomClaimTypes.Email, foundEmployee.Email),
+                    new Claim(CustomClaimTypes.Email, foundEmployee.Username),
                     new Claim(CustomClaimTypes.Guid, foundEmployee.Id.ToString()),
                     new Claim(CustomClaimTypes.IsAuthenticated, true.ToString()),
                 }),
@@ -59,9 +59,9 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            foreach (var item in foundEmployee.EmployeeRoles)
+            foreach (var item in foundEmployee.EmployeesRoles)
             {
-                tokenDescriptor.Subject.AddClaim(new Claim(CustomClaimTypes.Role, item.Role.RoleName));
+                tokenDescriptor.Subject.AddClaim(new Claim(CustomClaimTypes.Role, item.FkIdRoleNavigation.Name));
             }
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);

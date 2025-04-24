@@ -19,6 +19,8 @@ public partial class Employee
 
     public DateOnly LastSeen { get; set; }
 
+    public bool IsRemoveable { get; set; }
+
     public virtual ICollection<ActivitiesWorkTime> ActivitiesWorkTimes { get; set; } = new List<ActivitiesWorkTime>();
 
     public virtual ICollection<EmployeeActivity> EmployeeActivities { get; set; } = new List<EmployeeActivity>();

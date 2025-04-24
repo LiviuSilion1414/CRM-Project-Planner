@@ -26,7 +26,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<Role>(dto);
 
-            //model.RoleName = dto.roleName;
+            model.Name = dto.roleName;
 
             _context.Update(model);
 
@@ -76,7 +76,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
             var roles = await _context.Roles
                                       .AsNoTracking()
                                       .OrderBy(x => x.Id)
-                                      .Where(x => (string.IsNullOrEmpty(filter.searchQuery)/* || x.RoleName.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())*/))
+                                      .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                       .ToListAsync();
 
             return _mapper.Map<List<RoleDto>>(roles);

@@ -73,7 +73,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                     _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.roleId).FirstOrDefault());
                 } else
                 {
-                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = filter.roleId, /*Name = filter.role.roleName */ FkIdEmployee = filter.employeeId });
+                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = filter.roleId, RoleName = filter.role.roleName, FkIdEmployee = filter.employeeId });
                 }
                 await _context.SaveChangesAsync();
             }

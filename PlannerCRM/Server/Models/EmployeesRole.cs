@@ -11,6 +11,10 @@ public partial class EmployeesRole
 
     public Guid FkIdRole { get; set; }
 
+    public string RoleName { get; set; }
+
+    public bool IsRemoveable { get; set; }
+
     public virtual Employee FkIdEmployeeNavigation { get; set; }
 
     public virtual Role FkIdRoleNavigation { get; set; }
