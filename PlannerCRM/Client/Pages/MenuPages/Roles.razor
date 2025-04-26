@@ -28,7 +28,7 @@ AllowAlternatingRows="true">
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.id)" Title="Identifier" />
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role" />
         <RadzenDataGridColumn TItem="RoleDto" Width="64px">
             <Template Context="data">
                 <RadzenButton Variant="Variant.Filled" Icon="edit" ButtonStyle="ButtonStyle.Info" Click="@(() => OnAddEdit(data))"></RadzenButton>

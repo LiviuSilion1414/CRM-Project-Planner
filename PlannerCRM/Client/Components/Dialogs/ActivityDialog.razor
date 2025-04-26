@@ -55,7 +55,7 @@
                                 @ShowRoles(data)
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
+                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" Title="Email" />
                         <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
                     </Columns>
                 </RadzenDataGrid>
@@ -151,11 +151,11 @@
     {
     if (employee.roles.OrderBy(x => x.id).ToList().Count == 1)
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName}")
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name}")
     }
     else
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.roles.Count - 1}")
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name} + {employee.roles.Count - 1}")
     }
     }
     else

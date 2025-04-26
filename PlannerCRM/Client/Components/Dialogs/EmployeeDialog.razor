@@ -4,7 +4,7 @@
             <RadzenFieldset Text="Employee Info">
                 <RadzenColumn>
                     <RadzenText>Name: @SelectedEmployee.name</RadzenText>
-                    <RadzenText>Email: @SelectedEmployee.email</RadzenText>
+                    <RadzenText>Email: @SelectedEmployee.username</RadzenText>
                     <RadzenText>Phone: @SelectedEmployee.phone</RadzenText>
                 </RadzenColumn>
             </RadzenFieldset>
@@ -14,7 +14,7 @@
                 <RadzenColumn>
                     <RadzenDataGrid TItem="@RoleDto" Data="@SelectedEmployee.roles">
                         <Columns>
-                            <RadzenDataGridColumn TItem="@RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role" />
+                            <RadzenDataGridColumn TItem="@RoleDto" Property="@nameof(RoleDto.name)" Title="Role" />
                             <RadzenDataGridColumn TItem="@RoleDto" Width="64px">
                                 <Template Context="data">
                                     <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="open_in_new" Click="@OnEdit"></RadzenButton>

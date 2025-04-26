@@ -1,4 +1,7 @@
-﻿namespace PlannerCRM.Shared.Dtos;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
+
+namespace PlannerCRM.Shared.Dtos;
 
 public class WorkOrderDto
 {
@@ -7,6 +10,10 @@ public class WorkOrderDto
     [Required]
     [MinLength(5)]
     public string name { get; set; }
+
+    [Required]
+    [MinLength(5)]
+    public string description { get; set; }
 
     public DateOnly creationDate { get => DateOnly.FromDateTime(DateTime.Now); }
     public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }

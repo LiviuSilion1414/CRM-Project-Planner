@@ -18,11 +18,20 @@
                 </RadzenRow>
                 <RadzenRow class="mt-3">
                     <RadzenColumn>
+                        <RadzenLabel>Surname</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@Model.surname" />
+                        <ValidationMessage For="@(() => Model.surname)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
                         <RadzenLabel>Email</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@Model.email" />
-                        <ValidationMessage For="@(() => Model.email)" />
+                        <InputText class="form-control" @bind-Value="@Model.username" />
+                        <ValidationMessage For="@(() => Model.username)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow class="mt-3">
@@ -64,7 +73,7 @@
                                 <RadzenDropDown TValue="RoleDto"
                                 Data="@roles"
                                 AllowFiltering="true"
-                                TextProperty="@nameof(RoleDto.roleName)"
+                                TextProperty="@nameof(RoleDto.name)"
                                 Change="@AssignRole"
                                 @bind-Value="@assignedRole"
                                 Style="width: 40vw;" />
@@ -77,7 +86,7 @@
                                 AllowPaging="true"
                                 AllowSorting="true">
                                     <Columns>
-                                        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.roleName)" Title="Role Name" />
+                                        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role Name" />
                                         <RadzenDataGridColumn TItem="RoleDto" Width="64px">
                                             <Template Context="data">
                                                 <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>
@@ -241,7 +250,7 @@
                 }
                 else
                 {
-                    Model.roles = Model.roles.Select(x => new RoleDto { id = x.id, roleName = x.roleName, isRemoveable = true }).ToList();
+                    Model.roles = Model.roles.Select(x => new RoleDto { id = x.id, name = x.name, isRemoveable = true }).ToList();
                     result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE, Model, ApiType.Put);
                 }
 

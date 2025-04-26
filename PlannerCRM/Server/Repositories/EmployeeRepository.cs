@@ -16,7 +16,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<Employee>(dto);
 
-            if (await _context.Employees.AnyAsync(em => em.Username.ToLower().Trim().Equals(dto.email.ToLower().Trim())))
+            if (!await _context.Employees.AnyAsync(em => em.Username.ToLower().Trim().Equals(dto.username.ToLower().Trim())))
             {
                 byte[] salt = new byte[128 / 8];
                 string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.password,
@@ -73,7 +73,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                     _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.roleId).FirstOrDefault());
                 } else
                 {
-                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = filter.roleId, RoleName = filter.role.roleName, FkIdEmployee = filter.employeeId });
+                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = filter.roleId, RoleName = filter.role.name, FkIdEmployee = filter.employeeId });
                 }
                 await _context.SaveChangesAsync();
             }

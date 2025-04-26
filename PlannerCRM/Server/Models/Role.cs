@@ -9,5 +9,7 @@ public partial class Role
 
     public string Name { get; set; }
 
+    public bool IsRemoveable { get; set; }
+
     public virtual ICollection<EmployeesRole> EmployeesRoles { get; set; } = new List<EmployeesRole>();
 }

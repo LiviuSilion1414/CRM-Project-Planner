@@ -12,12 +12,12 @@ public class GlobalMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<Employee, EmployeeDto>()
-            .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeesRoles.Select(x => new RoleDto() { id = x.FkIdRole/*, roleName= x.RoleName*/ })))
+            .ForMember(dest => dest.roles, cfg => cfg.MapFrom(src => src.EmployeesRoles.Select(x => new RoleDto() { id = x.FkIdRole/*, name= x.RoleName*/ })))
             .ForMember(dest => dest.password, cfg => cfg.Ignore())
             .PreserveReferences();
 
         CreateMap<EmployeeDto, Employee>()
-            .ForMember(dest => dest.EmployeesRoles, cfg => cfg.MapFrom(src => src.roles.Select(x => new EmployeesRole() { FkIdRole = x.id/*, RoleName = x.roleName*/ })))
+            .ForMember(dest => dest.EmployeesRoles, cfg => cfg.MapFrom(src => src.roles.Select(x => new EmployeesRole() { FkIdRole = x.id/*, RoleName = x.name*/ })))
             .ForMember(dest => dest.PasswordHash, cfg => cfg.MapFrom(src => src.password))
             .PreserveReferences();
 
@@ -30,6 +30,7 @@ public class GlobalMappingProfile : Profile
             .ReverseMap();
 
         CreateMap<WorkOrder, WorkOrderDto>()
+            .ForMember(dest => dest.firmClient, cfg => cfg.MapFrom(src => src.FkIdFirmClientNavigation))
             .PreserveReferences()
             .ReverseMap();
 

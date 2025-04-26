@@ -46,7 +46,7 @@ else
                                             AllowFiltering="true"
                                             AllowClear="true"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            TextProperty="@nameof(RoleDto.roleName)"
+                                            TextProperty="@nameof(RoleDto.name)"
                                             ValueProperty="@nameof(RoleDto.id)"
                                             @bind-Value="@roleId" />
                         </RadzenFormField>
@@ -78,7 +78,7 @@ else
                             @ShowRoles(data)
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" Title="Email" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" Title="Email" />
                     <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
                     <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                         <Template Context="data">
@@ -232,11 +232,11 @@ else
     {
     if (employee.roles.OrderBy(x => x.id).ToList().Count == 1)
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName}")
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name}")
     }
     else
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.roles.Count - 1}")
+        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name} + {employee.roles.Count - 1}")
     }
     }
     else

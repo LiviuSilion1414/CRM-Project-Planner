@@ -5,7 +5,7 @@ public class ServerAppSettings
     //JWT
     public string Secret { get; set; }
 
-    //email
+    //username
     public string EmailHost { get; set; }
     public string EmailPort { get; set; }
     public string EnableSSL { get; set; }

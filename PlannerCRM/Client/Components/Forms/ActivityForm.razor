@@ -83,7 +83,7 @@
                         Data="@Model.employees">
                             <Columns>
                                 <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" />
-                                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.email)" />
+                                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" />
                                 <RadzenDataGridColumn TItem="@EmployeeDto">
                                     <Template Context="data">
                                         <RadzenButton Icon="delete" IconColor="@Colors.Danger" Click="@(() => RemoveAssignedEmployee(data.id))" />

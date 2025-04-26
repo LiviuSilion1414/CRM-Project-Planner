@@ -32,6 +32,15 @@
                             <ValidationMessage For="@(() => Model.endDate)" />
                         </RadzenColumn>
                     </RadzenRow>
+                    <RadzenRow class="mb-3">
+                        <RadzenColumn>
+                            <RadzenLabel Text="Description" />
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <textarea rows="10" class="w-100" @bind=@Model.description />
+                            <ValidationMessage For="@(() => Model.description)" />
+                        </RadzenColumn>
+                    </RadzenRow>
                 </RadzenFieldset>
             </RadzenColumn>
             <RadzenColumn>

@@ -5,7 +5,7 @@ public class RoleDto
     public Guid id { get; set; }
 
     [Required(ErrorMessage = "The role name is required")]
-    public string roleName { get; set; }
+    public string name { get; set; }
     
     [Required(ErrorMessage = "Please specify if this item can be deleted")]
     public bool? isRemoveable { get; set; }

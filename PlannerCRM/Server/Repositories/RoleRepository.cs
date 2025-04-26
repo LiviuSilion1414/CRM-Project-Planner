@@ -26,7 +26,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<Role>(dto);
 
-            model.Name = dto.roleName;
+            model.Name = dto.name;
 
             _context.Update(model);
 
