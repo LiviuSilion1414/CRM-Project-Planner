@@ -23,7 +23,5 @@ public partial class EmployeeWorkTime
 
     public virtual FirmClient FkIdFirmClientNavigation { get; set; }
 
-    public virtual WorkOrder FkIdWorkOrderNavigation { get; set; }
-
     public virtual WorkTime FkIdWorkTimeNavigation { get; set; }
 }

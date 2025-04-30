@@ -19,7 +19,7 @@ public partial class EmployeeActivity
 
     public virtual Employee FkIdEmployeeNavigation { get; set; }
 
-    public virtual WorkOrder FkIdWorkOrder1 { get; set; }
+    public virtual FirmClient FkIdFirmClientNavigation { get; set; }
 
-    public virtual FirmClient FkIdWorkOrderNavigation { get; set; }
+    public virtual WorkOrder FkIdWorkOrderNavigation { get; set; }
 }

@@ -24,6 +24,4 @@ public partial class FirmClient
     public virtual ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
 
     public virtual ICollection<WorkOrdersActivity> WorkOrdersActivities { get; set; } = new List<WorkOrdersActivity>();
-
-    public virtual ICollection<WorkTime> WorkTimes { get; set; } = new List<WorkTime>();
 }

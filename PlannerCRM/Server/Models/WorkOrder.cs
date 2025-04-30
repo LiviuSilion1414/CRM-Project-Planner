@@ -21,11 +21,7 @@ public partial class WorkOrder
 
     public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
 
-    public virtual ICollection<ActivitiesWorkTime> ActivitiesWorkTimes { get; set; } = new List<ActivitiesWorkTime>();
-
     public virtual ICollection<EmployeeActivity> EmployeeActivities { get; set; } = new List<EmployeeActivity>();
-
-    public virtual ICollection<EmployeeWorkTime> EmployeeWorkTimes { get; set; } = new List<EmployeeWorkTime>();
 
     public virtual ICollection<FirmClientsWorkOrder> FirmClientsWorkOrders { get; set; } = new List<FirmClientsWorkOrder>();
 
