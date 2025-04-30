@@ -45,11 +45,6 @@ public partial class PlannerCrmContext : DbContext
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.HasOne(d => d.FkIdActivityNavigation).WithMany(p => p.ActivitiesWorkTimes)
-                .HasForeignKey(d => d.FkIdActivity)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ActivitiesWorkTimes_Activities");
-
             entity.HasOne(d => d.FkIdEmployeeNavigation).WithMany(p => p.ActivitiesWorkTimes)
                 .HasForeignKey(d => d.FkIdEmployee)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -59,11 +54,6 @@ public partial class PlannerCrmContext : DbContext
                 .HasForeignKey(d => d.FkIdFirmClient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ActivitiesWorkTimes_FirmClients");
-
-            entity.HasOne(d => d.FkIdWorkOrderNavigation).WithMany(p => p.ActivitiesWorkTimes)
-                .HasForeignKey(d => d.FkIdWorkOrder)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ActivitiesWorkTimes_WorkOrders");
 
             entity.HasOne(d => d.FkIdWorkTimeNavigation).WithMany(p => p.ActivitiesWorkTimes)
                 .HasForeignKey(d => d.FkIdWorkTime)
@@ -114,35 +104,15 @@ public partial class PlannerCrmContext : DbContext
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.HasOne(d => d.FkIdActivityNavigation).WithMany(p => p.EmployeeActivities)
-                .HasForeignKey(d => d.FkIdActivity)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EmployeeActivities_Activities");
-
-            entity.HasOne(d => d.FkIdEmployeeNavigation).WithMany(p => p.EmployeeActivities)
-                .HasForeignKey(d => d.FkIdEmployee)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EmployeeActivities_Employees");
-
-            entity.HasOne(d => d.FkIdWorkOrderNavigation).WithMany(p => p.EmployeeActivities)
-                .HasForeignKey(d => d.FkIdWorkOrder)
+            entity.HasOne(d => d.FkIdFirmClientNavigation).WithMany(p => p.EmployeeActivities)
+                .HasForeignKey(d => d.FkIdFirmClient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EmployeeActivities_FirmClients");
-
-            entity.HasOne(d => d.FkIdWorkOrder1).WithMany(p => p.EmployeeActivities)
-                .HasForeignKey(d => d.FkIdWorkOrder)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EmployeeActivities_WorkOrders");
         });
 
         modelBuilder.Entity<EmployeeWorkTime>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
-
-            entity.HasOne(d => d.FkIdActivityNavigation).WithMany(p => p.EmployeeWorkTimes)
-                .HasForeignKey(d => d.FkIdActivity)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EmployeeWorkTimes_Activities");
 
             entity.HasOne(d => d.FkIdEmployeeNavigation).WithMany(p => p.EmployeeWorkTimes)
                 .HasForeignKey(d => d.FkIdEmployee)
@@ -153,11 +123,6 @@ public partial class PlannerCrmContext : DbContext
                 .HasForeignKey(d => d.FkIdFirmClient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EmployeeWorkTimes_FirmClients");
-
-            entity.HasOne(d => d.FkIdWorkOrderNavigation).WithMany(p => p.EmployeeWorkTimes)
-                .HasForeignKey(d => d.FkIdWorkOrder)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EmployeeWorkTimes_WorkOrders");
 
             entity.HasOne(d => d.FkIdWorkTimeNavigation).WithMany(p => p.EmployeeWorkTimes)
                 .HasForeignKey(d => d.FkIdWorkTime)
@@ -203,12 +168,12 @@ public partial class PlannerCrmContext : DbContext
             entity.HasOne(d => d.FkIdFirmClientNavigation).WithMany(p => p.FirmClientsWorkOrders)
                 .HasForeignKey(d => d.FkIdFirmClient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_FirmClientsWorkOrders_FirmClients1");
+                .HasConstraintName("FK_FirmClientsWorkOrders_FirmClients");
 
             entity.HasOne(d => d.FkIdWorkOrderNavigation).WithMany(p => p.FirmClientsWorkOrders)
                 .HasForeignKey(d => d.FkIdWorkOrder)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_FirmClientsWorkOrders_WorkOrders1");
+                .HasConstraintName("FK_FirmClientsWorkOrders_WorkOrders");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -239,20 +204,10 @@ public partial class PlannerCrmContext : DbContext
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
-            entity.HasOne(d => d.FkIdActivityNavigation).WithMany(p => p.WorkOrdersActivities)
-                .HasForeignKey(d => d.FkIdActivity)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WorkOrdersActivities_Activities");
-
             entity.HasOne(d => d.FkIdFirmClientNavigation).WithMany(p => p.WorkOrdersActivities)
                 .HasForeignKey(d => d.FkIdFirmClient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WorkOrdersActivities_FirmClients");
-
-            entity.HasOne(d => d.FkIdWorkOrderNavigation).WithMany(p => p.WorkOrdersActivities)
-                .HasForeignKey(d => d.FkIdWorkOrder)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WorkOrdersActivities_WorkOrders");
         });
 
         modelBuilder.Entity<WorkTime>(entity =>
@@ -262,16 +217,12 @@ public partial class PlannerCrmContext : DbContext
             entity.HasOne(d => d.FkIdActivityNavigation).WithMany(p => p.WorkTimes)
                 .HasForeignKey(d => d.FkIdActivity)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WorkTimes_Activities");
-
-            entity.HasOne(d => d.FkIdFirmClientNavigation).WithMany(p => p.WorkTimes)
-                .HasForeignKey(d => d.FkIdFirmClient)
-                .HasConstraintName("FK_WorkTimes_FirmClients");
+                .HasConstraintName("FK_Activities_WorkTimes");
 
             entity.HasOne(d => d.FkIdWorkOrderNavigation).WithMany(p => p.WorkTimes)
                 .HasForeignKey(d => d.FkIdWorkOrder)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WorkTimes_WorkOrders");
+                .HasConstraintName("FK_WorkOrders_WorkTimes");
         });
 
         OnModelCreatingPartial(modelBuilder);

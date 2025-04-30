@@ -19,17 +19,9 @@ public partial class Activity
 
     public Guid FkIdFirmClient { get; set; }
 
-    public virtual ICollection<ActivitiesWorkTime> ActivitiesWorkTimes { get; set; } = new List<ActivitiesWorkTime>();
-
-    public virtual ICollection<EmployeeActivity> EmployeeActivities { get; set; } = new List<EmployeeActivity>();
-
-    public virtual ICollection<EmployeeWorkTime> EmployeeWorkTimes { get; set; } = new List<EmployeeWorkTime>();
-
     public virtual FirmClient FkIdFirmClientNavigation { get; set; }
 
     public virtual WorkOrder FkIdWorkOrderNavigation { get; set; }
-
-    public virtual ICollection<WorkOrdersActivity> WorkOrdersActivities { get; set; } = new List<WorkOrdersActivity>();
 
     public virtual ICollection<WorkTime> WorkTimes { get; set; } = new List<WorkTime>();
 }
