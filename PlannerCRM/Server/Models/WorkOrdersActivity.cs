@@ -13,5 +13,9 @@ public partial class WorkOrdersActivity
 
     public Guid FkIdFirmClient { get; set; }
 
+    public virtual Activity FkIdActivityNavigation { get; set; }
+
     public virtual FirmClient FkIdFirmClientNavigation { get; set; }
+
+    public virtual WorkOrder FkIdWorkOrderNavigation { get; set; }
 }

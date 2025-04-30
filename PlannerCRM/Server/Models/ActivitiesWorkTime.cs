@@ -17,9 +17,13 @@ public partial class ActivitiesWorkTime
 
     public Guid FkIdEmployee { get; set; }
 
+    public virtual Activity FkIdActivityNavigation { get; set; }
+
     public virtual Employee FkIdEmployeeNavigation { get; set; }
 
     public virtual FirmClient FkIdFirmClientNavigation { get; set; }
+
+    public virtual WorkOrder FkIdWorkOrderNavigation { get; set; }
 
     public virtual WorkTime FkIdWorkTimeNavigation { get; set; }
 }
