@@ -137,6 +137,11 @@
         }
         _context = new(Model);
         await LoadData();
+        var modelprops = Model.GetType().GetProperties().ToDictionary(k => k.Name, v => v.GetValue(Model));
+        foreach (var item in modelprops)
+        {
+            Console.WriteLine("Key: " + item.Key + "\t\tValue: " + item.Value);
+        }
     }
 
     void Close()

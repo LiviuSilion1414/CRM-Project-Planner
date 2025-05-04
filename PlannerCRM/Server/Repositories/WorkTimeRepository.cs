@@ -54,7 +54,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
+            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate) && x.Id == filter.id);
 
             _context.Remove(existingModel);
 
@@ -75,7 +75,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
-                                             .FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
+                                             .FirstOrDefaultAsync(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate) && x.Id == filter.id);
 
             return _mapper.Map<WorkTimeDto>(existingModel);
         } catch (Exception ex)
@@ -91,7 +91,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
             var existingModel = await context.WorkTimes
                                              .AsNoTracking()
                                              .AsSplitQuery()
-                                             .Where(x => x.CreationDate >= filter.startDate)
+                                             .Where(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate))
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
@@ -114,7 +114,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
-                                             .Where(x => x.CreationDate >= filter.startDate && x.EmployeeWorkTimes.Any(y => y.FkIdEmployee == filter.employeeId))
+                                             .Where(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate) && x.EmployeeWorkTimes.Any(y => y.FkIdEmployee == filter.employeeId))
                                              .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);

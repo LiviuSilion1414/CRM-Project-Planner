@@ -24,8 +24,8 @@ public class WorkTimeFilterDto : FilterDto
     public Guid activityId { get; set; }
     public Guid workOrderId { get; set; }
     public Guid employeeId { get; set; }
-    public DateOnly startDate { get; set; }
-    public DateOnly endDate { get; set; }
+    public DateTime startDate { get; set; }
+    public DateTime endDate { get; set; }
 }
 
 public partial class ApiUrl

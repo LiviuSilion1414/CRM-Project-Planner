@@ -143,7 +143,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch(Exception ex)
         {
             return new ResultDto()
             {

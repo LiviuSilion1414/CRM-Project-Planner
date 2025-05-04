@@ -15,17 +15,17 @@ public class WorkOrderDto
     [MinLength(5)]
     public string description { get; set; }
 
-    public DateOnly creationDate { get => DateOnly.FromDateTime(DateTime.Now); }
+    public DateTime creationDate { get; set; }
     public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }
 
     [Required]
-    public DateOnly startDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+    public DateTime startDate { get; set; }
     public string startDateString { get => string.Format("{0:dd/MM/yyyy}", startDate); }
 
 
     [Required]
     [DateRangeValidation(nameof(startDate), nameof(endDate))]
-    public DateOnly endDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+    public DateTime endDate { get; set; }
     public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
 
     [Required(ErrorMessage = "The firm client is required")]
