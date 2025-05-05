@@ -133,7 +133,7 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
                                            .Include(a => a.EmployeeActivities).ThenInclude(x => x.FkIdEmployeeNavigation)
                                            .Include(a => a.FkIdWorkOrderNavigation).ThenInclude(x => x.FkIdFirmClientNavigation)
                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                       (filter.clientId == Guid.Empty || x.FkIdWorkOrderNavigation.FkIdFirmClient == filter.clientId) &&
+                                                       (filter.firmClientId == Guid.Empty || x.FkIdWorkOrderNavigation.FkIdFirmClient == filter.firmClientId) &&
                                                        (filter.workOrderId == Guid.Empty || x.FkIdWorkOrderNavigation.Id == filter.workOrderId))
                                            .ToListAsync();
 
@@ -210,7 +210,14 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
                 return;
             }
 
-            await _context.EmployeeActivities.AddAsync(new EmployeeActivity { FkIdActivity = filter.activityId, FkIdEmployee = filter.employeeId });
+            await _context.EmployeeActivities.AddAsync(
+                new EmployeeActivity { 
+                    FkIdActivity = filter.activityId, 
+                    FkIdEmployee = filter.employeeId,
+                    FkIdWorkOrder = filter.workOrderId,
+                    FkIdFirmClient = filter.firmClientId
+                }
+            );
 
             await _context.SaveChangesAsync();
         } catch

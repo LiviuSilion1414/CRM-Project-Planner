@@ -27,6 +27,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 
                 model.PasswordHash = cryptedPwd;
 
+                
                 await _context.Employees.AddAsync(model);
 
                 var mappedRoles = _mapper.Map<List<Role>>(dto.roles);
@@ -112,7 +113,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                          .AsSplitQuery()
                                          .Include(e => e.EmployeeActivities)
                                          .Include(e => e.EmployeesRoles)
-                                         .SingleAsync(e => e.Id == filter.employeeId);
+                                         .SingleAsync(e => e.Id == filter.id);
 
             return _mapper.Map<EmployeeDto>(employee);
         } 
@@ -174,9 +175,9 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
             var foundActivities = await _context.EmployeeActivities
                                                 .AsNoTracking()
                                                 .AsSplitQuery()
-                                                .Include(ac => ac.FkIdActivityNavigation)
+                                                .Include(ac => ac.FkIdActivityNavigation).ThenInclude(x => x.FkIdWorkOrderNavigation)
                                                 .Include(ac => ac.FkIdEmployeeNavigation)
-                                                .Where(x => x.FkIdEmployee == filter.employeeId)
+                                                .Where(x => x.FkIdEmployee == filter.id)
                                                 .ToListAsync();
 
             return _mapper.Map<List<EmployeeActivityDto>>(foundActivities);

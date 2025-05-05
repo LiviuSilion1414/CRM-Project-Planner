@@ -61,7 +61,7 @@ public partial class PlannerCrmContext : DbContext
                 .HasConstraintName("FK_ActivitiesWorkTimes_WorkTimes");
         });
 
-        modelBuilder.Entity<Activity>(entity =>
+       modelBuilder.Entity<Activity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_Activtities");
 
@@ -97,7 +97,7 @@ public partial class PlannerCrmContext : DbContext
                 .HasMaxLength(50);
             entity.Property(e => e.Username)
                 .IsRequired()
-                .HasMaxLength(20);
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<EmployeeActivity>(entity =>

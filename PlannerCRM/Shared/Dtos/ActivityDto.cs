@@ -33,7 +33,7 @@ public class ActivityFilterDto : FilterDto
     public Guid activityId { get; set; }
     public Guid employeeId { get; set; }
     public Guid workOrderId { get; set; }
-    public Guid clientId { get; set; }
+    public Guid firmClientId { get; set; }
 }
 
 public partial class ApiUrl

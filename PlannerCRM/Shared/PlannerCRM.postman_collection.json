@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "3abed9f0-11c7-4772-9040-83d86cbb64e1",
 		"name": "PlannerCRM",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25512474"
 	},
 	"item": [
@@ -10,13 +10,17 @@
 			"name": "Employees",
 			"item": [
 				{
-					"name": "Read - List",
+					"name": "List",
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -29,55 +33,139 @@
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/employee/list"
+						"url": {
+							"raw": "https://localhost:5030/api/employee/list",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"employee",
+								"list"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "GetAssociatedActivities",
+					"name": "Get",
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\": \"90c9c900-5c44-4ca8-a6f8-605db47b886a\"\r\n}",
+							"raw": "{\r\n    \"id\": \"54C2F1DE-A325-4B26-B923-AF338B2D30A7\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/employee/findAssociatedActivitiesByEmployeeId"
+						"url": {
+							"raw": "https://localhost:5030/api/employee/get",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"employee",
+								"get"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "Create",
+					"name": "Insert",
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"jkkkhhj\",\r\n    \"phone\": \"jkkkhhj\",\r\n    \"email\": \"jkkkhhj\",\r\n    \"password\": \"1\",\r\n    \"isRemoveable\": true,\r\n    \"roles\": []\r\n}",
+							"raw": "{\r\n    \"name\": \"Mario\",\r\n    \"surname\": \"Rossi\",\r\n    \"phone\": \"3519115581\",\r\n    \"username\": \"mario.rossi@gmail.com\",\r\n    \"password\": \"1\",\r\n    \"isRemoveable\": false,\r\n    \"roles\": []\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/employee/insert"
+						"url": {
+							"raw": "https://localhost:5030/api/employee/insert",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"employee",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n    \"id\": \"54C2F1DE-A325-4B26-B923-AF338B2D30A7\",\r\n    \"name\": \"Luigi\",\r\n    \"surname\": \"Verdi\",\r\n    \"phone\": \"3519115581\",\r\n    \"username\": \"luigi.verdi@gmail.com\",\r\n    \"password\": \"1\",\r\n    \"isRemoveable\": true,\r\n    \"roles\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5030/api/employee/update",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"employee",
+								"update"
+							]
+						}
 					},
 					"response": []
 				},
@@ -86,9 +174,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbiIsIm5hbWVpZCI6IjE3ZTA0NDBkLTRlMzktNGVkYy1iYzhlLTMzZjVkMmRlOTQxOSIsIm5iZiI6MTczOTcyODM3MCwiZXhwIjoxNzQyMzIwMzcwLCJpYXQiOjE3Mzk3MjgzNzB9.DurpDd6urfGxhy0nMXcF669D9zRQZkKOQxYztiuDr0I"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbiIsIm5hbWVpZCI6IjE3ZTA0NDBkLTRlMzktNGVkYy1iYzhlLTMzZjVkMmRlOTQxOSIsIm5iZiI6MTczOTcyODM3MCwiZXhwIjoxNzQyMzIwMzcwLCJpYXQiOjE3Mzk3MjgzNzB9.DurpDd6urfGxhy0nMXcF669D9zRQZkKOQxYztiuDr0I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -101,31 +193,20 @@
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/employee/assignRole/clown"
-					},
-					"response": []
-				},
-				{
-					"name": "Update",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
-							}
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\": \"68579866-cbbe-4c64-a103-56dcb15b4f3a\",\r\n    \"name\": \"pampam\",\r\n    \"phone\": \"pampam\",\r\n    \"email\": \"pampam\",\r\n    \"password\": \"zTdOM8W+9O4N6t92uYXXiPemdI9Oz+TuY809+IWoY/Y=\",\r\n    \"isRemoveable\": true,\r\n    \"roles\": []\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "https://localhost:5030/api/employee/update"
+						"url": {
+							"raw": "https://localhost:5030/api/employee/assignRole/clown",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"employee",
+								"assignRole",
+								"clown"
+							]
+						}
 					},
 					"response": []
 				},
@@ -137,19 +218,49 @@
 						},
 						"method": "DELETE",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "Read - Single",
+					"name": "GetAssociatedActivities",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
 						},
-						"method": "GET",
+						"method": "POST",
 						"header": [],
-						"url": ""
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"3425102F-8A7B-4F0C-811E-A52F19397185\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5030/api/employee/findAssociatedActivitiesByEmployeeId",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"employee",
+								"findAssociatedActivitiesByEmployeeId"
+							]
+						}
 					},
 					"response": []
 				}
@@ -163,13 +274,31 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbiIsIm5hbWVpZCI6IjE3ZTA0NDBkLTRlMzktNGVkYy1iYzhlLTMzZjVkMmRlOTQxOSIsIm5iZiI6MTczOTcyNDUwNywiZXhwIjoxNzQyMzE2NTA3LCJpYXQiOjE3Mzk3MjQ1MDd9.Sn6OidixcC9zwAAEGT9wcRdFgDNLAYRmoM6RmakLMbI"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbiIsIm5hbWVpZCI6IjE3ZTA0NDBkLTRlMzktNGVkYy1iYzhlLTMzZjVkMmRlOTQxOSIsIm5iZiI6MTczOTcyNDUwNywiZXhwIjoxNzQyMzE2NTA3LCJpYXQiOjE3Mzk3MjQ1MDd9.Sn6OidixcC9zwAAEGT9wcRdFgDNLAYRmoM6RmakLMbI",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost:5030/api/client/getwithpagination/100/0"
+						"url": {
+							"raw": "https://localhost:5030/api/client/getwithpagination/100/0",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"client",
+								"getwithpagination",
+								"100",
+								"0"
+							]
+						}
 					},
 					"response": []
 				},
@@ -189,7 +318,9 @@
 						},
 						"method": "PUT",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -201,7 +332,9 @@
 						},
 						"method": "DELETE",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -223,9 +356,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiYWRtaW4iLCJFbWFpbCI6IjEiLCJHdWlkIjoiMjY1Nzk5OWUtOTBkMS00OWRiLTkwMDItNmZjOTRkNDg5Y2Q3IiwiSXNBdXRoZW50aWNhdGVkIjoiVHJ1ZSIsIlJvbGUiOlsiYWRtaW4iLCJzdGFmZiJdLCJuYmYiOjE3NDA2MTkwODcsImV4cCI6MTc0MzIxMTA4NywiaWF0IjoxNzQwNjE5MDg3fQ.I1XKho0SxUk4Hd2_jhdG2-cqdB32wHclF3Q203RO5mg"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiYWRtaW4iLCJFbWFpbCI6IjEiLCJHdWlkIjoiMjY1Nzk5OWUtOTBkMS00OWRiLTkwMDItNmZjOTRkNDg5Y2Q3IiwiSXNBdXRoZW50aWNhdGVkIjoiVHJ1ZSIsIlJvbGUiOlsiYWRtaW4iLCJzdGFmZiJdLCJuYmYiOjE3NDA2MTkwODcsImV4cCI6MTc0MzIxMTA4NywiaWF0IjoxNzQwNjE5MDg3fQ.I1XKho0SxUk4Hd2_jhdG2-cqdB32wHclF3Q203RO5mg",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -238,15 +375,59 @@
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/workOrder/getWithPagination"
+						"url": {
+							"raw": "https://localhost:5030/api/workOrder/getWithPagination",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workOrder",
+								"getWithPagination"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "Create",
+					"name": "insert",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiIzNDI1MTAyZi04YTdiLTRmMGMtODExZS1hNTJmMTkzOTcxODUiLCJpc0F1dGhlbnRpY2F0ZWQiOiJUcnVlIiwibmJmIjoxNzQ1NjU3MjIzLCJleHAiOjE3NDgyNDkyMjMsImlhdCI6MTc0NTY1NzIyM30.XCp__Q0S0dzDuSUnFYnhJ8jJ__qCD-fckXp4Y0bBSOo",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"00000000-0000-0000-0000-000000000000\",\r\n  \"name\": \"e-commerce\",\r\n  \"description\": \"for the clients\",\r\n  \"creationDate\": \"2025-04-27\",\r\n  \"creationDateString\": \"27/04/2025\",\r\n  \"startDate\": \"2025-04-27\",\r\n  \"startDateString\": \"27/04/2025\",\r\n  \"endDate\": \"2025-09-30\",\r\n  \"endDateString\": \"30/09/2025\",\r\n  \"firmClientId\": \"bdf736b1-90b0-4ab0-9dc4-81b2ae148119\",\r\n  \"workOrderCostId\": \"00000000-0000-0000-0000-000000000000\",\r\n  \"firmClient\": {\r\n    \"id\": \"bdf736b1-90b0-4ab0-9dc4-81b2ae148119\",\r\n    \"name\": \"Tende-roma.it  SRLS\",\r\n    \"vatNumber\": \"16200811004\",\r\n    \"workOrders\": [\r\n      {\r\n        \"id\": \"2dafe145-4eae-46cd-a9f0-f7399501fd24\",\r\n        \"name\": \"Backoffice\",\r\n        \"description\": \"Funge da inserimento dati\",\r\n        \"creationDate\": \"2025-04-27\",\r\n        \"creationDateString\": \"27/04/2025\",\r\n        \"startDate\": \"2025-04-26\",\r\n        \"startDateString\": \"26/04/2025\",\r\n        \"endDate\": \"2025-04-26\",\r\n        \"endDateString\": \"26/04/2025\",\r\n        \"firmClientId\": \"bdf736b1-90b0-4ab0-9dc4-81b2ae148119\",\r\n        \"workOrderCostId\": \"00000000-0000-0000-0000-000000000000\",\r\n        \"firmClient\": null,\r\n        \"activities\": []\r\n      }\r\n    ]\r\n  },\r\n  \"activities\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5030/api/workOrder/insert",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workOrder",
+								"insert"
+							]
+						}
 					},
 					"response": []
 				},
@@ -258,7 +439,9 @@
 						},
 						"method": "PUT",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -270,7 +453,9 @@
 						},
 						"method": "DELETE",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -292,9 +477,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -307,15 +496,59 @@
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/activity/list"
+						"url": {
+							"raw": "https://localhost:5030/api/activity/list",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"activity",
+								"list"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Create",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiIzNDI1MTAyZi04YTdiLTRmMGMtODExZS1hNTJmMTkzOTcxODUiLCJpc0F1dGhlbnRpY2F0ZWQiOiJUcnVlIiwibmJmIjoxNzQ1NjU3MjIzLCJleHAiOjE3NDgyNDkyMjMsImlhdCI6MTc0NTY1NzIyM30.XCp__Q0S0dzDuSUnFYnhJ8jJ__qCD-fckXp4Y0bBSOo",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"00000000-0000-0000-0000-000000000000\",\r\n  \"name\": \"architecture\",\r\n  \"creationDate\": \"0001-01-01\",\r\n  \"creationDateString\": \"01/01/0001\",\r\n  \"startDate\": \"2025-04-28\",\r\n  \"startDateString\": \"28/04/2025\",\r\n  \"endDate\": \"2025-05-09\",\r\n  \"endDateString\": \"09/05/2025\",\r\n  \"workOrderId\": \"1ddaf172-de52-4823-9dfe-0c397bdcb322\",\r\n  \"workOrder\": {\r\n    \"id\": \"1ddaf172-de52-4823-9dfe-0c397bdcb322\",\r\n    \"name\": \"E-commerce\",\r\n    \"description\": \"for the clients\",\r\n    \"creationDate\": \"2025-04-27\",\r\n    \"creationDateString\": \"27/04/2025\",\r\n    \"startDate\": \"2025-04-27\",\r\n    \"startDateString\": \"27/04/2025\",\r\n    \"endDate\": \"2025-09-30\",\r\n    \"endDateString\": \"30/09/2025\",\r\n    \"firmClientId\": \"bdf736b1-90b0-4ab0-9dc4-81b2ae148119\",\r\n    \"workOrderCostId\": \"00000000-0000-0000-0000-000000000000\",\r\n    \"firmClient\": {\r\n      \"id\": \"bdf736b1-90b0-4ab0-9dc4-81b2ae148119\",\r\n      \"name\": \"Tende-roma.it  SRLS\",\r\n      \"vatNumber\": \"16200811004\",\r\n      \"workOrders\": [\r\n        {\r\n          \"id\": \"1ddaf172-de52-4823-9dfe-0c397bdcb322\",\r\n          \"name\": \"e-commerce\",\r\n          \"description\": \"for the clients\",\r\n          \"creationDate\": \"2025-04-27\",\r\n          \"creationDateString\": \"27/04/2025\",\r\n          \"startDate\": \"2025-04-27\",\r\n          \"startDateString\": \"27/04/2025\",\r\n          \"endDate\": \"2025-09-30\",\r\n          \"endDateString\": \"30/09/2025\",\r\n          \"workOrderCostId\": \"00000000-0000-0000-0000-000000000000\",\r\n          \"firmClient\": null,\r\n          \"activities\": []\r\n        },\r\n        {\r\n          \"id\": \"2dafe145-4eae-46cd-a9f0-f7399501fd24\",\r\n          \"name\": \"Backoffice\",\r\n          \"description\": \"Funge da inserimento dati\",\r\n          \"creationDate\": \"2025-04-27\",\r\n          \"creationDateString\": \"27/04/2025\",\r\n          \"startDate\": \"2025-04-26\",\r\n          \"startDateString\": \"26/04/2025\",\r\n          \"endDate\": \"2025-04-26\",\r\n          \"endDateString\": \"26/04/2025\",\r\n          \"workOrderCostId\": \"00000000-0000-0000-0000-000000000000\",\r\n          \"firmClient\": null,\r\n          \"activities\": []\r\n        }\r\n      ]\r\n    },\r\n    \"activities\": []\r\n  },\r\n  \"employees\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5030/api/activity/insert",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"activity",
+								"insert"
+							]
+						}
 					},
 					"response": []
 				},
@@ -327,7 +560,9 @@
 						},
 						"method": "PUT",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -339,7 +574,9 @@
 						},
 						"method": "DELETE",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				},
@@ -356,22 +593,38 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiIzNDI1MTAyZi04YTdiLTRmMGMtODExZS1hNTJmMTkzOTcxODUiLCJpc0F1dGhlbnRpY2F0ZWQiOiJUcnVlIiwibmJmIjoxNzQ1NjU3MjIzLCJleHAiOjE3NDgyNDkyMjMsImlhdCI6MTc0NTY1NzIyM30.XCp__Q0S0dzDuSUnFYnhJ8jJ__qCD-fckXp4Y0bBSOo",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"activityId\": \"0b5e20f5-ebc9-4632-a335-73c538471b5d\",\r\n    \"employeeId\": \"90c9c900-5c44-4ca8-a6f8-605db47b886a\"\r\n}",
+							"raw": "{\r\n    \"workOrderId\": \"1DDAF172-DE52-4823-9DFE-0C397BDCB322\",\r\n    \"firmClientId\": \"BDF736B1-90B0-4AB0-9DC4-81B2AE148119\",\r\n    \"activityId\": \"BB2FA09D-BADC-43F7-A36A-39E4AE4FC2FC\",\r\n    \"employeeId\": \"54C2F1DE-A325-4B26-B923-AF338B2D30A7\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/activity/assignActivity"
+						"url": {
+							"raw": "https://localhost:5030/api/activity/assignActivity",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"activity",
+								"assignActivity"
+							]
+						}
 					},
 					"response": []
 				},
@@ -380,9 +633,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IjEiLCJpZCI6IjkwYzljOTAwLTVjNDQtNGNhOC1hNmY4LTYwNWRiNDdiODg2YSIsImlzQXV0aGVudGljYXRlZCI6IlRydWUiLCJSb2xlIjoic3VwZXIgYWRtaW4iLCJuYmYiOjE3NDIyMzk5OTYsImV4cCI6MTc0NDgzMTk5NiwiaWF0IjoxNzQyMjM5OTk2fQ.O9_nBwGBSyx5qPIiAxw2-lXSc-mJKYkw7zZI8Vn7ccs",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -395,7 +652,19 @@
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/activity/removeAssignedEmployee"
+						"url": {
+							"raw": "https://localhost:5030/api/activity/removeAssignedEmployee",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"activity",
+								"removeAssignedEmployee"
+							]
+						}
 					},
 					"response": []
 				}
@@ -405,10 +674,32 @@
 			"name": "WorkTimes",
 			"item": [
 				{
-					"name": "Read - List",
+					"name": "List",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5030/api/workTime/list",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workTime",
+								"list"
+							]
+						}
 					},
 					"response": []
 				},
@@ -416,7 +707,20 @@
 					"name": "Create",
 					"request": {
 						"method": "POST",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5030/api/workTime/insert",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workTime",
+								"insert"
+							]
+						}
 					},
 					"response": []
 				},
@@ -428,7 +732,19 @@
 						},
 						"method": "PUT",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": "https://localhost:5030/api/workTime/update",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workTime",
+								"update"
+							]
+						}
 					},
 					"response": []
 				},
@@ -438,17 +754,63 @@
 						"auth": {
 							"type": "noauth"
 						},
-						"method": "DELETE",
+						"method": "POST",
 						"header": [],
-						"url": ""
+						"url": {
+							"raw": "https://localhost:5030/api/workTime/delete",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workTime",
+								"delete"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "Read - Single",
+					"name": "Get",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5030/api/workTime/get",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workTime",
+								"get"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Related WorkTimes By EmployeeId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5030/api/workTime/findAssociatedWorkTimesByEmployeeId",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"workTime",
+								"findAssociatedWorkTimesByEmployeeId"
+							]
+						}
 					},
 					"response": []
 				}
@@ -462,9 +824,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": ""
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -477,7 +843,19 @@
 								}
 							}
 						},
-						"url": "https://localhost:5030/api/account/login"
+						"url": {
+							"raw": "https://localhost:5030/api/account/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"account",
+								"login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -486,7 +864,19 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost:5030/api/account/logout"
+						"url": {
+							"raw": "https://localhost:5030/api/account/logout",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5030",
+							"path": [
+								"api",
+								"account",
+								"logout"
+							]
+						}
 					},
 					"response": []
 				}

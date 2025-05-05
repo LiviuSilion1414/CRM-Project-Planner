@@ -201,7 +201,7 @@ TextProperty="@nameof(WorkTimeDto.name)">
             var filter = new ActivityFilterDto
                 {
                     workOrderId = workOrderId ?? Guid.Empty,
-                    clientId = clientId ?? Guid.Empty,
+                    firmClientId = clientId ?? Guid.Empty,
                     searchQuery = query
                 };
 
