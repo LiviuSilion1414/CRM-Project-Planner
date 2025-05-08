@@ -39,10 +39,10 @@ public class AutoMapperProfile : Profile
             .ReverseMap();
 
         CreateMap<EmployeeActivity, EmployeeActivityDto>()
-            .ForMember(dest => dest.ActivityId, cfg => cfg.MapFrom(src => src.FkIdActivity))
-            .ForMember(dest => dest.EmployeeId, cfg => cfg.MapFrom(src => src.FkIdEmployee))
-            .ForMember(dest => dest.Activity, cfg => cfg.MapFrom(src => src.FkIdActivityNavigation))
-            .ForMember(dest => dest.Employee, cfg => cfg.MapFrom(src => src.FkIdEmployeeNavigation))
+            .ForMember(dest => dest.activityId, cfg => cfg.MapFrom(src => src.FkIdActivity))
+            .ForMember(dest => dest.employeeId, cfg => cfg.MapFrom(src => src.FkIdEmployee))
+            .ForMember(dest => dest.activity, cfg => cfg.MapFrom(src => src.FkIdActivityNavigation))
+            .ForMember(dest => dest.employee, cfg => cfg.MapFrom(src => src.FkIdEmployeeNavigation))
             .PreserveReferences()
             .ReverseMap();
     }

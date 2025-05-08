@@ -1,19 +1,19 @@
-﻿namespace PlannerCRM.Shared.Dtos;
+﻿using System;
+using System.Collections.Generic;
 
-public class RoleDto
+namespace PlannerCRM.Shared.Dtos;
+
+public partial class RoleDto
 {
-    public Guid id { get; set; }
-
-    [Required(ErrorMessage = "The role name is required")]
-    public string name { get; set; }
-    
-    [Required(ErrorMessage = "Please specify if this item can be deleted")]
+    public Guid? id { get; set; }
+    public string? name { get; set; }
     public bool? isRemoveable { get; set; }
+    public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
 }
 
 public class RoleFilterDto : FilterDto
 {
-    public Guid roleId { get; set; }
+    public Guid? roleId { get; set; }
 }
 
 public partial class ApiUrl

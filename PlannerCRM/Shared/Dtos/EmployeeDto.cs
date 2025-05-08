@@ -1,41 +1,35 @@
-﻿namespace PlannerCRM.Shared.Dtos;
+﻿using System;
+using System.Collections.Generic;
 
-public class EmployeeDto
+namespace PlannerCRM.Shared.Dtos;
+
+public partial class EmployeeDto
 {
-    public Guid id { get; set; }
-
-    [Required]
-    public string name { get; set; }
-
-    [Required]
-    public string surname { get; set; }
-
-    [Required]
-    public string phone { get; set; }
-    
-    [Required]
-    public string username { get; set; }
-
-    [Required]
-    public string password { get; set; }
-
-    [Required]
-    public bool isRemoveable { get; set; }
-
-    public List<RoleDto> roles { get; set; }
+    public Guid? id { get; set; }
+    public string? name { get; set; }
+    public string? surname { get; set; }
+    public string? username { get; set; }
+    public DateOnly? creationDate { get; set; }
+    public string? passwordHash { get; set; }
+    public DateOnly lastSeen { get; set; }
+    public bool? isRemoveable { get; set; }
+    public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
+    public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
+    public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
+    public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
 }
 
 public class EmployeeFilterDto : FilterDto
 {
-    public Guid employeeId { get; set; }
-    public Guid workOrderId { get; set; }
-    public Guid activityId { get; set; }
-    public Guid roleId { get; set; }
-    public bool isRemoveRole { get; set; }
-    public RoleDto role { get; set; }
+    public Guid? employeeId { get; set; }
+    public Guid? workOrderId { get; set; }
+    public Guid? activityId { get; set; }
+    public Guid? roleId { get; set; }
+    public bool? isRemoveRole { get; set; }
+    public RoleDto? role { get; set; }
 }
 
-public partial class ApiUrl
+    public partial class ApiUrl
 {
     public const string EMPLOYEE_CONTROLLER = "api/employee";
 

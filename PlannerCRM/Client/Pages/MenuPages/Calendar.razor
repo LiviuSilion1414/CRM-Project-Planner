@@ -54,7 +54,7 @@ else
 
     private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
     {
-        await dialog.OpenSideAsync<ActivityDialog>("Activity Info",
+        await dialog.OpenSideAsync<ActivityDialog>("activity Info",
             new Dictionary<string, object>() { 
                 { nameof(ActivityDialog.SelectedActivity), args.Data },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) }
@@ -65,7 +65,7 @@ else
 
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
-        await dialog.OpenAsync<ActivityForm>("Add Activity",
+        await dialog.OpenAsync<ActivityForm>("Add activity",
             new Dictionary<string, object>()
             {
                 { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },

@@ -5,21 +5,14 @@ namespace PlannerCRM.Shared.Dtos;
 
 public partial class EmployeeWorkTimeDto
 {
-    public Guid Id { get; set; }
-
-    public Guid EmployeeId { get; set; }
-
-    public Guid WorkTimeId { get; set; }
-
-    public Guid WorkOrderId { get; set; }
-
-    public Guid ActivityId { get; set; }
-
-    public ActivityDto Activity { get; set; }
-
-    public EmployeeDto Employee { get; set; }
-
-    public WorkOrderDto WorkOrder { get; set; }
-
-    public WorkTimeDto DtoWorkTime { get; set; }
+    public Guid? id { get; set; }
+    public Guid? fkIdEmployee { get; set; }
+    public Guid? fkIdWorkTime { get; set; }
+    public Guid? fkIdActivity { get; set; }
+    public Guid? fkIdWorkOrder { get; set; }
+    public Guid? fkIdFirmClient { get; set; }
+    public ActivityDto? fkIdActivityNavigation { get; set; }
+    public EmployeeDto? fkIdEmployeeNavigation { get; set; }
+    public FirmClientDto? fkIdFirmClientNavigation { get; set; }
+    public WorkTimeDto? fkIdWorkTimeNavigation { get; set; }
 }

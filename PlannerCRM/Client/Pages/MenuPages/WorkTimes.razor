@@ -1,5 +1,5 @@
 ﻿@page "/workTimes"
-@using System.Security.Claims
+@    using System.Security.Claims
 
 <RadzenCard class="mb-3">
     <RadzenRow JustifyContent="JustifyContent.Stretch">
@@ -94,7 +94,7 @@ TextProperty="@nameof(WorkTimeDto.name)">
 
     private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
     {
-        await dialog.OpenSideAsync<ActivityDialog>("Activity Info",
+        await dialog.OpenSideAsync<ActivityDialog>("activity Info",
             new Dictionary<string, object>()
                                 {
                 { nameof(ActivityDialog.SelectedActivity), args.Data },

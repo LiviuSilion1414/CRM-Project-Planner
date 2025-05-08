@@ -1,39 +1,31 @@
-﻿namespace PlannerCRM.Shared.Dtos;
+﻿using System;
+using System.Collections.Generic;
 
-public class ActivityDto
+namespace PlannerCRM.Shared.Dtos;
+
+public partial class ActivityDto
 {
-    public Guid id { get; set; }
-
-    [Required]
-    [MinLength(5)]
-    public string name { get; set; } = string.Empty;
-
-    [Required]
-    public DateTime creationDate { get; set; }
-    public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }
-
-    [Required]
-    //[DateRangeValidation(nameof(startDate), nameof(endDate))]
-    public DateTime? startDate { get; set; }
-    public string startDateString { get => string.Format("{0:dd/MM/yyyy}", startDate); }
-
-    [Required]
-    public DateTime? endDate { get; set; }
-    public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
-
-    [Required(ErrorMessage = "The workorder field is required")]
-    public Guid? workOrderId { get; set; }
-    
-    public WorkOrderDto workOrder { get; set; }
-    public List<EmployeeDto> employees { get; set; }
+    public Guid? id { get; set; }
+    public string? name { get; set; }
+    public DateOnly? creationDate { get; set; }
+    public DateOnly? startDate { get; set; }
+    public DateOnly? endDate { get; set; }
+    public Guid? fkIdWorkOrder { get; set; }
+    public Guid? fkIdFirmClient { get; set; }
+    public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
+    public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
+    public FirmClientDto? fkIdFirmClientNavigation { get; set; }
+    public WorkOrderDto? fkIdWorkOrderNavigation { get; set; }
+    public ICollection<WorkOrdersActivityDto>? workOrdersActivities { get; set; }
+    public ICollection<WorkTimeDto>? workTimes { get; set; }
 }
 
-public class ActivityFilterDto : FilterDto 
+public class ActivityFilterDto : FilterDto
 {
-    public Guid activityId { get; set; }
-    public Guid employeeId { get; set; }
-    public Guid workOrderId { get; set; }
-    public Guid firmClientId { get; set; }
+    public Guid? activityId { get; set; }
+    public Guid? employeeId { get; set; }
+    public Guid? workOrderId { get; set; }
+    public Guid? firmClientId { get; set; }
 }
 
 public partial class ApiUrl
@@ -50,6 +42,6 @@ public partial class ApiUrl
     public const string ACTIVITY_FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID = "findAssociatedEmployeesByActivityId";
     public const string ACTIVITY_FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID = "findAssociatedWorkOrdersByActivityId";
     public const string ACTIVITY_FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY = "findAssociatedWorkTimesWithinActivity";
-    public const string ACTIVITY_ASSIGN_ACTIVITY= "assignActivity";
+    public const string ACTIVITY_ASSIGN_ACTIVITY = "assignActivity";
     public const string ACTIVITY_REMOVE_ASSIGNED_EMPLOYEE = "removeAssignedEmployee";
 }

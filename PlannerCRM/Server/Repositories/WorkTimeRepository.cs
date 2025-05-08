@@ -20,7 +20,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
 
                 model.FkIdWorkOrderNavigation = await _context.WorkOrders.FindAsync(dto.workOrderId);
                 model.FkIdActivityNavigation = await _context.Activities.FindAsync(dto.activityId);
-                // model.Employee = await _context.Employees.Where(x);
+                // model.employee = await _context.Employees.Where(x);
                 await _context.AddAsync(model);
 
                 await context.SaveChangesAsync();

@@ -1,25 +1,27 @@
-﻿namespace PlannerCRM.Shared.Dtos;
+﻿using System;
+using System.Collections.Generic;
 
-public class FirmClientDto
+namespace PlannerCRM.Shared.Dtos;
+
+public partial class FirmClientDto
 {
-    public Guid id { get; set; }
-
-    [Required]
-    [MinLength(4)]
-    [MaxLength(50)]
-    public string name { get; set; }
-    
-    [Length(8, 15)]
-    [Required]
-    public string vatNumber { get; set; }
-    public List<WorkOrderDto> workOrders { get; set; }
+    public Guid? id { get; set; }
+    public string? name { get; set; }
+    public string? vatNumber { get; set; }
+    public ICollection<ActivityDto>? activities { get; set; }
+    public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
+    public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
+    public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
+    public ICollection<FirmClientsWorkOrderDto>? firmClientsWorkOrders { get; set; }
+    public ICollection<WorkOrderDto>? workOrders { get; set; }
+    public ICollection<WorkOrdersActivityDto>? workOrdersActivities { get; set; }
 }
 
 public class FirmClientFilterDto : FilterDto
 {
-    public Guid firmClientId { get; set; }
-    public Guid workOrderId { get; set; }
-    public Guid workOrderCostId { get; set; }
+    public Guid? firmClientId { get; set; }
+    public Guid? workOrderId { get; set; }
+    public Guid? workOrderCostId { get; set; }
 }
 
 public partial class ApiUrl

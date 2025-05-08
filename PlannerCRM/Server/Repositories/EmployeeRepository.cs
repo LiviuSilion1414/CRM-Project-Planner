@@ -176,10 +176,11 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                                 .AsNoTracking()
                                                 .AsSplitQuery()
                                                 .Include(ac => ac.FkIdActivityNavigation).ThenInclude(x => x.FkIdWorkOrderNavigation)
-                                                .Include(ac => ac.FkIdEmployeeNavigation)
+                                                .Include(ac => ac.FkIdEmployeeNavigation).ThenInclude(x => x.EmployeesRoles)
                                                 .Where(x => x.FkIdEmployee == filter.id)
                                                 .ToListAsync();
-
+            var config = _mapper.ConfigurationProvider;
+            config.AssertConfigurationIsValid();
             return _mapper.Map<List<EmployeeActivityDto>>(foundActivities);
         } 
         catch (Exception)

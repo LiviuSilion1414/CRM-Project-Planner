@@ -5,27 +5,25 @@ namespace PlannerCRM.Shared.Dtos;
 
 public partial class WorkTimeDto
 {
-    public Guid id { get; set; }
-    public int hours { get; set; }
-    public string name { get; set; }
-    public DateTime startDate { get; set; }
-    public DateTime endDate { get; set; }
-    public Guid employeeId { get; set; }
-    public Guid activityId { get; set; }
-    public Guid workOrderId { get; set; }
-    public ActivityDto activity { get; set; }
-    public EmployeeDto employee { get; set; }
-    public ICollection<EmployeeWorkTimeDto> employeeWorkTimes { get; set; } = new List<EmployeeWorkTimeDto>();
-    public WorkOrderDto workOrder { get; set; }
+    public Guid? id { get; set; }
+    public DateOnly? creationDate { get; set; }
+    public int? hours { get; set; }
+    public Guid? fkIdActivity { get; set; }
+    public Guid? fkIdWorkOrder { get; set; }
+    public Guid? fkIdFirmClient { get; set; }
+    public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
+    public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
+    public ActivityDto? fkIdActivityNavigation { get; set; }
+    public WorkOrderDto? fkIdWorkOrderNavigation { get; set; }
 }
 
 public class WorkTimeFilterDto : FilterDto
 {
-    public Guid activityId { get; set; }
-    public Guid workOrderId { get; set; }
-    public Guid employeeId { get; set; }
-    public DateTime startDate { get; set; }
-    public DateTime endDate { get; set; }
+    public Guid? activityId { get; set; }
+    public Guid? workOrderId { get; set; }
+    public Guid? employeeId { get; set; }
+    public DateTime? startDate { get; set; }
+    public DateTime? endDate { get; set; }
 }
 
 public partial class ApiUrl

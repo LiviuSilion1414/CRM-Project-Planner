@@ -1,46 +1,29 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PlannerCRM.Shared.Dtos;
 
-public class WorkOrderDto
+public partial class WorkOrderDto
 {
-    public Guid id { get; set; }
-    
-    [Required]
-    [MinLength(5)]
-    public string name { get; set; }
-
-    [Required]
-    [MinLength(5)]
-    public string description { get; set; }
-
-    public DateTime creationDate { get; set; }
-    public string creationDateString { get => string.Format("{0:dd/MM/yyyy}", creationDate); }
-
-    [Required]
-    public DateTime startDate { get; set; }
-    public string startDateString { get => string.Format("{0:dd/MM/yyyy}", startDate); }
-
-
-    [Required]
-    [DateRangeValidation(nameof(startDate), nameof(endDate))]
-    public DateTime endDate { get; set; }
-    public string endDateString { get => string.Format("{0:dd/MM/yyyy}", endDate); }
-
-    [Required(ErrorMessage = "The firm client is required")]
-    public Guid? firmClientId { get; set; }
-    
-    public Guid workOrderCostId { get; set; }
-   
-    public FirmClientDto firmClient { get; set; }
-    public List<ActivityDto> activities { get; set; }
+    public Guid? id { get; set; }
+    public string? name { get; set; }
+    public string? description { get; set; }
+    public DateOnly? creationDate { get; set; }
+    public DateOnly? startDate { get; set; }
+    public DateOnly? endDate { get; set; }
+    public Guid? fkIdFirmClient { get; set; }
+    public ICollection<ActivityDto>? activities { get; set; }
+    public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
+    public ICollection<FirmClientsWorkOrderDto>? firmClientsWorkOrders { get; set; }
+    public FirmClientDto? fkIdFirmClientNavigation { get; set; }
+    public ICollection<WorkOrdersActivityDto>? workOrdersActivities { get; set; }
+    public ICollection<WorkTimeDto>? workTimes { get; set; }
 }
 
 public class WorkOrderFilterDto : FilterDto
 {
-    public Guid workOrderId { get; set; }
-    public Guid firmClientId { get; set; }
+    public Guid? workOrderId { get; set; }
+    public Guid? firmClientId { get; set; }
 }
 
 public partial class ApiUrl

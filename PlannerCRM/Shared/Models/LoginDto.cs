@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Dtos;
+﻿namespace PlannerCRM.Shared.Models;
 
 public class LoginDto
 {
