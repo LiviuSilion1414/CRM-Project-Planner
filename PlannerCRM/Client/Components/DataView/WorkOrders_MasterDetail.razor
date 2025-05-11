@@ -66,7 +66,7 @@ else
                     else
                     {
                         <RadzenCard Variant="Variant.Text" class="rz-background-color-primary-lighter rz-color-on-primary-lighter">
-                            Client: <b>@workOrderDto.firmClient.name</b>
+                            Client: <b>@workOrderDto.fkIdFirmClientNavigation.name</b>
                         </RadzenCard>
 
                         <RadzenTabs SelectedIndex="0">
@@ -88,10 +88,10 @@ else
                                     <RadzenFieldset Text="Client">
                                         <RadzenRow>
                                             <RadzenColumn>
-                                                Name: @workOrderDto.firmClient.name
+                                                Name: @workOrderDto.fkIdFirmClientNavigation.name
                                             </RadzenColumn>
                                             <RadzenColumn>
-                                                Vat Number: @workOrderDto.firmClient.vatNumber
+                                                Vat Number: @workOrderDto.fkIdFirmClientNavigation.vatNumber
                                             </RadzenColumn>
                                         </RadzenRow>
                                     </RadzenFieldset>
@@ -186,8 +186,8 @@ else
     async Task ActivityOverview(ActivityDto activity)
     {
         activityDto = activity;
-        activityDto.workOrder = workOrderDto;
-        activityDto.workOrder.firmClient = workOrderDto.firmClient;
+        activityDto.fkIdWorkOrderNavigation = workOrderDto;
+        activityDto.fkIdWorkOrderNavigation.fkIdFirmClientNavigation = workOrderDto.fkIdFirmClientNavigation;
         await OnActivityOverview.InvokeAsync(activityDto);
     }
 

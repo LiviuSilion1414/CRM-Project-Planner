@@ -5,14 +5,14 @@
                 <RadzenColumn>
                     <RadzenText>Name: @SelectedEmployee.name</RadzenText>
                     <RadzenText>Email: @SelectedEmployee.username</RadzenText>
-                    <RadzenText>Phone: @SelectedEmployee.phone</RadzenText>
+                    <RadzenText>Created at: @SelectedEmployee.creationDateString</RadzenText>
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
-        <RadzenRow>
+        @* <RadzenRow>
             <RadzenFieldset Text="Current Roles">
                 <RadzenColumn>
-                    <RadzenDataGrid TItem="@RoleDto" Data="@SelectedEmployee.roles">
+                    <RadzenDataGrid TItem="@RoleDto" Data="@SelectedEmployee.employeesRoles">
                         <Columns>
                             <RadzenDataGridColumn TItem="@RoleDto" Property="@nameof(RoleDto.name)" Title="Role" />
                             <RadzenDataGridColumn TItem="@RoleDto" Width="64px">
@@ -24,7 +24,7 @@
                     </RadzenDataGrid>
                 </RadzenColumn>
             </RadzenFieldset>
-        </RadzenRow>
+        </RadzenRow> *@
     </RadzenStack>
     <RadzenStack AlignItems="AlignItems.Center">
         <RadzenRow>

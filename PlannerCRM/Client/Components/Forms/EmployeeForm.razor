@@ -12,8 +12,8 @@
                         <RadzenLabel>Name</RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@Model.name"/>
-                        <ValidationMessage For="@(() => Model.name)"/>
+                        <InputText class="form-control" @bind-Value="@Model.name" />
+                        <ValidationMessage For="@(() => Model.name)" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow class="mt-3">
@@ -34,15 +34,6 @@
                         <ValidationMessage For="@(() => Model.username)" />
                     </RadzenColumn>
                 </RadzenRow>
-                <RadzenRow class="mt-3">
-                    <RadzenColumn>
-                        <RadzenLabel>Phone</RadzenLabel>
-                    </RadzenColumn>
-                    <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@Model.phone" />
-                        <ValidationMessage For="@(() => Model.phone)" />
-                    </RadzenColumn>
-                </RadzenRow>
                 @if (IsInsert)
                 {
                     <RadzenRow class="mt-3">
@@ -50,8 +41,8 @@
                             <RadzenLabel>Password</RadzenLabel>
                         </RadzenColumn>
                         <RadzenColumn>
-                            <InputText class="form-control" @bind-Value="@Model.password" />
-                            <ValidationMessage For="@(() => Model.password)" />
+                            <InputText class="form-control" @bind-Value="@Model.passwordHash" />
+                            <ValidationMessage For="@(() => Model.passwordHash)" />
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow class="mt-3">
@@ -70,26 +61,26 @@
                         <RadzenRow class="mt-3">
                             <RadzenColumn Size="8">
                                 <RadzenLabel>Assign Roles</RadzenLabel>
-                                <RadzenDropDown TValue="RoleDto"
-                                Data="@roles"
-                                AllowFiltering="true"
-                                TextProperty="@nameof(RoleDto.name)"
-                                Change="@AssignRole"
-                                @bind-Value="@assignedRole"
-                                Style="width: 40vw;" />
+                                <RadzenDropDown TValue="EmployeesRoleDto"
+                                                Data="@roles"
+                                                AllowFiltering="true"
+                                                TextProperty="@nameof(EmployeesRoleDto.roleName)"
+                                                Change="@AssignRole"
+                                                @bind-Value="@assignedRole"
+                                                Style="width: 40vw;" />
                             </RadzenColumn>
                             <RadzenColumn Size="4">
                                 <RadzenDataGrid @ref="grid"
-                                TItem="RoleDto"
-                                Data="@Model.roles"
-                                PageSize="5"
-                                AllowPaging="true"
-                                AllowSorting="true">
+                                                TItem="EmployeesRoleDto"
+                                                Data="@Model.employeesRoles"
+                                                PageSize="5"
+                                                AllowPaging="true"
+                                                AllowSorting="true">
                                     <Columns>
-                                        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role Name" />
-                                        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+                                        <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
+                                        <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
                                             <Template Context="data">
-                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>
+                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole((Guid)data.fkIdRole))"></RadzenButton>
                                             </Template>
                                         </RadzenDataGridColumn>
                                     </Columns>
@@ -113,7 +104,7 @@
     </EditForm>
 </RadzenStack>
 
-@code 
+@code
 {
     [Parameter] public bool IsInsert { get; set; }
     [Parameter] public EmployeeDto Model { get; set; }
@@ -122,8 +113,8 @@
 
     EditContext _context;
     List<RoleDto> roles = new();
-    RadzenDataGrid<RoleDto> grid;
-    RoleDto assignedRole = new();
+    RadzenDataGrid<EmployeesRoleDto> grid;
+    EmployeesRoleDto assignedRole = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,9 +122,9 @@
         if (IsInsert)
         {
             Model = new EmployeeDto()
-            {
-                roles = new List<RoleDto>()
-            };
+                {
+                    employeesRoles = new List<EmployeesRoleDto>()
+                };
         }
         _context = new(Model);
         await LoadData();
@@ -174,10 +165,10 @@
     {
         try
         {
-            if (!Model.roles.Contains(assignedRole))
+            if (!Model.employeesRoles.Contains(assignedRole))
             {
                 var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE,
-                                                      new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.id, role = assignedRole, employeeId = Model.id },
+                                                      new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.fkIdRole, employeeId = Model.id },
                                                       ApiType.Put);
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
@@ -198,12 +189,12 @@
         }
     }
 
-    async Task RemoveRole(RoleDto role)
+    async Task RemoveRole(Guid roleId)
     {
         try
         {
-            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE, 
-                                                  new EmployeeFilterDto() { isRemoveRole = true, roleId = role.id, role = role, employeeId = Model.id }, 
+            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE,
+                                                  new EmployeeFilterDto() { isRemoveRole = true, roleId = roleId, employeeId = Model.id },
                                                   ApiType.Put);
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -255,7 +246,6 @@
                 }
                 else
                 {
-                    Model.roles = Model.roles.Select(x => new RoleDto { id = x.id, name = x.name, isRemoveable = true }).ToList();
                     result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE, Model, ApiType.Put);
                 }
 

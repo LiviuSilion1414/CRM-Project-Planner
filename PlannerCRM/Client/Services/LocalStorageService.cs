@@ -1,5 +1,5 @@
 ﻿using Microsoft.JSInterop;
-using PlannerCRM.Shared.Models;
+using PlannerCRM.Shared.Dtos;
 using System.Text.Json;
 
 namespace PlannerCRM.Client.Services;

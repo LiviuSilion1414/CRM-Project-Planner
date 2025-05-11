@@ -85,12 +85,12 @@ else
                     <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
                     <RadzenDataGridColumn TItem="@ActivityDto" Title="Work Order">
                         <Template Context="data">
-                            @data.workOrder.name
+                            @data.fkIdWorkOrderNavigation.name
                         </Template>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="@ActivityDto" Title="Client">
                         <Template Context="data">
-                            @data.workOrder.firmClient.name
+                            @data.fkIdWorkOrderNavigation.fkIdFirmClientNavigation.name
                         </Template>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />

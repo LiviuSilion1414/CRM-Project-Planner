@@ -1,4 +1,4 @@
-﻿namespace PlannerCRM.Shared.Models;
+﻿namespace PlannerCRM.Shared.Dtos;
 
 public partial class FilterDto
 {

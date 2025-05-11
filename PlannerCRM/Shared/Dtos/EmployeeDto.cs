@@ -9,9 +9,12 @@ public partial class EmployeeDto
     public string? name { get; set; }
     public string? surname { get; set; }
     public string? username { get; set; }
+    public string? fullname => !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(surname) ? surname + " " + name : string.Empty;
     public DateOnly? creationDate { get; set; }
+    public string? creationDateString => creationDate != null ? string.Format("{0:dd/MM/yyyy}", creationDate) : "not set";
     public string? passwordHash { get; set; }
-    public DateOnly lastSeen { get; set; }
+    public DateOnly? lastSeen { get; set; }
+    public string? lastSeenString => lastSeen != null ? string.Format("{0:dd/MM/yyyy}", lastSeen) : "not set";
     public bool? isRemoveable { get; set; }
     public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }

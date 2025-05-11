@@ -16,19 +16,19 @@
                     <RadzenColumn>
                         <RadzenFieldset Text="Client Information">
                             <RadzenColumn>
-                                <RadzenText>Name: @SelectedActivity.workOrder.firmClient.name</RadzenText>
-                                <RadzenText>Vat Number: @SelectedActivity.workOrder.firmClient.vatNumber</RadzenText>
-                                <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedActivity.workOrder.firmClient))"></RadzenButton>
+                                <RadzenText>Name: @SelectedActivity.fkIdWorkOrderNavigation.fkIdFirmClientNavigation.name</RadzenText>
+                                <RadzenText>Vat Number: @SelectedActivity.fkIdWorkOrderNavigation.fkIdFirmClientNavigation.vatNumber</RadzenText>
+                                <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedActivity.fkIdWorkOrderNavigation.fkIdFirmClientNavigation))"></RadzenButton>
                             </RadzenColumn>
                         </RadzenFieldset>
                     </RadzenColumn>
                     <RadzenColumn>
                         <RadzenFieldset Text="Work Order Information">
                             <RadzenColumn>
-                                <RadzenText>Name: @SelectedActivity.workOrder.name</RadzenText>
-                                <RadzenText>Start Date: @SelectedActivity.workOrder.startDateString</RadzenText>
-                                <RadzenText>End Date: @SelectedActivity.workOrder.endDateString</RadzenText>
-                                <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenWorkOrderDetails(SelectedActivity.workOrder))"></RadzenButton>
+                                <RadzenText>Name: @SelectedActivity.fkIdWorkOrderNavigation.name</RadzenText>
+                                <RadzenText>Start Date: @SelectedActivity.fkIdWorkOrderNavigation.startDateString</RadzenText>
+                                <RadzenText>End Date: @SelectedActivity.fkIdWorkOrderNavigation.endDateString</RadzenText>
+                                <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenWorkOrderDetails(SelectedActivity.fkIdWorkOrderNavigation))"></RadzenButton>
                             </RadzenColumn>
                         </RadzenFieldset>
                     </RadzenColumn>
@@ -43,20 +43,32 @@
                 </RadzenStack>
             </RadzenTabsItem>
             <RadzenTabsItem Text="Employees">
-                <RadzenDataGrid Data="@SelectedActivity.employees"
-                TItem="@EmployeeDto"
+                <RadzenDataGrid Data="@SelectedActivity.employeeActivities"
+                TItem="@EmployeeActivityDto"
                 AllowSorting="true"
                 AllowPaging="true"
                 AllowFiltering="true">
                     <Columns>
-                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
-                        <RadzenDataGridColumn TItem="@EmployeeDto" Title="Role(s)">
+                        <RadzenDataGridColumn TItem="@EmployeeActivityDto" Title="Name">
                             <Template Context="data">
-                                @ShowRoles(data)
+                                @data.fkIdEmployeeNavigation.name
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" Title="Email" />
-                        <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
+                        <RadzenDataGridColumn TItem="@EmployeeActivityDto" Title="Role(s)">
+                            <Template Context="data">
+                                @ShowRoles(data.fkIdEmployeeNavigation)
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="@EmployeeActivityDto" Title="Email">
+                            <Template Context="data">
+                                @data.fkIdEmployeeNavigation.username
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="@EmployeeActivityDto" Title="Created at">
+                            <Template Context="data">
+                                @data.fkIdEmployeeNavigation.creationDateString
+                            </Template>
+                        </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
             </RadzenTabsItem>
@@ -147,20 +159,20 @@
     {
         return
     @<div>
-        @if (employee.roles.OrderBy(x => x.id).FirstOrDefault() != null)
+        @if (employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault() != null)
     {
-    if (employee.roles.OrderBy(x => x.id).ToList().Count == 1)
+    if (employee.employeesRoles.OrderBy(x => x.id).ToList().Count == 1)
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name}")
+        @($"{employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault().roleName}")
     }
     else
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name} + {employee.roles.Count - 1}")
+        @($"{employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.employeesRoles.Count - 1}")
     }
     }
     else
     {
-        <b>no roles assigned</b>
+        <b>no employeesRoles assigned</b>
     }
     </div>;
     }

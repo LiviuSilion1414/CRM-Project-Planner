@@ -95,7 +95,7 @@ else
                                         </Columns>
                                     </RadzenDataGrid>
                                 </RadzenTabsItem>
-                                @if (workOrderDto != null && workOrderDto.firmClientId == clientDto.id)
+                                @if (workOrderDto != null && workOrderDto.fkIdFirmClient == clientDto.id)
                                 {
                                     <RadzenTabsItem Text="Activities">
                                         <RadzenDataList TItem="ActivityDto" WrapItems="true" AllowPaging="true" Data="@(workOrderDto.activities)" PageSize="10">
@@ -169,7 +169,7 @@ else
     async Task WorkOrderOverview(WorkOrderDto workOrder)
     {
         workOrderDto = workOrder;
-        workOrder.firmClient = clientDto;
+        workOrder.fkIdFirmClientNavigation = clientDto;
         await OnWorkOrderOverview.InvokeAsync(workOrder);
     }
 

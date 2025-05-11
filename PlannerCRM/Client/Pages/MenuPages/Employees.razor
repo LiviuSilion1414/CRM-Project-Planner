@@ -72,14 +72,13 @@ else
                     <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
                 </HeaderTemplate>
                 <Columns>
-                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" Title="Name" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.fullname)" Title="Full name" />
                     <RadzenDataGridColumn TItem="@EmployeeDto" Title="Role(s)">
                         <Template Context="data">
                             @ShowRoles(data)
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" Title="Email" />
-                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.phone)" Title="Phone" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.creationDateString)" Title="Creation Date" />
                     <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                         <Template Context="data">
                             <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
@@ -92,7 +91,7 @@ else
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                         <Template Context="data">
-                            <RadzenButton Disabled="@(!data.isRemoveable)" Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
+                            <RadzenButton Disabled="@(!(bool)data.isRemoveable)" Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => OnDelete(data))"></RadzenButton>
                         </Template>
                     </RadzenDataGridColumn>
                 </Columns>
@@ -228,15 +227,15 @@ else
     {
         return
     @<div>
-        @if (employee.roles.OrderBy(x => x.id).FirstOrDefault() != null)
+        @if (employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault() != null)
     {
-    if (employee.roles.OrderBy(x => x.id).ToList().Count == 1)
+    if (employee.employeesRoles.OrderBy(x => x.id).ToList().Count == 1)
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name}")
+        @($"{employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault().roleName}")
     }
     else
     {
-        @($"{employee.roles.OrderBy(x => x.id).FirstOrDefault().name} + {employee.roles.Count - 1}")
+        @($"{employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.employeesRoles.Count - 1}")
     }
     }
     else

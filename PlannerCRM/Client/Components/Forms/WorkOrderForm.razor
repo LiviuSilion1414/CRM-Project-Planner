@@ -1,5 +1,5 @@
 ﻿<RadzenStack>
-    <EditForm EditContext="@_workOrdercontext" OnValidSubmit="OnSubmit">
+    <EditForm EditContext="@_context" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <RadzenRow>
@@ -54,9 +54,9 @@
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                     TextProperty="@nameof(FirmClientDto.name)"
                     ValueProperty="@nameof(FirmClientDto.id)"
-                    @bind-Value="@Model.firmClientId"
-                    Change="@((object? guid) => SelectClient(guid))" />
-                    @if (Model.firmClient == null || Model.firmClientId == Guid.Empty || Model.firmClient.id == Guid.Empty)
+                    @bind-Value="@Model.fkIdFirmClient"
+                    Change="@((object? guid) => SelectClient((Guid)guid))" />
+                    @if (Model.fkIdFirmClientNavigation == null || (Guid)Model.fkIdFirmClient == Guid.Empty || (Guid)Model.fkIdFirmClient == Guid.Empty)
                     {
                         <RadzenRow>
                             <RadzenColumn>
@@ -71,7 +71,7 @@
                                 <RadzenLabel Text="Name" />
                             </RadzenColumn>
                             <RadzenColumn>
-                                <RadzenText Text=@Model.firmClient.name />
+                                <RadzenText Text=@Model.fkIdFirmClientNavigation.name />
                             </RadzenColumn>
                         </RadzenRow>
                         <RadzenRow class="mb-3">
@@ -79,7 +79,7 @@
                                 <RadzenLabel Text="Vat Number" />
                             </RadzenColumn>
                             <RadzenColumn>
-                                <RadzenText Text=@Model.firmClient.vatNumber />
+                                <RadzenText Text=@Model.fkIdFirmClientNavigation.vatNumber />
                             </RadzenColumn>
                         </RadzenRow>
                         <RadzenRow AlignItems="AlignItems.Center">
@@ -93,7 +93,7 @@
                             </RadzenColumn>
                         </RadzenRow>
                     }
-                    <ValidationMessage For="@(() => Model.firmClientId)" />
+                    <ValidationMessage For="@(() => Model.fkIdFirmClientNavigation)" />
                 </RadzenFieldset>
             </RadzenColumn>
         </RadzenRow>
@@ -165,7 +165,7 @@
     private string _query = string.Empty;
 
     private List<FirmClientDto> _clients = new();
-    private EditContext _workOrdercontext;
+    private EditContext _context;
     private EditContext _activityContext;
     private ActivityDto activityModel = new();
     private RadzenDataGrid<ActivityDto> grid = new();
@@ -177,14 +177,14 @@
         {
             Model = new WorkOrderDto()
                 {
-                    firmClient = new FirmClientDto()
+                    fkIdFirmClientNavigation = new FirmClientDto()
                 };
         }
         else
         {
             _activityContext = new(activityModel);
         }
-        _workOrdercontext = new(Model);
+        _context = new(Model);
         await LoadClients();
     }
 
@@ -192,8 +192,8 @@
     {
         try
         {
-            activityModel.workOrder = Model;
-            activityModel.workOrderId = Model.id;
+            activityModel.fkIdWorkOrderNavigation = Model;
+            activityModel.fkIdWorkOrder = Model.id;
             if (_activityContext.Validate())
             {
                 if (!Model.activities.Contains(activityModel))
@@ -296,19 +296,19 @@
         {
             if ((Guid)clientId != Guid.Empty)
             {
-                Model.firmClient = _clients.SingleOrDefault(x => x.id == (Guid)clientId) ?? new();
-                Model.firmClientId = _clients.SingleOrDefault(x => x.id == (Guid)clientId).id;
+                Model.fkIdFirmClientNavigation = _clients.SingleOrDefault(x => x.id == (Guid)clientId) ?? new();
+                Model.fkIdFirmClient = _clients.SingleOrDefault(x => x.id == (Guid)clientId).id;
             }
             else
             {
-                Model.firmClient = null;
-                Model.firmClientId = null;
+                Model.fkIdFirmClientNavigation = null;
+                Model.fkIdFirmClientNavigation = null;
             }
         }
         else
         {
-            Model.firmClient = null;
-            Model.firmClientId = null;
+            Model.fkIdFirmClientNavigation = null;
+            Model.fkIdFirmClientNavigation = null;
         }
     }
 
@@ -316,7 +316,7 @@
     {
         try
         {
-            if (_workOrdercontext.Validate())
+            if (_context.Validate())
             {
                 ResultDto result = new ResultDto();
                 if (IsInsert)
@@ -325,7 +325,7 @@
                 }
                 else
                 {
-                    activityModel.workOrderId = Model.id;
+                    activityModel.fkIdWorkOrder = Model.id;
 
                     result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_UPDATE, Model, ApiType.Put);
                 }

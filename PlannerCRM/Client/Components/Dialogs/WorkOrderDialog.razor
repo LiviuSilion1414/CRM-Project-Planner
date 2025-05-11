@@ -12,9 +12,9 @@
             <RadzenFieldset Text="Client Info">
                 <RadzenColumn>
                     <RadzenText TextStyle="TextStyle.DisplayH6" Text="Client"></RadzenText>
-                    <RadzenText>Name: @SelectedWorkOrder.firmClient.name</RadzenText>
-                    <RadzenText>Vat Number: @SelectedWorkOrder.firmClient.vatNumber</RadzenText>
-                    @*  <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedWorkOrder.firmClient))"></RadzenButton> *@
+                    <RadzenText>Name: @SelectedWorkOrder.fkIdFirmClientNavigation.name</RadzenText>
+                    <RadzenText>Vat Number: @SelectedWorkOrder.fkIdFirmClientNavigation.vatNumber</RadzenText>
+                    @*  <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OpenClientDetails(SelectedWorkOrder.fkIdFirmClientNavigation))"></RadzenButton> *@
                 </RadzenColumn>
             </RadzenFieldset>
         </RadzenRow>
@@ -121,7 +121,7 @@
 
     private async Task OnEdit(ActivityDto activity)
     {
-        //activity.workOrder = SelectedWorkOrder;
+        //activity.fkIdWorkOrderNavigation = SelectedWorkOrder;
         // await dialog.OpenAsync<ActivityForm>("activity Info",
         //     new Dictionary<string, object>()
         //     {

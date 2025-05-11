@@ -19,7 +19,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
             if (!await _context.Employees.AnyAsync(em => em.Username.ToLower().Trim().Equals(dto.username.ToLower().Trim())))
             {
                 byte[] salt = new byte[128 / 8];
-                string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.password,
+                string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.passwordHash,
                                                                                 salt: salt,
                                                                                 prf: KeyDerivationPrf.HMACSHA256,
                                                                                 iterationCount: 10000,
@@ -30,7 +30,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                 
                 await _context.Employees.AddAsync(model);
 
-                var mappedRoles = _mapper.Map<List<Role>>(dto.roles);
+                var mappedRoles = _mapper.Map<List<Role>>(dto.employeesRoles);
 
                 _context.EmployeesRoles.AddRange(mappedRoles.Select(x => new EmployeesRole() { FkIdEmployee  = model.Id, FkIdRole = x.Id }));
 
@@ -69,12 +69,12 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 
             if (existingModel != null)
             {
-                if (filter.isRemoveRole && existingModel.EmployeesRoles.Any(x => x.FkIdRole == filter.roleId))
+                if ((bool)filter.isRemoveRole && existingModel.EmployeesRoles.Any(x => x.FkIdRole == filter.roleId))
                 {
                     _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.roleId).FirstOrDefault());
                 } else
                 {
-                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = filter.roleId, RoleName = filter.role.name, FkIdEmployee = filter.employeeId });
+                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = (Guid)filter.roleId, RoleName = filter.role.name, FkIdEmployee = (Guid)filter.employeeId });
                 }
                 await _context.SaveChangesAsync();
             }

@@ -11,15 +11,15 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var checkWorkTimeByDate = await context.WorkTimes.Where(x => x.CreationDate == DateOnly.FromDateTime(dto.startDate) && x.Id == dto.id).AnyAsync();
+            var checkWorkTimeByDate = await context.WorkTimes.Where(x => x.CreationDate == dto.creationDate && x.Id == dto.id).AnyAsync();
 
 
             if (!checkWorkTimeByDate && dto.hours > 0 &&  dto.hours <= 8)
             {
                 var model = _mapper.Map<WorkTime>(dto);
 
-                model.FkIdWorkOrderNavigation = await _context.WorkOrders.FindAsync(dto.workOrderId);
-                model.FkIdActivityNavigation = await _context.Activities.FindAsync(dto.activityId);
+                model.FkIdWorkOrderNavigation = await _context.WorkOrders.FindAsync(dto.fkIdWorkOrder);
+                model.FkIdActivityNavigation = await _context.Activities.FindAsync(dto.fkIdActivity);
                 // model.employee = await _context.Employees.Where(x);
                 await _context.AddAsync(model);
 
@@ -35,7 +35,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate == DateOnly.FromDateTime(dto.startDate) && x.Id == dto.id);
+            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate == dto.creationDate && x.Id == dto.id);
 
             if (existingModel != null && dto.hours > 0 && dto.hours <= 8)
             {
@@ -54,7 +54,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate) && x.Id == filter.id);
+            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
 
             _context.Remove(existingModel);
 
@@ -75,7 +75,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
-                                             .FirstOrDefaultAsync(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate) && x.Id == filter.id);
+                                             .FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
 
             return _mapper.Map<WorkTimeDto>(existingModel);
         } catch (Exception ex)
@@ -91,7 +91,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
             var existingModel = await context.WorkTimes
                                              .AsNoTracking()
                                              .AsSplitQuery()
-                                             .Where(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate))
+                                             .Where(x => x.CreationDate >= filter.startDate)
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
@@ -114,7 +114,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
-                                             .Where(x => x.CreationDate >= DateOnly.FromDateTime(filter.startDate) && x.EmployeeWorkTimes.Any(y => y.FkIdEmployee == filter.employeeId))
+                                             .Where(x => x.CreationDate >= filter.startDate && x.EmployeeWorkTimes.Any(y => y.FkIdEmployee == filter.employeeId))
                                              .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);

@@ -9,8 +9,11 @@ public partial class WorkOrderDto
     public string? name { get; set; }
     public string? description { get; set; }
     public DateOnly? creationDate { get; set; }
+    public string? creationDateString => creationDate != null ? string.Format("{0:dd/MM/yyyy}", creationDate) : "not set";
     public DateOnly? startDate { get; set; }
+    public string? startDateString => startDate != null ? string.Format("{0:dd/MM/yyyy}", startDate) : "not set";
     public DateOnly? endDate { get; set; }
+    public string? endDateString => endDate != null ? string.Format("{0:dd/MM/yyyy}", endDate) : "not set";
     public Guid? fkIdFirmClient { get; set; }
     public ICollection<ActivityDto>? activities { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }

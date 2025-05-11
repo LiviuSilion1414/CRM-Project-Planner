@@ -20,41 +20,14 @@
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
-        <RadzenFieldset Text="Work Time Info">
+        <RadzenFieldset Text="Work time">
             <RadzenRow class="mt-3">
                 <RadzenColumn>
-                    <RadzenLabel Text="Name" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenTextBox @bind-Value=@Model.name />
-                    <ValidationMessage For="@(() => Model.name)" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow class="mt-3">
-                <RadzenColumn>
-                    <RadzenLabel Text="StartDate" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenDatePicker @bind-Value=@Model.startDate DateFormat="dd/MM/yyyy" />
-                    <ValidationMessage For="@(() => Model.startDate)" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow class="mt-3">
-                <RadzenColumn>
-                    <RadzenLabel Text="EndDate" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenDatePicker @bind-Value=@Model.endDate DateFormat="dd/MM/yyyy" />
-                    <ValidationMessage For="@(() => Model.endDate)" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow class="mt-3">
-                <RadzenColumn>
-                    <RadzenLabel Text="EndDate" />
+                    <RadzenLabel Text="Hours" />
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenNumeric @bind-Value=@Model.hours />
-                    <ValidationMessage For="@(() => Model.endDate)" />
+                    <ValidationMessage For="@(() => Model.hours)" />
                 </RadzenColumn>
             </RadzenRow>
         </RadzenFieldset>
@@ -91,19 +64,19 @@
 
         if (StartDate != null && EndDate != null)
         {
-            Model.startDate = (DateTime)StartDate;
-            Model.endDate = (DateTime)EndDate;
+            // Model.startDate = (DateTime)StartDate;
+            // Model.endDate = (DateTime)EndDate;
         }
         else
         {
-            Model.startDate = DateTime.Now;
-            Model.endDate = DateTime.Now;
+            // Model.startDate = DateTime.Now;
+            // Model.endDate = DateTime.Now;
         }
 
         _context = new(Model);
-        Model.workOrderId = WorkOrder.id;
-        Model.activityId = Activity.id;
-        Model.employeeId = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
+        Model.fkIdWorkOrder = WorkOrder.id;
+        Model.fkIdActivity = Activity.id;
+        //Model.fkid = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
     }
      
     private async Task OnSubmit()

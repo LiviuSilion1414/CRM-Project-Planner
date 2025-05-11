@@ -12,7 +12,7 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
         try
         {
             var model = _mapper.Map<WorkOrder>(dto);
-            model.FkIdFirmClientNavigation = _mapper.Map<FirmClient>(dto.firmClient);
+            model.FkIdFirmClientNavigation = _mapper.Map<FirmClient>(dto.fkIdFirmClientNavigation);
             _context.Attach(model.FkIdFirmClientNavigation);
 
             await _context.WorkOrders.AddAsync(model);

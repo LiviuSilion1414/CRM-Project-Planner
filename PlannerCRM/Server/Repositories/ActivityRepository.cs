@@ -59,7 +59,7 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingWorkOrder = await _context.WorkOrders.FindAsync(dto.workOrderId);
+            var existingWorkOrder = await _context.WorkOrders.FindAsync(dto.fkIdWorkOrder);
             var model = _mapper.Map<ActivityDto, Activity>(dto);
 
             model.FkIdWorkOrderNavigation = existingWorkOrder;
@@ -212,10 +212,10 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
 
             await _context.EmployeeActivities.AddAsync(
                 new EmployeeActivity { 
-                    FkIdActivity = filter.activityId, 
-                    FkIdEmployee = filter.employeeId,
-                    FkIdWorkOrder = filter.workOrderId,
-                    FkIdFirmClient = filter.firmClientId
+                    FkIdActivity = (Guid)filter.activityId, 
+                    FkIdEmployee = (Guid)filter.employeeId,
+                    FkIdWorkOrder = (Guid)filter.workOrderId,
+                    FkIdFirmClient = (Guid)filter.firmClientId
                 }
             );
 

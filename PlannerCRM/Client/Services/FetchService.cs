@@ -1,6 +1,4 @@
-﻿using PlannerCRM.Shared.Models;
-
-namespace PlannerCRM.Client.Services;
+﻿namespace PlannerCRM.Client.Services;
 
 public class FetchService(LocalStorageService localStorage, HttpClient http)
 {

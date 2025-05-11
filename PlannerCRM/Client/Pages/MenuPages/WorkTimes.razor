@@ -1,45 +1,45 @@
 ﻿@page "/workTimes"
-@    using System.Security.Claims
+@using System.Security.Claims
 
 <RadzenCard class="mb-3">
     <RadzenRow JustifyContent="JustifyContent.Stretch">
         <RadzenColumn>
             <RadzenFormField Text="Client" AllowFloatingLabel="false">
                 <RadzenDropDown TValue="Guid?"
-                class="form-control" Style="min-width: 20vw;"
-                Data="_clients"
-                AllowFiltering="true"
-                AllowClear="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                TextProperty="@nameof(FirmClientDto.name)"
-                ValueProperty="@nameof(FirmClientDto.id)"
-                @bind-Value="@clientId" />
+                                class="form-control" Style="min-width: 20vw;"
+                                Data="_clients"
+                                AllowFiltering="true"
+                                AllowClear="true"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                TextProperty="@nameof(FirmClientDto.name)"
+                                ValueProperty="@nameof(FirmClientDto.id)"
+                                @bind-Value="@clientId" />
             </RadzenFormField>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
                 <RadzenDropDown TValue="Guid?"
-                class="form-control" Style="min-width: 20vw;"
-                Data="@_workOrders.Where(x => x.firmClientId == clientId).ToList()"
-                AllowFiltering="true"
-                AllowClear="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                TextProperty="@nameof(WorkOrderDto.name)"
-                ValueProperty="@nameof(WorkOrderDto.id)"
-                @bind-Value="@workOrderId" />
+                                class="form-control" Style="min-width: 20vw;"
+                                Data="@_workOrders.Where(x => x.fkIdFirmClient == clientId).ToList()"
+                                AllowFiltering="true"
+                                AllowClear="true"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                TextProperty="@nameof(WorkOrderDto.name)"
+                                ValueProperty="@nameof(WorkOrderDto.id)"
+                                @bind-Value="@workOrderId" />
             </RadzenFormField>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenFormField Text="Activity" AllowFloatingLabel="false">
                 <RadzenDropDown TValue="Guid?"
-                class="form-control" Style="min-width: 20vw;"
-                Data="@_activities.Where(x => x.workOrderId == workOrderId).ToList()"
-                AllowFiltering="true"
-                AllowClear="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                TextProperty="@nameof(ActivityDto.name)"
-                ValueProperty="@nameof(ActivityDto.id)"
-                @bind-Value="@activityId" />
+                                class="form-control" Style="min-width: 20vw;"
+                                Data="@_activities.Where(x => x.fkIdWorkOrder == workOrderId).ToList()"
+                                AllowFiltering="true"
+                                AllowClear="true"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                TextProperty="@nameof(ActivityDto.name)"
+                                ValueProperty="@nameof(ActivityDto.id)"
+                                @bind-Value="@activityId" />
             </RadzenFormField>
         </RadzenColumn>
         <RadzenColumn>
@@ -49,18 +49,18 @@
     </RadzenRow>
 </RadzenCard>
 
-<RadzenScheduler TItem="WorkTimeDto"
-Style="height: 80vh;"
-Data=@_workTimes
-Culture="CultureInfo.InvariantCulture"
-SlotSelect="@OnAdd"
-SelectedIndex="1"
-StartProperty="@nameof(WorkTimeDto.startDate)"
-EndProperty="@nameof(WorkTimeDto.endDate)"
-TextProperty="@nameof(WorkTimeDto.name)">
+@* <RadzenScheduler TItem="WorkTimeDto"
+                 Style="height: 80vh;"
+                 Data=@_workTimes
+                 Culture="CultureInfo.InvariantCulture"
+                 SlotSelect="@OnAdd"
+                 SelectedIndex="1"
+                 StartProperty="@nameof(WorkTimeDto.)"
+                 EndProperty="@nameof(WorkTimeDto.endDate)"
+                 TextProperty="@nameof(WorkTimeDto.name)">
     <RadzenWeekView />
     <RadzenMonthView />
-</RadzenScheduler>
+</RadzenScheduler> *@
 
 @code
 {
@@ -96,10 +96,10 @@ TextProperty="@nameof(WorkTimeDto.name)">
     {
         await dialog.OpenSideAsync<ActivityDialog>("activity Info",
             new Dictionary<string, object>()
-                                {
+                                    {
                 { nameof(ActivityDialog.SelectedActivity), args.Data },
                 { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadActivities()) }
-                                },
+                                    },
             new SideDialogOptions() { Width = "40vw;" }
         );
     }
@@ -117,7 +117,7 @@ TextProperty="@nameof(WorkTimeDto.name)">
 
         await dialog.OpenAsync<WorkTimeForm>("Add Work Time",
             new Dictionary<string, object>()
-                {
+                    {
                 { nameof(WorkTimeForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadActivities()) },
                 { nameof(WorkTimeForm.IsInsert), true },
                 { nameof(WorkTimeForm.Ds), dialog },
@@ -125,7 +125,7 @@ TextProperty="@nameof(WorkTimeDto.name)">
                 { nameof(WorkTimeForm.EndDate), args.End },
                 { nameof(WorkTimeForm.Activity), activity },
                 { nameof(WorkTimeForm.WorkOrder), workOrder }
-                });
+                    });
     }
 
     private async Task LoadWorkTimes()
