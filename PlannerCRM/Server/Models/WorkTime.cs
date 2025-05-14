@@ -7,7 +7,7 @@ public partial class WorkTime
 {
     public Guid Id { get; set; }
 
-    public DateTime CreationDate { get; set; }
+    public DateOnly CreationDate { get; set; }
 
     public int Hours { get; set; }
 
