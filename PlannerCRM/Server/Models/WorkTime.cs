@@ -17,6 +17,8 @@ public partial class WorkTime
 
     public Guid FkIdFirmClient { get; set; }
 
+    public Guid FkIdEmployee { get; set; }
+
     public virtual ICollection<ActivitiesWorkTime> ActivitiesWorkTimes { get; set; } = new List<ActivitiesWorkTime>();
 
     public virtual ICollection<EmployeeWorkTime> EmployeeWorkTimes { get; set; } = new List<EmployeeWorkTime>();
