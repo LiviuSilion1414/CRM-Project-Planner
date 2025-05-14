@@ -1,6 +1,10 @@
-﻿namespace PlannerCRM.Client.Services;
+﻿using PlannerCRM.Shared.Dtos;
+using PlannerCRM.Shared.Services;
+using System.Net.Http.Json;
 
-public class FetchService(LocalStorageService localStorage, HttpClient http)
+namespace PlannerCRM.Client.Services;
+
+public partial class FetchService(LocalStorageService localStorage, HttpClient http)
 {
     private readonly HttpClient _http = http;
     private readonly LocalStorageService _localStorage = localStorage;

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Newtonsoft.Json.Linq;
+using PlannerCRM.Shared.Dtos;
+using System.Net;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
-namespace PlannerCRM.Client.Services;
+
+namespace PlannerCRM.Shared.Services;
 
 public class AuthService(HttpClient http, LocalStorageService localStorage) : AuthenticationStateProvider
 {

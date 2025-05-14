@@ -1,8 +1,7 @@
 ﻿using Microsoft.JSInterop;
-using PlannerCRM.Shared.Dtos;
 using System.Text.Json;
 
-namespace PlannerCRM.Client.Services;
+namespace PlannerCRM.Shared.Services;
 
 public class LocalStorageService(IJSRuntime js)
 {
