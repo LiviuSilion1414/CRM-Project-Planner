@@ -11,7 +11,7 @@ public partial class FirmClient
 
     public string VatNumber { get; set; }
 
-    public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
+    public DateTime CreationDate { get; set; }
 
     public virtual ICollection<ActivitiesWorkTime> ActivitiesWorkTimes { get; set; } = new List<ActivitiesWorkTime>();
 
