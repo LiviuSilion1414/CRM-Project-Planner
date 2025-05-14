@@ -68,24 +68,24 @@ public partial class PlannerCrmContext : DbContext
             entity.HasIndex(e => e.Id, "IX_Activtities");
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-
-            entity.HasOne(d => d.FkIdFirmClientNavigation).WithMany(p => p.Activities)
-                .HasForeignKey(d => d.FkIdFirmClient)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Activities_FirmClients");
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.FkIdWorkOrderNavigation).WithMany(p => p.Activities)
                 .HasForeignKey(d => d.FkIdWorkOrder)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Activities_WorkOrders");
+                .HasConstraintName("FK_WorkOrders_Activities");
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.LastSeen).HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -173,6 +173,7 @@ public partial class PlannerCrmContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK_FirmClient");
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -207,12 +208,15 @@ public partial class PlannerCrmContext : DbContext
         modelBuilder.Entity<WorkOrder>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(2000);
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.FkIdFirmClientNavigation).WithMany(p => p.WorkOrders)
                 .HasForeignKey(d => d.FkIdFirmClient)
@@ -243,6 +247,7 @@ public partial class PlannerCrmContext : DbContext
         modelBuilder.Entity<WorkTime>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreationDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.FkIdActivityNavigation).WithMany(p => p.WorkTimes)
                 .HasForeignKey(d => d.FkIdActivity)
