@@ -71,7 +71,8 @@ AllowAlternatingRows="true">
                     searchQuery = query
                 };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, filter, ApiType.Post);
+            var result = await execute.Role_List(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
@@ -100,7 +101,10 @@ AllowAlternatingRows="true">
         {
             if ((await dialog.Confirm("Confirm this item removal?", "Delete role")).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_DELETE, new RoleFilterDto() { roleId = role.id }, ApiType.Post);
+                var filter = new RoleFilterDto() { roleId = role.id };
+
+                var result = await execute.Role_Delete(filter);
+
                 if (result.hasCompleted)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

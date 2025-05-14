@@ -65,9 +65,10 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete client", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_DELETE, 
-                                                      new FirmClientFilterDto() { firmClientId = SelectedClient.id }, 
-                                                      ApiType.Post);
+                var filter = new FirmClientFilterDto() { firmClientId = SelectedClient.id };
+
+                var result = await execute.FirmClient_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

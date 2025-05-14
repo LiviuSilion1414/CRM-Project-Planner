@@ -38,12 +38,12 @@ else
         else
         {
             <Clients_MasterDetail Clients="_clients"
-                                  OnSearch="LoadData"
-                                  OnReset="ResetData"
-                                  OnAddClient="OnAdd"
-                                  OnEditClient="OnEdit"
-                                  OnDeleteClient="OnDelete"
-                                  OnWorkOrderOverview="OnWorkOrderSelect" />
+            OnSearch="LoadData"
+            OnReset="ResetData"
+            OnAddClient="OnAdd"
+            OnEditClient="OnEdit"
+            OnDeleteClient="OnDelete"
+            OnWorkOrderOverview="OnWorkOrderSelect" />
         }
     </RadzenCard>
 }
@@ -84,11 +84,12 @@ else
             fetch.IsBusy = true;
 
             var filter = new FirmClientFilterDto
-                {
-                    searchQuery = query
-                };
+            {
+                searchQuery = query
+            };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, filter, ApiType.Post);
+            var result = await execute.FirmClient_List(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
@@ -141,9 +142,10 @@ else
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete client", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_DELETE,
-                                                      new FirmClientFilterDto() { firmClientId = client.id },
-                                                      ApiType.Post);
+                var filter = new FirmClientFilterDto() { firmClientId = client.id };
+
+                var result = await execute.FirmClient_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

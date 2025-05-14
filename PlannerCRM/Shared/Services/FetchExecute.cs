@@ -39,9 +39,9 @@ public partial class FetchExecute(FetchService fetch)
         return await _fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_SEARCH, filterDto, ApiType.Post);
     }
 
-    public async Task<ResultDto> Activity_AssignActivity(ActivityDto dto)
+    public async Task<ResultDto> Activity_AssignActivity(ActivityFilterDto filterDto)
     {
-        return await _fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_ASSIGN_ACTIVITY, dto, ApiType.Post);
+        return await _fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_ASSIGN_ACTIVITY, filterDto, ApiType.Post);
     }
 
     public async Task<ResultDto> Activity_RemoveAssignedEmployee(ActivityFilterDto filterDto)
@@ -93,9 +93,9 @@ public partial class FetchExecute(FetchService fetch)
         return await _fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_LIST, filterDto, ApiType.Post);
     }
 
-    public async Task<ResultDto> Employee_UpdateRole(EmployeeDto dto)
+    public async Task<ResultDto> Employee_UpdateRole(EmployeeFilterDto filterDto)
     {
-        return await _fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE, dto, ApiType.Put);
+        return await _fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE, filterDto, ApiType.Put);
     }
 
     public async Task<ResultDto> Employee_Search(EmployeeFilterDto filterDto)

@@ -38,13 +38,13 @@ else
         else
         {
             <WorkOrders_MasterDetail Clients="_clients"
-                                     WorkOrders="_workOrders"
-                                     OnSearch="LoadData"
-                                     OnReset="ResetData"
-                                     OnActivityOverview="OnSelectActivity"
-                                     OnAddWorkOrder="OnAdd"
-                                     OnEditWorkOrder="OnEdit"
-                                     OnDeleteWorkOrder="OnDelete">
+            WorkOrders="_workOrders"
+            OnSearch="LoadData"
+            OnReset="ResetData"
+            OnActivityOverview="OnSelectActivity"
+            OnAddWorkOrder="OnAdd"
+            OnEditWorkOrder="OnEdit"
+            OnDeleteWorkOrder="OnDelete">
             </WorkOrders_MasterDetail>
         }
     </RadzenCard>
@@ -75,7 +75,8 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
@@ -99,7 +100,8 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, filter, ApiType.Post);
+            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
@@ -152,9 +154,10 @@ else
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_DELETE,
-                                                      new WorkOrderFilterDto() { workOrderId = workOrder.id },
-                                                      ApiType.Post);
+                var filter = new WorkOrderFilterDto() { workOrderId = workOrder.id };
+
+                var result = await execute.WorkOrder_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

@@ -78,14 +78,15 @@
         Model.fkIdActivity = Activity.id;
         //Model.fkid = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
     }
-     
+
     private async Task OnSubmit()
     {
         try
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKTIME_CONTROLLER, ApiUrl.WORKTIME_INSERT, Model, ApiType.Post);
+            var result = await execute.WorkTime_Insert(Model);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

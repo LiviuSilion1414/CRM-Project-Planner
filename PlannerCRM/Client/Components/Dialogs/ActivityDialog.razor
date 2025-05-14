@@ -89,15 +89,15 @@
 
     private async Task OnEdit()
     {
-    //     await dialog.OpenAsync<ActivityForm>("Edit activity",
-    //     new Dictionary<string, object>()
-    //                 {
-    //             { nameof(ActivityForm.Model), SelectedActivity },
-    //             { nameof(ActivityForm.IsInsert), false },
-    //             { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
-    //             { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-    //                 }
-    // );
+        //     await dialog.OpenAsync<ActivityForm>("Edit activity",
+        //     new Dictionary<string, object>()
+        //                 {
+        //             { nameof(ActivityForm.Model), SelectedActivity },
+        //             { nameof(ActivityForm.IsInsert), false },
+        //             { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
+        //             { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
+        //                 }
+        // );
     }
 
     private async Task OnDelete()
@@ -106,9 +106,10 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE,
-                                                  new ActivityFilterDto() { activityId = SelectedActivity.id },
-                                                  ApiType.Post);
+                var filter = new ActivityFilterDto() { activityId = SelectedActivity.id };
+
+                var result = await execute.Activity_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

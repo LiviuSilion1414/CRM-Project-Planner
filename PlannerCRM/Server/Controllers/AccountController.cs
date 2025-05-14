@@ -67,7 +67,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
 
             var tokenAsString = tokenHandler.WriteToken(token);
 
-            foundEmployee.LastSeen = DateOnly.FromDateTime(DateTime.UtcNow);
+            foundEmployee.LastSeen = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 

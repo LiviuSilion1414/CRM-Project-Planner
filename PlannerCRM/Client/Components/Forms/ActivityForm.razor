@@ -9,15 +9,15 @@
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDropDown TValue="Guid?"
-                                    Data="@_workOrders"
-                                    AllowFiltering="true"
-                                    Placeholder="Select workOrder"
-                                    AllowClear="true"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                    TextProperty="@nameof(WorkOrderDto.name)"
-                                    ValueProperty="@nameof(WorkOrderDto.id)"
-                                    @bind-Value="@Model.fkIdWorkOrder"
-                                    Change="@((object? guid) => SelectWorkOrder((Guid)guid))" />
+                    Data="@_workOrders"
+                    AllowFiltering="true"
+                    Placeholder="Select workOrder"
+                    AllowClear="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    TextProperty="@nameof(WorkOrderDto.name)"
+                    ValueProperty="@nameof(WorkOrderDto.id)"
+                    @bind-Value="@Model.fkIdWorkOrder"
+                    Change="@((object? guid) => SelectWorkOrder((Guid)guid))" />
                     <ValidationMessage For="@(() => Model.fkIdWorkOrder)" />
                 </RadzenColumn>
             </RadzenRow>
@@ -68,19 +68,19 @@
                 <RadzenRow>
                     <RadzenColumn>
                         <RadzenDropDown TValue="Guid?"
-                                        Placeholder="Assign employee"
-                                        Data="@_employees"
-                                        AllowFiltering="true"
-                                        AllowClear="true"
-                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                        ValueProperty="@nameof(EmployeeDto.id)"
-                                        TextProperty="@nameof(EmployeeDto.name)"
-                                        Change="@AssignEmployee"
-                                        @bind-Value="@employeeId" />
+                        Placeholder="Assign employee"
+                        Data="@_employees"
+                        AllowFiltering="true"
+                        AllowClear="true"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        ValueProperty="@nameof(EmployeeDto.id)"
+                        TextProperty="@nameof(EmployeeDto.name)"
+                        Change="@AssignEmployee"
+                        @bind-Value="@employeeId" />
                     </RadzenColumn>
                     <RadzenColumn>
                         <RadzenDataGrid TItem="@EmployeeDto"
-                                        Data="@_employees">
+                        Data="@_employees">
                             <Columns>
                                 <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" />
                                 <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" />
@@ -144,7 +144,8 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
+            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
@@ -163,7 +164,8 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_LIST, new EmployeeFilterDto(), ApiType.Post);
+            var result = await execute.Employee_List(new EmployeeFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
@@ -194,12 +196,12 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_INSERT, Model, ApiType.Post);
+                    result = await execute.Activity_Insert(Model);
                 }
                 else
                 {
                     // Model.fkIdWorkOrderNavigation =
-                    result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_UPDATE, Model, ApiType.Put);
+                    result = await execute.Activity_Update(Model);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
@@ -227,8 +229,10 @@
     {
         try
         {
+            var filter = new ActivityFilterDto() { activityId = Model.id, employeeId = (Guid)employeeId };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_ASSIGN_ACTIVITY, new ActivityFilterDto() { activityId = Model.id, employeeId = (Guid)employeeId }, ApiType.Post);
+            var result = await execute.Activity_AssignActivity(filter);
+
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -245,8 +249,10 @@
     {
         try
         {
+            var filter = new ActivityFilterDto() { activityId = Model.id, employeeId = (Guid)employeeId };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_REMOVE_ASSIGNED_EMPLOYEE, new ActivityFilterDto() { activityId = Model.id, employeeId = employeeId }, ApiType.Post);
+            var result = await execute.Activity_RemoveAssignedEmployee(filter);
+
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

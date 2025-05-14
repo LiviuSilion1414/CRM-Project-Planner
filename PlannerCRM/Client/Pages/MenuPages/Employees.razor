@@ -41,14 +41,14 @@ else
                     <RadzenColumn>
                         <RadzenFormField Text="Role" AllowFloatingLabel="false">
                             <RadzenDropDown TValue="Guid?"
-                                            class="form-control" Style="min-width: 20vw;"
-                                            Data="_roles"
-                                            AllowFiltering="true"
-                                            AllowClear="true"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            TextProperty="@nameof(RoleDto.name)"
-                                            ValueProperty="@nameof(RoleDto.id)"
-                                            @bind-Value="@roleId" />
+                            class="form-control" Style="min-width: 20vw;"
+                            Data="_roles"
+                            AllowFiltering="true"
+                            AllowClear="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            TextProperty="@nameof(RoleDto.name)"
+                            ValueProperty="@nameof(RoleDto.id)"
+                            @bind-Value="@roleId" />
                         </RadzenFormField>
                     </RadzenColumn>
                     <RadzenColumn>
@@ -64,10 +64,10 @@ else
             </RadzenCard>
 
             <RadzenDataGrid Data="@_employees"
-                            TItem="@EmployeeDto"
-                            AllowSorting="true"
-                            AllowPaging="true"
-                            AllowFiltering="true">
+            TItem="@EmployeeDto"
+            AllowSorting="true"
+            AllowPaging="true"
+            AllowFiltering="true">
                 <HeaderTemplate>
                     <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
                 </HeaderTemplate>
@@ -133,7 +133,8 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, new RoleFilterDto(), ApiType.Post);
+            var result = await execute.Role_List(new RoleFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
@@ -158,7 +159,8 @@ else
                         roleId = roleId ?? Guid.Empty
                     };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_LIST, filter, ApiType.Post);
+            var result = await execute.Employee_List(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
@@ -203,9 +205,10 @@ else
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete employee", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_DELETE,
-                                          new EmployeeFilterDto() { employeeId = employee.id },
-                                          ApiType.Post);
+                var filter = new EmployeeFilterDto() { employeeId = employee.id };
+
+                var result = await execute.Employee_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

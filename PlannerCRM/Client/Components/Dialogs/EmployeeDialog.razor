@@ -61,9 +61,10 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_GET,
-                                                  new EmployeeFilterDto() { employeeId = SelectedEmployee.id },
-                                                  ApiType.Post);
+            var filter = new EmployeeFilterDto() { employeeId = SelectedEmployee.id };
+
+            var result = await execute.Employee_Get(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 SelectedEmployee = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
@@ -82,9 +83,10 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete employee", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_DELETE, 
-                                                      new EmployeeFilterDto() { employeeId = SelectedEmployee.id }, 
-                                                      ApiType.Post);
+                var filter = new EmployeeFilterDto() { employeeId = SelectedEmployee.id };
+
+                var result = await execute.Employee_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
-using System.Text.Json;
+using PlannerCRM.Shared.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -13,6 +13,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<FetchService>();
+builder.Services.AddScoped<FetchExecute>();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();

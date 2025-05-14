@@ -198,9 +198,8 @@
             {
                 if (!Model.activities.Contains(activityModel))
                 {
-                    var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_INSERT,
-                                                          activityModel,
-                                                          ApiType.Post);
+                    var result = await execute.Activity_Insert(activityModel);
+
                     if (result.hasCompleted && result.messageType == MessageType.Success)
                     {
                         notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -227,9 +226,10 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE,
-                                                      new ActivityFilterDto() { activityId = activity.id },
-                                                      ApiType.Post);
+                var filter = new ActivityFilterDto() { activityId = activity.id };
+
+                var result = await execute.Activity_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -253,7 +253,8 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
@@ -272,12 +273,10 @@
         {
             fetch.IsBusy = true;
 
-            var filter = new WorkOrderFilterDto
-                {
-                    workOrderId = Model.id
-                };
+            var filter = new WorkOrderFilterDto { workOrderId = Model.id };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_GET, filter, ApiType.Post);
+            var result = await execute.WorkOrder_Get(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 Model = JsonSerializer.Deserialize<WorkOrderDto>(result.data.ToString());
@@ -321,13 +320,13 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_INSERT, Model, ApiType.Post);
+                    result = await execute.WorkOrder_Insert(Model);
                 }
                 else
                 {
                     activityModel.fkIdWorkOrder = Model.id;
 
-                    result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_UPDATE, Model, ApiType.Put);
+                    result = await execute.WorkOrder_Update(Model);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)

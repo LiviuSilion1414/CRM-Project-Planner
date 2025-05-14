@@ -72,9 +72,10 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_GET, 
-                                                  new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id }, 
-                                                  ApiType.Post);
+            var filter = new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id };
+
+            var result = await execute.WorkOrder_Get(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 SelectedWorkOrder = JsonSerializer.Deserialize<WorkOrderDto>(result.data.ToString());
@@ -93,9 +94,10 @@
         {
             if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", null)).Value)
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_DELETE,
-                                                      new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id }, 
-                                                      ApiType.Put);
+                var filter = new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id };
+
+                var result = await execute.WorkOrder_Delete(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

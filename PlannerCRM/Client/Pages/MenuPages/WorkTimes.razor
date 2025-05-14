@@ -6,40 +6,40 @@
         <RadzenColumn>
             <RadzenFormField Text="Client" AllowFloatingLabel="false">
                 <RadzenDropDown TValue="Guid?"
-                                class="form-control" Style="min-width: 20vw;"
-                                Data="_clients"
-                                AllowFiltering="true"
-                                AllowClear="true"
-                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                TextProperty="@nameof(FirmClientDto.name)"
-                                ValueProperty="@nameof(FirmClientDto.id)"
-                                @bind-Value="@clientId" />
+                class="form-control" Style="min-width: 20vw;"
+                Data="_clients"
+                AllowFiltering="true"
+                AllowClear="true"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                TextProperty="@nameof(FirmClientDto.name)"
+                ValueProperty="@nameof(FirmClientDto.id)"
+                @bind-Value="@clientId" />
             </RadzenFormField>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
                 <RadzenDropDown TValue="Guid?"
-                                class="form-control" Style="min-width: 20vw;"
-                                Data="@_workOrders.Where(x => x.fkIdFirmClient == clientId).ToList()"
-                                AllowFiltering="true"
-                                AllowClear="true"
-                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                TextProperty="@nameof(WorkOrderDto.name)"
-                                ValueProperty="@nameof(WorkOrderDto.id)"
-                                @bind-Value="@workOrderId" />
+                class="form-control" Style="min-width: 20vw;"
+                Data="@_workOrders.Where(x => x.fkIdFirmClient == clientId).ToList()"
+                AllowFiltering="true"
+                AllowClear="true"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                TextProperty="@nameof(WorkOrderDto.name)"
+                ValueProperty="@nameof(WorkOrderDto.id)"
+                @bind-Value="@workOrderId" />
             </RadzenFormField>
         </RadzenColumn>
         <RadzenColumn>
             <RadzenFormField Text="Activity" AllowFloatingLabel="false">
                 <RadzenDropDown TValue="Guid?"
-                                class="form-control" Style="min-width: 20vw;"
-                                Data="@_activities.Where(x => x.fkIdWorkOrder == workOrderId).ToList()"
-                                AllowFiltering="true"
-                                AllowClear="true"
-                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                TextProperty="@nameof(ActivityDto.name)"
-                                ValueProperty="@nameof(ActivityDto.id)"
-                                @bind-Value="@activityId" />
+                class="form-control" Style="min-width: 20vw;"
+                Data="@_activities.Where(x => x.fkIdWorkOrder == workOrderId).ToList()"
+                AllowFiltering="true"
+                AllowClear="true"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                TextProperty="@nameof(ActivityDto.name)"
+                ValueProperty="@nameof(ActivityDto.id)"
+                @bind-Value="@activityId" />
             </RadzenFormField>
         </RadzenColumn>
         <RadzenColumn>
@@ -134,14 +134,15 @@
         {
             fetch.IsBusy = true;
 
-            WorkTimeFilterDto searchFilter = new WorkTimeFilterDto()
+            WorkTimeFilterDto filter = new WorkTimeFilterDto()
                 {
                     employeeId = (Guid)currentUserId,
                     activityId = (Guid)activityId,
                     workOrderId = (Guid)workOrderId,
                 };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKTIME_CONTROLLER, ApiUrl.WORKTIME_FIND_ASSOCIATED_WORKTIMES_BY_EMPLOYEE_ID, searchFilter, ApiType.Post);
+            var result = await execute.WorkTime_FindAssociatedWorkTimesByEmployeeId(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workTimes = JsonSerializer.Deserialize<List<WorkTimeDto>>(result.data.ToString());
@@ -160,7 +161,8 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, new FirmClientFilterDto(), ApiType.Post);
+            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
@@ -179,7 +181,8 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, new WorkOrderFilterDto(), ApiType.Post);
+            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
@@ -205,7 +208,8 @@
                     searchQuery = query
                 };
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, filter, ApiType.Post);
+            var result = await execute.Activity_List(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());

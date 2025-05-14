@@ -62,20 +62,20 @@
                             <RadzenColumn Size="8">
                                 <RadzenLabel>Assign Roles</RadzenLabel>
                                 <RadzenDropDown TValue="EmployeesRoleDto"
-                                                Data="@roles"
-                                                AllowFiltering="true"
-                                                TextProperty="@nameof(EmployeesRoleDto.roleName)"
-                                                Change="@AssignRole"
-                                                @bind-Value="@assignedRole"
-                                                Style="width: 40vw;" />
+                                Data="@roles"
+                                AllowFiltering="true"
+                                TextProperty="@nameof(EmployeesRoleDto.roleName)"
+                                Change="@AssignRole"
+                                @bind-Value="@assignedRole"
+                                Style="width: 40vw;" />
                             </RadzenColumn>
                             <RadzenColumn Size="4">
                                 <RadzenDataGrid @ref="grid"
-                                                TItem="EmployeesRoleDto"
-                                                Data="@Model.employeesRoles"
-                                                PageSize="5"
-                                                AllowPaging="true"
-                                                AllowSorting="true">
+                                TItem="EmployeesRoleDto"
+                                Data="@Model.employeesRoles"
+                                PageSize="5"
+                                AllowPaging="true"
+                                AllowSorting="true">
                                     <Columns>
                                         <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
                                         <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
@@ -146,9 +146,10 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_GET,
-                                                  new EmployeeFilterDto() { employeeId = Model.id },
-                                                  ApiType.Post);
+            var filter = new EmployeeFilterDto() { employeeId = Model.id };
+
+            var result = await execute.Employee_Get(filter);
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 Model = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
@@ -167,9 +168,10 @@
         {
             if (!Model.employeesRoles.Contains(assignedRole))
             {
-                var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE,
-                                                      new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.fkIdRole, employeeId = Model.id },
-                                                      ApiType.Put);
+                var filter = new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.fkIdRole, employeeId = Model.id };
+
+                var result = await execute.Employee_UpdateRole(filter);
+
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -193,9 +195,10 @@
     {
         try
         {
-            var result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE,
-                                                  new EmployeeFilterDto() { isRemoveRole = true, roleId = roleId, employeeId = Model.id },
-                                                  ApiType.Put);
+            var filter = new EmployeeFilterDto() { isRemoveRole = true, roleId = roleId, employeeId = Model.id };
+
+            var result = await execute.Employee_UpdateRole(filter);
+
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -220,7 +223,8 @@
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_LIST, new RoleFilterDto(), ApiType.Post);
+            var result = await execute.Role_List(new RoleFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
@@ -242,11 +246,11 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_INSERT, Model, ApiType.Post);
+                    result = await execute.Employee_Insert(Model);
                 }
                 else
                 {
-                    result = await fetch.ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE, Model, ApiType.Put);
+                    result = await execute.Employee_Update(Model);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)

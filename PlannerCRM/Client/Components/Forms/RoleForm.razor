@@ -52,7 +52,8 @@
     {
         try
         {
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_INSERT, Model, ApiType.Post);
+            var result = await execute.Role_Insert(Model);
+            
             if (result.hasCompleted)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -70,7 +71,8 @@
     {
         try
         {
-            var result = await fetch.ExecuteAsync(ApiUrl.ROLE_CONTROLLER, ApiUrl.ROLE_UPDATE, Model, ApiType.Put);
+            var result = await execute.Role_Update(Model);
+
             if (result.hasCompleted)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

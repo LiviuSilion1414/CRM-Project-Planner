@@ -39,7 +39,8 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, new ActivityFilterDto(), ApiType.Post);
+            var result = await execute.Activity_List(new ActivityFilterDto());
+
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
