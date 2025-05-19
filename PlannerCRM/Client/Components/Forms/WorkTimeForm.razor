@@ -23,6 +23,15 @@
         <RadzenFieldset Text="Work time">
             <RadzenRow class="mt-3">
                 <RadzenColumn>
+                    <RadzenLabel Text="Date" />
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenDatePicker @bind-Value=@Model.creationDate DateFormat="dd/MM/yyyy"/>
+                    <ValidationMessage For="@(() => Model.creationDate)" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow class="mt-3">
+                <RadzenColumn>
                     <RadzenLabel Text="Hours" />
                 </RadzenColumn>
                 <RadzenColumn>
@@ -47,11 +56,11 @@
     [Parameter] public ActivityDto Activity { get; set; }
     [Parameter] public WorkOrderDto WorkOrder { get; set; }
     [Parameter] public DateTime? StartDate { get; set; }
-    [Parameter] public DateTime? EndDate { get; set; }
     [Parameter] public bool IsInsert { get; set; }
     [Parameter] public WorkTimeDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public DialogService Ds { get; set; }
+    [Parameter] public Guid CurrentUserId { get; set; }
 
     EditContext _context;
 
@@ -62,20 +71,13 @@
             Model = new();
         }
 
-        if (StartDate != null && EndDate != null)
-        {
-            // Model.startDate = (DateTime)StartDate;
-            // Model.endDate = (DateTime)EndDate;
-        }
-        else
-        {
-            // Model.startDate = DateTime.Now;
-            // Model.endDate = DateTime.Now;
-        }
+        Model.creationDate = StartDate ?? DateTime.Now;
 
         _context = new(Model);
         Model.fkIdWorkOrder = WorkOrder.id;
         Model.fkIdActivity = Activity.id;
+        Model.fkIdEmployee = CurrentUserId;
+        Model.fkIdFirmClient = Activity.fkIdFirmClient;
         //Model.fkid = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
     }
 
@@ -87,11 +89,13 @@
 
             var result = await execute.WorkTime_Insert(Model);
 
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            if (result.hasCompleted && result.messageType == MessageType.Success)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
             }
             fetch.IsBusy = false;
+            Close();
+            await OnReloadList.InvokeAsync();
         }
         catch
         {

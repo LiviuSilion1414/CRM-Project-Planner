@@ -8,9 +8,11 @@ public partial class WorkTimeDto
     public Guid? id { get; set; }
     public DateTime? creationDate { get; set; }
     public int? hours { get; set; }
+    public string? hoursString => hours != null ? hours.ToString() : "not set";
     public Guid? fkIdActivity { get; set; }
     public Guid? fkIdWorkOrder { get; set; }
     public Guid? fkIdFirmClient { get; set; }
+    public Guid? fkIdEmployee { get; set; }
     public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
     public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
     public ActivityDto? fkIdActivityNavigation { get; set; }

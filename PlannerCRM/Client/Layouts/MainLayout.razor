@@ -25,9 +25,9 @@
                         <RadzenLink Path="notifications">
                             <RadzenIcon Style="font-size: xx-large;" Icon="notifications"></RadzenIcon>
                         </RadzenLink>
-                        <RadzenProfileMenu Click="HandleClick" ShowIcon="true">
+                        <RadzenProfileMenu Click="HandleClick">
                             <Template>
-                                <RadzenText TextStyle="TextStyle.H6">HI, <b>@context.User.Identity.Name.ToUpper()!</b></RadzenText>
+                                <RadzenText TextStyle="TextStyle.H6">Hi, <b>@context.User.Identity.Name!</b></RadzenText>
                             </Template>
                             <ChildContent>
                                 <RadzenProfileMenuItem Text="Profile" Icon="person" Path="/profile"></RadzenProfileMenuItem>

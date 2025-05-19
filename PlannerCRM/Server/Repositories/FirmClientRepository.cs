@@ -12,6 +12,7 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
         try
         {
             var model = _mapper.Map<FirmClient>(dto);
+            model.CreationDate = DateTime.Now;
 
             await _context.FirmClients.AddAsync(model);
 

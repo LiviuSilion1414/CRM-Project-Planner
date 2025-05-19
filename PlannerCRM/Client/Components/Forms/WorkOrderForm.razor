@@ -50,13 +50,12 @@
                     Data="_clients"
                     AllowFiltering="true"
                     Placeholder="Select client"
-                    AllowClear="true"
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                     TextProperty="@nameof(FirmClientDto.name)"
                     ValueProperty="@nameof(FirmClientDto.id)"
                     @bind-Value="@Model.fkIdFirmClient"
                     Change="@((object? guid) => SelectClient((Guid)guid))" />
-                    @if (Model.fkIdFirmClientNavigation == null || (Guid)Model.fkIdFirmClient == Guid.Empty || (Guid)Model.fkIdFirmClient == Guid.Empty)
+                    @if (Model.fkIdFirmClient == null || Model.fkIdFirmClientNavigation == null)
                     {
                         <RadzenRow>
                             <RadzenColumn>
@@ -291,22 +290,14 @@
 
     private void SelectClient(object? clientId)
     {
-        if (clientId != null)
+        if (clientId != null && (Guid)clientId != Guid.Empty)
         {
-            if ((Guid)clientId != Guid.Empty)
-            {
-                Model.fkIdFirmClientNavigation = _clients.SingleOrDefault(x => x.id == (Guid)clientId) ?? new();
-                Model.fkIdFirmClient = _clients.SingleOrDefault(x => x.id == (Guid)clientId).id;
-            }
-            else
-            {
-                Model.fkIdFirmClientNavigation = null;
-                Model.fkIdFirmClientNavigation = null;
-            }
+            Model.fkIdFirmClientNavigation = _clients.SingleOrDefault(x => x.id == (Guid)clientId) ?? new();
+            Model.fkIdFirmClient = _clients.SingleOrDefault(x => x.id == (Guid)clientId).id;
         }
         else
         {
-            Model.fkIdFirmClientNavigation = null;
+            Model.fkIdFirmClient = null;
             Model.fkIdFirmClientNavigation = null;
         }
     }

@@ -95,6 +95,9 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
+                                             .Where(x => (filter.employeeId == null || x.FkIdEmployee == filter.employeeId) &&
+                                                         (filter.activityId == null || x.FkIdActivity == filter.activityId) &&
+                                                         (filter.workOrderId == null || x.FkIdWorkOrder == filter.workOrderId))
                                              .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);
@@ -114,7 +117,9 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .Include(x => x.EmployeeWorkTimes)
                                              .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
-                                             .Where(x => x.CreationDate >= filter.startDate && x.EmployeeWorkTimes.Any(y => y.FkIdEmployee == filter.employeeId))
+                                             .Where(x => (filter.employeeId == null || x.FkIdEmployee == filter.employeeId) &&
+                                                         (filter.activityId == null || x.FkIdActivity == filter.activityId) &&
+                                                         (filter.workOrderId == null || x.FkIdWorkOrder == filter.workOrderId))
                                              .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);

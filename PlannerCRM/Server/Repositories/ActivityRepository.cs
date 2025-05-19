@@ -13,26 +13,15 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<Activity>(dto);
 
-            var existingWorkOrder = await _context.WorkOrders.FindAsync(model.FkIdWorkOrderNavigation.Id);
-            if (existingWorkOrder == null)
-            {
-                return new ResultDto()
-                {
-                    id = null,
-                    data = null,
-                    hasCompleted = false,
-                    message = "Operation failed",
-                    messageType = MessageType.Error,
-                    statusCode = HttpStatusCode.BadRequest
-                };
-            }
+            model.CreationDate = DateTime.Now;
 
-            model.FkIdWorkOrderNavigation = existingWorkOrder;
+            model.FkIdWorkOrderNavigation = await _context.WorkOrders.FindAsync(model.FkIdWorkOrderNavigation.Id);
 
             var workOrderActivity = new WorkOrdersActivity
             {
                 FkIdActivityNavigation = model,
-                FkIdWorkOrder = model.FkIdWorkOrderNavigation.Id
+                FkIdWorkOrder = model.FkIdWorkOrderNavigation.Id,
+                FkIdFirmClient = model.FkIdWorkOrderNavigation.FkIdFirmClient
             };
 
             await _context.Activities.AddAsync(model);

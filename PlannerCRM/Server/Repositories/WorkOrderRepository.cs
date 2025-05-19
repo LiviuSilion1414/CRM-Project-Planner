@@ -12,8 +12,9 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
         try
         {
             var model = _mapper.Map<WorkOrder>(dto);
-            model.FkIdFirmClientNavigation = _mapper.Map<FirmClient>(dto.fkIdFirmClientNavigation);
-            _context.Attach(model.FkIdFirmClientNavigation);
+
+            model.FkIdFirmClientNavigation = await _context.FirmClients.FindAsync(dto.fkIdFirmClient);
+            model.CreationDate = DateTime.Now;
 
             await _context.WorkOrders.AddAsync(model);
 
@@ -38,13 +39,11 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingClient = await _context.FirmClients.FindAsync(dto.id);
+            var workOrder = await _context.WorkOrders
+                                        .Include(w => w.Activities)
+                                        .SingleAsync(w => w.Id == dto.id);
 
-            var model = _mapper.Map<WorkOrder>(dto);
-
-            model.FkIdFirmClientNavigation = existingClient;
-
-            _context.Update(model);
+            workOrder = _mapper.Map<WorkOrder>(dto);
 
             await _context.SaveChangesAsync();
         } catch
@@ -98,7 +97,7 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
                                            .OrderBy(w => w.Id)
                                            .Include(w => w.FkIdFirmClientNavigation)
                                            .Include(w => w.Activities)
-                                           .Where(x => (filter.firmClientId == Guid.Empty || filter.firmClientId == x.FkIdFirmClient) &&
+                                           .Where(x => (filter.firmClientId == null || filter.firmClientId == x.FkIdFirmClient) &&
                                                        (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                            .ToListAsync();
 

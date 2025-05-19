@@ -61,26 +61,26 @@
                         <RadzenRow class="mt-3">
                             <RadzenColumn Size="8">
                                 <RadzenLabel>Assign Roles</RadzenLabel>
-                                <RadzenDropDown TValue="EmployeesRoleDto"
-                                Data="@roles"
-                                AllowFiltering="true"
-                                TextProperty="@nameof(EmployeesRoleDto.roleName)"
-                                Change="@AssignRole"
-                                @bind-Value="@assignedRole"
-                                Style="width: 40vw;" />
+                                <RadzenDropDown TValue="RoleDto"
+                                                Data="@roles"
+                                                AllowFiltering="true"
+                                                TextProperty="@nameof(RoleDto.name)"
+                                                Change="@AssignRole"
+                                                @bind-Value="@assignedRole"
+                                                Style="width: 40vw;" />
                             </RadzenColumn>
                             <RadzenColumn Size="4">
                                 <RadzenDataGrid @ref="grid"
-                                TItem="EmployeesRoleDto"
-                                Data="@Model.employeesRoles"
-                                PageSize="5"
-                                AllowPaging="true"
-                                AllowSorting="true">
+                                                TItem="EmployeesRoleDto"
+                                                Data="@Model.employeesRoles"
+                                                PageSize="5"
+                                                AllowPaging="true"
+                                                AllowSorting="true">
                                     <Columns>
                                         <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
                                         <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
                                             <Template Context="data">
-                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole((Guid)data.fkIdRole))"></RadzenButton>
+                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole((Guid)data.id))"></RadzenButton>
                                             </Template>
                                         </RadzenDataGridColumn>
                                     </Columns>
@@ -114,7 +114,7 @@
     EditContext _context;
     List<RoleDto> roles = new();
     RadzenDataGrid<EmployeesRoleDto> grid;
-    EmployeesRoleDto assignedRole = new();
+    RoleDto assignedRole = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -166,9 +166,9 @@
     {
         try
         {
-            if (!Model.employeesRoles.Contains(assignedRole))
+            if (!Model.employeesRoles.Select(x => x.fkIdRoleNavigation).Equals(assignedRole))
             {
-                var filter = new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.fkIdRole, employeeId = Model.id };
+                var filter = new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.id, employeeId = Model.id };
 
                 var result = await execute.Employee_UpdateRole(filter);
 

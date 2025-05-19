@@ -26,8 +26,8 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                                                                 numBytesRequested: 256 / 8));
 
                 model.PasswordHash = cryptedPwd;
-                model.LastSeen = DateTime.UtcNow;
-                model.CreationDate = DateTime.UtcNow;
+                model.LastSeen = DateTime.Now;
+                model.CreationDate = DateTime.Now;
 
                 await _context.Employees.AddAsync(model);
 

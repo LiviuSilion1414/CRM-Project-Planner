@@ -44,23 +44,23 @@
         </RadzenColumn>
         <RadzenColumn>
             <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
-            <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadActivities"></RadzenButton>
+            <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadWorkTimes"></RadzenButton>
         </RadzenColumn>
     </RadzenRow>
 </RadzenCard>
 
-@* <RadzenScheduler TItem="WorkTimeDto"
+<RadzenScheduler TItem="WorkTimeDto"
                  Style="height: 80vh;"
                  Data=@_workTimes
                  Culture="CultureInfo.InvariantCulture"
                  SlotSelect="@OnAdd"
                  SelectedIndex="1"
-                 StartProperty="@nameof(WorkTimeDto.)"
-                 EndProperty="@nameof(WorkTimeDto.endDate)"
-                 TextProperty="@nameof(WorkTimeDto.name)">
+                 StartProperty="@nameof(WorkTimeDto.creationDate)"
+                 EndProperty="@nameof(WorkTimeDto.creationDate)"
+                 TextProperty="@nameof(WorkTimeDto.hoursString)">
     <RadzenWeekView />
     <RadzenMonthView />
-</RadzenScheduler> *@
+</RadzenScheduler>
 
 @code
 {
@@ -77,11 +77,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        currentUserId = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
+
+        await LoadWorkTimes();
         await LoadClients();
         await LoadWorkOrders();
         await LoadActivities();
-
-        currentUserId = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
     }
 
     async Task ResetData()
@@ -122,9 +123,9 @@
                 { nameof(WorkTimeForm.IsInsert), true },
                 { nameof(WorkTimeForm.Ds), dialog },
                 { nameof(WorkTimeForm.StartDate), args.Start },
-                { nameof(WorkTimeForm.EndDate), args.End },
                 { nameof(WorkTimeForm.Activity), activity },
-                { nameof(WorkTimeForm.WorkOrder), workOrder }
+                { nameof(WorkTimeForm.WorkOrder), workOrder },
+                { nameof(WorkTimeForm.CurrentUserId), currentUserId }
                     });
     }
 
@@ -136,9 +137,9 @@
 
             WorkTimeFilterDto filter = new WorkTimeFilterDto()
                 {
-                    employeeId = (Guid)currentUserId,
-                    activityId = (Guid)activityId,
-                    workOrderId = (Guid)workOrderId,
+                    employeeId = currentUserId,
+                    activityId = activityId,
+                    workOrderId = workOrderId,
                 };
 
             var result = await execute.WorkTime_FindAssociatedWorkTimesByEmployeeId(filter);

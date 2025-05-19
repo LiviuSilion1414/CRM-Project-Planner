@@ -54,7 +54,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
                     new Claim(CustomClaimTypes.Guid, foundEmployee.Id.ToString()),
                     new Claim(CustomClaimTypes.IsAuthenticated, true.ToString()),
                 }),
-                Expires = DateTime.UtcNow.AddDays(30),
+                Expires = DateTime.Now.AddDays(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -67,7 +67,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
 
             var tokenAsString = tokenHandler.WriteToken(token);
 
-            foundEmployee.LastSeen = DateTime.UtcNow;
+            foundEmployee.LastSeen = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
