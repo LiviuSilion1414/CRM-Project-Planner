@@ -19,16 +19,6 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
             await _context.WorkOrders.AddAsync(model);
 
             await _context.SaveChangesAsync();
-
-            await _context.FirmClientsWorkOrders.AddAsync(
-                new FirmClientsWorkOrder
-                {
-                    FkIdFirmClient = model.FkIdFirmClient,
-                    FkIdWorkOrder = model.Id
-                }
-            );
-
-            await _context.SaveChangesAsync();
         } catch (Exception ex)
         {
             throw;
@@ -136,7 +126,6 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
                                                 .AsSplitQuery()
                                                 .Include(ac => ac.FkIdWorkOrderNavigation)
                                                 .Include(ac => ac.EmployeeActivities)
-                                                .Include(ac => ac.EmployeeWorkTimes)
                                                 .Where(ac => ac.FkIdWorkOrder == filter.id)
                 .ToListAsync();
 

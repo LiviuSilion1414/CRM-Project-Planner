@@ -20,24 +20,53 @@
 <RadzenDataGrid @ref="grid"
 TItem="RoleDto"
 Data="roles"
+EditMode="DataGridEditMode.Single"
 SelectionMode="DataGridSelectionMode.Single"
 AllowSorting="true"
 AllowAlternatingRows="true">
     <HeaderTemplate>
-        <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@(() => OnAddEdit(new RoleDto()))"></RadzenButton>
+        <RadzenButton Icon="add_circle_outline" 
+        ButtonStyle="ButtonStyle.Primary" 
+        Variant="Variant.Filled" 
+        Text="Add" 
+        Disabled="@(isEditRow is not null && !(bool)isEditRow)"
+        Click="@AddRow"></RadzenButton>
     </HeaderTemplate>
     <Columns>
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.id)" Title="Identifier" />
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role" />
-        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role">
             <Template Context="data">
-                <RadzenButton Variant="Variant.Filled" Icon="edit" ButtonStyle="ButtonStyle.Info" Click="@(() => OnAddEdit(data))"></RadzenButton>
+                @data.name
             </Template>
+            <EditTemplate Context="edit">
+                <RadzenTextBox @bind-Value="edit.name" />
+            </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Width="64px">
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.isRemoveable)" Title="Removeable">
             <Template Context="data">
-                <RadzenButton Variant="Variant.Filled" Icon="delete" ButtonStyle="ButtonStyle.Danger" Click="@(() => DeleteRole(data))" Disabled="!data.isRemoveable.Value"></RadzenButton>
+                @if (data.isRemoveable.HasValue || !data.isRemoveable.Value)
+                {
+                    <RadzenIcon Icon="dangerous" IconStyle="IconStyle.Danger"></RadzenIcon>
+                }
+                else
+                {
+                    <RadzenIcon Icon="check_circle" IconStyle="IconStyle.Success"></RadzenIcon>
+
+                }
             </Template>
+            <EditTemplate Context="edit">
+                <RadzenCheckBox @bind-Value="edit.isRemoveable" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="RoleDto" Width="192px">
+            <Template Context="data">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" />
+            </Template>
+            <EditTemplate Context="data">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelRow(data))" aria-label="Cancel" />
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" aria-label="Delete" />
+            </EditTemplate>
         </RadzenDataGridColumn>
     </Columns>
 </RadzenDataGrid>
@@ -48,6 +77,7 @@ AllowAlternatingRows="true">
     List<RoleDto> roles = new();
 
     string query = string.Empty;
+    bool? isEditRow= null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,9 +97,9 @@ AllowAlternatingRows="true">
             fetch.IsBusy = true;
 
             var filter = new RoleFilterDto
-                {
-                    searchQuery = query
-                };
+                    {
+                        searchQuery = query
+                    };
 
             var result = await execute.Role_List(filter);
 
@@ -85,21 +115,80 @@ AllowAlternatingRows="true">
         }
     }
 
-    private async Task OnAddEdit(RoleDto role)
+    void EditRow(RoleDto role)
     {
-        await dialog.OpenAsync<RoleForm>("Add/UpdateRole",
-            new Dictionary<string, object>()
-            {
-                { nameof(RoleForm.Model), role },
-                { nameof(RoleForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) }
-            });
+        isEditRow = true;
+        grid.EditRow(role);
     }
+
+    void CancelRow(RoleDto role)
+    {
+        isEditRow = null;
+        grid.CancelEditRow(role);
+    }
+
+    void AddRow()
+    {
+        isEditRow = false;
+        grid.InsertRow(new());
+    }
+
+    private async Task HandleRole(RoleDto model)
+    {
+        try
+        {
+            var result = new ResultDto();
+
+            if (isEditRow != null && (bool)isEditRow)
+            {
+                result = await execute.Role_Update(model);
+            }
+            if (isEditRow == null || !(bool)isEditRow)
+            {
+                result = await execute.Role_Insert(model);
+            }
+
+            if (result.hasCompleted)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await LoadData();
+            }
+            CancelRow(model);
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task OnAdd()
+    {
+        await dialog.OpenAsync("Add new role", ds =>
+            @<RoleForm IsInsert=true OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "30%",
+            Height = "40%"
+        });
+    }
+
+    private async Task OnEdit(RoleDto role)
+    {
+        await dialog.OpenAsync("Update role", ds =>
+            @<RoleForm Model="@role" IsInsert=false OnReloadList="LoadData" />,
+    new DialogOptions
+    {
+        Width = "30%",
+        Height = "40%"
+    });
+    }
+
 
     private async Task DeleteRole(RoleDto role)
     {
         try
         {
-            if ((await dialog.Confirm("Confirm this item removal?", "Delete role")).Value)
+            if ((await dialog.Confirm("Do you really want to remove this role?. This action cannot be reversed.", "Delete role")).Value)
             {
                 var filter = new RoleFilterDto() { roleId = role.id };
 

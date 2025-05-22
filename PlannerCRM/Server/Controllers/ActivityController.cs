@@ -14,7 +14,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
         try
         {
             return await _repo.Insert(dto);
-        } catch
+        } catch (Exception ex)
         {
             return new ResultDto()
             {

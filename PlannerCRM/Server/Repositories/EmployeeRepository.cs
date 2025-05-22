@@ -75,7 +75,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                     _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.roleId).FirstOrDefault());
                 } else
                 {
-                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = (Guid)filter.roleId, RoleName = filter.role.name, FkIdEmployee = (Guid)filter.employeeId });
+                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = (Guid)filter.roleId, FkIdEmployee = (Guid)filter.employeeId });
                 }
                 await _context.SaveChangesAsync();
             }
@@ -135,7 +135,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                           .Include(e => e.EmployeesRoles)
                                           .Include(e => e.EmployeeActivities)
                                           .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                      (filter.roleId == Guid.Empty || x.EmployeesRoles.Where(y => y.FkIdRole == filter.roleId).Any()))
+                                                      (filter.roleId == null || x.EmployeesRoles.Where(y => y.FkIdRole == filter.roleId).Any()))
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);

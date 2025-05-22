@@ -21,7 +21,7 @@ public partial class FetchExecute(FetchService fetch)
 
     public async Task<ResultDto> Activity_Delete(ActivityFilterDto filterDto)
     {
-        return await _fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_INSERT, filterDto, ApiType.Post);
+        return await _fetch.ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_DELETE, filterDto, ApiType.Post);
     }
 
     public async Task<ResultDto> Activity_Get(ActivityFilterDto filterDto)

@@ -18,7 +18,6 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
             {
                 var model = _mapper.Map<WorkTime>(dto);
 
-                model.FkIdWorkOrderNavigation = await _context.WorkOrders.FindAsync(dto.fkIdWorkOrder);
                 model.FkIdActivityNavigation = await _context.Activities.FindAsync(dto.fkIdActivity);
                 // model.employee = await _context.Employees.Where(x);
                 await _context.AddAsync(model);
@@ -72,8 +71,6 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
             var existingModel = await context.WorkTimes
                                              .AsNoTracking()
                                              .AsSplitQuery()
-                                             .Include(x => x.EmployeeWorkTimes)
-                                             .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
                                              .FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
 
@@ -92,12 +89,9 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .AsNoTracking()
                                              .AsSplitQuery()
                                              .Where(x => x.CreationDate >= filter.startDate)
-                                             .Include(x => x.EmployeeWorkTimes)
-                                             .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
                                              .Where(x => (filter.employeeId == null || x.FkIdEmployee == filter.employeeId) &&
-                                                         (filter.activityId == null || x.FkIdActivity == filter.activityId) &&
-                                                         (filter.workOrderId == null || x.FkIdWorkOrder == filter.workOrderId))
+                                                         (filter.activityId == null || x.FkIdActivity == filter.activityId))
                                              .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);
@@ -114,12 +108,9 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
             var existingModel = await context.WorkTimes
                                              .AsNoTracking()
                                              .AsSplitQuery()
-                                             .Include(x => x.EmployeeWorkTimes)
-                                             .Include(x => x.FkIdWorkOrderNavigation)
                                              .Include(x => x.FkIdActivityNavigation)
                                              .Where(x => (filter.employeeId == null || x.FkIdEmployee == filter.employeeId) &&
-                                                         (filter.activityId == null || x.FkIdActivity == filter.activityId) &&
-                                                         (filter.workOrderId == null || x.FkIdWorkOrder == filter.workOrderId))
+                                                         (filter.activityId == null || x.FkIdActivity == filter.activityId))
                                              .ToListAsync();
 
             return _mapper.Map<List<WorkTimeDto>>(existingModel);

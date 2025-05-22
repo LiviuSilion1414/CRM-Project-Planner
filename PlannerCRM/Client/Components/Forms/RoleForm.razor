@@ -45,6 +45,11 @@
 
     protected override void OnInitialized()
     {
+        if (IsInsert)
+        {
+            Model = new RoleDto();
+        }
+
         editContext = new(Model);
     }
 
