@@ -9,12 +9,8 @@ public partial class FirmClientDto
     public string? name { get; set; }
     public string? vatNumber { get; set; }
     public ICollection<ActivityDto>? activities { get; set; }
-    public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
-    public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
-    public ICollection<FirmClientsWorkOrderDto>? firmClientsWorkOrders { get; set; }
     public ICollection<WorkOrderDto>? workOrders { get; set; }
-    public ICollection<WorkOrdersActivityDto>? workOrdersActivities { get; set; }
 }
 
 public class FirmClientFilterDto : FilterDto

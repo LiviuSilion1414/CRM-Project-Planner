@@ -17,9 +17,7 @@ public partial class WorkOrderDto
     public Guid? fkIdFirmClient { get; set; }
     public ICollection<ActivityDto>? activities { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
-    public ICollection<FirmClientsWorkOrderDto>? firmClientsWorkOrders { get; set; }
     public FirmClientDto? fkIdFirmClientNavigation { get; set; }
-    public ICollection<WorkOrdersActivityDto>? workOrdersActivities { get; set; }
     public ICollection<WorkTimeDto>? workTimes { get; set; }
 }
 

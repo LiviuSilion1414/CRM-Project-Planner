@@ -13,6 +13,9 @@ public class AutoMapperProfile : Profile
         CreateMap<Employee, EmployeeDto>()
             .PreserveReferences().ReverseMap();
 
+        CreateMap<EmployeesRole, EmployeesRoleDto>()
+        .PreserveReferences().ReverseMap();
+
         CreateMap<FirmClient, FirmClientDto>()
             .PreserveReferences()
             .ReverseMap();

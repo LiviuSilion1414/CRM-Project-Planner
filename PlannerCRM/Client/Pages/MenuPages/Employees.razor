@@ -107,7 +107,7 @@ else
 
     EmployeeDto? _selectedEmployee = new EmployeeDto();
 
-    private string query = string.Empty;
+    private string? query = string.Empty;
     private Guid? roleId = Guid.Empty;
 
     private bool isInsert = false;
@@ -122,8 +122,8 @@ else
 
     async Task ResetData()
     {
-        query = string.Empty;
-        roleId = Guid.Empty;
+        query = null;
+        roleId = null;
         await LoadData();
     }
 
@@ -154,10 +154,10 @@ else
             fetch.IsBusy = true;
 
             var filter = new EmployeeFilterDto
-                    {
-                        searchQuery = query ?? string.Empty,
-                        roleId = roleId ?? Guid.Empty
-                    };
+            {
+                searchQuery = query,
+                roleId = roleId
+            };
 
             var result = await execute.Employee_List(filter);
 

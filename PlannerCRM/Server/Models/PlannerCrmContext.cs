@@ -88,6 +88,9 @@ public partial class PlannerCrmContext : DbContext
         modelBuilder.Entity<EmployeesRole>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.RoleName)
+                .IsRequired()
+                .HasMaxLength(100);
 
             entity.HasOne(d => d.FkIdEmployeeNavigation).WithMany(p => p.EmployeesRoles)
                 .HasForeignKey(d => d.FkIdEmployee)

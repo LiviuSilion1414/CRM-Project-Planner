@@ -13,8 +13,6 @@ public partial class WorkTimeDto
     public Guid? fkIdWorkOrder { get; set; }
     public Guid? fkIdFirmClient { get; set; }
     public Guid? fkIdEmployee { get; set; }
-    public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
-    public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
     public ActivityDto? fkIdActivityNavigation { get; set; }
     public WorkOrderDto? fkIdWorkOrderNavigation { get; set; }
 }

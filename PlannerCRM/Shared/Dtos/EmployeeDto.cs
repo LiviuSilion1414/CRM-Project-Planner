@@ -17,9 +17,7 @@ public partial class EmployeeDto
     public DateTime? lastSeen { get; set; }
     public string? lastSeenString => lastSeen != null ? string.Format("{0:dd/MM/yyyy}", lastSeen) : "not set";
     public bool? isRemoveable { get; set; }
-    public ICollection<ActivitiesWorkTimeDto>? activitiesWorkTimes { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
-    public ICollection<EmployeeWorkTimeDto>? employeeWorkTimes { get; set; }
     public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
 }
 

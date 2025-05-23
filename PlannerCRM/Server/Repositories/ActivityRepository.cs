@@ -17,13 +17,6 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
 
             model.FkIdWorkOrderNavigation = await _context.WorkOrders.FindAsync(model.FkIdWorkOrderNavigation.Id);
 
-            var workOrderActivity = new WorkOrdersActivity
-            {
-                FkIdActivityNavigation = model,
-                FkIdWorkOrder = model.FkIdWorkOrderNavigation.Id,
-                FkIdFirmClient = model.FkIdWorkOrderNavigation.FkIdFirmClient
-            };
-
             await _context.Activities.AddAsync(model);
 
             await _context.SaveChangesAsync();
