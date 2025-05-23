@@ -70,12 +70,12 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 
             if (existingModel != null)
             {
-                if ((bool)filter.isRemoveRole && existingModel.EmployeesRoles.Any(x => x.FkIdRole == filter.roleId))
+                if ((bool)filter.isRemoveRole && existingModel.EmployeesRoles.Any(x => x.FkIdRole == filter.role.id))
                 {
-                    _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.roleId).FirstOrDefault());
+                    _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.role.id).FirstOrDefault());
                 } else
                 {
-                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = (Guid)filter.roleId, FkIdEmployee = (Guid)filter.employeeId });
+                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = (Guid)filter.role.id, FkIdEmployee = (Guid)filter.employeeId, RoleName = filter.role.name });
                 }
                 await _context.SaveChangesAsync();
             }
@@ -113,8 +113,8 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                          .AsNoTracking()
                                          .AsSplitQuery()
                                          .Include(e => e.EmployeeActivities)
-                                         .Include(e => e.EmployeesRoles)
-                                         .SingleAsync(e => e.Id == filter.id);
+                                         .Include(e => e.EmployeesRoles).ThenInclude(x => x.FkIdRoleNavigation)
+                                         .SingleAsync(e => e.Id == filter.employeeId);
 
             return _mapper.Map<EmployeeDto>(employee);
         } 

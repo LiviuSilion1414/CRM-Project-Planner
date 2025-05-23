@@ -60,6 +60,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
             var role = await _context.Roles
                                      .AsNoTracking()
                                      .AsSplitQuery()
+                                     .Include(x => x.EmployeesRoles)
                                      .SingleAsync(a => a.Id == filter.roleId);
 
             return _mapper.Map<RoleDto>(role);
@@ -75,6 +76,8 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
         {
             var roles = await _context.Roles
                                       .AsNoTracking()
+                                      .AsSplitQuery()
+                                      .Include(x => x.EmployeesRoles)
                                       .OrderBy(x => x.Id)
                                       .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                       .ToListAsync();

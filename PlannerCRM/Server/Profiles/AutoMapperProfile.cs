@@ -20,7 +20,8 @@ public class AutoMapperProfile : Profile
             .PreserveReferences()
             .ReverseMap();
 
-        CreateMap<RoleDto, Role>()
+        CreateMap<Role, RoleDto>()
+            .ForMember(dest => dest.isRemoveable, opt => opt.MapFrom(src => src.EmployeesRoles.Any()))
             .PreserveReferences()
             .ReverseMap();
 

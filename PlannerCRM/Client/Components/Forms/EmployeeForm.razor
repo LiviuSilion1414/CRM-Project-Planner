@@ -80,7 +80,7 @@
                                         <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
                                         <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
                                             <Template Context="data">
-                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole((Guid)data.id))"></RadzenButton>
+                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data.fkIdRoleNavigation))"></RadzenButton>
                                             </Template>
                                         </RadzenDataGridColumn>
                                     </Columns>
@@ -127,12 +127,8 @@
                 };
         }
         _context = new(Model);
-        await LoadData();
-        var modelprops = Model.GetType().GetProperties().ToDictionary(k => k.Name, v => v.GetValue(Model));
-        foreach (var item in modelprops)
-        {
-            Console.WriteLine("Key: " + item.Key + "\t\tValue: " + item.Value);
-        }
+        await LoadRoles();
+        await LoadEmployeeData();
     }
 
     void Close()
@@ -168,7 +164,7 @@
         {
             if (!Model.employeesRoles.Select(x => x.fkIdRoleNavigation).Equals(assignedRole))
             {
-                var filter = new EmployeeFilterDto() { isRemoveRole = false, roleId = assignedRole.id, employeeId = Model.id };
+                var filter = new EmployeeFilterDto() { isRemoveRole = false, role = assignedRole, employeeId = Model.id };
 
                 var result = await execute.Employee_UpdateRole(filter);
 
@@ -191,11 +187,11 @@
         }
     }
 
-    async Task RemoveRole(Guid roleId)
+    async Task RemoveRole(RoleDto role)
     {
         try
         {
-            var filter = new EmployeeFilterDto() { isRemoveRole = true, roleId = roleId, employeeId = Model.id };
+            var filter = new EmployeeFilterDto() { isRemoveRole = true, role = role, employeeId = Model.id };
 
             var result = await execute.Employee_UpdateRole(filter);
 
@@ -217,7 +213,7 @@
         }
     }
 
-    private async Task LoadData()
+    private async Task LoadRoles()
     {
         try
         {
