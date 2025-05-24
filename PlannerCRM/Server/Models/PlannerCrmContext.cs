@@ -141,7 +141,6 @@ public partial class PlannerCrmContext : DbContext
 
             entity.HasOne(d => d.FkIdFirmClientNavigation).WithMany(p => p.WorkOrders)
                 .HasForeignKey(d => d.FkIdFirmClient)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WorkOrders_FirmClients");
         });
 
@@ -156,7 +155,6 @@ public partial class PlannerCrmContext : DbContext
 
             entity.HasOne(d => d.FkIdEmployeeNavigation).WithMany(p => p.WorkTimes)
                 .HasForeignKey(d => d.FkIdEmployee)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WorkTimes_Employees");
         });
 

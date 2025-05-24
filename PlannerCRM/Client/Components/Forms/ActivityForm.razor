@@ -9,15 +9,15 @@
                 </RadzenColumn>
                 <RadzenColumn>
                     <RadzenDropDown TValue="Guid?"
-                    Data="@_workOrders"
-                    AllowFiltering="true"
-                    Placeholder="Select workOrder"
-                    AllowClear="true"
-                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                    TextProperty="@nameof(WorkOrderDto.name)"
-                    ValueProperty="@nameof(WorkOrderDto.id)"
-                    @bind-Value="@Model.fkIdWorkOrder"
-                    Change="@((object? guid) => SelectWorkOrder((Guid)guid))" />
+                                    Data="@_workOrders"
+                                    AllowFiltering="true"
+                                    Placeholder="Select workOrder"
+                                    AllowClear="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    TextProperty="@nameof(WorkOrderDto.name)"
+                                    ValueProperty="@nameof(WorkOrderDto.id)"
+                                    @bind-Value="@Model.fkIdWorkOrder"
+                                    Change="@((object? guid) => SelectWorkOrder((Guid)guid))" />
                     <ValidationMessage For="@(() => Model.fkIdWorkOrder)" />
                 </RadzenColumn>
             </RadzenRow>
@@ -64,23 +64,25 @@
         </RadzenFieldset>
         @if (!IsInsert)
         {
-            <RadzenFieldset>
+            <RadzenFieldset Text="Employees">
                 <RadzenRow>
                     <RadzenColumn>
                         <RadzenDropDown TValue="Guid?"
-                        Placeholder="Assign employee"
-                        Data="@_employees"
-                        AllowFiltering="true"
-                        AllowClear="true"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        ValueProperty="@nameof(EmployeeDto.id)"
-                        TextProperty="@nameof(EmployeeDto.name)"
-                        Change="@AssignEmployee"
-                        @bind-Value="@employeeId" />
+                                        Placeholder="Assign employee"
+                                        Data="@_employees.Where(x => !Model.employeeActivities.Select(y => y.fkIdEmployee).Contains(x.id))"
+                                        ValueProperty="@nameof(EmployeeDto.id)"
+                                        TextProperty="@nameof(EmployeeDto.name)"
+                                        Change="@AssignEmployee"
+                                        @bind-Value="@employeeId" 
+                                        Style="width: 30vw;">
+                            <EmptyTemplate>
+                                <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1" class="m-3" Text="No employees avaialable" />
+                            </EmptyTemplate>
+                        </RadzenDropDown>
                     </RadzenColumn>
+
                     <RadzenColumn>
-                        <RadzenDataGrid TItem="@EmployeeDto"
-                        Data="@_employees">
+                        <RadzenDataGrid TItem="@EmployeeDto" Data="@Model.employeeActivities.Select(x => x.fkIdEmployeeNavigation)">
                             <Columns>
                                 <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" />
                                 <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" />
@@ -134,8 +136,34 @@
                 };
         }
         _context = new(Model);
+        await LoadData();
         await LoadWorkOrders();
         await LoadEmployees();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var filter = new ActivityFilterDto()
+                {
+                    activityId = Model.id
+                };
+
+            var result = await execute.Activity_Get(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                Model = JsonSerializer.Deserialize<ActivityDto>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task LoadWorkOrders()
@@ -177,7 +205,6 @@
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
-
 
     private void SelectWorkOrder(object? guid)
     {
@@ -237,6 +264,9 @@
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployees();
+                await LoadData();
+                await OnReloadList.InvokeAsync();
+                await InvokeAsync(StateHasChanged);
             }
         }
         catch
@@ -257,6 +287,9 @@
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployees();
+                await LoadData();
+                await OnReloadList.InvokeAsync();
+                await InvokeAsync(StateHasChanged);
             }
         }
         catch

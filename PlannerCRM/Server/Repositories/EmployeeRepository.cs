@@ -93,6 +93,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
             var employee = await _context.Employees
                                          .Include(e => e.EmployeeActivities)
                                          .Include(e => e.EmployeesRoles)
+                                         .Include(e => e.WorkTimes)
                                          .SingleAsync(e => e.Id == filter.employeeId /*&& e.IsRemoveable*/);
 
             _context.Remove(employee);

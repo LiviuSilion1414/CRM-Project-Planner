@@ -55,51 +55,54 @@
                         </RadzenColumn>
                     </RadzenRow>
                 }
-                else
-                {
-                    <RadzenFieldset Text="Roles">
-                        <RadzenRow class="mt-3">
-                            <RadzenColumn Size="8">
-                                <RadzenLabel>Assign Roles</RadzenLabel>
-                                <RadzenDropDown TValue="RoleDto"
-                                                Data="@roles"
-                                                AllowFiltering="true"
-                                                TextProperty="@nameof(RoleDto.name)"
-                                                Change="@AssignRole"
-                                                @bind-Value="@assignedRole"
-                                                Style="width: 40vw;" />
-                            </RadzenColumn>
-                            <RadzenColumn Size="4">
-                                <RadzenDataGrid @ref="grid"
-                                                TItem="EmployeesRoleDto"
-                                                Data="@Model.employeesRoles"
-                                                PageSize="5"
-                                                AllowPaging="true"
-                                                AllowSorting="true">
-                                    <Columns>
-                                        <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
-                                        <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
-                                            <Template Context="data">
-                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data.fkIdRoleNavigation))"></RadzenButton>
-                                            </Template>
-                                        </RadzenDataGridColumn>
-                                    </Columns>
-                                </RadzenDataGrid>
-                            </RadzenColumn>
-                        </RadzenRow>
-                    </RadzenFieldset>
-                }
-                <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
-                    <RadzenRow>
-                        <RadzenColumn Size="6">
-                            <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
+            </RadzenFieldset>
+            @if (!IsInsert)
+            {
+                <RadzenFieldset Text="Roles">
+                    <RadzenRow class="mt-3">
+                        <RadzenColumn>
+                            <RadzenLabel>Roles</RadzenLabel>
+                            <RadzenDropDown TValue="RoleDto"
+                                            Data="@roles.Where(x => !Model.employeesRoles.Select(y => y.fkIdRole).Contains(x.id))"
+                                            TextProperty="@nameof(RoleDto.name)"
+                                            Change="@AssignRole"
+                                            @bind-Value="@assignedRole"
+                                            Style="width: 30vw;">
+                                <EmptyTemplate>
+                                    <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1" class="m-3" Text="No roles avaialable" />
+                                </EmptyTemplate>
+                            </RadzenDropDown>
                         </RadzenColumn>
-                        <RadzenColumn Size="6">
-                            <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
+                        <RadzenColumn>
+                            <RadzenDataGrid @ref="grid"
+                                            TItem="EmployeesRoleDto"
+                                            Data="@Model.employeesRoles"
+                                            PageSize="5"
+                                            AllowPaging="true"
+                                            AllowSorting="true">
+                                <Columns>
+                                    <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
+                                    <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
+                                        <Template Context="data">
+                                            <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data.fkIdRoleNavigation))"></RadzenButton>
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                </Columns>
+                            </RadzenDataGrid>
                         </RadzenColumn>
                     </RadzenRow>
-                </RadzenStack>
-            </RadzenFieldset>
+                </RadzenFieldset>
+            }
+            <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+                <RadzenRow>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
+                    </RadzenColumn>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
         </RadzenCard>
     </EditForm>
 </RadzenStack>

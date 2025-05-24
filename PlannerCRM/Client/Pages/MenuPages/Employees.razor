@@ -32,7 +32,7 @@ else
         }
         else if (isView && _selectedEmployee is not null)
         {
-            <EmployeeDialog SelectedEmployee="_selectedEmployee" OnReloadList="LoadData" />
+            <EmployeeDialog SelectedEmployee="_selectedEmployee" OnEditCallback="OnEdit"  OnDeleteCallback="OnDelete"/>
         }
         else
         {

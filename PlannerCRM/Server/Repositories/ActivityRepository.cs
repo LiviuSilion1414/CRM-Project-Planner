@@ -92,7 +92,7 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
                                          .AsNoTracking()
                                          .AsSplitQuery()
                                          .Include(a => a.FkIdWorkOrderNavigation).ThenInclude(x => x.FkIdFirmClientNavigation)
-                                         .Include(a => a.EmployeeActivities)
+                                         .Include(a => a.EmployeeActivities).ThenInclude(x => x.FkIdEmployeeNavigation)
                                          .SingleAsync(a => a.Id == filter.activityId);
 
             return _mapper.Map<ActivityDto>(activity);
