@@ -1,7 +1,151 @@
 ﻿@page "/profile"
 
-<h1>Profile</h1>
+@layout MainLayout
 
-@code {
+@attribute [Authorize]
 
+<RadzenStack JustifyContent="JustifyContent.Center">
+    <EditForm EditContext="@_context" OnValidSubmit="Submit">
+        <RadzenCard>
+            <RadzenFieldset Text="Employee">
+                <DataAnnotationsValidator />
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenLabel>Name</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@currentUser.name" />
+                        <ValidationMessage For="@(() => currentUser.name)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenLabel>Surname</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@currentUser.surname" />
+                        <ValidationMessage For="@(() => currentUser.surname)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenLabel>Email</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@currentUser.username" />
+                        <ValidationMessage For="@(() => currentUser.username)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenLabel>Password</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <InputText class="form-control" @bind-Value="@currentUser.passwordHash" />
+                        <ValidationMessage For="@(() => currentUser.passwordHash)" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenFieldset>
+            <RadzenFieldset Text="Roles">
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenDataGrid @ref="grid"
+                                        TItem="EmployeesRoleDto"
+                                        Data="@currentUser.employeesRoles"
+                                        PageSize="5"
+                                        AllowPaging="true"
+                                        AllowSorting="true">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenFieldset>
+            <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+                <RadzenRow>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
+                    </RadzenColumn>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" ButtonType="ButtonType.Submit"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenCard>
+    </EditForm>
+</RadzenStack>
+
+@code
+{
+    [Parameter] public EventCallback OnReloadList { get; set; }
+    [Parameter] public EventCallback OnCloseSide { get; set; }
+
+    EmployeeDto currentUser = new();
+    RoleDto assignedRole = new();
+
+    List<RoleDto> roles = new();
+
+    EditContext _context;
+
+    RadzenDataGrid<EmployeesRoleDto> grid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser.id = await auth.GetCurrentUserIdAsync();
+
+        await LoadData();
+    }
+
+    void Close()
+    {
+        dialog.Close();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var filter = new EmployeeFilterDto() { employeeId = currentUser.id };
+
+            var result = await execute.Employee_Get(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                currentUser = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task Submit()
+    {
+        try
+        {
+            if (_context.Validate())
+            {
+                ResultDto result = await execute.Employee_Update(currentUser);
+
+                if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await OnReloadList.InvokeAsync();
+                }
+                else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
 }

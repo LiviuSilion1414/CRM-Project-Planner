@@ -100,6 +100,11 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
         }
     }
 
+    public async Task<Guid> GetCurrentUserIdAsync()
+    {
+        return Guid.Parse((await GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
+    }
+
     private IEnumerable<Claim>? ParseClaimsFromJwt(string jwt)
     {
         try

@@ -1,5 +1,6 @@
 using Humanizer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.JSInterop.Infrastructure;
 using PlannerCRM.Server.Models;
 using PlannerCRM.Shared.Dtos;
 
@@ -50,6 +51,8 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<EmployeeDto, Employee>(dto);
 
+            // Decrypt the password and re-encrypt
+            // Check if the password is being updated
             _context.Employees.Update(model);
 
             await _context.SaveChangesAsync();

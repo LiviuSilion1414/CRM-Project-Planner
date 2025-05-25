@@ -50,14 +50,14 @@
 </RadzenCard>
 
 <RadzenScheduler TItem="WorkTimeDto"
-                 Style="height: 80vh;"
-                 Data=@_workTimes
-                 Culture="CultureInfo.InvariantCulture"
-                 SlotSelect="@OnAdd"
-                 SelectedIndex="1"
-                 StartProperty="@nameof(WorkTimeDto.creationDate)"
-                 EndProperty="@nameof(WorkTimeDto.creationDate)"
-                 TextProperty="@nameof(WorkTimeDto.hoursString)">
+Style="height: 80vh;"
+Data=@_workTimes
+Culture="CultureInfo.InvariantCulture"
+SlotSelect="@OnAdd"
+SelectedIndex="1"
+StartProperty="@nameof(WorkTimeDto.creationDate)"
+EndProperty="@nameof(WorkTimeDto.creationDate)"
+TextProperty="@nameof(WorkTimeDto.hoursString)">
     <RadzenWeekView />
     <RadzenMonthView />
 </RadzenScheduler>
@@ -77,7 +77,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        currentUserId = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
+        currentUserId = await auth.GetCurrentUserIdAsync();
 
         await LoadWorkTimes();
         await LoadClients();

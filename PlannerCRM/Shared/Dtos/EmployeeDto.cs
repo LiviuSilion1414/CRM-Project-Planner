@@ -31,6 +31,7 @@ public class EmployeeFilterDto : FilterDto
     public Guid? activityId { get; set; }
     public Guid? roleId { get; set; }
     public bool? isRemoveRole { get; set; }
+    public bool? isEditProfile { get; set; }
     public RoleDto? role { get; set; }
 }
 
