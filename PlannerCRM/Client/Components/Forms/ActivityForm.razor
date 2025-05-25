@@ -84,8 +84,8 @@
                     <RadzenColumn>
                         <RadzenDataGrid TItem="@EmployeeDto" Data="@Model.employeeActivities.Select(x => x.fkIdEmployeeNavigation)">
                             <Columns>
-                                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.name)" />
-                                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" />
+                                <RadzenDataGridColumn TItem="@EmployeeDto" Title="Name" Property="@nameof(EmployeeDto.name)" />
+                                <RadzenDataGridColumn TItem="@EmployeeDto" Title="Email" Property="@nameof(EmployeeDto.username)" />
                                 <RadzenDataGridColumn TItem="@EmployeeDto">
                                     <Template Context="data">
                                         <RadzenButton Icon="delete" IconColor="@Colors.Danger" Click="@(() => RemoveAssignedEmployee((Guid)data.id))" />
@@ -265,7 +265,6 @@
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployees();
                 await LoadData();
-                await OnReloadList.InvokeAsync();
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -288,7 +287,6 @@
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployees();
                 await LoadData();
-                await OnReloadList.InvokeAsync();
                 await InvokeAsync(StateHasChanged);
             }
         }

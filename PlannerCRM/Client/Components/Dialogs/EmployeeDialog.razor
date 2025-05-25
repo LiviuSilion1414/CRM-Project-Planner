@@ -57,6 +57,11 @@
     [Parameter] public EventCallback<EmployeeDto> OnDeleteCallback { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
     private async Task OnEdit()
     {
         await OnEditCallback.InvokeAsync(SelectedEmployee);

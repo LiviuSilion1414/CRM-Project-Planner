@@ -16,6 +16,7 @@ public partial class ActivityDto
     public string? startDateString => startDate != null ? string.Format("{0:dd/MM/yyyy}", startDate) : "not set";
     public DateTime? endDate { get; set; }
     public string? endDateString => endDate != null ? string.Format("{0:dd/MM/yyyy}", endDate) : "not set";
+    public int? totalEmployeesInt => employeeActivities != null && employeeActivities.Any() ? employeeActivities.Count : 0;
     public Guid? fkIdWorkOrder { get; set; }
     public Guid? fkIdFirmClient { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }

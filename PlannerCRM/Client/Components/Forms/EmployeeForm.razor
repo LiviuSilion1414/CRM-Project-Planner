@@ -176,7 +176,6 @@
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                     await LoadEmployeeData();
                     await grid.Reload();
-                    await OnReloadList.InvokeAsync();
                 }
                 else
                 {
@@ -203,7 +202,6 @@
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployeeData();
                 await grid.Reload();
-                await OnReloadList.InvokeAsync();
             }
             else
             {

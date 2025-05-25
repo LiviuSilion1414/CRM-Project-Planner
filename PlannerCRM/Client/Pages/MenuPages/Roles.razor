@@ -43,7 +43,7 @@ AllowAlternatingRows="true">
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.isRemoveable)" Title="Removeable">
             <Template Context="data">
-                @if (data.isRemoveable.HasValue || !data.isRemoveable.Value)
+                @if (data.isRemoveable.HasValue && !data.isRemoveable.Value)
                 {
                     <RadzenIcon Icon="dangerous" IconStyle="IconStyle.Danger"></RadzenIcon>
                 }

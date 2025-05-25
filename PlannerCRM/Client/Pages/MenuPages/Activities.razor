@@ -14,7 +14,7 @@ else
         {
             <RadzenRow>
                 <RadzenColumn SizeLG="12">
-                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="ResetFlags"></RadzenButton>
+                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="LoadData"></RadzenButton>
                 </RadzenColumn>
             </RadzenRow>
         }
@@ -95,6 +95,7 @@ else
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.startDateString)" Title="Start Date" />
                     <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.endDateString)" Title="End Date" />
+                    <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.totalEmployeesInt)" Title="Nr. Employees" />
                     <RadzenDataGridColumn TItem="@ActivityDto" Width="64px" Sortable="false" Filterable="false">
                         <Template Context="data">
                             <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>
@@ -190,6 +191,7 @@ else
     {
         try
         {
+            ResetFlags();
             fetch.IsBusy = true;
 
             var filter = new ActivityFilterDto

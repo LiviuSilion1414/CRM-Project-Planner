@@ -17,7 +17,7 @@ else
         {
             <RadzenRow>
                 <RadzenColumn SizeLG="12">
-                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="ResetFlags"></RadzenButton>
+                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="LoadData"></RadzenButton>
                 </RadzenColumn>
             </RadzenRow>
         }
@@ -73,11 +73,6 @@ else
                 </HeaderTemplate>
                 <Columns>
                     <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.fullname)" Title="Full name" />
-                    <RadzenDataGridColumn TItem="@EmployeeDto" Title="Role(s)">
-                        <Template Context="data">
-                            @ShowRoles(data)
-                        </Template>
-                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.creationDateString)" Title="Creation Date" />
                     <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                         <Template Context="data">
@@ -151,6 +146,7 @@ else
     {
         try
         {
+            ResetFlags();
             fetch.IsBusy = true;
 
             var filter = new EmployeeFilterDto
@@ -224,27 +220,5 @@ else
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
-    }
-
-    RenderFragment ShowRoles(EmployeeDto employee)
-    {
-        return
-    @<div>
-        @if (employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault() != null)
-    {
-    if (employee.employeesRoles.OrderBy(x => x.id).ToList().Count == 1)
-    {
-        @($"{employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault().roleName}")
-    }
-    else
-    {
-        @($"{employee.employeesRoles.OrderBy(x => x.id).FirstOrDefault().roleName} + {employee.employeesRoles.Count - 1}")
-    }
-    }
-    else
-    {
-        <b>no roles assigned</b>
-    }
-    </div>;
     }
 }

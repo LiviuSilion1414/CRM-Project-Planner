@@ -7,6 +7,7 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         CreateMap<Activity, ActivityDto>()
+            .ForMember(dest => dest.fkIdFirmClientNavigation, opt => opt.MapFrom(src => src.FkIdWorkOrderNavigation.FkIdFirmClientNavigation))
             .PreserveReferences()
             .ReverseMap();
 
