@@ -13,7 +13,8 @@ public partial class EmployeeDto
     public string? fullname => !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(surname) ? surname + " " + name : string.Empty;
     public DateTime? creationDate { get; set; }
     public string? creationDateString => creationDate != null ? string.Format("{0:dd/MM/yyyy}", creationDate) : "not set";
-    public string? passwordHash { get; set; }
+    public string? newPassword { get; set; }
+    public bool? isEditProfile { get; set; }
     public DateTime? lastSeen { get; set; }
     public string? lastSeenString => lastSeen != null ? string.Format("{0:dd/MM/yyyy}", lastSeen) : "not set";
     public bool? isRemoveable { get; set; }

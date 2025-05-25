@@ -19,14 +19,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 
             if (!await _context.Employees.AnyAsync(em => em.Username.ToLower().Trim().Equals(dto.username.ToLower().Trim())))
             {
-                byte[] salt = new byte[128 / 8];
-                string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: dto.passwordHash,
-                                                                                salt: salt,
-                                                                                prf: KeyDerivationPrf.HMACSHA256,
-                                                                                iterationCount: 10000,
-                                                                                numBytesRequested: 256 / 8));
-
-                model.PasswordHash = cryptedPwd;
+                model.PasswordHash = CryptPassword(dto.newPassword);
                 model.LastSeen = DateTime.Now;
                 model.CreationDate = DateTime.Now;
 
@@ -38,26 +31,47 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 
                 await _context.SaveChangesAsync();
             }
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
+    }
+
+    private static string CryptPassword(string password)
+    {
+        byte[] salt = new byte[128 / 8];
+        string cryptedPwd = Convert.ToBase64String(KeyDerivation.Pbkdf2(password: password,
+                                                                        salt: salt,
+                                                                        prf: KeyDerivationPrf.HMACSHA256,
+                                                                        iterationCount: 10000,
+                                                                        numBytesRequested: 256 / 8));
+        return cryptedPwd;
     }
 
     public async Task Update(EmployeeDto dto)
     {
         try
         {
-            var model = _mapper.Map<EmployeeDto, Employee>(dto);
+            var model = await _context.Employees
+                                      .FirstOrDefaultAsync(x => x.Id == (Guid)dto.id);
 
-            // Decrypt the password and re-encrypt
-            // Check if the password is being updated
-            _context.Employees.Update(model);
+            if (model != null)
+            {
+                model.Name = dto.name;
+                model.Surname = dto.surname;
+                model.Username = dto.username;
+                model.IsRemoveable = (bool)dto.isRemoveable;
 
-            await _context.SaveChangesAsync();
-        } 
-        catch (Exception)
+                if (!string.IsNullOrEmpty(dto.newPassword))
+                {
+                    model.PasswordHash = CryptPassword(dto.newPassword);
+                }
+
+                _context.Update(model);
+
+                await _context.SaveChangesAsync();
+            }
+        } catch (Exception)
         {
             throw;
         }
@@ -82,8 +96,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                 }
                 await _context.SaveChangesAsync();
             }
-        }
-        catch
+        } catch
         {
             throw;
         }
@@ -102,8 +115,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
             _context.Remove(employee);
 
             await _context.SaveChangesAsync();
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -121,8 +133,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                          .SingleAsync(e => e.Id == filter.employeeId);
 
             return _mapper.Map<EmployeeDto>(employee);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -143,8 +154,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -166,8 +176,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                               .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployee);
-        }
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -187,8 +196,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
             var config = _mapper.ConfigurationProvider;
             config.AssertConfigurationIsValid();
             return _mapper.Map<List<EmployeeActivityDto>>(foundActivities);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }

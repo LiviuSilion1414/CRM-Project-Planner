@@ -24,13 +24,16 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var model = _mapper.Map<Role>(dto);
+            var model = await _context.Roles.FindAsync((Guid)dto.id);
 
-            model.Name = dto.name;
+            if (model != null)
+            {
+                _mapper.Map(dto, model);
 
-            _context.Update(model);
+                _context.Update(model);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
         } catch
         {
             throw;
