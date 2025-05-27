@@ -14,6 +14,7 @@ public partial class EmployeeDto
     public DateTime? creationDate { get; set; }
     public string? creationDateString => creationDate != null ? string.Format("{0:dd/MM/yyyy}", creationDate) : "not set";
     public string? newPassword { get; set; }
+    public string? confirmNewPassword { get; set; }
     public bool? isEditProfile { get; set; }
     public DateTime? lastSeen { get; set; }
     public string? lastSeenString => lastSeen != null ? string.Format("{0:dd/MM/yyyy}", lastSeen) : "not set";

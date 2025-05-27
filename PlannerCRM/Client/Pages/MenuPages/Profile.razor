@@ -52,7 +52,16 @@ else
                             <RadzenLabel>Password</RadzenLabel>
                         </RadzenColumn>
                         <RadzenColumn>
-                            <InputText class="form-control" @bind-Value="@currentUser.newPassword" />
+                            <RadzenTextBox class="form-control" @bind-Value="@currentUser.newPassword" Placeholder="New password" />
+                            <ValidationMessage For="@(() => currentUser.newPassword)" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow class="mt-3">
+                        <RadzenColumn>
+                            <RadzenLabel>Confirm password</RadzenLabel>
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenTextBox class="form-control" @bind-Value="@currentUser.confirmNewPassword" Placeholder="Confirm new password" />
                             <ValidationMessage For="@(() => currentUser.newPassword)" />
                         </RadzenColumn>
                     </RadzenRow>
@@ -161,6 +170,23 @@ else
     {
         try
         {
+            string errorMessage = string.Empty;
+
+            if (!string.IsNullOrEmpty(currentUser.newPassword) && !string.IsNullOrEmpty(currentUser.confirmNewPassword) && 
+                currentUser.newPassword != currentUser.confirmNewPassword)
+            {
+                notification.Notify(NotificationSeverity.Error, "The new password doesn't match.", null, 4000);
+                return;
+            }
+            else if (
+                        (string.IsNullOrEmpty(currentUser.newPassword) && !string.IsNullOrEmpty(currentUser.confirmNewPassword)) ||
+                        (!string.IsNullOrEmpty(currentUser.newPassword) && string.IsNullOrEmpty(currentUser.confirmNewPassword))
+                    )
+            {
+                notification.Notify(NotificationSeverity.Error, "The new password field or confirm new password can either have a value or it can be left blank", null, 4000);
+                return;
+            }
+
             if (_context.Validate())
             {
                 ResultDto result = await execute.Employee_Update(currentUser);
