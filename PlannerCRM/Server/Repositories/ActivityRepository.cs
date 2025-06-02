@@ -113,8 +113,8 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
                                            .Include(a => a.EmployeeActivities).ThenInclude(x => x.FkIdEmployeeNavigation)
                                            .Include(a => a.FkIdWorkOrderNavigation).ThenInclude(x => x.FkIdFirmClientNavigation)
                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                       (filter.firmClientId == Guid.Empty || x.FkIdWorkOrderNavigation.FkIdFirmClient == filter.firmClientId) &&
-                                                       (filter.workOrderId == Guid.Empty || x.FkIdWorkOrderNavigation.Id == filter.workOrderId))
+                                                       (filter.firmClientId == null || x.FkIdWorkOrderNavigation.FkIdFirmClient == filter.firmClientId) &&
+                                                       (filter.workOrderId == null || x.FkIdWorkOrderNavigation.Id == filter.workOrderId))
                                            .ToListAsync();
 
             return _mapper.Map<List<ActivityDto>>(activities);
@@ -149,7 +149,7 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
                                                .AsNoTracking()
                                                .AsSplitQuery()
                                                .Include(em => em.EmployeeActivities)
-                                               .Where(em => em.EmployeeActivities.Any(ac => ac.FkIdActivity == filter.activityId))
+                                               .Where(em => em.EmployeeActivities.Any(ac => ac.FkIdEmployee == filter.employeeId))
                                                .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(foundEmployees);

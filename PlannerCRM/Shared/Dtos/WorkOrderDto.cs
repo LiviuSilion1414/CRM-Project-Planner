@@ -25,6 +25,7 @@ public class WorkOrderFilterDto : FilterDto
 {
     public Guid? workOrderId { get; set; }
     public Guid? firmClientId { get; set; }
+    public Guid? employeeId { get; set; }
 }
 
 public partial class ApiUrl
@@ -40,4 +41,5 @@ public partial class ApiUrl
     public const string WORKORDER_SEARCH = "search";
     public const string WORKORDER_FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID = "findAssociatedActivitiesByWorkOrderId";
     public const string WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID = "findAssociatedWorkOrdersByClientId";
+    public const string WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_EMPLOYEEID = "findAssociatedWorkOrdersByEmployeeId";
 }

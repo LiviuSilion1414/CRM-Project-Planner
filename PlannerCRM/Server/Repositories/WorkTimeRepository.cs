@@ -7,14 +7,14 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
     private readonly PlannerCrmContext _context = context;
     private readonly IMapper _mapper = mapper;
 
-    public async Task Insert(WorkTimeDto dto)
+    public async Task<ResultDto> Insert(WorkTimeDto dto)
     {
         try
         {
             var checkWorkTimeByDate = await context.WorkTimes.Where(x => x.CreationDate == dto.creationDate && x.Id == dto.id).AnyAsync();
+            var maxDailyHours = 8;
 
-
-            if (!checkWorkTimeByDate && dto.hours > 0 &&  dto.hours <= 8)
+            if (!checkWorkTimeByDate && dto.hours > 0 &&  dto.hours <= maxDailyHours)
             {
                 var model = _mapper.Map<WorkTime>(dto);
 
@@ -23,6 +23,28 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                 await _context.AddAsync(model);
 
                 await context.SaveChangesAsync();
+
+                return new ResultDto()
+                {
+                    id = null,
+                    data = null,
+                    hasCompleted = true,
+                    message = "Operation completed",
+                    messageType = MessageType.Success,
+                    statusCode = HttpStatusCode.OK
+                };
+            }
+            else
+            {
+                return new ResultDto()
+                {
+                    id = null,
+                    data = null,
+                    hasCompleted = false,
+                    message = "Excessive working hours",
+                    messageType = MessageType.Error,
+                    statusCode = HttpStatusCode.BadRequest
+                };
             }
         } catch (Exception ex)
         {

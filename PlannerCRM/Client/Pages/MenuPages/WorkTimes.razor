@@ -1,132 +1,37 @@
 ﻿@page "/workTimes"
 @using System.Security.Claims
 
-<RadzenCard class="mb-3">
-    <RadzenRow JustifyContent="JustifyContent.Stretch">
-        <RadzenColumn>
-            <RadzenFormField Text="Client" AllowFloatingLabel="false">
-                <RadzenDropDown TValue="Guid?"
-                class="form-control" Style="min-width: 20vw;"
-                Data="_clients"
-                AllowFiltering="true"
-                AllowClear="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                TextProperty="@nameof(FirmClientDto.name)"
-                ValueProperty="@nameof(FirmClientDto.id)"
-                @bind-Value="@clientId" />
-            </RadzenFormField>
-        </RadzenColumn>
-        <RadzenColumn>
-            <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
-                <RadzenDropDown TValue="Guid?"
-                class="form-control" Style="min-width: 20vw;"
-                Data="@_workOrders.Where(x => x.fkIdFirmClient == clientId).ToList()"
-                AllowFiltering="true"
-                AllowClear="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                TextProperty="@nameof(WorkOrderDto.name)"
-                ValueProperty="@nameof(WorkOrderDto.id)"
-                @bind-Value="@workOrderId" />
-            </RadzenFormField>
-        </RadzenColumn>
-        <RadzenColumn>
-            <RadzenFormField Text="Activity" AllowFloatingLabel="false">
-                <RadzenDropDown TValue="Guid?"
-                class="form-control" Style="min-width: 20vw;"
-                Data="@_activities.Where(x => x.fkIdWorkOrder == workOrderId).ToList()"
-                AllowFiltering="true"
-                AllowClear="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                TextProperty="@nameof(ActivityDto.name)"
-                ValueProperty="@nameof(ActivityDto.id)"
-                @bind-Value="@activityId" />
-            </RadzenFormField>
-        </RadzenColumn>
-        <RadzenColumn>
-            <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
-            <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadWorkTimes"></RadzenButton>
-        </RadzenColumn>
-    </RadzenRow>
-</RadzenCard>
-
 <RadzenScheduler TItem="WorkTimeDto"
-Style="height: 80vh;"
-Data=@_workTimes
-Culture="CultureInfo.InvariantCulture"
-SlotSelect="@OnAdd"
-SelectedIndex="1"
-StartProperty="@nameof(WorkTimeDto.creationDate)"
-EndProperty="@nameof(WorkTimeDto.creationDate)"
-TextProperty="@nameof(WorkTimeDto.hoursString)">
+                 Style="height: 80vh;"
+                 Data=@_workTimes
+                 Culture="CultureInfo.InvariantCulture"
+                 SlotSelect="@OnAdd"
+                 SelectedIndex="1"
+                 StartProperty="@nameof(WorkTimeDto.creationDate)"
+                 EndProperty="@nameof(WorkTimeDto.creationDate)"
+                 TextProperty="@nameof(WorkTimeDto.hoursString)">
     <RadzenWeekView />
     <RadzenMonthView />
 </RadzenScheduler>
 
 @code
 {
-    private List<ActivityDto> _activities = new();
-    private List<WorkOrderDto> _workOrders = new();
-    private List<FirmClientDto> _clients = new();
     private List<WorkTimeDto> _workTimes = new();
-
-    string query = string.Empty;
-    Guid? clientId = Guid.Empty;
-    Guid? workOrderId = Guid.Empty;
-    Guid? activityId = Guid.Empty;
-    Guid? currentUserId = Guid.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        currentUserId = await auth.GetCurrentUserIdAsync();
 
         await LoadWorkTimes();
-        await LoadClients();
-        await LoadWorkOrders();
-        await LoadActivities();
-    }
-
-    async Task ResetData()
-    {
-        query = string.Empty;
-        clientId = Guid.Empty;
-        workOrderId = Guid.Empty;
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
-    {
-        await dialog.OpenSideAsync<ActivityDialog>("activity Info",
-            new Dictionary<string, object>()
-                                    {
-                { nameof(ActivityDialog.SelectedActivity), args.Data },
-                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadActivities()) }
-                                    },
-            new SideDialogOptions() { Width = "40vw;" }
-        );
     }
 
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
-        if (workOrderId == Guid.Empty && activityId == Guid.Empty)
-        {
-            notification.Notify(NotificationSeverity.Warning, "Please select the activity from the dropdown menu", null, 4000);
-            return;
-        }
-
-        var activity = _activities.First(x => x.id == activityId);
-        var workOrder = _workOrders.First(x => x.id == workOrderId);
-
-        await dialog.OpenAsync<WorkTimeForm>("Add Work Time",
-            new Dictionary<string, object>()
-                    {
-                { nameof(WorkTimeForm.OnReloadList), EventCallback.Factory.Create(this, () => LoadActivities()) },
-                { nameof(WorkTimeForm.IsInsert), true },
-                { nameof(WorkTimeForm.Ds), dialog },
-                { nameof(WorkTimeForm.StartDate), args.Start },
-                { nameof(WorkTimeForm.Activity), activity },
-                { nameof(WorkTimeForm.WorkOrder), workOrder },
-                { nameof(WorkTimeForm.CurrentUserId), currentUserId }
-                    });
+        await dialog.OpenAsync("Add Work Time", ds =>
+        @<WorkTimeForm OnReloadList="@LoadWorkTimes"
+                        IsInsert="true"
+                        StartDate="@args.Start">
+        </WorkTimeForm>,
+        null);
     }
 
     private async Task LoadWorkTimes()
@@ -135,85 +40,13 @@ TextProperty="@nameof(WorkTimeDto.hoursString)">
         {
             fetch.IsBusy = true;
 
-            WorkTimeFilterDto filter = new WorkTimeFilterDto()
-                {
-                    employeeId = currentUserId,
-                    activityId = activityId,
-                    workOrderId = workOrderId,
-                };
+            WorkTimeFilterDto filter = new WorkTimeFilterDto();
 
             var result = await execute.WorkTime_FindAssociatedWorkTimesByEmployeeId(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workTimes = JsonSerializer.Deserialize<List<WorkTimeDto>>(result.data.ToString());
-            }
-            fetch.IsBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadClients()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            var result = await execute.FirmClient_List(new FirmClientFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
-            }
-            fetch.IsBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadWorkOrders()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
-            }
-            fetch.IsBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadActivities()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            var filter = new ActivityFilterDto
-                {
-                    workOrderId = workOrderId ?? Guid.Empty,
-                    firmClientId = clientId ?? Guid.Empty,
-                    searchQuery = query
-                };
-
-            var result = await execute.Activity_List(filter);
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
             fetch.IsBusy = false;
         }

@@ -13,16 +13,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     {
         try
         {
-            await _repo.Insert(dto);
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = true,
-                message = "Operation completed",
-                messageType = MessageType.Success,
-                statusCode = HttpStatusCode.OK
-            };
+            return await _repo.Insert(dto);
         } catch
         {
             return new ResultDto()

@@ -1,84 +1,109 @@
-﻿<RadzenStack>
-    <EditForm EditContext="@_context" OnValidSubmit="OnSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <RadzenFieldset Text="Activity Info">
-            <RadzenRow class="mt-3">
-                <RadzenColumn>
-                    <RadzenLabel>Work Order</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenTextBox Name="Name" @bind-Value=@WorkOrder.name  Disabled="true" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow class="mt-3">
-                <RadzenColumn>
-                    <RadzenLabel Text="Activity" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenTextBox Name="Name" @bind-Value=@Activity.name Disabled="true" />
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenFieldset>
-        <RadzenFieldset Text="Work time">
-            <RadzenRow class="mt-3">
-                <RadzenColumn>
-                    <RadzenLabel Text="Date" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenDatePicker @bind-Value=@Model.creationDate DateFormat="dd/MM/yyyy"/>
-                    <ValidationMessage For="@(() => Model.creationDate)" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow class="mt-3">
-                <RadzenColumn>
-                    <RadzenLabel Text="Hours" />
-                </RadzenColumn>
-                <RadzenColumn>
-                    <RadzenNumeric @bind-Value=@Model.hours />
-                    <ValidationMessage For="@(() => Model.hours)" />
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenFieldset>
-        <RadzenStack class="mt-3" AlignItems="AlignItems.Center">
-            <RadzenRow>
-                <RadzenColumn>
-                    <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="Close"></RadzenButton>
-                    <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit"></RadzenButton>
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenStack>
-    </EditForm>
-</RadzenStack>
+﻿@if (Model is null && _context is null)
+{
+    <p>Loading data...</p>
+}
+else
+{
+
+    <RadzenStack>
+        <EditForm EditContext="@_context" OnValidSubmit="OnSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <RadzenFieldset Text="Activity Info">
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
+                            <RadzenDropDown TValue="Guid?"
+                                            class="form-control" Style="min-width: 20vw;"
+                                            Data="@_workOrders"
+                                            AllowFiltering="true"
+                                            AllowClear="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            TextProperty="@nameof(WorkOrderDto.name)"
+                                            ValueProperty="@nameof(WorkOrderDto.id)"
+                                            @bind-Value="@Model.fkIdWorkOrder" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenFormField Text="Activity" AllowFloatingLabel="false">
+                            <RadzenDropDown TValue="Guid?"
+                                            class="form-control" Style="min-width: 20vw;"
+                                            Data="@_activities.Where(x => x.fkIdWorkOrder == Model.fkIdWorkOrder)"
+                                            Disabled="@(Model.fkIdWorkOrder == null)"
+                                            AllowFiltering="true"
+                                            AllowClear="true"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            TextProperty="@nameof(ActivityDto.name)"
+                                            ValueProperty="@nameof(ActivityDto.id)"
+                                            @bind-Value="@Model.fkIdActivity" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenFieldset>
+            <RadzenFieldset Text="Work time">
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenLabel Text="Date" />
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenDatePicker @bind-Value=@Model.creationDate DateFormat="dd/MM/yyyy" />
+                        <ValidationMessage For="@(() => Model.creationDate)" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="mt-3">
+                    <RadzenColumn>
+                        <RadzenLabel Text="Hours" />
+                    </RadzenColumn>
+                    <RadzenColumn>
+                        <RadzenNumeric @bind-Value=@Model.hours />
+                        <ValidationMessage For="@(() => Model.hours)" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenFieldset>
+            <RadzenStack class="mt-3" AlignItems="AlignItems.Center">
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="Close"></RadzenButton>
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </EditForm>
+    </RadzenStack>
+}   
 
 @code
 {
-    [Parameter] public ActivityDto Activity { get; set; }
-    [Parameter] public WorkOrderDto WorkOrder { get; set; }
     [Parameter] public DateTime? StartDate { get; set; }
     [Parameter] public bool IsInsert { get; set; }
     [Parameter] public WorkTimeDto Model { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
-    [Parameter] public DialogService Ds { get; set; }
-    [Parameter] public Guid CurrentUserId { get; set; }
 
     EditContext _context;
 
+    private List<ActivityDto> _activities = new();
+    private List<WorkOrderDto> _workOrders = new();
+    private List<FirmClientDto> _clients = new();
+
+    Guid? currentUserId = Guid.Empty;
+
     protected override async Task OnInitializedAsync()
     {
+        currentUserId = await auth.GetCurrentUserIdAsync();
         if (IsInsert)
         {
             Model = new();
         }
 
         Model.creationDate = StartDate ?? DateTime.Now;
+        Model.fkIdEmployee = currentUserId;
 
         _context = new(Model);
-        Model.fkIdWorkOrder = WorkOrder.id;
-        Model.fkIdActivity = Activity.id;
-        Model.fkIdEmployee = CurrentUserId;
-        Model.fkIdFirmClient = Activity.fkIdFirmClient;
-        //Model.fkid = Guid.Parse((await auth.GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
+
+        await LoadWorkOrders();
+        await LoadActivities();
     }
 
     private async Task OnSubmit()
@@ -93,6 +118,10 @@
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
             }
+            else
+            {
+                notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+            }
             fetch.IsBusy = false;
             Close();
             await OnReloadList.InvokeAsync();
@@ -103,8 +132,58 @@
         }
     }
 
+    private async Task LoadWorkOrders()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var filter = new WorkOrderFilterDto
+                {
+                    employeeId = currentUserId
+                };
+
+            var result = await execute.WorkOrder_FindAssociatedWorkOrdersByEmployeeId(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task LoadActivities()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var filter = new ActivityFilterDto
+                {
+                    employeeId = currentUserId
+                };
+
+            var result = await execute.Activity_List(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
     void Close()
     {
-        Ds.Close();
+        dialog.Close();
     }
 }

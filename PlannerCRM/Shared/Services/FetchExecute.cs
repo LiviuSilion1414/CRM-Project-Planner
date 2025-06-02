@@ -228,6 +228,10 @@ public partial class FetchExecute(FetchService fetch)
         return await _fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID, filterDto, ApiType.Post);
     }
 
+    public async Task<ResultDto> WorkOrder_FindAssociatedWorkOrdersByEmployeeId(WorkOrderFilterDto filterDto)
+    {
+        return await _fetch.ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_EMPLOYEEID, filterDto, ApiType.Post);
+    }
 
     #endregion
 

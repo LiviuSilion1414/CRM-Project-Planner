@@ -154,4 +154,22 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
             throw;
         }
     }
+
+    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByEmployeeId(WorkOrderFilterDto filter)
+    {
+        try
+        {
+            var foundWorkOrder = await _context.WorkOrders
+                                               .AsNoTracking()
+                                               .AsSplitQuery()
+                                               .Include(wo => wo.Activities).ThenInclude(ac => ac.EmployeeActivities)
+                                               .Where(wo => wo.Activities.SelectMany(x => x.EmployeeActivities).Any(y => y.FkIdEmployee == filter.employeeId))
+                                               .ToListAsync();
+
+            return _mapper.Map<List<WorkOrderDto>>(foundWorkOrder);
+        } catch
+        {
+            throw;
+        }
+    }
 }

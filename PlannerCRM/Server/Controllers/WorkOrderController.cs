@@ -248,4 +248,36 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
             };
         }
     }
+
+    
+
+        [HttpPost]
+    [Route(ApiUrl.WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_EMPLOYEEID)]
+    public async Task<ResultDto> FindAssociatedWorkOrdersByEmployeeId([FromBody] WorkOrderFilterDto filter)
+    {
+        try
+        {
+            var workOrders = await _repo.FindAssociatedWorkOrdersByEmployeeId(filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = workOrders,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } catch
+        {
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
+            };
+        }
+    }
 }
