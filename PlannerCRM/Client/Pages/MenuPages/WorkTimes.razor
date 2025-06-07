@@ -2,14 +2,14 @@
 @using System.Security.Claims
 
 <RadzenScheduler TItem="WorkTimeDto"
-                 Style="height: 80vh;"
-                 Data=@_workTimes
-                 Culture="CultureInfo.InvariantCulture"
-                 SlotSelect="@OnAdd"
-                 SelectedIndex="1"
-                 StartProperty="@nameof(WorkTimeDto.creationDate)"
-                 EndProperty="@nameof(WorkTimeDto.creationDate)"
-                 TextProperty="@nameof(WorkTimeDto.hoursString)">
+Style="height: 80vh;"
+Data=@_workTimes
+Culture="CultureInfo.InvariantCulture"
+SlotSelect="@OnAdd"
+SelectedIndex="1"
+StartProperty="@nameof(WorkTimeDto.creationDate)"
+EndProperty="@nameof(WorkTimeDto.creationDate)"
+TextProperty="@nameof(WorkTimeDto.hoursString)">
     <RadzenWeekView />
     <RadzenMonthView />
 </RadzenScheduler>
@@ -17,10 +17,11 @@
 @code
 {
     private List<WorkTimeDto> _workTimes = new();
+    private Guid currentUserId = Guid.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-
+        currentUserId = await auth.GetCurrentUserIdAsync();
         await LoadWorkTimes();
     }
 
@@ -30,7 +31,8 @@
         @<WorkTimeForm OnReloadList="@LoadWorkTimes"
                         IsInsert="true"
                         StartDate="@args.Start">
-        </WorkTimeForm>,
+        </WorkTimeForm>
+    ,
         null);
     }
 
@@ -40,7 +42,10 @@
         {
             fetch.IsBusy = true;
 
-            WorkTimeFilterDto filter = new WorkTimeFilterDto();
+            WorkTimeFilterDto filter = new WorkTimeFilterDto
+            {
+                employeeId = currentUserId,
+            };
 
             var result = await execute.WorkTime_FindAssociatedWorkTimesByEmployeeId(filter);
 

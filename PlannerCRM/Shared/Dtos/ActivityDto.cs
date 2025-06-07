@@ -19,6 +19,7 @@ public partial class ActivityDto
     public int? totalEmployeesInt => employeeActivities != null && employeeActivities.Any() ? employeeActivities.Count : 0;
     public Guid? fkIdWorkOrder { get; set; }
     public Guid? fkIdFirmClient { get; set; }
+    public string? hexColor { get; set; } = "#0000FF"; // Default color blue
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
     public FirmClientDto? fkIdFirmClientNavigation { get; set; }
     public WorkOrderDto? fkIdWorkOrderNavigation { get; set; }

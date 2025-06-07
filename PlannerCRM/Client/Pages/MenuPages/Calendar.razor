@@ -10,15 +10,16 @@
 else
 {
     <RadzenScheduler TItem="ActivityDto"
-    Style="height: 90vh;"
-    Data=@_activities
-    Culture="CultureInfo.InvariantCulture"
-    SlotSelect="@OnAdd"
-    AppointmentSelect="@OnSelect"
-    StartProperty="@nameof(ActivityDto.startDate)"
-    EndProperty="@nameof(ActivityDto.endDate)"
-    TextProperty="@nameof(ActivityDto.name)"
-    SelectedIndex="2">
+                     Style="height: 90vh;"
+                     Data=@_activities
+                     Culture="CultureInfo.InvariantCulture"
+                     SlotSelect="@OnAdd"
+                     AppointmentSelect="@OnSelect"
+                     StartProperty="@nameof(ActivityDto.startDate)"
+                     EndProperty="@nameof(ActivityDto.endDate)"
+                     TextProperty="@nameof(ActivityDto.name)"
+                     AppointmentRender="@OnEventRender"
+                     SelectedIndex="2">
         <RadzenDayView />
         <RadzenWeekView />
         <RadzenMonthView />
@@ -47,7 +48,7 @@ else
             }
             fetch.IsBusy = false;
         }
-        catch 
+        catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -55,22 +56,24 @@ else
 
     private async Task OnSelect(SchedulerAppointmentSelectEventArgs<ActivityDto> args)
     {
-        await dialog.OpenSideAsync<ActivityDialog>("activity Info",
-            new Dictionary<string, object>() { 
-                { nameof(ActivityDialog.SelectedActivity), args.Data },
-                { nameof(ActivityDialog.OnReloadList), EventCallback.Factory.Create(this, () => LoadData()) }
-            },
-            new SideDialogOptions() { Width = "40vw;" }
-        );
+
+        await dialog.OpenAsync("Activity Info", ds =>
+        @<ActivityDialog SelectedActivity="@args.Data"
+                         OnReloadList="() => LoadData()" />,
+        new DialogOptions() { Width = "90vw;" }
+    );
     }
 
     private async Task OnAdd(SchedulerSlotSelectEventArgs args)
     {
-        await dialog.OpenAsync<ActivityForm>("Add activity",
-            new Dictionary<string, object>()
-            {
-                { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, LoadData) },
-                { nameof(ActivityForm.IsInsert), true }
-            });
+        await dialog.OpenAsync("Add activity",
+            ds => @<ActivityForm OnReloadList="() => LoadData()" IsInsert="true" />,
+            new DialogOptions() { Width = "40vw;" }
+        );
+    }
+
+    void OnEventRender(SchedulerAppointmentRenderEventArgs<ActivityDto> args)
+    {
+        args.Attributes["style"] = $"background-color: {args.Data.hexColor};";
     }
 }

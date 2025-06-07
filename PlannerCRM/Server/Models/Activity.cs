@@ -19,6 +19,8 @@ public partial class Activity
 
     public Guid FkIdFirmClient { get; set; }
 
+    public string HexColor { get; set; }
+
     public virtual ICollection<EmployeeActivity> EmployeeActivities { get; set; } = new List<EmployeeActivity>();
 
     public virtual WorkOrder FkIdWorkOrderNavigation { get; set; }

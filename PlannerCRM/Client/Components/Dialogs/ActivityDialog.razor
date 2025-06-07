@@ -67,10 +67,10 @@
             </RadzenTabsItem>
             <RadzenTabsItem Text="Employees">
                 <RadzenDataGrid Data="@SelectedActivity.employeeActivities"
-                                TItem="@EmployeeActivityDto"
-                                AllowSorting="true"
-                                AllowPaging="true"
-                                AllowFiltering="true">
+                TItem="@EmployeeActivityDto"
+                AllowSorting="true"
+                AllowPaging="true"
+                AllowFiltering="true">
                     <Columns>
                         <RadzenDataGridColumn TItem="@EmployeeActivityDto" Title="Name">
                             <Template Context="data">
@@ -129,15 +129,17 @@
 
     private async Task OnEdit()
     {
-        //     await dialog.OpenAsync<ActivityForm>("Edit activity",
-        //     new Dictionary<string, object>()
-        //                 {
-        //             { nameof(ActivityForm.Model), SelectedActivity },
-        //             { nameof(ActivityForm.IsInsert), false },
-        //             { nameof(ActivityForm.OnReloadList), EventCallback.Factory.Create(this, InvokeReloadList) },
-        //             { nameof(ActivityForm.OnCloseSide), EventCallback.Factory.Create(this, dialog.CloseSide) }
-        //                 }
-        // );
+        await dialog.OpenAsync("Edit activity", ds =>
+            @<ActivityForm 
+                    Model=@SelectedActivity
+                    IsInsert=@false
+                    OnReloadList =@EventCallback.Factory.Create(this, InvokeReloadList)
+            />,
+            new DialogOptions
+            {
+                Width="80vw;"
+            }
+        );
     }
 
     private async Task OnDelete()
