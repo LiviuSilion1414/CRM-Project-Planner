@@ -18,19 +18,20 @@
 </RadzenCard>
 
 <RadzenDataGrid @ref="grid"
-TItem="RoleDto"
-Data="roles"
-EditMode="DataGridEditMode.Single"
-SelectionMode="DataGridSelectionMode.Single"
-AllowSorting="true"
-AllowAlternatingRows="true">
+                TItem="RoleDto"
+                Data="roles"
+                EditMode="DataGridEditMode.Single"
+                SelectionMode="DataGridSelectionMode.Single"
+                AllowSorting="true" 
+                RowCreate="@HandleRole"
+                RowUpdate="@HandleRole">
     <HeaderTemplate>
-        <RadzenButton Icon="add_circle_outline" 
-        ButtonStyle="ButtonStyle.Primary" 
-        Variant="Variant.Filled" 
-        Text="Add" 
-        Disabled="@(isEditRow is not null && !(bool)isEditRow)"
-        Click="@AddRow"></RadzenButton>
+        <RadzenButton Icon="add_circle_outline"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Variant="Variant.Filled"
+                      Text="Add"
+                      Disabled="@(isEditRow is not null && !(bool)isEditRow)"
+                      Click="@AddRow"></RadzenButton>
     </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role">
@@ -54,13 +55,13 @@ AllowAlternatingRows="true">
                 }
             </Template>
             <EditTemplate Context="edit">
-                <RadzenCheckBox @bind-Value="edit.isRemoveable" />
+                <RadzenCheckBox TriState="true" TValue="bool?" @bind-Value="edit.isRemoveable" />
             </EditTemplate>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Width="192px">
             <Template Context="data">
                 <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
-                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)"/>
+                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)" />
             </Template>
             <EditTemplate Context="data">
                 <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
@@ -77,7 +78,7 @@ AllowAlternatingRows="true">
     List<RoleDto> roles = new();
 
     string query = string.Empty;
-    bool? isEditRow= null;
+    bool? isEditRow = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -130,7 +131,7 @@ AllowAlternatingRows="true">
     void AddRow()
     {
         isEditRow = false;
-        grid.InsertRow(new());
+        grid.InsertRow(new RoleDto());
     }
 
     private async Task HandleRole(RoleDto model)
@@ -165,11 +166,11 @@ AllowAlternatingRows="true">
     {
         await dialog.OpenAsync("Add new role", ds =>
             @<RoleForm IsInsert=true OnReloadList="LoadData" />,
-        new DialogOptions
-        {
-            Width = "30%",
-            Height = "40%"
-        });
+    new DialogOptions
+            {
+                Width = "30%",
+                Height = "40%"
+            });
     }
 
     private async Task OnEdit(RoleDto role)
