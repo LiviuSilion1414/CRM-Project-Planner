@@ -1,0 +1,39 @@
+﻿<style>
+    .rz-card.rz-variant-filled:hover {
+    cursor: pointer;
+    }
+</style>
+
+<RadzenCard Variant="Variant.Filled" @onclick="@OnClick" class=@($"cursor-pointer {Class}")>
+    <RadzenRow AlignItems="AlignItems.End">
+        <RadzenColumn Size="12" SizeMD="8">
+            <RadzenIcon Icon="@Icon"></RadzenIcon>
+            <RadzenText TextStyle="TextStyle.Body2">@Text</RadzenText>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="4">
+            <RadzenLink Text="See more..." Path="@Path" Visible="@ShowMore"/>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+@code 
+{
+    [Parameter] public string Text { get; set; }
+    [Parameter] public string Path { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public bool ShowMore { get; set; } = true;
+    [Parameter] public EventCallback Click { get; set; }
+
+    async Task OnClick() 
+    {
+        if (Click.HasDelegate)
+        {
+            await Click.InvokeAsync();
+        }
+        else if (!string.IsNullOrEmpty(Path))
+        {
+            navigation.NavigateTo(Path);
+        }
+    }
+}

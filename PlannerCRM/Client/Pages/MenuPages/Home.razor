@@ -4,6 +4,38 @@
 
 <h3>Home</h3>
 
+<RadzenStack>
+    <RadzenRow class="m-3" JustifyContent="JustifyContent.Right">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenRow class="m-2">
+                <RadzenColumn SizeSM="6">
+                    <QuickActionCard Text="WorkOrders" Path="/workOrders" Icon="work"/>
+                </RadzenColumn>
+                <RadzenColumn SizeSM="6">
+                    <QuickActionCard Text="Clients" Path="/clients" Icon="groups"/>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow class="m-2">
+                <RadzenColumn SizeSM="6">
+                    <QuickActionCard Text="Employees" Path="/employees" Icon="people"/>
+                </RadzenColumn>
+                <RadzenColumn SizeSM="6">
+                    <QuickActionCard Text="WorkTimes" Path="/workTimes" Icon="work_history"/>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow class="m-2">
+                <RadzenColumn Size="12" SizeMD="12">
+                    <Statistics/>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <Calendar/>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
+
+
 @code {
 
 }

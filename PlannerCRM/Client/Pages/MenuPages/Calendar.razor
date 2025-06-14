@@ -10,7 +10,7 @@
 else
 {
     <RadzenScheduler TItem="ActivityDto"
-                     Style="height: 90vh;"
+                     Style="height: 80vh;"
                      Data=@_activities
                      Culture="CultureInfo.InvariantCulture"
                      SlotSelect="@OnAdd"
@@ -19,11 +19,9 @@ else
                      EndProperty="@nameof(ActivityDto.endDate)"
                      TextProperty="@nameof(ActivityDto.name)"
                      AppointmentRender="@OnEventRender"
-                     SelectedIndex="2">
-        <RadzenDayView />
+                     SelectedIndex="1">
         <RadzenWeekView />
         <RadzenMonthView />
-        <RadzenYearView />
     </RadzenScheduler>
 }
 @code {

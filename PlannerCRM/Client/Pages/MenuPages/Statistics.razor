@@ -1,7 +1,176 @@
 ﻿@page "/statistics"
 
-<h3>Statistics</h3>
+@if (fetch.IsBusy)
+{
+    <Loader />
+}
+else
+{
 
-@code {
+    <RadzenStack>
+        <RadzenRow class="m-3">
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenRow class="m-2">
+                    <RadzenColumn SizeSM="6">
+                        <QuickActionCard Text="@totalWorkOrderString" Path="/workOrders" Icon="work" />
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="6">
+                        <QuickActionCard Text="@totalClientsString" Path="/clients" Icon="groups" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="m-2">
+                    <RadzenColumn SizeSM="6">
+                        <QuickActionCard Text="@totalEmployeeString" Path="/employees" Icon="people" />
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="6">
+                        <QuickActionCard Text="@totalWorkTimesString" Path="/workTimes" Icon="work_history" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow class="m-2">
+                    <RadzenColumn SizeSM="12">
+                        <QuickActionCard Text="@totalActivitiesString" Path="/activities" Icon="check_circle" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+}
 
+@code
+{
+    List<ActivityDto> activities = new();
+    List<WorkOrderDto> workOrders = new();
+    List<FirmClientDto> clients = new();
+    List<EmployeeDto> employees = new();
+    List<WorkTimeDto> workTimes = new();
+
+    int totalActivities = 0;
+    int totalWorkOrders = 0;
+    int totalClients = 0;
+    int totalEmployees = 0;
+    int totalWorkTimes = 0;
+
+    string totalActivitiesString = string.Empty;
+    string totalWorkOrderString = string.Empty;
+    string totalClientsString = string.Empty;
+    string totalEmployeeString = string.Empty;
+    string totalWorkTimesString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        DoCalculations();
+    }
+
+    void DoCalculations()
+    {
+        totalWorkOrders = workOrders.Count;
+        totalClients = clients.Count;
+        totalEmployees = employees.Count;
+        totalWorkTimes = workTimes.Count;
+        totalActivities = activities.Count;
+
+        totalActivitiesString = $"{totalActivities} Activities";
+        totalWorkOrderString = $"{totalWorkOrders} WorkOrders";
+        totalClientsString = $"{totalClients} Clients";
+        totalEmployeeString = $"{totalEmployees} Employees";
+        totalWorkTimesString = $"{totalWorkTimes} WorkTimes";
+    }
+
+    async Task LoadData()
+    {
+        fetch.IsBusy = true;
+
+        await LoadActivities();
+        await LoadWorkOrders();
+        await LoadClients();
+        await LoadEmployees();
+        await LoadWorkTimes();
+
+        fetch.IsBusy = false;
+    }
+
+    async Task LoadWorkOrders()
+    {
+        try
+        {
+            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task LoadClients()
+    {
+        try
+        {
+            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task LoadEmployees()
+    {
+        try
+        {
+            var result = await execute.Employee_List(new EmployeeFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task LoadWorkTimes()
+    {
+        try
+        {
+            var result = await execute.WorkTime_List(new WorkTimeFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                workTimes = JsonSerializer.Deserialize<List<WorkTimeDto>>(result.data.ToString());
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task LoadActivities()
+    {
+        try
+        {
+            var result = await execute.Activity_List(new ActivityFilterDto());
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
+            }
+        }
+        catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
 }
