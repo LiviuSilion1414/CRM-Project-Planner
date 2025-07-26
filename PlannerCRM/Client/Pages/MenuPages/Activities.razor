@@ -52,7 +52,7 @@ else
                         <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
                             <RadzenDropDown TValue="Guid?"
                             class="form-control" Style="min-width: 20vw;"
-                            Data="_workOrders"
+                            Data="_workOrders.Where(x => x.fkIdFirmClient == clientId)"
                             AllowFiltering="true"
                             AllowClear="true"
                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -134,8 +134,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadClients();
-        await LoadWorkOrders();
         await LoadData();
     }
 
@@ -153,7 +151,12 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+            FirmClientFilterDto firmClientFilterDto = new FirmClientFilterDto
+            {
+                firmClientId = clientId
+            };
+
+            var result = await execute.FirmClient_List(firmClientFilterDto);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -173,7 +176,12 @@ else
         {
             fetch.IsBusy = true;
 
-            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+            WorkOrderFilterDto workOrderFilterDto = new WorkOrderFilterDto
+            {
+                workOrderId = workOrderId
+            };
+
+            var result = await execute.WorkOrder_List(workOrderFilterDto);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -187,7 +195,7 @@ else
         }
     }
 
-    private async Task LoadData()
+    private async Task LoadActivities()
     {
         try
         {
@@ -196,8 +204,8 @@ else
 
             var filter = new ActivityFilterDto
                 {
-                    workOrderId = workOrderId ?? Guid.Empty,
-                    firmClientId = clientId ?? Guid.Empty,
+                    workOrderId = workOrderId,
+                    firmClientId = clientId,
                     searchQuery = query
                 };
 
@@ -213,6 +221,13 @@ else
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    private async Task LoadData()
+    {
+        await LoadClients();
+        await LoadWorkOrders();
+        await LoadActivities();
     }
 
     private void ResetFlags()

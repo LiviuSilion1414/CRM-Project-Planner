@@ -6,34 +6,55 @@
 }
 else
 {
-
-    <RadzenStack>
-        <RadzenRow class="m-3">
-            <RadzenColumn Size="12" SizeMD="12">
-                <RadzenRow class="m-2">
-                    <RadzenColumn SizeSM="6">
-                        <QuickActionCard Text="@totalWorkOrderString" Path="/workOrders" Icon="work" />
-                    </RadzenColumn>
-                    <RadzenColumn SizeSM="6">
-                        <QuickActionCard Text="@totalClientsString" Path="/clients" Icon="groups" />
-                    </RadzenColumn>
-                </RadzenRow>
-                <RadzenRow class="m-2">
-                    <RadzenColumn SizeSM="6">
-                        <QuickActionCard Text="@totalEmployeeString" Path="/employees" Icon="people" />
-                    </RadzenColumn>
-                    <RadzenColumn SizeSM="6">
-                        <QuickActionCard Text="@totalWorkTimesString" Path="/workTimes" Icon="work_history" />
-                    </RadzenColumn>
-                </RadzenRow>
-                <RadzenRow class="m-2">
-                    <RadzenColumn SizeSM="12">
-                        <QuickActionCard Text="@totalActivitiesString" Path="/activities" Icon="check_circle" />
-                    </RadzenColumn>
-                </RadzenRow>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenStack>
+    <RadzenCard class="m-3">
+        <RadzenStack>
+            <RadzenRow>
+                <RadzenColumn Size="12">
+                    <RadzenText TextStyle="TextStyle.DisplayH6">All records</RadzenText>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenLabel>Work Orders</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    @workOrders.Count
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenLabel>Activities</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    @activities.Count
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenLabel>Clients</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    @clients.Count
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenLabel>Employees</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    @employees.Count
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenLabel>Work Times</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    @workTimes.Count
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenCard>
 }
 
 @code
@@ -44,37 +65,9 @@ else
     List<EmployeeDto> employees = new();
     List<WorkTimeDto> workTimes = new();
 
-    int totalActivities = 0;
-    int totalWorkOrders = 0;
-    int totalClients = 0;
-    int totalEmployees = 0;
-    int totalWorkTimes = 0;
-
-    string totalActivitiesString = string.Empty;
-    string totalWorkOrderString = string.Empty;
-    string totalClientsString = string.Empty;
-    string totalEmployeeString = string.Empty;
-    string totalWorkTimesString = string.Empty;
-
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
-        DoCalculations();
-    }
-
-    void DoCalculations()
-    {
-        totalWorkOrders = workOrders.Count;
-        totalClients = clients.Count;
-        totalEmployees = employees.Count;
-        totalWorkTimes = workTimes.Count;
-        totalActivities = activities.Count;
-
-        totalActivitiesString = $"{totalActivities} Activities";
-        totalWorkOrderString = $"{totalWorkOrders} WorkOrders";
-        totalClientsString = $"{totalClients} Clients";
-        totalEmployeeString = $"{totalEmployees} Employees";
-        totalWorkTimesString = $"{totalWorkTimes} WorkTimes";
     }
 
     async Task LoadData()
@@ -145,7 +138,12 @@ else
     {
         try
         {
-            var result = await execute.WorkTime_List(new WorkTimeFilterDto());
+            WorkTimeFilterDto workTimeFilterDto = new WorkTimeFilterDto
+            {
+                employeeId = await auth.GetCurrentUserIdAsync(),
+            };
+
+            var result = await execute.WorkTime_FindAssociatedWorkTimesByEmployeeId(workTimeFilterDto);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -168,7 +166,7 @@ else
                 activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
         }
-        catch
+        catch (Exception ex)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

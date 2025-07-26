@@ -29,8 +29,7 @@
         <RadzenButton Icon="add_circle_outline"
                       ButtonStyle="ButtonStyle.Primary"
                       Variant="Variant.Filled"
-                      Text="Add"
-                      Disabled="@(isEditRow is not null && !(bool)isEditRow)"
+                      Text="New"
                       Click="@AddRow"></RadzenButton>
     </HeaderTemplate>
     <Columns>
@@ -78,7 +77,6 @@
     List<RoleDto> roles = new();
 
     string query = string.Empty;
-    bool? isEditRow = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,20 +116,18 @@
 
     void EditRow(RoleDto role)
     {
-        isEditRow = true;
         grid.EditRow(role);
     }
 
     void CancelRow(RoleDto role)
     {
-        isEditRow = null;
         grid.CancelEditRow(role);
     }
 
     void AddRow()
     {
-        isEditRow = false;
-        grid.InsertRow(new RoleDto());
+        RoleDto role = new RoleDto();
+        grid.InsertRow(role);
     }
 
     private async Task HandleRole(RoleDto model)
@@ -140,11 +136,11 @@
         {
             var result = new ResultDto();
 
-            if (isEditRow != null && (bool)isEditRow)
+            if (model.id != null || model.id != Guid.Empty)
             {
                 result = await execute.Role_Update(model);
             }
-            if (isEditRow == null || !(bool)isEditRow)
+            else
             {
                 result = await execute.Role_Insert(model);
             }
