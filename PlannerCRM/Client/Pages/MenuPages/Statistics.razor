@@ -1,5 +1,7 @@
 ﻿@page "/statistics"
 
+@attribute [Authorize(Roles = "Admin")]
+
 @if (fetch.IsBusy)
 {
     <Loader />

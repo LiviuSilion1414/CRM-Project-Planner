@@ -186,6 +186,35 @@ public partial class FetchExecute(FetchService fetch)
 
     #endregion
 
+    #region Menu Role
+
+    public async Task<ResultDto> Menu_Role_Insert(MenuRoleDto dto)
+    {
+        return await _fetch.ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.MENU_ROLE_INSERT, dto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Menu_Role_Update(MenuRoleDto dto)
+    {
+        return await _fetch.ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.MENU_ROLE_UPDATE, dto, ApiType.Put);
+    }
+
+    public async Task<ResultDto> Menu_Role_Delete(MenuRoleFilterDto menuFilterDto)
+    {
+        return await _fetch.ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.MENU_ROLE_DELETE, menuFilterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Menu_Role_Get(MenuRoleFilterDto menuFilterDto)
+    {
+        return await _fetch.ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.MENU_ROLE_GET, menuFilterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Menu_Role_List(MenuRoleFilterDto menuFilterDto)
+    {
+        return await _fetch.ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.MENU_ROLE_LIST, menuFilterDto, ApiType.Post);
+    }
+
+    #endregion
+
     #region WorkOrder
 
     public async Task<ResultDto> WorkOrder_Insert(WorkOrderDto dto)

@@ -19,7 +19,7 @@
                 Style="width: 100%; background-color: lightseagreen;">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                         <RadzenSidebarToggle Click="ToggleSidebar" />
-                        <RadzenLink class="text-decoration-none" Match="NavLinkMatch.All" Path="/home" Text="PlannerCRM" />
+                        <RadzenText TextStyle="TextStyle.Body2" Text="PlannerCRM"  />
                     </RadzenStack>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px">
                         <RadzenLink Path="notifications">
@@ -39,20 +39,14 @@
             </RadzenHeader>
             <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
                 <RadzenPanelMenu>
-                    <RadzenPanelMenuItem Text="Home" Icon="house" Path="/home" />
-                    <RadzenPanelMenuItem Text="Recently" Icon="schedule" Path="/recently" />
-                    <AuthorizeView Roles="super admin" Context="auth">
-                    </AuthorizeView>
-                        <RadzenPanelMenuItem Text="Roles" Icon="work" Path="/roles" />
-                        <RadzenPanelMenuItem Text="Employees" Icon="people" Path="/employees" />
-                        <RadzenPanelMenuItem Text="Clients" Icon="groups" Path="/clients" />
-                        <RadzenPanelMenuItem Text="WorkOrders" Icon="work" Path="/workOrders" />
-                        <RadzenPanelMenuItem Text="Activities" Icon="check_circle" Path="/activities" />
-                    <RadzenPanelMenuItem Text="WorkTimes" Icon="work_history" Path="/workTimes" />
-                    <RadzenPanelMenuItem Text="Statistics" Icon="bar_chart" Path="/statistics" />
-                    <RadzenPanelMenuItem Text="Calendar" Icon="calendar_today" Path="/calendar" />
-                    <RadzenPanelMenuItem Text="Invoices" Icon="description" Path="/invoices" />
-                    <RadzenPanelMenuItem Text="Settings" Icon="settings" Path="/settings" />
+                    @foreach (var menuRole in menuRoles)
+                    {
+                        <AuthorizeView Roles="@menuRole.fkIdRoleNavigation.name" Context="auth">
+                            <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title" 
+                            Icon="@menuRole.fkIdMenuNavigation.icon" 
+                            Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
+                        </AuthorizeView >
+                    }
                 </RadzenPanelMenu>
                 <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
                     <RadzenText Text="PlannerCRM v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
@@ -70,11 +64,34 @@
 </AuthorizeView>
 
 @code {
+    List<MenuRoleDto> menuRoles = new List<MenuRoleDto>();
+
     private bool sidebarExpanded = true;
 
     protected override async Task OnInitializedAsync()
     {
         await auth.GetAuthenticationStateAsync();
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await execute.Menu_Role_List(new MenuRoleFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                menuRoles = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch(Exception exc)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private void ToggleSidebar()

@@ -1,5 +1,7 @@
 ﻿@page "/roles"
 
+@attribute [Authorize(Roles = "Admin")]
+
 <h3>Roles</h3>
 <PageTitle>Roles</PageTitle>
 

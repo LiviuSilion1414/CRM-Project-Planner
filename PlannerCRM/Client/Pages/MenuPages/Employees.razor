@@ -1,6 +1,8 @@
 ﻿@page "/employees"
-
 @layout MainLayout
+
+@attribute [Authorize(Roles = "Admin")]
+
 
 <h3>Employees</h3>
 <PageTitle>Employees</PageTitle>

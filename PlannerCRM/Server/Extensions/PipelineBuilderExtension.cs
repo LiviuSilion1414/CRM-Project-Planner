@@ -54,5 +54,6 @@ public static class PipelineBuilderExtension
         services.AddScoped<WorkOrderRepository>();
         services.AddScoped<WorkTimeRepository>();
         services.AddScoped<RoleRepository>();
+        services.AddScoped<MenuRoleRepository>();
     }
 }

@@ -25,7 +25,13 @@ public partial class PlannerCrmContext : DbContext
 
     public virtual DbSet<FirmClient> FirmClients { get; set; }
 
+    public virtual DbSet<Menu> Menus { get; set; }
+
+    public virtual DbSet<MenuRole> MenuRoles { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Setting> Settings { get; set; }
 
     public virtual DbSet<WorkOrder> WorkOrders { get; set; }
 
@@ -120,6 +126,49 @@ public partial class PlannerCrmContext : DbContext
                 .HasMaxLength(20);
         });
 
+        modelBuilder.Entity<Menu>(entity =>
+        {
+            entity.ToTable("Menu");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.Icon)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("icon");
+            entity.Property(e => e.IsDropdown).HasColumnName("isDropdown");
+            entity.Property(e => e.Path)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("path");
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("title");
+        });
+
+        modelBuilder.Entity<MenuRole>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.Property(e => e.FkIdMenu).HasColumnName("fkIdMenu");
+            entity.Property(e => e.FkIdRole).HasColumnName("fkIdRole");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+
+            entity.HasOne(d => d.FkIdMenuNavigation).WithMany()
+                .HasForeignKey(d => d.FkIdMenu)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MenuRoles_Menu");
+
+            entity.HasOne(d => d.FkIdRoleNavigation).WithMany()
+                .HasForeignKey(d => d.FkIdRole)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MenuRoles_Roles");
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
@@ -127,6 +176,25 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Setting>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(300)
+                .HasColumnName("description");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
+            entity.Property(e => e.IsActive).HasColumnName("isActive");
+            entity.Property(e => e.IsAdvanced).HasColumnName("isAdvanced");
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("title");
         });
 
         modelBuilder.Entity<WorkOrder>(entity =>
