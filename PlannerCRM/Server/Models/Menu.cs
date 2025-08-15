@@ -14,4 +14,6 @@ public partial class Menu
     public string Path { get; set; }
 
     public bool IsDropdown { get; set; }
+
+    public virtual ICollection<MenuRole> MenuRoles { get; set; } = new List<MenuRole>();
 }

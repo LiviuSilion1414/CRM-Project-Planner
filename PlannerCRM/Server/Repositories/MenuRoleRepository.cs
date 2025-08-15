@@ -11,7 +11,10 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            await _context.MenuRoles.AddAsync(_mapper.Map<MenuRole>(dto));
+            var mappedResult = _mapper.Map<MenuRole>(dto);
+            mappedResult.FkIdRoleNavigation = null;
+
+            await _context.MenuRoles.AddAsync(mappedResult);
 
             await _context.SaveChangesAsync();
         } catch
@@ -78,16 +81,29 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var roles = await _context.MenuRoles
-                                      .AsNoTracking()
+            var menuRoles = await _context.MenuRoles
                                       .AsSplitQuery()
-                                      .Include(x => x.FkIdRoleNavigation)
                                       .Include(x => x.FkIdMenuNavigation)
+                                      .Include(x => x.FkIdRoleNavigation)
                                       .OrderBy(x => x.Id)
-                                      //.Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                       .ToListAsync();
+            var mappedResult = _mapper.Map<List<MenuRoleDto>>(menuRoles);
 
-            return _mapper.Map<List<MenuRoleDto>>(roles);
+            var employeesRoles = await _context.EmployeesRoles
+                                          .AsNoTracking()
+                                          .AsSplitQuery()
+                                          .Include(x => x.FkIdEmployeeNavigation)
+                                          .Where(x => menuRoles.Select(r => r.FkIdRole).Contains(x.FkIdRole))
+                                          .ToListAsync();
+            var mappedEmployeeRoles = _mapper.Map<List<EmployeesRoleDto>>(employeesRoles);
+
+            return mappedResult.Select(x =>
+            {
+                x.employeesRoles = mappedEmployeeRoles.Where(y => y.fkIdRole == x.fkIdRole).ToList();
+
+                return x;
+            })
+            .ToList();
         } catch (Exception)
         {
             throw;

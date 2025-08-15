@@ -142,7 +142,7 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception exc)
         {
             return new ResultDto()
             {

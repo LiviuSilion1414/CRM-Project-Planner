@@ -14,4 +14,6 @@ public partial class Role
     public DateTime? CreationDate { get; set; }
 
     public virtual ICollection<EmployeesRole> EmployeesRoles { get; set; } = new List<EmployeesRole>();
+
+    public virtual ICollection<MenuRole> MenuRoles { get; set; } = new List<MenuRole>();
 }

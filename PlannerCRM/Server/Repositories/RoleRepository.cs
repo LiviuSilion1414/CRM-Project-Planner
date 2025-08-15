@@ -85,7 +85,41 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
                                       .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                       .ToListAsync();
 
-            return _mapper.Map<List<RoleDto>>(roles);
+            var mappedResult = _mapper.Map<List<RoleDto>>(roles);
+
+
+            var menuRoles = await _context.MenuRoles
+                                      .AsSplitQuery()
+                                      .Include(x => x.FkIdMenuNavigation)
+                                      .Include(x => x.FkIdRoleNavigation)
+                                      .OrderBy(x => x.Id)
+                                      .Where(x => roles.Select(r => r.Id).Contains(x.FkIdRole))
+                                      .ToListAsync();
+            
+            var mappedMenuRoles = _mapper.Map<List<MenuRoleDto>>(menuRoles);
+
+            var employeesRoles = await _context.EmployeesRoles
+                                          .AsNoTracking()
+                                          .AsSplitQuery()
+                                          .Include(x => x.FkIdEmployeeNavigation)
+                                          .Where(x => menuRoles.Select(r => r.FkIdRole).Contains(x.FkIdRole))
+                                          .ToListAsync();
+            var mappedEmployeeRoles = _mapper.Map<List<EmployeesRoleDto>>(employeesRoles);
+
+            return mappedResult.Select(x =>
+            {
+                x.menuRoleList = mappedMenuRoles.Where(mr => mr.fkIdRole == x.id).Select(y =>
+                {
+                    y.employeesRoles = mappedEmployeeRoles.Where(k => k.fkIdRole == y.id).ToList();
+
+                    return y;
+                }).ToList();
+
+                x.employeeRolesList = mappedEmployeeRoles.Where(y => y.fkIdRole == x.id).ToList();
+
+                return x;
+            }).ToList();
+
         } catch (Exception)
         {
             throw;

@@ -150,20 +150,18 @@ public partial class PlannerCrmContext : DbContext
 
         modelBuilder.Entity<MenuRole>(entity =>
         {
-            entity.HasNoKey();
-
-            entity.Property(e => e.FkIdMenu).HasColumnName("fkIdMenu");
-            entity.Property(e => e.FkIdRole).HasColumnName("fkIdRole");
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("id");
+            entity.Property(e => e.FkIdMenu).HasColumnName("fkIdMenu");
+            entity.Property(e => e.FkIdRole).HasColumnName("fkIdRole");
 
-            entity.HasOne(d => d.FkIdMenuNavigation).WithMany()
+            entity.HasOne(d => d.FkIdMenuNavigation).WithMany(p => p.MenuRoles)
                 .HasForeignKey(d => d.FkIdMenu)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MenuRoles_Menu");
 
-            entity.HasOne(d => d.FkIdRoleNavigation).WithMany()
+            entity.HasOne(d => d.FkIdRoleNavigation).WithMany(p => p.MenuRoles)
                 .HasForeignKey(d => d.FkIdRole)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MenuRoles_Roles");

@@ -1,4 +1,6 @@
-﻿namespace PlannerCRM.Shared.Dtos;
+﻿using System.Security.Claims;
+
+namespace PlannerCRM.Shared.Dtos;
 
 public class CustomClaimTypes
 {

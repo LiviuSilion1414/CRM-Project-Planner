@@ -41,5 +41,13 @@ public class AutoMapperProfile : Profile
         CreateMap<EmployeeActivity, EmployeeActivityDto>()
             .PreserveReferences()
             .ReverseMap();
+
+        CreateMap<MenuRole, MenuRoleDto>()
+            .PreserveReferences()
+            .ReverseMap();
+
+        CreateMap<Menu, MenuDto>()
+            .PreserveReferences()
+            .ReverseMap();
     }
 }

@@ -14,6 +14,7 @@ public partial class MenuRoleDto
     public virtual MenuDto fkIdMenuNavigation { get; set; }
 
     public virtual RoleDto fkIdRoleNavigation { get; set; }
+    public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
 }
 
 public partial class MenuRoleFilterDto : FilterDto

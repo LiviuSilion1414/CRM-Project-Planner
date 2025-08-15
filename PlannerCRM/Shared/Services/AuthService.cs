@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using PlannerCRM.Client.Services;
 using PlannerCRM.Shared.Dtos;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace PlannerCRM.Shared.Services;
@@ -103,6 +105,37 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
     public async Task<Guid> GetCurrentUserIdAsync()
     {
         return Guid.Parse((await GetAuthenticationStateAsync()).User.Claims.First(x => x.Type == CustomClaimTypes.Guid).Value);
+    }
+
+    public async Task<CurrentUserDto> GetCurrentUserDataAsync(FetchService fetchService)
+    {
+        var currentUser = new CurrentUserDto();
+
+        var authState = await GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user == null || !user.Identity.IsAuthenticated)
+        {
+            fetchService.currentUser = new CurrentUserDto();
+            return currentUser;
+        }
+
+        currentUser.email = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Email)?.Value ?? string.Empty;
+        currentUser.name = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Name)?.Value ?? string.Empty;
+        currentUser.isAuthenticated = user.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.IsAuthenticated)?.Value != null
+                                                        ? bool.Parse(user.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.IsAuthenticated)?.Value)
+                                                        : false;
+        currentUser.id = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value != null
+                                           ? Guid.Parse(user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value)
+                                           : Guid.Empty;
+        currentUser.roles = user.Claims
+                                   .Where(c => c.Type == CustomClaimTypes.Role)
+                                   .Select(c => c.Value)
+                                   .ToList();
+
+        fetchService.currentUser = currentUser;
+
+        return currentUser;
     }
 
     private IEnumerable<Claim>? ParseClaimsFromJwt(string jwt)

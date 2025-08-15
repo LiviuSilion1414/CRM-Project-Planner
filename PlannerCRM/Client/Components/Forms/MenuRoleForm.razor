@@ -1,0 +1,151 @@
+﻿<RadzenCard>
+    <RadzenText TextStyle="TextStyle.H3" Text="Menu Role Form" />
+    <RadzenFieldset Text="Menu">
+        <RadzenRow class="mt-3">
+            <RadzenColumn Size="12" SizeMD="3">
+                Title
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="9">
+                <RadzenTextBox Name="Title" @bind-Value="@Model.fkIdMenuNavigation.title" Placeholder="Title" Style="width: 100%;" />
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                Path
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="9">
+                <RadzenTextBox Name="Title" @bind-Value="@Model.fkIdMenuNavigation.path" Placeholder="Path" Style="width: 100%;" />
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                Icon
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="8">
+                <RadzenTextBox Name="Title" @bind-Value="@Model.fkIdMenuNavigation.icon" Placeholder="Icon" Style="width: 100%;" />
+            </RadzenColumn>
+            @if (!string.IsNullOrEmpty(Model.fkIdMenuNavigation.icon))
+            {
+                <RadzenColumn Size="12" SizeMD="1">
+                    <RadzenIcon IconStyle="IconStyle.Primary" Icon="@Model.fkIdMenuNavigation.icon" />
+                </RadzenColumn>
+            }
+        </RadzenRow>
+    </RadzenFieldset>
+
+    <RadzenFieldset Text="Role">
+        <RadzenRow class="mt-3">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenLabel>Role</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="8">
+                <RadzenDropDown TValue="@Guid"
+                Data="@roleList"
+                AllowFiltering="true"
+                Placeholder="Select a role"
+                AllowClear="true"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                TextProperty="@nameof(RoleDto.name)"
+                ValueProperty="@nameof(RoleDto.id)"
+                @bind-Value="@Model.fkIdRole"/>
+            </RadzenColumn>
+            @if (Model.fkIdRole != Guid.Empty)
+            {
+                <RadzenColumn Size="12" SizeMD="3">
+                    Is removeable?
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@Model.fkIdRoleNavigation.isRemoveable" Disabled="true"/>
+                </RadzenColumn>
+            }
+        </RadzenRow>
+    </RadzenFieldset>
+
+    <RadzenStack class="mt-3" AlignItems="AlignItems.Center">
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenButton ButtonType="ButtonType.Button" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Info" Text="Close" Click="Cancel"></RadzenButton>
+                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" Text="Submit" Click="@Save"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenCard>
+
+
+@code
+{
+    [Parameter] public DialogService ds { get; set; }
+    [Parameter] public bool IsInsert { get; set; }
+    [Parameter] public MenuRoleDto? Model { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
+    List<RoleDto> roleList = new List<RoleDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsInsert)
+        {
+            Model = new MenuRoleDto()
+            {
+                fkIdMenuNavigation = new MenuDto(),
+                fkIdRoleNavigation = new RoleDto(),
+            };
+        }
+        await LoadRoles();
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await execute.Role_List(new RoleFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                roleList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch (Exception exc)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task Save()
+    {
+        if (Model != null)
+        {
+            try
+            {
+                fetch.IsBusy = true;
+
+                ResultDto result = new ResultDto();
+
+                if (IsInsert)
+                {
+                    result = await execute.Menu_Role_Insert(Model);
+                }
+                else
+                {
+                    result = await execute.Menu_Role_Update(Model);
+                }
+
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                }
+                fetch.IsBusy = false;
+            }
+            catch (Exception exc)
+            {
+                notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+            }
+        }
+    }
+
+    void Cancel()
+    {
+        ds.Close();
+    }
+}

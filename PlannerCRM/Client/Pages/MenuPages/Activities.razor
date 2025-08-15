@@ -122,12 +122,12 @@ else
     private List<WorkOrderDto> _workOrders = new();
     private List<FirmClientDto> _clients = new();
 
-    private ActivityDto? _selectedActivity = new();
 
     private string query = string.Empty;
     private Guid? clientId = Guid.Empty;
     private Guid? workOrderId = Guid.Empty;
 
+    private ActivityDto? _selectedActivity = new();
     private bool isInsert = false;
     private bool isView = false;
     private bool isEdit = false;

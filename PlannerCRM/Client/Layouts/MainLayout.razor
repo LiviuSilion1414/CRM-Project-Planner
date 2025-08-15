@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@inherits LayoutComponentBase
 
 @inject NavigationManager nav
 @inject LocalStorageService localStorage
@@ -14,12 +15,12 @@
         <RadzenLayout>
             <RadzenHeader>
                 <RadzenStack Orientation="Orientation.Horizontal"
-                AlignItems="AlignItems.Center"
-                JustifyContent="JustifyContent.SpaceBetween"
-                Style="width: 100%; background-color: lightseagreen;">
+                             AlignItems="AlignItems.Center"
+                             JustifyContent="JustifyContent.SpaceBetween"
+                             Style="width: 100%; background-color: lightseagreen;">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                         <RadzenSidebarToggle Click="ToggleSidebar" />
-                        <RadzenText TextStyle="TextStyle.Body2" Text="PlannerCRM"  />
+                        <RadzenText TextStyle="TextStyle.Body2" Text="PlannerCRM" />
                     </RadzenStack>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px">
                         <RadzenLink Path="notifications">
@@ -37,25 +38,43 @@
                     </RadzenStack>
                 </RadzenStack>
             </RadzenHeader>
-            <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
-                <RadzenPanelMenu>
-                    @foreach (var menuRole in menuRoles)
-                    {
-                        <AuthorizeView Roles="@menuRole.fkIdRoleNavigation.name" Context="auth">
-                            <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title" 
-                            Icon="@menuRole.fkIdMenuNavigation.icon" 
-                            Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
-                        </AuthorizeView >
-                    }
-                </RadzenPanelMenu>
-                <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
-                    <RadzenText Text="PlannerCRM v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
-                    <RadzenText Text="Copyright Ⓒ 2025" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" class="rz-mb-0" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
-                </RadzenStack>
-            </RadzenSidebar>
-            <RadzenBody>
-                @Body
-            </RadzenBody>
+            @if (fetch.currentUser.roles.Any())
+            {
+                <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
+                    <RadzenPanelMenu>
+                        @foreach (var menuRole in fetch.MenuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id))
+                        {
+                            @if (fetch.currentUser.roles.Contains(menuRole.fkIdRoleNavigation.name))
+                            {
+                                <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.roles.Select(y => y)))" Context="auth">
+                                    <Authorized>
+                                        <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
+                                                                Icon="@menuRole.fkIdMenuNavigation.icon"
+                                                                Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
+                                    </Authorized>
+                                    <NotAuthorized>
+                                        <p>Not Authorized :)</p>
+                                    </NotAuthorized>
+                                </AuthorizeView>
+                            }
+                        }
+                    </RadzenPanelMenu>
+                    <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
+                        <RadzenText Text="PlannerCRM v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
+                        <RadzenText Text="Copyright Ⓒ 2025" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" class="rz-mb-0" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
+                    </RadzenStack>
+                </RadzenSidebar>
+                <RadzenBody>
+                    <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.roles.Select(y => y)))" Context="auth">
+                        <Authorized>
+                            @Body
+                        </Authorized>
+                        <NotAuthorized>
+                            <p>Not Authorized :)</p>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </RadzenBody>
+            }
         </RadzenLayout>
     </Authorized>
     <NotAuthorized>
@@ -64,14 +83,29 @@
 </AuthorizeView>
 
 @code {
-    List<MenuRoleDto> menuRoles = new List<MenuRoleDto>();
-
     private bool sidebarExpanded = true;
+    AuthenticationState authState = new AuthenticationState(new ClaimsPrincipal());
 
     protected override async Task OnInitializedAsync()
     {
-        await auth.GetAuthenticationStateAsync();
-        await LoadData();
+        authState = await auth.GetAuthenticationStateAsync();
+
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            if (!fetch.MenuRolesList.Any())
+            {
+                await LoadData();
+            }
+            if (!fetch.RolesList.Any())
+            {
+                await LoadRoles();
+            }
+            if (string.IsNullOrEmpty(fetch.Token))
+            {
+                fetch.Token = await fetch.GetBearerToken();
+                fetch.currentUser = await auth.GetCurrentUserDataAsync(fetch);
+            }
+        }
     }
 
     private async Task LoadData()
@@ -84,11 +118,31 @@
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
-                menuRoles = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
+                fetch.MenuRolesList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
             }
             fetch.IsBusy = false;
         }
-        catch(Exception exc)
+        catch (Exception exc)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            fetch.IsBusy = true;
+
+            var result = await execute.Role_List(new RoleFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                fetch.RolesList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+            fetch.IsBusy = false;
+        }
+        catch (Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

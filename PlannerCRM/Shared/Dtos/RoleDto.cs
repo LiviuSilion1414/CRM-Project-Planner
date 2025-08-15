@@ -5,10 +5,12 @@ namespace PlannerCRM.Shared.Dtos;
 
 public partial class RoleDto
 {
-    public Guid? id { get; set; }
+    public Guid id { get; set; }
     public string? name { get; set; } = string.Empty;
     public bool? isRemoveable { get; set; } = false;
-    //public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
+
+    public List<EmployeesRoleDto> employeeRolesList { get; set; } = new List<EmployeesRoleDto>();
+    public List<MenuRoleDto> menuRoleList { get; set; } = new List<MenuRoleDto>();
 }
 
 public class RoleFilterDto : FilterDto
