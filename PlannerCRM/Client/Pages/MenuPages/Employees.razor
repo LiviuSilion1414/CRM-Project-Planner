@@ -44,7 +44,7 @@ else
                         <RadzenFormField Text="Role" AllowFloatingLabel="false">
                             <RadzenDropDown TValue="Guid?"
                             class="form-control" Style="min-width: 20vw;"
-                            Data="_roles"
+                            Data="@fetch.rolesList"
                             AllowFiltering="true"
                             AllowClear="true"
                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -100,7 +100,6 @@ else
 @code
 {
     private List<EmployeeDto> _employees = new();
-    private List<RoleDto> _roles = new();
 
     EmployeeDto? _selectedEmployee = new EmployeeDto();
 
@@ -113,7 +112,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadRoles();
         await LoadData();
     }
 
@@ -122,26 +120,6 @@ else
         query = null;
         roleId = null;
         await LoadData();
-    }
-
-    private async Task LoadRoles()
-    {
-        try
-        {
-            fetch.isBusy = true;
-
-            var result = await fetch.Role_List(new RoleFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                _roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
-            }
-            fetch.isBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
     }
 
     private async Task LoadData()
@@ -165,7 +143,7 @@ else
             }
             fetch.isBusy = false;
         }
-        catch
+        catch(Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
