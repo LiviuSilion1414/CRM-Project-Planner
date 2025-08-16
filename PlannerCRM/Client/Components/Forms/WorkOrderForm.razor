@@ -197,7 +197,7 @@
             {
                 if (!Model.activities.Contains(activityModel))
                 {
-                    var result = await execute.Activity_Insert(activityModel);
+                    var result = await fetch.Activity_Insert(activityModel);
 
                     if (result.hasCompleted && result.messageType == MessageType.Success)
                     {
@@ -227,7 +227,7 @@
             {
                 var filter = new ActivityFilterDto() { activityId = activity.id };
 
-                var result = await execute.Activity_Delete(filter);
+                var result = await fetch.Activity_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
@@ -250,15 +250,15 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+            var result = await fetch.FirmClient_List(new FirmClientFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -270,17 +270,17 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new WorkOrderFilterDto { workOrderId = Model.id };
 
-            var result = await execute.WorkOrder_Get(filter);
+            var result = await fetch.WorkOrder_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 Model = JsonSerializer.Deserialize<WorkOrderDto>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -311,13 +311,13 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await execute.WorkOrder_Insert(Model);
+                    result = await fetch.WorkOrder_Insert(Model);
                 }
                 else
                 {
                     activityModel.fkIdWorkOrder = Model.id;
 
-                    result = await execute.WorkOrder_Update(Model);
+                    result = await fetch.WorkOrder_Update(Model);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)

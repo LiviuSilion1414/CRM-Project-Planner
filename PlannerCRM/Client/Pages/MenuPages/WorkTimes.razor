@@ -21,7 +21,7 @@ TextProperty="@nameof(WorkTimeDto.hoursString)">
 
     protected override async Task OnInitializedAsync()
     {
-        currentUserId = await auth.GetCurrentUserIdAsync();
+        currentUserId = fetch.currentUser.id;
         await LoadWorkTimes();
     }
 
@@ -40,20 +40,20 @@ TextProperty="@nameof(WorkTimeDto.hoursString)">
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             WorkTimeFilterDto filter = new WorkTimeFilterDto
             {
                 employeeId = currentUserId,
             };
 
-            var result = await execute.WorkTime_FindAssociatedWorkTimesByEmployeeId(filter);
+            var result = await fetch.WorkTime_FindAssociatedWorkTimesByEmployeeId(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workTimes = JsonSerializer.Deserialize<List<WorkTimeDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {

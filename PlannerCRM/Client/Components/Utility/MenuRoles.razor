@@ -146,15 +146,15 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.Role_List(new RoleFilterDto());
+            var result = await fetch.Role_List(new RoleFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roleList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch (Exception exc)
         {
@@ -162,19 +162,19 @@ else
         }
     }
 
-    private async Task LoadMenuRoles()
+    public async Task LoadMenuRoles()
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.Menu_Role_List(new MenuRoleFilterDto());
+            var result = await fetch.Menu_Role_List(new MenuRoleFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 menuRoleList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch (Exception exc)
         {

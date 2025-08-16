@@ -71,17 +71,17 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new EmployeeFilterDto() { employeeId = SelectedEmployee.id };
 
-            var result = await execute.Employee_Get(filter);
+            var result = await fetch.Employee_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 SelectedEmployee = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {

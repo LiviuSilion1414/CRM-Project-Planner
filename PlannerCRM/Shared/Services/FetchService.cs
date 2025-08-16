@@ -1,20 +1,110 @@
-﻿using PlannerCRM.Shared.Dtos;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using PlannerCRM.Shared.Dtos;
 using PlannerCRM.Shared.Services;
 using System.Net.Http.Json;
+using System.Security.Claims;
+using System.Text.Json;
 
-namespace PlannerCRM.Client.Services;
+namespace PlannerCRM.Shared.Services;
 
-public partial class FetchService(LocalStorageService localStorage, HttpClient http)
+public partial class FetchService(LocalStorageService localStorage, HttpClient http, AuthService auth)
 {
     private readonly HttpClient _http = http;
     private readonly LocalStorageService _localStorage = localStorage;
+    private readonly AuthService _auth = auth;
 
-    public CurrentUserDto? currentUser  = new ();
-    public bool IsBusy { get; set; }
-    public string? Token { get; set; }
-    public List<MenuRoleDto> MenuRolesList { get; set; } = new List<MenuRoleDto>();
-    public List<RoleDto> RolesList { get; set; } = new List<RoleDto>();
+    public CurrentUserDto? currentUser { get; set; } = new CurrentUserDto();
+    public bool isBusy { get; set; }
+    public string? token { get; set; }
+    public List<MenuRoleDto> menuRolesList { get; set; } = new List<MenuRoleDto>();
+    public List<RoleDto> rolesList { get; set; } = new List<RoleDto>();
+    public AuthenticationState authState { get; set; } = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
+    // metodo chiamato nel layout principale e se le voci di menu sono state cambiate
+    public async Task LoadData()
+    {
+        authState = await _auth.GetAuthenticationStateAsync();
+
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            if (!menuRolesList.Any())
+            {
+                await LoadMenuRoles();
+            }
+            if (!rolesList.Any())
+            {
+                await LoadGlobalRoles();
+            }
+            if (string.IsNullOrEmpty(token))
+            {
+                await GetBearerToken();
+                await GetCurrentUserDataAsync();
+            }
+        }
+    }
+
+    private async Task LoadMenuRoles()
+    {
+        try
+        {
+            isBusy = true;
+
+            var result = await Menu_Role_List(new MenuRoleFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                menuRolesList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
+            }
+            isBusy = false;
+        } 
+        catch (Exception exc)
+        {
+            throw;
+        }
+    }
+
+    private async Task LoadGlobalRoles()
+    {
+        try
+        {
+            isBusy = true;
+
+            var result = await Role_List(new RoleFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                rolesList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+            isBusy = false;
+        } 
+        catch (Exception exc)
+        {
+            throw;
+        }
+    }
+
+    public async Task GetCurrentUserDataAsync()
+    {
+        var authState = await _auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user != null || user.Identity.IsAuthenticated)
+        {
+
+        currentUser.email = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Email)?.Value ?? string.Empty;
+        currentUser.name = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Name)?.Value ?? string.Empty;
+        currentUser.isAuthenticated = user.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.IsAuthenticated)?.Value != null
+                                                        ? bool.Parse(user.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.IsAuthenticated)?.Value)
+                                                        : false;
+        currentUser.id = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value != null
+                                           ? Guid.Parse(user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value)
+                                           : Guid.Empty;
+        currentUser.roles = user.Claims
+                                   .Where(c => c.Type == CustomClaimTypes.Role)
+                                   .Select(c => c.Value)
+                                   .ToList();
+        }
+    }
 
     public async Task<ResultDto> ExecuteAsync<TItem>(string controllerName, string endpoint, TItem data, ApiType apiType)
         where TItem : class
@@ -23,7 +113,7 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
         {
             if (!_http.DefaultRequestHeaders.Contains("Authorization"))
             {
-                _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {Token}");
+                _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             }
 
             var response = new HttpResponseMessage();
@@ -50,11 +140,12 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
         }
     }
 
-    public async Task<string?> GetBearerToken()
+    public async Task GetBearerToken()
     {
         try
         {
-            return (await _localStorage.GetItemAsync(CustomClaimTypes.Token)).ToString();
+            var value = await _localStorage.GetItemAsync(CustomClaimTypes.Token);
+            token = value.ToString();
         } 
         catch (Exception)
         {

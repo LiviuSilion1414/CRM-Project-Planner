@@ -3,7 +3,7 @@
 <h3>Work Orders</h3>
 <PageTitle>Work Orders</PageTitle>
 
-@if (fetch.IsBusy)
+@if (fetch.isBusy)
 {
     <Loader />
 }
@@ -73,15 +73,15 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+            var result = await fetch.FirmClient_List(new FirmClientFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -98,15 +98,15 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+            var result = await fetch.WorkOrder_List(new WorkOrderFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -156,7 +156,7 @@ else
             {
                 var filter = new WorkOrderFilterDto() { workOrderId = workOrder.id };
 
-                var result = await execute.WorkOrder_Delete(filter);
+                var result = await fetch.WorkOrder_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {

@@ -21,6 +21,8 @@ public partial class Employee
 
     public bool IsRemoveable { get; set; }
 
+    public string Token { get; set; }
+
     public virtual ICollection<EmployeeActivity> EmployeeActivities { get; set; } = new List<EmployeeActivity>();
 
     public virtual ICollection<EmployeesRole> EmployeesRoles { get; set; } = new List<EmployeesRole>();

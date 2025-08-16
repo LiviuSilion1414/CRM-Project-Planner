@@ -2,7 +2,7 @@
 
 @attribute [Authorize(Roles = "Admin")]
 
-@if (fetch.IsBusy)
+@if (fetch.isBusy)
 {
     <Loader />
 }
@@ -74,7 +74,7 @@ else
 
     async Task LoadData()
     {
-        fetch.IsBusy = true;
+        fetch.isBusy = true;
 
         await LoadActivities();
         await LoadWorkOrders();
@@ -82,14 +82,14 @@ else
         await LoadEmployees();
         await LoadWorkTimes();
 
-        fetch.IsBusy = false;
+        fetch.isBusy = false;
     }
 
     async Task LoadWorkOrders()
     {
         try
         {
-            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+            var result = await fetch.WorkOrder_List(new WorkOrderFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -106,7 +106,7 @@ else
     {
         try
         {
-            var result = await execute.FirmClient_List(new FirmClientFilterDto());
+            var result = await fetch.FirmClient_List(new FirmClientFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -123,7 +123,7 @@ else
     {
         try
         {
-            var result = await execute.Employee_List(new EmployeeFilterDto());
+            var result = await fetch.Employee_List(new EmployeeFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -142,10 +142,10 @@ else
         {
             WorkTimeFilterDto workTimeFilterDto = new WorkTimeFilterDto
             {
-                employeeId = await auth.GetCurrentUserIdAsync(),
+                employeeId = fetch.currentUser.id,
             };
 
-            var result = await execute.WorkTime_FindAssociatedWorkTimesByEmployeeId(workTimeFilterDto);
+            var result = await fetch.WorkTime_FindAssociatedWorkTimesByEmployeeId(workTimeFilterDto);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -162,7 +162,7 @@ else
     {
         try
         {
-            var result = await execute.Activity_List(new ActivityFilterDto());
+            var result = await fetch.Activity_List(new ActivityFilterDto());
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());

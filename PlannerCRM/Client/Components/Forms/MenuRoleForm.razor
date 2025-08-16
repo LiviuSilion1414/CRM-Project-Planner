@@ -1,4 +1,6 @@
-﻿<RadzenCard>
+﻿@layout MainLayout 
+
+<RadzenCard>
     <RadzenText TextStyle="TextStyle.H3" Text="Menu Role Form" />
     <RadzenFieldset Text="Menu">
         <RadzenRow class="mt-3">
@@ -45,6 +47,7 @@
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 TextProperty="@nameof(RoleDto.name)"
                 ValueProperty="@nameof(RoleDto.id)"
+                Style="width: 100%;"
                 @bind-Value="@Model.fkIdRole"/>
             </RadzenColumn>
             @if (Model.fkIdRole != Guid.Empty)
@@ -96,15 +99,15 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.Role_List(new RoleFilterDto());
+            var result = await fetch.Role_List(new RoleFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roleList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch (Exception exc)
         {
@@ -118,24 +121,25 @@
         {
             try
             {
-                fetch.IsBusy = true;
+                fetch.isBusy = true;
 
                 ResultDto result = new ResultDto();
 
                 if (IsInsert)
                 {
-                    result = await execute.Menu_Role_Insert(Model);
+                    result = await fetch.Menu_Role_Insert(Model);
                 }
                 else
                 {
-                    result = await execute.Menu_Role_Update(Model);
+                    result = await fetch.Menu_Role_Update(Model);
                 }
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await fetch.LoadData(); //reloads the menu and refreshes current user data
                 }
-                fetch.IsBusy = false;
+                fetch.isBusy = false;
             }
             catch (Exception exc)
             {

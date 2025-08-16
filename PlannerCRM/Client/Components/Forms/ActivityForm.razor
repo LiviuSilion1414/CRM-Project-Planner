@@ -155,20 +155,20 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new ActivityFilterDto()
                 {
                     activityId = Model.id
                 };
 
-            var result = await execute.Activity_Get(filter);
+            var result = await fetch.Activity_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 Model = JsonSerializer.Deserialize<ActivityDto>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -180,15 +180,15 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.WorkOrder_List(new WorkOrderFilterDto());
+            var result = await fetch.WorkOrder_List(new WorkOrderFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -200,15 +200,15 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.Employee_List(new EmployeeFilterDto());
+            var result = await fetch.Employee_List(new EmployeeFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -233,12 +233,12 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await execute.Activity_Insert(Model);
+                    result = await fetch.Activity_Insert(Model);
                 }
                 else
                 {
                     // Model.fkIdWorkOrderNavigation =
-                    result = await execute.Activity_Update(Model);
+                    result = await fetch.Activity_Update(Model);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
@@ -268,7 +268,7 @@
         {
             var filter = new ActivityFilterDto() { activityId = Model.id, employeeId = (Guid)employeeId };
 
-            var result = await execute.Activity_AssignActivity(filter);
+            var result = await fetch.Activity_AssignActivity(filter);
 
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -290,7 +290,7 @@
         {
             var filter = new ActivityFilterDto() { activityId = Model.id, employeeId = (Guid)employeeId };
 
-            var result = await execute.Activity_RemoveAssignedEmployee(filter);
+            var result = await fetch.Activity_RemoveAssignedEmployee(filter);
 
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {

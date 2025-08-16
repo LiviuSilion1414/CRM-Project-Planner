@@ -143,17 +143,17 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new EmployeeFilterDto() { employeeId = Model.id };
 
-            var result = await execute.Employee_Get(filter);
+            var result = await fetch.Employee_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 Model = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -169,7 +169,7 @@
             {
                 var filter = new EmployeeFilterDto() { isRemoveRole = false, role = assignedRole, employeeId = Model.id };
 
-                var result = await execute.Employee_UpdateRole(filter);
+                var result = await fetch.Employee_UpdateRole(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
@@ -195,7 +195,7 @@
         {
             var filter = new EmployeeFilterDto() { isRemoveRole = true, role = role, employeeId = Model.id };
 
-            var result = await execute.Employee_UpdateRole(filter);
+            var result = await fetch.Employee_UpdateRole(filter);
 
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -218,15 +218,15 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.Role_List(new RoleFilterDto());
+            var result = await fetch.Role_List(new RoleFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -243,11 +243,11 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await execute.Employee_Insert(Model);
+                    result = await fetch.Employee_Insert(Model);
                 }
                 else
                 {
-                    result = await execute.Employee_Update(Model);
+                    result = await fetch.Employee_Update(Model);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)

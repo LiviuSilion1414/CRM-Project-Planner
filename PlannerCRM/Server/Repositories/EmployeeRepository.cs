@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.JSInterop.Infrastructure;
 using PlannerCRM.Server.Models;
 using PlannerCRM.Shared.Dtos;
+using static PlannerCRM.Shared.DtoShared;
 
 namespace PlannerCRM.Server.Repositories;
 
@@ -26,6 +27,16 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                 await _context.Employees.AddAsync(model);
 
                 var mappedRoles = _mapper.Map<List<Role>>(dto.employeesRoles);
+
+                if (!mappedRoles.Where(x => x.Id == Guid.Parse(BaseRoles.USER.GetDescription())).Any())
+                {
+                    mappedRoles.Add(new Role()
+                    {
+                        Id = Guid.Parse(BaseRoles.USER.GetDescription()),
+                        Name = BaseRoles.USER.ToString(),
+                        IsRemoveable = false
+                    });
+                }
 
                 _context.EmployeesRoles.AddRange(mappedRoles.Select(x => new EmployeesRole() { FkIdEmployee  = model.Id, FkIdRole = x.Id }));
 

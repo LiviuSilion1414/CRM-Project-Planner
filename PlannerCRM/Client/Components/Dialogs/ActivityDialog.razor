@@ -109,17 +109,17 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new ActivityFilterDto() { employeeId = SelectedActivity.id };
 
-            var result = await execute.Activity_Get(filter);
+            var result = await fetch.Activity_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 SelectedActivity = JsonSerializer.Deserialize<ActivityDto>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -150,7 +150,7 @@
             {
                 var filter = new ActivityFilterDto() { activityId = SelectedActivity.id };
 
-                var result = await execute.Activity_Delete(filter);
+                var result = await fetch.Activity_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {

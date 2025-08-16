@@ -113,7 +113,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        currentUser.id = await auth.GetCurrentUserIdAsync();
+        currentUser.id = fetch.currentUser.id;
 
         await LoadData();
     }
@@ -147,18 +147,18 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new EmployeeFilterDto() { employeeId = currentUser.id, isEditProfile = true };
 
-            var result = await execute.Employee_Get(filter);
+            var result = await fetch.Employee_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 currentUser = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
                 _context = new EditContext(currentUser);
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -189,7 +189,7 @@ else
 
             if (_context.Validate())
             {
-                ResultDto result = await execute.Employee_Update(currentUser);
+                ResultDto result = await fetch.Employee_Update(currentUser);
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {

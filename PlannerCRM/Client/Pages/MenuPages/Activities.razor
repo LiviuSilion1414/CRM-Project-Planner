@@ -3,7 +3,7 @@
 <h3>Activities</h3>
 <PageTitle>Activities</PageTitle>
 
-@if (fetch.IsBusy)
+@if (fetch.isBusy)
 {
     <Loader />
 }
@@ -149,20 +149,20 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             FirmClientFilterDto firmClientFilterDto = new FirmClientFilterDto
             {
                 firmClientId = clientId
             };
 
-            var result = await execute.FirmClient_List(firmClientFilterDto);
+            var result = await fetch.FirmClient_List(firmClientFilterDto);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -174,20 +174,20 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             WorkOrderFilterDto workOrderFilterDto = new WorkOrderFilterDto
             {
                 workOrderId = workOrderId
             };
 
-            var result = await execute.WorkOrder_List(workOrderFilterDto);
+            var result = await fetch.WorkOrder_List(workOrderFilterDto);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -200,7 +200,7 @@ else
         try
         {
             ResetFlags();
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new ActivityFilterDto
                 {
@@ -209,13 +209,13 @@ else
                     searchQuery = query
                 };
 
-            var result = await execute.Activity_List(filter);
+            var result = await fetch.Activity_List(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -263,7 +263,7 @@ else
             {
                 var filter = new ActivityFilterDto() { activityId = activity.id };
 
-                var result = await execute.Activity_Delete(filter);
+                var result = await fetch.Activity_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {

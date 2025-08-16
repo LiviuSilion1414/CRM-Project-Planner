@@ -95,20 +95,20 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new RoleFilterDto
                     {
                         searchQuery = query
                     };
 
-            var result = await execute.Role_List(filter);
+            var result = await fetch.Role_List(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -140,11 +140,11 @@
 
             if (model.id != null || model.id != Guid.Empty)
             {
-                result = await execute.Role_Update(model);
+                result = await fetch.Role_Update(model);
             }
             else
             {
-                result = await execute.Role_Insert(model);
+                result = await fetch.Role_Insert(model);
             }
 
             if (result.hasCompleted)
@@ -191,7 +191,7 @@
             {
                 var filter = new RoleFilterDto() { roleId = role.id };
 
-                var result = await execute.Role_Delete(filter);
+                var result = await fetch.Role_Delete(filter);
 
                 if (result.hasCompleted)
                 {

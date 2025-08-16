@@ -3,7 +3,7 @@
 <h4>Calendar</h4>
 <PageTitle>Calendar</PageTitle>
 
-@if (fetch.IsBusy)
+@if (fetch.isBusy)
 {
     <Loader />
 }
@@ -36,15 +36,15 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.Activity_List(new ActivityFilterDto());
+            var result = await fetch.Activity_List(new ActivityFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {

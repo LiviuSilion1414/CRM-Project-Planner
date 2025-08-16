@@ -67,7 +67,7 @@
             {
                 var filter = new FirmClientFilterDto() { firmClientId = SelectedClient.id };
 
-                var result = await execute.FirmClient_Delete(filter);
+                var result = await fetch.FirmClient_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {

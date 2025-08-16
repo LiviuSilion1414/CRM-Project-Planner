@@ -7,7 +7,7 @@
 <h3>Employees</h3>
 <PageTitle>Employees</PageTitle>
 
-@if (fetch.IsBusy)
+@if (fetch.isBusy)
 {
     <Loader />
 }
@@ -128,15 +128,15 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.Role_List(new RoleFilterDto());
+            var result = await fetch.Role_List(new RoleFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -149,7 +149,7 @@ else
         try
         {
             ResetFlags();
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new EmployeeFilterDto
             {
@@ -157,13 +157,13 @@ else
                 roleId = roleId
             };
 
-            var result = await execute.Employee_List(filter);
+            var result = await fetch.Employee_List(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -205,7 +205,7 @@ else
             {
                 var filter = new EmployeeFilterDto() { employeeId = employee.id };
 
-                var result = await execute.Employee_Delete(filter);
+                var result = await fetch.Employee_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {

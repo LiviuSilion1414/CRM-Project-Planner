@@ -15,9 +15,9 @@
         <RadzenLayout>
             <RadzenHeader>
                 <RadzenStack Orientation="Orientation.Horizontal"
-                             AlignItems="AlignItems.Center"
-                             JustifyContent="JustifyContent.SpaceBetween"
-                             Style="width: 100%; background-color: lightseagreen;">
+                AlignItems="AlignItems.Center"
+                JustifyContent="JustifyContent.SpaceBetween"
+                Style="width: 100%; background-color: lightseagreen;">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                         <RadzenSidebarToggle Click="ToggleSidebar" />
                         <RadzenText TextStyle="TextStyle.Body2" Text="PlannerCRM" />
@@ -42,15 +42,15 @@
             {
                 <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
                     <RadzenPanelMenu>
-                        @foreach (var menuRole in fetch.MenuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id))
+                        @foreach (var menuRole in fetch.menuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id))
                         {
                             @if (fetch.currentUser.roles.Contains(menuRole.fkIdRoleNavigation.name))
                             {
                                 <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.roles.Select(y => y)))" Context="auth">
                                     <Authorized>
                                         <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
-                                                                Icon="@menuRole.fkIdMenuNavigation.icon"
-                                                                Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
+                                        Icon="@menuRole.fkIdMenuNavigation.icon"
+                                        Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
                                     </Authorized>
                                     <NotAuthorized>
                                         <p>Not Authorized :)</p>
@@ -88,64 +88,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        authState = await auth.GetAuthenticationStateAsync();
+        await fetch.LoadData();
 
-        if (authState.User.Identity.IsAuthenticated)
-        {
-            if (!fetch.MenuRolesList.Any())
-            {
-                await LoadData();
-            }
-            if (!fetch.RolesList.Any())
-            {
-                await LoadRoles();
-            }
-            if (string.IsNullOrEmpty(fetch.Token))
-            {
-                fetch.Token = await fetch.GetBearerToken();
-                fetch.currentUser = await auth.GetCurrentUserDataAsync(fetch);
-            }
-        }
-    }
-
-    private async Task LoadData()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            var result = await execute.Menu_Role_List(new MenuRoleFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                fetch.MenuRolesList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
-            }
-            fetch.IsBusy = false;
-        }
-        catch (Exception exc)
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadRoles()
-    {
-        try
-        {
-            fetch.IsBusy = true;
-
-            var result = await execute.Role_List(new RoleFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                fetch.RolesList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
-            }
-            fetch.IsBusy = false;
-        }
-        catch (Exception exc)
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
     }
 
     private void ToggleSidebar()

@@ -70,17 +70,17 @@
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id };
 
-            var result = await execute.WorkOrder_Get(filter);
+            var result = await fetch.WorkOrder_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 SelectedWorkOrder = JsonSerializer.Deserialize<WorkOrderDto>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -96,7 +96,7 @@
             {
                 var filter = new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id };
 
-                var result = await execute.WorkOrder_Delete(filter);
+                var result = await fetch.WorkOrder_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {

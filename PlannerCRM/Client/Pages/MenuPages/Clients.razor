@@ -3,7 +3,7 @@
 <h3>Clients</h3>
 <PageTitle>Clients</PageTitle>
 
-@if (fetch.IsBusy)
+@if (fetch.isBusy)
 {
     <Loader />
 }
@@ -81,20 +81,20 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new FirmClientFilterDto
             {
                 searchQuery = query
             };
 
-            var result = await execute.FirmClient_List(filter);
+            var result = await fetch.FirmClient_List(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -144,7 +144,7 @@ else
             {
                 var filter = new FirmClientFilterDto() { firmClientId = client.id };
 
-                var result = await execute.FirmClient_Delete(filter);
+                var result = await fetch.FirmClient_Delete(filter);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {

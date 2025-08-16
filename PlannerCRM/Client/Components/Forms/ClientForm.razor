@@ -65,11 +65,11 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await execute.FirmClient_Insert(Model);
+                    result = await fetch.FirmClient_Insert(Model);
                 }
                 else
                 {
-                    result = await execute.FirmClient_Update(Model);
+                    result = await fetch.FirmClient_Update(Model);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)

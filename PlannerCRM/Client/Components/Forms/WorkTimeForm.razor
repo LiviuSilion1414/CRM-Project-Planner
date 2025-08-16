@@ -14,14 +14,14 @@ else
                     <RadzenColumn>
                         <RadzenFormField Text="Work Order" AllowFloatingLabel="false">
                             <RadzenDropDown TValue="Guid?"
-                                            class="form-control" Style="min-width: 20vw;"
-                                            Data="@_workOrders"
-                                            AllowFiltering="true"
-                                            AllowClear="true"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            TextProperty="@nameof(WorkOrderDto.name)"
-                                            ValueProperty="@nameof(WorkOrderDto.id)"
-                                            @bind-Value="@Model.fkIdWorkOrder" />
+                            class="form-control" Style="min-width: 20vw;"
+                            Data="@_workOrders"
+                            AllowFiltering="true"
+                            AllowClear="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            TextProperty="@nameof(WorkOrderDto.name)"
+                            ValueProperty="@nameof(WorkOrderDto.id)"
+                            @bind-Value="@Model.fkIdWorkOrder" />
                         </RadzenFormField>
                     </RadzenColumn>
                 </RadzenRow>
@@ -29,15 +29,15 @@ else
                     <RadzenColumn>
                         <RadzenFormField Text="Activity" AllowFloatingLabel="false">
                             <RadzenDropDown TValue="Guid?"
-                                            class="form-control" Style="min-width: 20vw;"
-                                            Data="@_activities.Where(x => x.fkIdWorkOrder == Model.fkIdWorkOrder)"
-                                            Disabled="@(Model.fkIdWorkOrder == null)"
-                                            AllowFiltering="true"
-                                            AllowClear="true"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            TextProperty="@nameof(ActivityDto.name)"
-                                            ValueProperty="@nameof(ActivityDto.id)"
-                                            @bind-Value="@Model.fkIdActivity" />
+                            class="form-control" Style="min-width: 20vw;"
+                            Data="@_activities.Where(x => x.fkIdWorkOrder == Model.fkIdWorkOrder)"
+                            Disabled="@(Model.fkIdWorkOrder == null)"
+                            AllowFiltering="true"
+                            AllowClear="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            TextProperty="@nameof(ActivityDto.name)"
+                            ValueProperty="@nameof(ActivityDto.id)"
+                            @bind-Value="@Model.fkIdActivity" />
                         </RadzenFormField>
                     </RadzenColumn>
                 </RadzenRow>
@@ -91,7 +91,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        currentUserId = await auth.GetCurrentUserIdAsync();
+        currentUserId = fetch.currentUser.id;
         if (IsInsert)
         {
             Model = new();
@@ -110,9 +110,9 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
-            var result = await execute.WorkTime_Insert(Model);
+            var result = await fetch.WorkTime_Insert(Model);
 
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -122,7 +122,7 @@ else
             {
                 notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
             Close();
             await OnReloadList.InvokeAsync();
         }
@@ -136,20 +136,20 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new WorkOrderFilterDto
                 {
                     employeeId = currentUserId
                 };
 
-            var result = await execute.WorkOrder_FindAssociatedWorkOrdersByEmployeeId(filter);
+            var result = await fetch.WorkOrder_FindAssociatedWorkOrdersByEmployeeId(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {
@@ -161,20 +161,20 @@ else
     {
         try
         {
-            fetch.IsBusy = true;
+            fetch.isBusy = true;
 
             var filter = new ActivityFilterDto
                 {
                     employeeId = currentUserId
                 };
 
-            var result = await execute.Activity_List(filter);
+            var result = await fetch.Activity_List(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
-            fetch.IsBusy = false;
+            fetch.isBusy = false;
         }
         catch
         {

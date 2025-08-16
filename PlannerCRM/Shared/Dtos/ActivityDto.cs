@@ -1,4 +1,4 @@
-﻿using PlannerCRM.Client.Services;
+﻿using PlannerCRM.Shared.Services;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
