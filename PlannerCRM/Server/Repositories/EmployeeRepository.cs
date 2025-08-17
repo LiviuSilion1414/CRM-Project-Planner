@@ -25,6 +25,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                 model.CreationDate = DateTime.Now;
 
                 await _context.Employees.AddAsync(model);
+                await _context.SaveChangesAsync();
 
                 var mappedRoles = _mapper.Map<List<Role>>(dto.employeesRoles);
 
@@ -38,7 +39,8 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                     });
                 }
 
-                _context.EmployeesRoles.AddRange(mappedRoles.Select(x => new EmployeesRole() { FkIdEmployee  = model.Id, FkIdRole = x.Id }));
+
+                _context.EmployeesRoles.AddRange(mappedRoles.Select(x => new EmployeesRole() { FkIdEmployee  = model.Id, FkIdRole = x.Id, RoleName = x.Name }));
 
                 await _context.SaveChangesAsync();
             }
