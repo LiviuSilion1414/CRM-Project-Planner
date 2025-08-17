@@ -1,4 +1,4 @@
-﻿@page "/utility/menu-rolesList"
+﻿@page "/utility/menu-roles"
 
 @layout MainLayout
 @attribute [Authorize]
@@ -74,12 +74,20 @@ else
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="MenuRoleDto" Title="N. authorized">
                                         <Template Context="data">
-                                            @data.employeesRoles.Count()
+                                            @role.employeeRolesList.Where(x => x.fkIdRole == data.fkIdRole).Count()
                                         </Template>
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="MenuRoleDto" Width="55px">
                                         <Template Context="data">
                                             <RadzenButton Icon="open_in_new" Click="@(() => OnEdit(data))" />
+                                        </Template>
+                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="MenuRoleDto" Width="55px">
+                                        <Template Context="data">
+                                            @if (!role.employeeRolesList.Any())
+                                            {
+                                                <RadzenButton Icon="delete" IconColor="danger" Click="@(() => OnDelete(data))" />
+                                            }
                                         </Template>
                                     </RadzenDataGridColumn>
                                 </Columns>
@@ -176,6 +184,36 @@ else
                 menuRoleList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
+        }
+        catch (Exception exc)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    public async Task OnDelete(MenuRoleDto menuRole)
+    {
+        try
+        {
+            var confirm = await dialog.Confirm("Do you want to remove this item?", "Delete menu role");
+
+            if (confirm != null && (bool)confirm)
+            {
+                MenuRoleFilterDto filterDto = new MenuRoleFilterDto()
+                {
+                    id = menuRole.id
+                };
+
+                fetch.isBusy = true;
+
+                var result = await fetch.Menu_Role_Delete(filterDto);
+
+                if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, "", 4000);
+                }
+                fetch.isBusy = false;
+            }
         }
         catch (Exception exc)
         {

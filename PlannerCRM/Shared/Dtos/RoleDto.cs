@@ -7,7 +7,7 @@ public partial class RoleDto
 {
     public Guid id { get; set; }
     public string? name { get; set; } = string.Empty;
-    public bool? isRemoveable { get; set; } = false;
+    public bool isRemoveable { get; set; } = false;
 
     public List<EmployeesRoleDto> employeeRolesList { get; set; } = new List<EmployeesRoleDto>();
     public List<MenuRoleDto> menuRoleList { get; set; } = new List<MenuRoleDto>();

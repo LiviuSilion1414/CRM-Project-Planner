@@ -103,7 +103,6 @@ public partial class PlannerCrmContext : DbContext
 
             entity.HasOne(d => d.FkIdEmployeeNavigation).WithMany(p => p.EmployeesRoles)
                 .HasForeignKey(d => d.FkIdEmployee)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EmployeesRoles_Employees");
 
             entity.HasOne(d => d.FkIdRoleNavigation).WithMany(p => p.EmployeesRoles)

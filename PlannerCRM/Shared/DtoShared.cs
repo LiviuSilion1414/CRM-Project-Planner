@@ -18,6 +18,21 @@ public static class DtoShared
 
     public enum BaseRoles
     {
-        [Description("66FBECFE-5CEF-4ACE-9A04-23AFBAF1A3C4")] USER = 0
+        [Description("66FBECFE-5CEF-4ACE-9A04-23AFBAF1A3C4")] User,
+        [Description("2E926644-0F08-4204-B92F-38AC9CA18E66")] Tech_Assistance,
+        [Description("E4FEDDE3-2A93-4A65-98E5-8F927BDB1C61")] Operation_Manager,
+        [Description("BA157D28-F713-462C-9FA6-C9FF17E016AB")] Admin,
+        [Description("0C83C028-705A-491E-9D0E-D1B75518A04E")] ProjectManager,
     }
+
+    public enum BaseRolesStrings
+    {
+        [Description("User")] User,
+        [Description("Tech Assistance")] Tech_Assistance,
+        [Description("Operation Manager")] Operation_Manager,
+        [Description("Admin")] Admin,
+        [Description("Project Manager")] ProjectManager,
+    }
+
+    public static List<string> BaseRolesList = Enum.GetValues<BaseRolesStrings>().Select(x => x.GetDescription()).ToList();
 }

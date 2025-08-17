@@ -1,6 +1,7 @@
-﻿@page "/rolesList"
+﻿@page "/roles"
+@using static PlannerCRM.Shared.DtoShared
 
-@attribute [Authorize(Roles = "Admin")]
+
 
 <h3>Roles</h3>
 <PageTitle>Roles</PageTitle>
@@ -24,7 +25,7 @@
                 Data="roles"
                 EditMode="DataGridEditMode.Single"
                 SelectionMode="DataGridSelectionMode.Single"
-                AllowSorting="true" 
+                AllowSorting="true"
                 RowCreate="@HandleRole"
                 RowUpdate="@HandleRole">
     <HeaderTemplate>
@@ -43,31 +44,46 @@
                 <RadzenTextBox @bind-Value="edit.name" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.isRemoveable)" Title="Removeable">
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.isRemoveable)" Title="Is Removeable?" TextAlign="TextAlign.Center">
             <Template Context="data">
-                @if (data.isRemoveable.HasValue && !data.isRemoveable.Value)
+                @if (!IsBaseRole(data) && !data.menuRoleList.Any() && !data.employeeRolesList.Any())
                 {
-                    <RadzenIcon Icon="dangerous" IconStyle="IconStyle.Danger"></RadzenIcon>
+                    <b>YES</b>
                 }
                 else
                 {
-                    <RadzenIcon Icon="check_circle" IconStyle="IconStyle.Success"></RadzenIcon>
-
+                    <b>NO</b>
                 }
             </Template>
             <EditTemplate Context="edit">
-                <RadzenCheckBox TriState="true" TValue="bool?" @bind-Value="edit.isRemoveable" />
+                <RadzenCheckBox TriState="false" TValue="bool" @bind-Value="edit.isRemoveable" />
             </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="RoleDto" Title="Linked Employees" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                @(data.employeeRolesList.Count)
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="RoleDto" Title="Linked Menu's" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                @(data.menuRoleList.Count)
+            </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Width="192px">
             <Template Context="data">
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
-                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)" />
+                @if (!IsBaseRole(data) && !data.menuRoleList.Any() && !data.employeeRolesList.Any())
+                {
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
+                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)" />
+                }
             </Template>
             <EditTemplate Context="data">
-                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
-                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelRow(data))" aria-label="Cancel" />
-                <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)" />
+                @if (!IsBaseRole(data) && !data.menuRoleList.Any() && !data.employeeRolesList.Any())
+                {
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelRow(data))" aria-label="Cancel" />
+                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)" />
+                }
             </EditTemplate>
         </RadzenDataGridColumn>
     </Columns>
@@ -89,6 +105,12 @@
     {
         query = string.Empty;
         await LoadData();
+    }
+
+    bool IsBaseRole(RoleDto role)
+    {
+        var result = BaseRolesList.Contains(role.name);
+        return result;
     }
 
     private async Task LoadData()
@@ -138,7 +160,7 @@
         {
             var result = new ResultDto();
 
-            if (model.id != null || model.id != Guid.Empty)
+            if (model.id != Guid.Empty)
             {
                 result = await fetch.Role_Update(model);
             }
@@ -164,11 +186,11 @@
     {
         await dialog.OpenAsync("Add new role", ds =>
             @<RoleForm IsInsert=true OnReloadList="LoadData" />,
-    new DialogOptions
-            {
-                Width = "30%",
-                Height = "40%"
-            });
+        new DialogOptions
+        {
+            Width = "30%",
+            Height = "40%"
+        });
     }
 
     private async Task OnEdit(RoleDto role)

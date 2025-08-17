@@ -29,12 +29,12 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 
                 var mappedRoles = _mapper.Map<List<Role>>(dto.employeesRoles);
 
-                if (!mappedRoles.Where(x => x.Id == Guid.Parse(BaseRoles.USER.GetDescription())).Any())
+                if (!mappedRoles.Where(x => x.Id == Guid.Parse(BaseRoles.User.GetDescription())).Any())
                 {
                     mappedRoles.Add(new Role()
                     {
-                        Id = Guid.Parse(BaseRoles.USER.GetDescription()),
-                        Name = BaseRoles.USER.ToString(),
+                        Id = Guid.Parse(BaseRoles.User.GetDescription()),
+                        Name = BaseRoles.User.ToString(),
                         IsRemoveable = false
                     });
                 }
@@ -123,7 +123,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                          .Include(e => e.EmployeeActivities)
                                          .Include(e => e.EmployeesRoles)
                                          .Include(e => e.WorkTimes)
-                                         .SingleAsync(e => e.Id == filter.employeeId /*&& e.IsRemoveable*/);
+                                         .FirstOrDefaultAsync(e => e.Id == filter.employeeId);
 
             _context.Remove(employee);
 

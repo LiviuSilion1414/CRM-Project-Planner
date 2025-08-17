@@ -47,7 +47,7 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var activity = await _context.MenuRoles.SingleAsync(a => a.Id == filter.roleId/* && (bool)a.IsRemoveable*/);
+            var activity = await _context.MenuRoles.SingleAsync(a => a.Id == filter.id/* && (bool)a.IsRemoveable*/);
 
             _context.Remove(activity);
 

@@ -11,7 +11,10 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            await _context.Roles.AddAsync(_mapper.Map<Role>(dto));
+            var mappedResult = _mapper.Map<Role>(dto);
+            mappedResult.CreationDate = DateTime.Now;
+
+            await _context.Roles.AddAsync(mappedResult);
 
             await _context.SaveChangesAsync();
         } catch
@@ -80,7 +83,8 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
             var roles = await _context.Roles
                                       .AsNoTracking()
                                       .AsSplitQuery()
-                                      .Include(x => x.EmployeesRoles)
+                                      .Include(x => x.EmployeesRoles).ThenInclude(x => x.FkIdEmployeeNavigation)
+                                      .Include(x => x.MenuRoles).ThenInclude(x => x.FkIdMenuNavigation)
                                       .OrderBy(x => x.Id)
                                       .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                       .ToListAsync();
