@@ -1,12 +1,12 @@
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiUrl.EMPLOYEE_CONTROLLER)]
 public class EmployeeController(EmployeeRepository repo) : ControllerBase
 {
     private readonly EmployeeRepository _repo = repo;
 
-    [Authorize]
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_INSERT)]
     public async Task<ResultDto> Insert(EmployeeDto dto)
@@ -37,7 +37,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPut]
     [Route(ApiUrl.EMPLOYEE_UPDATE)]
     public async Task<ResultDto> Update(EmployeeDto dto)
@@ -68,7 +67,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPut]
     [Route(ApiUrl.EMPLOYEE_UPDATE_ROLE)]
     public async Task<ResultDto> UpdateRole(EmployeeFilterDto filter)
@@ -99,7 +97,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_DELETE)]
     public async Task<ResultDto> Delete([FromBody] EmployeeFilterDto filter)
@@ -130,7 +127,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_GET)]
     public async Task<ResultDto> Get([FromBody] EmployeeFilterDto filter)
@@ -161,7 +157,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_LIST)]
     public async Task<ResultDto> List([FromBody] EmployeeFilterDto filter)
@@ -192,7 +187,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_SEARCH)]
     public async Task<ResultDto> Search([FromBody] EmployeeFilterDto filter)
@@ -254,7 +248,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID)]
     public async Task<ResultDto> FindAssociatedActivitiesByEmployeeId([FromBody] EmployeeFilterDto filter)

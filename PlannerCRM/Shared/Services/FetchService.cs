@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using PlannerCRM.Shared.Dtos;
 using PlannerCRM.Shared.Services;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
@@ -27,6 +28,11 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
 
         if (authState.User.Identity.IsAuthenticated)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                await GetBearerToken();
+                await GetCurrentUserDataAsync();
+            }
             if (!menuRolesList.Any())
             {
                 await LoadMenuRoles();
@@ -34,11 +40,6 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
             if (!rolesList.Any())
             {
                 await LoadGlobalRoles();
-            }
-            if (string.IsNullOrEmpty(token))
-            {
-                await GetBearerToken();
-                await GetCurrentUserDataAsync();
             }
         }
     }
@@ -111,7 +112,7 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
     {
         try
         {
-            if (!_http.DefaultRequestHeaders.Contains("Authorization"))
+            if (_http.DefaultRequestHeaders != null && !_http.DefaultRequestHeaders.Contains("Authorization"))
             {
                 _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             }

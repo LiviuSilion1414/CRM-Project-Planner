@@ -1,5 +1,6 @@
 ﻿namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiUrl.MENU_ROLE_CONTROLLER)]
 public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
