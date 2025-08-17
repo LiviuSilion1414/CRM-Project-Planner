@@ -23,7 +23,7 @@ public partial class EmployeeDto
     public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
     public string employeesRolesCommaSeparatedString => employeesRoles != null && employeesRoles.Any()
         ? string.Join(", ", employeesRoles.Select(er => er?.roleName))
-        : "no roles set";
+        : "no rolesList set";
 }
 
 public class EmployeeFilterDto : FilterDto

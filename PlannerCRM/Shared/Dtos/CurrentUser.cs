@@ -9,7 +9,7 @@ public class CurrentUserDto
     public string email { get; set; }
     public string token { get; set; }
     public bool isAuthenticated { get; set; }
-    public List<string> roles { get; set; } = new List<string>();
-
+    public List<string> rolesList { get; set; } = new List<string>();
+    public List<string> menuList { get; set; } = new List<string>();
     public List<Claim> claims { get; set; }
 }

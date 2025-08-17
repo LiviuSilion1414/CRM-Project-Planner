@@ -1,6 +1,7 @@
-﻿@page "/utility/menu-roles"
+﻿@page "/utility/menu-rolesList"
 
 @layout MainLayout
+@attribute [Authorize]
 
 @if ((isInsert || isEdit || isView) && _selectedMenuRole is not null)
 {

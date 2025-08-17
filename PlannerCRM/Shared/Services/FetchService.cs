@@ -92,6 +92,7 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
         if (user != null || user.Identity.IsAuthenticated)
         {
 
+        currentUser.token = token;
         currentUser.email = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Email)?.Value ?? string.Empty;
         currentUser.name = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Name)?.Value ?? string.Empty;
         currentUser.isAuthenticated = user.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.IsAuthenticated)?.Value != null
@@ -100,8 +101,12 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
         currentUser.id = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value != null
                                            ? Guid.Parse(user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value)
                                            : Guid.Empty;
-        currentUser.roles = user.Claims
+        currentUser.rolesList = user.Claims
                                    .Where(c => c.Type == CustomClaimTypes.Role)
+                                   .Select(c => c.Value)
+                                   .ToList();
+        currentUser.menuList = user.Claims
+                                   .Where(c => c.Type == CustomClaimTypes.Menu)
                                    .Select(c => c.Value)
                                    .ToList();
         }

@@ -38,15 +38,15 @@
                     </RadzenStack>
                 </RadzenStack>
             </RadzenHeader>
-            @if (fetch.currentUser.roles.Any())
+            @if (fetch.currentUser.rolesList.Any())
             {
                 <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
                     <RadzenPanelMenu>
                         @foreach (var menuRole in fetch.menuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id))
                         {
-                            @if (fetch.currentUser.roles.Contains(menuRole.fkIdRoleNavigation.name))
+                            @if (fetch.currentUser.rolesList.Contains(menuRole.fkIdRoleNavigation.name))
                             {
-                                <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.roles.Select(y => y)))" Context="auth">
+                                <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.rolesList.Select(y => y)))" Context="auth">
                                     <Authorized>
                                         <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
                                         Icon="@menuRole.fkIdMenuNavigation.icon"
@@ -65,7 +65,7 @@
                     </RadzenStack>
                 </RadzenSidebar>
                 <RadzenBody>
-                    <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.roles.Select(y => y)))" Context="auth">
+                    <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.rolesList.Select(y => y)))" Context="auth">
                         <Authorized>
                             @Body
                         </Authorized>
@@ -84,12 +84,10 @@
 
 @code {
     private bool sidebarExpanded = true;
-    AuthenticationState authState = new AuthenticationState(new ClaimsPrincipal());
 
     protected override async Task OnInitializedAsync()
     {
         await fetch.LoadData();
-
     }
 
     private void ToggleSidebar()
