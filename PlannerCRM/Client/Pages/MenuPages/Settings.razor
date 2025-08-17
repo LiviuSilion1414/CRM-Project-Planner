@@ -1,7 +1,76 @@
 ﻿@page "/settings"
 
-<h3>Settings</h3>
+<RadzenDataList TItem="@SettingDto" Data="@settingsList">
+    <EmptyTemplate>
+        <RadzenText Text="No data found" />
+    </EmptyTemplate>
+    <Template Context="data">
+        <RadzenCard Variant="Variant.Filled" Style="width: 100%; overflow: hidden; ">
+            <RadzenRow Gap="0" class="m-2">
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenText TextStyle="TextStyle.H6">@data.title</RadzenText>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    <RadzenText TextStyle="TextStyle.H6">Is active?</RadzenText>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenText TextStyle="TextStyle.Body2">@data.description</RadzenText>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    <RadzenSwitch @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
+    </Template>
+</RadzenDataList>
 
-@code {
+@code
+{
+    List<SettingDto> settingsList = new List<SettingDto>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSettings();
+    }
+
+    private async Task LoadSettings()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Settings_List(new SettingFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                settingsList = JsonSerializer.Deserialize<List<SettingDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        }
+        catch (Exception exc)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    public async Task OnUpdate(SettingDto settingDto)
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Settings_Update(settingDto);
+
+            if (result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, "", 4000);
+                await LoadSettings();
+            }
+            fetch.isBusy = false;
+        }
+        catch (Exception exc)
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
 }

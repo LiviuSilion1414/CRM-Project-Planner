@@ -65,7 +65,7 @@ else
                 </RadzenRow>
             </RadzenCard>
 
-            <RadzenDataGrid Data="@_employees"
+            <RadzenDataGrid Data="@_employees.OrderBy(x => x.lastSeen)"
             TItem="@EmployeeDto"
             AllowSorting="true"
             AllowPaging="true"
@@ -76,6 +76,8 @@ else
                 <Columns>
                     <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.fullname)" Title="Full name" />
                     <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.creationDateString)" Title="Creation Date" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" Title="Username" />
+                    <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.lastSeenString)" Title="Last Seen At" />
                     <RadzenDataGridColumn TItem="@EmployeeDto" Width="64px" Sortable="false" Filterable="false">
                         <Template Context="data">
                             <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => OnSelect(data))"></RadzenButton>

@@ -177,15 +177,13 @@ public partial class PlannerCrmContext : DbContext
 
         modelBuilder.Entity<Setting>(entity =>
         {
-            entity.HasNoKey();
-
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("id");
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(300)
                 .HasColumnName("description");
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("id");
             entity.Property(e => e.IsActive).HasColumnName("isActive");
             entity.Property(e => e.IsAdvanced).HasColumnName("isAdvanced");
             entity.Property(e => e.Title)

@@ -296,4 +296,33 @@ public partial class FetchService
 
 
     #endregion
+
+    #region Settings
+
+    public async Task<ResultDto> Settings_Insert(SettingDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.SETTINGS_CONTROLLER, ApiUrl.SETTINGS_INSERT, dto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Settings_Update(SettingDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.SETTINGS_CONTROLLER, ApiUrl.SETTINGS_UPDATE, dto, ApiType.Put);
+    }
+
+    public async Task<ResultDto> Settings_Delete(SettingFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.SETTINGS_CONTROLLER, ApiUrl.SETTINGS_DELETE, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Settings_Get(SettingFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.SETTINGS_CONTROLLER, ApiUrl.SETTINGS_GET, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Settings_List(SettingFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.SETTINGS_CONTROLLER, ApiUrl.SETTINGS_LIST, filterDto, ApiType.Post);
+    }
+
+    #endregion
 }

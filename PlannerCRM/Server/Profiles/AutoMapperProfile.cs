@@ -49,5 +49,9 @@ public class AutoMapperProfile : Profile
         CreateMap<Menu, MenuDto>()
             .PreserveReferences()
             .ReverseMap();
+
+        CreateMap<Setting, SettingDto>()
+            .PreserveReferences()
+            .ReverseMap();
     }
 }
