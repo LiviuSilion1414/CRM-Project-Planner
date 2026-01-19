@@ -7,11 +7,11 @@ public partial class MenuDto
 {
     public Guid id { get; set; }
 
-    public string title { get; set; }
+    public string? title { get; set; }
 
-    public bool isDropdown { get; set; }
+    public bool? isDropdown { get; set; }
 
-    public string icon { get; set; }
+    public string? icon { get; set; }
 
-    public string path { get; set; }
+    public string? path { get; set; }
 }

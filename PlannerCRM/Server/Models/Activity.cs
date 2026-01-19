@@ -9,15 +9,15 @@ public partial class Activity
 
     public string Name { get; set; }
 
-    public DateTime CreationDate { get; set; }
+    public DateTime? CreationDate { get; set; }
 
-    public DateTime StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
-    public Guid FkIdWorkOrder { get; set; }
+    public Guid? FkIdWorkOrder { get; set; }
 
-    public Guid FkIdFirmClient { get; set; }
+    public Guid? FkIdFirmClient { get; set; }
 
     public string HexColor { get; set; }
 

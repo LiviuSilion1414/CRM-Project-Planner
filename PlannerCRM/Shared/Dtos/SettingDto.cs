@@ -7,13 +7,13 @@ public partial class SettingDto
 {
     public Guid id { get; set; }
 
-    public string title { get; set; }
+    public string? title { get; set; }
 
-    public string description { get; set; }
+    public string? description { get; set; }
 
-    public bool isActive { get; set; }
+    public bool? isActive { get; set; }
 
-    public bool isAdvanced { get; set; }
+    public bool? isAdvanced { get; set; }
 }
 
 public class SettingFilterDto : FilterDto

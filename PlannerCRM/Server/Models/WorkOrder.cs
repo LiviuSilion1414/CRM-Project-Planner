@@ -11,13 +11,13 @@ public partial class WorkOrder
 
     public string Description { get; set; }
 
-    public DateTime CreationDate { get; set; }
+    public DateTime? CreationDate { get; set; }
 
-    public DateTime StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
-    public Guid FkIdFirmClient { get; set; }
+    public Guid? FkIdFirmClient { get; set; }
 
     public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
 

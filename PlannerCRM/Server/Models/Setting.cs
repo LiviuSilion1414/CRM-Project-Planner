@@ -11,7 +11,7 @@ public partial class Setting
 
     public string Description { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool? IsActive { get; set; }
 
-    public bool IsAdvanced { get; set; }
+    public bool? IsAdvanced { get; set; }
 }

@@ -45,12 +45,12 @@ if (!app.Environment.IsDevelopment())
 } 
 else
 {
-    app.UseWebAssemblyDebugging();
+    //app.UseWebAssemblyDebugging();
 }
 
 app.UseHttpsRedirection();
 
-app.UseBlazorFrameworkFiles();
+//app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();

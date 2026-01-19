@@ -13,13 +13,13 @@ public partial class Employee
 
     public string Username { get; set; }
 
-    public DateTime CreationDate { get; set; }
+    public DateTime? CreationDate { get; set; }
 
     public string PasswordHash { get; set; }
 
-    public DateTime LastSeen { get; set; }
+    public DateTime? LastSeen { get; set; }
 
-    public bool IsRemoveable { get; set; }
+    public bool? IsRemoveable { get; set; }
 
     public string Token { get; set; }
 

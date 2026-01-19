@@ -9,7 +9,7 @@ public partial class Role
 
     public string Name { get; set; }
 
-    public bool IsRemoveable { get; set; }
+    public bool? IsRemoveable { get; set; }
 
     public DateTime? CreationDate { get; set; }
 
