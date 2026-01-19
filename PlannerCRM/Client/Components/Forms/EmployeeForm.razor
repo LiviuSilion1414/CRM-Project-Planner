@@ -191,7 +191,7 @@
             {
                 var filter = new EmployeeFilterDto() { isRemoveRole = false, role = assignedRole, employeeId = Model.id };
 
-                var result = await fetch.Employee_UpdateRole(filter);
+                var result = await fetch.Employee_Update(new());
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
@@ -215,7 +215,7 @@
         {
             var filter = new EmployeeFilterDto() { isRemoveRole = true, role = role, employeeId = Model.id };
 
-            var result = await fetch.Employee_UpdateRole(filter);
+            var result = await fetch.Employee_Update(new());
 
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {

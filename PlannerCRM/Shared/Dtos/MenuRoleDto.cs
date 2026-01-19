@@ -19,7 +19,6 @@ public partial class MenuRoleDto
 
 public partial class MenuRoleFilterDto : FilterDto
 {
-    public Guid? id { get; set; }
     public Guid? menuId { get; set; }
     public Guid? roleId { get; set; }
 }

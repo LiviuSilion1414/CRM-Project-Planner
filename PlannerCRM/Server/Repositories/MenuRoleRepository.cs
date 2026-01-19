@@ -1,4 +1,5 @@
-﻿using PlannerCRM.Server.Models;
+﻿using Humanizer;
+using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
 
@@ -12,7 +13,6 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
         try
         {
             var mappedResult = _mapper.Map<MenuRole>(dto);
-            mappedResult.FkIdRoleNavigation = null;
 
             await _context.MenuRoles.AddAsync(mappedResult);
 
@@ -27,16 +27,14 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var model = await _context.MenuRoles.FindAsync((Guid)dto.id);
+            var model = await _context.MenuRoles.FirstOrDefaultAsync(x => x.Id == dto.id);
 
-            if (model != null)
-            {
-                _mapper.Map(dto, model);
+            if (model == null) return;
+            _mapper.Map(dto, model);
 
-                _context.Update(model);
+            _context.Update(model);
 
-                await _context.SaveChangesAsync();
-            }
+            await _context.SaveChangesAsync();
         } catch
         {
             throw;
@@ -47,7 +45,7 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var activity = await _context.MenuRoles.SingleAsync(a => a.Id == filter.id/* && (bool)a.IsRemoveable*/);
+            var activity = await _context.MenuRoles.FirstOrDefaultAsync(x => x.Id == filter.menuId);
 
             _context.Remove(activity);
 
@@ -68,7 +66,7 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
                                      .AsSplitQuery()
                                      .Include(x => x.FkIdRoleNavigation)
                                      .Include(x => x.FkIdMenuNavigation)
-                                     .SingleAsync(a => a.Id == filter.roleId);
+                                     .SingleAsync(a => a.Id == filter.id);
 
             return _mapper.Map<MenuRoleDto>(role);
         } catch (Exception)
@@ -89,21 +87,7 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
                                       .ToListAsync();
             var mappedResult = _mapper.Map<List<MenuRoleDto>>(menuRoles);
 
-            var employeesRoles = await _context.EmployeesRoles
-                                          .AsNoTracking()
-                                          .AsSplitQuery()
-                                          .Include(x => x.FkIdEmployeeNavigation)
-                                          .Where(x => menuRoles.Select(r => r.FkIdRole).Contains(x.FkIdRole))
-                                          .ToListAsync();
-            var mappedEmployeeRoles = _mapper.Map<List<EmployeesRoleDto>>(employeesRoles);
-
-            return mappedResult.Select(x =>
-            {
-                x.employeesRoles = mappedEmployeeRoles.Where(y => y.fkIdRole == x.fkIdRole).ToList();
-
-                return x;
-            })
-            .ToList();
+            return mappedResult;
         } catch (Exception)
         {
             throw;

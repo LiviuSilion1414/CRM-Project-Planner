@@ -11,41 +11,21 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var checkWorkTimeByDate = await context.WorkTimes.Where(x => x.CreationDate == dto.creationDate && x.Id == dto.id).AnyAsync();
-            var maxDailyHours = 8;
+            var model = _mapper.Map<WorkTime>(dto);
 
-            if (!checkWorkTimeByDate && dto.hours > 0 &&  dto.hours <= maxDailyHours)
+            await _context.AddAsync(model);
+
+            await context.SaveChangesAsync();
+
+            return new ResultDto()
             {
-                var model = _mapper.Map<WorkTime>(dto);
-
-                model.FkIdActivityNavigation = await _context.Activities.FindAsync(dto.fkIdActivity);
-                // model.employee = await _context.Employees.Where(x);
-                await _context.AddAsync(model);
-
-                await context.SaveChangesAsync();
-
-                return new ResultDto()
-                {
-                    id = null,
-                    data = null,
-                    hasCompleted = true,
-                    message = "Operation completed",
-                    messageType = MessageType.Success,
-                    statusCode = HttpStatusCode.OK
-                };
-            }
-            else
-            {
-                return new ResultDto()
-                {
-                    id = null,
-                    data = null,
-                    hasCompleted = false,
-                    message = "Excessive working hours",
-                    messageType = MessageType.Error,
-                    statusCode = HttpStatusCode.BadRequest
-                };
-            }
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
         } catch (Exception ex)
         {
             throw;
@@ -60,7 +40,9 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
 
             if (existingModel != null && dto.hours > 0 && dto.hours <= 8)
             {
-                existingModel = _mapper.Map<WorkTime>(dto);
+                existingModel.Hours = dto.hours;
+                existingModel.FkIdActivity = dto.fkIdActivity;
+                existingModel.FkIdEmployee = dto.fkIdEmployee;
 
                 _context.Update(existingModel);
 
@@ -75,7 +57,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
+            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.Id == filter.id);
 
             _context.Remove(existingModel);
 
@@ -94,7 +76,7 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .AsNoTracking()
                                              .AsSplitQuery()
                                              .Include(x => x.FkIdActivityNavigation)
-                                             .FirstOrDefaultAsync(x => x.CreationDate >= filter.startDate && x.Id == filter.id);
+                                             .FirstOrDefaultAsync(x => x.Id == filter.id);
 
             return _mapper.Map<WorkTimeDto>(existingModel);
         } catch (Exception ex)
@@ -111,25 +93,6 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
                                              .AsNoTracking()
                                              .AsSplitQuery()
                                              .Where(x => x.CreationDate >= filter.startDate)
-                                             .Include(x => x.FkIdActivityNavigation)
-                                             .Where(x => (filter.employeeId == null || x.FkIdEmployee == filter.employeeId) &&
-                                                         (filter.activityId == null || x.FkIdActivity == filter.activityId))
-                                             .ToListAsync();
-
-            return _mapper.Map<List<WorkTimeDto>>(existingModel);
-        } catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<WorkTimeDto>> FindAssociatedWorktimesByEmployeeId(WorkTimeFilterDto filter)
-    {
-        try
-        {
-            var existingModel = await context.WorkTimes
-                                             .AsNoTracking()
-                                             .AsSplitQuery()
                                              .Include(x => x.FkIdActivityNavigation)
                                              .Where(x => (filter.employeeId == null || x.FkIdEmployee == filter.employeeId) &&
                                                          (filter.activityId == null || x.FkIdActivity == filter.activityId))

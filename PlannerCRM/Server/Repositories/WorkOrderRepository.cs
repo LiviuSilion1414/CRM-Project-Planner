@@ -13,7 +13,6 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
         {
             var model = _mapper.Map<WorkOrder>(dto);
 
-            model.FkIdFirmClientNavigation = await _context.FirmClients.FindAsync(dto.fkIdFirmClient);
             model.CreationDate = DateTime.Now;
 
             await _context.WorkOrders.AddAsync(model);
@@ -29,11 +28,13 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var workOrder = await _context.WorkOrders
-                                        .Include(w => w.Activities)
-                                        .SingleAsync(w => w.Id == dto.id);
+            var workOrder = await _context.WorkOrders.FirstOrDefaultAsync(x => x.Id == dto.id);
 
-            workOrder = _mapper.Map<WorkOrder>(dto);
+            if (workOrder == null) return;
+
+            workOrder.Name = dto.name;
+            workOrder.StartDate = dto.startDate;
+            workOrder.EndDate = dto.endDate;
 
             await _context.SaveChangesAsync();
         } catch
@@ -46,9 +47,9 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var workOrder = await _context.WorkOrders
-                .Include(w => w.Activities)
-                .SingleAsync(w => w.Id == filter.workOrderId);
+            var workOrder = await _context.WorkOrders.FirstOrDefaultAsync(x => x.Id == filter.id);
+
+            if (workOrder == null) return;
 
             _context.Remove(workOrder);
 
@@ -92,81 +93,6 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
                                            .ToListAsync();
 
             return _mapper.Map<List<WorkOrderDto>>(workOrders);
-        } catch
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<WorkOrderDto>> Search(WorkOrderFilterDto filter)
-    {
-        try
-        {
-            var foundWorkOrder = await _context.WorkOrders
-                                               .AsNoTracking()
-                                               .AsSplitQuery()
-                                               .Where(wo => EF.Functions.Like(wo.Name, $"%{filter.searchQuery}%"))
-                                               .Include(wo => wo.FkIdFirmClientNavigation)
-                                               .Include(wo => wo.Activities)
-                                               .ToListAsync();
-
-            return _mapper.Map<List<WorkOrderDto>>(foundWorkOrder);
-        } catch
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<ActivityDto>> FindAssociatedActivitiesByWorkOrderId(WorkOrderFilterDto filter)
-    {
-        try
-        {
-            var foundActivities = await _context.Activities
-                                                .AsNoTracking()
-                                                .AsSplitQuery()
-                                                .Include(ac => ac.FkIdWorkOrderNavigation)
-                                                .Include(ac => ac.EmployeeActivities)
-                                                .Where(ac => ac.FkIdWorkOrder == filter.id)
-                .ToListAsync();
-
-            return _mapper.Map<List<ActivityDto>>(foundActivities);
-        } catch
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(WorkOrderFilterDto filter)
-    {
-        try
-        {
-            var foundWorkOrder = await _context.WorkOrders
-                                               .AsNoTracking()
-                                               .AsSplitQuery()
-                                               .Include(wo => wo.FkIdFirmClientNavigation)
-                                               .Include(wo => wo.Activities)
-                                               .Where(wo => wo.FkIdFirmClient == filter.id)
-                                               .ToListAsync();
-
-            return _mapper.Map<List<WorkOrderDto>>(foundWorkOrder);
-        } catch
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByEmployeeId(WorkOrderFilterDto filter)
-    {
-        try
-        {
-            var foundWorkOrder = await _context.WorkOrders
-                                               .AsNoTracking()
-                                               .AsSplitQuery()
-                                               .Include(wo => wo.Activities).ThenInclude(ac => ac.EmployeeActivities)
-                                               .Where(wo => wo.Activities.SelectMany(x => x.EmployeeActivities).Any(y => y.FkIdEmployee == filter.employeeId))
-                                               .ToListAsync();
-
-            return _mapper.Map<List<WorkOrderDto>>(foundWorkOrder);
         } catch
         {
             throw;

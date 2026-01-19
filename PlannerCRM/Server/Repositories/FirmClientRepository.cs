@@ -17,8 +17,7 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
             await _context.FirmClients.AddAsync(model);
 
             await _context.SaveChangesAsync();
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
 
             throw;
@@ -33,12 +32,13 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
 
             existingModel.Name = dto.name;
             existingModel.VatNumber = dto.vatNumber;
+            existingModel.Email = dto.email;
+            existingModel.FiscalCode = dto.fiscalCode;
 
             _context.Update(existingModel);
 
             await _context.SaveChangesAsync();
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -56,8 +56,7 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
             _context.Remove(client);
 
             await _context.SaveChangesAsync();
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -74,8 +73,7 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
                                        .SingleAsync(c => c.Id == filter.firmClientId);
 
             return _mapper.Map<FirmClientDto>(client);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }
@@ -90,51 +88,12 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
                                             .AsSplitQuery()
                                             .OrderBy(c => c.Id)
                                             .Include(c => c.WorkOrders).ThenInclude(w => w.Activities)
-                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
+                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim()) &&
+                                                        (filter.firmClientId == null || filter.firmClientId == Guid.Empty) || (filter.firmClientId == x.Id)))
                                             .ToListAsync();
 
             return _mapper.Map<List<FirmClientDto>>(firmClients);
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<FirmClientDto>> Search(FirmClientFilterDto filter)
-    {
-        try
-        {
-            var foundClients = await _context.FirmClients
-                                             .AsNoTracking()
-                                             .AsSplitQuery()
-                                             .Include(cl => cl.WorkOrders)
-                                             .Where(cl => EF.Functions.Like(cl.Name, $"%{filter.searchQuery}%"))
-                                             .ToListAsync();
-
-            return _mapper.Map<List<FirmClientDto>>(foundClients);
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public async Task<List<WorkOrderDto>> FindAssociatedWorkOrdersByClientId(FirmClientFilterDto filter)
-    {
-        try
-        {
-            var foundWorkOrders = await _context.WorkOrders
-                                                .AsNoTracking()
-                                                .AsSplitQuery()
-                                                .Include(wo => wo.FkIdFirmClientNavigation)
-                                                .Include(wo => wo.Activities)
-                                                .Where(wo => wo.FkIdFirmClient == filter.firmClientId)
-                                                .ToListAsync();
-
-            return _mapper.Map<List<WorkOrderDto>>(foundWorkOrders);
-        } 
-        catch (Exception)
+        } catch (Exception)
         {
             throw;
         }

@@ -32,36 +32,6 @@ public partial class FetchService
         return await ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_LIST, filterDto, ApiType.Post);
     }
 
-    public async Task<ResultDto> Activity_Search(ActivityFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_SEARCH, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> Activity_AssignActivity(ActivityFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_ASSIGN_ACTIVITY, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> Activity_RemoveAssignedEmployee(ActivityFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_REMOVE_ASSIGNED_EMPLOYEE, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> Activity_FindAssociatedEmployeesByActivityid(ActivityFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_FIND_ASSOCIATED_EMPLOYEES_BY_ACTIVITYID, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> Activity_FindAssociatedWorkOrdersByActivityid(ActivityFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_FIND_ASSOCIATED_WORKORDERS_BY_ACTIVITYID, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> Activity_FindAssociatedWorkTimesWithinActivity(ActivityFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.ACTIVITY_CONTROLLER, ApiUrl.ACTIVITY_FIND_ASSOCIATED_WORKTIMES_WITHIN_ACTIVITY, filterDto, ApiType.Post);
-    }
-
     #endregion
 
     #region Employee
@@ -91,27 +61,6 @@ public partial class FetchService
         return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_LIST, filterDto, ApiType.Post);
     }
 
-    public async Task<ResultDto> Employee_UpdateRole(EmployeeFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_UPDATE_ROLE, filterDto, ApiType.Put);
-    }
-
-    public async Task<ResultDto> Employee_Search(EmployeeFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_SEARCH, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> Employee_SearchByNameEmailPhoneForRecovery(EmployeeFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> Employee_FindAssociatedActivitiesByEmployeeId(EmployeeFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.EMPLOYEE_FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID, filterDto, ApiType.Post);
-    }
-
-
     #endregion
 
     #region FirmClient
@@ -140,17 +89,6 @@ public partial class FetchService
     {
         return await ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_LIST, filterDto, ApiType.Post);
     }
-
-    public async Task<ResultDto> FirmClient_Search(FirmClientFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_SEARCH, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> FirmClient_FindAssociatedWorkOrdersByClientId(FirmClientFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.CLIENT_CONTROLLER, ApiUrl.CLIENT_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID, filterDto, ApiType.Post);
-    }
-
 
     #endregion
 
@@ -240,26 +178,6 @@ public partial class FetchService
         return await ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_LIST, filterDto, ApiType.Post);
     }
 
-    public async Task<ResultDto> WorkOrder_Search(WorkOrderFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_SEARCH, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> WorkOrder_FindAssociatedActivitiesByWorkOrderId(WorkOrderFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_FIND_ASSOCIATED_ACTIVITIES_BY_WORKORDERID, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> WorkOrder_FindAssociatedWorkOrdersByClientId(WorkOrderFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_CLIENTID, filterDto, ApiType.Post);
-    }
-
-    public async Task<ResultDto> WorkOrder_FindAssociatedWorkOrdersByEmployeeId(WorkOrderFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.WORKORDER_CONTROLLER, ApiUrl.WORKORDER_FIND_ASSOCIATED_WORKORDERS_BY_EMPLOYEEID, filterDto, ApiType.Post);
-    }
-
     #endregion
 
     #region WorkTime
@@ -288,12 +206,6 @@ public partial class FetchService
     {
         return await ExecuteAsync(ApiUrl.WORKTIME_CONTROLLER, ApiUrl.WORKTIME_LIST, filterDto, ApiType.Post);
     }
-
-    public async Task<ResultDto> WorkTime_FindAssociatedWorkTimesByEmployeeId(WorkTimeFilterDto filterDto)
-    {
-        return await ExecuteAsync(ApiUrl.WORKTIME_CONTROLLER, ApiUrl.WORKTIME_FIND_ASSOCIATED_WORKTIMES_BY_EMPLOYEE_ID, filterDto, ApiType.Post);
-    }
-
 
     #endregion
 

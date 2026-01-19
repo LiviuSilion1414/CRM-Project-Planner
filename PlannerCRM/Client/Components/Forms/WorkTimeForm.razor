@@ -143,7 +143,7 @@ else
                     employeeId = currentUserId
                 };
 
-            var result = await fetch.WorkOrder_FindAssociatedWorkOrdersByEmployeeId(filter);
+            var result = await fetch.WorkOrder_List(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {

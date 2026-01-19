@@ -35,5 +35,4 @@ public partial class ApiUrl
     public const string WORKTIME_DELETE = "delete";
     public const string WORKTIME_GET = "get";
     public const string WORKTIME_LIST = "list";
-    public const string WORKTIME_FIND_ASSOCIATED_WORKTIMES_BY_EMPLOYEE_ID = "findAssociatedWorkTimesByEmployeeId";
 }

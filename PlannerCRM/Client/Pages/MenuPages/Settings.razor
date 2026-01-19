@@ -16,9 +16,9 @@
                 <RadzenColumn Size="12" SizeMD="10">
                     <RadzenText TextStyle="TextStyle.Body2">@data.description</RadzenText>
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    <RadzenSwitch @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
-                </RadzenColumn>
+                @* <RadzenColumn Size="12" SizeMD="2">
+                    <RadzenSwitch TValue="bool?" @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
+                </RadzenColumn> *@
             </RadzenRow>
         </RadzenCard>
     </Template>

@@ -47,7 +47,7 @@ TextProperty="@nameof(WorkTimeDto.hoursString)">
                 employeeId = currentUserId,
             };
 
-            var result = await fetch.WorkTime_FindAssociatedWorkTimesByEmployeeId(filter);
+            var result = await fetch.WorkTime_List(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {

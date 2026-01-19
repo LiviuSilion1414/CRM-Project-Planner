@@ -1,4 +1,5 @@
-﻿using PlannerCRM.Server.Models;
+﻿using Humanizer;
+using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
 
@@ -27,7 +28,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var model = await _context.Roles.FindAsync((Guid)dto.id);
+            var model = await _context.Roles.FirstOrDefaultAsync(x => x.Id == dto.id);
 
             if (model != null)
             {
@@ -47,7 +48,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var activity = await _context.Roles.SingleAsync(a => a.Id == filter.roleId/* && (bool)a.IsRemoveable*/);
+            var activity = await _context.Roles.FirstOrDefaultAsync(x => x.Id == filter.id);
 
             _context.Remove(activity);
 
@@ -67,7 +68,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
                                      .AsNoTracking()
                                      .AsSplitQuery()
                                      .Include(x => x.EmployeesRoles)
-                                     .SingleAsync(a => a.Id == filter.roleId);
+                                     .SingleAsync(a => a.Id == filter.id);
 
             return _mapper.Map<RoleDto>(role);
         } catch (Exception)

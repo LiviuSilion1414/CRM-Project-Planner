@@ -268,7 +268,7 @@
         {
             var filter = new ActivityFilterDto() { activityId = Model.id, employeeId = (Guid)employeeId };
 
-            var result = await fetch.Activity_AssignActivity(filter);
+            var result = await fetch.Activity_Insert(new());
 
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -290,7 +290,7 @@
         {
             var filter = new ActivityFilterDto() { activityId = Model.id, employeeId = (Guid)employeeId };
 
-            var result = await fetch.Activity_RemoveAssignedEmployee(filter);
+            var result = await fetch.Activity_Delete(filter);
 
             if (result.hasCompleted && result.messageType == MessageType.Success)
             {

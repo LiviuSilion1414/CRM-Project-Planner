@@ -145,7 +145,7 @@ else
                 employeeId = fetch.currentUser.id,
             };
 
-            var result = await fetch.WorkTime_FindAssociatedWorkTimesByEmployeeId(workTimeFilterDto);
+            var result = await fetch.WorkTime_List(workTimeFilterDto);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {

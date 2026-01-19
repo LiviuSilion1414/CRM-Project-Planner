@@ -61,9 +61,4 @@ public class EmployeeFilterDto : FilterDto
     public const string EMPLOYEE_DELETE = "delete";
     public const string EMPLOYEE_GET = "get";
     public const string EMPLOYEE_LIST = "list";
-
-    public const string EMPLOYEE_UPDATE_ROLE = "updateRole";
-    public const string EMPLOYEE_SEARCH = "search";
-    public const string EMPLOYEE_SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY = "searchEmployeeByNameForRecovery";
-    public const string EMPLOYEE_FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID = "findAssociatedActivitiesByEmployeeId";
 }

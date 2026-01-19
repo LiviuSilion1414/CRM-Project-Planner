@@ -149,34 +149,4 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
             };
         }
     }
-
-    [HttpPost]
-    [Route(ApiUrl.WORKTIME_FIND_ASSOCIATED_WORKTIMES_BY_EMPLOYEE_ID)]
-    public async Task<ResultDto> FindAssociatedActivitiesByWorkTimeId([FromBody] WorkTimeFilterDto filter)
-    {
-        try
-        {
-            var workTimes = await _repo.FindAssociatedWorktimesByEmployeeId(filter);
-            return new ResultDto()
-            {
-                id = null,
-                data = workTimes,
-                hasCompleted = true,
-                message = "Operation completed",
-                messageType = MessageType.Success,
-                statusCode = HttpStatusCode.OK
-            };
-        } catch
-        {
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = false,
-                message = "Operation failed",
-                messageType = MessageType.Error,
-                statusCode = HttpStatusCode.NotFound
-            };
-        }
-    }
 }

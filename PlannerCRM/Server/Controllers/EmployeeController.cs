@@ -67,36 +67,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
         }
     }
 
-    [HttpPut]
-    [Route(ApiUrl.EMPLOYEE_UPDATE_ROLE)]
-    public async Task<ResultDto> UpdateRole(EmployeeFilterDto filter)
-    {
-        try
-        {
-            await _repo.UpdateEmployeeRole(filter);
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = true,
-                message = "Operation completed",
-                messageType = MessageType.Success,
-                statusCode = HttpStatusCode.OK
-            };
-        } catch
-        {
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = false,
-                message = "Operation failed",
-                messageType = MessageType.Error,
-                statusCode = HttpStatusCode.BadRequest
-            };
-        }
-    }
-
     [HttpPost]
     [Route(ApiUrl.EMPLOYEE_DELETE)]
     public async Task<ResultDto> Delete([FromBody] EmployeeFilterDto filter)
@@ -174,97 +144,6 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 statusCode = HttpStatusCode.OK
             };
         } catch
-        {
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = false,
-                message = "Operation failed",
-                messageType = MessageType.Error,
-                statusCode = HttpStatusCode.BadRequest
-            };
-        }
-    }
-
-    [HttpPost]
-    [Route(ApiUrl.EMPLOYEE_SEARCH)]
-    public async Task<ResultDto> Search([FromBody] EmployeeFilterDto filter)
-    {
-        try
-        {
-            var employees = await _repo.Search(filter);
-            return new ResultDto()
-            {
-                id = null,
-                data = employees,
-                hasCompleted = true,
-                message = "Operation completed",
-                messageType = MessageType.Success,
-                statusCode = HttpStatusCode.OK
-            };
-        } catch
-        {
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = false,
-                message = "Operation failed",
-                messageType = MessageType.Error,
-                statusCode = HttpStatusCode.BadRequest
-            };
-        }
-    }
-
-    [AllowAnonymous]
-    [HttpPost]
-    [Route(ApiUrl.EMPLOYEE_SEARCH_EMPLOYEE_BY_NAME_EMAIL_PHONE_FOR_RECOVERY)]
-    public async Task<ResultDto> SearchEmployeeByNameForRecovery([FromBody] EmployeeFilterDto filter)
-    {
-        try
-        {
-            var recoveryEmployees = await _repo.Search(filter);
-            return new ResultDto()
-            {
-                id = null,
-                data = recoveryEmployees,
-                hasCompleted = true,
-                message = "Operation completed",
-                messageType = MessageType.Success,
-                statusCode = HttpStatusCode.OK
-            };
-        } catch
-        {
-            return new ResultDto()
-            {
-                id = null,
-                data = null,
-                hasCompleted = false,
-                message = "Operation failed",
-                messageType = MessageType.Error,
-                statusCode = HttpStatusCode.BadRequest
-            };
-        }
-    }
-
-    [HttpPost]
-    [Route(ApiUrl.EMPLOYEE_FIND_ASSOCIATED_ACTIVITIES_BY_EMPLOYEEID)]
-    public async Task<ResultDto> FindAssociatedActivitiesByEmployeeId([FromBody] EmployeeFilterDto filter)
-    {
-        try
-        {
-            var activities = await _repo.FindAssociatedActivitiesByEmployeeId(filter);
-            return new ResultDto()
-            {
-                id = null,
-                data = activities,
-                hasCompleted = true,
-                message = "Operation completed",
-                messageType = MessageType.Success,
-                statusCode = HttpStatusCode.OK
-            };
-        } catch(Exception exc)
         {
             return new ResultDto()
             {

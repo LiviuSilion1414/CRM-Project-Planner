@@ -1,4 +1,5 @@
-﻿using PlannerCRM.Server.Models;
+﻿using Humanizer;
+using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
 
@@ -26,16 +27,19 @@ public class SettingRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var model = await _context.Settings.FindAsync((Guid)dto.id);
+            var model = await _context.Settings.FirstOrDefaultAsync(x => x.Id == dto.id);
 
-            if (model != null)
-            {
-                _mapper.Map(dto, model);
+            if (model == null) return;
 
-                _context.Update(model);
+            model.Description = dto.description;
+            model.IsActive = dto.isActive;
+            model.IsAdvanced = dto.isAdvanced;
+            model.Title = dto.title;
 
-                await _context.SaveChangesAsync();
-            }
+
+            _context.Update(model);
+
+            await _context.SaveChangesAsync();
         } catch
         {
             throw;
@@ -46,9 +50,11 @@ public class SettingRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var activity = await _context.Settings.SingleAsync(a => a.Id == filter.id/* && (bool)a.IsRemoveable*/);
+            var model = await _context.Settings.FirstOrDefaultAsync(x => x.Id == filter.id);
 
-            _context.Remove(activity);
+            if (model == null) return;
+
+            _context.Remove(model);
 
             await _context.SaveChangesAsync();
         } catch (Exception)
