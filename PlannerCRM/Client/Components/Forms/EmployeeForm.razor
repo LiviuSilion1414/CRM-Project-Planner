@@ -5,94 +5,97 @@
 <RadzenStack JustifyContent="JustifyContent.Center">
     <EditForm EditContext="@_context" OnValidSubmit="Submit">
         <RadzenCard>
-            <RadzenFieldset Text="Employee">
-                <DataAnnotationsValidator />
-                <RadzenRow class="mt-3">
-                    <RadzenColumn>
-                        <RadzenLabel>Name</RadzenLabel>
-                    </RadzenColumn>
-                    <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@Model.name" />
-                        <ValidationMessage For="@(() => Model.name)" />
-                    </RadzenColumn>
-                </RadzenRow>
-                <RadzenRow class="mt-3">
-                    <RadzenColumn>
-                        <RadzenLabel>Surname</RadzenLabel>
-                    </RadzenColumn>
-                    <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@Model.surname" />
-                        <ValidationMessage For="@(() => Model.surname)" />
-                    </RadzenColumn>
-                </RadzenRow>
-                <RadzenRow class="mt-3">
-                    <RadzenColumn>
-                        <RadzenLabel>Email</RadzenLabel>
-                    </RadzenColumn>
-                    <RadzenColumn>
-                        <InputText class="form-control" @bind-Value="@Model.username" />
-                        <ValidationMessage For="@(() => Model.username)" />
-                    </RadzenColumn>
-                </RadzenRow>
-                @if (IsInsert)
-                {
-                    <RadzenRow class="mt-3">
-                        <RadzenColumn>
-                            <RadzenLabel>Password</RadzenLabel>
-                        </RadzenColumn>
-                        <RadzenColumn>
-                            <InputText class="form-control" @bind-Value="@Model.newPassword" />
-                            <ValidationMessage For="@(() => Model.newPassword)" />
-                        </RadzenColumn>
-                    </RadzenRow>
-                    <RadzenRow class="mt-3">
-                        <RadzenColumn>
-                            <RadzenLabel>Is removeable?</RadzenLabel>
-                        </RadzenColumn>
-                        <RadzenColumn>
-                            <RadzenCheckBox @bind-Value="@Model.isRemoveable" />
-                            <ValidationMessage For="@(() => Model.isRemoveable)" />
-                        </RadzenColumn>
-                    </RadzenRow>
-                }
-            </RadzenFieldset>
-            @if (!IsInsert)
-            {
-                <RadzenFieldset Text="Roles">
-                    <RadzenRow class="mt-3">
-                        <RadzenColumn>
-                            <RadzenLabel>Roles</RadzenLabel>
-                            <RadzenDropDown TValue="RoleDto"
-                                            Data="@roles.Where(x => !Model.employeesRoles.Select(y => y.fkIdRole).Contains(x.id))"
-                                            TextProperty="@nameof(RoleDto.name)"
-                                            Change="@AssignRole"
-                                            @bind-Value="@assignedRole"
-                                            Style="width: 30vw;">
-                                <EmptyTemplate>
-                                    <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1" class="m-3" Text="No roles avaialable" />
-                                </EmptyTemplate>
-                            </RadzenDropDown>
-                        </RadzenColumn>
-                        <RadzenColumn>
-                            <RadzenDataGrid @ref="grid"
-                                            TItem="EmployeesRoleDto"
-                                            Data="@Model.employeesRoles"
-                                            PageSize="5"
-                                            AllowPaging="true"
-                                            AllowSorting="true">
-                                <Columns>
-                                    <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
-                                    <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
-                                        <Template Context="data">
-                                            <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data.fkIdRoleNavigation))"></RadzenButton>
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                </Columns>
-                            </RadzenDataGrid>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenFieldset>
-            }
+            <RadzenTabs>
+                <Tabs>
+                    <RadzenTabsItem Text="Employee Data">
+                        <RadzenFieldset Text="Employee">
+                            <DataAnnotationsValidator />
+                            <RadzenRow class="mt-3">
+                                <RadzenColumn Size="12" SizeMD="3">
+                                    <RadzenLabel>Name</RadzenLabel>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <InputText class="form-control w-100" @bind-Value="@Model.name" />
+                                    <ValidationMessage For="@(() => Model.name)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow class="mt-3">
+                                <RadzenColumn Size="12" SizeMD="3">
+                                    <RadzenLabel>Surname</RadzenLabel>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <InputText class="form-control w-100" @bind-Value="@Model.surname" />
+                                    <ValidationMessage For="@(() => Model.surname)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow class="mt-3">
+                                <RadzenColumn Size="12" SizeMD="3">
+                                    <RadzenLabel>Email</RadzenLabel>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <InputText class="form-control w-25" @bind-Value="@Model.username" />
+                                    <ValidationMessage For="@(() => Model.username)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow class="mt-3">
+                                <RadzenColumn Size="12" SizeMD="3">
+                                    <RadzenLabel>Password</RadzenLabel>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <InputText class="form-control w-25" @bind-Value="@Model.newPassword" />
+                                    <ValidationMessage For="@(() => Model.newPassword)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow class="mt-3">
+                                <RadzenColumn Size="12" SizeMD="3">
+                                    <RadzenLabel>Confirm Password</RadzenLabel>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <InputText class="form-control w-25" @bind-Value="@Model.confirmNewPassword" />
+                                    <ValidationMessage For="@(() => Model.confirmNewPassword)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow class="mt-3">
+                                <RadzenColumn Size="12" SizeMD="3">
+                                    <RadzenLabel>Is removeable?</RadzenLabel>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenCheckBox class="form-control" TriState="false" @bind-Value="@Model.isRemoveable" />
+                                    <ValidationMessage For="@(() => Model.isRemoveable)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenFieldset>
+                    </RadzenTabsItem>
+                    <RadzenTabsItem Text="Assigned Roles" Visible="@(IsInsert == false)">
+                        <RadzenFieldset Text="Roles">
+                            <RadzenRow class="mt-3">
+                                <RadzenColumn>
+                                    <RadzenDataGrid @ref="grid"
+                                                    TItem="EmployeesRoleDto"
+                                                    Data="@Model.employeesRoles"
+                                                    PageSize="20"
+                                                    AllowFiltering="false"
+                                                    AllowPaging="false"
+                                                    AllowSorting="true">
+                                        <HeaderTemplate>
+                                            <RadzenButton Icon="playlist_add_check" Text="New" Click="New"></RadzenButton>
+                                        </HeaderTemplate>
+                                        <Columns>
+                                            <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
+                                            <RadzenDataGridColumn TItem="EmployeesRoleDto" Width="64px">
+                                                <Template Context="data">
+                                                    <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data.fkIdRoleNavigation))"></RadzenButton>
+                                                </Template>
+                                            </RadzenDataGridColumn>
+                                        </Columns>
+                                    </RadzenDataGrid>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenFieldset>
+                    </RadzenTabsItem>
+                </Tabs>
+            </RadzenTabs>
             <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
                 <RadzenRow>
                     <RadzenColumn Size="6">
@@ -125,9 +128,9 @@
         if (IsInsert)
         {
             Model = new EmployeeDto()
-                {
-                    employeesRoles = new List<EmployeesRoleDto>()
-                };
+            {
+                employeesRoles = new List<EmployeesRoleDto>()
+            };
         }
         _context = new(Model);
         await LoadRoles();
@@ -154,11 +157,30 @@
                 Model = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task New()
+    {
+        await dialog.OpenAsync("Assign Role", ds =>
+        @<RadzenCard>
+            <RadzenFieldset Text="Select Role">
+                <RadzenDropDown Style="width:100%" Data="@roles" TextProperty="roleName" ValueProperty="id" @bind-Value="assignedRole" />
+            </RadzenFieldset>
+            <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+                <RadzenRow>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
+                    </RadzenColumn>
+                    <RadzenColumn Size="6">
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Assign" Click="AssignRole"></RadzenButton>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenCard> );
     }
 
     async Task AssignRole()
@@ -176,14 +198,12 @@
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                     await LoadEmployeeData();
                     await grid.Reload();
-                }
-                else
+                } else
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 }
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Success, "Something went wrong, please retry", null, 4000);
         }
@@ -202,13 +222,11 @@
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployeeData();
                 await grid.Reload();
-            }
-            else
+            } else
             {
                 notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Error, "Something went wrong, please retry", null, 4000);
         }
@@ -227,8 +245,7 @@
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -244,8 +261,7 @@
                 if (IsInsert)
                 {
                     result = await fetch.Employee_Insert(Model);
-                }
-                else
+                } else
                 {
                     result = await fetch.Employee_Update(Model);
                 }
@@ -254,14 +270,12 @@
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                     await OnReloadList.InvokeAsync();
-                }
-                else
+                } else
                 {
                     notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

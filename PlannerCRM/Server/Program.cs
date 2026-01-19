@@ -1,5 +1,6 @@
 //Scaffold-DbContext "Server=localhost;Database=Planner_crm;Trusted_Connection=true;TrustServerCertificate=true;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -f
 
+using PlannerCRM.Server.Profiles;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +26,11 @@ builder.Services.RegisterServices();
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddAutoMapper(typeof(Program));
-
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<AutoMapperProfile>();
+    cfg.LicenseKey = builder.Configuration["AutoMapper:LicenseKey"];
+});
 
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));

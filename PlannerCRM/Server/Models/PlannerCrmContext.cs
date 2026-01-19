@@ -97,9 +97,6 @@ public partial class PlannerCrmContext : DbContext
         modelBuilder.Entity<EmployeesRole>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.RoleName)
-                .IsRequired()
-                .HasMaxLength(100);
 
             entity.HasOne(d => d.FkIdEmployeeNavigation).WithMany(p => p.EmployeesRoles)
                 .HasForeignKey(d => d.FkIdEmployee)
@@ -117,12 +114,16 @@ public partial class PlannerCrmContext : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.Email).HasMaxLength(50);
+            entity.Property(e => e.FiscalCode)
+                .HasMaxLength(10)
+                .IsFixedLength();
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.VatNumber)
                 .IsRequired()
-                .HasMaxLength(20);
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<Menu>(entity =>

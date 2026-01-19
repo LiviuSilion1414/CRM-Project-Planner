@@ -40,7 +40,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                 }
 
 
-                _context.EmployeesRoles.AddRange(mappedRoles.Select(x => new EmployeesRole() { FkIdEmployee  = model.Id, FkIdRole = x.Id, RoleName = x.Name }));
+                _context.EmployeesRoles.AddRange(mappedRoles.Select(x => new EmployeesRole() { FkIdEmployee  = model.Id, FkIdRole = x.Id }));
 
                 await _context.SaveChangesAsync();
             }
@@ -105,7 +105,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                     _context.EmployeesRoles.Remove(existingModel.EmployeesRoles.Where(x => x.FkIdRole == filter.role.id).FirstOrDefault());
                 } else
                 {
-                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = (Guid)filter.role.id, FkIdEmployee = (Guid)filter.employeeId, RoleName = filter.role.name });
+                    _context.EmployeesRoles.Add(new EmployeesRole { FkIdRole = (Guid)filter.role.id, FkIdEmployee = (Guid)filter.employeeId });
                 }
                 await _context.SaveChangesAsync();
             }

@@ -5,6 +5,8 @@ namespace PlannerCRM.Server.Models;
 
 public partial class FirmClient
 {
+    public string FiscalCode { get; set; }
+
     public Guid Id { get; set; }
 
     public string Name { get; set; }
@@ -12,6 +14,8 @@ public partial class FirmClient
     public string VatNumber { get; set; }
 
     public DateTime CreationDate { get; set; }
+
+    public string Email { get; set; }
 
     public virtual ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
 }

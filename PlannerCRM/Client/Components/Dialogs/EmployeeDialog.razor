@@ -1,45 +1,45 @@
 ﻿<RadzenRow class="row mt-3">
-    <RadzenColumn class="col-lg-3 col-md-5">
-        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold" Text="Full name" />
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenText Text="Full name" />
     </RadzenColumn>
-    <RadzenColumn class="col-lg-9 col-md-7 w-100">
-        <RadzenText>@SelectedEmployee.fullname</RadzenText>
-    </RadzenColumn>
-</RadzenRow>
-
-<RadzenRow class="row mt-3">
-    <RadzenColumn class="col-lg-3 col-md-5">
-        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold" Text="Username/Email" />
-    </RadzenColumn>
-    <RadzenColumn class="col-lg-9 col-md-7 w-100">
-        <RadzenText>@SelectedEmployee.username</RadzenText>
+    <RadzenColumn Size="12" SizeMD="9">
+        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold">@SelectedEmployee.fullname</RadzenText>
     </RadzenColumn>
 </RadzenRow>
 
 <RadzenRow class="row mt-3">
-    <RadzenColumn class="col-lg-3 col-md-5">
-        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold" Text="Roles" />
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenText Text="Username/Email" />
     </RadzenColumn>
-    <RadzenColumn class="col-lg-9 col-md-7 w-100">
-        <RadzenText>@SelectedEmployee.employeesRolesCommaSeparatedString</RadzenText>
-    </RadzenColumn>
-</RadzenRow>
-
-<RadzenRow class="row mt-3">
-    <RadzenColumn class="col-lg-3 col-md-5">
-        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold" Text="Created at" />
-    </RadzenColumn>
-    <RadzenColumn class="col-lg-9 col-md-7 w-100">
-        <RadzenText>@SelectedEmployee.creationDateString</RadzenText>
+    <RadzenColumn Size="12" SizeMD="9">
+        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold">@SelectedEmployee.username</RadzenText>
     </RadzenColumn>
 </RadzenRow>
 
 <RadzenRow class="row mt-3">
-    <RadzenColumn class="col-lg-3 col-md-5">
-        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold" Text="Last seen at" />
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenText Text="Roles" />
     </RadzenColumn>
-    <RadzenColumn class="col-lg-9 col-md-7 w-100">
-        <RadzenText>@SelectedEmployee.lastSeenString</RadzenText>
+    <RadzenColumn Size="12" SizeMD="9">
+        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold">@SelectedEmployee.employeesRolesCommaSeparatedString</RadzenText>
+    </RadzenColumn>
+</RadzenRow>
+
+<RadzenRow class="row mt-3">
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenText Text="Created at" />
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="9">
+        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold">@SelectedEmployee.creationDateString</RadzenText>
+    </RadzenColumn>
+</RadzenRow>
+
+<RadzenRow class="row mt-3">
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenText Text="Last seen at" />
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="9">
+        <RadzenText TextStyle="TextStyle.Body1" class="fw-semibold">@SelectedEmployee.lastSeenString</RadzenText>
     </RadzenColumn>
 </RadzenRow>
 
