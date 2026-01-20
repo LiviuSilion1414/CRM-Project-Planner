@@ -1,32 +1,48 @@
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
-using PlannerCRM.Shared.Services;
+using Microsoft.AspNetCore.Components.Web;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
+var builder = WebApplication.CreateBuilder(args);
 
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 
-builder.Services.AddAuthorizationCore();
-
+// Registrazioni dei servizi (adatta quelli browser‑specifici)
 builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<FetchService>();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
+builder.Services.AddScoped<LocalStorageService>();
+//builder.Services.AddSingleton<WeatherForecastService>();
 
-builder.Services.AddOptions();
-builder.Services.AddAuthorizationCore();
-
-builder.Services.AddScoped(_ => 
-    new HttpClient {
-        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) 
-    }
-);
+// Per chiamate HTTP lato server
+builder.Services.AddHttpClient();
 
 builder.Services.AddRadzenComponents();
+builder.Services.AddAuthorizationCore();
 
-await builder.Build().RunAsync();
+builder.Services.AddOptions();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationCore();
+
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();

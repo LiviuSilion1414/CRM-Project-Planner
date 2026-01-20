@@ -8,24 +8,20 @@ namespace PlannerCRM.Server.Extensions;
 
 public static class PipelineBuilderExtension
 {
-    public static void ConfigureSqlConnection(this WebApplicationBuilder builder)
+    public static void ConfigureSqlConnection(this IServiceCollection services, string connectionString)
     {
-        builder.Services.AddDbContext<PlannerCrmContext>(options =>
-            options.UseSqlServer(
-                builder.Configuration
-                    .GetConnectionString("DefaultDbString")
-                        ?? throw new InvalidOperationException(""" "DefaultDbString" not found!""")));
+        services.AddDbContext<PlannerCrmContext>(options =>options.UseSqlServer(connectionString));
     }
 
-    public static void ConfigureJwtAuth(this WebApplicationBuilder builder)
+    public static void ConfigureJwtAuth(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         //JWToken
-        IConfigurationSection appSettingsSection = builder.Configuration.GetSection("AppSettings");
-        builder.Services.Configure<ServerAppSettings>(appSettingsSection);
+        IConfigurationSection appSettingsSection = configurationSection;
+        services.Configure<ServerAppSettings>(appSettingsSection);
         ServerAppSettings appSettings = appSettingsSection.Get<ServerAppSettings>();
         byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
-        builder.Services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;

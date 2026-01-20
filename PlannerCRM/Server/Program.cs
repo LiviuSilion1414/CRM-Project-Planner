@@ -12,15 +12,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddMvc()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                });
 
-builder.ConfigureSqlConnection();
+builder.Services.ConfigureSqlConnection(builder.Configuration.GetConnectionString("DefaultDbString"));
 
-builder.ConfigureJwtAuth();
+builder.Services.ConfigureJwtAuth(builder.Configuration.GetSection("AppSettings"));
 
 builder.Services.RegisterServices();
 
@@ -35,31 +35,7 @@ builder.Services.AddAutoMapper(cfg =>
 builder.Logging.AddConfiguration(
     builder.Configuration.GetSection("Logging"));
 var app = builder.Build();
-
-//app.UseExceptionHandler();
-
-if (!app.Environment.IsDevelopment()) 
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-} 
-else
-{
-    //app.UseWebAssemblyDebugging();
-}
-
 app.UseHttpsRedirection();
-
-//app.UseBlazorFrameworkFiles();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("index.html");
-
 app.Run();
