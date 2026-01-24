@@ -21,6 +21,12 @@ builder.Services.AddScoped<LocalStorageService>();
 
 // Per chiamate HTTP lato server
 builder.Services.AddHttpClient();
+builder.Services.AddScoped(_ =>
+    new HttpClient
+    {
+        BaseAddress = new Uri(builder.Configuration["ApiUrl"])
+    }
+);
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddAuthorizationCore();
