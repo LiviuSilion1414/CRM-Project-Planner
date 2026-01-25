@@ -1,21 +1,27 @@
+using PlannerCRM.Server.Models;
+using PlannerCRM.Server.System;
+using static PlannerCRM.Shared.Dtos.DtoShared;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route(ApiUrl.WORKTIME_CONTROLLER)]
-public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
+public class WorkTimeController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly WorkTimeRepository _repo = repo;
+    private readonly WorkTimeRepository _repo = new(context, mapper);
+    private readonly SystemLogHelper _systemLog = new(context);
 
     [HttpPost]
-    [Route(ApiUrl.WORKTIME_INSERT)]
+    [Route(ApiUrl.INSERT)]
     public async Task<ResultDto> Insert([FromBody] WorkTimeDto dto)
     {
         try
         {
             return await _repo.Insert(dto);
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKTIME_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -29,7 +35,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(ApiUrl.WORKTIME_UPDATE)]
+    [Route(ApiUrl.UPDATE)]
     public async Task<ResultDto> Update(WorkTimeDto dto)
     {
         try
@@ -44,22 +50,25 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
-            return new ResultDto()
+            await _systemLog.WriteLog(ApiUrl.WORKTIME_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             {
-                id = null,
-                data = null,
-                hasCompleted = false,
-                message = "Operation failed",
-                messageType = MessageType.Error,
-                statusCode = HttpStatusCode.NotFound
-            };
+                return new ResultDto()
+                {
+                    id = null,
+                    data = null,
+                    hasCompleted = false,
+                    message = "Operation failed",
+                    messageType = MessageType.Error,
+                    statusCode = HttpStatusCode.NotFound
+                };
+            }
         }
     }
 
     [HttpPost]
-    [Route(ApiUrl.WORKTIME_DELETE)]
+    [Route(ApiUrl.DELETE)]
     public async Task<ResultDto> Delete([FromBody] WorkTimeFilterDto filter)
     {
         try
@@ -74,8 +83,9 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKTIME_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -89,7 +99,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.WORKTIME_GET)]
+    [Route(ApiUrl.GET)]
     public async Task<ResultDto> Get([FromBody] WorkTimeFilterDto filter)
     {
         try
@@ -104,8 +114,9 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKTIME_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -119,7 +130,7 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.WORKTIME_LIST)]
+    [Route(ApiUrl.LIST)]
     public async Task<ResultDto> List([FromBody] WorkTimeFilterDto filter)
     {
 
@@ -136,8 +147,9 @@ public class WorkTimeController(WorkTimeRepository repo) : ControllerBase
                 statusCode = HttpStatusCode.OK
             };
 
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKTIME_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,

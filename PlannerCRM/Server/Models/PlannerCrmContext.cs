@@ -33,6 +33,8 @@ public partial class PlannerCrmContext : DbContext
 
     public virtual DbSet<Setting> Settings { get; set; }
 
+    public virtual DbSet<SystemLog> SystemLogs { get; set; }
+
     public virtual DbSet<WorkOrder> WorkOrders { get; set; }
 
     public virtual DbSet<WorkTime> WorkTimes { get; set; }
@@ -169,6 +171,27 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(100)
                 .HasColumnName("title");
+        });
+
+        modelBuilder.Entity<SystemLog>(entity =>
+        {
+            entity.ToTable("SystemLog");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())", "DF_SystemLog_id")
+                .HasColumnName("id");
+            entity.Property(e => e.Date)
+                .HasColumnType("datetime")
+                .HasColumnName("date");
+            entity.Property(e => e.Endpoint)
+                .HasMaxLength(500)
+                .HasColumnName("endpoint");
+            entity.Property(e => e.Reason).HasColumnName("reason");
+            entity.Property(e => e.Request).HasColumnName("request");
+            entity.Property(e => e.Stacktrace).HasColumnName("stacktrace");
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
+                .HasColumnName("username");
         });
 
         modelBuilder.Entity<WorkOrder>(entity =>

@@ -1,14 +1,21 @@
+using AutoMapper;
+using Humanizer;
+using PlannerCRM.Server.Models;
+using PlannerCRM.Server.System;
+using static PlannerCRM.Shared.Dtos.DtoShared;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route(ApiUrl.WORKORDER_CONTROLLER)]
-public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
+public class WorkOrderController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly WorkOrderRepository _repo = repo;
+    private readonly WorkOrderRepository _repo = new(context, mapper);
+    private readonly SystemLogHelper _systemLog = new(context);
 
     [HttpPost]
-    [Route(ApiUrl.WORKORDER_INSERT)]
+    [Route(ApiUrl.INSERT)]
     public async Task<ResultDto> Insert([FromBody] WorkOrderDto dto)
     {
         try
@@ -23,8 +30,9 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKORDER_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -38,7 +46,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(ApiUrl.WORKORDER_UPDATE)]
+    [Route(ApiUrl.UPDATE)]
     public async Task<ResultDto> Update(WorkOrderDto dto)
     {
         try
@@ -53,8 +61,9 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKORDER_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -68,7 +77,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.WORKORDER_DELETE)]
+    [Route(ApiUrl.DELETE)]
     public async Task<ResultDto> Delete([FromBody] WorkOrderFilterDto filter)
     {
         try
@@ -83,8 +92,9 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKORDER_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -98,7 +108,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.WORKORDER_GET)]
+    [Route(ApiUrl.GET)]
     public async Task<ResultDto> Get([FromBody] WorkOrderFilterDto filter)
     {
         try
@@ -113,8 +123,9 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKORDER_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -128,7 +139,7 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.WORKORDER_LIST)]
+    [Route(ApiUrl.LIST)]
     public async Task<ResultDto> List([FromBody] WorkOrderFilterDto filter)
     {
 
@@ -145,8 +156,9 @@ public class WorkOrderController(WorkOrderRepository repo) : ControllerBase
                 statusCode = HttpStatusCode.OK
             };
 
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.WORKORDER_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,

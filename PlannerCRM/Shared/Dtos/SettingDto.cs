@@ -20,14 +20,3 @@ public class SettingFilterDto : FilterDto
 {
 
 }
-
-public partial class ApiUrl
-{
-    public const string SETTINGS_CONTROLLER = "api/settings";
-
-    public const string SETTINGS_INSERT = "insert";
-    public const string SETTINGS_UPDATE = "update";
-    public const string SETTINGS_DELETE = "delete";
-    public const string SETTINGS_GET = "get";
-    public const string SETTINGS_LIST = "list";
-}

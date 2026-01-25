@@ -51,14 +51,3 @@ public class EmployeeFilterDto : FilterDto
     public bool? isEditProfile { get; set; }
     public RoleDto? role { get; set; }
 }
-
-    public partial class ApiUrl
-{
-    public const string EMPLOYEE_CONTROLLER = "api/employee";
-
-    public const string EMPLOYEE_INSERT = "insert";
-    public const string EMPLOYEE_UPDATE = "update";
-    public const string EMPLOYEE_DELETE = "delete";
-    public const string EMPLOYEE_GET = "get";
-    public const string EMPLOYEE_LIST = "list";
-}

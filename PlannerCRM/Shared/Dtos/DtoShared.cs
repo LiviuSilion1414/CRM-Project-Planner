@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlannerCRM.Shared;
+namespace PlannerCRM.Shared.Dtos;
 public static class DtoShared
 {
     public static string GetDescription(this Enum value)     
@@ -35,4 +35,25 @@ public static class DtoShared
     }
 
     public static List<string> BaseRolesList = Enum.GetValues<BaseRolesStrings>().Select(x => x.GetDescription()).ToList();
+
+    public partial class ApiUrl
+    {
+        public const string ACCOUNT_CONTROLLER = "api/account/";
+        public const string ACTIVITY_CONTROLLER = "api/activity/";
+        public const string CLIENT_CONTROLLER = "api/client/";
+        public const string EMPLOYEE_CONTROLLER = "api/employee/";
+        public const string MENU_ROLE_CONTROLLER = "api/menurole/";
+        public const string ROLE_CONTROLLER = "api/role/";
+        public const string SETTINGS_CONTROLLER = "api/settings/";
+        public const string WORKORDER_CONTROLLER = "api/workorder/";
+        public const string WORKTIME_CONTROLLER = "api/worktime/";
+
+        public const string ACCOUNT_LOGIN = "login";
+
+        public const string INSERT = "insert";
+        public const string UPDATE = "update";
+        public const string DELETE = "delete";
+        public const string GET = "get";
+        public const string LIST = "list";
+    }
 }

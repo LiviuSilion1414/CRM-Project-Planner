@@ -27,14 +27,3 @@ public class WorkOrderFilterDto : FilterDto
     public Guid? firmClientId { get; set; }
     public Guid? employeeId { get; set; }
 }
-
-public partial class ApiUrl
-{
-    public const string WORKORDER_CONTROLLER = "api/workorder";
-
-    public const string WORKORDER_INSERT = "insert";
-    public const string WORKORDER_UPDATE = "update";
-    public const string WORKORDER_DELETE = "delete";
-    public const string WORKORDER_GET = "get";
-    public const string WORKORDER_LIST = "list";
-}

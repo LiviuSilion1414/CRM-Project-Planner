@@ -124,16 +124,17 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
 
             var response = new HttpResponseMessage();
 
+            var endPointUrl = controllerName + endpoint;
             switch (apiType)
             {
                 case ApiType.Get:
-                    response = await _http.GetAsync($"{controllerName}/{endpoint}");
+                    response = await _http.GetAsync(endPointUrl);
                     break;
                 case ApiType.Post:
-                    response = await _http.PostAsJsonAsync($"{controllerName}/{endpoint}", data);
+                    response = await _http.PostAsJsonAsync(endPointUrl, data);
                     break;
                 case ApiType.Put:
-                    response = await _http.PutAsJsonAsync($"{controllerName}/{endpoint}", data);
+                    response = await _http.PutAsJsonAsync(endPointUrl, data);
                     break;
             }
 

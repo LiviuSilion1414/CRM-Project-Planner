@@ -15,8 +15,8 @@ public class ErrorModel : PageModel
         _logger = logger;
     }
 
-    public void OnGet() {
-        RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier;
-        _logger.LogError("Somethign Went Wrong While Processing Your Request. Try Again Later.");
-    }
+    //public void OnGet() {
+    //    RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+    //    _logger.LogError("Somethign Went Wrong While Processing Your Request. Try Again Later.");
+    //}
 }

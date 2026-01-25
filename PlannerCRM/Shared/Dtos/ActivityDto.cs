@@ -34,14 +34,3 @@ public class ActivityFilterDto : FilterDto
     public Guid? workOrderId { get; set; }
     public Guid? firmClientId { get; set; }
 }
-
-public partial class ApiUrl
-{
-    public const string ACTIVITY_CONTROLLER = "api/activity";
-
-    public const string ACTIVITY_INSERT = "insert";
-    public const string ACTIVITY_UPDATE = "update";
-    public const string ACTIVITY_DELETE = "delete";
-    public const string ACTIVITY_GET = "get";
-    public const string ACTIVITY_LIST = "list";
-}

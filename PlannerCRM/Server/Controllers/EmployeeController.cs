@@ -1,14 +1,20 @@
+using Humanizer;
+using PlannerCRM.Server.Models;
+using PlannerCRM.Server.System;
+using static PlannerCRM.Shared.Dtos.DtoShared;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route(ApiUrl.EMPLOYEE_CONTROLLER)]
-public class EmployeeController(EmployeeRepository repo) : ControllerBase
+public class EmployeeController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly EmployeeRepository _repo = repo;
+    private readonly EmployeeRepository _repo = new(context, mapper);
+    private readonly SystemLogHelper _systemLog = new(context);
 
     [HttpPost]
-    [Route(ApiUrl.EMPLOYEE_INSERT)]
+    [Route(ApiUrl.INSERT)]
     public async Task<ResultDto> Insert(EmployeeDto dto)
     {
         try
@@ -23,8 +29,9 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEE_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -38,7 +45,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(ApiUrl.EMPLOYEE_UPDATE)]
+    [Route(ApiUrl.UPDATE)]
     public async Task<ResultDto> Update(EmployeeDto dto)
     {
         try
@@ -53,8 +60,9 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEE_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -68,7 +76,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.EMPLOYEE_DELETE)]
+    [Route(ApiUrl.DELETE)]
     public async Task<ResultDto> Delete([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -83,8 +91,9 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch(Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -98,7 +107,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.EMPLOYEE_GET)]
+    [Route(ApiUrl.GET)]
     public async Task<ResultDto> Get([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -113,8 +122,9 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEE_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -128,7 +138,7 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.EMPLOYEE_LIST)]
+    [Route(ApiUrl.LIST)]
     public async Task<ResultDto> List([FromBody] EmployeeFilterDto filter)
     {
         try
@@ -143,8 +153,9 @@ public class EmployeeController(EmployeeRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEE_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,

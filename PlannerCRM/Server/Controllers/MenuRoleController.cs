@@ -1,14 +1,20 @@
-﻿namespace PlannerCRM.Server.Controllers;
+﻿using Humanizer;
+using PlannerCRM.Server.Models;
+using PlannerCRM.Server.System;
+using static PlannerCRM.Shared.Dtos.DtoShared;
+
+namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route(ApiUrl.MENU_ROLE_CONTROLLER)]
-public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
+public class MenuRoleController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly MenuRoleRepository _repo = repo;
+    private readonly MenuRoleRepository _repo = new(context, mapper);
+    private readonly SystemLogHelper _systemLog = new(context);
 
     [HttpPost]
-    [Route(ApiUrl.MENU_ROLE_INSERT)]
+    [Route(ApiUrl.INSERT)]
     public async Task<ResultDto> Insert(MenuRoleDto dto)
     {
         try
@@ -23,8 +29,9 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.MENU_ROLE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -38,7 +45,7 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(ApiUrl.MENU_ROLE_UPDATE)]
+    [Route(ApiUrl.UPDATE)]
     public async Task<ResultDto> Update(MenuRoleDto dto)
     {
         try
@@ -53,8 +60,9 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.MENU_ROLE_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -68,7 +76,7 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.MENU_ROLE_DELETE)]
+    [Route(ApiUrl.DELETE)]
     public async Task<ResultDto> Delete(MenuRoleFilterDto filter)
     {
         try
@@ -83,8 +91,9 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.MENU_ROLE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -98,7 +107,7 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.MENU_ROLE_GET)]
+    [Route(ApiUrl.GET)]
     public async Task<ResultDto> Get(MenuRoleFilterDto filter)
     {
         try
@@ -113,8 +122,9 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.MENU_ROLE_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -128,7 +138,7 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.MENU_ROLE_LIST)]
+    [Route(ApiUrl.LIST)]
     public async Task<ResultDto> List(MenuRoleFilterDto filter)
     {
         try
@@ -143,8 +153,9 @@ public class MenuRoleController(MenuRoleRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch (Exception exc)
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.MENU_ROLE_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,

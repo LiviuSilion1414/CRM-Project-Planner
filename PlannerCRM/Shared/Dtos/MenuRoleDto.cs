@@ -22,14 +22,3 @@ public partial class MenuRoleFilterDto : FilterDto
     public Guid? menuId { get; set; }
     public Guid? roleId { get; set; }
 }
-
-public partial class ApiUrl
-{
-    public const string MENU_ROLE_CONTROLLER = "api/menurole";
-
-    public const string MENU_ROLE_INSERT = "insert";
-    public const string MENU_ROLE_UPDATE = "update";
-    public const string MENU_ROLE_DELETE = "delete";
-    public const string MENU_ROLE_GET = "get";
-    public const string MENU_ROLE_LIST = "list";
-}

@@ -25,14 +25,3 @@ public class WorkTimeFilterDto : FilterDto
     public DateTime? startDate { get; set; }
     public DateTime? endDate { get; set; }
 }
-
-public partial class ApiUrl
-{
-    public const string WORKTIME_CONTROLLER = "api/workTime";
-
-    public const string WORKTIME_INSERT = "insert";
-    public const string WORKTIME_UPDATE = "update";
-    public const string WORKTIME_DELETE = "delete";
-    public const string WORKTIME_GET = "get";
-    public const string WORKTIME_LIST = "list";
-}

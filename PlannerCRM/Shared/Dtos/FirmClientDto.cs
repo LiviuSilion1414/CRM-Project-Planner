@@ -21,14 +21,3 @@ public class FirmClientFilterDto : FilterDto
     public Guid? workOrderId { get; set; }
     public Guid? workOrderCostId { get; set; }
 }
-
-public partial class ApiUrl
-{
-    public const string CLIENT_CONTROLLER = "api/client";
-
-    public const string CLIENT_INSERT = "insert";
-    public const string CLIENT_UPDATE = "update";
-    public const string CLIENT_DELETE = "delete";
-    public const string CLIENT_GET = "get";
-    public const string CLIENT_LIST = "list";
-}

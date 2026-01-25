@@ -2,8 +2,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.JSInterop.Infrastructure;
 using PlannerCRM.Server.Models;
-using PlannerCRM.Shared.Dtos;
-using static PlannerCRM.Shared.DtoShared;
+using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Server.Repositories;
 

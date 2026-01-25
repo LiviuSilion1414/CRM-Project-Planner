@@ -1,14 +1,19 @@
+using PlannerCRM.Server.Models;
+using PlannerCRM.Server.System;
+using static PlannerCRM.Shared.Dtos.DtoShared;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route(ApiUrl.CLIENT_CONTROLLER)]
-public class ClientController(FirmClientRepository repo) : ControllerBase
+public class ClientController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly FirmClientRepository _repo = repo;
+    private readonly FirmClientRepository _repo = new(context, mapper);
+    private readonly SystemLogHelper _systemLog = new(context);
 
     [HttpPost]
-    [Route(ApiUrl.CLIENT_INSERT)]
+    [Route(ApiUrl.INSERT)]
     public async Task<ResultDto> Insert(FirmClientDto dto)
     {
         try
@@ -23,8 +28,9 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.CLIENT_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -38,7 +44,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPut]
-    [Route(ApiUrl.CLIENT_UPDATE)]
+    [Route(ApiUrl.UPDATE)]
     public async Task<ResultDto> Update(FirmClientDto dto)
     {
         try
@@ -53,8 +59,9 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.CLIENT_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -68,7 +75,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.CLIENT_DELETE)]
+    [Route(ApiUrl.DELETE)]
     public async Task<ResultDto> Delete([FromBody] FirmClientFilterDto filter)
     {
         try
@@ -83,8 +90,9 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.CLIENT_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -98,7 +106,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.CLIENT_GET)]
+    [Route(ApiUrl.GET)]
     public async Task<ResultDto> Get([FromBody] FirmClientFilterDto filter)
     {
         try
@@ -113,8 +121,9 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.CLIENT_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -128,7 +137,7 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
     }
 
     [HttpPost]
-    [Route(ApiUrl.CLIENT_LIST)]
+    [Route(ApiUrl.LIST)]
     public async Task<ResultDto> List([FromBody] FirmClientFilterDto filter)
     {
         try
@@ -143,8 +152,9 @@ public class ClientController(FirmClientRepository repo) : ControllerBase
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch(Exception ex)
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.CLIENT_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.IdentityModel.Tokens;
 using PlannerCRM.Server.Models;
 using PlannerCRM.Server.Repositories;
+using PlannerCRM.Server.System;
 using System.Text;
 
 namespace PlannerCRM.Server.Extensions;
@@ -43,7 +45,7 @@ public static class PipelineBuilderExtension
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddScoped<ServerAppSettings>();
-
+        services.AddScoped<SystemLogHelper>();
         services.AddScoped<ActivityRepository>();
         services.AddScoped<EmployeeRepository>();
         services.AddScoped<FirmClientRepository>();

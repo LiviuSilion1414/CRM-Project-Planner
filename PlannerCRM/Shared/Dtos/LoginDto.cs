@@ -10,11 +10,3 @@ public class LoginDto
 
     public bool rememberMe { get; set; }
 }
-
-
-public partial class ApiUrl
-{
-    public const string ACCOUNT_CONTROLLER = "api/account";
-
-    public const string ACCOUNT_LOGIN = "login";
-}

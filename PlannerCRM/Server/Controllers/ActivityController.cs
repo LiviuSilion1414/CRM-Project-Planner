@@ -1,14 +1,22 @@
+using Humanizer;
+using PlannerCRM.Server.Models;
+using PlannerCRM.Server.System;
+using System.Security.Claims;
+using System.Text.Json;
+using static PlannerCRM.Shared.Dtos.DtoShared;
+
 namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
 [Route(ApiUrl.ACTIVITY_CONTROLLER)]
-public class ActivityController(ActivityRepository specificRepo) : ControllerBase
+public class ActivityController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly ActivityRepository _repo = specificRepo;
+    private readonly ActivityRepository _repo = new(context, mapper);
+    private readonly SystemLogHelper _systemLog = new(context);
 
     [HttpPost]
-    [Route(ApiUrl.ACTIVITY_INSERT)]
+    [Route(ApiUrl.INSERT)]
     public async Task<ResultDto> Insert(ActivityDto dto)
     {
         try
@@ -16,6 +24,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
             return await _repo.Insert(dto);
         } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -29,14 +38,15 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPut]
-    [Route(ApiUrl.ACTIVITY_UPDATE)]
+    [Route(ApiUrl.UPDATE)]
     public async Task<ResultDto> Update(ActivityDto dto)
     {
         try
         {
             return await _repo.Update(dto);
-        } catch
+        } catch(Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -50,7 +60,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPost]
-    [Route(ApiUrl.ACTIVITY_DELETE)]
+    [Route(ApiUrl.DELETE)]
     public async Task<ResultDto> Delete([FromBody] ActivityFilterDto filter)
     {
         try
@@ -65,8 +75,9 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -80,8 +91,8 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPost]
-    [Route(ApiUrl.ACTIVITY_GET)]
-    public async Task<ResultDto> GetById([FromBody] ActivityFilterDto filter)
+    [Route(ApiUrl.GET)]
+    public async Task<ResultDto> Get([FromBody] ActivityFilterDto filter)
     {
         try
         {
@@ -95,8 +106,9 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -110,7 +122,7 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
     }
 
     [HttpPost]
-    [Route(ApiUrl.ACTIVITY_LIST)]
+    [Route(ApiUrl.LIST)]
     public async Task<ResultDto> List([FromBody] ActivityFilterDto filter)
     {
         try
@@ -125,8 +137,9 @@ public class ActivityController(ActivityRepository specificRepo) : ControllerBas
                 messageType = MessageType.Success,
                 statusCode = HttpStatusCode.OK
             };
-        } catch
+        } catch (Exception ex)
         {
+            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
