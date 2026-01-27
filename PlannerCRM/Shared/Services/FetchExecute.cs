@@ -64,6 +64,35 @@ public partial class FetchService
 
     #endregion
 
+    #region EmployeesRoles
+
+    public async Task<ResultDto> EmployeesRoles_Insert(EmployeesRolesDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> EmployeesRoles_Update(EmployeesRolesFilterDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
+    }
+
+    public async Task<ResultDto> EmployeesRoles_Delete(EmployeesRolesFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.DELETE, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> EmployeesRoles_Get(EmployeesRolesFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.GET, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> EmployeesRoles_List(EmployeesRolesFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+    }
+
+    #endregion
+
     #region FirmClient
 
     public async Task<ResultDto> FirmClient_Insert(FirmClientDto dto)

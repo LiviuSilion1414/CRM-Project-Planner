@@ -1,0 +1,68 @@
+﻿
+<RadzenCard>
+    <RadzenDataGrid TItem="@RoleDto"
+                    Data="@rolesDtoList"
+                    AllowSorting="false"
+                    AllowFiltering="false">
+        <Columns>
+            <RadzenDataGridColumn Property="@(nameof(RoleDto.name))" Title="Name" />
+            <RadzenDataGridColumn Property="@(nameof(RoleDto.isRemoveableString))" Title="Removeable from system?" />
+            <RadzenDataGridColumn Width="55px">
+                <Template Context="data">
+                    <RadzenButton Icon="add"
+                                  Click="@(() => SelectRole(data))"
+                                  Style="@(getCssClass(isDisabled(data)))"
+                                  Disabled="@isDisabled(data)" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+    <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+        <RadzenRow>
+            <RadzenColumn Size="6">
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="dialog.Close"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenCard>
+
+@code
+{
+    [Parameter] public EmployeeDto employeeDto { get; set; }
+    [Parameter] public List<RoleDto> rolesDtoList { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
+    async Task SelectRole(RoleDto roleDto)
+    {
+        var confirm = await dialog.Confirm("Do you really want to assign this role?");
+        if (confirm != null && (bool)confirm)
+        {
+            var employeesRoleDto = new EmployeesRolesDto
+            {
+                fkIdEmployee = (Guid)employeeDto.id,
+                fkIdRole = roleDto.id
+            };
+            ResultDto result = await fetch.EmployeesRoles_Insert(employeesRoleDto);
+
+            if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await OnReloadList.InvokeAsync();
+                dialog.Close();
+            } else
+            {
+                notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+            }
+        }
+    }
+
+    bool isDisabled(RoleDto roleDto)
+    {
+        return employeeDto.employeesRoles.Select(x => x.fkIdRole).Contains(roleDto.id);
+    }
+
+    string getCssClass(bool isDisabled)
+    {
+        return isDisabled ? "cursor: not-allowed;" : "cursor:pointer;";
+    }
+}

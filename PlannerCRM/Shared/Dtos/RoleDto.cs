@@ -10,7 +10,7 @@ public partial class RoleDto
     public bool isRemoveable { get; set; } = false;
     public string isRemoveableString => isRemoveable ? "Yes" : "No";
 
-    public List<EmployeesRoleDto> employeeRolesList { get; set; } = new List<EmployeesRoleDto>();
+    public List<EmployeesRolesDto> employeeRolesList { get; set; } = new List<EmployeesRolesDto>();
     public List<MenuRoleDto> menuRoleList { get; set; } = new List<MenuRoleDto>();
 }
 

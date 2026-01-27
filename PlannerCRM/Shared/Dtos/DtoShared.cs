@@ -42,6 +42,7 @@ public static class DtoShared
         public const string ACTIVITY_CONTROLLER = "api/activity/";
         public const string CLIENT_CONTROLLER = "api/client/";
         public const string EMPLOYEE_CONTROLLER = "api/employee/";
+        public const string EMPLOYEESROLES_CONTROLLER = "api/employeesroles/";
         public const string MENU_ROLE_CONTROLLER = "api/menurole/";
         public const string ROLE_CONTROLLER = "api/role/";
         public const string SETTINGS_CONTROLLER = "api/settings/";

@@ -35,7 +35,7 @@ public partial class EmployeeDto
     [Required(ErrorMessage = "Is removeable? option is required")]
     public bool? isRemoveable { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
-    public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
+    public ICollection<EmployeesRolesDto>? employeesRoles { get; set; }
     public string employeesRolesCommaSeparatedString => employeesRoles != null && employeesRoles.Any()
         ? string.Join(", ", employeesRoles.Select(er => er?.fkIdRoleNavigation?.name))
         : "no rolesList set";

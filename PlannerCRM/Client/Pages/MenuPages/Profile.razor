@@ -70,13 +70,13 @@ else
                     <RadzenRow class="mt-3">
                         <RadzenColumn>
                             <RadzenDataGrid @ref="grid"
-                            TItem="EmployeesRoleDto"
+                            TItem="EmployeesRolesDto"
                             Data="@currentUser.employeesRoles"
                             PageSize="5"
                             AllowPaging="true"
                             AllowSorting="true">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.fkIdRoleNavigation.name)" Title="Role Name" />
+                                    <RadzenDataGridColumn TItem="EmployeesRolesDto" Property="@nameof(EmployeesRolesDto.fkIdRoleNavigation.name)" Title="Role Name" />
                                 </Columns>
                             </RadzenDataGrid>
                         </RadzenColumn>
@@ -109,7 +109,7 @@ else
 
     EditContext _context;
 
-    RadzenDataGrid<EmployeesRoleDto> grid;
+    RadzenDataGrid<EmployeesRolesDto> grid;
 
     protected override async Task OnInitializedAsync()
     {

@@ -128,7 +128,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                           .AsSplitQuery()
                                           .OrderBy(e => e.Id)
                                           .Include(e => e.EmployeesRoles)
-                                          .Include(e => e.EmployeeActivities)
+                                          .Include(e => e.EmployeesRoles).ThenInclude(x => x.FkIdRoleNavigation)
                                           .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
                                                       (filter.roleId == null || filter.roleId == Guid.Empty) || (x.EmployeesRoles.Any(y => y.FkIdRole == filter.roleId)))
                                           .ToListAsync();

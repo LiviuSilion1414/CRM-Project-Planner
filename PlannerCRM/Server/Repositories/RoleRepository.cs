@@ -109,7 +109,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
                                           .Include(x => x.FkIdEmployeeNavigation)
                                           .Where(x => menuRoles.Select(r => r.FkIdRole).Contains(x.FkIdRole))
                                           .ToListAsync();
-            var mappedEmployeeRoles = _mapper.Map<List<EmployeesRoleDto>>(employeesRoles);
+            var mappedEmployeeRoles = _mapper.Map<List<EmployeesRolesDto>>(employeesRoles);
 
             return mappedResult.Select(x =>
             {
