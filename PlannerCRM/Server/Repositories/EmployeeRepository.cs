@@ -110,7 +110,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                          .AsSplitQuery()
                                          .Include(e => e.EmployeeActivities)
                                          .Include(e => e.EmployeesRoles).ThenInclude(x => x.FkIdRoleNavigation)
-                                         .SingleAsync(e => e.Id == filter.employeeId);
+                                         .FirstAsync(e => e.Id == filter.employeeId);
 
             return _mapper.Map<EmployeeDto>(employee);
         } catch (Exception)
@@ -130,7 +130,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                           .Include(e => e.EmployeesRoles)
                                           .Include(e => e.EmployeeActivities)
                                           .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                      (filter.roleId == null || filter.roleId == Guid.Empty) || (filter.employeeId == x.Id))
+                                                      (filter.roleId == null || filter.roleId == Guid.Empty) || (x.EmployeesRoles.Any(y => y.FkIdRole == filter.roleId)))
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);

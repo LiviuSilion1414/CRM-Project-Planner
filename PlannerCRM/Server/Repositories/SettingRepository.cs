@@ -70,7 +70,7 @@ public class SettingRepository(PlannerCrmContext context, IMapper mapper)
         {
             var role = await _context.Settings
                                      .AsNoTracking()
-                                     .SingleAsync(a => a.Id == filter.id);
+                                     .FirstAsync(a => a.Id == filter.id);
 
             return _mapper.Map<SettingDto>(role);
         } catch (Exception)

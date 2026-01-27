@@ -1,6 +1,7 @@
 ﻿using PlannerCRM.Shared.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace PlannerCRM.Shared.Dtos;
 
@@ -28,16 +29,15 @@ public partial class EmployeeDto
     [Compare("newPassword", ErrorMessage = "The new password and confirmation password do not match.")]
     public string? confirmNewPassword { get; set; }
 
-    public bool? isEditProfile { get; set; }
     public DateTime? lastSeen { get; set; }
     public string? lastSeenString => lastSeen != null ? string.Format("{0:dd/MM/yyyy}", lastSeen) : "";
 
-    [Required(ErrorMessage = "Is remoavble option is required")]
+    [Required(ErrorMessage = "Is removeable? option is required")]
     public bool? isRemoveable { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
     public ICollection<EmployeesRoleDto>? employeesRoles { get; set; }
     public string employeesRolesCommaSeparatedString => employeesRoles != null && employeesRoles.Any()
-        ? string.Join(", ", employeesRoles.Select(er => er?.roleName))
+        ? string.Join(", ", employeesRoles.Select(er => er?.fkIdRoleNavigation?.name))
         : "no rolesList set";
 }
 

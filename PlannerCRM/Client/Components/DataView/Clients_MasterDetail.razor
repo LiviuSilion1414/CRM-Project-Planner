@@ -175,6 +175,6 @@ else
 
     void OnClientChanged(Guid clientId)
     {
-        clientDto = Clients.SingleOrDefault(x => x.id == clientId);
+        clientDto = Clients.FirstOrDefault(x => x.id == clientId);
     }
 }

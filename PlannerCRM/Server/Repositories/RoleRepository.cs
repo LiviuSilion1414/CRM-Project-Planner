@@ -68,7 +68,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
                                      .AsNoTracking()
                                      .AsSplitQuery()
                                      .Include(x => x.EmployeesRoles)
-                                     .SingleAsync(a => a.Id == filter.id);
+                                     .FirstAsync(a => a.Id == filter.id);
 
             return _mapper.Map<RoleDto>(role);
         } catch (Exception)

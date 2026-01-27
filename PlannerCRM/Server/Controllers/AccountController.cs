@@ -25,7 +25,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
         var foundEmployee = await _context.Employees
                                           .Include(x => x.EmployeesRoles)
                                           .ThenInclude(x => x.FkIdRoleNavigation).ThenInclude(x => x.MenuRoles).ThenInclude(x => x.FkIdMenuNavigation)
-                                          .SingleOrDefaultAsync(em => em.Username.Contains(dto.username));
+                                          .FirstOrDefaultAsync(em => em.Username.Contains(dto.username));
 
         if (foundEmployee is not null)
         {

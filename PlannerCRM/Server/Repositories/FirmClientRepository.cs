@@ -28,7 +28,7 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
-            var existingModel = await _context.FirmClients.SingleAsync(cl => cl.Id == dto.id);
+            var existingModel = await _context.FirmClients.FirstAsync(cl => cl.Id == dto.id);
 
             existingModel.Name = dto.name;
             existingModel.VatNumber = dto.vatNumber;
@@ -51,7 +51,7 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
             var client = await _context.FirmClients
                                        .AsSplitQuery()
                                        .Include(c => c.WorkOrders)
-                                       .SingleAsync(c => c.Id == filter.firmClientId);
+                                       .FirstAsync(c => c.Id == filter.firmClientId);
 
             _context.Remove(client);
 
@@ -70,7 +70,7 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
                                        .AsNoTracking()
                                        .AsSplitQuery()
                                        .Include(c => c.WorkOrders)
-                                       .SingleAsync(c => c.Id == filter.firmClientId);
+                                       .FirstAsync(c => c.Id == filter.firmClientId);
 
             return _mapper.Map<FirmClientDto>(client);
         } catch (Exception)

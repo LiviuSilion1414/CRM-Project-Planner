@@ -66,7 +66,7 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
                                      .AsSplitQuery()
                                      .Include(x => x.FkIdRoleNavigation)
                                      .Include(x => x.FkIdMenuNavigation)
-                                     .SingleAsync(a => a.Id == filter.id);
+                                     .FirstAsync(a => a.Id == filter.id);
 
             return _mapper.Map<MenuRoleDto>(role);
         } catch (Exception)

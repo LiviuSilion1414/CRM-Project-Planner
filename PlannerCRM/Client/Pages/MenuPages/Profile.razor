@@ -76,7 +76,7 @@ else
                             AllowPaging="true"
                             AllowSorting="true">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.roleName)" Title="Role Name" />
+                                    <RadzenDataGridColumn TItem="EmployeesRoleDto" Property="@nameof(EmployeesRoleDto.fkIdRoleNavigation.name)" Title="Role Name" />
                                 </Columns>
                             </RadzenDataGrid>
                         </RadzenColumn>

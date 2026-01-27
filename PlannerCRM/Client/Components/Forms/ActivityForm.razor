@@ -220,7 +220,7 @@
     {
         if (guid != null && (Guid)guid != Guid.Empty)
         {
-            Model.fkIdWorkOrderNavigation = _workOrders.SingleOrDefault(x => x.id == (Guid)guid);
+            Model.fkIdWorkOrderNavigation = _workOrders.FirstOrDefault(x => x.id == (Guid)guid);
         }
     }
 

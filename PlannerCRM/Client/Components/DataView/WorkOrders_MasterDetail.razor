@@ -193,6 +193,6 @@ else
 
     void OnWorkOrderChanged(Guid clientId)
     {
-        workOrderDto = WorkOrders.SingleOrDefault(x => x.id == clientId);
+        workOrderDto = WorkOrders.FirstOrDefault(x => x.id == clientId);
     }
 }

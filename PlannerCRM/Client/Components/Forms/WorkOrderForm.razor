@@ -292,8 +292,8 @@
     {
         if (clientId != null && (Guid)clientId != Guid.Empty)
         {
-            Model.fkIdFirmClientNavigation = _clients.SingleOrDefault(x => x.id == (Guid)clientId) ?? new();
-            Model.fkIdFirmClient = _clients.SingleOrDefault(x => x.id == (Guid)clientId).id;
+            Model.fkIdFirmClientNavigation = _clients.FirstOrDefault(x => x.id == (Guid)clientId) ?? new();
+            Model.fkIdFirmClient = _clients.FirstOrDefault(x => x.id == (Guid)clientId).id;
         }
         else
         {

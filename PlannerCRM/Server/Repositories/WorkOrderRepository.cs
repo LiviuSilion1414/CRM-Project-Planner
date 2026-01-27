@@ -69,7 +69,7 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
                                           .AsSplitQuery()
                                           .Include(w => w.Activities)
                                           .Include(w => w.FkIdFirmClientNavigation)
-                                          .SingleAsync(w => w.Id == filter.id);
+                                          .FirstAsync(w => w.Id == filter.id);
 
             return _mapper.Map<WorkOrderDto>(workOrder);
         } catch

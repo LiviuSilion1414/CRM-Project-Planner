@@ -1,0 +1,40 @@
+﻿<RadzenDataGrid TItem="@RoleDto"
+                Data="@rolesDtoList"
+                AllowSorting="false"
+                AllowFiltering="false">
+    <Columns>
+        <RadzenDataGridColumn Property="@(nameof(RoleDto.name))" Title="Name"/>
+        <RadzenDataGridColumn Property="@(nameof(RoleDto.isRemoveableString))" Title="Removeable from system?"/>
+        <RadzenDataGridColumn Width="55px">
+            <Template Context="data">
+                <RadzenButton Click="@(() => SelectRole(data))" Disabled="@employeeDto.employeesRoles.Select(x => x.fkIdRole).Contains(data.id)"/>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code 
+{
+    [Parameter] public EmployeeDto employeeDto { get; set; }
+    [Parameter] public List<RoleDto> rolesDtoList { get; set; }
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
+    async Task SelectRole(RoleDto roleDto)
+    {
+        var employeesRoleDto = new EmployeesRoleDto
+        {
+            fkIdEmployee = employeeDto.id,
+            fkIdRole = roleDto.id
+        };
+        ResultDto result = await fetch.Employee_Insert(new());
+
+        if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
+        {
+            notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+            await OnReloadList.InvokeAsync();
+        } else
+        {
+            notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+        }
+    }
+}
