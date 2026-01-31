@@ -20,7 +20,7 @@
                                     <RadzenLabel>Name</RadzenLabel>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <InputText class="form-control w-100" @bind-Value="@Model.name" />
+                                    <InputText class="form-control w-100" @bind-Value="@employeeDto.name" />
                                 </RadzenColumn>
                             </RadzenRow>
                             <RadzenRow class="mt-3">
@@ -28,7 +28,7 @@
                                     <RadzenLabel>Surname</RadzenLabel>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <InputText class="form-control w-100" @bind-Value="@Model.surname" />
+                                    <InputText class="form-control w-100" @bind-Value="@employeeDto.surname" />
                                 </RadzenColumn>
                             </RadzenRow>
                             <RadzenRow class="mt-3">
@@ -36,7 +36,7 @@
                                     <RadzenLabel>Email</RadzenLabel>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <InputText class="form-control w-25" @bind-Value="@Model.username" />
+                                    <InputText class="form-control w-25" @bind-Value="@employeeDto.username" />
                                 </RadzenColumn>
                             </RadzenRow>
 
@@ -47,7 +47,7 @@
                                         <RadzenLabel>Password</RadzenLabel>
                                     </RadzenColumn>
                                     <RadzenColumn Size="12" SizeMD="9">
-                                        <InputText class="form-control w-25" @bind-Value="@Model.newPassword" />
+                                        <InputText class="form-control w-25" @bind-Value="@employeeDto.newPassword" type="password" />
                                     </RadzenColumn>
                                 </RadzenRow>
                                 <RadzenRow class="mt-3">
@@ -55,7 +55,7 @@
                                         <RadzenLabel>Confirm Password</RadzenLabel>
                                     </RadzenColumn>
                                     <RadzenColumn Size="12" SizeMD="9">
-                                        <InputText class="form-control w-25" @bind-Value="@Model.confirmNewPassword" />
+                                        <InputText class="form-control w-25" @bind-Value="@employeeDto.confirmNewPassword" type="password" />
                                     </RadzenColumn>
                                 </RadzenRow>
                             }
@@ -64,7 +64,7 @@
                                     <RadzenLabel>Is removeable?</RadzenLabel>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <RadzenCheckBox class="form-control" TriState="false" @bind-Value="@Model.isRemoveable" />
+                                    <RadzenCheckBox class="form-control" TriState="false" @bind-Value="@employeeDto.isRemoveable" />
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenFieldset>
@@ -75,7 +75,7 @@
                                 <RadzenColumn>
                                     <RadzenDataGrid @ref="grid"
                                                     TItem="EmployeesRolesDto"
-                                                    Data="@Model.employeesRoles"
+                                                    Data="@employeeDto.employeesRoles"
                                                     PageSize="20"
                                                     AllowFiltering="false"
                                                     AllowPaging="false"
@@ -119,7 +119,7 @@
 @code
 {
     [Parameter] public bool IsInsert { get; set; }
-    [Parameter] public EmployeeDto Model { get; set; } = new();
+    [Parameter] public EmployeeDto employeeDto { get; set; } = new();
     [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public EventCallback OnCloseSide { get; set; }
 
@@ -148,17 +148,16 @@
         {
             fetch.isBusy = true;
 
-            var filter = new EmployeeFilterDto() { employeeId = Model.id };
+            var filter = new EmployeeFilterDto() { employeeId = employeeDto.id };
 
             result = await fetch.Employee_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
-                Model = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
+                employeeDto = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
             }
             fetch.isBusy = false;
-        } 
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
         }
@@ -166,16 +165,16 @@
 
     async Task New()
     {
-        await dialog.OpenAsync("Assign Role", ds => @<Employee_AddRoles employeeDto="@Model" rolesDtoList="@roles" OnReloadList="LoadEmployeeData" />);
+        await dialog.OpenAsync("Assign Role", ds => @<Employee_AddRoles employeeDto="@employeeDto" rolesDtoList="@roles" OnReloadList="LoadEmployeeData" />);
     }
 
     async Task AssignRole()
     {
         try
         {
-            if (!Model.employeesRoles.Select(x => x.fkIdRoleNavigation).Equals(assignedRole))
+            if (!employeeDto.employeesRoles.Select(x => x.fkIdRoleNavigation).Equals(assignedRole))
             {
-                var filter = new EmployeeFilterDto() { isRemoveRole = false, role = assignedRole, employeeId = Model.id };
+                var filter = new EmployeeFilterDto() { isRemoveRole = false, role = assignedRole, employeeId = employeeDto.id };
 
                 var result = await fetch.Employee_Update(new());
 
@@ -199,7 +198,7 @@
     {
         try
         {
-            var filter = new EmployeesRolesFilterDto() { roleId = role.id, employeeId = Model.id };
+            var filter = new EmployeesRolesFilterDto() { roleId = role.id, employeeId = employeeDto.id };
 
             var result = await fetch.EmployeesRoles_Delete(filter);
 
@@ -246,10 +245,10 @@
                 ResultDto result = new ResultDto();
                 if (IsInsert)
                 {
-                    result = await fetch.Employee_Insert(Model);
+                    result = await fetch.Employee_Insert(employeeDto);
                 } else
                 {
-                    result = await fetch.Employee_Update(Model);
+                    result = await fetch.Employee_Update(employeeDto);
                 }
 
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
@@ -267,35 +266,70 @@
         }
     }
 
-    
+
     bool IsValid()
     {
-        bool isValid = false;
-        var errorMessage = new StringBuilder();
+        var isValid = false;
+        var errorsList = new List<string>();
 
-        if (string.IsNullOrEmpty(Model.name))
-            errorMessage.AppendLine("Name field is required");
+        if (string.IsNullOrEmpty(employeeDto.name))
+            errorsList.Add("Name field is required");
 
-        if (string.IsNullOrEmpty(Model.surname))
-            errorMessage.AppendLine("Surname field is required");
+        if (string.IsNullOrEmpty(employeeDto.surname))
+            errorsList.Add("Surname field is required");
 
-        if (string.IsNullOrEmpty(Model.username))
-            errorMessage.AppendLine("Username field is required");
-        else if (!new EmailAddressAttribute().IsValid(Model.username))
-            errorMessage.AppendLine("Username field should be an email address");
+        if (string.IsNullOrEmpty(employeeDto.username))
+            errorsList.Add("Username field is required");
+        else if (!new EmailAddressAttribute().IsValid(employeeDto.username))
+            errorsList.Add("Username field should be an email address");
 
-        if (Model.isRemoveable == null)
-            errorMessage.AppendLine("\"Is removeable\" field is required");
+        if (employeeDto.isRemoveable == null)
+            errorsList.Add("\"Is removeable\" field is required");
 
-        isValid = errorMessage.Length == 0;
+        if (IsInsert)
+        {
+            if (string.IsNullOrEmpty(employeeDto.newPassword))
+                errorsList.Add("New password field is required");
+
+            if (string.IsNullOrEmpty(employeeDto.confirmNewPassword))
+                errorsList.Add("Confirm new password field is required");
+
+            if (!string.IsNullOrEmpty(employeeDto.newPassword) && !string.IsNullOrEmpty(employeeDto.confirmNewPassword))
+            {
+                if (employeeDto.newPassword.Contains("\\s") || employeeDto.confirmNewPassword.Contains("\\s"))
+                    errorsList.Add("New password and Confirm new password fields must not have empty spaces");
+
+                if (employeeDto.newPassword.Length != employeeDto.confirmNewPassword.Length)
+                    errorsList.Add("New password and Confirm new password fields must have same lengths");
+
+                else if (employeeDto.newPassword.Length == employeeDto.confirmNewPassword.Length && (employeeDto.newPassword.Length <= 8 || employeeDto.confirmNewPassword.Length <= 8))
+                    errorsList.Add("Both New password and Confirm new password fields must be at least 8 characters");
+
+                if (!employeeDto.newPassword.Equals(employeeDto.confirmNewPassword))
+                    errorsList.Add("New password and Confirm new password fields must be equal");
+            }
+        }
+
+
+        isValid = !errorsList.Any();
 
         if (isValid)
             return true;
 
-        notification.Notify(NotificationSeverity.Warning, "Warning!!!", errorMessage.ToString(), 4000);
+        foreach (var err in errorsList)
+        {
+            var notificationMessage = new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Attention!!!",
+                Duration = 4000,
+                ShowProgress = true,
+                Detail = err
+            };
+
+            notification.Notify(notificationMessage);
+        }
 
         return false;
     }
-
-
 }

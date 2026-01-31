@@ -3,7 +3,7 @@ namespace PlannerCRM.Shared.Attributes;
 public partial class PasswordValidatorAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext) {
-        if (value is not null && value.GetType() == typeof(string) && EmailRegex().IsMatch(value as string)) 
+        if (string.IsNullOrEmpty(value as string) == false && value.GetType() == typeof(string) && EmailRegex().IsMatch(value as string)) 
         {
             return ValidationResult.Success;
         }

@@ -129,7 +129,7 @@
         EmployeeDto employeeDto = new EmployeeDto();
 
         await dialog.OpenAsync("Add employee", ds =>
-        @<EmployeeForm IsInsert=true Model="@employeeDto" OnReloadList="@LoadData"></EmployeeForm>  ,
+        @<EmployeeForm IsInsert=true employeeDto="@employeeDto" OnReloadList="@LoadData"></EmployeeForm>  ,
         new DialogOptions
         {
             Width = "70%",
@@ -141,7 +141,7 @@
     async Task OnEdit(EmployeeDto employee)
     {
         await dialog.OpenAsync("Edit employee", ds =>
-        @<EmployeeForm IsInsert=false Model="@employee" OnReloadList="@LoadData"></EmployeeForm>  ,
+        @<EmployeeForm IsInsert=false employeeDto="@employee" OnReloadList="@LoadData"></EmployeeForm>  ,
         new DialogOptions
         {
             Width = "70%",
