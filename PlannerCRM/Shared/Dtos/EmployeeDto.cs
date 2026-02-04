@@ -22,17 +22,23 @@ public partial class EmployeeDto
     public DateTime? creationDate { get; set; }
     public string? creationDateString => creationDate != null ? string.Format("{0:dd/MM/yyyy}", creationDate) : "";
 
-    [Required]
+    //[Required]
     public string? newPassword { get; set; }
 
-    [Required]
-    [Compare("newPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+    //[Required]
+    //[Compare(nameof(newPassword), ErrorMessage = "The new password and confirmation password do not match.")]
     public string? confirmNewPassword { get; set; }
+
+    public bool isComplete => !string.IsNullOrEmpty(name) 
+                              && !string.IsNullOrEmpty(surname) 
+                              && !string.IsNullOrEmpty(username) 
+                              && isRemoveable != null 
+                              && employeesRoles.Any();
 
     public DateTime? lastSeen { get; set; }
     public string? lastSeenString => lastSeen != null ? string.Format("{0:dd/MM/yyyy}", lastSeen) : "";
 
-    [Required(ErrorMessage = "Is removeable? option is required")]
+    [Required(ErrorMessage = "Check whether this employee is removeable from the system")]
     public bool? isRemoveable { get; set; }
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
     public ICollection<EmployeesRolesDto>? employeesRoles { get; set; }

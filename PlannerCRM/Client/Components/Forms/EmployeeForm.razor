@@ -14,91 +14,77 @@
             <RadzenTabs>
                 <Tabs>
                     <RadzenTabsItem Text="Employee Data">
-                        <RadzenFieldset Text="Employee">
-                            <RadzenRow class="mt-3">
-                                <RadzenColumn Size="12" SizeMD="3">
-                                    <RadzenLabel>Name</RadzenLabel>
-                                </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="9">
-                                    <InputText class="form-control w-100" @bind-Value="@employeeDto.name" />
-                                </RadzenColumn>
-                            </RadzenRow>
-                            <RadzenRow class="mt-3">
-                                <RadzenColumn Size="12" SizeMD="3">
-                                    <RadzenLabel>Surname</RadzenLabel>
-                                </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="9">
-                                    <InputText class="form-control w-100" @bind-Value="@employeeDto.surname" />
-                                </RadzenColumn>
-                            </RadzenRow>
-                            <RadzenRow class="mt-3">
-                                <RadzenColumn Size="12" SizeMD="3">
-                                    <RadzenLabel>Email</RadzenLabel>
-                                </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="9">
-                                    <InputText class="form-control w-25" @bind-Value="@employeeDto.username" />
-                                </RadzenColumn>
-                            </RadzenRow>
+                        <EditForm EditContext="@editContext" OnValidSubmit="@Submit">
+                            <DataAnnotationsValidator />
+                            <RadzenFieldset Text="Employee">
+                                <RadzenRow class="mt-3">
+                                    <RadzenColumn Size="12" SizeMD="3">
+                                        <RadzenLabel>Name</RadzenLabel>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="9">
+                                        <InputText class="form-control w-100" @bind-Value="@employeeDto.name" />
+                                        <ValidationMessage For="@(() => employeeDto.name)" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow class="mt-3">
+                                    <RadzenColumn Size="12" SizeMD="3">
+                                        <RadzenLabel>Surname</RadzenLabel>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="9">
+                                        <InputText class="form-control w-100" @bind-Value="@employeeDto.surname" />
+                                        <ValidationMessage For="@(() => employeeDto.surname)" />
+                                    </RadzenColumn>
+                                </RadzenRow>
+                                <RadzenRow class="mt-3">
+                                    <RadzenColumn Size="12" SizeMD="3">
+                                        <RadzenLabel>Email</RadzenLabel>
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeMD="9">
+                                        <InputText class="form-control w-25" @bind-Value="@employeeDto.username" />
+                                        <ValidationMessage For="@(() => employeeDto.username)" />
+                                    </RadzenColumn>
+                                </RadzenRow>
 
-                            @if (IsInsert)
-                            {
                                 <RadzenRow class="mt-3">
                                     <RadzenColumn Size="12" SizeMD="3">
-                                        <RadzenLabel>Password</RadzenLabel>
+                                        <RadzenLabel>Is removeable?</RadzenLabel>
                                     </RadzenColumn>
                                     <RadzenColumn Size="12" SizeMD="9">
-                                        <InputText class="form-control w-25" @bind-Value="@employeeDto.newPassword" type="password" />
+                                        <RadzenCheckBox class="form-control" TriState="false" @bind-Value="@employeeDto.isRemoveable" />
+                                        <ValidationMessage For="@(() => employeeDto.isRemoveable)" />
                                     </RadzenColumn>
                                 </RadzenRow>
-                                <RadzenRow class="mt-3">
-                                    <RadzenColumn Size="12" SizeMD="3">
-                                        <RadzenLabel>Confirm Password</RadzenLabel>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="9">
-                                        <InputText class="form-control w-25" @bind-Value="@employeeDto.confirmNewPassword" type="password" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                            }
-                            <RadzenRow class="mt-3">
-                                <RadzenColumn Size="12" SizeMD="3">
-                                    <RadzenLabel>Is removeable?</RadzenLabel>
-                                </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="9">
-                                    <RadzenCheckBox class="form-control" TriState="false" @bind-Value="@employeeDto.isRemoveable" />
-                                </RadzenColumn>
-                            </RadzenRow>
-                        </RadzenFieldset>
+                            </RadzenFieldset>
+                        </EditForm>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="Assigned Roles" Visible="@(IsInsert == false)">
-                        <RadzenFieldset Text="Roles">
-                            <RadzenRow class="mt-3">
-                                <RadzenColumn>
-                                    <RadzenDataGrid @ref="grid"
-                                                    TItem="EmployeesRolesDto"
-                                                    Data="@employeeDto.employeesRoles"
-                                                    PageSize="20"
-                                                    AllowFiltering="false"
-                                                    AllowPaging="false"
-                                                    AllowSorting="true">
-                                        <HeaderTemplate>
-                                            <RadzenButton Icon="playlist_add_check" Text="New" Click="New"></RadzenButton>
-                                        </HeaderTemplate>
-                                        <Columns>
-                                            <RadzenDataGridColumn TItem="EmployeesRolesDto" Property="@nameof(EmployeesRolesDto.fkIdRoleNavigation.name)" Title="Role Name">
-                                                <Template Context="data">
-                                                    @data.fkIdRoleNavigation.name
-                                                </Template>
-                                            </RadzenDataGridColumn>
-                                            <RadzenDataGridColumn TItem="EmployeesRolesDto" Width="64px">
-                                                <Template Context="data">
-                                                    <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data.fkIdRoleNavigation))"></RadzenButton>
-                                                </Template>
-                                            </RadzenDataGridColumn>
-                                        </Columns>
-                                    </RadzenDataGrid>
-                                </RadzenColumn>
-                            </RadzenRow>
-                        </RadzenFieldset>
+                        <RadzenRow class="mt-3">
+                            <RadzenColumn>
+                                <RadzenDataGrid @ref="grid"
+                                                TItem="EmployeesRolesDto"
+                                                Data="@employeeDto.employeesRoles"
+                                                PageSize="20"
+                                                AllowFiltering="false"
+                                                AllowPaging="false"
+                                                AllowSorting="true">
+                                    <HeaderTemplate>
+                                        <RadzenButton Icon="playlist_add_check" Text="New" Click="New"></RadzenButton>
+                                    </HeaderTemplate>
+                                    <Columns>
+                                        <RadzenDataGridColumn TItem="EmployeesRolesDto" Property="@nameof(EmployeesRolesDto.fkIdRoleNavigation.name)" Title="Role Name">
+                                            <Template Context="data">
+                                                @data.fkIdRoleNavigation.name
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="EmployeesRolesDto" Width="64px">
+                                            <Template Context="data">
+                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data.fkIdRoleNavigation))"></RadzenButton>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    </Columns>
+                                </RadzenDataGrid>
+                            </RadzenColumn>
+                        </RadzenRow>
                     </RadzenTabsItem>
                 </Tabs>
             </RadzenTabs>
@@ -126,7 +112,7 @@
     List<RoleDto> roles = new();
     RadzenDataGrid<EmployeesRolesDto> grid;
     RoleDto assignedRole = new();
-
+    EditContext editContext;
     protected override async Task OnInitializedAsync()
     {
         if (!IsInsert)
@@ -134,6 +120,7 @@
             await LoadEmployeeData();
         }
         await LoadRoles();
+        editContext = new(employeeDto);
     }
 
     void Close()
@@ -155,6 +142,7 @@
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 employeeDto = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
+                await OnReloadList.InvokeAsync();
             }
             fetch.isBusy = false;
         } catch
@@ -165,7 +153,15 @@
 
     async Task New()
     {
-        await dialog.OpenAsync("Assign Role", ds => @<Employee_AddRoles employeeDto="@employeeDto" rolesDtoList="@roles" OnReloadList="LoadEmployeeData" />);
+        await dialog.OpenAsync("Assign Role", ds =>
+        @<Employee_AddRoles employeeDto="@employeeDto" rolesDtoList="@roles" OnReloadList="LoadEmployeeData" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 
     async Task AssignRole()
@@ -182,7 +178,7 @@
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                     await LoadEmployeeData();
-                    await grid.Reload();
+                    await OnReloadList.InvokeAsync();
                 } else
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
@@ -206,7 +202,7 @@
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployeeData();
-                await grid.Reload();
+                await OnReloadList.InvokeAsync();
             } else
             {
                 notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
@@ -240,7 +236,7 @@
     {
         try
         {
-            if (IsValid())
+            if (editContext.Validate())
             {
                 ResultDto result = new ResultDto();
                 if (IsInsert)
@@ -254,6 +250,7 @@
                 if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadEmployeeData();
                     await OnReloadList.InvokeAsync();
                 } else
                 {
@@ -264,72 +261,5 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
-    }
-
-
-    bool IsValid()
-    {
-        var isValid = false;
-        var errorsList = new List<string>();
-
-        if (string.IsNullOrEmpty(employeeDto.name))
-            errorsList.Add("Name field is required");
-
-        if (string.IsNullOrEmpty(employeeDto.surname))
-            errorsList.Add("Surname field is required");
-
-        if (string.IsNullOrEmpty(employeeDto.username))
-            errorsList.Add("Username field is required");
-        else if (!new EmailAddressAttribute().IsValid(employeeDto.username))
-            errorsList.Add("Username field should be an email address");
-
-        if (employeeDto.isRemoveable == null)
-            errorsList.Add("\"Is removeable\" field is required");
-
-        if (IsInsert)
-        {
-            if (string.IsNullOrEmpty(employeeDto.newPassword))
-                errorsList.Add("New password field is required");
-
-            if (string.IsNullOrEmpty(employeeDto.confirmNewPassword))
-                errorsList.Add("Confirm new password field is required");
-
-            if (!string.IsNullOrEmpty(employeeDto.newPassword) && !string.IsNullOrEmpty(employeeDto.confirmNewPassword))
-            {
-                if (employeeDto.newPassword.Contains("\\s") || employeeDto.confirmNewPassword.Contains("\\s"))
-                    errorsList.Add("New password and Confirm new password fields must not have empty spaces");
-
-                if (employeeDto.newPassword.Length != employeeDto.confirmNewPassword.Length)
-                    errorsList.Add("New password and Confirm new password fields must have same lengths");
-
-                else if (employeeDto.newPassword.Length == employeeDto.confirmNewPassword.Length && (employeeDto.newPassword.Length <= 8 || employeeDto.confirmNewPassword.Length <= 8))
-                    errorsList.Add("Both New password and Confirm new password fields must be at least 8 characters");
-
-                if (!employeeDto.newPassword.Equals(employeeDto.confirmNewPassword))
-                    errorsList.Add("New password and Confirm new password fields must be equal");
-            }
-        }
-
-
-        isValid = !errorsList.Any();
-
-        if (isValid)
-            return true;
-
-        foreach (var err in errorsList)
-        {
-            var notificationMessage = new NotificationMessage()
-            {
-                Severity = NotificationSeverity.Error,
-                Summary = "Attention!!!",
-                Duration = 4000,
-                ShowProgress = true,
-                Detail = err
-            };
-
-            notification.Notify(notificationMessage);
-        }
-
-        return false;
     }
 }
