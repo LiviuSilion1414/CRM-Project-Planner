@@ -56,11 +56,11 @@
                 <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
             </HeaderTemplate>
             <Columns>
-                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.fullname)" Title="Full name" />
-                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.creationDateString)" Title="Creation Date" />
-                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" Title="Username" />
-                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.lastSeenString)" Title="Last Seen At" />
-                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.isComplete)" Width="64px" Sortable="true" Filterable="false">
+                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.fullname)" Title="Full name" Sortable="true" Filterable="false" />
+                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.creationDateString)" Title="Creation Date" Sortable="true" Filterable="false" />
+                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.username)" Title="Username" Sortable="true" Filterable="false" />
+                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.lastSeenString)" Title="Last Seen At" Sortable="true" Filterable="false" />
+                <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.isComplete)" Title="Is complete?" Width="150px" Sortable="true" Filterable="false" TextAlign="TextAlign.Center">
                     <Template Context="data">
                         @if (data.isComplete)
                         {

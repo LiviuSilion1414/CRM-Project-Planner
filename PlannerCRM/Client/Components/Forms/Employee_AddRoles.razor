@@ -47,8 +47,8 @@
             if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                await OnReloadList.InvokeAsync();
                 dialog.Close();
+                await OnReloadList.InvokeAsync();
             } else
             {
                 notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
