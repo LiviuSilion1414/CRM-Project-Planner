@@ -1,6 +1,7 @@
 ﻿using PlannerCRM.Shared.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace PlannerCRM.Shared.Dtos;
@@ -9,16 +10,25 @@ public partial class EmployeeDto
 {
     public Guid? id { get; set; }
 
+    [Description("Name")]
     [Required]
     public string? name { get; set; }
 
+    [Description("Surname")]
     [Required]
     public string? surname { get; set; }
 
+    [Description("Username")]
     [Required]
     [EmailAddress]
     public string? username { get; set; }
+
+    [Description("Can remove?")]
+    [Required(ErrorMessage = "Check whether this employee is removeable from the system")]
+    public bool? isRemoveable { get; set; }
+
     public string? fullname => !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(surname) ? surname + " " + name : string.Empty;
+
     public DateTime? creationDate { get; set; }
     public string? creationDateString => creationDate != null ? string.Format("{0:dd/MM/yyyy}", creationDate) : "";
 
@@ -38,13 +48,9 @@ public partial class EmployeeDto
     public DateTime? lastSeen { get; set; }
     public string? lastSeenString => lastSeen != null ? string.Format("{0:dd/MM/yyyy}", lastSeen) : "";
 
-    [Required(ErrorMessage = "Check whether this employee is removeable from the system")]
-    public bool? isRemoveable { get; set; }
+
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
     public ICollection<EmployeesRolesDto>? employeesRoles { get; set; }
-    public string employeesRolesCommaSeparatedString => employeesRoles != null && employeesRoles.Any()
-        ? string.Join(", ", employeesRoles.Select(er => er?.fkIdRoleNavigation?.name))
-        : "no rolesList set";
 }
 
 public class EmployeeFilterDto : FilterDto

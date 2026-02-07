@@ -54,6 +54,9 @@
                         AllowFiltering="true">
             <HeaderTemplate>
                 <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+
+                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add with Dynamic Form" Click="@OnAddDynamicForm"></RadzenButton>
+
             </HeaderTemplate>
             <Columns>
                 <RadzenDataGridColumn TItem="@EmployeeDto" Property="@nameof(EmployeeDto.fullname)" Title="Full name" Sortable="true" Filterable="false" />
@@ -151,10 +154,35 @@
         });
     }
 
-    async Task OnEdit(EmployeeDto employee)
+    async Task OnAddDynamicForm()
     {
-        await dialog.OpenAsync("Edit employee", ds =>
-        @<EmployeeForm IsInsert=false employeeDto="@employee" OnReloadList="@LoadData"></EmployeeForm>  ,
+        EmployeeDto employeeDto = new EmployeeDto();
+
+        await dialog.OpenAsync("Dynamic Form - Employee", ds =>
+        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@LoadData"/> ,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
+    }
+
+    async Task OnEdit(EmployeeDto employeeDto)
+    {
+        // await dialog.OpenAsync("Edit employee", ds =>
+        // @<EmployeeForm IsInsert=false employeeDto="@employee" OnReloadList="@LoadData"></EmployeeForm>  ,
+        // new DialogOptions
+        // {
+        //     Width = "80%",
+        //     Height = "90%",
+        //     CloseDialogOnEsc = true,
+        //     ShowClose = true
+        // });
+
+                await dialog.OpenAsync("Dynamic Form - Employee", ds =>
+        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@LoadData"/> ,
         new DialogOptions
         {
             Width = "80%",
