@@ -1,0 +1,33 @@
+﻿@using System.Linq.Expressions
+@using System.Reflection
+
+@implements IDisposable
+
+@foreach (var message in EditContext.GetValidationMessages(_fieldIdentifier))
+{
+    <div class="@Class">
+        @message
+    </div>
+}
+
+@code {
+    [CascadingParameter] private EditContext EditContext { get; set; }
+
+    [Parameter] public PropertyInfo Property { get; set; }
+    [Parameter] public string Class { get; set; } = "text-danger";
+
+    private FieldIdentifier _fieldIdentifier;
+
+    protected override void OnInitialized()
+    {
+        _fieldIdentifier = new FieldIdentifier(EditContext.Model, Property.Name);
+        EditContext.OnValidationStateChanged += HandleValidationStateChanged;
+    }
+
+    private void HandleValidationStateChanged(object o, ValidationStateChangedEventArgs args) => StateHasChanged();
+
+    public void Dispose()
+    {
+        EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+    }
+}

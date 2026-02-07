@@ -155,8 +155,10 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                           .OrderBy(e => e.Id)
                                           .Include(e => e.EmployeesRoles)
                                           .Include(e => e.EmployeesRoles).ThenInclude(x => x.FkIdRoleNavigation)
-                                          .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                      (filter.roleId == null || filter.roleId == Guid.Empty) || (x.EmployeesRoles.Any(y => y.FkIdRole == filter.roleId)))
+                                          .Where(x => ((string.IsNullOrEmpty(filter.name) || x.Name.ToLower().Trim().Contains(filter.name))) &&
+                                                      ((string.IsNullOrEmpty(filter.surname) || x.Surname.ToLower().Trim().Contains(filter.surname))) &&
+                                                      ((string.IsNullOrEmpty(filter.username) || x.Username.ToLower().Trim().Contains(filter.username))) &&
+                                                      ((filter.roleId == null || filter.roleId == Guid.Empty) || (x.EmployeesRoles.Any(y => y.FkIdRole == filter.roleId))))
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);

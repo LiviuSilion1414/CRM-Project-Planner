@@ -13,11 +13,14 @@
 {
 
     <RadzenCard class="mb-3">
-        <RadzenRow JustifyContent="JustifyContent.Stretch">
-            <RadzenColumn>
+        <RadzenRow class="mt-3">
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenLabel>Role</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
                 <RadzenFormField Text="Role" AllowFloatingLabel="false">
                     <RadzenDropDown TValue="Guid?"
-                                    class="form-control" Style="min-width: 20vw;"
+                                    class="form-control" 
                                     Data="@fetch.rolesList"
                                     AllowFiltering="true"
                                     AllowClear="true"
@@ -27,28 +30,47 @@
                                     @bind-Value="@roleId" />
                 </RadzenFormField>
             </RadzenColumn>
-            <RadzenColumn>
-                <RadzenFormField Text="Employee" AllowFloatingLabel="false">
-                    <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@query" />
-                </RadzenFormField>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenLabel>Name</RadzenLabel>
             </RadzenColumn>
-            <RadzenColumn>
-                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
-                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@name" />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenLabel>Surname</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@surname" />
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenLabel>Username</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenTextBox class="form-control" Style="min-width: 20vw;" @bind-Value="@username" />
             </RadzenColumn>
         </RadzenRow>
     </RadzenCard>
 
      <RadzenCard class="mb-3">
-         <RadzenText>
-            Total employees: <b>@_employees.Count</b>
-         </RadzenText>
+         <RadzenRow class="mb-3">
+             <RadzenColumn Size="12" SizeMD="10">
+                 <RadzenText>
+                    Total employees: <b>@_employees.Count</b>
+                 </RadzenText>
+             </RadzenColumn>
+             <RadzenColumn Size="12" SizeMD="2">
+                <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+            </RadzenColumn>
+         </RadzenRow>
     </RadzenCard>
 
     <RadzenCard class="mb-3">
 
         <RadzenDataGrid Data="@_employees.OrderBy(x => x.lastSeen)"
                         TItem="@EmployeeDto"
+                        PageSize="20"
+                        PageSizeOptions="@pageSizeOptions"
                         AllowSorting="true"
                         AllowPaging="true"
                         AllowFiltering="true">
@@ -97,9 +119,13 @@
 
 @code
 {
+    IEnumerable<int> pageSizeOptions = new[] { 20, 50, 100 };
     private List<EmployeeDto> _employees = new();
 
-    private string? query = string.Empty;
+    private string? name = string.Empty;
+    private string? surname = string.Empty;
+    private string? username = string.Empty;
+
     private Guid? roleId = Guid.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -109,7 +135,9 @@
 
     async Task ResetData()
     {
-        query = null;
+        name = null;
+        surname = null;
+        username = null;
         roleId = null;
         await LoadData();
     }
@@ -122,7 +150,9 @@
 
             var filter = new EmployeeFilterDto
             {
-                searchQuery = query,
+                name = name,
+                surname = surname,
+                username = username,
                 roleId = roleId
             };
 
@@ -158,8 +188,17 @@
     {
         EmployeeDto employeeDto = new EmployeeDto();
 
-        await dialog.OpenAsync("Dynamic Form - Employee", ds =>
-        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@Submit"/> ,
+        await dialog.OpenAsync("New Employee", ds =>
+        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@Submit">
+            <TopContent>
+				<RadzenRow>
+					<RadzenColumn Size="12" SizeMD="12">
+						<RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Employee Form</RadzenLabel></RadzenText>
+						<RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing employees.</RadzenText>
+					</RadzenColumn>
+				</RadzenRow>
+            </TopContent>    
+        </DynamicForm> ,
         new DialogOptions
         {
             Width = "80%",

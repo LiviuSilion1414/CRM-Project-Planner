@@ -24,7 +24,7 @@ public partial class EmployeeDto
     public string? username { get; set; }
 
     [Description("Can remove?")]
-    [Required(ErrorMessage = "Check whether this employee is removeable from the system")]
+    [Required(ErrorMessage = "Check this box to continue")]
     public bool? isRemoveable { get; set; }
 
     public string? fullname => !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(surname) ? surname + " " + name : string.Empty;
@@ -63,4 +63,8 @@ public class EmployeeFilterDto : FilterDto
     public bool? isRemoveRole { get; set; }
     public bool? isEditProfile { get; set; }
     public RoleDto? role { get; set; }
+    public string? username { get; set; }
+    public string? name { get; set; }
+    public string? surname { get; set; }
+
 }
