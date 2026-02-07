@@ -43,6 +43,7 @@ public partial class EmployeeDto
                               && !string.IsNullOrEmpty(surname) 
                               && !string.IsNullOrEmpty(username) 
                               && isRemoveable != null 
+                              && employeesRoles != null 
                               && employeesRoles.Any();
 
     public DateTime? lastSeen { get; set; }

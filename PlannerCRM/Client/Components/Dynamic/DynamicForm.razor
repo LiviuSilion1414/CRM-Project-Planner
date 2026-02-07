@@ -1,25 +1,24 @@
 ﻿@using System.Reflection
 @using System.ComponentModel
-@using System.Threading.Tasks
 @typeparam TItem where TItem : class, new()
 
-<EditForm EditContext="@editContext"
-          OnSubmit="HandleSubmit">
-    <ValidationSummary />
+<EditForm EditContext="@editContext" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
+    <ValidationSummary />
+
     <RadzenCard>
-        @foreach (var prop in properties.OrderByDescending(x => x.IsRequired))
+        @foreach (var prop in properties)
         {
-            @if (SupportedTypes.Contains(prop.PropertyType))
+            @if (SupportedTypes.Contains(prop.UnderlyingType))
             {
                 <RadzenRow class="mt-3">
                     <RadzenColumn Size="12" SizeMD="3">
                         <RadzenLabel>
-                            @prop.Label
                             @if (prop.IsRequired)
                             {
-                                <span class="text-danger">*</span>
+                                <span class="text-danger" style="margin-right: 5px;">*</span>
                             }
+                            @prop.Label
                         </RadzenLabel>
                     </RadzenColumn>
                     <RadzenColumn Size="12" SizeMD="3">
@@ -34,14 +33,15 @@
             @AdvancedContent
         }
     </RadzenCard>
+
     <RadzenCard class="mt-3">
         <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
             <RadzenRow>
                 <RadzenColumn Size="6">
-                    <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="@(() => dialog.Close())"></RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="@(() => dialog.Close())" />
                 </RadzenColumn>
                 <RadzenColumn Size="6">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Text="Save"></RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Text="Save" />
                 </RadzenColumn>
             </RadzenRow>
         </RadzenStack>
@@ -49,15 +49,13 @@
 </EditForm>
 
 @code {
-    [Parameter] public TItem Model { get; set; } = default!;
-    [Parameter] public List<RenderFragment> AdvancedContent { get; set; } = default!;
-    [Parameter] public Expression<Func<object>> For { get; set; }
-
+    [Parameter] public TItem Model { get; set; } = new();
+    [Parameter] public RenderFragment? AdvancedContent { get; set; }
     [Parameter] public EventCallback<TItem> OnReloadList { get; set; }
 
-    List<PropertyMeta> properties = new();
-
     private EditContext editContext = default!;
+    private List<PropertyMeta> properties = new();
+
     static readonly NullabilityInfoContext nullabilityContext = new();
     static readonly List<Type> SupportedTypes = new()
     {
@@ -71,13 +69,13 @@
         typeof(bool),
         typeof(bool?),
         typeof(DateTime),
-        typeof(DateTime?),
+        typeof(DateTime?)
     };
 
     record PropertyMeta(
         PropertyInfo Property,
         string Label,
-        Type PropertyType,
+        Type UnderlyingType,
         bool IsRequired,
         bool IsNullable
     );
@@ -90,173 +88,80 @@
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.CanWrite && p.GetCustomAttribute<RequiredAttribute>() != null)
             .Select(p =>
-                {
-                    var underlyingType = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
+            {
+                var underlyingType = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
+                var nullability = nullabilityContext.Create(p);
 
-                    var nullability = nullabilityContext.Create(p);
+                bool isNullable =
+                    Nullable.GetUnderlyingType(p.PropertyType) != null ||
+                    nullability.ReadState == NullabilityState.Nullable;
 
-                    bool isNullable =
-                        Nullable.GetUnderlyingType(p.PropertyType) != null ||
-                        nullability.ReadState == NullabilityState.Nullable;
-
-                    return new PropertyMeta(
-                        p,
-                        p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name,
-                        underlyingType,
-                        p.GetCustomAttribute<RequiredAttribute>() != null,
-                        isNullable
-                    );
-                })
+                return new PropertyMeta(
+                    Property:p,
+                    Label: p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name,
+                    UnderlyingType: underlyingType,
+                    IsRequired: p.GetCustomAttribute<RequiredAttribute>() != null,
+                    IsNullable: isNullable
+                );
+            })
             .ToList();
     }
 
     RenderFragment RenderField(PropertyMeta meta)
     {
-        RenderFragment result;
+        var value = meta.Property.GetValue(Model);
 
-        if (meta.PropertyType == typeof(string))
+        if (meta.UnderlyingType == typeof(string))
         {
-            result = RenderString(meta);
-        } else if (meta.PropertyType == typeof(int) || meta.PropertyType == typeof(decimal) || meta.PropertyType == typeof(double))
-        {
-            result = RenderNumber(meta);
-        } else if (meta.PropertyType == typeof(bool))
-        {
-            result = RenderBool(meta);
-        } else if (meta.PropertyType == typeof(DateTime))
-        {
-            result = RenderDateTime(meta);
-        } else
-        {
-            result =@<></>;
+            return @<RadzenTextBox class="w-100" Value="@(value?.ToString())" Change="@(v => AssignValue(meta, v))"  Placeholder="Digit something" />;
         }
 
-        return result;
-    }
-
-    RenderFragment RenderString(PropertyMeta meta)
-    {
-        var value = meta.Property.GetValue(Model)?.ToString();
-
-        return @<RadzenTextBox class="form-control w-100" Value="@(value)" Change="@((value) => Handle_AssignValue(meta, value))" />;
-    }
-
-    RenderFragment RenderNumber(PropertyMeta meta)
-    {
-        RenderFragment result;
-
-        var value = meta.Property.GetValue(Model)?.ToString();
-
-        if (meta.IsNullable)
+        if (meta.UnderlyingType == typeof(int))
         {
-            if (meta.PropertyType == typeof(int))
-            {
-                result =@<RadzenNumeric class="form-control w-25" 
-                                        TValue="int?" 
-                                        Value="@(Convert.ToInt32(value))"
-                                        Change="@((value) => Handle_AssignValue(meta, value))" />;
-            } else if (meta.PropertyType == typeof(decimal))
-            {
-                result =@<RadzenNumeric class="form-control w-25" 
-                                        TValue="decimal?" 
-                                        Format="c" 
-                                        Value="@(Convert.ToDecimal(value))"
-                                        Change="@((value) => Handle_AssignValue(meta, value))" />;
-            } else if (meta.PropertyType == typeof(double))
-            {
-                result =@<RadzenNumeric class="form-control w-25" 
-                                        TValue="double?" 
-                                        Value="@(Convert.ToDouble(value))"
-                                        Change="@((value) => Handle_AssignValue(meta, value))" />;
-            } else
-            {
-                result =@<></>;
-            }
-        } else
-        {
-            if (meta.PropertyType == typeof(int))
-            {
-                result =@<RadzenNumeric class="form-control w-25"
-                               TValue="int"
-                               Value="@(Convert.ToInt32(value))"
-                               Change="@((value) => Handle_AssignValue(meta, value))" />;
-            } else if (meta.PropertyType == typeof(decimal))
-            {
-                result =@<RadzenNumeric class="form-control w-25"
-                               TValue="decimal"
-                               Format="c"
-                               Value="@(Convert.ToDecimal(value))"
-                               Change="@((value) => Handle_AssignValue(meta, value))" />;
-            } else if (meta.PropertyType == typeof(double))
-            {
-                result =@<RadzenNumeric class="form-control w-25"
-                               TValue="double"
-                               Value="@(Convert.ToDouble(value))"
-                               Change="@((value) => Handle_AssignValue(meta, value))" />;
-            } else
-            {
-                result =@<></>;
-            }
+            return meta.IsNullable
+                ? @<RadzenNumeric class="w-25" TValue="int?" Value="@((int?)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />
+                : @<RadzenNumeric class="w-25" TValue="int" Value="@((int)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />;
         }
 
-        return result;
-    }
-
-    RenderFragment RenderBool(PropertyMeta meta)
-    {
-        RenderFragment result;
-        var value = meta.Property.GetValue(Model)?.ToString();
-
-        if (meta.IsNullable)
+        if (meta.UnderlyingType == typeof(decimal))
         {
-            result =@<RadzenRadioButtonList TValue="bool?">
-                        <Items>
-                            <RadzenRadioButtonListItem TValue="bool?" Value="true" Text="Yes"  />
-                            <RadzenRadioButtonListItem TValue="bool?" Value="false" Text="No" />
-                        </Items>
-                    </RadzenRadioButtonList>;
-        } else
-        {
-            result =@<RadzenRadioButtonList TValue="bool">
-                <Items>
-                    <RadzenRadioButtonListItem TValue="bool" Value="true" Text="Yes" />
-                    <RadzenRadioButtonListItem TValue="bool" Value="false" Text="No" />
-                </Items>
-            </RadzenRadioButtonList>;
+            return meta.IsNullable
+                ? @<RadzenNumeric class="w-25" TValue="decimal?" Value="@((decimal?)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />
+                : @<RadzenNumeric class="w-25" TValue="decimal" Value="@((decimal)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />;
         }
 
-        return result;
-    }
-
-    RenderFragment RenderDateTime(PropertyMeta meta)
-    {
-        RenderFragment result;
-        var value = meta.Property.GetValue(Model)?.ToString();
-
-        if (meta.IsNullable)
+        if (meta.UnderlyingType == typeof(double))
         {
-            result =@<RadzenDatePicker Style="width:100%" DateFormat="dd/MM/yyyy" Value="@(Convert.ToDateTime(value))" TValue="DateTime ?" Change="@((value) => Handle_AssignValue(meta, value))" />;
-        } else
-        {
-            result =@<RadzenDatePicker Style="width:100%" DateFormat="dd/MM/yyyy" Value="@(Convert.ToDateTime(value))" TValue="DateTime" Change="@((value) => Handle_AssignValue(meta, value))" />;
+            return meta.IsNullable
+                ? @<RadzenNumeric class="w-25" TValue="double?" Value="@((double?)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />
+                : @<RadzenNumeric class="w-25" TValue="double" Value="@((double)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />;
         }
 
-        return result;
+        if (meta.UnderlyingType == typeof(bool))
+        {
+            return meta.IsNullable
+                ? @<RadzenCheckBox TValue="bool?" Value="@((bool?)value)" Change="@(v => AssignValue(meta, v))" />
+                : @<RadzenCheckBox TValue="bool" Value="@((bool)value)" Change="@(v => AssignValue(meta, v))" />;
+        }
+
+        if (meta.UnderlyingType == typeof(DateTime))
+        {
+            return meta.IsNullable
+                ? @<RadzenDatePicker TValue="DateTime ?" Value="@((DateTime?)value)" DateFormat="dd/MM/yyyy" Change="@(v => AssignValue(meta, v))" Style="width:100%" Placeholder="dd/mm/yyyy" />
+                : @<RadzenDatePicker TValue="DateTime" Value="@((DateTime)value)" DateFormat="dd/MM/yyyy" Change="@(v => AssignValue(meta, v))" Style="width:100%" Placeholder="dd/mm/yyyy" />;
+        }
+
+        return @<></>;
     }
 
-
-    void Handle_AssignValue(PropertyMeta meta, object value)
+    void AssignValue(PropertyMeta meta, object value)
     {
-        Model.GetType().GetProperty(meta.Property.Name).SetValue(Model, value);
-
+        meta.Property.SetValue(Model, value);
         editContext.NotifyFieldChanged(new FieldIdentifier(Model, meta.Property.Name));
     }
 
     async Task HandleSubmit()
     {
-        if (editContext.Validate())
-        {
-            await OnReloadList.InvokeAsync(Model);
-        }
+        await OnReloadList.InvokeAsync(Model);
     }
 }

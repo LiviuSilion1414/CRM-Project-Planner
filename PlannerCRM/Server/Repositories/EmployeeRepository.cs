@@ -2,6 +2,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.JSInterop.Infrastructure;
 using PlannerCRM.Server.Models;
+using System.Security.Cryptography;
 using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Server.Repositories;
@@ -19,6 +20,11 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
 
             if (!await _context.Employees.AnyAsync(em => em.Username.ToLower().Trim().Equals(dto.username.ToLower().Trim())))
             {
+                if (string.IsNullOrEmpty(dto.newPassword))
+                {
+                    dto.newPassword = GeneratePassword(8);
+                }
+
                 model.PasswordHash = CryptPassword(dto.newPassword);
                 model.LastSeen = DateTime.Now;
                 model.CreationDate = DateTime.Now;
@@ -51,6 +57,26 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                                                         iterationCount: 10000,
                                                                         numBytesRequested: 256 / 8));
         return cryptedPwd;
+    }
+
+    static string GeneratePassword(int length)
+    {
+        const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+";
+        char[] password = new char[length];
+
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            byte[] uintBuffer = new byte[sizeof(uint)];
+
+            for (int i = 0 ; i < length ; i++)
+            {
+                rng.GetBytes(uintBuffer);
+                uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                password[i] = validChars[(int)(num % (uint)validChars.Length)];
+            }
+        }
+
+        return new string(password);
     }
 
     public async Task Update(EmployeeDto dto)

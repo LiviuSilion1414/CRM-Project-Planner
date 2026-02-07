@@ -159,7 +159,7 @@
         EmployeeDto employeeDto = new EmployeeDto();
 
         await dialog.OpenAsync("Dynamic Form - Employee", ds =>
-        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@LoadData"/> ,
+        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@Submit"/> ,
         new DialogOptions
         {
             Width = "80%",
@@ -167,6 +167,36 @@
             CloseDialogOnEsc = true,
             ShowClose = true
         });
+    }
+
+    
+    async Task Submit(EmployeeDto employeeDto)
+    {
+        try
+        {
+            bool isInsert = employeeDto.id == null || employeeDto.id == Guid.Empty;
+
+            ResultDto result = new ResultDto();
+            if (isInsert)
+            {
+                result = await fetch.Employee_Insert(employeeDto);
+            } else
+            {
+                result = await fetch.Employee_Update(employeeDto);
+            }
+
+            if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await LoadData();
+            } else
+            {
+                notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+            }
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     async Task OnEdit(EmployeeDto employeeDto)
@@ -182,7 +212,7 @@
         // });
 
                 await dialog.OpenAsync("Dynamic Form - Employee", ds =>
-        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@LoadData"/> ,
+        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@Submit"/> ,
         new DialogOptions
         {
             Width = "80%",
