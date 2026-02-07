@@ -2,17 +2,6 @@
 @using System.ComponentModel
 @typeparam TItem where TItem : class, new()
 
-<style>
-    .valid-feedback
-    {
-        border-color: green;
-    }
-
-    .invalid-feedback {
-        border-color: red;
-    }
-</style>
-
 <EditForm EditContext="@editContext" OnValidSubmit="HandleSubmit">
     @if (TopContent != null)
     {
@@ -24,8 +13,8 @@
     <RadzenCard class="mt-3">
         <RadzenRow>
             <RadzenColumn Size="12" SizeMD="10">
-                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Only required fields?</RadzenLabel></RadzenText>
-                <RadzenText TextStyle="TextStyle.Body2">This option is by default enabled.</RadzenText>
+                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Show only required fields?</RadzenLabel></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body2">This option is enabled by default.</RadzenText>
             </RadzenColumn>
             <RadzenColumn Size="12" SizeMD="2">
                 <RadzenSwitch @bind-Value="ShowOnlyRequired" Change="@ReloadModelProperties" />
