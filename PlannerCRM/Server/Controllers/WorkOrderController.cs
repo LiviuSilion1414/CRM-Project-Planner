@@ -78,11 +78,11 @@ public class WorkOrderController(PlannerCrmContext context, IMapper mapper) : Co
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete([FromBody] WorkOrderFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] WorkOrderDto dto)
     {
         try
         {
-            await _repo.Delete(filter);
+            await _repo.Delete(dto);
             return new ResultDto()
             {
                 id = null,
@@ -94,7 +94,7 @@ public class WorkOrderController(PlannerCrmContext context, IMapper mapper) : Co
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.WORKORDER_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.WORKORDER_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,

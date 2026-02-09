@@ -9,4 +9,7 @@ public class PropertyMeta
     public Type underlyingType { get; set; }
     public bool isRequired { get; set; }
     public bool isNullable { get; set; }
+    public bool isGuid { get; set; } = false;
+    public Guid id { get; set; }
+
 }

@@ -77,11 +77,11 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete([FromBody] EmployeesRolesFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] EmployeesRolesDto dto)
     {
         try
         {
-            await _repo.Delete(filter);
+            await _repo.Delete(dto);
             return new ResultDto()
             {
                 id = null,
@@ -93,7 +93,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
             };
         } catch(Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.EMPLOYEESROLES_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEESROLES_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,

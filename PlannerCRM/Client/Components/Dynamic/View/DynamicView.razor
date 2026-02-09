@@ -3,7 +3,7 @@
 @typeparam TItem where TItem : class, new()
 
 <RadzenCard class="mt-3">
-    @foreach (var prop in properties)
+    @foreach (var prop in MetaProperties)
     {
         <RadzenRow class="mt-3">
             <RadzenColumn Size="12" SizeMD="3">
@@ -28,18 +28,7 @@
 
 @code {
     [Parameter] public TItem Model { get; set; } = new();
-
-    private List<PropertyMeta> properties = new();
-
-    protected override void OnParametersSet()
-    {
-        ReloadModelProperties();
-    }
-
-    void ReloadModelProperties()
-    {
-        properties = DynamicPropertyMetaLoader.GetModelProperties(Model);
-    }
+    [Parameter] public List<PropertyMeta> MetaProperties { get; set; } = new();
 
     RenderFragment RenderField(PropertyMeta meta)
     {

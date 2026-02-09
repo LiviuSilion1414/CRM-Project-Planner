@@ -44,14 +44,14 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
-    public async Task Delete(FirmClientFilterDto filter)
+    public async Task Delete(FirmClientDto dto)
     {
         try
         {
             var client = await _context.FirmClients
                                        .AsSplitQuery()
                                        .Include(c => c.WorkOrders)
-                                       .FirstAsync(c => c.Id == filter.firmClientId);
+                                       .FirstAsync(c => c.Id == dto.id);
 
             _context.Remove(client);
 

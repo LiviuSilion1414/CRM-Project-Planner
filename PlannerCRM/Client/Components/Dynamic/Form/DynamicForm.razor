@@ -9,44 +9,34 @@
             @TopContent
         </RadzenCard>
     }
-
-    @* <RadzenCard class="mt-3">
-        <RadzenRow>
-            <RadzenColumn Size="12" SizeMD="10">
-                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Show only required fields?</RadzenLabel></RadzenText>
-                <RadzenText TextStyle="TextStyle.Body2">This option is enabled by default.</RadzenText>
-            </RadzenColumn>
-            <RadzenColumn Size="12" SizeMD="2">
-                <RadzenSwitch @bind-Value="ShowOnlyRequired" Change="@ReloadModelProperties" />
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenCard> *@
-
     <RadzenCard class="mt-3">
         <DataAnnotationsValidator />
 
-        @foreach (var prop in properties)
+        @foreach (var prop in MetaProperties)
         {
-            <RadzenRow class="mt-3">
-                <RadzenColumn Size="12" SizeMD="3">
-                    <RadzenLabel>
-                        @if (prop.isRequired)
-                        {
-                            <RadzenLabel style="margin-right: 5px;font-weight:bold;">
-                                <span class="text-danger">*</span>
-                            </RadzenLabel>
-                        }
-                        @prop.label
-                    </RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
-                    @RenderField(prop)
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="3"/>
-                <RadzenColumn Size="12" SizeMD="9">
-                    <DynamicValidationMessage Property="@prop.property"/>
-                </RadzenColumn>
-            </RadzenRow>
+            @if (prop.isRequired)
+            {
+                <RadzenRow class="mt-3">
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenLabel>
+                            @if (prop.isRequired)
+                            {
+                                <RadzenLabel style="margin-right: 5px;font-weight:bold;">
+                                    <span class="text-danger">*</span>
+                                </RadzenLabel>
+                            }
+                            @prop.label
+                        </RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="9">
+                        @RenderField(prop)
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="3" />
+                    <RadzenColumn Size="12" SizeMD="9">
+                        <DynamicValidationMessage Property="@prop.property" />
+                    </RadzenColumn>
+                </RadzenRow>
+            }
         }
 
         <RadzenRow class="mt-3">
@@ -79,27 +69,20 @@
     [Parameter] public RenderFragment? TopContent { get; set; }
     [Parameter] public RenderFragment? BottomContent { get; set; }
     [Parameter] public EventCallback<TItem> OnSubmit { get; set; }
+    [Parameter] public List<PropertyMeta> MetaProperties { get; set; } = new();
 
     private EditContext editContext = default!;
-    private List<PropertyMeta> properties = new();
 
     protected override void OnParametersSet()
     {
         editContext = new EditContext(Model);
-
-        ReloadModelProperties();
-    }
-
-    void ReloadModelProperties()
-    {
-        properties = DynamicPropertyMetaLoader.GetModelProperties(Model);
     }
 
     RenderFragment RenderField(PropertyMeta meta)
     {
         var value = meta.property.GetValue(Model);
 
-        var style = value != null && editContext.IsValid(new FieldIdentifier(Model, meta.property.Name)) ? "border-color: green;" : "border-color: red;";
+        var style = editContext.IsValid(new FieldIdentifier(Model, meta.property.Name)) ? "border-color: green;" : "border-color: red;";
 
         if (meta.underlyingType == typeof(string))
         {
@@ -116,8 +99,8 @@
         if (meta.underlyingType == typeof(decimal))
         {
             return meta.isNullable
-                ? @<RadzenNumeric class="w-25"  Style="@style" TValue="decimal?" Value="@((decimal?)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />
-                : @<RadzenNumeric class="w-25"  Style="@style" TValue="decimal" Value="@((decimal)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />;
+                ? @<RadzenNumeric class="w-25" Style="@style" TValue="decimal?" Value="@((decimal?)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />
+                : @<RadzenNumeric class="w-25" Style="@style" TValue="decimal" Value="@((decimal)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />;
         }
 
         if (meta.underlyingType == typeof(double))
@@ -131,7 +114,7 @@
         {
             return meta.isNullable
                 ? @<RadzenCheckBox TValue="bool?" Style="@style" Value="@((bool?)value)" Change="@(v => AssignValue(meta, v))" />
-                : @<RadzenCheckBox TValue="bool"  Style="@style" Value="@((bool)value)" Change="@(v => AssignValue(meta, v))" />;
+                : @<RadzenCheckBox TValue="bool" Style="@style" Value="@((bool)value)" Change="@(v => AssignValue(meta, v))" />;
         }
 
         if (meta.underlyingType == typeof(DateTime))
@@ -152,7 +135,7 @@
 
     void CleanProperties()
     {
-        foreach (var pp in properties.Where(x => x.isRequired == false).ToList())
+        foreach (var pp in MetaProperties.Where(x => x.isRequired == false).ToList())
         {
             pp.property.SetValue(Model, default);
         }

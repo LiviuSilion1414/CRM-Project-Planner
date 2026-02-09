@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
+using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Shared.Services;
 
@@ -142,6 +143,39 @@ public partial class FetchService(LocalStorageService localStorage, HttpClient h
             return result;
         } 
         catch(Exception exc)
+        {
+            throw;
+        }
+    }
+
+    public async Task<ResultDto> Dynamic_ExecuteAsync<TItem>(string controllerName, ActionType actionType, TItem data)
+        where TItem : class
+    {
+        try
+        {
+            if (actionType == ActionType.Insert)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.INSERT, data, ApiType.Post);
+            }
+            if (actionType == ActionType.Update)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.UPDATE, data, ApiType.Put);
+            }
+            if (actionType == ActionType.Delete)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.DELETE, data, ApiType.Post);
+            }
+
+            return new ResultDto
+            {
+                data = null,
+                hasCompleted = false,
+                messageType = MessageType.Error,
+                statusCode = System.Net.HttpStatusCode.ServiceUnavailable,
+                message = string.Empty,
+            };
+        } 
+        catch (Exception exc)
         {
             throw;
         }

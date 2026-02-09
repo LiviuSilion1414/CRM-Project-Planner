@@ -41,11 +41,11 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
-    public async Task Delete(MenuRoleFilterDto filter)
+    public async Task Delete(MenuRoleDto dto)
     {
         try
         {
-            var activity = await _context.MenuRoles.FirstOrDefaultAsync(x => x.Id == filter.menuId);
+            var activity = await _context.MenuRoles.FirstOrDefaultAsync(x => x.Id == dto.id);
 
             _context.Remove(activity);
 

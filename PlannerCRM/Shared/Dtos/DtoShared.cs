@@ -16,9 +16,16 @@ public static class DtoShared
         return attributes?.Description;
     }
 
+    public enum ActionType
+    {
+        Insert,
+        Update,
+        Delete
+    }
+
     public enum ColumnActionType
     {
-        Edit,
+        Update,
         Delete,
         View
     }

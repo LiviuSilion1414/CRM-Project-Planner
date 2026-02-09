@@ -77,11 +77,11 @@ public class MenuRoleController(PlannerCrmContext context, IMapper mapper) : Con
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete(MenuRoleFilterDto filter)
+    public async Task<ResultDto> Delete(MenuRoleDto dto)
     {
         try
         {
-            await _repo.Delete(filter);
+            await _repo.Delete(dto);
             return new ResultDto()
             {
                 id = null,
@@ -93,7 +93,7 @@ public class MenuRoleController(PlannerCrmContext context, IMapper mapper) : Con
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.MENU_ROLE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.MENU_ROLE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,

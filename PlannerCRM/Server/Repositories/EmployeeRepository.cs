@@ -108,7 +108,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
     }
 
 
-    public async Task Delete(EmployeeFilterDto filter)
+    public async Task Delete(EmployeeDto dto)
     {
         try
         {
@@ -116,7 +116,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                          .Include(e => e.EmployeeActivities)
                                          .Include(e => e.EmployeesRoles)
                                          .Include(e => e.WorkTimes)
-                                         .FirstOrDefaultAsync(e => e.Id == filter.employeeId);
+                                         .FirstOrDefaultAsync(e => e.Id == dto.id);
 
             _context.Remove(employee);
 

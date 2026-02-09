@@ -1,5 +1,6 @@
 ﻿using PlannerCRM.Shared.Dtos;
 using System.ComponentModel;
+using System.Net.NetworkInformation;
 using System.Reflection;
 
 namespace PlannerCRM.Shared.Services;
@@ -23,6 +24,8 @@ public static class DynamicPropertyMetaLoader
         typeof(DateTime?)
     };
 
+    public static bool IsSupported(Type type) => SupportedTypes.Contains(type);
+
     public static List<PropertyMeta> GetModelProperties(object model)
     {
         return model.GetType()
@@ -38,11 +41,11 @@ public static class DynamicPropertyMetaLoader
                     {
                         var underlyingType = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
                         var nullability = nullabilityContext.Create(p);
-                    
+
                         bool isNullable =
                             Nullable.GetUnderlyingType(p.PropertyType) != null ||
                             nullability.ReadState == NullabilityState.Nullable;
-                    
+
                         return new PropertyMeta
                         {
                             property = p,

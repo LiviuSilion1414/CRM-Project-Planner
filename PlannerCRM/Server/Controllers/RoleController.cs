@@ -76,11 +76,11 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete(RoleFilterDto filter)
+    public async Task<ResultDto> Delete(RoleDto dto)
     {
         try
         {
-            await _repo.Delete(filter);
+            await _repo.Delete(dto);
             return new ResultDto()
             {
                 id = null,
@@ -92,7 +92,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.ROLE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.ROLE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,

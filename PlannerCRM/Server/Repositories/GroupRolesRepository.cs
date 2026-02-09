@@ -43,11 +43,11 @@ public class GroupRolesRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
-    public async Task Delete(GroupRolesFilterDto filter)
+    public async Task Delete(GroupRoleDto dto)
     {
         try
         {
-            var activity = await _context.GroupRoles.FirstOrDefaultAsync(x => x.Id == filter.id);
+            var activity = await _context.GroupRoles.FirstOrDefaultAsync(x => x.Id == dto.id);
 
             _context.Remove(activity);
 

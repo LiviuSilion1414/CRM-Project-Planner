@@ -76,11 +76,11 @@ public class GroupRolesController(PlannerCrmContext context, IMapper mapper) : C
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete(GroupRolesFilterDto filter)
+    public async Task<ResultDto> Delete(GroupRoleDto dto)
     {
         try
         {
-            await _repo.Delete(filter);
+            await _repo.Delete(dto);
             return new ResultDto()
             {
                 id = null,
@@ -92,7 +92,7 @@ public class GroupRolesController(PlannerCrmContext context, IMapper mapper) : C
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.GROUP_ROLES_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.GROUP_ROLES_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,

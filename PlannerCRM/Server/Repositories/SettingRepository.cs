@@ -46,11 +46,11 @@ public class SettingRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
-    public async Task Delete(SettingFilterDto filter)
+    public async Task Delete(SettingDto dto)
     {
         try
         {
-            var model = await _context.Settings.FirstOrDefaultAsync(x => x.Id == filter.id);
+            var model = await _context.Settings.FirstOrDefaultAsync(x => x.Id == dto.id);
 
             if (model == null) return;
 

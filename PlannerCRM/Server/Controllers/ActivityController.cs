@@ -61,11 +61,11 @@ public class ActivityController(PlannerCrmContext context, IMapper mapper) : Con
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete([FromBody] ActivityFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] ActivityDto dto)
     {
         try
         {
-            await _repo.Delete(filter);
+            await _repo.Delete(dto);
             return new ResultDto()
             {
                 id = null,
@@ -77,7 +77,7 @@ public class ActivityController(PlannerCrmContext context, IMapper mapper) : Con
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,

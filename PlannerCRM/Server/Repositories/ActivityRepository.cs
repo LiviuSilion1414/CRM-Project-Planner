@@ -1,3 +1,4 @@
+using Humanizer;
 using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
@@ -63,7 +64,7 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
-    public async Task Delete(ActivityFilterDto filter)
+    public async Task Delete(ActivityDto dto)
     {
         try
         {
@@ -71,7 +72,7 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
                                          .AsNoTracking()
                                          .AsSplitQuery()
                                          .Include(a => a.EmployeeActivities)
-                                         .FirstOrDefaultAsync(a => a.Id == filter.activityId);
+                                         .FirstOrDefaultAsync(a => a.Id == dto.id);
 
             _context.Remove(activity);
 

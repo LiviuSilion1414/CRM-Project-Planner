@@ -43,11 +43,11 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
-    public async Task Delete(WorkOrderFilterDto filter)
+    public async Task Delete(WorkOrderDto dto)
     {
         try
         {
-            var workOrder = await _context.WorkOrders.FirstOrDefaultAsync(x => x.Id == filter.id);
+            var workOrder = await _context.WorkOrders.FirstOrDefaultAsync(x => x.Id == dto.id);
 
             if (workOrder == null) return;
 

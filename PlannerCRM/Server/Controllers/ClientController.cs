@@ -76,11 +76,11 @@ public class ClientController(PlannerCrmContext context, IMapper mapper) : Contr
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete([FromBody] FirmClientFilterDto filter)
+    public async Task<ResultDto> Delete([FromBody] FirmClientDto dto)
     {
         try
         {
-            await _repo.Delete(filter);
+            await _repo.Delete(dto);
             return new ResultDto()
             {
                 id = null,
@@ -92,7 +92,7 @@ public class ClientController(PlannerCrmContext context, IMapper mapper) : Contr
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.CLIENT_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.CLIENT_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,

@@ -1,4 +1,5 @@
-﻿using PlannerCRM.Server.Models;
+﻿using Humanizer;
+using PlannerCRM.Server.Models;
 
 namespace PlannerCRM.Server.Repositories;
 
@@ -53,11 +54,11 @@ public class WorkTimeRepository(PlannerCrmContext context, IMapper mapper)
             throw;
         }
     }
-    public async Task Delete(WorkTimeFilterDto filter)
+    public async Task Delete(WorkTimeDto dto)
     {
         try
         {
-            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.Id == filter.id);
+            var existingModel = await context.WorkTimes.FirstOrDefaultAsync(x => x.Id == dto.id);
 
             _context.Remove(existingModel);
 

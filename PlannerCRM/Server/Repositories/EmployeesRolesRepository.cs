@@ -48,12 +48,12 @@ public class EmployeesRolesRepository(PlannerCrmContext context, IMapper mapper)
     }
 
 
-    public async Task Delete(EmployeesRolesFilterDto filter)
+    public async Task Delete(EmployeesRolesDto dto)
     {
         try
         {
             var employee = await _context.EmployeesRoles
-                                         .FirstOrDefaultAsync(e => e.Id == filter.id || (e.FkIdEmployee == filter.employeeId && e.FkIdRole == filter.roleId));
+                                         .FirstOrDefaultAsync(e => e.Id == dto.id);
 
             _context.Remove(employee);
 
