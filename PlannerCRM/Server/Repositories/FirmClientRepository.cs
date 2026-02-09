@@ -88,8 +88,11 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
                                             .AsSplitQuery()
                                             .OrderBy(c => c.Id)
                                             .Include(c => c.WorkOrders).ThenInclude(w => w.Activities)
-                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim()) &&
-                                                        (filter.firmClientId == null || filter.firmClientId == Guid.Empty) || (filter.firmClientId == x.Id)))
+                                            .Where(x => (string.IsNullOrEmpty(filter.name) || x.Name.ToLower().Trim().Contains(filter.name.ToLower().Trim()) &&
+                                                        (string.IsNullOrEmpty(filter.fiscalCode) || x.FiscalCode.ToLower().Trim().Contains(filter.fiscalCode.ToLower().Trim())) &&
+                                                        (string.IsNullOrEmpty(filter.email) || x.Email.ToLower().Trim().Contains(filter.email.ToLower().Trim())) &&
+                                                        (string.IsNullOrEmpty(filter.vatNumber) || x.VatNumber.ToLower().Trim().Contains(filter.vatNumber.ToLower().Trim())))
+                                            )
                                             .ToListAsync();
 
             return _mapper.Map<List<FirmClientDto>>(firmClients);

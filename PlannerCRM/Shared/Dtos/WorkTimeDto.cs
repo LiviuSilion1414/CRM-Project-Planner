@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PlannerCRM.Shared.Dtos;
 
@@ -7,6 +8,9 @@ public partial class WorkTimeDto
 {
     public Guid? id { get; set; }
     public DateTime? creationDate { get; set; }
+
+    [Required]
+    [Description("Hours")]
     public int? hours { get; set; }
     public string? hoursString => hours != null ? hours.ToString() : "not set";
     public Guid? fkIdActivity { get; set; }

@@ -86,7 +86,7 @@
 
         if (meta.underlyingType == typeof(string))
         {
-            return  @<RadzenTextBox class="w-50" Style="@style" Value="@(value?.ToString())" Change="@(v => AssignValue(meta, v))" Placeholder="Digit something" />;
+            return  @<RadzenTextBox class="w-50" Style="@style" Value="@(value?.ToString())" Change="@(v => AssignValue(meta, v))" Placeholder="Digit something"/>;
         }
 
         if (meta.underlyingType == typeof(int))

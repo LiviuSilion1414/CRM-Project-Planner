@@ -10,14 +10,18 @@ public partial class EmployeeDto
 {
     public Guid? id { get; set; }
 
+
+    [MaxLength(50)]
     [Description("Name")]
     [Required]
     public string? name { get; set; }
 
+    [MaxLength(50)]
     [Description("Surname")]
     [Required]
     public string? surname { get; set; }
 
+    [MaxLength(50)]
     [Description("Username")]
     [Required]
     [EmailAddress]

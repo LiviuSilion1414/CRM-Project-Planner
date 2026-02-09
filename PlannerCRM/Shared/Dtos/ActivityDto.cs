@@ -13,6 +13,7 @@ public partial class ActivityDto
 
     [Required]
     [Description("Name")]
+    [MaxLength(100)]
     public string? name { get; set; }
 
     public DateTime? creationDate { get; set; }
@@ -32,6 +33,7 @@ public partial class ActivityDto
     public Guid? fkIdWorkOrder { get; set; }
     public Guid? fkIdFirmClient { get; set; }
 
+    [MaxLength(50)]
     public string? hexColor { get; set; } = "#0000FF"; // Default color blue
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
     public FirmClientDto? fkIdFirmClientNavigation { get; set; }

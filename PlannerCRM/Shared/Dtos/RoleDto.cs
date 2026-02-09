@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PlannerCRM.Shared.Dtos;
 
 public partial class RoleDto
 {
     public Guid id { get; set; }
+    
+    [Required]
+    [MaxLength(50)]
+    [Description("Name")]
     public string? name { get; set; } = string.Empty;
     public Guid? fkIdGroupRole { get; set; }
 

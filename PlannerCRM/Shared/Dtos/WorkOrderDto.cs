@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PlannerCRM.Shared.Dtos;
 
 public partial class WorkOrderDto
 {
     public Guid? id { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    [Description("Name")]
     public string? name { get; set; }
+
+    [Required]
+    [MaxLength(2000)]
+    [Description("Description")]
     public string? description { get; set; }
     public DateTime? creationDate { get; set; }
     public string? creationDateString => creationDate != null ? string.Format("{0:dd/MM/yyyy}", creationDate) : "not set";
