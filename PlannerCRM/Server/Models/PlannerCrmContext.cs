@@ -108,9 +108,7 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())", "DF_FirmClients_Id");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(50);
-            entity.Property(e => e.FiscalCode)
-                .HasMaxLength(10)
-                .IsFixedLength();
+            entity.Property(e => e.FiscalCode).HasMaxLength(20);
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.VatNumber).HasMaxLength(50);
         });
