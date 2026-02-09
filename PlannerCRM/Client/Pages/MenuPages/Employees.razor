@@ -65,7 +65,9 @@
          </RadzenRow>
     </RadzenCard>
 
-    <RadzenCard class="mb-3">
+    <DynamicGrid TItem="@EmployeeDto" ItemsList="@_employees" ModelTitle="Employees" OnAdd="@OnAddDynamicForm" OnDelete="@OnDelete" OnEdit="@OnEdit"/>
+
+    @* <RadzenCard class="mb-3">
 
         <RadzenDataGrid Data="@_employees.OrderBy(x => x.lastSeen)"
                         TItem="@EmployeeDto"
@@ -114,7 +116,7 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </RadzenCard>
+    </RadzenCard> *@
 }
 
 @code
@@ -167,21 +169,6 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
-    }
-
-    async Task OnAdd()
-    {
-        EmployeeDto employeeDto = new EmployeeDto();
-
-        await dialog.OpenAsync("Add employee", ds =>
-        @<EmployeeForm IsInsert=true employeeDto="@employeeDto" OnReloadList="@LoadData"></EmployeeForm>  ,
-        new DialogOptions
-        {
-            Width = "80%",
-            Height = "90%",
-            CloseDialogOnEsc = true,
-            ShowClose = true
-        });
     }
 
     async Task OnAddDynamicForm()
@@ -240,7 +227,7 @@
 
     async Task OnEdit(EmployeeDto employeeDto)
     {
-                await dialog.OpenAsync("Dynamic Form - Employee", ds =>
+        await dialog.OpenAsync("Employee Form", ds =>
         @<EmployeeForm employeeDto="@employeeDto" IsInsert="false" /> ,
         new DialogOptions
         {
@@ -253,7 +240,7 @@
 
     async Task OnSelect(EmployeeDto employee)
     {
-        await dialog.OpenAsync("Dynamic Details", ds =>
+        await dialog.OpenAsync("Employee Details", ds =>
         @<DynamicView Model="@employee"/>,
         new DialogOptions
         {

@@ -16,6 +16,13 @@ public static class DtoShared
         return attributes?.Description;
     }
 
+    public enum ColumnActionType
+    {
+        Edit,
+        Delete,
+        View
+    }
+
     public enum BaseRoles
     {
         [Description("66FBECFE-5CEF-4ACE-9A04-23AFBAF1A3C4")] User,
