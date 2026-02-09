@@ -14,48 +14,7 @@
             <RadzenTabs>
                 <Tabs>
                     <RadzenTabsItem Text="Employee Data">
-                        <EditForm EditContext="@editContext" OnValidSubmit="@Submit">
-                            <DataAnnotationsValidator />
-                            <RadzenFieldset Text="Employee">
-                                <RadzenRow class="mt-3">
-                                    <RadzenColumn Size="12" SizeMD="3">
-                                        <RadzenLabel>Name</RadzenLabel>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="9">
-                                        <InputText class="form-control w-100" @bind-Value="@employeeDto.name" />
-                                        <ValidationMessage For="@(() => employeeDto.name)" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow class="mt-3">
-                                    <RadzenColumn Size="12" SizeMD="3">
-                                        <RadzenLabel>Surname</RadzenLabel>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="9">
-                                        <InputText class="form-control w-100" @bind-Value="@employeeDto.surname" />
-                                        <ValidationMessage For="@(() => employeeDto.surname)" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow class="mt-3">
-                                    <RadzenColumn Size="12" SizeMD="3">
-                                        <RadzenLabel>Email</RadzenLabel>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="9">
-                                        <InputText class="form-control w-25" @bind-Value="@employeeDto.username" />
-                                        <ValidationMessage For="@(() => employeeDto.username)" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-
-                                <RadzenRow class="mt-3">
-                                    <RadzenColumn Size="12" SizeMD="3">
-                                        <RadzenLabel>Is removeable?</RadzenLabel>
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="9">
-                                        <RadzenCheckBox class="form-control" TriState="false" @bind-Value="@employeeDto.isRemoveable" />
-                                        <ValidationMessage For="@(() => employeeDto.isRemoveable)" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                            </RadzenFieldset>
-                        </EditForm>
+                        <DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnSubmit="Update"/>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="Assigned Roles" Visible="@(IsInsert == false)">
                         <RadzenRow class="mt-3">
@@ -68,7 +27,7 @@
                                                 AllowPaging="false"
                                                 AllowSorting="true">
                                     <HeaderTemplate>
-                                        <RadzenButton Icon="playlist_add_check" Text="New" Click="New"></RadzenButton>
+                                        <RadzenButton Icon="playlist_add_check" Text="New" Click="NewRole"></RadzenButton>
                                     </HeaderTemplate>
                                     <Columns>
                                         <RadzenDataGridColumn TItem="EmployeesRolesDto" Property="@nameof(EmployeesRolesDto.fkIdRoleNavigation.name)" Title="Role Name">
@@ -88,7 +47,7 @@
                     </RadzenTabsItem>
                 </Tabs>
             </RadzenTabs>
-            <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+            @*<RadzenStack AlignItems="AlignItems.Center" class="mt-3">
                 <RadzenRow>
                     <RadzenColumn Size="6">
                         <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="Close"></RadzenButton>
@@ -97,7 +56,7 @@
                         <RadzenButton ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Text="Save" Click="Submit"></RadzenButton>
                     </RadzenColumn>
                 </RadzenRow>
-            </RadzenStack>
+            </RadzenStack> *@
         </RadzenCard>
     </RadzenStack>
 }
@@ -151,7 +110,7 @@
         }
     }
 
-    async Task New()
+    async Task NewRole()
     {
         await dialog.OpenAsync("Assign Role", ds =>
         @<Employee_AddRoles employeeDto="@employeeDto" rolesDtoList="@roles" OnReloadList="LoadEmployeeData" />,
@@ -210,6 +169,26 @@
         } catch
         {
             notification.Notify(NotificationSeverity.Error, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task Update()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Employee_Update(employeeDto);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                
+            }
+            fetch.isBusy = false;
+            await InvokeAsync(StateHasChanged);
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
 

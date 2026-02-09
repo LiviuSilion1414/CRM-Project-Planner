@@ -11,15 +11,6 @@
                 <ValidationMessage For="@(() => Model.name)" />
             </RadzenColumn>
         </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn>
-                <RadzenLabel>Is Removeable?</RadzenLabel>
-            </RadzenColumn>
-            <RadzenColumn>
-                <RadzenCheckBox @bind-Value="Model.isRemoveable"/>
-                <ValidationMessage For="@(() => Model.isRemoveable)" />
-            </RadzenColumn>
-        </RadzenRow>
         <RadzenRow class="mt-3" AlignItems="AlignItems.End">
             <RadzenStack AlignItems="AlignItems.Center">
                 <RadzenRow>

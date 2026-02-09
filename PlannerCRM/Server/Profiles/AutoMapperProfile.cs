@@ -7,7 +7,6 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         CreateMap<Activity, ActivityDto>()
-            .ForMember(dest => dest.fkIdFirmClientNavigation, opt => opt.MapFrom(src => src.FkIdWorkOrderNavigation.FkIdFirmClientNavigation))
             .PreserveReferences()
             .ReverseMap();
 
@@ -22,7 +21,10 @@ public class AutoMapperProfile : Profile
             .ReverseMap();
 
         CreateMap<Role, RoleDto>()
-            .ForMember(dest => dest.isRemoveable, opt => opt.MapFrom(src => src.EmployeesRoles.Any()))
+            .PreserveReferences()
+            .ReverseMap();
+
+        CreateMap<GroupRole, GroupRoleDto>()
             .PreserveReferences()
             .ReverseMap();
 

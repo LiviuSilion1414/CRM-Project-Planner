@@ -25,6 +25,8 @@ public partial class PlannerCrmContext : DbContext
 
     public virtual DbSet<FirmClient> FirmClients { get; set; }
 
+    public virtual DbSet<GroupRole> GroupRoles { get; set; }
+
     public virtual DbSet<Menu> Menus { get; set; }
 
     public virtual DbSet<MenuRole> MenuRoles { get; set; }
@@ -113,6 +115,17 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.VatNumber).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<GroupRole>(entity =>
+        {
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())", "DF_GroupRoles_id")
+                .HasColumnName("id");
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("title");
+        });
+
         modelBuilder.Entity<Menu>(entity =>
         {
             entity.ToTable("Menu");
@@ -155,7 +168,12 @@ public partial class PlannerCrmContext : DbContext
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())", "DF_Roles_Id");
             entity.Property(e => e.CreationDate).HasColumnType("datetime");
+            entity.Property(e => e.FkIdGroupRole).HasColumnName("fkIdGroupRole");
             entity.Property(e => e.Name).HasMaxLength(50);
+
+            entity.HasOne(d => d.FkIdGroupRoleNavigation).WithMany(p => p.Roles)
+                .HasForeignKey(d => d.FkIdGroupRole)
+                .HasConstraintName("FK_Roles_GroupRoles");
         });
 
         modelBuilder.Entity<Setting>(entity =>

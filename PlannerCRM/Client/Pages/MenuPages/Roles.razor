@@ -44,19 +44,12 @@
                 <RadzenTextBox @bind-Value="edit.name" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.isRemoveable)" Title="Is Removeable?" TextAlign="TextAlign.Center">
+        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.fkIdGroupRoleNavigation.title)" Title="Group" TextAlign="TextAlign.Center">
             <Template Context="data">
-                @if (!IsBaseRole(data) && !data.menuRoleList.Any() && !data.employeeRolesList.Any())
-                {
-                    <b>YES</b>
-                }
-                else
-                {
-                    <b>NO</b>
-                }
+                @data?.fkIdGroupRoleNavigation?.title
             </Template>
             <EditTemplate Context="edit">
-                <RadzenCheckBox TriState="false" TValue="bool" @bind-Value="edit.isRemoveable" />
+                <RadzenDropDown TValue="Guid ?" @bind-Value="edit.fkIdGroupRole" Data="@groupRoles" TextProperty="title" ValueProperty="id" />
             </EditTemplate>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Title="Linked Employees" TextAlign="TextAlign.Center">
@@ -71,19 +64,11 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Width="192px">
             <Template Context="data">
-                @if (!IsBaseRole(data) && !data.menuRoleList.Any() && !data.employeeRolesList.Any())
-                {
-                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
-                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)" />
-                }
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
             </Template>
             <EditTemplate Context="data">
-                @if (!IsBaseRole(data) && !data.menuRoleList.Any() && !data.employeeRolesList.Any())
-                {
-                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
-                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelRow(data))" aria-label="Cancel" />
-                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium" Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRole(data))" Disabled="@((bool)data.isRemoveable)" />
-                }
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelRow(data))" aria-label="Cancel" />
             </EditTemplate>
         </RadzenDataGridColumn>
     </Columns>
@@ -93,6 +78,7 @@
 {
     RadzenDataGrid<RoleDto> grid;
     List<RoleDto> roles = new();
+    List<GroupRoleDto> groupRoles = new();
 
     string query = string.Empty;
 
@@ -107,12 +93,6 @@
         await LoadData();
     }
 
-    bool IsBaseRole(RoleDto role)
-    {
-        var result = BaseRolesList.Contains(role.name);
-        return result;
-    }
-
     private async Task LoadData()
     {
         try
@@ -120,9 +100,9 @@
             fetch.isBusy = true;
 
             var filter = new RoleFilterDto
-                    {
-                        searchQuery = query
-                    };
+            {
+                searchQuery = query
+            };
 
             var result = await fetch.Role_List(filter);
 
@@ -130,9 +110,15 @@
             {
                 roles = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
+
+            result = await fetch.GroupRoles_List(new());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                groupRoles = JsonSerializer.Deserialize<List<GroupRoleDto>>(result.data.ToString());
+            }
             fetch.isBusy = false;
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -163,8 +149,7 @@
             if (model.id != Guid.Empty)
             {
                 result = await fetch.Role_Update(model);
-            }
-            else
+            } else
             {
                 result = await fetch.Role_Insert(model);
             }
@@ -175,8 +160,7 @@
                 await LoadData();
             }
             CancelRow(model);
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -197,11 +181,11 @@
     {
         await dialog.OpenAsync("Update role", ds =>
             @<RoleForm Model="@role" IsInsert=false OnReloadList="LoadData" />,
-    new DialogOptions
-    {
-        Width = "30%",
-        Height = "40%"
-    });
+        new DialogOptions
+        {
+            Width = "30%",
+            Height = "40%"
+        });
     }
 
 
@@ -221,8 +205,7 @@
                     await LoadData();
                 }
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

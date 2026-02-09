@@ -1,6 +1,7 @@
 //Scaffold-DbContext "Server=localhost;Database=Planner_crm;Trusted_Connection=true;TrustServerCertificate=true;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -f
 
 using PlannerCRM.Server.Profiles;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);

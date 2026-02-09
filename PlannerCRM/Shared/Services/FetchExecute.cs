@@ -152,6 +152,36 @@ public partial class FetchService
 
     #endregion
 
+    #region GroupRoles
+
+    public async Task<ResultDto> GroupRoles_Insert(GroupRoleDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.GROUP_ROLES_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> GroupRoles_Update(GroupRoleDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.GROUP_ROLES_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
+    }
+
+    public async Task<ResultDto> GroupRoles_Delete(GroupRolesFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.GROUP_ROLES_CONTROLLER, ApiUrl.DELETE, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> GroupRoles_Get(GroupRolesFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.GROUP_ROLES_CONTROLLER, ApiUrl.GET, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> GroupRoles_List(GroupRolesFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.GROUP_ROLES_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+    }
+
+
+    #endregion
+
     #region Menu Role
 
     public async Task<ResultDto> Menu_Role_Insert(MenuRoleDto dto)

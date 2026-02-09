@@ -50,15 +50,6 @@
                 Style="width: 100%;"
                 @bind-Value="@Model.fkIdRole"/>
             </RadzenColumn>
-            @if (Model.fkIdRole != Guid.Empty)
-            {
-                <RadzenColumn Size="12" SizeMD="3">
-                    Is removeable?
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="9">
-                    <RadzenCheckBox @bind-Value="@Model.fkIdRoleNavigation.isRemoveable" Disabled="true"/>
-                </RadzenColumn>
-            }
         </RadzenRow>
     </RadzenFieldset>
 

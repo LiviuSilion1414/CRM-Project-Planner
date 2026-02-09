@@ -1,0 +1,85 @@
+﻿@using System.Reflection
+@using System.ComponentModel
+@typeparam TItem where TItem : class, new()
+
+<RadzenCard class="mt-3">
+    @foreach (var prop in properties)
+    {
+        <RadzenRow class="mt-3">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenLabel>@prop.label</RadzenLabel>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="9">
+                @RenderField(prop)
+            </RadzenColumn>
+        </RadzenRow>
+    }
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+        <RadzenRow>
+            <RadzenColumn Size="6">
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="@(() => dialog.Close())" />
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Parameter] public TItem Model { get; set; } = new();
+
+    private List<PropertyMeta> properties = new();
+
+    protected override void OnParametersSet()
+    {
+        ReloadModelProperties();
+    }
+
+    void ReloadModelProperties()
+    {
+        properties = DynamicPropertyMetaLoader.GetModelProperties(Model);
+    }
+
+    RenderFragment RenderField(PropertyMeta meta)
+    {
+        var value = meta.property.GetValue(Model).ToString();
+
+        var style = "font-weight:bold;";
+
+        if (meta.underlyingType == typeof(string) ||
+            meta.underlyingType == typeof(int) ||
+            meta.underlyingType == typeof(double))
+        {
+            return @<RadzenLabel Style="@style" Text="@value" />;
+        }
+
+        if (meta.underlyingType == typeof(decimal))
+        {
+            var result = string.Format("{0:#.00}", Convert.ToDecimal(value) / 100);
+
+            return @<RadzenLabel Style="@style" Text="@result" />;
+        }
+
+        if (meta.underlyingType == typeof(bool))
+        {
+            var result = Convert.ToBoolean(value) == true ? "True" : "False";
+
+            return @<RadzenLabel Style="@style" Text="@result" />;
+        }
+
+        if (meta.underlyingType == typeof(DateTime))
+        {
+            var result = string.Format("{0:dd/MM/yyyy}", value);
+
+            return  @<RadzenLabel Style="@style" Text="@result" />;
+        }
+
+        return @<></>;
+    }
+
+    async Task HandleSubmit()
+    {
+        dialog.Close();
+    }
+}

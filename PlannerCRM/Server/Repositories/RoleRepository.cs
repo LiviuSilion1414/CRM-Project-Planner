@@ -67,7 +67,9 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
             var role = await _context.Roles
                                      .AsNoTracking()
                                      .AsSplitQuery()
-                                     .Include(x => x.EmployeesRoles)
+                                     .Include(x => x.EmployeesRoles).ThenInclude(x => x.FkIdEmployeeNavigation)
+                                     .Include(x => x.MenuRoles).ThenInclude(x => x.FkIdMenuNavigation)
+                                     .Include(x => x.FkIdGroupRoleNavigation)
                                      .FirstAsync(a => a.Id == filter.id);
 
             return _mapper.Map<RoleDto>(role);
@@ -86,6 +88,7 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
                                       .AsSplitQuery()
                                       .Include(x => x.EmployeesRoles).ThenInclude(x => x.FkIdEmployeeNavigation)
                                       .Include(x => x.MenuRoles).ThenInclude(x => x.FkIdMenuNavigation)
+                                      .Include(x => x.FkIdGroupRoleNavigation)
                                       .OrderBy(x => x.Id)
                                       .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
                                       .ToListAsync();
@@ -125,6 +128,26 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
                 return x;
             }).ToList();
 
+        } catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<List<RoleDto>> List2(RoleFilterDto filter)
+    {
+        try
+        {
+            var roles = await _context.Roles
+                                      .AsNoTracking()
+                                      .AsSplitQuery()
+                                      .Include(x => x.EmployeesRoles).ThenInclude(x => x.FkIdEmployeeNavigation)
+                                      .Include(x => x.MenuRoles).ThenInclude(x => x.FkIdMenuNavigation)
+                                      .Include(x => x.FkIdGroupRoleNavigation)
+                                      .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery.ToLower().Trim())))
+                                      .ToListAsync();
+
+            return _mapper.Map<List<RoleDto>>(roles);
         } catch (Exception)
         {
             throw;

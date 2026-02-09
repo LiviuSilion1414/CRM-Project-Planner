@@ -30,13 +30,13 @@
             <RadzenRow class="mt-3">
                 <RadzenColumn Size="12" SizeMD="3">
                     <RadzenLabel>
-                        @if (prop.IsRequired)
+                        @if (prop.isRequired)
                         {
                             <RadzenLabel style="margin-right: 5px;font-weight:bold;">
                                 <span class="text-danger">*</span>
                             </RadzenLabel>
                         }
-                        @prop.Label
+                        @prop.label
                     </RadzenLabel>
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="9">
@@ -44,7 +44,7 @@
                 </RadzenColumn>
                 <RadzenColumn Size="12" SizeMD="3"/>
                 <RadzenColumn Size="12" SizeMD="9">
-                    <DynamicValidationMessage Property="@prop.Property"/>
+                    <DynamicValidationMessage Property="@prop.property"/>
                 </RadzenColumn>
             </RadzenRow>
         }
@@ -78,34 +78,10 @@
     [Parameter] public bool ShowOnlyRequired { get; set; } = true;
     [Parameter] public RenderFragment? TopContent { get; set; }
     [Parameter] public RenderFragment? BottomContent { get; set; }
-    [Parameter] public EventCallback<TItem> OnReloadList { get; set; }
+    [Parameter] public EventCallback<TItem> OnSubmit { get; set; }
 
     private EditContext editContext = default!;
     private List<PropertyMeta> properties = new();
-
-    static readonly NullabilityInfoContext nullabilityContext = new();
-    static readonly List<Type> SupportedTypes = new()
-    {
-        typeof(string),
-        typeof(int),
-        typeof(int?),
-        typeof(decimal),
-        typeof(decimal?),
-        typeof(double),
-        typeof(double?),
-        typeof(bool),
-        typeof(bool?),
-        typeof(DateTime),
-        typeof(DateTime?)
-    };
-
-    record PropertyMeta(
-        PropertyInfo Property,
-        string Label,
-        Type UnderlyingType,
-        bool IsRequired,
-        bool IsNullable
-    );
 
     protected override void OnParametersSet()
     {
@@ -116,76 +92,53 @@
 
     void ReloadModelProperties()
     {
-        properties = Model.GetType()
-                          .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                          .Where(p => p.CanWrite && 
-                                      p.SetMethod != null &&
-                                      (SupportedTypes.Contains(p.PropertyType)) &&
-                                      (ShowOnlyRequired == false || (ShowOnlyRequired == true && p.GetCustomAttribute<RequiredAttribute>() != null && p.GetCustomAttribute<DescriptionAttribute>() != null)))
-                          .Select(p =>
-                          {
-                              var underlyingType = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
-                              var nullability = nullabilityContext.Create(p);
-
-                              bool isNullable =
-                                  Nullable.GetUnderlyingType(p.PropertyType) != null ||
-                                  nullability.ReadState == NullabilityState.Nullable;
-
-                              return new PropertyMeta(
-                                  Property: p,
-                                  Label: p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name,
-                                  UnderlyingType: underlyingType,
-                                  IsRequired: p.GetCustomAttribute<RequiredAttribute>() != null,
-                                  IsNullable: isNullable
-                              );
-                          })
-                          .ToList();
+        properties = DynamicPropertyMetaLoader.GetModelProperties(Model);
     }
 
     RenderFragment RenderField(PropertyMeta meta)
     {
-        var value = meta.Property.GetValue(Model);
+        var value = meta.property.GetValue(Model);
 
-        var style = value != null && editContext.IsValid(new FieldIdentifier(Model, meta.Property.Name)) ? "border-color: green;" : "border-color: red;";
+        var style = value != null && editContext.IsValid(new FieldIdentifier(Model, meta.property.Name)) ? "border-color: green;" : "border-color: red;";
 
-        if (meta.UnderlyingType == typeof(string))
+        if (meta.underlyingType == typeof(string))
         {
-            return  @<RadzenTextBox class="w-100" Style="@style" Value="@(value?.ToString())" Change="@(v => AssignValue(meta, v))" Placeholder="Digit something" />;
+            return  @<RadzenTextBox class="w-50" Style="@style" Value="@(value?.ToString())" Change="@(v => AssignValue(meta, v))" Placeholder="Digit something" />;
         }
 
-        if (meta.UnderlyingType == typeof(int))
+        if (meta.underlyingType == typeof(int))
         {
-            return meta.IsNullable
+            return meta.isNullable
                 ? @<RadzenNumeric class="w-25" Style="@style" TValue="int?" Value="@((int?)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />
                 : @<RadzenNumeric class="w-25" Style="@style" TValue="int" Value="@((int)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />;
         }
 
-        if (meta.UnderlyingType == typeof(decimal))
+        if (meta.underlyingType == typeof(decimal))
         {
-            return meta.IsNullable
+            return meta.isNullable
                 ? @<RadzenNumeric class="w-25"  Style="@style" TValue="decimal?" Value="@((decimal?)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />
                 : @<RadzenNumeric class="w-25"  Style="@style" TValue="decimal" Value="@((decimal)value)" Change="@(v => AssignValue(meta, v))" Format="c" Placeholder="Digit a number" />;
         }
 
-        if (meta.UnderlyingType == typeof(double))
+        if (meta.underlyingType == typeof(double))
         {
-            return meta.IsNullable
+            return meta.isNullable
                 ? @<RadzenNumeric class="w-25" Style="@style" TValue="double?" Value="@((double?)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />
                 : @<RadzenNumeric class="w-25" Style="@style" TValue="double" Value="@((double)value)" Change="@(v => AssignValue(meta, v))" Placeholder="Digit a number" />;
         }
 
-        if (meta.UnderlyingType == typeof(bool))
+        if (meta.underlyingType == typeof(bool))
         {
-            return meta.IsNullable
+            return meta.isNullable
                 ? @<RadzenCheckBox TValue="bool?" Style="@style" Value="@((bool?)value)" Change="@(v => AssignValue(meta, v))" />
                 : @<RadzenCheckBox TValue="bool"  Style="@style" Value="@((bool)value)" Change="@(v => AssignValue(meta, v))" />;
         }
 
-        if (meta.UnderlyingType == typeof(DateTime))
+        if (meta.underlyingType == typeof(DateTime))
         {
-            return meta.IsNullable
-                ? @<RadzenDatePicker TValue="DateTime ?"  Style="@style" Value="@((DateTime?)value)" DateFormat="dd/MM/yyyy" Change="@(v => AssignValue(meta, v))" Placeholder="dd/mm/yyyy" />
-                : @<RadzenDatePicker TValue="DateTime"  Style="@style" Value="@((DateTime)value)" DateFormat="dd/MM/yyyy" Change="@(v => AssignValue(meta, v))" Placeholder="dd/mm/yyyy" />;
+            return meta.isNullable
+                ? @<RadzenDatePicker class="w-25" TValue="DateTime ?" Style="@style" Value="@((DateTime?)value)" DateFormat="dd/MM/yyyy" Change="@(v => AssignValue(meta, v))" Placeholder="dd/mm/yyyy" />
+                : @<RadzenDatePicker class="w-25" TValue="DateTime" Style="@style" Value="@((DateTime)value)" DateFormat="dd/MM/yyyy" Change="@(v => AssignValue(meta, v))" Placeholder="dd/mm/yyyy" />;
         }
 
         return @<></>;
@@ -193,15 +146,15 @@
 
     void AssignValue(PropertyMeta meta, object value)
     {
-        meta.Property.SetValue(Model, value);
-        editContext.NotifyFieldChanged(new FieldIdentifier(Model, meta.Property.Name));
+        meta.property.SetValue(Model, value);
+        editContext.NotifyFieldChanged(new FieldIdentifier(Model, meta.property.Name));
     }
 
     void CleanProperties()
     {
-        foreach (var pp in properties.Where(x => x.IsRequired == false).ToList())
+        foreach (var pp in properties.Where(x => x.isRequired == false).ToList())
         {
-            pp.Property.SetValue(Model, default);
+            pp.property.SetValue(Model, default);
         }
     }
 
@@ -210,6 +163,6 @@
         CleanProperties();
 
         dialog.Close();
-        await OnReloadList.InvokeAsync(Model);
+        await OnSubmit.InvokeAsync(Model);
     }
 }

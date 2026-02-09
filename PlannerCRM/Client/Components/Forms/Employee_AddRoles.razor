@@ -6,7 +6,7 @@
                     AllowFiltering="false">
         <Columns>
             <RadzenDataGridColumn Property="@(nameof(RoleDto.name))" Title="Name" />
-            <RadzenDataGridColumn Property="@(nameof(RoleDto.isRemoveableString))" Title="Removeable from system?" />
+            <RadzenDataGridColumn Property="@(nameof(RoleDto.fkIdGroupRoleNavigation.title))" Title="Group" />
             <RadzenDataGridColumn Width="55px">
                 <Template Context="data">
                     <RadzenButton Icon="add"

@@ -189,7 +189,7 @@
         EmployeeDto employeeDto = new EmployeeDto();
 
         await dialog.OpenAsync("New Employee", ds =>
-        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@Submit">
+        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnSubmit="@Submit">
             <TopContent>
 				<RadzenRow>
 					<RadzenColumn Size="12" SizeMD="12">
@@ -240,18 +240,8 @@
 
     async Task OnEdit(EmployeeDto employeeDto)
     {
-        // await dialog.OpenAsync("Edit employee", ds =>
-        // @<EmployeeForm IsInsert=false employeeDto="@employee" OnReloadList="@LoadData"></EmployeeForm>  ,
-        // new DialogOptions
-        // {
-        //     Width = "80%",
-        //     Height = "90%",
-        //     CloseDialogOnEsc = true,
-        //     ShowClose = true
-        // });
-
                 await dialog.OpenAsync("Dynamic Form - Employee", ds =>
-        @<DynamicForm TItem="@EmployeeDto" Model="@employeeDto" OnReloadList="@Submit"/> ,
+        @<EmployeeForm employeeDto="@employeeDto" IsInsert="false" /> ,
         new DialogOptions
         {
             Width = "80%",
@@ -263,8 +253,8 @@
 
     async Task OnSelect(EmployeeDto employee)
     {
-        await dialog.OpenAsync("Details", ds =>
-        @<EmployeeDialog employeeDto="@employee" OnReloadList="@LoadData"></EmployeeDialog>  ,
+        await dialog.OpenAsync("Dynamic Details", ds =>
+        @<DynamicView Model="@employee"/>,
         new DialogOptions
         {
             Width = "80%",

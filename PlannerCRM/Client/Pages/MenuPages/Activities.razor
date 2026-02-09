@@ -80,6 +80,7 @@ else
             AllowFiltering="true">
                 <HeaderTemplate>
                     <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+                    <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add with Dynamic Form" Click="@OnAddDynamicForm"></RadzenButton>
                 </HeaderTemplate>
                 <Columns>
                     <RadzenDataGridColumn TItem="@ActivityDto" Property="@nameof(ActivityDto.name)" Title="Name" />
@@ -255,6 +256,30 @@ else
         isView = !isView;
     }
 
+    
+    async Task OnAddDynamicForm()
+    {
+        ActivityDto activityDto = new ActivityDto();
+
+        await dialog.OpenAsync("New Employee", ds =>
+        @<DynamicForm TItem="@ActivityDto" Model="@activityDto">
+            <TopContent>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Employee Form</RadzenLabel></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing employees.</RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+            </TopContent>
+        </DynamicForm> ,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
+    }
     private async Task OnDelete(ActivityDto activity)
     {
         try

@@ -23,6 +23,7 @@ else
         <RadzenRow JustifyContent="JustifyContent.End">
             <RadzenColumn SizeLG="12">
                 <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@AddClient"></RadzenButton>
+                <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@AddClientWithDynamicForm"></RadzenButton>
             </RadzenColumn>
         </RadzenRow>
     </RadzenCard>
@@ -149,6 +150,30 @@ else
     async Task AddClient()
     {
         await OnAddClient.InvokeAsync();
+    }
+
+    async Task AddClientWithDynamicForm()
+    {
+        FirmClientDto firmClientDto = new FirmClientDto();
+
+        await dialog.OpenAsync("New Employee", ds =>
+        @<DynamicForm TItem="@FirmClientDto" Model="@firmClientDto">
+            <TopContent>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Employee Form</RadzenLabel></RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing employees.</RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+            </TopContent>
+        </DynamicForm> ,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 
     async Task EditClient()
