@@ -7,14 +7,14 @@ using static PlannerCRM.Shared.Dtos.DtoShared;
 namespace PlannerCRM.Server.Controllers;
 
 [ApiController]
-[Route(ApiUrl.ROLE_CONTROLLER)]
-public class RoleController(PlannerCrmContext context, IMapper mapper) : ControllerBase
+[Route(ApiUrl.MENU_CONTROLLER)]
+public class MenuController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly RoleRepository _repo = new(context, mapper);
+    private readonly MenuRepository _repo = new(context, mapper);
     private readonly SystemLogHelper _systemLog = new(context);
     [HttpPost]
     [Route(ApiUrl.INSERT)]
-    public async Task<ResultDto> Insert(RoleDto dto)
+    public async Task<ResultDto> Insert(MenuDto dto)
     {
         try
         {
@@ -30,7 +30,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.ROLE_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
+            await _systemLog.WriteLog(ApiUrl.MENU_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -45,7 +45,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
 
     [HttpPut]
     [Route(ApiUrl.UPDATE)]
-    public async Task<ResultDto> Update(RoleDto dto)
+    public async Task<ResultDto> Update(MenuDto dto)
     {
         try
         {
@@ -61,7 +61,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.ROLE_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
+            await _systemLog.WriteLog(ApiUrl.MENU_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -76,7 +76,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete(RoleDto dto)
+    public async Task<ResultDto> Delete(MenuDto dto)
     {
         try
         {
@@ -92,7 +92,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.ROLE_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
+            await _systemLog.WriteLog(ApiUrl.MENU_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -107,7 +107,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
 
     [HttpPost]
     [Route(ApiUrl.GET)]
-    public async Task<ResultDto> Get(RoleFilterDto filter)
+    public async Task<ResultDto> Get(MenuFilterDto filter)
     {
         try
         {
@@ -123,7 +123,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.ROLE_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.MENU_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -138,7 +138,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
 
     [HttpPost]
     [Route(ApiUrl.LIST)]
-    public async Task<ResultDto> List(RoleFilterDto filter)
+    public async Task<ResultDto> List(MenuFilterDto filter)
     {
         try
         {
@@ -154,7 +154,7 @@ public class RoleController(PlannerCrmContext context, IMapper mapper) : Control
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.ROLE_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.MENU_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,

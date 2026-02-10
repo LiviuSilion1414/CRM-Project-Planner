@@ -60,6 +60,7 @@ public static class DtoShared
         public const string MENU_ROLE_CONTROLLER = "api/menurole/";
         public const string GROUP_ROLES_CONTROLLER = "api/grouproles/";
         public const string ROLE_CONTROLLER = "api/role/";
+        public const string MENU_CONTROLLER = "api/menu/";
         public const string SETTINGS_CONTROLLER = "api/settings/";
         public const string WORKORDER_CONTROLLER = "api/workorder/";
         public const string WORKTIME_CONTROLLER = "api/worktime/";

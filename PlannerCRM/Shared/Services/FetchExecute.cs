@@ -211,6 +211,36 @@ public partial class FetchService
 
     #endregion
 
+    #region Menu
+
+    public async Task<ResultDto> Menu_Insert(MenuDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.MENU_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Menu_Update(MenuDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.MENU_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
+    }
+
+    public async Task<ResultDto> Menu_Delete(MenuFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.MENU_CONTROLLER, ApiUrl.DELETE, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Menu_Get(MenuFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.MENU_CONTROLLER, ApiUrl.GET, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Menu_List(MenuFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.MENU_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+    }
+
+
+    #endregion
+
     #region WorkOrder
 
     public async Task<ResultDto> WorkOrder_Insert(WorkOrderDto dto)

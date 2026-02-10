@@ -5,7 +5,7 @@ namespace PlannerCRM.Shared.Dtos;
 public class CustomClaimTypes
 {
     public const string Guid = "id";
-    public const string Name = "name";
+    public const string Name = "title";
     public const string Email = "username";
     public const string Role = "role";
     public const string Menu = "menu";

@@ -1,0 +1,152 @@
+﻿@page "/menus"
+@using static PlannerCRM.Shared.Dtos.DtoShared
+
+<h3>Menu List</h3>
+<PageTitle>Menu List</PageTitle>
+
+<RadzenCard class="mb-3">
+    <RadzenRow JustifyContent="JustifyContent.Stretch">
+        <RadzenColumn>
+            <RadzenFormField Text="Name" AllowFloatingLabel="false">
+                <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@query" />
+            </RadzenFormField>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
+             TItem="@MenuDto"
+             ItemsList="@menuList"
+             ModelTitle="Menu"
+             OnReloadList="LoadData" />
+
+@code
+{
+    RadzenDataGrid<RoleDto> grid;
+    List<MenuDto> menuList = new();
+
+    string query = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    async Task ResetData()
+    {
+        query = string.Empty;
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var filter = new MenuFilterDto
+            {
+                title = query
+            };
+
+            var result = await fetch.Menu_List(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                menuList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    void EditRow(RoleDto role)
+    {
+        grid.EditRow(role);
+    }
+
+    void CancelRow(RoleDto role)
+    {
+        grid.CancelEditRow(role);
+    }
+
+    void AddRow()
+    {
+        RoleDto role = new RoleDto();
+        grid.InsertRow(role);
+    }
+
+    private async Task HandleRole(RoleDto model)
+    {
+        try
+        {
+            var result = new ResultDto();
+
+            if (model.id != Guid.Empty)
+            {
+                result = await fetch.Role_Update(model);
+            } else
+            {
+                result = await fetch.Role_Insert(model);
+            }
+
+            if (result.hasCompleted)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await LoadData();
+            }
+            CancelRow(model);
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task OnAdd()
+    {
+        await dialog.OpenAsync("Add new role", ds =>
+            @<RoleForm IsInsert=true OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "30%",
+            Height = "40%"
+        });
+    }
+
+    private async Task OnEdit(RoleDto role)
+    {
+        await dialog.OpenAsync("Update role", ds =>
+            @<RoleForm Model="@role" IsInsert=false OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "30%",
+            Height = "40%"
+        });
+    }
+
+
+    private async Task DeleteRole(RoleDto role)
+    {
+        try
+        {
+            if ((await dialog.Confirm("Do you really want to remove this role?. This action cannot be reversed.", "Delete role")).Value)
+            {
+                var filter = new RoleFilterDto() { roleId = role.id };
+
+                var result = await fetch.Role_Delete(filter);
+
+                if (result.hasCompleted)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadData();
+                }
+            }
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+}

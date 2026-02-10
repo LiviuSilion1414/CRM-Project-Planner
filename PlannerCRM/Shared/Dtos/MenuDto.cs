@@ -27,3 +27,8 @@ public partial class MenuDto
     [Description("Path")]
     public string? path { get; set; }
 }
+
+public partial class MenuFilterDto : FilterDto
+{
+    public string? title { get; set; }
+}
