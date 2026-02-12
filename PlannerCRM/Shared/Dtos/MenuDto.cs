@@ -26,6 +26,9 @@ public partial class MenuDto
     [MaxLength(50)]
     [Description("Path")]
     public string? path { get; set; }
+
+    public virtual ICollection<MenuRoleDto> MenuRoles { get; set; } = new List<MenuRoleDto>();
+
 }
 
 public partial class MenuFilterDto : FilterDto

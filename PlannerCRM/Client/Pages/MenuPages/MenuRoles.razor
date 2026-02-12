@@ -15,94 +15,62 @@
 @if (isInsert && _selectedMenuRole is not null)
 {
     <MenuRoleForm Model="@_selectedMenuRole" IsInsert="true" OnReloadList="LoadData" />
-}
-else if (isEdit && _selectedMenuRole is not null)
+} else if (isEdit && _selectedMenuRole is not null)
 {
     <MenuRoleForm Model="@_selectedMenuRole" IsInsert="false" OnReloadList="LoadData" />
-}
-else if (isView && _selectedMenuRole is not null)
+} else if (isView && _selectedMenuRole is not null)
 {
     <MenuRoleDialog SelectedMenuRole="_selectedMenuRole" OnReloadList="LoadData" />
-}
-else
+} else
 {
-    <RadzenTabs>
-        <Tabs>
-            @foreach (var role in roleList)
-            {
-                <RadzenTabsItem Text="@role.name">
-                    <RadzenRow Gap="0" class="rz-p-4">
-                        <RadzenColumn Size="12" SizeLG="3">
-                            <RadzenDataList TItem="@EmployeeDto" Data="@role.employeeRolesList.Select(x => x.fkIdEmployeeNavigation)">
-                                <EmptyTemplate>
-                                    <RadzenText Text="No data found" />
-                                </EmptyTemplate>
-                                <Template Context="data">
-                                    <RadzenCard Variant="Variant.Outlined" class="rz-p-0" Style="width: 100%; overflow: hidden;">
-                                        <RadzenRow Gap="0">
-                                            <RadzenColumn Size="12" SizeLG="12" class="rz-p-4">
-                                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-on-secondary-lighter">Full name: @(data.fullname)</RadzenText>
-                                            </RadzenColumn>
-                                        </RadzenRow>
-                                        <RadzenRow Gap="0">
-                                            <RadzenColumn Size="12" SizeLG="12" class="rz-p-4">
-                                                <RadzenText TextStyle="TextStyle.Body2" TagName="TagName.H5" class="rz-color-on-secondary-lighter">Login: @(data.username)</RadzenText>
-                                            </RadzenColumn>
-                                        </RadzenRow>
-                                    </RadzenCard>
-                                </Template>
-                            </RadzenDataList>
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeLG="9">
-                            <RadzenDataGrid Data="@role.menuRoleList" TItem="MenuRoleDto" AllowFiltering="false" AllowPaging="false" AllowSorting="true">
-                                <EmptyTemplate>
-                                    <RadzenText Text="No data found" />
-                                </EmptyTemplate>
-                                <HeaderTemplate>
-                                    <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
-                                </HeaderTemplate>
-                                <Columns>
-                                    <RadzenDataGridColumn TItem="MenuRoleDto" Title="Title">
-                                        <Template Context="data">
-                                            @data.fkIdMenuNavigation.title
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="MenuRoleDto" Title="Path">
-                                        <Template Context="data">
-                                            <RadzenLink Path="@data.fkIdMenuNavigation.path" Text="@data.fkIdMenuNavigation.path" />
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="MenuRoleDto" Title="Icon">
-                                        <Template Context="data">
-                                            <RadzenIcon Icon="@data.fkIdMenuNavigation.icon" IconStyle="IconStyle.Primary" />
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="MenuRoleDto" Title="N. authorized">
-                                        <Template Context="data">
-                                            @role.employeeRolesList.Where(x => x.fkIdRole == data.fkIdRole).Count()
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="MenuRoleDto" Width="55px">
-                                        <Template Context="data">
-                                            <RadzenButton Icon="open_in_new" Click="@(() => OnEdit(data))" />
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                    <RadzenDataGridColumn TItem="MenuRoleDto" Width="55px">
-                                        <Template Context="data">
-                                            @if (!role.employeeRolesList.Any())
-                                            {
-                                                <RadzenButton Icon="delete" IconColor="danger" Click="@(() => OnDelete(data))" />
-                                            }
-                                        </Template>
-                                    </RadzenDataGridColumn>
-                                </Columns>
-                            </RadzenDataGrid>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenTabsItem>
-            }
-        </Tabs>
-    </RadzenTabs>
+
+    <RadzenDataGrid Data="@menuRoleList"
+                    TItem="MenuRoleDto" 
+                    AllowFiltering="false" 
+                    AllowPaging="false" AllowSorting="true">
+        <EmptyTemplate>
+            <RadzenText Text="No data found" />
+        </EmptyTemplate>
+        <HeaderTemplate>
+            <RadzenButton Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Filled" Text="Add" Click="@OnAdd"></RadzenButton>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn TItem="MenuRoleDto" Title="Title">
+                <Template Context="data">
+                    @data.fkIdMenuNavigation.title
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="MenuRoleDto" Title="Path">
+                <Template Context="data">
+                    <RadzenLink Path="@data.fkIdMenuNavigation.path" Text="@data.fkIdMenuNavigation.path" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="MenuRoleDto" Title="Icon" Width="120px" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    <RadzenIcon Icon="@data.fkIdMenuNavigation.icon" IconStyle="IconStyle.Primary" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="MenuRoleDto" Title="N. authorized" Width="150px" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    @data.fkIdRoleNavigation.employeeRolesList.Where(x => x.fkIdRole == data.fkIdRole).Count()
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="MenuRoleDto" Width="64px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    <RadzenButton Icon="open_in_new" Click="@(() => OnEdit(data))" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="MenuRoleDto" Width="64px" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    @if (!data.fkIdRoleNavigation.employeeRolesList.Any())
+                    {
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" IconColor="danger" Click="@(() => OnDelete(data))" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+
 }
 
 @code
@@ -169,8 +137,7 @@ else
                 roleList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch (Exception exc)
+        } catch (Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -189,8 +156,7 @@ else
                 menuRoleList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch (Exception exc)
+        } catch (Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -219,8 +185,7 @@ else
                 }
                 fetch.isBusy = false;
             }
-        }
-        catch (Exception exc)
+        } catch (Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

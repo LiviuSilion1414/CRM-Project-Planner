@@ -10,27 +10,30 @@
     </RadzenCard>
 }
 
-<RadzenCard class="mb-3">
-    <RadzenRow class="mb-3">
-        <RadzenColumn Size="12" SizeMD="10">
-            <RadzenText>
-                Results found: <b>@ItemsList.Count</b>
-            </RadzenText>
-        </RadzenColumn>
-        <RadzenColumn Size="12" SizeMD="2">
-            <RadzenButton Icon="search_off"
-                          ButtonStyle="ButtonStyle.Info"
-                          Variant="Variant.Filled"
-                          Text="Reset"
-                          Click="@Reset" />
-            <RadzenButton Icon="search"
-                          ButtonStyle="ButtonStyle.Secondary"
-                          Variant="Variant.Filled"
-                          Text="Search"
-                          Click="@LoadData" />
-        </RadzenColumn>
-    </RadzenRow>
-</RadzenCard>
+@if (ShowControls)
+{
+    <RadzenCard class="mb-3">
+        <RadzenRow class="mb-3">
+            <RadzenColumn Size="12" SizeMD="10">
+                <RadzenText>
+                    Results found: <b>@ItemsList.Count</b>
+                </RadzenText>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenButton Icon="search_off"
+                              ButtonStyle="ButtonStyle.Info"
+                              Variant="Variant.Filled"
+                              Text="Reset"
+                              Click="@Reset" />
+                <RadzenButton Icon="search"
+                              ButtonStyle="ButtonStyle.Secondary"
+                              Variant="Variant.Filled"
+                              Text="Search"
+                              Click="@LoadData" />
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+}
 
 <RadzenCard class="mt-3">
     <RadzenDataGrid TItem="@TItem"
@@ -41,11 +44,14 @@
                     PageSize="20"
                     PageSizeOptions="@pageSizeOptions">
         <HeaderTemplate>
-            <RadzenButton Icon="add_circle_outline" 
-                          ButtonStyle="ButtonStyle.Primary" 
-                          Variant="Variant.Filled" 
-                          Text="New" 
-                          Click="@InsertRecord"/>
+            @if (ShowControls)
+            {
+                <RadzenButton Icon="add_circle_outline"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Variant="Variant.Filled"
+                              Text="New"
+                              Click="@InsertRecord" />
+            }
         </HeaderTemplate>
         <EmptyTemplate>
             <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
@@ -57,11 +63,14 @@
         <Columns>
             @foreach (var prop in properties)
             {
-                @RenderDataGridColumn(prop);
+                @RenderDataGridColumn(prop)
             }
-            @RenderDataGridActionColumn(ColumnActionType.View)
-            @RenderDataGridActionColumn(ColumnActionType.Update)
-            @RenderDataGridActionColumn(ColumnActionType.Delete)
+            @if (ShowControls)
+            {
+                @RenderDataGridActionColumn(ColumnActionType.Update)
+                @RenderDataGridActionColumn(ColumnActionType.View)
+                @RenderDataGridActionColumn(ColumnActionType.Delete)
+            }
         </Columns>
     </RadzenDataGrid>
 </RadzenCard>
@@ -69,6 +78,7 @@
 @code {
     [Parameter] public string ApiController { get; set; }
     [Parameter] public string ModelTitle { get; set; }
+    [Parameter] public bool ShowControls { get; set; } = true;
     [Parameter] public List<TItem> ItemsList { get; set; } = new();
     [Parameter] public RenderFragment? TopContent { get; set; }
     [Parameter] public EventCallback OnReset { get; set; }
@@ -97,53 +107,51 @@
                 meta.underlyingType == typeof(double))
             {
                 return@<RadzenDataGridColumn TItem="@TItem" Title="@meta.label" Property="@meta.property.Name" Sortable="true" Filterable="false">
-                <Template Context="data">
-                    @{
-                        var value = meta.property.GetValue(data).ToString();
-                    }
-                    <RadzenLabel Text="@value" MouseEnter="@((e) => ShowTooltip(e, value))" />
-                </Template>
-            </RadzenDataGridColumn>;
+                    <Template Context="data">
+                        @{
+                            var value = meta.property.GetValue(data).ToString();
+                        }
+                        <RadzenLabel Text="@value" MouseEnter="@((e) => ShowTooltip(e, value))" />
+                    </Template>
+                </RadzenDataGridColumn>;
             } else if (meta.underlyingType == typeof(decimal))
             {
                 return@<RadzenDataGridColumn TItem="@TItem" Title="@meta.label" Property="@meta.property.Name" Sortable="true" Filterable="false">
-                <Template Context="data">
-                    @{
-                        var value = string.Format("{0:#.00}", Convert.ToDecimal(meta.property.GetValue(data)) / 100);
-                    }
-                    <RadzenLabel Text="@value" MouseEnter="@((e) => ShowTooltip(e, value))" />
-                </Template>
-            </RadzenDataGridColumn>;
+                    <Template Context="data">
+                        @{
+                            var value = string.Format("{0:#.00}", Convert.ToDecimal(meta.property.GetValue(data)) / 100);
+                        }
+                        <RadzenLabel Text="@value" MouseEnter="@((e) => ShowTooltip(e, value))" />
+                    </Template>
+                </RadzenDataGridColumn>;
             } else if (meta.underlyingType == typeof(bool))
             {
                 return@<RadzenDataGridColumn TItem="@TItem" Title="@meta.label" Property="@meta.property.Name" Sortable="true" Filterable="false">
-                <Template Context="data">
-                    @if (Convert.ToBoolean(meta.property.GetValue(data)) == true)
-                    {
-                        <RadzenLabel MouseEnter="@((e) => ShowTooltip(e, "True"))" Style="font-weight:bold;">True</RadzenLabel>
-                    } else
-                    {
-                        <RadzenLabel MouseEnter="@((e) => ShowTooltip(e, "False"))" Style="font-weight:bold;">False</RadzenLabel>
-                    }
-                </Template>
-            </RadzenDataGridColumn>;
+                    <Template Context="data">
+                        @if (Convert.ToBoolean(meta.property.GetValue(data)) == true)
+                        {
+                            <RadzenLabel MouseEnter="@((e) => ShowTooltip(e, "True"))" Style="font-weight:bold;">True</RadzenLabel>
+                        } else
+                        {
+                            <RadzenLabel MouseEnter="@((e) => ShowTooltip(e, "False"))" Style="font-weight:bold;">False</RadzenLabel>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>;
             } else if (meta.underlyingType == typeof(DateTime))
             {
                 return@<RadzenDataGridColumn TItem="@TItem" Title="@meta.label" Property="@meta.property.Name" Sortable="true" Filterable="false">
-                <Template Context="data">
-                    @{
-                        var value = string.Format("{0:dd/MM/yyyy}", meta.property.GetValue(data));
-                    }
-                    <RadzenLabel Text="@value" MouseEnter="@((e) => ShowTooltip(e, value))"/>
-                </Template>
-            </RadzenDataGridColumn>;
-            }
-            else
+                    <Template Context="data">
+                        @{
+                            var value = string.Format("{0:dd/MM/yyyy}", meta.property.GetValue(data));
+                        }
+                        <RadzenLabel Text="@value" MouseEnter="@((e) => ShowTooltip(e, value))" />
+                    </Template>
+                </RadzenDataGridColumn>;
+            } else
             {
                 return@<span></span>;
             }
-        } 
-        else
+        } else
         {
             return@<span></span>;
         }
@@ -252,33 +260,33 @@
     async Task ViewRecord(TItem item)
     {
         await dialog.OpenAsync($"{ModelTitle} Details", ds =>
-        @<DynamicView TItem="@TItem" Model="@item" MetaProperties="@properties"/>,
+        @<DynamicView TItem="@TItem" Model="@item" MetaProperties="@properties" />,
         new DialogOptions
-            {
-                Width = "80%",
-                Height = "90%",
-                CloseDialogOnEsc = true,
-                ShowClose = true
-            });
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 
     async Task UpdateRecord(TItem item)
     {
 
         await dialog.OpenAsync($"Update {ModelTitle}", ds =>
-        @<DynamicForm TItem="@TItem" 
+        @<DynamicForm TItem="@TItem"
                       MetaProperties="@properties"
-                      Model="@item" 
+                      Model="@item"
                       OnSubmit="@Submit_Edit">
-            <TopContent>
-                <RadzenRow>
-                    <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">@(ModelTitle) Form</RadzenLabel></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing data.</RadzenText>
-                    </RadzenColumn>
-                </RadzenRow>
-            </TopContent>
-        </DynamicForm> 
+    <TopContent>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">@(ModelTitle) Form</RadzenLabel></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing data.</RadzenText>
+            </RadzenColumn>
+        </RadzenRow>
+    </TopContent>
+</DynamicForm>
     ,
         new DialogOptions
         {
@@ -293,10 +301,10 @@
     {
         var item = new TItem();
         await dialog.OpenAsync($"New {ModelTitle}", ds =>
-        @<DynamicForm TItem="@TItem" 
-                      MetaProperties="@properties"
-                      Model="@item" 
-                      OnSubmit="@Submit_Add">
+        @<DynamicForm TItem="@TItem"
+                              MetaProperties="@properties"
+                              Model="@item"
+                              OnSubmit="@Submit_Add">
             <TopContent>
                 <RadzenRow>
                     <RadzenColumn Size="12" SizeMD="12">

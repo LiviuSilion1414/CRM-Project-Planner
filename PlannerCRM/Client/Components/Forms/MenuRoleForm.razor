@@ -1,4 +1,5 @@
-﻿@layout MainLayout 
+﻿@using static PlannerCRM.Shared.Dtos.DtoShared
+@layout MainLayout
 
 <RadzenCard>
     <RadzenText TextStyle="TextStyle.H3" Text="Menu Role Form" />
@@ -35,20 +36,14 @@
 
     <RadzenFieldset Text="Role">
         <RadzenRow class="mt-3">
-            <RadzenColumn Size="12" SizeMD="3">
-                <RadzenLabel>Role</RadzenLabel>
-            </RadzenColumn>
-            <RadzenColumn Size="12" SizeMD="8">
-                <RadzenDropDown TValue="@Guid"
-                Data="@roleList"
-                AllowFiltering="true"
-                Placeholder="Select a role"
-                AllowClear="true"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                TextProperty="@nameof(RoleDto.name)"
-                ValueProperty="@nameof(RoleDto.id)"
-                Style="width: 100%;"
-                @bind-Value="@Model.fkIdRole"/>
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenButton Icon="playlist_add_check" Text="New" Click="NewRole"></RadzenButton>
+
+                <DynamicGrid ApiController="@ApiUrl.EMPLOYEE_CONTROLLER"
+                             TItem="@RoleDto"
+                             ItemsList="@roleList.Where(x => Model.fkIdRole == x.id).ToList()"
+                             ModelTitle="Role"
+                             ShowControls="false"/>
             </RadzenColumn>
         </RadzenRow>
     </RadzenFieldset>
@@ -83,10 +78,10 @@
                 fkIdRoleNavigation = new RoleDto(),
             };
         }
-        await LoadRoles();
+        await LoadData();
     }
 
-    private async Task LoadRoles()
+    private async Task LoadData()
     {
         try
         {
@@ -98,9 +93,20 @@
             {
                 roleList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
             }
+
+            var menuRoleFilter = new MenuRoleFilterDto
+            {
+                id = Model.id
+            };
+
+            result = await fetch.Menu_Role_Get(menuRoleFilter);
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                Model = JsonSerializer.Deserialize<MenuRoleDto>(result.data.ToString());
+            }
+
             fetch.isBusy = false;
-        }
-        catch (Exception exc)
+        } catch (Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -119,8 +125,7 @@
                 if (IsInsert)
                 {
                     result = await fetch.Menu_Role_Insert(Model);
-                }
-                else
+                } else
                 {
                     result = await fetch.Menu_Role_Update(Model);
                 }
@@ -131,12 +136,24 @@
                     await fetch.LoadData(); //reloads the menu and refreshes current user data
                 }
                 fetch.isBusy = false;
-            }
-            catch (Exception exc)
+            } catch (Exception exc)
             {
                 notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
             }
         }
+    }
+
+    async Task NewRole()
+    {
+        await dialog.OpenAsync("Assign Role", ds =>
+        @<Menu_AddRoles MenuDto="@Model.fkIdMenuNavigation" rolesDtoList="@roleList" OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 
     void Cancel()

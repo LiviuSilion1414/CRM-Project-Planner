@@ -82,7 +82,7 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
             var menuRoles = await _context.MenuRoles
                                       .AsSplitQuery()
                                       .Include(x => x.FkIdMenuNavigation)
-                                      .Include(x => x.FkIdRoleNavigation)
+                                      .Include(x => x.FkIdRoleNavigation).ThenInclude(x => x.EmployeesRoles)
                                       .OrderBy(x => x.Id)
                                       .ToListAsync();
             var mappedResult = _mapper.Map<List<MenuRoleDto>>(menuRoles);
