@@ -9,18 +9,31 @@ using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Shared.Services;
 
-public partial class FetchService(LocalStorageService localStorage, HttpClient http, AuthService auth)
+public partial class FetchService
 {
-    private readonly HttpClient _http = http;
-    private readonly LocalStorageService _localStorage = localStorage;
-    private readonly AuthService _auth = auth;
+    private readonly HttpClient _http;
+    private readonly AuthService _auth;
+    private readonly LocalStorageService _localStorage;
 
     public CurrentUserDto? currentUser { get; set; } = new CurrentUserDto();
     public bool isBusy { get; set; }
     public string? token { get; set; }
+    public List<string> supportedControllers { get; set; } = new List<string>();
     public List<MenuRoleDto> menuRolesList { get; set; } = new List<MenuRoleDto>();
     public List<RoleDto> rolesList { get; set; } = new List<RoleDto>();
     public AuthenticationState authState { get; set; } = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+
+    public FetchService (LocalStorageService localStorage, HttpClient http, AuthService auth)
+    {
+        _http = http;
+        _localStorage = localStorage;
+        _auth = auth;
+        supportedControllers = typeof(ApiUrl)
+                          .GetFields()
+                          .Where(x => x.Name.EndsWith("_CONTROLLER"))
+                          .Select(x => x.Name)
+                          .ToList();
+    }
 
     // metodo chiamato nel layout principale e se le voci di menu sono state cambiate
     public async Task LoadData()

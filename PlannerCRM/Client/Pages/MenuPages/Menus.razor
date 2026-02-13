@@ -14,7 +14,7 @@
     </RadzenRow>
 </RadzenCard>
 
-<DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
+<DynamicGrid ApiController="@nameof(ApiUrl.MENU_CONTROLLER)"
              TItem="@MenuDto"
              ItemsList="@menuList"
              ModelTitle="Menu"

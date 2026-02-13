@@ -54,12 +54,18 @@
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Title="Linked Employees" TextAlign="TextAlign.Center">
             <Template Context="data">
-                @(data.employeeRolesList.Count)
+                <RadzenButton Click="@(() => ViewEmployeeList(data))">
+                    @(data.employeeRolesList.Count)
+
+                </RadzenButton>
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Title="Linked Menu's" TextAlign="TextAlign.Center">
             <Template Context="data">
-                @(data.menuRoleList.Count)
+                <RadzenButton Click="@(() => ViewMenuList(data))">
+                    @(data.menuRoleList.Count)
+
+                </RadzenButton>
             </Template>
         </RadzenDataGridColumn>
         <RadzenDataGridColumn TItem="RoleDto" Width="192px">
@@ -164,6 +170,50 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task ViewMenuList(RoleDto roleDto)
+    {
+        await dialog.OpenAsync("Menu role", ds =>
+            @<DynamicGrid TItem="@MenuDto" 
+                          ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).ToList()" 
+                          AllowControls="false"
+            OnReloadList="LoadData">
+            <Columns>
+                <RadzenDataGridColumn TItem="@MenuDto" Title="Icon best" Width="64px" TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+                    <Template Context="data">
+                        <RadzenIcon Icon="@data.icon" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </DynamicGrid>,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%"
+        });
+    }
+
+    async Task ViewEmployeeList(RoleDto roleDto)
+    {
+        await dialog.OpenAsync("Employee role", ds =>
+            @<DynamicGrid TItem="@EmployeeDto"
+                                  ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).ToList()"
+                                  AllowControls="false"
+                                  OnReloadList="LoadData">
+            <Columns>
+                <RadzenDataGridColumn TItem="@MenuDto" Title="Icon best" Width="64px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <RadzenIcon Icon="@data.icon" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </DynamicGrid>,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%"
+        });
     }
 
     private async Task OnAdd()
