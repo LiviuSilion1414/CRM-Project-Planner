@@ -10,7 +10,7 @@
     </RadzenCard>
 }
 
-@if (AllowControls)
+@if (AllowActionColumns || AllowInsert)
 {
     <RadzenCard class="mb-3">
         <RadzenRow class="mb-3">
@@ -44,7 +44,7 @@
                     PageSize="20"
                     PageSizeOptions="@pageSizeOptions">
         <HeaderTemplate>
-            @if (AllowControls)
+            @if (AllowInsert)
             {
                 <RadzenButton Icon="add_circle_outline"
                               ButtonStyle="ButtonStyle.Primary"
@@ -69,7 +69,7 @@
             {
                 @Columns
             }
-            @if (AllowControls)
+            @if (AllowActionColumns)
             {
                 @RenderDataGridActionColumn(ColumnActionType.Update)
                 @RenderDataGridActionColumn(ColumnActionType.View)
@@ -82,7 +82,8 @@
 @code {
     [Parameter] public string ApiController { get; set; }
     [Parameter] public string ModelTitle { get; set; }
-    [Parameter] public bool AllowControls { get; set; } = true;
+    [Parameter] public bool AllowActionColumns { get; set; } = false;
+    [Parameter] public bool AllowInsert { get; set; } = false;
     [Parameter] public List<TItem> ItemsList { get; set; } = new();
     [Parameter] public RenderFragment? TopContent { get; set; }
     [Parameter] public RenderFragment? Columns { get; set; }
@@ -98,17 +99,17 @@
 
     protected override void OnParametersSet()
     {
-        if (AllowControls)
+        if (AllowActionColumns || AllowInsert)
         {
             if (string.IsNullOrEmpty(ApiController))
             {
                 throw new ArgumentNullException("ApiController cannot be null");
             } else
             {
-                if (!fetch.supportedControllers.Contains(ApiController))
-                {
-                    throw new InvalidOperationException("ApiController must be an already declared controller");
-                }
+                // if (!fetch.supportedControllers.Contains(ApiController))
+                // {
+                //     throw new InvalidOperationException("ApiController must be an already declared controller");
+                // }
             }
         }
 
@@ -186,7 +187,7 @@
             <Template Context="data">
                 @if (columnActionType == ColumnActionType.Update)
                 {
-                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Info" Icon="open_in_new" Click="@(() => ViewRecord(data))"></RadzenButton>
+                    <RadzenButton Variant="Variant.Text" IconColor="@Colors.Primary" Icon="open_in_new" Click="@(() => ViewRecord(data))"></RadzenButton>
                 }
                 @if (columnActionType == ColumnActionType.View)
                 {

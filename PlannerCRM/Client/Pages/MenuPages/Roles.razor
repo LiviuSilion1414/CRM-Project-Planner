@@ -68,7 +68,7 @@
                 </RadzenButton>
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Width="192px">
+        <RadzenDataGridColumn TItem="RoleDto" Width="200px">
             <Template Context="data">
                 <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
             </Template>
@@ -177,8 +177,9 @@
         await dialog.OpenAsync("Menu role", ds =>
             @<DynamicGrid TItem="@MenuDto" 
                           ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).ToList()" 
-                          AllowControls="false"
-            OnReloadList="LoadData">
+                          AllowActionColumns="false"
+                          AllowInsert="false"
+                          OnReloadList="LoadData">
             <Columns>
                 <RadzenDataGridColumn TItem="@MenuDto" Title="Icon best" Width="64px" TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
                     <Template Context="data">
@@ -186,7 +187,8 @@
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>
-        </DynamicGrid>,
+        </DynamicGrid>
+    ,
         new DialogOptions
         {
             Width = "80%",
@@ -199,16 +201,9 @@
         await dialog.OpenAsync("Employee role", ds =>
             @<DynamicGrid TItem="@EmployeeDto"
                                   ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).ToList()"
-                                  AllowControls="false"
-                                  OnReloadList="LoadData">
-            <Columns>
-                <RadzenDataGridColumn TItem="@MenuDto" Title="Icon best" Width="64px" TextAlign="TextAlign.Center">
-                    <Template Context="data">
-                        <RadzenIcon Icon="@data.icon" />
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </DynamicGrid>,
+                                  AllowActionColumns="false"
+                                  AllowInsert="false"
+                                  OnReloadList="LoadData"/>,
         new DialogOptions
         {
             Width = "80%",

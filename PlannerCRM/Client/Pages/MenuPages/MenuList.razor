@@ -1,4 +1,4 @@
-﻿@page "/menus"
+﻿@page "/menu-list"
 @using static PlannerCRM.Shared.Dtos.DtoShared
 
 <h3>Menu List</h3>
@@ -14,11 +14,11 @@
     </RadzenRow>
 </RadzenCard>
 
-<DynamicGrid ApiController="@nameof(ApiUrl.MENU_CONTROLLER)"
+<DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
              TItem="@MenuDto"
              ItemsList="@menuList"
              ModelTitle="Menu"
-             OnReloadList="LoadData" />
+             OnReloadList="LoadData"/>
 
 @code
 {
