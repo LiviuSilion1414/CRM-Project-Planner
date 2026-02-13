@@ -78,7 +78,7 @@
 @code {
     [Parameter] public string ApiController { get; set; }
     [Parameter] public string ModelTitle { get; set; }
-    [Parameter] public bool ShowControls { get; set; } = true;
+    [Parameter] public bool AllowControls { get; set; } = true;
     [Parameter] public List<TItem> ItemsList { get; set; } = new();
     [Parameter] public RenderFragment? TopContent { get; set; }
     [Parameter] public EventCallback OnReset { get; set; }
