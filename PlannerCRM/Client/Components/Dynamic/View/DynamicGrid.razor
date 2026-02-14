@@ -44,14 +44,25 @@
                     PageSize="20"
                     PageSizeOptions="@pageSizeOptions">
         <HeaderTemplate>
-            @if (AllowInsert)
-            {
-                <RadzenButton Icon="add_circle_outline"
-                              ButtonStyle="ButtonStyle.Primary"
-                              Variant="Variant.Filled"
-                              Text="New"
-                              Click="@InsertRecord" />
-            }
+            <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+                <RadzenRow>
+                    <RadzenColumn Size="12">
+                        @if (AllowInsert)
+                        {
+                            <RadzenButton Icon="add_circle_outline"
+                                          ButtonStyle="ButtonStyle.Primary"
+                                          Variant="Variant.Filled"
+                                          Text="New"
+                                          Click="@InsertRecord" />
+                        }
+                    </RadzenColumn>
+                    <RadzenColumn Size="12">
+                        <RadzenFormField Text="Max word wrap" AllowFloatingLabel="true">
+                            <RadzenNumeric Style="width: 100%;" @bind-Value="@maxWordWrapLength" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
         </HeaderTemplate>
         <EmptyTemplate>
             <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
@@ -94,6 +105,7 @@
     [Parameter] public EventCallback<TItem> OnDelete { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
 
+    private int maxWordWrapLength = 500;
     private List<PropertyMeta> properties = new();
     IEnumerable<int> pageSizeOptions = new int[] { 20, 50, 100, 200 };
 
@@ -134,8 +146,9 @@
                     <Template Context="data">
                         @{
                             var value = meta.property.GetValue(data).ToString();
+                            var style = meta.isTextArea && meta.textAreaLength <= maxWordWrapLength ? "white-space:pre-wrap;" : "";
                         }
-                        <RadzenLabel Text="@value" MouseEnter="@((e) => ShowTooltip(e, value))" />
+                        <RadzenLabel Text="@value" Style="@style" MouseEnter="@((e) => ShowTooltip(e, value))" />
                     </Template>
                 </RadzenDataGridColumn>;
             } else if (meta.underlyingType == typeof(decimal))
@@ -349,18 +362,19 @@
 
             await dialog.OpenAsync($"New {ModelTitle}",
             ds =>@<DynamicForm TItem="@TItem"
-                                           MetaProperties="@properties"
-                                           Model="@newItem"
-                                           OnSubmit="@Submit_Add">
-                <TopContent>
-                    <RadzenRow>
-                        <RadzenColumn Size="12" SizeMD="12">
-                            <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">@(ModelTitle) Form</RadzenLabel></RadzenText>
-                            <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing data.</RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </TopContent>
-            </DynamicForm>,
+                               MetaProperties="@properties"
+                               Model="@newItem"
+                               OnSubmit="@Submit_Add">
+    <TopContent>
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">@(ModelTitle) Form</RadzenLabel></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing data.</RadzenText>
+            </RadzenColumn>
+        </RadzenRow>
+    </TopContent>
+</DynamicForm>
+    ,
             new DialogOptions
             {
                 Width = "80%",
@@ -371,5 +385,13 @@
         }
     }
 
-    void ShowTooltip(ElementReference elementReference, string text, TooltipOptions options = null) => tooltip.Open(elementReference, text, options);
+    void ShowTooltip(ElementReference elementReference, string text, TooltipOptions? options = null)
+    {
+        var tooltipOptions = options ?? new TooltipOptions();
+
+        tooltipOptions.Position = TooltipPosition.Bottom;
+        tooltipOptions.Style ??= "white-space:pre-wrap";
+
+        tooltip.Open(elementReference, text, tooltipOptions);
+    }
 }

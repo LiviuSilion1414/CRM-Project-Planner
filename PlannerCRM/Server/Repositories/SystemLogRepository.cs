@@ -90,7 +90,7 @@ public class SystemLogRepository(PlannerCrmContext context, IMapper mapper)
                                       .AsSplitQuery()
                                       .OrderBy(x => x.Id)
                                       .Where(x => (string.IsNullOrEmpty(filter.username) || x.Username.ToLower().Trim().Contains(filter.username.ToLower().Trim())) &&
-                                                  ((filter.dateFrom == null && filter.dateFrom == null) || filter.dateFrom < x.Date && filter.dateTo > x.Date) &&
+                                                  (filter.date == null || ((DateTime)filter.date).Date == ((DateTime)x.Date).Date) &&
                                                   (filter.fkIdProject == null || filter.fkIdProject == x.FkIdProject))
                                       .ToListAsync();
 

@@ -1,0 +1,73 @@
+﻿@page "/systemlog-list"
+@using static PlannerCRM.Shared.Dtos.DtoShared
+
+<h3>SystemLog List</h3>
+<PageTitle>SystemLog List</PageTitle>
+
+<RadzenCard class="mb-3">
+    <RadzenRow JustifyContent="JustifyContent.Stretch">
+        <RadzenColumn>
+            <RadzenFormField Text="Username" AllowFloatingLabel="false">
+                <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@username" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenFormField Text="Date" AllowFloatingLabel="false">
+                <RadzenDatePicker class="form-control" DateFormat="dd/MM/yyyy" @bind-Value="@date" />
+            </RadzenFormField>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<DynamicGrid ApiController="@ApiUrl.SYSTEMLOG_CONTROLLER"
+             AllowInsert="true"
+             AllowActionColumns="true"
+             TItem="@SystemLogDto"
+             ItemsList="@systemLogList"
+             ModelTitle="System Log"
+             OnReloadList="LoadData" />
+
+@code
+{
+    List<SystemLogDto> systemLogList = new();
+
+    string? username;
+    DateTime? date;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    async Task ResetData()
+    {
+        username = null;
+        date = null;
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var filter = new SystemLogFilterDto
+            {
+                username = username,
+                date = date
+            };
+
+            var result = await fetch.SystemLog_List(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                systemLogList = JsonSerializer.Deserialize<List<SystemLogDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+}

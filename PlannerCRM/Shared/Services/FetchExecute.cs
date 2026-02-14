@@ -327,4 +327,33 @@ public partial class FetchService
     }
 
     #endregion
+
+    #region SystemLog
+
+    public async Task<ResultDto> SystemLog_Insert(SystemLogDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> SystemLog_Update(SystemLogDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
+    }
+
+    public async Task<ResultDto> SystemLog_Delete(SystemLogFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ApiUrl.DELETE, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> SystemLog_Get(SystemLogFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ApiUrl.GET, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> SystemLog_List(SystemLogFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+    }
+
+    #endregion
 }

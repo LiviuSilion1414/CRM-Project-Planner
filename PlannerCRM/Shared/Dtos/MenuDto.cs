@@ -28,7 +28,6 @@ public partial class MenuDto
     public string? path { get; set; }
 
     [Required]
-    [MaxLength(50)]
     [Description("Ranking")]
     public int? ranking { get; set; }
 
