@@ -30,6 +30,13 @@ public static class DtoShared
         View
     }
 
+
+    public enum Projects
+    {
+        [Description("A114651F-3F6F-408D-8477-60087AB27A6D")] Api,
+        [Description("80051D73-9672-47EA-A616-65D03F7A67D1")] Backoffice,
+    }
+
     public enum BaseRoles
     {
         [Description("66FBECFE-5CEF-4ACE-9A04-23AFBAF1A3C4")] User,
@@ -62,6 +69,7 @@ public static class DtoShared
         public const string ROLE_CONTROLLER = "api/role/";
         public const string MENU_CONTROLLER = "api/menu/";
         public const string SETTINGS_CONTROLLER = "api/settings/";
+        public const string SYSTEMLOG_CONTROLLER = "api/systemlog/";
         public const string WORKORDER_CONTROLLER = "api/workorder/";
         public const string WORKTIME_CONTROLLER = "api/worktime/";
 

@@ -55,5 +55,13 @@ public class AutoMapperProfile : Profile
         CreateMap<Setting, SettingDto>()
             .PreserveReferences()
             .ReverseMap();
+
+        CreateMap<SystemLog, SystemLogDto>()
+            .PreserveReferences()
+            .ReverseMap();
+
+        CreateMap<Project, ProjectDto>()
+            .PreserveReferences()
+            .ReverseMap();
     }
 }

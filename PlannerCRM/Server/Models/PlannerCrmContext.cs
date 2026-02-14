@@ -31,6 +31,8 @@ public partial class PlannerCrmContext : DbContext
 
     public virtual DbSet<MenuRole> MenuRoles { get; set; }
 
+    public virtual DbSet<Project> Projects { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Setting> Settings { get; set; }
@@ -163,6 +165,17 @@ public partial class PlannerCrmContext : DbContext
                 .HasConstraintName("FK_MenuRoles_Roles");
         });
 
+        modelBuilder.Entity<Project>(entity =>
+        {
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())", "DF_Projects_id")
+                .HasColumnName("id");
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnName("title");
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())", "DF_Roles_Id");
@@ -203,12 +216,17 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.Endpoint)
                 .HasMaxLength(500)
                 .HasColumnName("endpoint");
+            entity.Property(e => e.FkIdProject).HasColumnName("fkIdProject");
             entity.Property(e => e.Reason).HasColumnName("reason");
             entity.Property(e => e.Request).HasColumnName("request");
             entity.Property(e => e.Stacktrace).HasColumnName("stacktrace");
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .HasColumnName("username");
+
+            entity.HasOne(d => d.FkIdProjectNavigation).WithMany(p => p.SystemLogs)
+                .HasForeignKey(d => d.FkIdProject)
+                .HasConstraintName("FK_SystemLog_Projects");
         });
 
         modelBuilder.Entity<WorkOrder>(entity =>

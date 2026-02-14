@@ -18,4 +18,8 @@ public partial class SystemLog
     public string Username { get; set; }
 
     public string Request { get; set; }
+
+    public Guid? FkIdProject { get; set; }
+
+    public virtual Project FkIdProjectNavigation { get; set; }
 }

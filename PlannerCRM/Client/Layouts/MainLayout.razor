@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@using static PlannerCRM.Shared.Dtos.DtoShared
 @inherits LayoutComponentBase
 
 @inject NavigationManager nav
@@ -65,7 +66,27 @@
                     </RadzenStack>
                 </RadzenSidebar>
                 <RadzenBody>
-                    @Body
+                    <ErrorBoundary>
+                        <ChildContent>
+                            @Body
+                        </ChildContent>
+                        <ErrorContent Context="exception">
+                            <div class="rz-p-4 rz-m-4 rz-border rz-border-danger rz-border-radius">
+
+                                <RadzenAlert AlertStyle="AlertStyle.Danger" Style="margin-bottom:15px">
+                                    An error occured.
+                                </RadzenAlert>
+
+                                <div style="margin-top:15px">
+                                    <RadzenButton Text="Send Feedback"
+                                                  Icon="bug_report"
+                                                  ButtonStyle="ButtonStyle.Danger"
+                                                  Click="@(() => LogException(exception))" />
+                                </div>
+
+                            </div>
+                        </ErrorContent>
+                    </ErrorBoundary>
                 </RadzenBody>
             }
         </RadzenLayout>
@@ -93,6 +114,31 @@
         if (menuitem.Text.Equals("Logout"))
         {
             await Logout();
+        }
+    }
+
+    async Task LogException(Exception ex)
+    {
+        var systemLog = new SystemLogDto
+        {
+            date = DateTime.Now,
+            endpoint = nav.BaseUri,
+            reason = ex.Message,
+            stacktrace = ex.StackTrace,
+            username = fetch.currentUser.name,
+            request = null,
+            fkIdProject = Guid.Parse(Projects.Backoffice.GetDescription())
+        };
+
+        ResultDto result = await fetch.Dynamic_ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ActionType.Insert, systemLog);
+        if (result.hasCompleted && result.messageType == MessageType.Success)
+        {
+            notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+            nav.Refresh(forceReload: true);
+        }
+        else
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
         }
     }
 

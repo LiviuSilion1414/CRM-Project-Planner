@@ -14,6 +14,8 @@
     </RadzenRow>
 </RadzenCard>
 
+<RadzenButton Text="Divide by zero" Click="@Divide"/>
+
 <DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
              AllowInsert="true"
              AllowActionColumns="true"
@@ -31,8 +33,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //await LoadData();
-        throw new Exception();
+        await LoadData();
+    }
+
+    void Divide()
+    {
+        int v = 0;
+        var r = 150 / v;
     }
 
     async Task ResetData()
