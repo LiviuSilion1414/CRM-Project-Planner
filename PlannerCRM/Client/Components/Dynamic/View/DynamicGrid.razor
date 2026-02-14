@@ -10,7 +10,7 @@
     </RadzenCard>
 }
 
-@if (AllowActionColumns || AllowInsert)
+@if (AllowDelete || AllowInsert)
 {
     <RadzenCard class="mb-3">
         <RadzenRow class="mb-3">
@@ -56,11 +56,14 @@
                                           Click="@InsertRecord" />
                         }
                     </RadzenColumn>
-                    <RadzenColumn Size="12">
-                        <RadzenFormField Text="Max word wrap" AllowFloatingLabel="true">
-                            <RadzenNumeric Style="width: 100%;" @bind-Value="@maxWordWrapLength" />
-                        </RadzenFormField>
-                    </RadzenColumn>
+                    @if (AllowWordWrapHandling)
+                    {
+                        <RadzenColumn Size="12">
+                            <RadzenFormField Text="Max word wrap" AllowFloatingLabel="true">
+                                <RadzenNumeric Style="width: 100%;" @bind-Value="@maxWordWrapLength" />
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    }
                 </RadzenRow>
             </RadzenStack>
         </HeaderTemplate>
@@ -72,18 +75,31 @@
             </RadzenStack>
         </EmptyTemplate>
         <Columns>
-            @foreach (var prop in properties)
+            @if (MainColumns != null)
             {
-                @RenderDataGridColumn(prop)
-            }
-            @if (Columns != null)
+                @MainColumns                
+            } 
+            else
             {
-                @Columns
+
+                @foreach (var prop in properties)
+                {
+                    @RenderDataGridColumn(prop)
+                }
             }
-            @if (AllowActionColumns)
+
+            @if (ExtraColumns != null)
+            {
+                @ExtraColumns
+            }
+
+            @RenderDataGridActionColumn(ColumnActionType.View)
+            @if (AllowDelete)
             {
                 @RenderDataGridActionColumn(ColumnActionType.Update)
-                @RenderDataGridActionColumn(ColumnActionType.View)
+            }
+            @if (AllowDelete)
+            {
                 @RenderDataGridActionColumn(ColumnActionType.Delete)
             }
         </Columns>
@@ -93,11 +109,14 @@
 @code {
     [Parameter] public string ApiController { get; set; }
     [Parameter] public string ModelTitle { get; set; }
-    [Parameter] public bool AllowActionColumns { get; set; } = false;
-    [Parameter] public bool AllowInsert { get; set; } = false;
+    [Parameter] public bool AllowUpdate { get; set; } = true;
+    [Parameter] public bool AllowDelete { get; set; } = true;
+    [Parameter] public bool AllowInsert { get; set; } = true;
+    [Parameter] public bool AllowWordWrapHandling { get; set; } = false;
     [Parameter] public List<TItem> ItemsList { get; set; } = new();
     [Parameter] public RenderFragment? TopContent { get; set; }
-    [Parameter] public RenderFragment? Columns { get; set; }
+    [Parameter] public RenderFragment? MainColumns { get; set; }
+    [Parameter] public RenderFragment? ExtraColumns { get; set; }
     [Parameter] public EventCallback OnReset { get; set; }
     [Parameter] public EventCallback<TItem> OnInsert { get; set; }
     [Parameter] public EventCallback<TItem> OnUpdate { get; set; }
@@ -111,7 +130,7 @@
 
     protected override void OnParametersSet()
     {
-        if (AllowActionColumns || AllowInsert)
+        if (AllowUpdate || AllowDelete || AllowInsert)
         {
             if (string.IsNullOrEmpty(ApiController))
             {

@@ -14,11 +14,10 @@
     </RadzenRow>
 </RadzenCard>
 
-<RadzenButton Text="Divide by zero" Click="@Divide"/>
-
 <DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
              AllowInsert="true"
-             AllowActionColumns="true"
+             AllowUpdate="true"
+             AllowDelete="true"
              TItem="@MenuDto"
              ItemsList="@menuList"
              ModelTitle="Menu"
@@ -33,12 +32,6 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
-    }
-
-    void Divide()
-    {
-        int v = 0;
-        var r = 150 / v;
     }
 
     async Task ResetData()
@@ -62,7 +55,7 @@
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
-                menuList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
+                menuList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString()).OrderByDescending(x => x.ranking).ToList();
             }
             fetch.isBusy = false;
         } catch

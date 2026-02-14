@@ -177,16 +177,17 @@
         await dialog.OpenAsync("Menu role", ds =>
             @<DynamicGrid TItem="@MenuDto" 
                           ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).ToList()" 
-                          AllowActionColumns="false"
+                          AllowUpdate="true"
+                          AllowDelete="true"
                           AllowInsert="false"
                           OnReloadList="LoadData">
-            <Columns>
+            <ExtraColumns>
                 <RadzenDataGridColumn TItem="@MenuDto" Title="Icon best" Width="64px" TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
                     <Template Context="data">
                         <RadzenIcon Icon="@data.icon" />
                     </Template>
                 </RadzenDataGridColumn>
-            </Columns>
+            </ExtraColumns>
         </DynamicGrid>
     ,
         new DialogOptions
@@ -201,7 +202,8 @@
         await dialog.OpenAsync("Employee role", ds =>
             @<DynamicGrid TItem="@EmployeeDto"
                                   ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).ToList()"
-                                  AllowActionColumns="false"
+                                 AllowUpdate="true"
+                                 AllowDelete="true"
                                   AllowInsert="false"
                                   OnReloadList="LoadData"/>,
         new DialogOptions

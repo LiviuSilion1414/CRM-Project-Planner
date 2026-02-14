@@ -88,7 +88,7 @@ public class SystemLogRepository(PlannerCrmContext context, IMapper mapper)
             var settings = await _context.SystemLogs
                                       .AsNoTracking()
                                       .AsSplitQuery()
-                                      .OrderBy(x => x.Id)
+                                      .OrderByDescending(x => x.Date)
                                       .Where(x => (string.IsNullOrEmpty(filter.username) || x.Username.ToLower().Trim().Contains(filter.username.ToLower().Trim())) &&
                                                   (filter.date == null || ((DateTime)filter.date).Date == ((DateTime)x.Date).Date) &&
                                                   (filter.fkIdProject == null || filter.fkIdProject == x.FkIdProject))
