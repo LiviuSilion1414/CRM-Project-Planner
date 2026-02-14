@@ -68,7 +68,7 @@ public partial class FetchService
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
-                menuRolesList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString());
+                menuRolesList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString()).OrderBy(x => x.fkIdMenuNavigation.ranking).ToList();
             }
             isBusy = false;
         } 

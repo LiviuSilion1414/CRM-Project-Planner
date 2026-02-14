@@ -49,10 +49,12 @@ public static class DynamicPropertyMetaLoader
                         return new PropertyMeta
                         {
                             property = p,
-                            label = p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name,
+                            isNullable = isNullable,
                             underlyingType = underlyingType,
+                            label = p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name,
                             isRequired = p.GetCustomAttribute<RequiredAttribute>() != null,
-                            isNullable = isNullable
+                            isTextArea = p.GetCustomAttribute<MaxLengthAttribute>() != null,
+                            textAreaLength = p.GetCustomAttribute<MaxLengthAttribute>() != null ? p.GetCustomAttribute<MaxLengthAttribute>().Length : 0
                         };
                     })
                     .ToList();

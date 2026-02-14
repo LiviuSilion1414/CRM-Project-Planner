@@ -27,6 +27,11 @@ public partial class MenuDto
     [Description("Path")]
     public string? path { get; set; }
 
+    [Required]
+    [MaxLength(50)]
+    [Description("Ranking")]
+    public int? ranking { get; set; }
+
     public virtual ICollection<MenuRoleDto> MenuRoles { get; set; } = new List<MenuRoleDto>();
 
 }

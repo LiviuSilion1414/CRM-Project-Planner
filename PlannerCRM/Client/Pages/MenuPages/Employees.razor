@@ -53,7 +53,9 @@
     </RadzenCard>
 
     <DynamicGrid ApiController="@ApiUrl.EMPLOYEE_CONTROLLER"
-                 TItem="@EmployeeDto"
+                 TItem="@EmployeeDto" 
+                 AllowInsert="true"
+                 AllowActionColumns="true"
                  ItemsList="@_employees"
                  ModelTitle="Employee"
                  OnReloadList="LoadData"

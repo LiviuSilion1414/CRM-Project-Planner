@@ -15,5 +15,7 @@ public partial class Menu
 
     public bool? IsDropdown { get; set; }
 
+    public int? Ranking { get; set; }
+
     public virtual ICollection<MenuRole> MenuRoles { get; set; } = new List<MenuRole>();
 }

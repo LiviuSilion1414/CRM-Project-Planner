@@ -42,7 +42,7 @@
             {
                 <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
                     <RadzenPanelMenu>
-                        @foreach (var menuRole in fetch.menuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id))
+                        @foreach (var menuRole in fetch.menuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id).OrderBy(x => x.fkIdMenuNavigation.ranking))
                         {
                             @if (fetch.currentUser.rolesList.Contains(menuRole.fkIdRoleNavigation.name))
                             {

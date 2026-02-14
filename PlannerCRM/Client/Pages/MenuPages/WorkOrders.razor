@@ -1,4 +1,5 @@
 ﻿@page "/workOrders"
+@using static PlannerCRM.Shared.Dtos.DtoShared
 
 <h3>Work Orders</h3>
 <PageTitle>Work Orders</PageTitle>
@@ -9,96 +10,48 @@
 }
 else
 {
-    <RadzenCard>
-        @if ((isInsert || isEdit || isView || isActivityView) && (_selectedWorkOrder is not null || _selectedActivity is not null))
-        {
-            <RadzenRow>
-                <RadzenColumn SizeLG="12" SizeMD="12" SizeSM="12">
-                    <RadzenButton Icon="chevron_left" ButtonStyle="ButtonStyle.Primary" Text="Back to list" Click="ResetFlags"></RadzenButton>
-                </RadzenColumn>
-            </RadzenRow>
-        }
-
-        @if (isInsert && _selectedWorkOrder is not null)
-        {
-            <WorkOrderForm Model="@_selectedWorkOrder" IsInsert="true" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
-        }
-        else if (isEdit && _selectedWorkOrder is not null)
-        {
-            <WorkOrderForm Model="@_selectedWorkOrder" IsInsert="false" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
-        }
-        else if (isView && _selectedWorkOrder is not null)
-        {
-            <WorkOrderDialog SelectedWorkOrder="_selectedWorkOrder" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
-        }
-        else if (isActivityView && _selectedActivity is not null)
-        {
-            <ActivityDialog SelectedActivity="_selectedActivity" OnReloadList="@(() => LoadData(new WorkOrderFilterDto()))" />
-        }
-        else
-        {
-            <WorkOrders_MasterDetail Clients="_clients"
-            WorkOrders="_workOrders"
-            OnSearch="LoadData"
-            OnReset="ResetData"
-            OnActivityOverview="OnSelectActivity"
-            OnAddWorkOrder="OnAdd"
-            OnEditWorkOrder="OnEdit"
-            OnDeleteWorkOrder="OnDelete">
-            </WorkOrders_MasterDetail>
-        }
+    <RadzenCard class="mb-3">
+        <RadzenRow JustifyContent="JustifyContent.Stretch">
+            <RadzenColumn>
+                <RadzenFormField Text="Title" AllowFloatingLabel="false">
+                    <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@title" />
+                </RadzenFormField>
+            </RadzenColumn>
+        </RadzenRow>
     </RadzenCard>
+
+    <DynamicGrid ApiController="@ApiUrl.WORKORDER_CONTROLLER"
+                    TItem="@WorkOrderDto" 
+                    AllowInsert="true"
+                    AllowActionColumns="true"
+                    ItemsList="@_workOrders"
+                    ModelTitle="Work Order"
+                    OnReloadList="LoadData"
+                    OnReset="@ResetData" />
+
 }
 
 @code
 {
     private List<WorkOrderDto> _workOrders = new();
-    private List<FirmClientDto> _clients = new();
 
-    WorkOrderDto? _selectedWorkOrder = new WorkOrderDto();
-    ActivityDto? _selectedActivity = new ActivityDto();
-
-    private bool isInsert = false;
-    private bool isView = false;
-    private bool isEdit = false;
-    private bool isActivityView = false;
+    private string? title;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadClients();
-        await LoadData(new WorkOrderFilterDto());
+        await LoadData();
     }
 
-    private async Task LoadClients()
+    private async Task LoadData()
     {
         try
         {
             fetch.isBusy = true;
 
-            var result = await fetch.FirmClient_List(new FirmClientFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            WorkOrderFilterDto filter = new WorkOrderFilterDto()
             {
-                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
-            }
-            fetch.isBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    async Task ResetData()
-    {
-        await LoadData(new WorkOrderFilterDto());
-    }
-
-    private async Task LoadData(WorkOrderFilterDto filter)
-    {
-        try
-        {
-            fetch.isBusy = true;
+                searchQuery = title
+            };
 
             var result = await fetch.WorkOrder_List(new WorkOrderFilterDto());
 
@@ -114,64 +67,11 @@ else
         }
     }
 
-    private void ResetFlags()
+    private async Task ResetData()
     {
-        isActivityView = false;
-        isView = false;
-        isEdit = false;
-        isInsert = false;
-        _selectedWorkOrder = null;
-        _selectedActivity = null;
+        title = null;
+
+        await LoadData();
     }
 
-    void OnAdd()
-    {
-        _selectedWorkOrder = new();
-        isInsert = !isInsert;
-    }
-
-    void OnEdit(WorkOrderDto workOrder)
-    {
-        _selectedWorkOrder = workOrder;
-        isEdit = !isEdit;
-    }
-
-    void OnSelect(WorkOrderDto workOrder)
-    {
-        _selectedWorkOrder = workOrder;
-        isView = !isView;
-    }
-
-    void OnSelectActivity(ActivityDto activity)
-    {
-        _selectedActivity = activity;
-        isActivityView = !isActivityView;
-    }
-
-    private async Task OnDelete(WorkOrderDto workOrder)
-    {
-        try
-        {
-            if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", null)).Value)
-            {
-                var filter = new WorkOrderFilterDto() { workOrderId = workOrder.id };
-
-                var result = await fetch.WorkOrder_Delete(filter);
-
-                if (result.hasCompleted && result.messageType == MessageType.Success)
-                {
-                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                    await LoadData(new WorkOrderFilterDto());
-                }
-                else
-                {
-                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
-                }
-            }
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
 }

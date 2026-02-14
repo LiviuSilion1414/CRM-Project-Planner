@@ -138,6 +138,7 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.Path)
                 .HasMaxLength(50)
                 .HasColumnName("path");
+            entity.Property(e => e.Ranking).HasColumnName("ranking");
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
                 .HasColumnName("title");
