@@ -60,6 +60,7 @@
                  ItemsList="@_employees"
                  ModelTitle="Employee"
                  OnReloadList="LoadData"
+                 OnAdvancedUpdate="UpdateRecord"
                  OnReset="@ResetData" />
 }
 
@@ -113,5 +114,18 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task UpdateRecord(EmployeeDto item)
+    {
+        await dialog.OpenAsync($"Advanced editing", ds =>
+        @<EmployeeForm employeeDto="@item" IsInsert="false" OnReloadList="LoadData"/>,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 }

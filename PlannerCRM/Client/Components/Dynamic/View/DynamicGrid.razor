@@ -43,7 +43,7 @@
                     AllowFiltering="@AllowFiltering"
                     AllowPaging="true"
                     PageSize="20"
-                    AllowRowSelectOnRowClick="@AllowSelection"
+                    AllowRowSelectOnRowClick="false"
                     SelectionMode="DataGridSelectionMode.Multiple"
                     @bind-Value="@selectedItems"
                     PageSizeOptions="@pageSizeOptions">
@@ -118,14 +118,15 @@
                 @ExtraColumns
             }
 
-            @RenderDataGridActionColumn(ColumnActionType.View)
+            @RenderDataGridActionColumn(ColumnActionType.VIEW)
             @if (AllowUpdate)
             {
-                @RenderDataGridActionColumn(ColumnActionType.Update)
+                @RenderDataGridActionColumn(ColumnActionType.UPDATE)
+                @RenderDataGridActionColumn(ColumnActionType.ADVANCED_UPDATE)
             }
             @if (AllowDelete)
             {
-                @RenderDataGridActionColumn(ColumnActionType.Delete)
+                @RenderDataGridActionColumn(ColumnActionType.DELETE)
             }
         </Columns>
     </RadzenDataGrid>
@@ -147,6 +148,7 @@
     [Parameter] public RenderFragment? ExtraColumns { get; set; }
     [Parameter] public EventCallback OnReset { get; set; }
     [Parameter] public EventCallback<TItem> OnInsert { get; set; }
+    [Parameter] public EventCallback<TItem> OnAdvancedUpdate { get; set; }
     [Parameter] public EventCallback<TItem> OnUpdate { get; set; }
     [Parameter] public EventCallback<TItem> OnView { get; set; }
     [Parameter] public EventCallback<TItem> OnDelete { get; set; }
@@ -251,17 +253,21 @@
             <Template Context="data">
                 @if (ContainsItem(data) == false)
                 {
-                    @if (columnActionType == ColumnActionType.View)
+                    @if (columnActionType == ColumnActionType.VIEW)
                     {
-                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.Primary" Icon="open_in_new" Click="@(() => ViewRecord(data))"></RadzenButton>
+                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.Primary" Icon="open_in_new" Click="@(() => ViewRecord(data))" MouseEnter="@((e) => ShowTooltip(e, "View Record"))"></RadzenButton>
                     }
-                    @if (columnActionType == ColumnActionType.Update)
+                    else if (columnActionType == ColumnActionType.UPDATE)
                     {
-                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.Secondary" Icon="edit" Click="@(() => UpdateRecord(data))"></RadzenButton>
+                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.Secondary" Icon="bolt" Click="@(() => UpdateRecord(data))" MouseEnter="@((e) => ShowTooltip(e, "Fast Update"))"></RadzenButton>
                     }
-                    @if (columnActionType == ColumnActionType.Delete)
+                    else if (columnActionType == ColumnActionType.ADVANCED_UPDATE)
                     {
-                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => DeleteRecord(data))"></RadzenButton>
+                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.PrimaryLight" Icon="edit" Click="@(() => AdvancedUpdateRecord(data))" MouseEnter="@((e) => ShowTooltip(e, "Advanced Update"))"></RadzenButton>
+                    }
+                    else if (columnActionType == ColumnActionType.DELETE)
+                    {
+                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => DeleteRecord(data))" MouseEnter="@((e) => ShowTooltip(e, "Delete Record"))"></RadzenButton>
                     }
                 }
             </Template>
@@ -329,7 +335,7 @@
             await OnDelete.InvokeAsync(item);
         } else
         {
-            bool? confirm = await dialog.Confirm("Are you really sure you want to permanently delete this record? The operation is irreversible", "Delete record");
+            bool? confirm = await dialog.Confirm("Are you really sure you want to permanently delete this record? The operation is irreversible", "DELETE record");
             var result = new ResultDto();
 
             if (confirm != null && confirm == true)
@@ -357,7 +363,7 @@
     private async Task DeleteMultipleRecords()
     {
 
-        bool? confirm = await dialog.Confirm("Are you really sure you want to permanently delete THE SELECTED records? The operation is irreversible!!!", "Delete selected records");
+        bool? confirm = await dialog.Confirm("Are you really sure you want to permanently delete THE SELECTED records? The operation is irreversible!!!", "DELETE selected records");
         var result = new ResultDto();
 
         if (confirm != null && confirm == true)
@@ -406,6 +412,11 @@
                 ShowClose = true
             });
         }
+    }
+
+    async Task AdvancedUpdateRecord(TItem item)
+    {
+        await OnAdvancedUpdate.InvokeAsync(item);
     }
 
     async Task UpdateRecord(TItem item)

@@ -26,9 +26,10 @@ public static class DtoShared
 
     public enum ColumnActionType
     {
-        Update,
-        Delete,
-        View
+        ADVANCED_UPDATE,
+        UPDATE,
+        DELETE,
+        VIEW
     }
 
 
