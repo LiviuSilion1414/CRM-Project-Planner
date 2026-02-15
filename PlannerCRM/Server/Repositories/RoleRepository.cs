@@ -60,6 +60,28 @@ public class RoleRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
+    public async Task DeleteMultiple(List<Guid?> idList)
+    {
+        try
+        {
+            var itemsList = await _context.Roles
+                                         .AsNoTracking()
+                                         .AsSplitQuery()
+                                         .Include(a => a.MenuRoles)
+                                         .Include(a => a.EmployeesRoles)
+                                         .Where(a => idList.Contains(a.Id))
+                                         .ToListAsync();
+
+            _context.RemoveRange(itemsList);
+
+            await _context.SaveChangesAsync();
+        } catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<RoleDto> Get(RoleFilterDto filter)
     {
         try

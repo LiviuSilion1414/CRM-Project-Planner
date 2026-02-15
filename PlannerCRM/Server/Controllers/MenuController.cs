@@ -106,6 +106,37 @@ public class MenuController(PlannerCrmContext context, IMapper mapper) : Control
     }
 
     [HttpPost]
+    [Route(ApiUrl.DELETE_MULTIPLE)]
+    public async Task<ResultDto> DeleteMultiple([FromBody] List<Guid?> idList)
+    {
+        try
+        {
+            await _repo.DeleteMultiple(idList);
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } catch (Exception ex)
+        {
+            await _systemLog.WriteLog(ApiUrl.ACTIVITY_CONTROLLER + ApiUrl.DELETE_MULTIPLE, ex, User?.Identity, idList);
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.BadRequest
+            };
+        }
+    }
+
+    [HttpPost]
     [Route(ApiUrl.GET)]
     public async Task<ResultDto> Get(MenuFilterDto filter)
     {

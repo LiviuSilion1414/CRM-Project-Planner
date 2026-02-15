@@ -226,7 +226,7 @@
 
     private async Task OnEdit(RoleDto role)
     {
-        await dialog.OpenAsync("Update role", ds =>
+        await dialog.OpenAsync("UPDATE role", ds =>
             @<RoleForm Model="@role" IsInsert=false OnReloadList="LoadData" />,
         new DialogOptions
         {
@@ -240,7 +240,7 @@
     {
         try
         {
-            if ((await dialog.Confirm("Do you really want to remove this role?. This action cannot be reversed.", "Delete role")).Value)
+            if ((await dialog.Confirm("Do you really want to remove this role?. This action cannot be reversed.", "DELETE role")).Value)
             {
                 var filter = new RoleFilterDto() { roleId = role.id };
 

@@ -55,7 +55,7 @@
 
     private async Task OnEdit()
     {
-        // await dialog.OpenAsync<WorkOrderForm>("Update workOrder",
+        // await dialog.OpenAsync<WorkOrderForm>("UPDATE workOrder",
         //     new Dictionary<string, object>()
         //     {
         //         { nameof(WorkOrderForm.Model), SelectedWorkOrder },
@@ -92,7 +92,7 @@
     {
         try
         {
-            if ((await dialog.Confirm("Confirm this item removal", "Delete workorder", null)).Value)
+            if ((await dialog.Confirm("Confirm this item removal", "DELETE workorder", null)).Value)
             {
                 var filter = new WorkOrderFilterDto() { workOrderId = SelectedWorkOrder.id };
 

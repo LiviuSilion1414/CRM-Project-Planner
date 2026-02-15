@@ -64,6 +64,26 @@ public class SettingRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
+
+    public async Task DeleteMultiple(List<Guid?> idList)
+    {
+        try
+        {
+            var itemsList = await _context.Settings
+                                         .AsNoTracking()
+                                         .Where(a => idList.Contains(a.Id))
+                                         .ToListAsync();
+
+            _context.RemoveRange(itemsList);
+
+            await _context.SaveChangesAsync();
+        } catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<SettingDto> Get(SettingFilterDto filter)
     {
         try

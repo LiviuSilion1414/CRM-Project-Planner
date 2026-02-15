@@ -63,6 +63,27 @@ public class MenuRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
+    public async Task DeleteMultiple(List<Guid?> idList)
+    {
+        try
+        {
+            var itemsList = await _context.Menus
+                                         .AsNoTracking()
+                                         .AsSplitQuery()
+                                         .Include(a => a.MenuRoles)
+                                         .Where(a => idList.Contains(a.Id))
+                                         .ToListAsync();
+
+            _context.RemoveRange(itemsList);
+
+            await _context.SaveChangesAsync();
+        } catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<MenuDto> Get(MenuFilterDto filter)
     {
         try

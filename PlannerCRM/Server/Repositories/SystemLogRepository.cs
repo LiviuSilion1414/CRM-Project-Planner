@@ -66,6 +66,27 @@ public class SystemLogRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
+
+    public async Task DeleteMultiple(List<Guid?> idList)
+    {
+        try
+        {
+            var itemsList = await _context.SystemLogs
+                                         .AsNoTracking()
+                                         .Where(a => idList.Contains(a.Id))
+                                         .ToListAsync();
+
+            _context.RemoveRange(itemsList);
+
+            await _context.SaveChangesAsync();
+        } catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+
     public async Task<SystemLogDto> Get(SystemLogFilterDto filter)
     {
         try

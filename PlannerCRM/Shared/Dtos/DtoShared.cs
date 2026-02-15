@@ -18,9 +18,10 @@ public static class DtoShared
 
     public enum ActionType
     {
-        Insert,
-        Update,
-        Delete
+        INSERT,
+        UPDATE,
+        DELETE,
+        DELETE_MULTIPLE
     }
 
     public enum ColumnActionType
@@ -78,6 +79,7 @@ public static class DtoShared
         public const string INSERT = "insert";
         public const string UPDATE = "update";
         public const string DELETE = "delete";
+        public const string DELETE_MULTIPLE = "deleteMultiple";
         public const string GET = "get";
         public const string LIST = "list";
     }

@@ -166,17 +166,21 @@ public partial class FetchService
     {
         try
         {
-            if (actionType == ActionType.Insert)
+            if (actionType == ActionType.INSERT)
             {
                 return await ExecuteAsync(controllerName, ApiUrl.INSERT, data, ApiType.Post);
             }
-            if (actionType == ActionType.Update)
+            else if (actionType == ActionType.UPDATE)
             {
                 return await ExecuteAsync(controllerName, ApiUrl.UPDATE, data, ApiType.Put);
             }
-            if (actionType == ActionType.Delete)
+            else if (actionType == ActionType.DELETE)
             {
                 return await ExecuteAsync(controllerName, ApiUrl.DELETE, data, ApiType.Post);
+            }
+            else if (actionType == ActionType.DELETE_MULTIPLE)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.DELETE_MULTIPLE, data, ApiType.Post);
             }
 
             return new ResultDto
@@ -189,6 +193,38 @@ public partial class FetchService
             };
         } 
         catch (Exception exc)
+        {
+            throw;
+        }
+    }
+
+    public async Task<ResultDto> Dynamic_ExecuteAsync<Guid>(string controllerName, ActionType actionType, List<Guid?> data)
+    {
+        try
+        {
+            if (actionType == ActionType.INSERT)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.INSERT, data, ApiType.Post);
+            } else if (actionType == ActionType.UPDATE)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.UPDATE, data, ApiType.Put);
+            } else if (actionType == ActionType.DELETE)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.DELETE, data, ApiType.Post);
+            } else if (actionType == ActionType.DELETE_MULTIPLE)
+            {
+                return await ExecuteAsync(controllerName, ApiUrl.DELETE_MULTIPLE, data, ApiType.Post);
+            }
+
+            return new ResultDto
+            {
+                data = null,
+                hasCompleted = false,
+                messageType = MessageType.Error,
+                statusCode = System.Net.HttpStatusCode.ServiceUnavailable,
+                message = string.Empty,
+            };
+        } catch (Exception exc)
         {
             throw;
         }

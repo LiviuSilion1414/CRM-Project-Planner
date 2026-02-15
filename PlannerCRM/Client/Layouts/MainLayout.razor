@@ -139,7 +139,7 @@
             fkIdProject = Guid.Parse(Projects.Backoffice.GetDescription())
         };
 
-        ResultDto result = await fetch.Dynamic_ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ActionType.Insert, systemLog);
+        ResultDto result = await fetch.Dynamic_ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ActionType.INSERT, systemLog);
         if (result.hasCompleted && result.messageType == MessageType.Success)
         {
             notification.Notify(NotificationSeverity.Success, result.message, null, 4000);

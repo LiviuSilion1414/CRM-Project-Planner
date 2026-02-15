@@ -129,7 +129,7 @@
 
     private async Task OnEdit()
     {
-        await dialog.OpenAsync("Update activity", ds =>
+        await dialog.OpenAsync("UPDATE activity", ds =>
             @<ActivityForm 
                     Model=@SelectedActivity
                     IsInsert=@false
@@ -146,7 +146,7 @@
     {
         try
         {
-            if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
+            if ((await dialog.Confirm("Confirm this item removal", "DELETE activity", null)).Value)
             {
                 var filter = new ActivityFilterDto() { activityId = SelectedActivity.id };
 
@@ -176,7 +176,7 @@
 
     async Task OpenWorkOrderDetails(WorkOrderDto workOrder)
     {
-        //     await dialog.OpenAsync<WorkOrderForm>("Update workOrder",
+        //     await dialog.OpenAsync<WorkOrderForm>("UPDATE workOrder",
         //     new Dictionary<string, object>()
         //                 {
         //             { nameof(WorkOrderForm.Model), workOrder },
@@ -188,7 +188,7 @@
 
     private async Task OpenClientDetails(FirmClientDto client)
     {
-        //     await dialog.OpenAsync<ClientForm>("Update client",
+        //     await dialog.OpenAsync<ClientForm>("UPDATE client",
         //     new Dictionary<string, object>()
         //                 {
         //             { nameof(ClientForm.Model), client },

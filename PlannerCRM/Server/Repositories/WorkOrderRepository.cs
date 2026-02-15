@@ -60,6 +60,27 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
+    public async Task DeleteMultiple(List<Guid?> idList)
+    {
+        try
+        {
+            var itemsList = await _context.WorkOrders
+                                         .AsNoTracking()
+                                         .AsSplitQuery()
+                                         .Include(a => a.Activities)
+                                         .Where(a => idList.Contains(a.Id))
+                                         .ToListAsync();
+
+            _context.RemoveRange(itemsList);
+
+            await _context.SaveChangesAsync();
+        } catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<WorkOrderDto> Get(WorkOrderFilterDto filter)
     {
         try

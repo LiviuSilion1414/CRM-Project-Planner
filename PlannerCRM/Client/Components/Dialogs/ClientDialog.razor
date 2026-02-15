@@ -48,7 +48,7 @@
 
     private async Task OnEdit()
     {
-        // await dialog.OpenAsync<ClientForm>("Update client",
+        // await dialog.OpenAsync<ClientForm>("UPDATE client",
         //     new Dictionary<string, object>()
         //     {
         //         { nameof(ClientForm.Model), SelectedClient },
@@ -63,7 +63,7 @@
     {
         try
         {
-            if ((await dialog.Confirm("Confirm this item removal", "Delete client", null)).Value)
+            if ((await dialog.Confirm("Confirm this item removal", "DELETE client", null)).Value)
             {
                 var filter = new FirmClientFilterDto() { firmClientId = SelectedClient.id };
 
@@ -94,7 +94,7 @@
 
     async Task OpenWorkOrderDetails(WorkOrderDto workOrder)
     {
-        // await dialog.OpenAsync<WorkOrderForm>("Update workOrder",
+        // await dialog.OpenAsync<WorkOrderForm>("UPDATE workOrder",
         //     new Dictionary<string, object>()
         //     {
         //         { nameof(WorkOrderForm.Model), workOrder },

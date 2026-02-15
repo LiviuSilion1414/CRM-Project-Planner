@@ -282,7 +282,7 @@
 
         try
         {
-            result = await fetch.Dynamic_ExecuteAsync<TItem>(ApiController, ActionType.Insert, item);
+            result = await fetch.Dynamic_ExecuteAsync<TItem>(ApiController, ActionType.INSERT, item);
 
             if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
             {
@@ -303,7 +303,7 @@
         var result = new ResultDto();
         try
         {
-            result = await fetch.Dynamic_ExecuteAsync<TItem>(ApiController, ActionType.Update, item);
+            result = await fetch.Dynamic_ExecuteAsync<TItem>(ApiController, ActionType.UPDATE, item);
 
             if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
             {
@@ -333,7 +333,7 @@
             {
                 try
                 {
-                    result = await fetch.Dynamic_ExecuteAsync<TItem>(ApiController, ActionType.Delete, item);
+                    result = await fetch.Dynamic_ExecuteAsync<TItem>(ApiController, ActionType.DELETE, item);
 
                     if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
                     {
@@ -361,20 +361,24 @@
         {
             try
             {
-                foreach (var item in selectedItems.ToList())
+                List<Guid?> idList = selectedItems
+                .Select(x =>
                 {
-                    result = await fetch.Dynamic_ExecuteAsync<TItem>(ApiController, ActionType.Delete, item);
+                    var idProperty = x.GetType().GetProperty("id");
+                    var value = idProperty.GetValue(x) != null ? Guid.Parse(idProperty.GetValue(x).ToString()) : new Guid?();
 
-                    if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
-                    {
-                        notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                        await LoadData();
-                    } else
-                    {
-                        notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
-                    }
+                    return value;
+                })
+                .ToList();
+
+                result = await fetch.Dynamic_ExecuteAsync<Guid?>(ApiController, ActionType.DELETE_MULTIPLE, idList);
+
+                if (!result.hasCompleted && result.statusCode != HttpStatusCode.OK)
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
                 notification.Notify(NotificationSeverity.Success, $"{selectedItems.Count} records had been deleted", null, 4000);
+                await LoadData();
             } catch
             {
                 notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);

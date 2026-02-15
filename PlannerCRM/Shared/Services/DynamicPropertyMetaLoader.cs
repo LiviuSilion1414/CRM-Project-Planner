@@ -11,6 +11,8 @@ public static class DynamicPropertyMetaLoader
     static readonly NullabilityInfoContext nullabilityContext = new();
     static readonly List<Type> SupportedTypes = new()
     {
+        typeof(Guid),
+        typeof(Guid?),
         typeof(string),
         typeof(int),
         typeof(int?),
@@ -36,7 +38,8 @@ public static class DynamicPropertyMetaLoader
                                 ((ShowOnlyRequired == false) ||
                                 (ShowOnlyRequired == true &&
                                     p.GetCustomAttribute<RequiredAttribute>() != null &&
-                                    p.GetCustomAttribute<DescriptionAttribute>() != null)))
+                                    p.GetCustomAttribute<DescriptionAttribute>() != null)) &&
+                                (p.PropertyType != typeof(Guid) || (p.PropertyType == typeof(Guid) || p.PropertyType == typeof(Guid?)) && (p.Name == "id")))
                     .Select(p =>
                     {
                         var underlyingType = Nullable.GetUnderlyingType(p.PropertyType) ?? p.PropertyType;
@@ -46,8 +49,12 @@ public static class DynamicPropertyMetaLoader
                             Nullable.GetUnderlyingType(p.PropertyType) != null ||
                             nullability.ReadState == NullabilityState.Nullable;
 
+                        bool isGuid = (p.PropertyType == typeof(Guid) || p.PropertyType == typeof(Guid?)) && (p.Name == "id");
+
                         return new PropertyMeta
                         {
+                            isGuid = isGuid,
+                            id = isGuid ? Guid.Parse(p.GetValue(model).ToString()) : null,
                             property = p,
                             isNullable = isNullable,
                             underlyingType = underlyingType,

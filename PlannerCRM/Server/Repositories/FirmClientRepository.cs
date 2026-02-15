@@ -62,6 +62,27 @@ public class FirmClientRepository(PlannerCrmContext context, IMapper mapper)
         }
     }
 
+    public async Task DeleteMultiple(List<Guid?> idList)
+    {
+        try
+        {
+            var itemsList = await _context.FirmClients
+                                         .AsNoTracking()
+                                         .AsSplitQuery()
+                                         .Include(a => a.WorkOrders).ThenInclude(x => x.Activities)
+                                         .Where(a => idList.Contains(a.Id))
+                                         .ToListAsync();
+
+            _context.RemoveRange(itemsList);
+
+            await _context.SaveChangesAsync();
+        } catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<FirmClientDto> Get(FirmClientFilterDto filter)
     {
         try
