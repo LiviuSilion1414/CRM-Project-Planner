@@ -10,106 +10,56 @@
 }
 else
 {
-    <DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
+    <RadzenCard class="mb-3">
+        <RadzenRow JustifyContent="JustifyContent.Stretch">
+            <RadzenColumn>
+                <RadzenFormField Text="Title" AllowFloatingLabel="false">
+                    <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@title" />
+                </RadzenFormField>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <DynamicGrid ApiController="@ApiUrl.ACTIVITY_CONTROLLER"
                  AllowInsert="true"
                  AllowUpdate="true"
                  AllowDelete="true"
                  TItem="@ActivityDto"
                  ItemsList="@_activities"
                  ModelTitle="Activity"
-                 OnReloadList="LoadData" />
+                 OnReloadList="Throw" />
 }
 
 @code {
     private List<ActivityDto> _activities = new();
-    private List<WorkOrderDto> _workOrders = new();
-    private List<FirmClientDto> _clients = new();
 
-
-    private string query = string.Empty;
-    private Guid? clientId = Guid.Empty;
-    private Guid? workOrderId = Guid.Empty;
-
-    private ActivityDto? _selectedActivity = new();
-    private bool isInsert = false;
-    private bool isView = false;
-    private bool isEdit = false;
+    private string title;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
     }
 
+    void Throw()
+    {
+        throw new Exception();
+    }
+
     async Task ResetData()
     {
-        query = string.Empty;
-        clientId = Guid.Empty;
-        workOrderId = Guid.Empty;
+        title = null;
         await LoadData();
     }
 
-    private async Task LoadClients()
+    private async Task LoadData()
     {
         try
         {
-            fetch.isBusy = true;
-
-            FirmClientFilterDto firmClientFilterDto = new FirmClientFilterDto
-            {
-                firmClientId = clientId
-            };
-
-            var result = await fetch.FirmClient_List(firmClientFilterDto);
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                _clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
-            }
-            fetch.isBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadWorkOrders()
-    {
-        try
-        {
-            fetch.isBusy = true;
-
-            WorkOrderFilterDto workOrderFilterDto = new WorkOrderFilterDto
-            {
-                workOrderId = workOrderId
-            };
-
-            var result = await fetch.WorkOrder_List(workOrderFilterDto);
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
-            }
-            fetch.isBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadActivities()
-    {
-        try
-        {
-            ResetFlags();
             fetch.isBusy = true;
 
             var filter = new ActivityFilterDto
                 {
-                    workOrderId = workOrderId,
-                    firmClientId = clientId,
-                    searchQuery = query
+                    searchQuery = title
                 };
 
             var result = await fetch.Activity_List(filter);
@@ -119,89 +69,6 @@ else
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch
-        {
-            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
-        }
-    }
-
-    private async Task LoadData()
-    {
-        await LoadClients();
-        await LoadWorkOrders();
-        await LoadActivities();
-    }
-
-    private void ResetFlags()
-    {
-        isView = false;
-        isEdit = false;
-        isInsert = false;
-        _selectedActivity = null;
-    }
-
-    void OnAdd()
-    {
-        _selectedActivity = new();
-        isInsert = !isInsert;
-    }
-    void OnEdit(ActivityDto activity)
-    {
-        _selectedActivity = activity;
-        isEdit = !isEdit;
-    }
-
-    void OnSelect(ActivityDto activity)
-    {
-        _selectedActivity = activity;
-        isView = !isView;
-    }
-
-    
-    async Task OnAddDynamicForm()
-    {
-        ActivityDto activityDto = new ActivityDto();
-
-        await dialog.OpenAsync("New Employee", ds =>
-        @<DynamicForm TItem="@ActivityDto" Model="@activityDto">
-            <TopContent>
-                <RadzenRow>
-                    <RadzenColumn Size="12" SizeMD="12">
-                        <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Employee Form</RadzenLabel></RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing employees.</RadzenText>
-                    </RadzenColumn>
-                </RadzenRow>
-            </TopContent>
-        </DynamicForm> ,
-        new DialogOptions
-        {
-            Width = "80%",
-            Height = "90%",
-            CloseDialogOnEsc = true,
-            ShowClose = true
-        });
-    }
-    private async Task OnDelete(ActivityDto activity)
-    {
-        try
-        {
-            if ((await dialog.Confirm("Confirm this item removal", "Delete activity", null)).Value)
-            {
-                var filter = new ActivityFilterDto() { activityId = activity.id };
-
-                var result = await fetch.Activity_Delete(filter);
-
-                if (result.hasCompleted && result.messageType == MessageType.Success)
-                {
-                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                    await LoadData();
-                }
-                else
-                {
-                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
-                }
-            }
         }
         catch
         {

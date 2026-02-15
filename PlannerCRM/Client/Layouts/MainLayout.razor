@@ -131,7 +131,7 @@
         var systemLog = new SystemLogDto
         {
             date = DateTime.Now,
-            endpoint = nav.BaseUri,
+            endpoint = nav.Uri,
             reason = ex.Message,
             stacktrace = ex.StackTrace,
             username = fetch.currentUser.name,

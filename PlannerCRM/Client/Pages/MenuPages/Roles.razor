@@ -177,8 +177,8 @@
         await dialog.OpenAsync("Menu role", ds =>
             @<DynamicGrid TItem="@MenuDto" 
                           ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).ToList()" 
-                          AllowUpdate="true"
-                          AllowDelete="true"
+                          AllowUpdate="false"
+                          AllowDelete="false"
                           AllowInsert="false"
                           OnReloadList="LoadData">
             <ExtraColumns>
@@ -201,11 +201,11 @@
     {
         await dialog.OpenAsync("Employee role", ds =>
             @<DynamicGrid TItem="@EmployeeDto"
-                                  ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).ToList()"
-                                 AllowUpdate="true"
-                                 AllowDelete="true"
-                                  AllowInsert="false"
-                                  OnReloadList="LoadData"/>,
+                          ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).ToList()"
+                          AllowUpdate="false"
+                          AllowDelete="false"
+                          AllowInsert="false"
+                          OnReloadList="LoadData"/>,
         new DialogOptions
         {
             Width = "80%",
