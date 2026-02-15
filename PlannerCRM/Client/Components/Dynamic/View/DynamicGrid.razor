@@ -265,8 +265,7 @@
                     }
                 }
             </Template>
-        </RadzenDataGridColumn>
-    ;
+        </RadzenDataGridColumn>;
     }
 
     async Task Reset()
@@ -381,7 +380,7 @@
                 {
                     notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
                 }
-                notification.Notify(NotificationSeverity.Success, $"{selectedItems.Count} records had been deleted", null, 4000);
+                notification.Notify(NotificationSeverity.Success, $"{selectedItems.Count} record(s) had been deleted", null, 4000);
                 await LoadData();
             } catch
             {
