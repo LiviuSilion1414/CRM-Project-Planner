@@ -27,7 +27,7 @@ else
                  TItem="@ActivityDto"
                  ItemsList="@_activities"
                  ModelTitle="Activity"
-                 OnReloadList="Throw" />
+                 OnReloadList="LoadData" />
 }
 
 @code {
@@ -38,11 +38,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
-    }
-
-    void Throw()
-    {
-        throw new Exception();
     }
 
     async Task ResetData()
