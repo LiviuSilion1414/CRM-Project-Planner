@@ -55,6 +55,22 @@ else
                     @workTimes.Count
                 </RadzenColumn>
             </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenLabel>Roles List</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    @rolesList.Count
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="10">
+                    <RadzenLabel>Menu list</RadzenLabel>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="2">
+                    @menusList.Count
+                </RadzenColumn>
+            </RadzenRow>
         </RadzenStack>
     </RadzenCard>
 }
@@ -66,6 +82,8 @@ else
     List<FirmClientDto> clients = new();
     List<EmployeeDto> employees = new();
     List<WorkTimeDto> workTimes = new();
+    List<RoleDto> rolesList = new();
+    List<MenuDto> menusList = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,8 +99,42 @@ else
         await LoadClients();
         await LoadEmployees();
         await LoadWorkTimes();
+        await LoadMenuList();
+        await LoadRoleList();
 
         fetch.isBusy = false;
+    }
+
+    async Task LoadMenuList()
+    {
+        try
+        {
+            var result = await fetch.Menu_List(new());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                menusList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
+            }
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task LoadRoleList()
+    {
+        try
+        {
+            var result = await fetch.Role_List(new());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                rolesList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     async Task LoadWorkOrders()

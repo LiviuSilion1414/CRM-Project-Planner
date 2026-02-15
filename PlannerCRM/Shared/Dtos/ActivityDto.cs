@@ -33,7 +33,7 @@ public partial class ActivityDto
     public Guid? fkIdWorkOrder { get; set; }
     public Guid? fkIdFirmClient { get; set; }
 
-    [MaxLength(50)]
+    //[MaxLength(50)]
     public string? hexColor { get; set; } = "#0000FF"; // Default color blue
     public ICollection<EmployeeActivityDto>? employeeActivities { get; set; }
     public FirmClientDto? fkIdFirmClientNavigation { get; set; }

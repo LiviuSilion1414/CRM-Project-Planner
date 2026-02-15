@@ -21,7 +21,7 @@
              TItem="@MenuDto"
              ItemsList="@menuList"
              ModelTitle="Menu"
-             OnReloadList="LoadData"/>
+             OnReloadList="ReloadMenuRoles" />
 
 @code
 {
@@ -62,5 +62,10 @@
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task ReloadMenuRoles()
+    {
+        navigation.Refresh(forceReload: true);
     }
 }

@@ -25,7 +25,7 @@
                     </RadzenStack>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px">
                         <RadzenLink Path="notifications">
-                            <RadzenIcon Style="font-size: xx-large;" Icon="notifications"></RadzenIcon>
+                            <RadzenIcon Style="font-size: x-large;" Icon="notifications"></RadzenIcon>
                         </RadzenLink>
                         <RadzenProfileMenu Click="HandleClick" Style="background-color: lightseagreen">
                             <Template>
@@ -42,20 +42,29 @@
             @if (fetch.currentUser.rolesList.Any())
             {
                 <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
-                    <RadzenPanelMenu>
+                    <RadzenPanelMenu ShowArrow="true" Multiple="true" DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
                         @foreach (var menuRole in fetch.menuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id).OrderBy(x => x.fkIdMenuNavigation.ranking))
                         {
                             @if (fetch.currentUser.rolesList.Contains(menuRole.fkIdRoleNavigation.name))
                             {
                                 <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.rolesList.Select(y => y)))" Context="auth">
                                     <Authorized>
-                                        <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
-                                                             Icon="@menuRole.fkIdMenuNavigation.icon"
-                                                             Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
+                                        @if ((bool)menuRole.fkIdMenuNavigation.isDropdown)
+                                        {
+                                            <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
+                                                                 Icon="@menuRole.fkIdMenuNavigation.icon">
+                                                <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
+                                                                     Icon="@menuRole.fkIdMenuNavigation.icon"
+                                                                     Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
+                                            </RadzenPanelMenuItem>
+                                        }
+                                        else
+                                        {
+                                            <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
+                                                                 Icon="@menuRole.fkIdMenuNavigation.icon"
+                                                                 Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
+                                        }
                                     </Authorized>
-                                    <NotAuthorized>
-                                        <p>Not Authorized :)</p>
-                                    </NotAuthorized>
                                 </AuthorizeView>
                             }
                         }
