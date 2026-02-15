@@ -177,6 +177,7 @@
         await dialog.OpenAsync("Menu role", ds =>
             @<DynamicGrid TItem="@MenuDto" 
                           ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).ToList()" 
+                          AllowSelection="false"
                           AllowUpdate="false"
                           AllowDelete="false"
                           AllowInsert="false"
@@ -202,6 +203,7 @@
         await dialog.OpenAsync("Employee role", ds =>
             @<DynamicGrid TItem="@EmployeeDto"
                           ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).ToList()"
+                          AllowSelection="false"
                           AllowUpdate="false"
                           AllowDelete="false"
                           AllowInsert="false"

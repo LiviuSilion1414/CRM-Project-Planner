@@ -39,10 +39,11 @@
     <RadzenDataGrid @ref="grid"
                     TItem="@TItem"
                     Data="@ItemsList"
-                    AllowSorting="true"
-                    AllowFiltering="true"
+                    AllowSorting="@AllowSorting"
+                    AllowFiltering="@AllowFiltering"
                     AllowPaging="true"
                     PageSize="20"
+                    AllowRowSelectOnRowClick="@AllowSelection"
                     SelectionMode="DataGridSelectionMode.Multiple"
                     @bind-Value="@selectedItems"
                     PageSizeOptions="@pageSizeOptions">
@@ -90,7 +91,7 @@
             </RadzenStack>
         </EmptyTemplate>
         <Columns>
-            <RadzenDataGridColumn Width="60px" Sortable="false" Filterable="false">
+            <RadzenDataGridColumn Width="60px" Sortable="false" Filterable="false" Visible="@AllowSelection">
                 <HeaderTemplate>
                     <RadzenCheckBox TabIndex="-1" TriState="false" TValue="bool?" InputAttributes="@(new Dictionary<string, object>() { { "aria-label", "Select all items" } })"
                                     Value="@(selectedItems == null || selectedItems?.Any() != true ? false : !ItemsList.All(i => selectedItems.Contains(i)) ? null : ItemsList.Any(i => selectedItems.Contains(i)))"
@@ -118,7 +119,7 @@
             }
 
             @RenderDataGridActionColumn(ColumnActionType.View)
-            @if (AllowDelete)
+            @if (AllowUpdate)
             {
                 @RenderDataGridActionColumn(ColumnActionType.Update)
             }
@@ -136,6 +137,9 @@
     [Parameter] public bool AllowUpdate { get; set; } = true;
     [Parameter] public bool AllowDelete { get; set; } = true;
     [Parameter] public bool AllowInsert { get; set; } = true;
+    [Parameter] public bool AllowSelection { get; set; } = true;
+    [Parameter] public bool AllowFiltering { get; set; } = true;
+    [Parameter] public bool AllowSorting { get; set; } = true;
     [Parameter] public bool AllowWordWrapHandling { get; set; } = false;
     [Parameter] public List<TItem> ItemsList { get; set; } = new();
     [Parameter] public RenderFragment? TopContent { get; set; }
@@ -247,11 +251,11 @@
             <Template Context="data">
                 @if (ContainsItem(data) == false)
                 {
-                    @if (columnActionType == ColumnActionType.Update)
+                    @if (columnActionType == ColumnActionType.View)
                     {
                         <RadzenButton Variant="Variant.Text" IconColor="@Colors.Primary" Icon="open_in_new" Click="@(() => ViewRecord(data))"></RadzenButton>
                     }
-                    @if (columnActionType == ColumnActionType.View)
+                    @if (columnActionType == ColumnActionType.Update)
                     {
                         <RadzenButton Variant="Variant.Text" IconColor="@Colors.Secondary" Icon="edit" Click="@(() => UpdateRecord(data))"></RadzenButton>
                     }
