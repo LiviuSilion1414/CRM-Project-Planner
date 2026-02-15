@@ -21,6 +21,7 @@ public partial class FetchService
     public List<string> supportedControllers { get; set; } = new List<string>();
     public List<MenuRoleDto> menuRolesList { get; set; } = new List<MenuRoleDto>();
     public List<RoleDto> rolesList { get; set; } = new List<RoleDto>();
+    public Dictionary<Type, List<PropertyMeta>> lookupMetaProperties { get; set; } = new Dictionary<Type, List<PropertyMeta>>();
     public AuthenticationState authState { get; set; } = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
     public FetchService (LocalStorageService localStorage, HttpClient http, AuthService auth)
@@ -46,6 +47,7 @@ public partial class FetchService
             {
                 await GetBearerToken();
                 await GetCurrentUserDataAsync();
+                await LoadAllDtoMetaProperties();
             }
             if (!menuRolesList.Any())
             {
@@ -55,6 +57,31 @@ public partial class FetchService
             {
                 await LoadGlobalRoles();
             }
+        }
+    }
+
+    private async Task LoadAllDtoMetaProperties()
+    {
+        try
+        {
+            isBusy = true;
+
+            lookupMetaProperties = new Dictionary<Type, List<PropertyMeta>>()
+            {
+                { typeof(ActivityDto), DynamicPropertyMetaLoader.GetModelProperties(new ActivityDto()) },
+                { typeof(EmployeeDto), DynamicPropertyMetaLoader.GetModelProperties(new EmployeeDto()) },
+                { typeof(FirmClientDto), DynamicPropertyMetaLoader.GetModelProperties(new FirmClientDto()) },
+                { typeof(MenuDto), DynamicPropertyMetaLoader.GetModelProperties(new MenuDto()) },
+                { typeof(SettingDto), DynamicPropertyMetaLoader.GetModelProperties(new SettingDto()) },
+                { typeof(SystemLogDto), DynamicPropertyMetaLoader.GetModelProperties(new SystemLogDto()) },
+                { typeof(WorkOrderDto), DynamicPropertyMetaLoader.GetModelProperties(new WorkOrderDto()) },
+                { typeof(WorkTimeDto), DynamicPropertyMetaLoader.GetModelProperties(new WorkTimeDto()) },
+            };
+
+            isBusy = false;
+        } catch (Exception exc)
+        {
+            throw;
         }
     }
 

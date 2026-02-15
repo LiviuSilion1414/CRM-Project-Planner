@@ -177,7 +177,7 @@
 
     void ReloadModelProperties()
     {
-        properties = DynamicPropertyMetaLoader.GetModelProperties(new TItem());
+        properties = fetch.lookupMetaProperties[typeof(TItem)];
     }
 
     RenderFragment? RenderDataGridColumn(PropertyMeta meta)
