@@ -21,6 +21,8 @@ public partial class FetchService
     public List<string> supportedControllers { get; set; } = new List<string>();
     public List<MenuRoleDto> menuRolesList { get; set; } = new List<MenuRoleDto>();
     public List<RoleDto> rolesList { get; set; } = new List<RoleDto>();
+    public List<MenuDto> menusList { get; set; } = new List<MenuDto>();
+
     public Dictionary<Type, List<PropertyMeta>> lookupMetaProperties { get; set; } = new Dictionary<Type, List<PropertyMeta>>();
     public AuthenticationState authState { get; set; } = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
@@ -45,9 +47,9 @@ public partial class FetchService
         {
             if (string.IsNullOrEmpty(token))
             {
+                await LoadAllDtoMetaProperties();
                 await GetBearerToken();
                 await GetCurrentUserDataAsync();
-                await LoadAllDtoMetaProperties();
             }
             if (!menuRolesList.Any())
             {
@@ -56,6 +58,10 @@ public partial class FetchService
             if (!rolesList.Any())
             {
                 await LoadGlobalRoles();
+            }
+            if (!menusList.Any())
+            {
+                await LoadGlobalMenus();
             }
         }
     }
@@ -128,6 +134,25 @@ public partial class FetchService
         }
     }
 
+    private async Task LoadGlobalMenus()
+    {
+        try
+        {
+            isBusy = true;
+
+            var result = await Menu_List(new MenuFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                menusList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
+            }
+            isBusy = false;
+        } catch (Exception exc)
+        {
+            throw;
+        }
+    }
+
     public async Task GetCurrentUserDataAsync()
     {
         var authState = await _auth.GetAuthenticationStateAsync();
@@ -182,8 +207,19 @@ public partial class FetchService
                     break;
             }
 
-            var result = await response.Content.ReadFromJsonAsync<ResultDto>();
-            return result;
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<ResultDto>();
+            }
+
+            return new ResultDto
+            {
+                data = null,
+                hasCompleted = false,
+                messageType = MessageType.Error,
+                statusCode = System.Net.HttpStatusCode.ServiceUnavailable,
+                message = string.Empty,
+            };
         } 
         catch(Exception exc)
         {

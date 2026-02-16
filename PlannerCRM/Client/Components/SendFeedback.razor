@@ -1,0 +1,54 @@
+﻿@using static PlannerCRM.Shared.Dtos.DtoShared
+
+<RadzenCard class="mt-3 rz-p-4 rz-m-4 rz-border rz-border-danger rz-border-radius">
+    <RadzenRow class="mt-3">
+        <RadzenColumn Size="12">
+            <RadzenAlert AlertStyle="AlertStyle.Danger" AllowClose="false" Style="margin-bottom:15px">
+                An unexpected error occured.
+            </RadzenAlert>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+        <RadzenRow>
+            <RadzenColumn Size="6">
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="@(() => dialog.Close())" />
+            </RadzenColumn>
+            <RadzenColumn Size="6">
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Text="Send feedback" Click="LogException" />
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenCard>
+
+@code
+{
+    [Parameter] public Exception exception { get; set; }
+
+    async Task LogException()
+    {
+        var systemLog = new SystemLogDto
+        {
+            date = DateTime.Now,
+            endpoint = navigation.Uri,
+            reason = exception.Message,
+            stacktrace = exception.StackTrace,
+            username = fetch.currentUser.name,
+            request = null,
+            fkIdProject = Guid.Parse(Projects.Backoffice.GetDescription())
+        };
+
+        ResultDto result = await fetch.Dynamic_ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ActionType.INSERT, systemLog);
+        if (result.hasCompleted && result.messageType == MessageType.Success)
+        {
+            notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+            navigation.Refresh(forceReload: true);
+        } else
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+        }
+    }
+
+}

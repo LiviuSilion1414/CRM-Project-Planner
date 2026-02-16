@@ -136,7 +136,9 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.Icon)
                 .HasMaxLength(50)
                 .HasColumnName("icon");
+            entity.Property(e => e.IdParent).HasColumnName("idParent");
             entity.Property(e => e.IsDropdown).HasColumnName("isDropdown");
+            entity.Property(e => e.IsMenu).HasColumnName("isMenu");
             entity.Property(e => e.Path)
                 .HasMaxLength(50)
                 .HasColumnName("path");
@@ -144,6 +146,10 @@ public partial class PlannerCrmContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
                 .HasColumnName("title");
+
+            entity.HasOne(d => d.IdParentNavigation).WithMany(p => p.InverseIdParentNavigation)
+                .HasForeignKey(d => d.IdParent)
+                .HasConstraintName("FK_Menu_Menu");
         });
 
         modelBuilder.Entity<MenuRole>(entity =>

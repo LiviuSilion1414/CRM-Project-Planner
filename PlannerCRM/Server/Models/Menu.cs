@@ -15,7 +15,15 @@ public partial class Menu
 
     public bool? IsDropdown { get; set; }
 
+    public bool? IsMenu { get; set; }
+
     public int? Ranking { get; set; }
+
+    public Guid? IdParent { get; set; }
+
+    public virtual Menu IdParentNavigation { get; set; }
+
+    public virtual ICollection<Menu> InverseIdParentNavigation { get; set; } = new List<Menu>();
 
     public virtual ICollection<MenuRole> MenuRoles { get; set; } = new List<MenuRole>();
 }

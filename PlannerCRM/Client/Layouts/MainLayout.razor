@@ -39,65 +39,41 @@
                     </RadzenStack>
                 </RadzenStack>
             </RadzenHeader>
-            @if (fetch.currentUser.rolesList.Any())
-            {
-                <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
-                    <RadzenPanelMenu ShowArrow="true" Multiple="true" DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
-                        @foreach (var menuRole in fetch.menuRolesList.DistinctBy(x => x.fkIdMenuNavigation.id).OrderBy(x => x.fkIdMenuNavigation.ranking))
+            <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
+                <RadzenPanelMenu ShowArrow="true" Multiple="true" DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
+                    @foreach (var globalMenu in fetch.menusList.Where(x => x.isDropdown != null && (bool)x.isDropdown).ToList())
+                    {
+                        @if ((bool)globalMenu.isDropdown)
                         {
-                            @if (fetch.currentUser.rolesList.Contains(menuRole.fkIdRoleNavigation.name))
-                            {
-                                <AuthorizeView Roles="@(string.Join(", ", fetch.currentUser.rolesList.Select(y => y)))" Context="auth">
-                                    <Authorized>
-                                        @if ((bool)menuRole.fkIdMenuNavigation.isDropdown)
-                                        {
-                                            <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
-                                                                 Icon="@menuRole.fkIdMenuNavigation.icon">
-                                                <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
-                                                                     Icon="@menuRole.fkIdMenuNavigation.icon"
-                                                                     Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
-                                            </RadzenPanelMenuItem>
-                                        }
-                                        else
-                                        {
-                                            <RadzenPanelMenuItem Text="@menuRole.fkIdMenuNavigation.title"
-                                                                 Icon="@menuRole.fkIdMenuNavigation.icon"
-                                                                 Path="@($"/{menuRole.fkIdMenuNavigation.path}")" />
-                                        }
-                                    </Authorized>
-                                </AuthorizeView>
-                            }
+                            <RadzenPanelMenuItem Text="@globalMenu.title"
+                                                 Icon="@globalMenu.icon">
+                                @foreach (var menu in fetch.menusList.Where(x => x.isMenu != null && (bool)x.isMenu && x.idParent == globalMenu.id).ToList())
+                                {
+                                    @if (fetch.menuRolesList.Where(x => x.fkIdMenu == menu.id).Any())
+                                    {
+                                        <RadzenPanelMenuItem Text="@menu.title" Icon="@menu.icon" Path="@($"/{menu.path}")" />
+                                    }
+                                }
+                            </RadzenPanelMenuItem>
                         }
-                    </RadzenPanelMenu>
-                    <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
-                        <RadzenText Text="PlannerCRM v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
-                        <RadzenText Text="Copyright Ⓒ 2025" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" class="rz-mb-0" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
-                    </RadzenStack>
-                </RadzenSidebar>
-                <RadzenBody>
-                    <ErrorBoundary>
-                        <ChildContent>
-                            @Body
-                        </ChildContent>
-                        <ErrorContent Context="exception">
-                            <div class="rz-p-4 rz-m-4 rz-border rz-border-danger rz-border-radius">
-
-                                <RadzenAlert AlertStyle="AlertStyle.Danger" Style="margin-bottom:15px">
-                                    An error occured.
-                                </RadzenAlert>
-
-                                <div style="margin-top:15px">
-                                    <RadzenButton Text="Send Feedback"
-                                                  Icon="bug_report"
-                                                  ButtonStyle="ButtonStyle.Danger"
-                                                  Click="@(() => LogException(exception))" />
-                                </div>
-
-                            </div>
-                        </ErrorContent>
-                    </ErrorBoundary>
-                </RadzenBody>
-            }
+                     
+                    }
+                </RadzenPanelMenu>
+                <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
+                    <RadzenText Text="PlannerCRM v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
+                    <RadzenText Text="Copyright Ⓒ 2025" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" class="rz-mb-0" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
+                </RadzenStack>
+            </RadzenSidebar>
+            <RadzenBody>
+                <ErrorBoundary >
+                    <ChildContent>
+                        @Body
+                    </ChildContent>
+                    <ErrorContent Context="exception">
+                        @ShowSendFeedbackDialog(exception)
+                    </ErrorContent>
+                </ErrorBoundary>
+            </RadzenBody>
         </RadzenLayout>
     </Authorized>
     <NotAuthorized>
@@ -126,29 +102,16 @@
         }
     }
 
-    async Task LogException(Exception ex)
+    async Task ShowSendFeedbackDialog(Exception exception)
     {
-        var systemLog = new SystemLogDto
+        await dialog.OpenAsync("Send feedback", ds => @<SendFeedback exception="exception" />,
+        new DialogOptions
         {
-            date = DateTime.Now,
-            endpoint = nav.Uri,
-            reason = ex.Message,
-            stacktrace = ex.StackTrace,
-            username = fetch.currentUser.name,
-            request = null,
-            fkIdProject = Guid.Parse(Projects.Backoffice.GetDescription())
-        };
-
-        ResultDto result = await fetch.Dynamic_ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ActionType.INSERT, systemLog);
-        if (result.hasCompleted && result.messageType == MessageType.Success)
-        {
-            notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-            nav.Refresh(forceReload: true);
-        }
-        else
-        {
-            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
-        }
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 
     async Task Logout()

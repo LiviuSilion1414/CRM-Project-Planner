@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PlannerCRM.Shared.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -18,6 +19,10 @@ public partial class MenuDto
     public bool? isDropdown { get; set; }
 
     [Required]
+    [Description("Is Menu?")]
+    public bool? isMenu { get; set; }
+
+    [Required]
     [MaxLength(50)]
     [Description("Icon")]
     public string? icon { get; set; }
@@ -25,11 +30,14 @@ public partial class MenuDto
     [Required]
     [MaxLength(50)]
     [Description("Path")]
+    [StartsWithSlash]
     public string? path { get; set; }
 
     [Required]
     [Description("Ranking")]
     public int? ranking { get; set; }
+
+    public Guid? idParent { get; set; }
 
     public virtual ICollection<MenuRoleDto> menuRoles { get; set; } = new List<MenuRoleDto>();
 
