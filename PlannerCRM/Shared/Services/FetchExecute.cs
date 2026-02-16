@@ -76,9 +76,9 @@ public partial class FetchService
         return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
     }
 
-    public async Task<ResultDto> EmployeesRoles_Delete(EmployeesRolesFilterDto filterDto)
+    public async Task<ResultDto> EmployeesRoles_Delete(EmployeesRolesDto employeesRolesDto)
     {
-        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.DELETE, filterDto, ApiType.Post);
+        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.DELETE, employeesRolesDto, ApiType.Post);
     }
 
     public async Task<ResultDto> EmployeesRoles_Get(EmployeesRolesFilterDto filterDto)
@@ -184,27 +184,27 @@ public partial class FetchService
 
     #region Menu Role
 
-    public async Task<ResultDto> Menu_Role_Insert(MenuRoleDto dto)
+    public async Task<ResultDto> MenuRoles_Insert(MenuRoleDto dto)
     {
         return await ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
     }
 
-    public async Task<ResultDto> Menu_Role_Update(MenuRoleDto dto)
+    public async Task<ResultDto> MenuRoles_Update(MenuRoleDto dto)
     {
         return await ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
     }
 
-    public async Task<ResultDto> Menu_Role_Delete(MenuRoleFilterDto menuFilterDto)
+    public async Task<ResultDto> MenuRoles_Delete(MenuRoleDto dto)
     {
-        return await ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.DELETE, menuFilterDto, ApiType.Post);
+        return await ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.DELETE, dto, ApiType.Post);
     }
 
-    public async Task<ResultDto> Menu_Role_Get(MenuRoleFilterDto menuFilterDto)
+    public async Task<ResultDto> MenuRoles_Get(MenuRoleFilterDto menuFilterDto)
     {
         return await ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.GET, menuFilterDto, ApiType.Post);
     }
 
-    public async Task<ResultDto> Menu_Role_List(MenuRoleFilterDto menuFilterDto)
+    public async Task<ResultDto> MenuRoles_List(MenuRoleFilterDto menuFilterDto)
     {
         return await ExecuteAsync(ApiUrl.MENU_ROLE_CONTROLLER, ApiUrl.LIST, menuFilterDto, ApiType.Post);
     }

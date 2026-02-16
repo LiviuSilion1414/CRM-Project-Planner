@@ -60,7 +60,7 @@
                  ItemsList="@_employees"
                  ModelTitle="Employee"
                  OnReloadList="LoadData"
-                 OnAdvancedUpdate="UpdateRecord"
+                 OnAdvancedUpdate="AdvancedUpdate"
                  OnReset="@ResetData" />
 }
 
@@ -116,10 +116,10 @@
         }
     }
 
-    async Task UpdateRecord(EmployeeDto item)
+    async Task AdvancedUpdate(EmployeeDto item)
     {
         await dialog.OpenAsync($"Advanced editing", ds =>
-        @<EmployeeForm employeeDto="@item" IsInsert="false" OnReloadList="LoadData"/>,
+        @<EmployeeForm employeeDto="@item" OnReloadList="LoadData"/>,
         new DialogOptions
         {
             Width = "80%",

@@ -70,8 +70,10 @@ public partial class FetchService
             {
                 { typeof(ActivityDto), DynamicPropertyMetaLoader.GetModelProperties(new ActivityDto()) },
                 { typeof(EmployeeDto), DynamicPropertyMetaLoader.GetModelProperties(new EmployeeDto()) },
+                { typeof(EmployeesRolesDto), DynamicPropertyMetaLoader.GetModelProperties(new EmployeesRolesDto()) },
                 { typeof(FirmClientDto), DynamicPropertyMetaLoader.GetModelProperties(new FirmClientDto()) },
                 { typeof(MenuDto), DynamicPropertyMetaLoader.GetModelProperties(new MenuDto()) },
+                { typeof(MenuRoleDto), DynamicPropertyMetaLoader.GetModelProperties(new MenuRoleDto()) },
                 { typeof(RoleDto), DynamicPropertyMetaLoader.GetModelProperties(new RoleDto()) },
                 { typeof(SettingDto), DynamicPropertyMetaLoader.GetModelProperties(new SettingDto()) },
                 { typeof(SystemLogDto), DynamicPropertyMetaLoader.GetModelProperties(new SystemLogDto()) },
@@ -92,7 +94,7 @@ public partial class FetchService
         {
             isBusy = true;
 
-            var result = await Menu_Role_List(new MenuRoleFilterDto());
+            var result = await MenuRoles_List(new MenuRoleFilterDto());
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {

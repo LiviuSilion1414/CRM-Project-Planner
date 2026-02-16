@@ -12,7 +12,7 @@
     <RadzenCard class="mt-3 mb-3">
         <RadzenRow>
             <RadzenColumn Size="12" SizeMD="12">
-                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Employee Form</RadzenLabel></RadzenText>
+                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Menu Form</RadzenLabel></RadzenText>
                 <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing data.</RadzenText>
             </RadzenColumn>
         </RadzenRow>
@@ -23,38 +23,38 @@
             <RadzenTabs TabPosition="TabPosition.Left" SelectedIndex="@index">
                 <Tabs>
                     <RadzenTabsItem Text="General Details">
-                        <DynamicForm TItem="@EmployeeDto"
-                                     MetaProperties="@fetch.lookupMetaProperties[typeof(EmployeeDto)]"
-                                     Model="@employeeDto"
+                        <DynamicForm TItem="@MenuDto"
+                                     MetaProperties="@fetch.lookupMetaProperties[typeof(MenuDto)]"
+                                     Model="@menuDto"
                                      OnSubmit="@Update">
                         </DynamicForm>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="Assigned Roles">
                         <RadzenRow class="mt-3">
                             <RadzenColumn>
-                                <DynamicGrid ApiController="@ApiUrl.EMPLOYEESROLES_CONTROLLER"
-                                             TItem="@EmployeesRolesDto"
+                                <DynamicGrid ApiController="@ApiUrl.MENU_ROLE_CONTROLLER"
+                                             TItem="@MenuRoleDto"
                                              AllowInsert="true"
                                              OnInsert="@NewRole"
-                                             ItemsList="@employeeDto.employeesRoles.ToList()"
-                                             ModelTitle="Employee's Roles"
-                                             OnReloadList="LoadEmployeeData"
+                                             ItemsList="@menuDto.menuRoles.ToList()"
+                                             ModelTitle="Menu's Roles"
+                                             OnReloadList="LoadMenuData"
                                              ShowClear="false"
                                              ShowSearch="false">
                                     <MainColumns>
-                                        <RadzenDataGridColumn TItem="@EmployeesRolesDto" Title="Title" Sortable="true" Filterable="false">
+                                        <RadzenDataGridColumn TItem="@MenuRoleDto" Title="Title" Sortable="true" Filterable="false">
                                             <Template Context="data">
                                                 @data?.fkIdRoleNavigation?.name
                                             </Template>
                                         </RadzenDataGridColumn>
-                                        <RadzenDataGridColumn TItem="@EmployeesRolesDto" Title="Group" Sortable="true" Filterable="false" Width="150px">
+                                        <RadzenDataGridColumn TItem="@MenuRoleDto" Title="Group" Sortable="true" Filterable="false" Width="150px">
                                             <Template Context="data">
                                                 @data?.fkIdRoleNavigation?.fkIdGroupRoleNavigation?.title
                                             </Template>
                                         </RadzenDataGridColumn>
                                     </MainColumns>
                                     <ExtraColumns>
-                                        <RadzenDataGridColumn TItem="@EmployeesRolesDto" Width="64px" Sortable="false" Filterable="false">
+                                        <RadzenDataGridColumn TItem="@MenuRoleDto" Width="64px" Sortable="false" Filterable="false">
                                             <Template Context="data">
                                                 <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveRole(data))"></RadzenButton>
                                             </Template>
@@ -72,7 +72,7 @@
 
 @code
 {
-    [Parameter] public EmployeeDto employeeDto { get; set; } = new();
+    [Parameter] public MenuDto menuDto { get; set; } = new();
     [Parameter] public EventCallback OnReloadList { get; set; }
 
     int index;
@@ -82,15 +82,15 @@
         dialog.Close();
     }
 
-    void GetEmployee(EmployeeDto employeeDtoUpd)
+    void GetMenu(MenuDto menuDtoUpd)
     {
-        employeeDto = employeeDtoUpd;
+        menuDto = menuDtoUpd;
     }
 
     async Task NewRole()
     {
         await dialog.OpenAsync("Assign Role", ds =>
-        @<Employee_AddRoles employeeDto="@employeeDto" />,
+        @<Menu_AddRoles menuDto="@menuDto" />,
         new DialogOptions
         {
             Width = "80%",
@@ -100,20 +100,20 @@
         });
     }
 
-    private async Task LoadEmployeeData()
+    private async Task LoadMenuData()
     {
         var result = new ResultDto();
         try
         {
             fetch.isBusy = true;
 
-            var filter = new EmployeeFilterDto() { employeeId = employeeDto.id };
+            var filter = new MenuFilterDto() { id = menuDto.id };
 
-            result = await fetch.Employee_Get(filter);
+            result = await fetch.Menu_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
-                employeeDto = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
+                menuDto = JsonSerializer.Deserialize<MenuDto>(result.data.ToString());
                 await InvokeAsync(StateHasChanged);
             }
             fetch.isBusy = false;
@@ -124,7 +124,7 @@
     }
 
 
-    async Task RemoveRole(EmployeesRolesDto employeesRolesDto)
+    async Task RemoveRole(MenuRoleDto menuRoleDto)
     {
         try
         {
@@ -132,12 +132,12 @@
 
             if (confirm != null && confirm == true)
             {
-                var result = await fetch.EmployeesRoles_Delete(employeesRolesDto);
+                var result = await fetch.MenuRoles_Delete(menuRoleDto);
 
                 if (result.hasCompleted && result.messageType == MessageType.Success)
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
-                    await LoadEmployeeData();
+                    await LoadMenuData();
                     await OnReloadList.InvokeAsync();
                     await InvokeAsync(StateHasChanged);
                 } else
@@ -151,13 +151,13 @@
         }
     }
 
-    private async Task Update(EmployeeDto employeeDtoUpd)
+    private async Task Update(MenuDto menuDtoUpd)
     {
         try
         {
             fetch.isBusy = true;
 
-            var result = await fetch.Employee_Update(employeeDtoUpd);
+            var result = await fetch.Menu_Update(menuDtoUpd);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {

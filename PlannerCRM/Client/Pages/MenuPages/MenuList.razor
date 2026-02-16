@@ -21,6 +21,7 @@
              TItem="@MenuDto"
              ItemsList="@menuList"
              ModelTitle="Menu"
+             OnAdvancedUpdate="AdvancedUpdate"
              OnReloadList="ReloadMenuRoles" />
 
 @code
@@ -63,7 +64,20 @@
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
-
+    
+    async Task AdvancedUpdate(MenuDto item)
+    {
+        await dialog.OpenAsync($"Advanced editing", ds =>
+        @<MenuForm menuDto="@item" OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
+    }
+    
     async Task ReloadMenuRoles()
     {
         navigation.Refresh(forceReload: true);

@@ -32,8 +32,8 @@
 
 @code
 {
-    [Parameter] public EmployeeDto employeeDto { get; set; }
-    [Parameter] public EventCallback<EmployeeDto> OnReloadList { get; set; }
+    [Parameter] public MenuDto menuDto { get; set; }
+    [Parameter] public EventCallback<MenuDto> OnReloadList { get; set; }
 
     List<RoleDto> rolesDtoList = new List<RoleDto>();
 
@@ -49,13 +49,13 @@
         {
             fetch.isBusy = true;
 
-            var filter = new EmployeeFilterDto() { employeeId = employeeDto.id };
+            var filter = new MenuFilterDto() { id = menuDto.id };
 
-            result = await fetch.Employee_Get(filter);
+            result = await fetch.Menu_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
-                employeeDto = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
+                menuDto = JsonSerializer.Deserialize<MenuDto>(result.data.ToString());
                 await InvokeAsync(StateHasChanged);
             }
             fetch.isBusy = false;
@@ -89,18 +89,18 @@
         var confirm = await dialog.Confirm("Do you really want to assign this role?", "Assign Role");
         if (confirm != null && (bool)confirm)
         {
-            var employeesRoleDto = new EmployeesRolesDto
+            var menuRoleDto = new MenuRoleDto
             {
-                fkIdEmployee = (Guid)employeeDto.id,
+                fkIdMenu = (Guid)menuDto.id,
                 fkIdRole = roleDto.id
             };
-            ResultDto result = await fetch.EmployeesRoles_Insert(employeesRoleDto);
+            ResultDto result = await fetch.MenuRoles_Insert(menuRoleDto);
 
             if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadEmployeeData();
-                await OnReloadList.InvokeAsync(employeeDto);
+                await OnReloadList.InvokeAsync(menuDto);
                 await InvokeAsync(StateHasChanged);
             } else
             {
@@ -111,7 +111,7 @@
 
     bool isDisabled(RoleDto roleDto)
     {
-        return employeeDto.employeesRoles.Select(x => x.fkIdRole).Contains(roleDto.id);
+        return menuDto.menuRoles.Select(x => x.fkIdRole).Contains(roleDto.id);
     }
 
     string getCssClass(bool isDisabled)

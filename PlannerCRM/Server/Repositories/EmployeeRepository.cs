@@ -157,7 +157,7 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                          .AsNoTracking()
                                          .AsSplitQuery()
                                          .Include(e => e.EmployeeActivities)
-                                         .Include(e => e.EmployeesRoles).ThenInclude(x => x.FkIdRoleNavigation)
+                                         .Include(e => e.EmployeesRoles).ThenInclude(x => x.FkIdRoleNavigation).ThenInclude(x => x.FkIdGroupRoleNavigation)
                                          .FirstAsync(e => e.Id == filter.employeeId);
 
             return _mapper.Map<EmployeeDto>(employee);

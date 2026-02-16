@@ -31,7 +31,7 @@ public partial class MenuDto
     [Description("Ranking")]
     public int? ranking { get; set; }
 
-    public virtual ICollection<MenuRoleDto> MenuRoles { get; set; } = new List<MenuRoleDto>();
+    public virtual ICollection<MenuRoleDto> menuRoles { get; set; } = new List<MenuRoleDto>();
 
 }
 
