@@ -1,0 +1,141 @@
+﻿@using System.Text
+@using static PlannerCRM.Shared.Dtos.DtoShared
+@layout MainLayout
+
+@attribute [Authorize]
+
+@if (fetch.isBusy)
+{
+    <Loader />
+} else
+{
+    <RadzenCard class="mt-3 mb-3">
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Work Order Form</RadzenLabel></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing data.</RadzenText>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenStack JustifyContent="JustifyContent.Center">
+        <RadzenCard>
+            <RadzenTabs TabPosition="TabPosition.Left" SelectedIndex="@index">
+                <Tabs>
+                    <RadzenTabsItem Text="General Details">
+                        <DynamicForm TItem="@WorkOrderDto"
+                                     MetaProperties="@fetch.lookupMetaProperties[typeof(WorkOrderDto)]"
+                                     Model="@workOrderDto"
+                                     OnSubmit="@Update">
+                        </DynamicForm>
+                    </RadzenTabsItem>
+                    <RadzenTabsItem Text="Assigned Client">
+                        <RadzenDropDown TValue="Guid ?"
+                                        TextProperty="name"
+                                        ValueProperty="id"
+                                        AllowClear="true"
+                                        @bind-Value="@workOrderDto.fkIdFirmClient"
+                                        Data="@clientsList"
+                                        Style="width: 100%;"
+                                        Change="@(() => Update(workOrderDto))" />
+                        @if (workOrderDto.fkIdFirmClient != null && workOrderDto.fkIdFirmClientNavigation != null)
+                        {
+                            <DynamicView TItem="@FirmClientDto"
+                                         MetaProperties="@fetch.lookupMetaProperties[typeof(FirmClientDto)]"
+                                         Model="@workOrderDto.fkIdFirmClientNavigation" />
+                        }
+                    </RadzenTabsItem>
+                </Tabs>
+            </RadzenTabs>
+        </RadzenCard>
+    </RadzenStack>
+}
+
+@code
+{
+    [Parameter] public WorkOrderDto workOrderDto { get; set; } = new();
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
+    List<FirmClientDto> clientsList = new List<FirmClientDto>();
+    int index;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadClients();
+    }
+
+    void Close()
+    {
+        dialog.Close();
+    }
+
+    void GetEmployee(WorkOrderDto workOrderDtoUpd)
+    {
+        workOrderDto = workOrderDtoUpd;
+    }
+
+    private async Task LoadClients()
+    {
+        var result = new ResultDto();
+        try
+        {
+            fetch.isBusy = true;
+
+            result = await fetch.FirmClient_List(new FirmClientFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                clientsList = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
+                await InvokeAsync(StateHasChanged);
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+        }
+    }
+
+    private async Task LoadWorkOrderData()
+    {
+        var result = new ResultDto();
+        try
+        {
+            fetch.isBusy = true;
+
+            var filter = new WorkOrderFilterDto() { workOrderId = workOrderDto.id };
+
+            result = await fetch.WorkOrder_Get(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                workOrderDto = JsonSerializer.Deserialize<WorkOrderDto>(result.data.ToString());
+                await InvokeAsync(StateHasChanged);
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+        }
+    }
+
+    private async Task Update(WorkOrderDto workOrderUpd)
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.WorkOrder_Update(workOrderUpd);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+
+            }
+            fetch.isBusy = false;
+            await OnReloadList.InvokeAsync();
+            await InvokeAsync(StateHasChanged);
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+}

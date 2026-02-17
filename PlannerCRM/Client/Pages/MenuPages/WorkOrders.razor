@@ -27,6 +27,7 @@ else
                     AllowDelete="true"
                     ItemsList="@_workOrders"
                     ModelTitle="Work Order"
+                    OnAdvancedUpdate="AdvancedUpdate"
                     OnReloadList="LoadData"
                     OnReset="@ResetData" />
 
@@ -42,6 +43,14 @@ else
     {
         await LoadData();
     }
+
+    private async Task ResetData()
+    {
+        title = null;
+
+        await LoadData();
+    }
+
 
     private async Task LoadData()
     {
@@ -68,11 +77,16 @@ else
         }
     }
 
-    private async Task ResetData()
+    async Task AdvancedUpdate(WorkOrderDto item)
     {
-        title = null;
-
-        await LoadData();
+        await dialog.OpenAsync($"Advanced editing", ds =>
+        @<WorkOrderForm workOrderDto="@item" OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
-
 }

@@ -35,6 +35,7 @@ public class WorkOrderRepository(PlannerCrmContext context, IMapper mapper)
             workOrder.Name = dto.name;
             workOrder.StartDate = dto.startDate;
             workOrder.EndDate = dto.endDate;
+            workOrder.FkIdFirmClient = dto.fkIdFirmClient;
 
             await _context.SaveChangesAsync();
         } catch

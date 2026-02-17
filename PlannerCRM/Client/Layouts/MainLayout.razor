@@ -42,10 +42,12 @@
             <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
                 <RadzenPanelMenu ShowArrow="true" Multiple="true" DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
                     @foreach (var globalMenu in fetch.menusList.Where(x => fetch.menuRolesList.Select(y => y.fkIdMenu).Contains(x.id))
-                                                               .Where(x => x.isDropdown != null && (bool)x.isDropdown)
+                                                               .DistinctBy(x => x.id)
+                                                               //.Where(x => x.isDropdown != null && (bool)x.isDropdown)
                                                                .ToList())
                     {
-                        @if ((bool)globalMenu.isDropdown)
+                        // This is a menu with dropdown and without parent, so it will be displayed as a main menu with submenus
+                        @if (globalMenu.isDropdown != null && (bool)globalMenu.isDropdown && globalMenu.idParent == null)
                         {
                             <RadzenPanelMenuItem Text="@globalMenu.title"
                                                  Icon="@globalMenu.icon">
@@ -61,7 +63,14 @@
                                 }
                             </RadzenPanelMenuItem>
                         }
-                     
+                        // These instead are menu's without parent and displayed as self-menu
+                        @if (globalMenu.isMenu != null && (bool)globalMenu.isMenu && globalMenu.idParent == null)
+                        {
+                            <RadzenPanelMenuItem Text="@globalMenu.title"
+                                                 Icon="@globalMenu.icon"
+                                                 Path="@($"/{globalMenu.path}")">
+                            </RadzenPanelMenuItem>
+                        }
                     }
                 </RadzenPanelMenu>
                 <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
