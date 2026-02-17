@@ -1,0 +1,131 @@
+﻿
+<RadzenCard>
+    <RadzenDataGrid TItem="@WorkOrderDto"
+                    Data="@workOrdersList.Where(x => x.fkIdFirmClient == null)"
+                    AllowSorting="false"
+                    AllowFiltering="false">
+        <Columns>
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Title="Title" Sortable="true" Filterable="false">
+                <Template Context="data">
+                    @data.name
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Title="Created on" Sortable="true" Filterable="false">
+                <Template Context="data">
+                    @data.creationDateString
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Title="Start on" Sortable="true" Filterable="false">
+                <Template Context="data">
+                    @data.startDateString
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="@WorkOrderDto" Title="Start on" Sortable="true" Filterable="false">
+                <Template Context="data">
+                    @data.endDateString
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Width="55px">
+                <Template Context="data">
+                    <RadzenButton Icon="add"
+                                  Click="@(() => SelectWorkOrder(data))"
+                                  Style="@(getCssClass(isDisabled(data)))"
+                                  Disabled="@isDisabled(data)" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+    <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+        <RadzenRow>
+            <RadzenColumn Size="6">
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="dialog.Close"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenCard>
+
+@code
+{
+    [Parameter] public FirmClientDto firmClientDto { get; set; }
+    [Parameter] public EventCallback<FirmClientDto> OnReloadList { get; set; }
+
+    List<WorkOrderDto> workOrdersList = new List<WorkOrderDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkOrders();
+    }
+
+    private async Task LoadActivityData()
+    {
+        var result = new ResultDto();
+        try
+        {
+            fetch.isBusy = true;
+
+            var filter = new FirmClientFilterDto() { firmClientId = firmClientDto.id };
+
+            result = await fetch.FirmClient_Get(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                firmClientDto = JsonSerializer.Deserialize<FirmClientDto>(result.data.ToString());
+                await InvokeAsync(StateHasChanged);
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+        }
+    }
+
+    private async Task LoadWorkOrders()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.WorkOrder_List(new WorkOrderFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                workOrdersList = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task SelectWorkOrder(WorkOrderDto workOrderDtoUpd)
+    {
+        var confirm = await dialog.Confirm("Do you really want to assign this employee?", "Assign Employee");
+        if (confirm != null && (bool)confirm)
+        {
+            workOrderDtoUpd.fkIdFirmClient = firmClientDto.id;
+            ResultDto result = await fetch.WorkOrder_Update(workOrderDtoUpd);
+
+            if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await LoadActivityData();
+                await OnReloadList.InvokeAsync();
+                await InvokeAsync(StateHasChanged);
+            } else
+            {
+                notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+            }
+        }
+    }
+
+    bool isDisabled(WorkOrderDto workOrderDto)
+    {
+        return firmClientDto.workOrders.Select(x => x.id).Contains(workOrderDto.id);
+    }
+
+    string getCssClass(bool isDisabled)
+    {
+        return isDisabled ? "cursor: not-allowed;" : "cursor:pointer;";
+    }
+}

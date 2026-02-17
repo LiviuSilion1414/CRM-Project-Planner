@@ -43,6 +43,7 @@ else
                     TItem="@FirmClientDto"
                     ItemsList="@_clients"
                     ModelTitle="Client"
+                    OnAdvancedUpdate="AdvancedUpdate"
                     OnReloadList="LoadData"
                     OnReset="@ResetData" />
 }
@@ -96,5 +97,18 @@ else
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task AdvancedUpdate(FirmClientDto item)
+    {
+        await dialog.OpenAsync($"Advanced editing", ds =>
+        @<ClientForm firmClientDto="@item" OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 }
