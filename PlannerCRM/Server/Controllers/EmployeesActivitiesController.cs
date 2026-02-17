@@ -7,15 +7,15 @@ namespace PlannerCRM.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route(ApiUrl.EMPLOYEES_ROLES_CONTROLLER)]
-public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper) : ControllerBase
+[Route(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER)]
+public class EmployeesActivitiesController(PlannerCrmContext context, IMapper mapper) : ControllerBase
 {
-    private readonly EmployeesRolesRepository _repo = new(context, mapper);
+    private readonly EmployeesActivitiesRepository _repo = new(context, mapper);
     private readonly SystemLogHelper _systemLog = new(context);
 
     [HttpPost]
     [Route(ApiUrl.INSERT)]
-    public async Task<ResultDto> Insert(EmployeesRolesDto dto)
+    public async Task<ResultDto> Insert(EmployeeActivityDto dto)
     {
         try
         {
@@ -31,7 +31,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ROLES_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER + ApiUrl.INSERT, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -46,7 +46,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
 
     [HttpPut]
     [Route(ApiUrl.UPDATE)]
-    public async Task<ResultDto> Update(EmployeesRolesDto dto)
+    public async Task<ResultDto> Update(EmployeeActivityDto dto)
     {
         try
         {
@@ -62,7 +62,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ROLES_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER + ApiUrl.UPDATE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -77,7 +77,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
 
     [HttpPost]
     [Route(ApiUrl.DELETE)]
-    public async Task<ResultDto> Delete([FromBody] EmployeesRolesDto dto)
+    public async Task<ResultDto> Delete([FromBody] EmployeeActivityDto dto)
     {
         try
         {
@@ -93,7 +93,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
             };
         } catch(Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ROLES_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER + ApiUrl.DELETE, ex, User?.Identity, dto);
             return new ResultDto()
             {
                 id = null,
@@ -139,7 +139,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
 
     [HttpPost]
     [Route(ApiUrl.GET)]
-    public async Task<ResultDto> Get([FromBody] EmployeesRolesFilterDto filter)
+    public async Task<ResultDto> Get([FromBody] EmployeeActivityFilterDto filter)
     {
         try
         {
@@ -155,7 +155,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ROLES_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER + ApiUrl.GET, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,
@@ -170,7 +170,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
 
     [HttpPost]
     [Route(ApiUrl.LIST)]
-    public async Task<ResultDto> List([FromBody] EmployeesRolesFilterDto filter)
+    public async Task<ResultDto> List([FromBody] EmployeeActivityFilterDto filter)
     {
         try
         {
@@ -186,7 +186,7 @@ public class EmployeesRolesController(PlannerCrmContext context, IMapper mapper)
             };
         } catch (Exception ex)
         {
-            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ROLES_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER + ApiUrl.LIST, ex, User?.Identity, filter);
             return new ResultDto()
             {
                 id = null,

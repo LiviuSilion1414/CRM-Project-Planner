@@ -55,7 +55,7 @@
         <RadzenDataGridColumn TItem="RoleDto" Title="Linked Employees" TextAlign="TextAlign.Center">
             <Template Context="data">
                 <RadzenButton Click="@(() => ViewEmployeeList(data))">
-                    @(data.employeeRolesList.Count)
+                    @(data.employeeRolesList.DistinctBy(x => x.fkIdEmployee).Count())
 
                 </RadzenButton>
             </Template>
@@ -63,7 +63,7 @@
         <RadzenDataGridColumn TItem="RoleDto" Title="Linked Menu's" TextAlign="TextAlign.Center">
             <Template Context="data">
                 <RadzenButton Click="@(() => ViewMenuList(data))">
-                    @(data.menuRoleList.Count)
+                    @(data.menuRoleList.DistinctBy(x => x.fkIdMenu).Count())
 
                 </RadzenButton>
             </Template>
@@ -176,7 +176,7 @@
     {
         await dialog.OpenAsync("Menu role", ds =>
             @<DynamicGrid TItem="@MenuDto" 
-                          ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).ToList()" 
+                          ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).OrderBy(x => x.title).DistinctBy(x => x.id).ToList()"
                           AllowSelection="false"
                           AllowUpdate="false"
                           AllowDelete="false"
@@ -202,7 +202,7 @@
     {
         await dialog.OpenAsync("Employee role", ds =>
             @<DynamicGrid TItem="@EmployeeDto"
-                          ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).ToList()"
+                     ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).OrderBy(x => x.fullname).DistinctBy(x => x.id).ToList()"
                           AllowSelection="false"
                           AllowUpdate="false"
                           AllowDelete="false"

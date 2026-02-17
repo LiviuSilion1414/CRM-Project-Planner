@@ -31,7 +31,6 @@ public partial class ActivityDto
     public string? endDateString => endDate != null ? string.Format("{0:dd/MM/yyyy}", endDate) : "not set";
     public int? totalEmployeesInt => employeeActivities != null && employeeActivities.Any() ? employeeActivities.Count : 0;
     public Guid? fkIdWorkOrder { get; set; }
-    public Guid? fkIdFirmClient { get; set; }
 
     //[MaxLength(50)]
     public string? hexColor { get; set; } = "#0000FF"; // Default color blue

@@ -27,6 +27,7 @@ else
                  TItem="@ActivityDto"
                  ItemsList="@_activities"
                  ModelTitle="Activity"
+                 OnAdvancedUpdate="AdvancedUpdate"
                  OnReloadList="LoadData" />
 }
 
@@ -69,5 +70,18 @@ else
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
+    }
+
+    async Task AdvancedUpdate(ActivityDto item)
+    {
+        await dialog.OpenAsync($"Advanced editing", ds =>
+        @<ActivityForm activityDto="@item" OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
     }
 }

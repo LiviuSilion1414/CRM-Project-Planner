@@ -61,7 +61,8 @@ public static class DynamicPropertyMetaLoader
                             isNullable = isNullable,
                             underlyingType = underlyingType,
                             label = p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name,
-                            isRequired = p.GetCustomAttribute<RequiredAttribute>() != null || p.GetCustomAttribute<RequiredIfAttribute>() != null,
+                            isRequired = p.GetCustomAttribute<RequiredAttribute>() != null,
+                            isRequiredIf = p.GetCustomAttribute<RequiredIfAttribute>() != null,
                             isTextArea = p.GetCustomAttribute<MaxLengthAttribute>() != null,
                             textAreaLength = p.GetCustomAttribute<MaxLengthAttribute>() != null ? p.GetCustomAttribute<MaxLengthAttribute>().Length : 0
                         };

@@ -15,3 +15,9 @@ public partial class EmployeeActivityDto
     public FirmClientDto? fkIdFirmClientNavigation { get; set; }
     public WorkOrderDto? fkIdWorkOrderNavigation { get; set; }
 }
+
+public partial class EmployeeActivityFilterDto : FilterDto
+{ 
+    public Guid? activityId { get; set; }
+    public Guid? employeeId { get; set; }
+}

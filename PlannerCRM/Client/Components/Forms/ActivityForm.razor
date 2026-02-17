@@ -1,0 +1,218 @@
+﻿@using System.Text
+@using static PlannerCRM.Shared.Dtos.DtoShared
+@layout MainLayout
+
+@attribute [Authorize]
+
+@if (fetch.isBusy)
+{
+    <Loader />
+} else
+{
+    <RadzenCard class="mt-3 mb-3">
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">Activity Form</RadzenLabel></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body2">This form allows you to insert new and update existing data.</RadzenText>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenStack JustifyContent="JustifyContent.Center">
+        <RadzenCard>
+            <RadzenTabs TabPosition="TabPosition.Left" SelectedIndex="@index">
+                <Tabs>
+                    <RadzenTabsItem Text="General Details">
+                        <DynamicForm TItem="@ActivityDto"
+                                     MetaProperties="@fetch.lookupMetaProperties[typeof(ActivityDto)]"
+                                     Model="@activityDto"
+                                     OnSubmit="@Update">
+                        </DynamicForm>
+                    </RadzenTabsItem>
+                    <RadzenTabsItem Text="Assigned Work Order">
+                        <RadzenDropDown TValue="Guid ?"
+                                        TextProperty="name"
+                                        ValueProperty="id"
+                                        AllowClear="true"
+                                        @bind-Value="@activityDto.fkIdWorkOrder"
+                                        Data="@workOrdersList"
+                                        Style="width: 100%;"
+                                        Change="@(() => Update(activityDto))" />
+                        @if (activityDto.fkIdWorkOrder != null)
+                        {
+                            <DynamicView TItem="@WorkOrderDto"
+                                         MetaProperties="@fetch.lookupMetaProperties[typeof(WorkOrderDto)]"
+                                         Model="@activityDto.fkIdWorkOrderNavigation" />
+                        }
+                    </RadzenTabsItem>
+                    <RadzenTabsItem Text="Assigned Employee">
+                        <RadzenRow class="mt-3">
+                            <RadzenColumn>
+                                <DynamicGrid ApiController="@ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER"
+                                             TItem="@EmployeeActivityDto"
+                                             AllowInsert="true"
+                                             OnInsert="@NewEmployee"
+                                             ItemsList="@activityDto.employeeActivities.ToList()"
+                                             ModelTitle="Activity's Employees"
+                                             OnReloadList="LoadActivityData"
+                                             ShowClear="false"
+                                             ShowSearch="false">
+                                    <MainColumns>
+                                        <RadzenDataGridColumn TItem="@EmployeeActivityDto" Title="Full Name" Sortable="true" Filterable="false">
+                                            <Template Context="data">
+                                                @data?.fkIdEmployeeNavigation?.fullname
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="@EmployeeActivityDto" Title="Username" Sortable="true" Filterable="false">
+                                            <Template Context="data">
+                                                @data?.fkIdEmployeeNavigation?.username
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    </MainColumns>
+                                    <ExtraColumns>
+                                        <RadzenDataGridColumn TItem="@EmployeeActivityDto" Width="64px" Sortable="false" Filterable="false">
+                                            <Template Context="data">
+                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveEmployee(data))"></RadzenButton>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    </ExtraColumns>
+                                </DynamicGrid>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenTabsItem>
+                </Tabs>
+            </RadzenTabs>
+        </RadzenCard>
+    </RadzenStack>
+}
+
+@code
+{
+    [Parameter] public ActivityDto activityDto { get; set; } = new();
+    [Parameter] public EventCallback OnReloadList { get; set; }
+
+    List<WorkOrderDto> workOrdersList = new List<WorkOrderDto>();
+    int index;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkOrders();
+    }
+
+    void Close()
+    {
+        dialog.Close();
+    }
+
+    void GetEmployee(ActivityDto activityDtoUpd)
+    {
+        activityDto = activityDtoUpd;
+    }
+
+    async Task NewEmployee()
+    {
+        await dialog.OpenAsync("Assign Employees", ds =>
+        @<Activity_AddEmployees activityDto="@activityDto" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
+    }
+
+    private async Task LoadWorkOrders()
+    {
+        var result = new ResultDto();
+        try
+        {
+            fetch.isBusy = true;
+
+            result = await fetch.WorkOrder_List(new WorkOrderFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                workOrdersList = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
+                await InvokeAsync(StateHasChanged);
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+        }
+    }
+
+    private async Task LoadActivityData()
+    {
+        var result = new ResultDto();
+        try
+        {
+            fetch.isBusy = true;
+
+            var filter = new ActivityFilterDto() { activityId = activityDto.id };
+
+            result = await fetch.Activity_Get(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                activityDto = JsonSerializer.Deserialize<ActivityDto>(result.data.ToString());
+                await InvokeAsync(StateHasChanged);
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+        }
+    }
+
+
+    async Task RemoveEmployee(EmployeeActivityDto employeeActivityDto)
+    {
+        try
+        {
+            bool? confirm = await dialog.Confirm("Are you really sure you want to permanently delete this role from the employee? The operation is irreversible", "Delete record");
+
+            if (confirm != null && confirm == true)
+            {
+                var result = await fetch.EmployeeActivity_Delete(employeeActivityDto);
+
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadActivityData();
+                    await OnReloadList.InvokeAsync();
+                    await InvokeAsync(StateHasChanged);
+                } else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Error, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task Update(ActivityDto activityDtoUpd)
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Activity_Update(activityDtoUpd);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+
+            }
+            fetch.isBusy = false;
+            await OnReloadList.InvokeAsync();
+            await InvokeAsync(StateHasChanged);
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+}

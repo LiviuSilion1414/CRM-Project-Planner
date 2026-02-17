@@ -78,6 +78,7 @@ public partial class FetchService
                 { typeof(ActivityDto), DynamicPropertyMetaLoader.GetModelProperties(new ActivityDto()) },
                 { typeof(EmployeeDto), DynamicPropertyMetaLoader.GetModelProperties(new EmployeeDto()) },
                 { typeof(EmployeesRolesDto), DynamicPropertyMetaLoader.GetModelProperties(new EmployeesRolesDto()) },
+                { typeof(EmployeeActivityDto), DynamicPropertyMetaLoader.GetModelProperties(new EmployeeActivityDto()) },
                 { typeof(FirmClientDto), DynamicPropertyMetaLoader.GetModelProperties(new FirmClientDto()) },
                 { typeof(MenuDto), DynamicPropertyMetaLoader.GetModelProperties(new MenuDto()) },
                 { typeof(MenuRoleDto), DynamicPropertyMetaLoader.GetModelProperties(new MenuRoleDto()) },

@@ -14,44 +14,41 @@
 
         @foreach (var prop in MetaProperties)
         {
-            @if (prop.isRequired)
-            {
-                <RadzenRow class="mt-3">
-                    <RadzenColumn Size="12" SizeMD="3">
-                        <RadzenLabel>
-                            @if (prop.isRequired)
-                            {
-                                <RadzenLabel style="margin-right: 5px;font-weight:bold;">
-                                    <span class="text-danger">*</span>
-                                </RadzenLabel>
-                            }
-                            @prop.label
-                        </RadzenLabel>
-                        @if (prop.isTextArea)
+            <RadzenRow class="mt-3">
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenLabel>
+                        @if (prop.isRequired || prop.isRequiredIf)
                         {
-                            <br />
-                            <RadzenLabel Style="font-size:small">
-                                @{
-
-                                    var currentValue = prop.property.GetValue(Model)?.ToString() ?? string.Empty;
-                                    var remaining = prop.textAreaLength - currentValue.Length;
-
-                                    <span>
-                                        Max @prop.textAreaLength characters - Remaining: @remaining
-                                    </span>
-                                }
+                            <RadzenLabel style="margin-right: 5px;font-weight:bold;">
+                                <span class="text-danger">*</span>
                             </RadzenLabel>
                         }
-                    </RadzenColumn>
-                    <RadzenColumn Size="12" SizeMD="9">
-                        @RenderField(prop)
-                    </RadzenColumn>
-                    <RadzenColumn Size="12" SizeMD="3" />
-                    <RadzenColumn Size="12" SizeMD="9">
-                        <DynamicValidationMessage Property="@prop.property" />
-                    </RadzenColumn>
-                </RadzenRow>
-            }
+                        @prop.label
+                    </RadzenLabel>
+                    @if (prop.isTextArea)
+                    {
+                        <br />
+                        <RadzenLabel Style="font-size:small">
+                            @{
+
+                                var currentValue = prop.property.GetValue(Model)?.ToString() ?? string.Empty;
+                                var remaining = prop.textAreaLength - currentValue.Length;
+
+                                <span>
+                                    Max @prop.textAreaLength characters - Remaining: @remaining
+                                </span>
+                            }
+                        </RadzenLabel>
+                    }
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="9">
+                    @RenderField(prop)
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="3" />
+                <RadzenColumn Size="12" SizeMD="9">
+                    <DynamicValidationMessage Property="@prop.property" />
+                </RadzenColumn>
+            </RadzenRow>
         }
 
         <RadzenRow class="mt-3">

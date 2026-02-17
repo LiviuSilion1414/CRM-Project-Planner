@@ -68,27 +68,56 @@ public partial class FetchService
 
     public async Task<ResultDto> EmployeesRoles_Insert(EmployeesRolesDto dto)
     {
-        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ROLES_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
     }
 
     public async Task<ResultDto> EmployeesRoles_Update(EmployeesRolesFilterDto dto)
     {
-        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ROLES_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
     }
 
     public async Task<ResultDto> EmployeesRoles_Delete(EmployeesRolesDto employeesRolesDto)
     {
-        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.DELETE, employeesRolesDto, ApiType.Post);
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ROLES_CONTROLLER, ApiUrl.DELETE, employeesRolesDto, ApiType.Post);
     }
 
     public async Task<ResultDto> EmployeesRoles_Get(EmployeesRolesFilterDto filterDto)
     {
-        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.GET, filterDto, ApiType.Post);
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ROLES_CONTROLLER, ApiUrl.GET, filterDto, ApiType.Post);
     }
 
     public async Task<ResultDto> EmployeesRoles_List(EmployeesRolesFilterDto filterDto)
     {
-        return await ExecuteAsync(ApiUrl.EMPLOYEESROLES_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ROLES_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+    }
+
+    #endregion
+
+    #region EmployeeActivity
+
+    public async Task<ResultDto> EmployeeActivity_Insert(EmployeeActivityDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER, ApiUrl.INSERT, dto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> EmployeeActivity_Update(EmployeeActivityFilterDto dto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER, ApiUrl.UPDATE, dto, ApiType.Put);
+    }
+
+    public async Task<ResultDto> EmployeeActivity_Delete(EmployeeActivityDto employeesRolesDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER, ApiUrl.DELETE, employeesRolesDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> EmployeeActivity_Get(EmployeeActivityFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER, ApiUrl.GET, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> EmployeeActivity_List(EmployeeActivityFilterDto filterDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEES_ACTIVITIES_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
     }
 
     #endregion

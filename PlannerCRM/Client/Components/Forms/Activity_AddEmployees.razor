@@ -1,0 +1,117 @@
+﻿
+<RadzenCard>
+    <RadzenDataGrid TItem="@EmployeeDto"
+                    Data="@employeeDtoList"
+                    AllowSorting="false"
+                    AllowFiltering="false">
+        <Columns>
+            <RadzenDataGridColumn Property="@(nameof(EmployeeDto.fullname))" Title="Full Name" />
+            <RadzenDataGridColumn Property="@(nameof(EmployeeDto.username))" Title="User Name" />
+            <RadzenDataGridColumn Width="55px">
+                <Template Context="data">
+                    <RadzenButton Icon="add"
+                                  Click="@(() => SelectEmployee(data))"
+                                  Style="@(getCssClass(isDisabled(data)))"
+                                  Disabled="@isDisabled(data)" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+    <RadzenStack AlignItems="AlignItems.Center" class="mt-3">
+        <RadzenRow>
+            <RadzenColumn Size="6">
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Variant="Variant.Outlined" Text="Cancel" Click="dialog.Close"></RadzenButton>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenCard>
+
+@code
+{
+    [Parameter] public ActivityDto activityDto { get; set; }
+    [Parameter] public EventCallback<ActivityDto> OnReloadList { get; set; }
+
+    List<EmployeeDto> employeeDtoList = new List<EmployeeDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRoles();
+    }
+
+    private async Task LoadActivityData()
+    {
+        var result = new ResultDto();
+        try
+        {
+            fetch.isBusy = true;
+
+            var filter = new ActivityFilterDto() { activityId = activityDto.id };
+
+            result = await fetch.Activity_Get(filter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                activityDto = JsonSerializer.Deserialize<ActivityDto>(result.data.ToString());
+                await InvokeAsync(StateHasChanged);
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+        }
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Employee_List(new EmployeeFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                employeeDtoList = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task SelectEmployee(EmployeeDto employeeDto)
+    {
+        var confirm = await dialog.Confirm("Do you really want to assign this employee?", "Assign Employee");
+        if (confirm != null && (bool)confirm)
+        {
+            var employeesActivityDto = new EmployeeActivityDto
+            {
+                fkIdEmployee = (Guid)employeeDto.id,
+                fkIdActivity = activityDto.id
+            };
+            ResultDto result = await fetch.EmployeeActivity_Insert(employeesActivityDto);
+
+            if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
+            {
+                notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                await LoadActivityData();
+                await OnReloadList.InvokeAsync(activityDto);
+                await InvokeAsync(StateHasChanged);
+            } else
+            {
+                notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+            }
+        }
+    }
+
+    bool isDisabled(EmployeeDto employeeDto)
+    {
+        return activityDto.employeeActivities.Select(x => x.fkIdEmployee).Contains(employeeDto.id);
+    }
+
+    string getCssClass(bool isDisabled)
+    {
+        return isDisabled ? "cursor: not-allowed;" : "cursor:pointer;";
+    }
+}

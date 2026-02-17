@@ -44,6 +44,7 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
             activityUpd.StartDate = dto.startDate;
             activityUpd.EndDate = dto.endDate;
             activityUpd.Name = dto.name;
+            activityUpd.FkIdWorkOrder = dto.fkIdWorkOrder;
 
             _context.Activities.Update(activityUpd);
 
@@ -135,7 +136,6 @@ public class ActivityRepository(PlannerCrmContext context, IMapper mapper)
                                            .Include(a => a.EmployeeActivities).ThenInclude(x => x.FkIdEmployeeNavigation)
                                            .Include(a => a.FkIdWorkOrderNavigation).ThenInclude(x => x.FkIdFirmClientNavigation)
                                            .Where(x => (string.IsNullOrEmpty(filter.searchQuery) || x.Name.ToLower().Trim().Contains(filter.searchQuery)) &&
-                                                       (filter.firmClientId == null || x.FkIdFirmClient == filter.firmClientId) &&
                                                        (filter.workOrderId == null || x.FkIdWorkOrder == filter.workOrderId))
                                            .ToListAsync();
 
