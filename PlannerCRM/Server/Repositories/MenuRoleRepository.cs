@@ -105,6 +105,7 @@ public class MenuRoleRepository(PlannerCrmContext context, IMapper mapper)
                                       .Include(x => x.FkIdMenuNavigation)
                                       .Include(x => x.FkIdRoleNavigation).ThenInclude(x => x.EmployeesRoles)
                                       .OrderBy(x => x.Id)
+                                      .Where(x => ((filter.idList == null || !filter.idList.Any()) || (filter.idList.Contains(x.Id))))
                                       .ToListAsync();
             var mappedResult = _mapper.Map<List<MenuRoleDto>>(menuRoles);
 

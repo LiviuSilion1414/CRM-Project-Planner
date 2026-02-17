@@ -1,20 +1,16 @@
 ﻿
 <RadzenCard>
-    <RadzenDataGrid TItem="@RoleDto"
-                    Data="@rolesDtoList.OrderBy(x => x.fkIdGroupRoleNavigation.title)"
+    <RadzenDataGrid TItem="@MenuDto"
+                    Data="@menuDtoList.Where(x => x.isMenu != null && (bool)x.isMenu && x.idParent != menuParent.id)"
                     AllowSorting="false"
                     AllowFiltering="false">
         <Columns>
-            <RadzenDataGridColumn Property="@(nameof(RoleDto.name))" Title="Name" />
-            <RadzenDataGridColumn Title="Group">
-                <Template Context="data">
-                    @data.fkIdGroupRoleNavigation.title
-                </Template>
-            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@(nameof(MenuDto.title))" Title="Title" />
+            <RadzenDataGridColumn Property="@(nameof(MenuDto.path))" Title="Path" />
             <RadzenDataGridColumn Width="55px">
                 <Template Context="data">
                     <RadzenButton Icon="add"
-                                  Click="@(() => SelectRole(data))"
+                                  Click="@(() => SelectMenu(data))"
                                   Style="@(getCssClass(isDisabled(data)))"
                                   Disabled="@isDisabled(data)" />
                 </Template>
@@ -32,9 +28,14 @@
 
 @code
 {
-    [Parameter] public MenuDto menuDto { get; set; }
+    [Parameter] public MenuDto menuParent { get; set; }
     [Parameter] public EventCallback<MenuDto> OnReloadList { get; set; }
-    [Parameter] public List<RoleDto> rolesDtoList { get; set; }
+    [Parameter] public List<MenuDto> menuDtoList { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMenuList();
+    }
 
     private async Task LoadMenuData()
     {
@@ -43,13 +44,13 @@
         {
             fetch.isBusy = true;
 
-            var filter = new MenuFilterDto() { id = menuDto.id };
+            var filter = new MenuFilterDto() { id = menuParent.id };
 
             result = await fetch.Menu_Get(filter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
-                menuDto = JsonSerializer.Deserialize<MenuDto>(result.data.ToString());
+                menuParent = JsonSerializer.Deserialize<MenuDto>(result.data.ToString());
                 await InvokeAsync(StateHasChanged);
             }
             fetch.isBusy = false;
@@ -59,23 +60,39 @@
         }
     }
 
-    async Task SelectRole(RoleDto roleDto)
+    private async Task LoadMenuList()
     {
-        var confirm = await dialog.Confirm("Do you really want to assign this role?", "Assign Role");
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Menu_List(new MenuFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                menuDtoList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    async Task SelectMenu(MenuDto subMenu)
+    {
+        var confirm = await dialog.Confirm("Do you really want to assign this sub-menu?", "Assign Sub-Menu");
         if (confirm != null && (bool)confirm)
         {
-            var menuRoleDto = new MenuRoleDto
-            {
-                fkIdMenu = (Guid)menuDto.id,
-                fkIdRole = roleDto.id
-            };
-            ResultDto result = await fetch.MenuRoles_Insert(menuRoleDto);
+            subMenu.idParent = menuParent.id;
+            subMenu.menuRoles = null;
+            ResultDto result = await fetch.Menu_Update(subMenu);
 
             if (result.hasCompleted && result.statusCode == HttpStatusCode.OK)
             {
                 notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                 await LoadMenuData();
-                await OnReloadList.InvokeAsync(menuDto);
+                await OnReloadList.InvokeAsync(menuParent);
                 await InvokeAsync(StateHasChanged);
             } else
             {
@@ -84,9 +101,9 @@
         }
     }
 
-    bool isDisabled(RoleDto roleDto)
+    bool isDisabled(MenuDto selectedSubMenu)
     {
-        return menuDto.menuRoles.Select(x => x.fkIdRole).Contains(roleDto.id);
+        return menuDtoList.Select(x => x.idParent).Contains(selectedSubMenu.id);
     }
 
     string getCssClass(bool isDisabled)

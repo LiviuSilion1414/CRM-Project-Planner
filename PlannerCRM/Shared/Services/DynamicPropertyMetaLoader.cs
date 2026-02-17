@@ -1,4 +1,5 @@
-﻿using PlannerCRM.Shared.Dtos;
+﻿using PlannerCRM.Shared.Attributes;
+using PlannerCRM.Shared.Dtos;
 using System.ComponentModel;
 using System.Net.NetworkInformation;
 using System.Reflection;
@@ -37,7 +38,8 @@ public static class DynamicPropertyMetaLoader
                                 (SupportedTypes.Contains(p.PropertyType)) &&
                                 ((ShowOnlyRequired == false) ||
                                 (ShowOnlyRequired == true &&
-                                    p.GetCustomAttribute<RequiredAttribute>() != null &&
+                                    (p.GetCustomAttribute<RequiredAttribute>() != null ||
+                                     p.GetCustomAttribute<RequiredIfAttribute>() != null) &&
                                     p.GetCustomAttribute<DescriptionAttribute>() != null)) &&
                                 (p.PropertyType != typeof(Guid) || (p.PropertyType == typeof(Guid) || p.PropertyType == typeof(Guid?)) && (p.Name == "id")))
                     .Select(p =>
@@ -59,7 +61,7 @@ public static class DynamicPropertyMetaLoader
                             isNullable = isNullable,
                             underlyingType = underlyingType,
                             label = p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name,
-                            isRequired = p.GetCustomAttribute<RequiredAttribute>() != null,
+                            isRequired = p.GetCustomAttribute<RequiredAttribute>() != null || p.GetCustomAttribute<RequiredIfAttribute>() != null,
                             isTextArea = p.GetCustomAttribute<MaxLengthAttribute>() != null,
                             textAreaLength = p.GetCustomAttribute<MaxLengthAttribute>() != null ? p.GetCustomAttribute<MaxLengthAttribute>().Length : 0
                         };

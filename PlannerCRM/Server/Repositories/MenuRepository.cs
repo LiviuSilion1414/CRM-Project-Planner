@@ -49,8 +49,11 @@ public class MenuRepository(PlannerCrmContext context, IMapper mapper)
         {
             var menuRoles = await _context.MenuRoles.FirstOrDefaultAsync(x => x.FkIdMenu == dto.id);
 
-            _context.Remove(menuRoles);
-            await _context.SaveChangesAsync();
+            if (menuRoles != null)
+            {
+                _context.Remove(menuRoles);
+                await _context.SaveChangesAsync();
+            }
 
             var menu = await _context.Menus.FirstOrDefaultAsync(x => x.Id == dto.id);
 

@@ -64,6 +64,41 @@
                             </RadzenColumn>
                         </RadzenRow>
                     </RadzenTabsItem>
+                    <RadzenTabsItem Text="Assigned Sub Menu's">
+                        <RadzenRow class="mt-3">
+                            <RadzenColumn>
+                                <DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
+                                             TItem="@MenuDto"
+                                             AllowInsert="true"
+                                             OnInsert="@NewSubMenu"
+                                             ItemsList="@menuDtoList.Where(x => x.idParent == menuDto.id).ToList()"
+                                             ModelTitle="Sub Menu's"
+                                             OnReloadList="LoadMenuData"
+                                             ShowClear="false"
+                                             ShowSearch="false">
+                                    <MainColumns>
+                                        <RadzenDataGridColumn TItem="@MenuDto" Title="Title" Sortable="true" Filterable="false">
+                                            <Template Context="data">
+                                                @data?.title
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="@MenuDto" Title="Path" Sortable="true" Filterable="false" Width="150px">
+                                            <Template Context="data">
+                                                @data?.path
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    </MainColumns>
+                                    <ExtraColumns>
+                                        <RadzenDataGridColumn TItem="@MenuDto" Width="64px" Sortable="false" Filterable="false">
+                                            <Template Context="data">
+                                                <RadzenButton Icon="delete" Variant="Variant.Text" IconColor="@Colors.Danger" Click="@(() => RemoveSubMenu(data))"></RadzenButton>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                    </ExtraColumns>
+                                </DynamicGrid>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenTabsItem>
                 </Tabs>
             </RadzenTabs>
         </RadzenCard>
@@ -77,6 +112,15 @@
 
     int index;
 
+    List<MenuDto> menuDtoList = new List<MenuDto>();
+    List<RoleDto> rolesDtoList = new List<RoleDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMenuList();
+        await LoadRoleList();
+    }
+
     void Close()
     {
         dialog.Close();
@@ -87,10 +131,15 @@
         menuDto = menuDtoUpd;
     }
 
+    async Task Reload()
+    {
+        await OnReloadList.InvokeAsync();
+    }
+
     async Task NewRole()
     {
         await dialog.OpenAsync("Assign Role", ds =>
-        @<Menu_AddRoles menuDto="@menuDto" />,
+        @<Menu_AddRoles menuDto="@menuDto" rolesDtoList="@rolesDtoList" OnReloadList="Reload" />,
         new DialogOptions
         {
             Width = "80%",
@@ -98,6 +147,57 @@
             CloseDialogOnEsc = true,
             ShowClose = true
         });
+    }
+
+    async Task NewSubMenu()
+    {
+        await dialog.OpenAsync("Assign Sub-Menu", ds =>
+        @<Menu_AddSubMenus menuParent="@menuDto" menuDtoList="@menuDtoList" OnReloadList="Reload" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
+    }
+
+    private async Task LoadMenuList()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Menu_List(new MenuFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                menuDtoList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
+    private async Task LoadRoleList()
+    {
+        try
+        {
+            fetch.isBusy = true;
+
+            var result = await fetch.Role_List(new RoleFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                rolesDtoList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
+            }
+            fetch.isBusy = false;
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
+        }
     }
 
     private async Task LoadMenuData()
@@ -124,6 +224,35 @@
     }
 
 
+    async Task RemoveSubMenu(MenuDto menuDtoToDelete)
+    {
+        try
+        {
+            bool? confirm = await dialog.Confirm("Are you really sure you want to permanently remove the sub-menu? The operation is irreversible", "Delete record");
+
+            if (confirm != null && confirm == true)
+            {
+                menuDtoToDelete.idParent = null;
+                menuDtoToDelete.menuRoles = null;
+                var result = await fetch.Menu_Update(menuDtoToDelete);
+
+                if (result.hasCompleted && result.messageType == MessageType.Success)
+                {
+                    notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+                    await LoadMenuData();
+                    await Reload();
+                    await InvokeAsync(StateHasChanged);
+                } else
+                {
+                    notification.Notify(NotificationSeverity.Error, result.message, null, 4000);
+                }
+            }
+        } catch
+        {
+            notification.Notify(NotificationSeverity.Error, "Something went wrong, please retry", null, 4000);
+        }
+    }
+
     async Task RemoveRole(MenuRoleDto menuRoleDto)
     {
         try
@@ -138,7 +267,7 @@
                 {
                     notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
                     await LoadMenuData();
-                    await OnReloadList.InvokeAsync();
+                    await Reload();
                     await InvokeAsync(StateHasChanged);
                 } else
                 {

@@ -25,7 +25,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
         var foundEmployee = await _context.Employees
                                           .Include(x => x.EmployeesRoles)
                                           .ThenInclude(x => x.FkIdRoleNavigation).ThenInclude(x => x.MenuRoles).ThenInclude(x => x.FkIdMenuNavigation)
-                                          .FirstOrDefaultAsync(em => em.Username.Contains(dto.username));
+                                          .FirstOrDefaultAsync(em => em.Username.Trim().ToLower() == dto.username.Trim().ToLower());
 
         if (foundEmployee is not null)
         {
@@ -59,15 +59,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            foreach (var employeeRole in foundEmployee.EmployeesRoles)
-            {
-                tokenDescriptor.Subject.AddClaim(new Claim(CustomClaimTypes.Role, employeeRole.FkIdRoleNavigation.Name));
-                foreach (var menu in employeeRole.FkIdRoleNavigation.MenuRoles.Select(x => x.FkIdMenuNavigation))
-                {
-                    tokenDescriptor.Subject.AddClaim(new Claim(CustomClaimTypes.Menu, menu.Path));
-                }
-
-            }
+            tokenDescriptor.Subject.AddClaim(new Claim(CustomClaimTypes.Menu, string.Join(",", foundEmployee.EmployeesRoles.SelectMany(x => x.FkIdRoleNavigation.MenuRoles.DistinctBy(y => y.FkIdMenu)).Select(y => y.Id.ToString()))));
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 

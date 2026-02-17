@@ -101,7 +101,12 @@ public partial class FetchService
         {
             isBusy = true;
 
-            var result = await MenuRoles_List(new MenuRoleFilterDto());
+            MenuRoleFilterDto menuRoleFilter = new MenuRoleFilterDto()
+            {
+                idList = currentUser.menuRolesList
+            };
+
+            var result = await MenuRoles_List(menuRoleFilter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
@@ -171,13 +176,18 @@ public partial class FetchService
         currentUser.id = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value != null
                                            ? Guid.Parse(user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value)
                                            : Guid.Empty;
-        currentUser.rolesList = user.Claims
-                                   .Where(c => c.Type == CustomClaimTypes.Role)
-                                   .Select(c => c.Value)
-                                   .ToList();
-        currentUser.menuList = user.Claims
+        currentUser.menuRolesList = user.Claims
                                    .Where(c => c.Type == CustomClaimTypes.Menu)
-                                   .Select(c => c.Value)
+                                   .SelectMany(c => c.Value.Split(","))
+                                   .Select(c => 
+                                   {
+                                       if (Guid.TryParse(c, out Guid menuId))
+                                       {
+                                           return menuId;
+                                       }
+
+                                       return Guid.Empty;
+                                   })
                                    .ToList();
         }
     }
