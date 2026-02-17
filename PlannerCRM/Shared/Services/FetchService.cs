@@ -4,6 +4,7 @@ using PlannerCRM.Shared.Services;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using static PlannerCRM.Shared.Dtos.DtoShared;
 
@@ -194,16 +195,19 @@ public partial class FetchService
             var response = new HttpResponseMessage();
 
             var endPointUrl = controllerName + endpoint;
+            var json = JsonSerializer.Serialize(data);
             switch (apiType)
             {
                 case ApiType.Get:
                     response = await _http.GetAsync(endPointUrl);
                     break;
                 case ApiType.Post:
-                    response = await _http.PostAsJsonAsync(endPointUrl, data);
+                    //response = await _http.PostAsJsonAsync(endPointUrl, data);
+                    response = await _http.PostAsync(endPointUrl, new StringContent(json, Encoding.UTF8, "application/json"));
                     break;
                 case ApiType.Put:
-                    response = await _http.PutAsJsonAsync(endPointUrl, data);
+                    //response = await _http.PutAsJsonAsync(endPointUrl, data);
+                    response = await _http.PutAsync(endPointUrl, new StringContent(json, Encoding.UTF8, "application/json"));
                     break;
             }
 

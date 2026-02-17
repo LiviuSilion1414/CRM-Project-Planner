@@ -6,8 +6,7 @@
 @if (containsType == false)
 {
     <b>Not supported</b>
-} 
-else
+} else
 {
 
 
@@ -175,7 +174,7 @@ else
     private IList<TItem>? selectedItems;
     private int maxWordWrapLength = 500;
 
-    private bool containsType = true;
+    private bool containsType = false;
 
     IEnumerable<int> pageSizeOptions = new int[] { 20, 50, 100, 200 };
 
@@ -196,14 +195,17 @@ else
 
     async Task ReloadModelProperties()
     {
-        if (fetch.lookupMetaProperties.ContainsKey(typeof(TItem)))
+        if (fetch.lookupMetaProperties.Any())
         {
-            properties = fetch.lookupMetaProperties[typeof(TItem)];
-            containsType = true;
-        } else
-        {
-            containsType = false;
-            await ShowSendFeedbackDialog(new Exception($"The type {typeof(TItem).Name} is not supported.Please make sure the assembly containing the type is referenced and properly loaded"));
+            if (fetch.lookupMetaProperties.ContainsKey(typeof(TItem)))
+            {
+                properties = fetch.lookupMetaProperties[typeof(TItem)];
+                containsType = true;
+            } else
+            {
+                containsType = false;
+                await ShowSendFeedbackDialog(new Exception($"The type {typeof(TItem).Name} is not supported.Please make sure the assembly containing the type is referenced and properly loaded"));
+            }
         }
     }
 
