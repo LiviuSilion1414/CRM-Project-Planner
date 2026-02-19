@@ -198,4 +198,66 @@ public class EmployeeController(PlannerCrmContext context, IMapper mapper) : Con
             };
         }
     }
+
+    [HttpPost]
+    [Route(ApiUrl.MENU_LIST_BY_EMPLOYEE_ID)]
+    public async Task<ResultDto> MenuListByEmployeeId(EmployeeFilterDto filter)
+    {
+        try
+        {
+            var menuList = await _repo.MenuListByEmployeeId(filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = menuList,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } catch (Exception ex)
+        {
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEE_CONTROLLER + ApiUrl.MENU_LIST_BY_EMPLOYEE_ID, ex, User?.Identity, filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
+            };
+        }
+    }
+
+    [HttpPost]
+    [Route(ApiUrl.ROLE_LIST_BY_EMPLOYEE_ID)]
+    public async Task<ResultDto> RoleListByEmployeeId(EmployeeFilterDto filter)
+    {
+        try
+        {
+            var roleList = await _repo.RoleListByEmployeeId(filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = roleList,
+                hasCompleted = true,
+                message = "Operation completed",
+                messageType = MessageType.Success,
+                statusCode = HttpStatusCode.OK
+            };
+        } catch (Exception ex)
+        {
+            await _systemLog.WriteLog(ApiUrl.EMPLOYEE_CONTROLLER + ApiUrl.ROLE_LIST_BY_EMPLOYEE_ID, ex, User?.Identity, filter);
+            return new ResultDto()
+            {
+                id = null,
+                data = null,
+                hasCompleted = false,
+                message = "Operation failed",
+                messageType = MessageType.Error,
+                statusCode = HttpStatusCode.NotFound
+            };
+        }
+    }
 }

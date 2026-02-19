@@ -84,5 +84,8 @@ public static class DtoShared
         public const string DELETE_MULTIPLE = "deleteMultiple";
         public const string GET = "get";
         public const string LIST = "list";
+
+        public const string MENU_LIST_BY_EMPLOYEE_ID = "menuListByEmployeeId";
+        public const string ROLE_LIST_BY_EMPLOYEE_ID = "roleListByEmployeeId";
     }
 }

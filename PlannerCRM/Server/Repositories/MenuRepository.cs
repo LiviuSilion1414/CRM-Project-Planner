@@ -55,6 +55,14 @@ public class MenuRepository(PlannerCrmContext context, IMapper mapper)
                 await _context.SaveChangesAsync();
             }
 
+            var relatedMenuList = await _context.Menus.Where(x => x.IdParent == dto.id).ToListAsync();
+            
+            if (relatedMenuList != null)
+            {
+                relatedMenuList.Select(x => x.IdParent = null).ToList();
+                await _context.SaveChangesAsync();
+            }
+            
             var menu = await _context.Menus.FirstOrDefaultAsync(x => x.Id == dto.id);
 
             _context.Remove(menu);
@@ -112,7 +120,10 @@ public class MenuRepository(PlannerCrmContext context, IMapper mapper)
                                       .AsNoTracking()
                                       .AsSplitQuery()
                                       .Include(x => x.MenuRoles).ThenInclude(x => x.FkIdRoleNavigation)
-                                      .Where(x => (string.IsNullOrEmpty(filter.title) || x.Title.ToLower().Trim().Contains(filter.title.ToLower().Trim())))
+                                      .Where(x => (string.IsNullOrEmpty(filter.title) || x.Title.ToLower().Trim().Contains(filter.title.ToLower().Trim())) ||
+                                                  (string.IsNullOrEmpty(filter.title) || x.Path.ToLower().Trim().Contains(filter.title.ToLower().Trim()))
+
+                                      )
                                       .ToListAsync();
 
             return _mapper.Map<List<MenuDto>>(roles);

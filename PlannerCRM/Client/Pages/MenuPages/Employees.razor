@@ -22,7 +22,7 @@
                 <RadzenFormField Text="Role" AllowFloatingLabel="false">
                     <RadzenDropDown TValue="Guid ?"
                                     class="form-control"
-                                    Data="@fetch.rolesList"
+                                    Data="@(fetch.currentUser?.roleList ?? new())"
                                     AllowFiltering="true"
                                     AllowClear="true"
                                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"

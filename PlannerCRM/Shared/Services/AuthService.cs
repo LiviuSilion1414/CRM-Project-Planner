@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using PlannerCRM.Shared.Services;
 using PlannerCRM.Shared.Dtos;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace PlannerCRM.Shared.Services;
 
@@ -36,8 +32,16 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             }
 
             var result = await response.Content.ReadFromJsonAsync<ResultDto>();
+            var currentUser = JsonSerializer.Deserialize<CurrentUserDto>(result.data.ToString());
 
-            await _localStorage.SetItemAsync(CustomClaimTypes.Token, result.data.ToString());
+            await _localStorage.SetItemAsync(CustomClaimTypes.Guid, currentUser.id);
+            await _localStorage.SetItemAsync(CustomClaimTypes.IsAuthenticated, currentUser.isAuthenticated);
+            await _localStorage.SetItemAsync(CustomClaimTypes.Email, currentUser.email);
+            await _localStorage.SetItemAsync(CustomClaimTypes.Name, currentUser.name);
+            await _localStorage.SetItemAsync(CustomClaimTypes.Token, currentUser.token);
+            await _localStorage.SetItemAsync(CustomClaimTypes.Menu, currentUser.menuList);
+            await _localStorage.SetItemAsync(CustomClaimTypes.Role, currentUser.roleList);
+            await _localStorage.SetItemAsync(CustomClaimTypes.RoleString, currentUser.roleList.Select(x => x.name).ToList());
 
             return new ResultDto()
             {
@@ -85,16 +89,42 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
 
             object token = await _localStorage.GetItemAsync(CustomClaimTypes.Token);
 
-            if (token == null) return anonymous;
-
-            var claims = ParseClaimsFromJwt(token.ToString());
-
-            if (claims == null)
+            if (string.IsNullOrEmpty(token?.ToString()))
             {
                 return anonymous;
             }
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Bearer", CustomClaimTypes.Name, CustomClaimTypes.Role)));
+            var objId = await _localStorage.GetItemAsync(CustomClaimTypes.Guid);
+            var objIsAuthenticated = await _localStorage.GetItemAsync(CustomClaimTypes.IsAuthenticated);
+            var objEmail = await _localStorage.GetItemAsync(CustomClaimTypes.Email);
+            var objName = await _localStorage.GetItemAsync(CustomClaimTypes.Name);
+            var objToken = await _localStorage.GetItemAsync(CustomClaimTypes.Token);
+            var objMenuList = await _localStorage.GetItemAsync(CustomClaimTypes.Menu);
+            var objRoleList = await _localStorage.GetItemAsync(CustomClaimTypes.Role);
+            var objRoleListString = JsonSerializer.Deserialize<List<string>>((await _localStorage.GetItemAsync(CustomClaimTypes.RoleString)).ToString());
+
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim(CustomClaimTypes.Token, token.ToString()),
+                new Claim(CustomClaimTypes.Guid, objId.ToString()),
+                new Claim(CustomClaimTypes.IsAuthenticated, objIsAuthenticated.ToString()),
+                new Claim(CustomClaimTypes.Email, objEmail.ToString()),
+                new Claim(CustomClaimTypes.Name, objName.ToString()),
+                new Claim(CustomClaimTypes.Menu, objMenuList.ToString()),
+                new Claim(CustomClaimTypes.Role, objRoleList.ToString())
+            };
+
+            foreach (var claim in objRoleListString)
+            {
+                claims.Add(new Claim(CustomClaimTypes.RoleString, claim));
+            }
+
+            if (claims == null || !claims.Any())
+            {
+                return anonymous;
+            }
+
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Bearer", CustomClaimTypes.Name, CustomClaimTypes.RoleString)));
         } 
         catch 
         {

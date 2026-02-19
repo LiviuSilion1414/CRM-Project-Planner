@@ -17,17 +17,13 @@ public partial class FetchService
     private readonly LocalStorageService _localStorage;
 
     public CurrentUserDto? currentUser { get; set; } = new CurrentUserDto();
-    public bool isBusy { get; set; }
-    public string? token { get; set; }
+    public bool isBusy { get; set; } = false;
     public List<string> supportedControllers { get; set; } = new List<string>();
-    public List<MenuRoleDto> menuRolesList { get; set; } = new List<MenuRoleDto>();
-    public List<RoleDto> rolesList { get; set; } = new List<RoleDto>();
-    public List<MenuDto> menusList { get; set; } = new List<MenuDto>();
 
     public Dictionary<Type, List<PropertyMeta>> lookupMetaProperties { get; set; } = new Dictionary<Type, List<PropertyMeta>>();
     public AuthenticationState authState { get; set; } = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
-    public FetchService (LocalStorageService localStorage, HttpClient http, AuthService auth)
+    public FetchService(LocalStorageService localStorage, HttpClient http, AuthService auth)
     {
         _http = http;
         _localStorage = localStorage;
@@ -42,28 +38,15 @@ public partial class FetchService
     // metodo chiamato nel layout principale e se le voci di menu sono state cambiate
     public async Task LoadData()
     {
+        await LoadAllDtoMetaProperties();
         authState = await _auth.GetAuthenticationStateAsync();
 
         if (authState.User.Identity.IsAuthenticated)
         {
-            if (string.IsNullOrEmpty(token))
-            {
-                await LoadAllDtoMetaProperties();
-                await GetBearerToken();
-                await GetCurrentUserDataAsync();
-            }
-            if (!menuRolesList.Any())
-            {
-                await LoadMenuRoles();
-            }
-            if (!rolesList.Any())
-            {
-                await LoadGlobalRoles();
-            }
-            if (!menusList.Any())
-            {
-                await LoadGlobalMenus();
-            }
+            await GetCurrentUserDataAsync(authState.User);
+            //if (string.IsNullOrEmpty(token))
+            //{
+            //}
         }
     }
 
@@ -96,101 +79,16 @@ public partial class FetchService
         }
     }
 
-    private async Task LoadMenuRoles()
+    public async Task GetCurrentUserDataAsync(ClaimsPrincipal user)
     {
-        try
-        {
-            isBusy = true;
-
-            MenuRoleFilterDto menuRoleFilter = new MenuRoleFilterDto()
-            {
-                idList = currentUser.menuRolesList
-            };
-
-            var result = await MenuRoles_List(menuRoleFilter);
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                menuRolesList = JsonSerializer.Deserialize<List<MenuRoleDto>>(result.data.ToString()).OrderBy(x => x.fkIdMenuNavigation.ranking).ToList();
-            }
-            isBusy = false;
-        } 
-        catch (Exception exc)
-        {
-            throw;
-        }
-    }
-
-    private async Task LoadGlobalRoles()
-    {
-        try
-        {
-            isBusy = true;
-
-            var result = await Role_List(new RoleFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                rolesList = JsonSerializer.Deserialize<List<RoleDto>>(result.data.ToString());
-            }
-            isBusy = false;
-        } 
-        catch (Exception exc)
-        {
-            throw;
-        }
-    }
-
-    private async Task LoadGlobalMenus()
-    {
-        try
-        {
-            isBusy = true;
-
-            var result = await Menu_List(new MenuFilterDto());
-
-            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
-            {
-                menusList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
-            }
-            isBusy = false;
-        } catch (Exception exc)
-        {
-            throw;
-        }
-    }
-
-    public async Task GetCurrentUserDataAsync()
-    {
-        var authState = await _auth.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user != null || user.Identity.IsAuthenticated)
-        {
-
-        currentUser.token = token;
-        currentUser.email = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Email)?.Value ?? string.Empty;
-        currentUser.name = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Name)?.Value ?? string.Empty;
-        currentUser.isAuthenticated = user.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.IsAuthenticated)?.Value != null
-                                                        ? bool.Parse(user.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.IsAuthenticated)?.Value)
-                                                        : false;
-        currentUser.id = user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value != null
-                                           ? Guid.Parse(user.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.Guid)?.Value)
-                                           : Guid.Empty;
-        currentUser.menuRolesList = user.Claims
-                                   .Where(c => c.Type == CustomClaimTypes.Menu)
-                                   .SelectMany(c => c.Value.Split(","))
-                                   .Select(c => 
-                                   {
-                                       if (Guid.TryParse(c, out Guid menuId))
-                                       {
-                                           return menuId;
-                                       }
-
-                                       return Guid.Empty;
-                                   })
-                                   .ToList();
-        }
+        currentUser.id = Guid.Parse((await _localStorage.GetItemAsync(CustomClaimTypes.Guid)).ToString());
+        currentUser.isAuthenticated = bool.Parse((await _localStorage.GetItemAsync(CustomClaimTypes.IsAuthenticated)).ToString());
+        currentUser.email = (await _localStorage.GetItemAsync(CustomClaimTypes.Email)).ToString();
+        currentUser.name = (await _localStorage.GetItemAsync(CustomClaimTypes.Name)).ToString();
+        currentUser.token = (await _localStorage.GetItemAsync(CustomClaimTypes.Token)).ToString();
+        currentUser.menuList = JsonSerializer.Deserialize<List<MenuDto>>((await _localStorage.GetItemAsync(CustomClaimTypes.Menu)).ToString());
+        currentUser.roleList = JsonSerializer.Deserialize<List<RoleDto>>((await _localStorage.GetItemAsync(CustomClaimTypes.Role)).ToString());
+        currentUser.roleListString = JsonSerializer.Deserialize<List<string>>((await _localStorage.GetItemAsync(CustomClaimTypes.RoleString)).ToString());
     }
 
     public async Task<ResultDto> ExecuteAsync<TItem>(string controllerName, string endpoint, TItem data, ApiType apiType)
@@ -200,25 +98,22 @@ public partial class FetchService
         {
             if (_http.DefaultRequestHeaders != null && !_http.DefaultRequestHeaders.Contains("Authorization"))
             {
-                _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {currentUser.token}");
             }
 
             var response = new HttpResponseMessage();
 
             var endPointUrl = controllerName + endpoint;
-            var json = JsonSerializer.Serialize(data);
             switch (apiType)
             {
                 case ApiType.Get:
                     response = await _http.GetAsync(endPointUrl);
                     break;
                 case ApiType.Post:
-                    //response = await _http.PostAsJsonAsync(endPointUrl, data);
-                    response = await _http.PostAsync(endPointUrl, new StringContent(json, Encoding.UTF8, "application/json"));
+                    response = await _http.PostAsJsonAsync(endPointUrl, data);
                     break;
                 case ApiType.Put:
-                    //response = await _http.PutAsJsonAsync(endPointUrl, data);
-                    response = await _http.PutAsync(endPointUrl, new StringContent(json, Encoding.UTF8, "application/json"));
+                    response = await _http.PutAsJsonAsync(endPointUrl, data);
                     break;
             }
 
@@ -235,8 +130,7 @@ public partial class FetchService
                 statusCode = System.Net.HttpStatusCode.ServiceUnavailable,
                 message = string.Empty,
             };
-        } 
-        catch(Exception exc)
+        } catch (Exception exc)
         {
             throw;
         }
@@ -250,16 +144,13 @@ public partial class FetchService
             if (actionType == ActionType.INSERT)
             {
                 return await ExecuteAsync(controllerName, ApiUrl.INSERT, data, ApiType.Post);
-            }
-            else if (actionType == ActionType.UPDATE)
+            } else if (actionType == ActionType.UPDATE)
             {
                 return await ExecuteAsync(controllerName, ApiUrl.UPDATE, data, ApiType.Put);
-            }
-            else if (actionType == ActionType.DELETE)
+            } else if (actionType == ActionType.DELETE)
             {
                 return await ExecuteAsync(controllerName, ApiUrl.DELETE, data, ApiType.Post);
-            }
-            else if (actionType == ActionType.DELETE_MULTIPLE)
+            } else if (actionType == ActionType.DELETE_MULTIPLE)
             {
                 return await ExecuteAsync(controllerName, ApiUrl.DELETE_MULTIPLE, data, ApiType.Post);
             }
@@ -272,8 +163,7 @@ public partial class FetchService
                 statusCode = System.Net.HttpStatusCode.ServiceUnavailable,
                 message = string.Empty,
             };
-        } 
-        catch (Exception exc)
+        } catch (Exception exc)
         {
             throw;
         }
@@ -306,19 +196,6 @@ public partial class FetchService
                 message = string.Empty,
             };
         } catch (Exception exc)
-        {
-            throw;
-        }
-    }
-
-    public async Task GetBearerToken()
-    {
-        try
-        {
-            var value = await _localStorage.GetItemAsync(CustomClaimTypes.Token);
-            token = value.ToString();
-        } 
-        catch (Exception)
         {
             throw;
         }

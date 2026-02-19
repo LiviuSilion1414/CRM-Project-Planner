@@ -21,7 +21,7 @@ TextProperty="@nameof(WorkTimeDto.hoursString)">
 
     protected override async Task OnInitializedAsync()
     {
-        currentUserId = fetch.currentUser.id;
+        currentUserId = (Guid)fetch.currentUser.id;
         await LoadWorkTimes();
     }
 

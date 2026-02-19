@@ -8,6 +8,7 @@ public class CustomClaimTypes
     public const string Name = "title";
     public const string Email = "username";
     public const string Role = "role";
+    public const string RoleString = "roleString";
     public const string Menu = "menu";
     public const string IsAuthenticated = "isAuthenticated";
     public const string Token = "token";

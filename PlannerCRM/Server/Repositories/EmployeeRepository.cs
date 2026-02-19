@@ -2,6 +2,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.JSInterop.Infrastructure;
 using PlannerCRM.Server.Models;
+using Radzen;
 using System.Security.Cryptography;
 using static PlannerCRM.Shared.Dtos.DtoShared;
 
@@ -184,6 +185,46 @@ public class EmployeeRepository(PlannerCrmContext context, IMapper mapper)
                                           .ToListAsync();
 
             return _mapper.Map<List<EmployeeDto>>(employees);
+        } catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<List<MenuDto>> MenuListByEmployeeId(EmployeeFilterDto filter)
+    {
+        try
+        {
+            List<Menu> menuList = await _context.Employees
+                                         .AsNoTracking()
+                                         .AsSplitQuery()
+                                         .Include(x => x.EmployeesRoles).ThenInclude(x => x.FkIdRoleNavigation.MenuRoles)
+                                         .Where(x => x.Id == filter.employeeId)
+                                         .SelectMany(x => x.EmployeesRoles.SelectMany(y => y.FkIdRoleNavigation.MenuRoles.Select(v => v.FkIdMenuNavigation)))
+                                         .Distinct()
+                                         .OrderBy(x => x.Ranking)
+                                         .ToListAsync();
+            return _mapper.Map<List<MenuDto>>(menuList);
+        } catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<List<RoleDto>> RoleListByEmployeeId(EmployeeFilterDto filter)
+    {
+        try
+        {
+            List<Role> roleList = await _context.Employees
+                                                .AsNoTracking()
+                                                .AsSplitQuery()
+                                                .Include(x => x.EmployeesRoles)
+                                                .Where(x => x.Id == filter.employeeId)
+                                                .SelectMany(x => x.EmployeesRoles.Select(y => y.FkIdRoleNavigation))
+                                                .Distinct()
+                                                .ToListAsync();
+
+            return _mapper.Map<List<RoleDto>>(roleList);
         } catch (Exception)
         {
             throw;

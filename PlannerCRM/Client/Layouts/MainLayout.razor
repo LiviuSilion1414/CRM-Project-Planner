@@ -41,25 +41,18 @@
             </RadzenHeader>
             <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
                 <RadzenPanelMenu ShowArrow="true" Multiple="true" DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
-                    @foreach (var globalMenu in fetch.menusList.Where(x => fetch.menuRolesList.Select(y => y.fkIdMenu).Contains(x.id))
-                                                               .DistinctBy(x => x.id)
-                                                               //.Where(x => x.isDropdown != null && (bool)x.isDropdown)
-                                                               .ToList())
+                    @foreach (var globalMenu in fetch.currentUser?.menuList ?? new())
                     {
                         // This is a menu with dropdown and without parent, so it will be displayed as a main menu with submenus
                         @if (globalMenu.isDropdown != null && (bool)globalMenu.isDropdown && globalMenu.idParent == null)
                         {
                             <RadzenPanelMenuItem Text="@globalMenu.title"
                                                  Icon="@globalMenu.icon">
-                                @foreach (var menu in fetch.menusList
-                                                           .Where(x => fetch.menuRolesList.Select(y => y.fkIdMenu).Contains(x.id))
-                                                           .Where(x => x.isMenu != null && (bool)x.isMenu && x.idParent == globalMenu.id)
-                                                           .ToList())
+                                @foreach (var menu in fetch.currentUser.menuList
+                                                           ?.Where(x => x.isMenu != null && (bool)x.isMenu && x.idParent == globalMenu.id)
+                                                           ?.ToList() ?? new())
                                 {
-                                    @if (fetch.menuRolesList.Where(x => x.fkIdMenu == menu.id).Any())
-                                    {
-                                        <RadzenPanelMenuItem Text="@menu.title" Icon="@menu.icon" Path="@($"/{menu.path}")" />
-                                    }
+                                    <RadzenPanelMenuItem Text="@menu.title" Icon="@menu.icon" Path="@($"/{menu.path}")" />
                                 }
                             </RadzenPanelMenuItem>
                         }

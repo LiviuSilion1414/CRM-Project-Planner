@@ -59,7 +59,17 @@ public partial class FetchService
 
     public async Task<ResultDto> Employee_List(EmployeeFilterDto filterDto)
     {
-        return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+         return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.LIST, filterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Menu_ListByEmployeeId(EmployeeFilterDto employeeFilterDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.MENU_LIST_BY_EMPLOYEE_ID, employeeFilterDto, ApiType.Post);
+    }
+
+    public async Task<ResultDto> Role_ListByEmployeeId(EmployeeFilterDto employeeFilterDto)
+    {
+        return await ExecuteAsync(ApiUrl.EMPLOYEE_CONTROLLER, ApiUrl.MENU_LIST_BY_EMPLOYEE_ID, employeeFilterDto, ApiType.Post);
     }
 
     #endregion

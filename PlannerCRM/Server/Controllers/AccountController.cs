@@ -40,6 +40,9 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
                 return BadRequest(new());
             }
 
+            CurrentUserDto currentUserDto = new CurrentUserDto();
+            EmployeeDto employeeDto = _mapper.Map<EmployeeDto>(foundEmployee);
+
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
 
             var appSettings = _config.GetSection("AppSettings").Get<ServerAppSettings>();
@@ -50,30 +53,43 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(CustomClaimTypes.Name, foundEmployee.Name),
-                    new Claim(CustomClaimTypes.Email, foundEmployee.Username),
-                    new Claim(CustomClaimTypes.Guid, foundEmployee.Id.ToString()),
+                    new Claim(CustomClaimTypes.Name, employeeDto.fullname),
+                    new Claim(CustomClaimTypes.Email, employeeDto.username),
+                    new Claim(CustomClaimTypes.Guid, employeeDto.id.ToString()),
                     new Claim(CustomClaimTypes.IsAuthenticated, true.ToString()),
                 }),
                 Expires = DateTime.Now.AddDays(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            tokenDescriptor.Subject.AddClaim(new Claim(CustomClaimTypes.Menu, string.Join(",", foundEmployee.EmployeesRoles.SelectMany(x => x.FkIdRoleNavigation.MenuRoles.DistinctBy(y => y.FkIdMenu)).Select(y => y.Id.ToString()))));
-
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
             var tokenAsString = tokenHandler.WriteToken(token);
 
             foundEmployee.LastSeen = DateTime.Now;
-            //foundEmployee.Token = tokenAsString;
+            foundEmployee.Token = tokenAsString;
 
             await _context.SaveChangesAsync();
+
+            var employeeFilter = new EmployeeFilterDto 
+            { 
+                employeeId = employeeDto.id 
+            };
+
+            var employeeRepository = new EmployeeRepository(_context, _mapper);
+
+            currentUserDto.id = (Guid)employeeDto.id;
+            currentUserDto.isAuthenticated = true;
+            currentUserDto.token = tokenAsString;
+            currentUserDto.name = employeeDto.fullname;
+            currentUserDto.email = employeeDto.username;
+            currentUserDto.menuList = await employeeRepository.MenuListByEmployeeId(employeeFilter);
+            currentUserDto.roleList = await employeeRepository.RoleListByEmployeeId(employeeFilter);
 
             return Ok(
                 new ResultDto
                 {
-                    data = tokenAsString,
+                    data = currentUserDto,
                     id = foundEmployee.Id,
                     hasCompleted = true,
                     message = "Logged in",
