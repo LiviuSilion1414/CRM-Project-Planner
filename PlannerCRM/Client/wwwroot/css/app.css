@@ -1,17 +1,5 @@
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid red;
-}
-
-.validation-message {
-    color: red;
+body {
+    background-color: var(--crm-bg);
 }
 
 #blazor-error-ui {
@@ -41,4 +29,44 @@ html, body {
 
     .blazor-error-boundary::after {
         content: "An error has occurred."
+    }
+
+:root {
+    --crm-primary: #3f51b5; /* indigo material */
+    --crm-accent: #03dac6; /* teal */
+    --crm-bg: #f5f6fa; /* background app */
+    --crm-surface: #ffffff; /* card */
+    --crm-border: #e0e0e0;
+    --crm-radius: 8px;
+}
+
+.rz-card {
+    background: var(--crm-surface);
+    border-radius: var(--crm-radius);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    border: 0;
+}
+
+.rz-button {
+    border-radius: var(--crm-radius);
+    text-transform: none;
+    font-weight: 500;
+}
+
+    .rz-button.rz-primary {
+        background-color: var(--crm-primary);
+    }
+
+.rz-textbox,
+.rz-numeric,
+.rz-dropdown {
+    border-radius: var(--crm-radius);
+    border: 1px solid var(--crm-border);
+}
+
+    .rz-textbox:focus,
+    .rz-numeric:focus,
+    .rz-dropdown:focus-within {
+        border-color: var(--crm-primary);
+        box-shadow: 0 0 0 2px rgba(63,81,181,.15);
     }

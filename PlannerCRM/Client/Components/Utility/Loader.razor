@@ -1,6 +1,20 @@
-﻿<div class="text-center" style="position: absolute; top: 50%; left: 50%;">
-    <div class="spinner-grow text-primary" role="status"></div>
-    <div class="spinner-grow text-secondary" role="status"></div>
-    <div class="spinner-grow text-success" role="status"></div>
-    <h4>Loading...</h4>
+﻿<div class="loader-overlay">
+    <RadzenStack Gap="1rem" AlignItems="AlignItems.Center">
+        <RadzenProgressBarCircular Mode="ProgressBarMode.Indeterminate"
+                                   Size="ProgressBarCircularSize.Large" />
+        <span>Processing...</span>
+    </RadzenStack>
 </div>
+
+<style>
+    .loader-overlay {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient( 180deg, rgba(243, 244, 246, 0.85), rgba(229, 231, 235, 0.85) );
+        backdrop-filter: blur(6px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+    }
+</style>
