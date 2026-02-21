@@ -30,7 +30,8 @@
                         </RadzenLink>
                         <RadzenProfileMenu Click="HandleClick" Style="background-color: lightseagreen; margin:0;" ShowIcon="true">
                             <Template>
-                                <RadzenText TextStyle="TextStyle.Body1">Hi, <b>@context.User.Identity.Name!</b></RadzenText>
+                               @*  <RadzenText TextStyle="TextStyle.Body1">Welcome, <b>@fetch.currentUser?.name!</b></RadzenText> *@
+                                <RadzenGravatar Email="@fetch.currentUser?.email" />
                             </Template>
                             <ChildContent>
                                 <RadzenProfileMenuItem Text="Profile" Icon="person" Path="/profile"></RadzenProfileMenuItem>
@@ -57,8 +58,7 @@
                                 }
                             </RadzenPanelMenuItem>
                         }
-                        // These instead are menu's without parent and displayed as self-menu
-                        @if (globalMenu.isMenu != null && (bool)globalMenu.isMenu && globalMenu.idParent == null)
+                        else
                         {
                             <RadzenPanelMenuItem Text="@globalMenu.title"
                                                  Icon="@globalMenu.icon"

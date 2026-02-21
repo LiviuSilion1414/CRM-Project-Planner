@@ -33,24 +33,21 @@ public partial class FetchService
                           .Where(x => x.Name.EndsWith("_CONTROLLER"))
                           .Select(x => x.Name)
                           .ToList();
+        LoadAllDtoMetaProperties();
     }
 
     // metodo chiamato nel layout principale e se le voci di menu sono state cambiate
     public async Task LoadData()
     {
-        await LoadAllDtoMetaProperties();
         authState = await _auth.GetAuthenticationStateAsync();
 
         if (authState.User.Identity.IsAuthenticated)
         {
             await GetCurrentUserDataAsync(authState.User);
-            //if (string.IsNullOrEmpty(token))
-            //{
-            //}
         }
     }
 
-    private async Task LoadAllDtoMetaProperties()
+    private void LoadAllDtoMetaProperties()
     {
         try
         {
