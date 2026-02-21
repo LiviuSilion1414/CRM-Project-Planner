@@ -27,10 +27,10 @@ public partial class MenuDto
     [Description("Icon")]
     public string? icon { get; set; }
 
-    [RequiredIf(nameof(isDropdown), false, ErrorMessage = "Path is required when 'Is Dropdown ?' is false")]
+    //[RequiredIf(nameof(isDropdown), false, ErrorMessage = "Path is required when 'Is Dropdown ?' is false")]
     [MaxLength(50)]
     [Description("Path")]
-    //[StartsWithSlash]
+    [Required]
     public string? path { get; set; }
 
     [Required]
