@@ -1,29 +1,30 @@
 ﻿@page "/menu-list"
 @using static PlannerCRM.Shared.Dtos.DtoShared
 
-<h3>Menu List</h3>
-<PageTitle>Menu List</PageTitle>
+<PageContainer PageTitle="Menu List">
+    <ChildContent>
+        <RadzenCard class="mb-3">
+            <RadzenRow JustifyContent="JustifyContent.Stretch">
+                <RadzenColumn>
+                    <RadzenFormField Text="Name" AllowFloatingLabel="false">
+                        <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@query" />
+                    </RadzenFormField>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
 
-<RadzenCard class="mb-3">
-    <RadzenRow JustifyContent="JustifyContent.Stretch">
-        <RadzenColumn>
-            <RadzenFormField Text="Name" AllowFloatingLabel="false">
-                <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@query" />
-            </RadzenFormField>
-        </RadzenColumn>
-    </RadzenRow>
-</RadzenCard>
-
-<DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
-             AllowInsert="true"
-             AllowUpdate="true"
-             AllowDelete="true"
-             TItem="@MenuDto"
-             ItemsList="@menuList"
-             ModelTitle="Menu"
-             OnAdvancedUpdate="AdvancedUpdate"
-             OnReloadList="LoadData"
-             OnReset="ResetData"/>
+        <DynamicGrid ApiController="@ApiUrl.MENU_CONTROLLER"
+                     AllowInsert="true"
+                     AllowUpdate="true"
+                     AllowDelete="true"
+                     TItem="@MenuDto"
+                     ItemsList="@menuList"
+                     ModelTitle="Menu"
+                     OnAdvancedUpdate="AdvancedUpdate"
+                     OnReloadList="LoadData"
+                     OnReset="ResetData" />
+    </ChildContent>
+</PageContainer>
 
 @code
 {
@@ -65,7 +66,7 @@
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
     }
-    
+
     async Task AdvancedUpdate(MenuDto item)
     {
         await dialog.OpenAsync($"Advanced editing", ds =>
@@ -78,7 +79,7 @@
             ShowClose = true
         });
     }
-    
+
     async Task ReloadMenuRoles()
     {
         navigation.Refresh(forceReload: true);

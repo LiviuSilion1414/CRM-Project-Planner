@@ -1,33 +1,37 @@
 ﻿@page "/systemlog-list"
 @using static PlannerCRM.Shared.Dtos.DtoShared
 
-<h3>SystemLog List</h3>
-<PageTitle>SystemLog List</PageTitle>
+<PageContainer PageTitle="System Log" 
+               Description="A centralized logging system that captures application errors and critical events in real time. 
+                            It provides a single, unified page where errors can be reviewed, analyzed, and managed, enabling faster troubleshooting, 
+                            consistent handling, and improved system reliability.">
+    <ChildContent>
+        <RadzenCard class="mb-3">
+            <RadzenRow JustifyContent="JustifyContent.Stretch">
+                <RadzenColumn>
+                    <RadzenFormField Text="Username" AllowFloatingLabel="false">
+                        <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@username" />
+                    </RadzenFormField>
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenFormField Text="Date" AllowFloatingLabel="false">
+                        <RadzenDatePicker class="form-control" DateFormat="dd/MM/yyyy" @bind-Value="@date" />
+                    </RadzenFormField>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
 
-<RadzenCard class="mb-3">
-    <RadzenRow JustifyContent="JustifyContent.Stretch">
-        <RadzenColumn>
-            <RadzenFormField Text="Username" AllowFloatingLabel="false">
-                <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@username" />
-            </RadzenFormField>
-        </RadzenColumn>
-        <RadzenColumn>
-            <RadzenFormField Text="Date" AllowFloatingLabel="false">
-                <RadzenDatePicker class="form-control" DateFormat="dd/MM/yyyy" @bind-Value="@date" />
-            </RadzenFormField>
-        </RadzenColumn>
-    </RadzenRow>
-</RadzenCard>
-
-<DynamicGrid ApiController="@ApiUrl.SYSTEMLOG_CONTROLLER"
-             AllowInsert="true"
-             AllowUpdate="true"
-             AllowDelete="true"
-             TItem="@SystemLogDto"
-             ItemsList="@systemLogList"
-             ModelTitle="System Log"
-             OnReloadList="LoadData" 
-             OnReset="ResetData"/>
+        <DynamicGrid ApiController="@ApiUrl.SYSTEMLOG_CONTROLLER"
+                     AllowInsert="true"
+                     AllowUpdate="true"
+                     AllowDelete="true"
+                     TItem="@SystemLogDto"
+                     ItemsList="@systemLogList"
+                     ModelTitle="System Log"
+                     OnReloadList="LoadData"
+                     OnReset="ResetData" />
+    </ChildContent>
+</PageContainer>
 
 @code
 {

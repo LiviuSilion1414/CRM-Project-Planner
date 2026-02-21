@@ -1,18 +1,23 @@
 ﻿@page "/workTimes"
 @using System.Security.Claims
 
-<RadzenScheduler TItem="WorkTimeDto"
-Style="height: 80vh;"
-Data=@_workTimes
-Culture="CultureInfo.InvariantCulture"
-SlotSelect="@OnAdd"
-SelectedIndex="1"
-StartProperty="@nameof(WorkTimeDto.creationDate)"
-EndProperty="@nameof(WorkTimeDto.creationDate)"
-TextProperty="@nameof(WorkTimeDto.hoursString)">
-    <RadzenWeekView />
-    <RadzenMonthView />
-</RadzenScheduler>
+<PageContainer PageTitle="Work Times">
+    <ChildContent>
+        <RadzenScheduler TItem="WorkTimeDto"
+                         Style="height: 80vh;"
+                         Data=@_workTimes
+                         Culture="CultureInfo.InvariantCulture"
+                         SlotSelect="@OnAdd"
+                         SelectedIndex="1"
+                         StartProperty="@nameof(WorkTimeDto.creationDate)"
+                         EndProperty="@nameof(WorkTimeDto.creationDate)"
+                         TextProperty="@nameof(WorkTimeDto.hoursString)">
+            <RadzenWeekView />
+            <RadzenMonthView />
+        </RadzenScheduler>
+
+    </ChildContent>
+</PageContainer>
 
 @code
 {
@@ -29,9 +34,9 @@ TextProperty="@nameof(WorkTimeDto.hoursString)">
     {
         await dialog.OpenAsync("Add Work Time", ds =>
         @<WorkTimeForm OnReloadList="@LoadWorkTimes"
-                        IsInsert="true"
-                        StartDate="@args.Start">
-        </WorkTimeForm>
+                       IsInsert="true"
+                       StartDate="@args.Start">
+</WorkTimeForm>
     ,
         null);
     }
@@ -54,8 +59,7 @@ TextProperty="@nameof(WorkTimeDto.hoursString)">
                 _workTimes = JsonSerializer.Deserialize<List<WorkTimeDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

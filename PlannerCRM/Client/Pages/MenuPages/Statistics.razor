@@ -2,78 +2,75 @@
 
 @attribute [Authorize(Roles = "Admin")]
 
-@if (fetch.isBusy)
-{
-    <Loader />
-}
-else
-{
-    <RadzenCard class="m-3">
-        <RadzenStack>
-            <RadzenRow>
-                <RadzenColumn Size="12">
-                    <RadzenText TextStyle="TextStyle.DisplayH6">All records</RadzenText>
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenLabel>Work Orders</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    @workOrders.Count
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenLabel>Activities</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    @activities.Count
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenLabel>Clients</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    @clients.Count
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenLabel>Employees</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    @employees.Count
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenLabel>Work Times</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    @workTimes.Count
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenLabel>Roles List</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    @rolesList.Count
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenLabel>Menu list</RadzenLabel>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    @menusList.Count
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenStack>
-    </RadzenCard>
-}
+<PageContainer PageTitle="Statistics">
+    <ChildContent>
+        <RadzenCard class="m-3">
+            <RadzenStack>
+                <RadzenRow>
+                    <RadzenColumn Size="12">
+                        <RadzenText TextStyle="TextStyle.DisplayH6">All records</RadzenText>
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="10">
+                        <RadzenLabel>Work Orders</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        @workOrders.Count
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="10">
+                        <RadzenLabel>Activities</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        @activities.Count
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="10">
+                        <RadzenLabel>Clients</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        @clients.Count
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="10">
+                        <RadzenLabel>Employees</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        @employees.Count
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="10">
+                        <RadzenLabel>Work Times</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        @workTimes.Count
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="10">
+                        <RadzenLabel>Roles List</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        @rolesList.Count
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn Size="12" SizeMD="10">
+                        <RadzenLabel>Menu list</RadzenLabel>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                        @menusList.Count
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenCard>
+    </ChildContent>
+</PageContainer>
 
 @code
 {
@@ -147,8 +144,7 @@ else
             {
                 workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -164,8 +160,7 @@ else
             {
                 clients = JsonSerializer.Deserialize<List<FirmClientDto>>(result.data.ToString());
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -181,8 +176,7 @@ else
             {
                 employees = JsonSerializer.Deserialize<List<EmployeeDto>>(result.data.ToString());
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -203,8 +197,7 @@ else
             {
                 workTimes = JsonSerializer.Deserialize<List<WorkTimeDto>>(result.data.ToString());
             }
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -219,8 +212,7 @@ else
             {
                 activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

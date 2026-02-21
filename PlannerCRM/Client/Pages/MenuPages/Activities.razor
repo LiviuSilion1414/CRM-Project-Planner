@@ -1,34 +1,30 @@
 ﻿@page "/activities"
 @using static PlannerCRM.Shared.Dtos.DtoShared
 
-<h3>Activities</h3>
-<PageTitle>Activities</PageTitle>
+<PageContainer PageTitle="Activities"
+               Description="Here you can handle all activities assigned">
+    <ChildContent>
+        <RadzenCard class="mb-3">
+            <RadzenRow JustifyContent="JustifyContent.Stretch">
+                <RadzenColumn>
+                    <RadzenFormField Text="Title" AllowFloatingLabel="false">
+                        <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@title" />
+                    </RadzenFormField>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
 
-@if (fetch.isBusy)
-{
-    <Loader />
-}
-else
-{
-    <RadzenCard class="mb-3">
-        <RadzenRow JustifyContent="JustifyContent.Stretch">
-            <RadzenColumn>
-                <RadzenFormField Text="Title" AllowFloatingLabel="false">
-                    <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@title" />
-                </RadzenFormField>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenCard>
-
-    <DynamicGrid ApiController="@ApiUrl.ACTIVITY_CONTROLLER"
-                 AllowInsert="true"
-                 AllowUpdate="true"
-                 AllowDelete="true"
-                 TItem="@ActivityDto"
-                 ItemsList="@_activities"
-                 ModelTitle="Activity"
-                 OnAdvancedUpdate="AdvancedUpdate"
-                 OnReloadList="LoadData" />
+        <DynamicGrid ApiController="@ApiUrl.ACTIVITY_CONTROLLER"
+                     AllowInsert="true"
+                     AllowUpdate="true"
+                     AllowDelete="true"
+                     TItem="@ActivityDto"
+                     ItemsList="@_activities"
+                     ModelTitle="Activity"
+                     OnAdvancedUpdate="AdvancedUpdate"
+                     OnReloadList="LoadData" />
+    </ChildContent>
+</PageContainer>
 }
 
 @code {
@@ -54,9 +50,9 @@ else
             fetch.isBusy = true;
 
             var filter = new ActivityFilterDto
-                {
-                    searchQuery = title
-                };
+            {
+                searchQuery = title
+            };
 
             var result = await fetch.Activity_List(filter);
 
@@ -65,8 +61,7 @@ else
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

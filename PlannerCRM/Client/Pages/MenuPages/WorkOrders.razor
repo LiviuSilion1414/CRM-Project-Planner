@@ -1,37 +1,31 @@
 ﻿@page "/workOrders"
 @using static PlannerCRM.Shared.Dtos.DtoShared
 
-<h3>Work Orders</h3>
-<PageTitle>Work Orders</PageTitle>
+<PageContainer PageTitle="Work Orders">
+    <ChildContent>
+        <RadzenCard class="mb-3">
+            <RadzenRow JustifyContent="JustifyContent.Stretch">
+                <RadzenColumn>
+                    <RadzenFormField Text="Title" AllowFloatingLabel="false">
+                        <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@title" />
+                    </RadzenFormField>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
 
-@if (fetch.isBusy)
-{
-    <Loader />
-}
-else
-{
-    <RadzenCard class="mb-3">
-        <RadzenRow JustifyContent="JustifyContent.Stretch">
-            <RadzenColumn>
-                <RadzenFormField Text="Title" AllowFloatingLabel="false">
-                    <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@title" />
-                </RadzenFormField>
-            </RadzenColumn>
-        </RadzenRow>
-    </RadzenCard>
+        <DynamicGrid ApiController="@ApiUrl.WORKORDER_CONTROLLER"
+                     TItem="@WorkOrderDto"
+                     AllowInsert="true"
+                     AllowUpdate="true"
+                     AllowDelete="true"
+                     ItemsList="@_workOrders"
+                     ModelTitle="Work Order"
+                     OnAdvancedUpdate="AdvancedUpdate"
+                     OnReloadList="LoadData"
+                     OnReset="@ResetData" />
 
-    <DynamicGrid ApiController="@ApiUrl.WORKORDER_CONTROLLER"
-                    TItem="@WorkOrderDto" 
-                    AllowInsert="true"
-                    AllowUpdate="true"
-                    AllowDelete="true"
-                    ItemsList="@_workOrders"
-                    ModelTitle="Work Order"
-                    OnAdvancedUpdate="AdvancedUpdate"
-                    OnReloadList="LoadData"
-                    OnReset="@ResetData" />
-
-}
+    </ChildContent>
+</PageContainer>sa
 
 @code
 {
@@ -70,8 +64,7 @@ else
                 _workOrders = JsonSerializer.Deserialize<List<WorkOrderDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

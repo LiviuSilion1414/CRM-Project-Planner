@@ -1,28 +1,32 @@
 ﻿@page "/settings"
 
-<RadzenDataList TItem="@SettingDto" Data="@settingsList">
-    <EmptyTemplate>
-        <RadzenText Text="No data found" />
-    </EmptyTemplate>
-    <Template Context="data">
-        <RadzenCard Variant="Variant.Filled" Style="width: 100%; overflow: hidden; ">
-            <RadzenRow Gap="0" class="m-2">
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenText TextStyle="TextStyle.H6">@data.title</RadzenText>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    <RadzenText TextStyle="TextStyle.H6">Is active?</RadzenText>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="10">
-                    <RadzenText TextStyle="TextStyle.Body2">@data.description</RadzenText>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    <RadzenSwitch @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenCard>
-    </Template>
-</RadzenDataList>
+<PageContainer PageTitle="Settings">
+    <ChildContent>
+        <RadzenDataList TItem="@SettingDto" Data="@settingsList">
+            <EmptyTemplate>
+                <RadzenText Text="No data found" />
+            </EmptyTemplate>
+            <Template Context="data">
+                <RadzenCard Variant="Variant.Filled" Style="width: 100%; overflow: hidden; ">
+                    <RadzenRow Gap="0" class="m-2">
+                        <RadzenColumn Size="12" SizeMD="10">
+                            <RadzenText TextStyle="TextStyle.H6">@data.title</RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="2">
+                            <RadzenText TextStyle="TextStyle.H6">Is active?</RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="10">
+                            <RadzenText TextStyle="TextStyle.Body2">@data.description</RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="2">
+                            <RadzenSwitch @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+    </ChildContent>
+</PageContainer>
 
 @code
 {
@@ -46,8 +50,7 @@
                 settingsList = JsonSerializer.Deserialize<List<SettingDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch (Exception exc)
+        } catch (Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -67,8 +70,7 @@
                 await LoadSettings();
             }
             fetch.isBusy = false;
-        }
-        catch (Exception exc)
+        } catch (Exception exc)
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }

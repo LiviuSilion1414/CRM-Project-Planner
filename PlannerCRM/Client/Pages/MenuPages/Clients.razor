@@ -1,15 +1,9 @@
 ﻿@page "/clients"
 @using static PlannerCRM.Shared.Dtos.DtoShared
 
-<h3>Clients</h3>
-<PageTitle>Clients</PageTitle>
-
-@if (fetch.isBusy)
-{
-    <Loader />
-}
-else
-{
+<PageContainer PageTitle="Clients"
+               Description="Here you can handle all the clients">
+    <ChildContent>
     <RadzenCard class="mb-3">
         <RadzenRow class="mt-3">
             <RadzenColumn Size="12" SizeMD="2">
@@ -46,8 +40,8 @@ else
                     OnAdvancedUpdate="AdvancedUpdate"
                     OnReloadList="LoadData"
                     OnReset="@ResetData" />
-}
-
+</ChildContent>
+</PageContainer>
 @code
 {
     private List<FirmClientDto> _clients = new List<FirmClientDto>();

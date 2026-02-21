@@ -1,0 +1,29 @@
+﻿@if (fetch.isBusy)
+{
+    <Loader />
+}
+else
+{
+    <PageTitle>@PageTitle</PageTitle>
+
+    <RadzenCard class="mt-3">
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenText TextStyle="TextStyle.H5"><RadzenLabel Style="font-weight:bold;">@PageTitle</RadzenLabel></RadzenText>
+                <RadzenText TextStyle="TextStyle.Body2">@Description</RadzenText>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <RadzenCard class="mt-3">
+            @ChildContent
+    </RadzenCard>
+}
+
+@code 
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string PageTitle { get; set; }
+    [Parameter] public string Description { get; set; }
+
+}

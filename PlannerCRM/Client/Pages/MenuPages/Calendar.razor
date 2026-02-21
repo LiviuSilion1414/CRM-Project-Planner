@@ -1,29 +1,25 @@
 ﻿@page "/calendar"
 
-<h4>Calendar</h4>
-<PageTitle>Calendar</PageTitle>
+<PageContainer PageTitle="Calendar"
+               Description="Here you can handle all activities on a calendar view">
+    <ChildContent>
+        <RadzenScheduler TItem="ActivityDto"
+                         Style="height: 80vh;"
+                         Data=@_activities
+                         Culture="CultureInfo.InvariantCulture"
+                         SlotSelect="@OnAdd"
+                         AppointmentSelect="@OnSelect"
+                         StartProperty="@nameof(ActivityDto.startDate)"
+                         EndProperty="@nameof(ActivityDto.endDate)"
+                         TextProperty="@nameof(ActivityDto.name)"
+                         AppointmentRender="@OnEventRender"
+                         SelectedIndex="1">
+            <RadzenWeekView />
+            <RadzenMonthView />
+        </RadzenScheduler>
+    </ChildContent>
+</PageContainer>
 
-@if (fetch.isBusy)
-{
-    <Loader />
-}
-else
-{
-    <RadzenScheduler TItem="ActivityDto"
-                     Style="height: 80vh;"
-                     Data=@_activities
-                     Culture="CultureInfo.InvariantCulture"
-                     SlotSelect="@OnAdd"
-                     AppointmentSelect="@OnSelect"
-                     StartProperty="@nameof(ActivityDto.startDate)"
-                     EndProperty="@nameof(ActivityDto.endDate)"
-                     TextProperty="@nameof(ActivityDto.name)"
-                     AppointmentRender="@OnEventRender"
-                     SelectedIndex="1">
-        <RadzenWeekView />
-        <RadzenMonthView />
-    </RadzenScheduler>
-}
 @code {
     private List<ActivityDto> _activities = new();
 
@@ -45,8 +41,7 @@ else
                 _activities = JsonSerializer.Deserialize<List<ActivityDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
-        }
-        catch
+        } catch
         {
             notification.Notify(NotificationSeverity.Warning, "Something went wrong, please retry", null, 4000);
         }
@@ -57,7 +52,7 @@ else
 
         await dialog.OpenAsync("Activity Info", ds =>
         @<ActivityDialog SelectedActivity="@args.Data"
-                         OnReloadList="() => LoadData()" />,
+                        OnReloadList="() => LoadData()" />,
         new DialogOptions() { Width = "90vw;" }
     );
     }
@@ -66,7 +61,7 @@ else
     {
         await dialog.OpenAsync("Add activity",
             ds => @<ActivityForm OnReloadList="() => LoadData()" IsInsert="true" />,
-            new DialogOptions() { Width = "40vw;" }
+        new DialogOptions() { Width = "40vw;" }
         );
     }
 

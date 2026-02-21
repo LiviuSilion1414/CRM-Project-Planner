@@ -3,82 +3,83 @@
 
 @attribute [Authorize(Roles = "Admin")]
 
-<h3>Roles</h3>
-<PageTitle>Roles</PageTitle>
+<PageContainer PageTitle="Roles">
+    <ChildContent>
+        <RadzenCard class="mb-3">
+            <RadzenRow JustifyContent="JustifyContent.Stretch">
+                <RadzenColumn>
+                    <RadzenFormField Text="Role Name" AllowFloatingLabel="false">
+                        <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@query" />
+                    </RadzenFormField>
+                </RadzenColumn>
+                <RadzenColumn>
+                    <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
+                    <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
 
-<RadzenCard class="mb-3">
-    <RadzenRow JustifyContent="JustifyContent.Stretch">
-        <RadzenColumn>
-            <RadzenFormField Text="Role Name" AllowFloatingLabel="false">
-                <RadzenTextBox class="form-control" Style="min-width: 30vw;" @bind-Value="@query" />
-            </RadzenFormField>
-        </RadzenColumn>
-        <RadzenColumn>
-            <RadzenButton Icon="search_off" ButtonStyle="ButtonStyle.Info" Variant="Variant.Filled" Text="Reset" Click="@ResetData"></RadzenButton>
-            <RadzenButton Icon="search" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Filled" Text="Search" Click="@LoadData"></RadzenButton>
-        </RadzenColumn>
-    </RadzenRow>
-</RadzenCard>
+        <RadzenDataGrid @ref="grid"
+                        TItem="RoleDto"
+                        Data="roles"
+                        EditMode="DataGridEditMode.Single"
+                        SelectionMode="DataGridSelectionMode.Single"
+                        AllowSorting="true"
+                        RowCreate="@HandleRole"
+                        RowUpdate="@HandleRole">
+            <HeaderTemplate>
+                <RadzenButton Icon="add_circle_outline"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Variant="Variant.Filled"
+                              Text="New"
+                              Click="@AddRow"></RadzenButton>
+            </HeaderTemplate>
+            <Columns>
+                <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role">
+                    <Template Context="data">
+                        @data.name
+                    </Template>
+                    <EditTemplate Context="edit">
+                        <RadzenTextBox @bind-Value="edit.name" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.fkIdGroupRoleNavigation.title)" Title="Group" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        @data?.fkIdGroupRoleNavigation?.title
+                    </Template>
+                    <EditTemplate Context="edit">
+                        <RadzenDropDown TValue="Guid ?" @bind-Value="edit.fkIdGroupRole" Data="@groupRoles" TextProperty="title" ValueProperty="id" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="RoleDto" Title="Linked Employees" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <RadzenButton Click="@(() => ViewEmployeeList(data))">
+                            @(data.employeeRolesList.DistinctBy(x => x.fkIdEmployee).Count())
 
-<RadzenDataGrid @ref="grid"
-                TItem="RoleDto"
-                Data="roles"
-                EditMode="DataGridEditMode.Single"
-                SelectionMode="DataGridSelectionMode.Single"
-                AllowSorting="true"
-                RowCreate="@HandleRole"
-                RowUpdate="@HandleRole">
-    <HeaderTemplate>
-        <RadzenButton Icon="add_circle_outline"
-                      ButtonStyle="ButtonStyle.Primary"
-                      Variant="Variant.Filled"
-                      Text="New"
-                      Click="@AddRow"></RadzenButton>
-    </HeaderTemplate>
-    <Columns>
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role">
-            <Template Context="data">
-                @data.name
-            </Template>
-            <EditTemplate Context="edit">
-                <RadzenTextBox @bind-Value="edit.name" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.fkIdGroupRoleNavigation.title)" Title="Group" TextAlign="TextAlign.Center">
-            <Template Context="data">
-                @data?.fkIdGroupRoleNavigation?.title
-            </Template>
-            <EditTemplate Context="edit">
-                <RadzenDropDown TValue="Guid ?" @bind-Value="edit.fkIdGroupRole" Data="@groupRoles" TextProperty="title" ValueProperty="id" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Title="Linked Employees" TextAlign="TextAlign.Center">
-            <Template Context="data">
-                <RadzenButton Click="@(() => ViewEmployeeList(data))">
-                    @(data.employeeRolesList.DistinctBy(x => x.fkIdEmployee).Count())
+                        </RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="RoleDto" Title="Linked Menu's" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <RadzenButton Click="@(() => ViewMenuList(data))">
+                            @(data.menuRoleList.DistinctBy(x => x.fkIdMenu).Count())
 
-                </RadzenButton>
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Title="Linked Menu's" TextAlign="TextAlign.Center">
-            <Template Context="data">
-                <RadzenButton Click="@(() => ViewMenuList(data))">
-                    @(data.menuRoleList.DistinctBy(x => x.fkIdMenu).Count())
-
-                </RadzenButton>
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="RoleDto" Width="200px">
-            <Template Context="data">
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
-            </Template>
-            <EditTemplate Context="data">
-                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
-                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelRow(data))" aria-label="Cancel" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
+                        </RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="RoleDto" Width="200px">
+                    <Template Context="data">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(data))" @onclick:stopPropagation="true" />
+                    </Template>
+                    <EditTemplate Context="data">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => HandleRole(data))" aria-label="Save" />
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelRow(data))" aria-label="Cancel" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </ChildContent>
+</PageContainer>
 
 @code
 {
@@ -175,21 +176,21 @@
     async Task ViewMenuList(RoleDto roleDto)
     {
         await dialog.OpenAsync("Menu role", ds =>
-            @<DynamicGrid TItem="@MenuDto" 
+            @<DynamicGrid TItem="@MenuDto"
                           ItemsList="@roleDto.menuRoleList.Select(x => x.fkIdMenuNavigation).OrderBy(x => x.title).DistinctBy(x => x.id).ToList()"
                           AllowSelection="false"
                           AllowUpdate="false"
                           AllowDelete="false"
                           AllowInsert="false"
                           OnReloadList="LoadData">
-            <ExtraColumns>
-                <RadzenDataGridColumn TItem="@MenuDto" Title="Icon best" Width="64px" TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
-                    <Template Context="data">
-                        <RadzenIcon Icon="@data.icon" />
-                    </Template>
-                </RadzenDataGridColumn>
-            </ExtraColumns>
-        </DynamicGrid>
+    <ExtraColumns>
+        <RadzenDataGridColumn TItem="@MenuDto" Title="Icon best" Width="64px" TextAlign="TextAlign.Center" Filterable="false" Sortable="false">
+            <Template Context="data">
+                <RadzenIcon Icon="@data.icon" />
+            </Template>
+        </RadzenDataGridColumn>
+    </ExtraColumns>
+</DynamicGrid>
     ,
         new DialogOptions
         {
@@ -203,11 +204,11 @@
         await dialog.OpenAsync("Employee role", ds =>
             @<DynamicGrid TItem="@EmployeeDto"
                      ItemsList="@roleDto.employeeRolesList.Select(x => x.fkIdEmployeeNavigation).OrderBy(x => x.fullname).DistinctBy(x => x.id).ToList()"
-                          AllowSelection="false"
-                          AllowUpdate="false"
-                          AllowDelete="false"
-                          AllowInsert="false"
-                          OnReloadList="LoadData"/>,
+                     AllowSelection="false"
+                     AllowUpdate="false"
+                     AllowDelete="false"
+                     AllowInsert="false"
+                     OnReloadList="LoadData" />,
         new DialogOptions
         {
             Width = "80%",

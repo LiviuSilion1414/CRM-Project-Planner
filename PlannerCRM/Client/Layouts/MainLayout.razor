@@ -20,14 +20,15 @@
                              JustifyContent="JustifyContent.SpaceBetween"
                              Style="width: 100%; background-color: lightseagreen;">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                        <RadzenSidebarToggle Click="ToggleSidebar" />
+                        <RadzenSidebarToggle Click="ToggleSidebar" Icon="@(sidebarExpanded ? "close" : "menu")" />
                         <RadzenText TextStyle="TextStyle.Body2" Text="PlannerCRM" />
                     </RadzenStack>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="10px">
+                        <RadzenAppearanceToggle />
                         <RadzenLink Path="notifications">
-                            <RadzenIcon Style="font-size: x-large;" Icon="notifications"></RadzenIcon>
+                            <RadzenIcon Style="font-size: larger;" Icon="notifications"></RadzenIcon>
                         </RadzenLink>
-                        <RadzenProfileMenu Click="HandleClick" Style="background-color: lightseagreen">
+                        <RadzenProfileMenu Click="HandleClick" Style="background-color: lightseagreen; margin:0;" ShowIcon="true">
                             <Template>
                                 <RadzenText TextStyle="TextStyle.Body1">Hi, <b>@context.User.Identity.Name!</b></RadzenText>
                             </Template>

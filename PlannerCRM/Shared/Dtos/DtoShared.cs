@@ -75,6 +75,7 @@ public static class DtoShared
         public const string SYSTEMLOG_CONTROLLER = "api/systemlog/";
         public const string WORKORDER_CONTROLLER = "api/workorder/";
         public const string WORKTIME_CONTROLLER = "api/worktime/";
+        public const string MAIL_SENDER_CONTROLLER = "api/mailsender/";
 
         public const string ACCOUNT_LOGIN = "login";
 
@@ -87,5 +88,7 @@ public static class DtoShared
 
         public const string MENU_LIST_BY_EMPLOYEE_ID = "menuListByEmployeeId";
         public const string ROLE_LIST_BY_EMPLOYEE_ID = "roleListByEmployeeId";
+
+        public const string SEND_MAIL = "sendMail";
     }
 }

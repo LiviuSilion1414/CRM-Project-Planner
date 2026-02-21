@@ -22,7 +22,7 @@ public class SystemLogHelper(PlannerCrmContext context)
             Reason = ex.Message,
             Stacktrace = ex.StackTrace,
             Username = ((ClaimsIdentity)identity).Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.Name).Value,
-            Request = JsonSerializer.Serialize(request),
+            Request = request != null ? JsonSerializer.Serialize(request) : null,
             FkIdProject = Guid.Parse(Projects.Api.GetDescription())
         };
 

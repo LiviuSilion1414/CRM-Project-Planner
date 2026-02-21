@@ -133,7 +133,10 @@
                         @if (AllowUpdate)
                         {
                             @RenderDataGridActionColumn(ColumnActionType.UPDATE)
-                            @RenderDataGridActionColumn(ColumnActionType.ADVANCED_UPDATE)
+                            @if (OnAdvancedUpdate.HasDelegate)
+                            {
+                                @RenderDataGridActionColumn(ColumnActionType.ADVANCED_UPDATE)
+                            }
                         }
                         @if (AllowDelete)
                         {

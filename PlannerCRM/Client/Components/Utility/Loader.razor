@@ -1,20 +1,57 @@
 ﻿<div class="loader-overlay">
-    <RadzenStack Gap="1rem" AlignItems="AlignItems.Center">
-        <RadzenProgressBarCircular Mode="ProgressBarMode.Indeterminate"
-                                   Size="ProgressBarCircularSize.Large" />
-        <span>Processing...</span>
-    </RadzenStack>
+    <div class="loader-glass">
+        <div class="spinner"></div>
+        <div class="loader-text">Processing request</div>
+    </div>
 </div>
+
 
 <style>
     .loader-overlay {
         position: fixed;
         inset: 0;
-        background: linear-gradient( 180deg, rgba(243, 244, 246, 0.85), rgba(229, 231, 235, 0.85) );
+        background: rgba(15, 23, 42, 0.35); /* slate-900 */
         backdrop-filter: blur(6px);
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         z-index: 2000;
+    }
+
+    .loader-glass {
+        min-width: 260px;
+        padding: 28px 36px;
+        border-radius: 16px;
+        background: linear-gradient( 135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08) );
+        border: 1px solid rgba(255,255,255,0.25);
+        box-shadow: 0 20px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .loader-text {
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: .2px;
+        color: #f8fafc;
+        opacity: .9;
+    }
+
+    /* Spinner */
+    .spinner {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.25);
+        border-top-color: #ffffff;
+        animation: spin 0.9s linear infinite;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
     }
 </style>
