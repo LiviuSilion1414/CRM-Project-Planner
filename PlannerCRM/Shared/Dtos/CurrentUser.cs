@@ -13,7 +13,7 @@ public class CurrentUserDto
     public List<Claim>? claims { get; set; }
 
 
-
+    public List<MenuNode> menuTree { get; set; }
     public List<MenuDto> menuList { get; set; }
     public List<RoleDto> roleList { get; set; }
     public List<string> roleListString { get; set; }

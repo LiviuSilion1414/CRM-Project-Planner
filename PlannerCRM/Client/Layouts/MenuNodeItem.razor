@@ -1,0 +1,31 @@
+﻿@foreach (var node in Nodes)
+{
+    @if (node.isDropdown != null && (bool)node.isDropdown)
+    {
+        <RadzenPanelMenuItem Text="@node.title"
+                             Icon="@node.icon">
+            @if (node.Children?.Count > 0)
+            {
+                <MenuNodeItem Nodes="node.Children" />
+            }
+        </RadzenPanelMenuItem>
+    } 
+    else if (node.isMenu != null && (bool)node.isMenu)
+    {
+        <RadzenPanelMenuItem Text="@node.title"
+                             Icon="@node.icon"
+                             Path="@(string.IsNullOrWhiteSpace(node.path) ? null : $"/{node.path}")">
+
+            @if (node.Children?.Count > 0)
+            {
+                <MenuNodeItem Nodes="node.Children" />
+            }
+
+        </RadzenPanelMenuItem>
+    }
+}
+
+@code {
+    [Parameter]
+    public List<MenuNode> Nodes { get; set; } = new();
+}

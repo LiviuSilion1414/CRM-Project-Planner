@@ -43,11 +43,12 @@
         ResultDto result = await fetch.Dynamic_ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ActionType.INSERT, systemLog);
         if (result.hasCompleted && result.messageType == MessageType.Success)
         {
-            notification.Notify(NotificationSeverity.Success, result.message, null, 4000);
+            notification.Notify(NotificationSeverity.Success, "We catched that error!", null, 1500);
+            Thread.Sleep(1500);
             navigation.Refresh(forceReload: true);
         } else
         {
-            notification.Notify(NotificationSeverity.Warning, result.message, null, 4000);
+            notification.Notify(NotificationSeverity.Warning, "Uh oh, just another error", null, 4000);
         }
     }
 

@@ -43,6 +43,21 @@ public partial class MenuDto
 
 }
 
+public class MenuNode
+{
+    public Guid? id { get; set; }
+    public Guid? idParent { get; set; }
+
+    public bool? isMenu { get; set; }
+    public bool? isDropdown { get; set; }
+
+    public string title { get; set; }
+    public string icon { get; set; }
+    public string path { get; set; }
+
+    public List<MenuNode> Children { get; set; } = new();
+}
+
 public partial class MenuFilterDto : FilterDto
 {
     public string? title { get; set; }

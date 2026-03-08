@@ -42,30 +42,16 @@
                 </RadzenStack>
             </RadzenHeader>
             <RadzenSidebar @bind-Expanded="sidebarExpanded" Style="height: 100vh;">
-                <RadzenPanelMenu ShowArrow="true" Multiple="true" DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
-                    @foreach (var globalMenu in fetch.currentUser?.menuList ?? new())
-                    {
-                        // This is a menu with dropdown and without parent, so it will be displayed as a main menu with submenus
-                        @if (globalMenu.isDropdown != null && (bool)globalMenu.isDropdown && globalMenu.idParent == null)
-                        {
-                            <RadzenPanelMenuItem Text="@globalMenu.title"
-                                                 Icon="@globalMenu.icon">
-                                @foreach (var menu in fetch.currentUser.menuList
-                                                           ?.Where(x => x.isMenu != null && (bool)x.isMenu && x.idParent == globalMenu.id)
-                                                           ?.ToList() ?? new())
-                                {
-                                    <RadzenPanelMenuItem Text="@menu.title" Icon="@menu.icon" Path="@($"/{menu.path}")" />
-                                }
-                            </RadzenPanelMenuItem>
-                        }
-                        else
-                        {
-                            <RadzenPanelMenuItem Text="@globalMenu.title"
-                                                 Icon="@globalMenu.icon"
-                                                 Path="@($"/{globalMenu.path}")">
-                            </RadzenPanelMenuItem>
-                        }
-                    }
+                <RadzenPanelMenu ShowArrow="true"
+                                 Multiple="true"
+                                 DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
+                    <RadzenPanelMenu ShowArrow="true"
+                                     Multiple="true"
+                                     DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
+
+                        <MenuNodeItem Nodes="@(fetch?.currentUser?.menuTree ?? new())" />
+
+                    </RadzenPanelMenu>
                 </RadzenPanelMenu>
                 <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
                     <RadzenText Text="PlannerCRM v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" Style="color: lightseagreen" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
@@ -73,12 +59,12 @@
                 </RadzenStack>
             </RadzenSidebar>
             <RadzenBody>
-                <ErrorBoundary >
+                <ErrorBoundary>
                     <ChildContent>
                         @Body
                     </ChildContent>
-                    <ErrorContent Context="exception">
-                        @ShowSendFeedbackDialog(exception)
+                    <ErrorContent context="exception">
+                        <SendFeedback exception="@exception" />
                     </ErrorContent>
                 </ErrorBoundary>
             </RadzenBody>
@@ -110,16 +96,28 @@
         }
     }
 
-    async Task ShowSendFeedbackDialog(Exception exception)
+    async Task LogException(Exception exception)
     {
-        await dialog.OpenAsync("Send feedback", ds => @<SendFeedback exception="exception" />,
-        new DialogOptions
+        var systemLog = new SystemLogDto
         {
-            Width = "80%",
-            Height = "90%",
-            CloseDialogOnEsc = true,
-            ShowClose = true
-        });
+            date = DateTime.Now,
+            endpoint = navigation.Uri,
+            reason = exception.Message,
+            stacktrace = exception.StackTrace,
+            username = fetch.currentUser.name,
+            request = null,
+            fkIdProject = Guid.Parse(Projects.Backoffice.GetDescription())
+        };
+
+        ResultDto result = await fetch.Dynamic_ExecuteAsync(ApiUrl.SYSTEMLOG_CONTROLLER, ActionType.INSERT, systemLog);
+        if (result.hasCompleted && result.messageType == MessageType.Success)
+        {
+            notification.Notify(NotificationSeverity.Success, "Error log saved", null, 4000);
+            //navigation.Refresh(forceReload: true);
+        } else
+        {
+            notification.Notify(NotificationSeverity.Warning, "An error occurred while trying to save the error log", null, 4000);
+        }
     }
 
     async Task Logout()

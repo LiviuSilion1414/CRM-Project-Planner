@@ -69,15 +69,17 @@
 
     async Task AdvancedUpdate(MenuDto item)
     {
-        await dialog.OpenAsync($"Advanced editing", ds =>
-        @<MenuForm menuDto="@item" OnReloadList="LoadData" />,
-        new DialogOptions
-        {
-            Width = "80%",
-            Height = "90%",
-            CloseDialogOnEsc = true,
-            ShowClose = true
-        });
+        throw new NotImplementedException("test exception");
+
+        // await dialog.OpenAsync($"Advanced editing", ds =>
+        // @<MenuForm menuDto="@item" OnReloadList="LoadData" />,
+        // new DialogOptions
+        // {
+        //     Width = "80%",
+        //     Height = "90%",
+        //     CloseDialogOnEsc = true,
+        //     ShowClose = true
+        // });
     }
 
     async Task ReloadMenuRoles()

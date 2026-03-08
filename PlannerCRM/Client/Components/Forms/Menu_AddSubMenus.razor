@@ -1,7 +1,7 @@
 ﻿
 <RadzenCard>
     <RadzenDataGrid TItem="@MenuDto"
-                    Data="@menuDtoList.Where(x => x.isMenu != null && (bool)x.isMenu && x.idParent != menuParent.id)"
+                    Data="@menuDtoList.Where(x => x.idParent != menuParent.id)"
                     AllowSorting="false"
                     AllowFiltering="false">
         <Columns>
