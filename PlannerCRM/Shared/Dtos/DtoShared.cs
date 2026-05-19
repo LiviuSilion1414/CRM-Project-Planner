@@ -26,12 +26,18 @@ public static class DtoShared
 
     public enum ColumnActionType
     {
+        ADVANCED_UPDATE_READONLY,
         ADVANCED_UPDATE,
         UPDATE,
         DELETE,
         VIEW
     }
 
+    public enum MenuViewType
+    {
+        TREE_VIEW,
+        PANEL_MENU
+    }
 
     public enum Projects
     {

@@ -1,14 +1,13 @@
 ﻿<RadzenStack Gap="1rem" class="rz-m-12">
-    <RadzenText TextStyle="TextStyle.H5">Sorry, page not found!</RadzenText>
-    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">
-        Go to 
-        <RadzenLink Path="./login" Icon="login">
-            <b>login page</b>
-        </RadzenLink>
-        and retry.
+    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">
+        Access Denied
+    </RadzenText>
+
+    <RadzenText TextStyle="TextStyle.Body1">
+        You are not authenticated or do not have the required permissions to access this page.
+    </RadzenText>
+
+    <RadzenText TextStyle="TextStyle.Body2">
+        Please go to the <RadzenLink Path="login" Icon="login"><b>login page</b></RadzenLink> and try again.
     </RadzenText>
 </RadzenStack>
-
-@code {
-
-}

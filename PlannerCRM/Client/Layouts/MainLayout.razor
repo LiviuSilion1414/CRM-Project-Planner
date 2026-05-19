@@ -30,7 +30,7 @@
                         </RadzenLink>
                         <RadzenProfileMenu Click="HandleClick" Style="background-color: lightseagreen; margin:0;" ShowIcon="true">
                             <Template>
-                               @*  <RadzenText TextStyle="TextStyle.Body1">Welcome, <b>@fetch.currentUser?.name!</b></RadzenText> *@
+                                @*  <RadzenText TextStyle="TextStyle.Body1">Welcome, <b>@fetch.currentUser?.name!</b></RadzenText> *@
                                 <RadzenGravatar Email="@fetch.currentUser?.email" />
                             </Template>
                             <ChildContent>
@@ -49,7 +49,7 @@
                                      Multiple="true"
                                      DisplayStyle="@(sidebarExpanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)">
 
-                        <MenuNodeItem Nodes="@(fetch?.currentUser?.menuTree ?? new())" />
+                        <MenuNodeItem Nodes="@(fetch?.currentUser?.menuTree ?? new())" menuViewType="MenuViewType.PANEL_MENU" />
 
                     </RadzenPanelMenu>
                 </RadzenPanelMenu>
@@ -76,11 +76,15 @@
 </AuthorizeView>
 
 @code {
+    [Inject] public ThemeService themeService { get; set; }
+
     private bool sidebarExpanded = true;
 
     protected override async Task OnInitializedAsync()
     {
         await fetch.LoadData();
+
+        //themeService.SetTheme(Themes.Free, false);
     }
 
     private void ToggleSidebar()

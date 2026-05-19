@@ -116,13 +116,13 @@ public class MenuRepository(PlannerCrmContext context, IMapper mapper)
     {
         try
         {
+            //sta saltando i submenu con idparent legato al menu padre.. bisogna fare lettura ad albero e poi filtrare in memoria
             var roles = await _context.Menus
                                       .AsNoTracking()
                                       .AsSplitQuery()
                                       .Include(x => x.MenuRoles).ThenInclude(x => x.FkIdRoleNavigation)
-                                      .Where(x => (string.IsNullOrEmpty(filter.title) || x.Title.ToLower().Trim().Contains(filter.title.ToLower().Trim())) ||
-                                                  (string.IsNullOrEmpty(filter.title) || x.Path.ToLower().Trim().Contains(filter.title.ToLower().Trim()))
-
+                                      .Where(x => (string.IsNullOrEmpty(filter.title) || x.Title.ToLower().Trim().Contains(filter.title.ToLower().Trim())) 
+                                                //&& (filter.idParent == null || filter.idParent == x.IdParent)
                                       )
                                       .ToListAsync();
 

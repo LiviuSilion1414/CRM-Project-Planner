@@ -19,26 +19,28 @@
 
     @if (AllowDelete || AllowInsert)
     {
-        <RadzenCard class="mb-3">
+        <RadzenCard class=@($"mt-3 {getRowClass()}")>
             <RadzenRow class="mb-3">
-                <RadzenColumn Size="12" SizeMD="10">
+                <RadzenColumn Size="12" SizeMD="9">
                     <RadzenText>
                         Results found: <b>@ItemsList.Count</b>
                     </RadzenText>
                 </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="2">
-                    <RadzenButton Icon="search_off"
-                                  ButtonStyle="ButtonStyle.Info"
-                                  Variant="Variant.Filled"
-                                  Text="Reset"
-                                  Visible="@ShowClear"
-                                  Click="@Reset" />
-                    <RadzenButton Icon="search"
-                                  ButtonStyle="ButtonStyle.Secondary"
-                                  Variant="Variant.Filled"
-                                  Text="Search"
-                                  Visible="@ShowSearch"
-                                  Click="@LoadData" />
+                <RadzenColumn Size="12" SizeMD="3">
+                    <RadzenStack AlignItems="AlignItems.Center" class="mt-3" Orientation="Orientation.Horizontal">
+                        <RadzenButton Icon="search_off"
+                                      ButtonStyle="ButtonStyle.Info"
+                                      Variant="Variant.Filled"
+                                      Text="Reset"
+                                      Visible="@ShowClear"
+                                      Click="@Reset" />
+                        <RadzenButton Icon="search"
+                                      ButtonStyle="ButtonStyle.Secondary"
+                                      Variant="Variant.Filled"
+                                      Text="Search"
+                                      Visible="@ShowSearch"
+                                      Click="@LoadData" />
+                    </RadzenStack>
                 </RadzenColumn>
             </RadzenRow>
         </RadzenCard>
@@ -129,7 +131,13 @@
                         @ExtraColumns
                     } else
                     {
-                        @RenderDataGridActionColumn(ColumnActionType.VIEW)
+                        @if (OnAdvancedUpdate.HasDelegate)
+                        {
+                            @RenderDataGridActionColumn(ColumnActionType.ADVANCED_UPDATE_READONLY)
+                        } else
+                        {
+                            @RenderDataGridActionColumn(ColumnActionType.VIEW)
+                        }
                         @if (AllowUpdate)
                         {
                             @RenderDataGridActionColumn(ColumnActionType.UPDATE)
@@ -168,10 +176,14 @@
     [Parameter] public EventCallback OnReset { get; set; }
     [Parameter] public EventCallback<TItem> OnInsert { get; set; }
     [Parameter] public EventCallback<TItem> OnAdvancedUpdate { get; set; }
+    [Parameter] public EventCallback<TItem> OnAdvancedUpdateReadonly { get; set; }
     [Parameter] public EventCallback<TItem> OnUpdate { get; set; }
     [Parameter] public EventCallback<TItem> OnView { get; set; }
     [Parameter] public EventCallback<TItem> OnDelete { get; set; }
     [Parameter] public EventCallback OnReloadList { get; set; }
+    [Parameter] public bool isReadonly { get; set; } = false;
+
+    private string getRowClass() => isReadonly ? "form-disabled" : "";
 
     private List<PropertyMeta> properties = new();
     private IList<TItem>? selectedItems;
@@ -288,6 +300,9 @@
                     } else if (columnActionType == ColumnActionType.ADVANCED_UPDATE)
                     {
                         <RadzenButton Variant="Variant.Text" IconColor="@Colors.PrimaryLight" Icon="edit" Click="@(() => AdvancedUpdateRecord(data))" MouseEnter="@((e) => ShowTooltip(e, "Advanced Update"))"></RadzenButton>
+                    } else if (columnActionType == ColumnActionType.ADVANCED_UPDATE_READONLY)
+                    {
+                        <RadzenButton Variant="Variant.Text" IconColor="@Colors.PrimaryLight" Icon="open_in_new" Click="@(() => AdvancedUpdateReadonlyRecord(data))" MouseEnter="@((e) => ShowTooltip(e, "Advanced Update"))"></RadzenButton>
                     } else if (columnActionType == ColumnActionType.DELETE)
                     {
                         <RadzenButton Variant="Variant.Text" IconColor="@Colors.Danger" Icon="delete" Click="@(() => DeleteRecord(data))" MouseEnter="@((e) => ShowTooltip(e, "Delete Record"))"></RadzenButton>
@@ -452,6 +467,11 @@
     async Task AdvancedUpdateRecord(TItem item)
     {
         await OnAdvancedUpdate.InvokeAsync(item);
+    }
+
+    async Task AdvancedUpdateReadonlyRecord(TItem item)
+    {
+        await OnAdvancedUpdateReadonly.InvokeAsync(item);
     }
 
     async Task UpdateRecord(TItem item)

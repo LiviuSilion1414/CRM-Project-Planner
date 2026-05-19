@@ -55,6 +55,7 @@
                      ModelTitle="Employee"
                      OnReloadList="LoadData"
                      OnAdvancedUpdate="AdvancedUpdate"
+                     OnAdvancedUpdateReadonly="@((item) => AdvancedUpdate(item, true))"
                      OnReset="@ResetData" />
     </ChildContent>
 </PageContainer>
@@ -114,7 +115,20 @@
     async Task AdvancedUpdate(EmployeeDto item)
     {
         await dialog.OpenAsync($"Advanced editing", ds =>
-        @<EmployeeForm employeeDto="@item" OnReloadList="LoadData" />,
+        @<EmployeeForm employeeDto="@item" isReadonly="@false" OnReloadList="LoadData" />,
+        new DialogOptions
+        {
+            Width = "80%",
+            Height = "90%",
+            CloseDialogOnEsc = true,
+            ShowClose = true
+        });
+    }
+
+    async Task AdvancedUpdate(EmployeeDto item, bool isReadonly = false)
+    {
+        await dialog.OpenAsync($"Advanced editing", ds =>
+        @<EmployeeForm employeeDto="@item" isReadonly="@isReadonly" OnReloadList="LoadData" />,
         new DialogOptions
         {
             Width = "80%",

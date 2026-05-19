@@ -99,6 +99,11 @@
                             </RadzenColumn>
                         </RadzenRow>
                     </RadzenTabsItem>
+                    <RadzenTabsItem Text="Tree view" Visible="@((bool)menuDto.isDropdown)">
+                        <RadzenTree Style="width: 100%; height: 300px">
+                            <MenuNodeItem Nodes="@menuTree" menuViewType="MenuViewType.TREE_VIEW" />
+                        </RadzenTree>
+                    </RadzenTabsItem>
                 </Tabs>
             </RadzenTabs>
         </RadzenCard>
@@ -114,6 +119,8 @@
 
     List<MenuDto> menuDtoList = new List<MenuDto>();
     List<RoleDto> rolesDtoList = new List<RoleDto>();
+    List<MenuNode> menuTree = new List<MenuNode>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -168,11 +175,20 @@
         {
             fetch.isBusy = true;
 
-            var result = await fetch.Menu_List(new MenuFilterDto());
+            var menuFilter = new MenuFilterDto()
+            {
+                idParent = menuDto.id
+            };
+
+            //sta saltando i submenu con idparent legato al menu padre.. bisogna fare lettura ad albero e poi filtrare in memoria
+
+            var result = await fetch.Menu_List(menuFilter);
 
             if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
             {
                 menuDtoList = JsonSerializer.Deserialize<List<MenuDto>>(result.data.ToString());
+                menuTree = MenuTreeBuilder.Build(menuDtoList);
+                //menuTree = MenuTreeBuilder.Build(menuDtoList.Where(x => x.idParent == menuDto.id).ToList());
             }
             fetch.isBusy = false;
         } catch

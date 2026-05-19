@@ -58,7 +58,46 @@ public class MenuNode
     public List<MenuNode> Children { get; set; } = new();
 }
 
+public static class MenuTreeBuilder
+{
+    public static List<MenuNode> Build(List<MenuDto>? menuList)
+    {
+        List<MenuNode> menuTree = new();
+        var list = menuList ?? new();
+
+        var lookup = list.ToDictionary(
+            x => x.id,
+            x => new MenuNode
+            {
+                id = x.id,
+                idParent = x.idParent,
+                title = x.title,
+                icon = x.icon,
+                path = x.path,
+                isDropdown = x.isDropdown,
+                isMenu = x.isMenu
+
+            });
+
+        foreach (var node in lookup.Values)
+        {
+            if (node.idParent != null && lookup.ContainsKey(node.idParent.Value))
+            {
+                lookup[node.idParent.Value].Children.Add(node);
+            } else
+            {
+                menuTree.Add(node);
+            }
+        }
+
+        return menuTree;
+    }
+}
+
 public partial class MenuFilterDto : FilterDto
 {
     public string? title { get; set; }
+
+    public Guid? idParent { get; set; }
+
 }

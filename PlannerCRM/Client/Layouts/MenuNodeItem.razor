@@ -1,31 +1,52 @@
-﻿@foreach (var node in Nodes)
+﻿@using static PlannerCRM.Shared.Dtos.DtoShared
+@foreach (var node in Nodes)
 {
     @if (node.isDropdown != null && (bool)node.isDropdown)
     {
-        <RadzenPanelMenuItem Text="@node.title"
-                             Icon="@node.icon">
-            @if (node.Children?.Count > 0)
-            {
-                <MenuNodeItem Nodes="node.Children" />
-            }
-        </RadzenPanelMenuItem>
-    } 
-    else if (node.isMenu != null && (bool)node.isMenu)
+        @if (menuViewType == MenuViewType.PANEL_MENU)
+        {
+            <RadzenPanelMenuItem Text="@node.title"
+                                 Icon="@node.icon">
+                @if (node.Children.Any())
+                {
+                    <MenuNodeItem Nodes="node.Children" menuViewType="MenuViewType.PANEL_MENU" />
+                }
+            </RadzenPanelMenuItem>
+        } else if (menuViewType == MenuViewType.TREE_VIEW)
+        {
+            <RadzenTreeItem Text="@node.title" HasChildren="@node.Children.Any()">
+                <Template>
+                    <RadzenIcon Icon="@node.icon" />
+                    <RadzenText>@node.title</RadzenText>
+                </Template>
+                <ChildContent>
+                    @if (node.Children.Any())
+                    {
+                        <MenuNodeItem Nodes="node.Children" menuViewType="MenuViewType.TREE_VIEW" />
+                    }
+                </ChildContent>
+            </RadzenTreeItem>
+        }
+    } else if (node.isMenu != null && (bool)node.isMenu)
     {
-        <RadzenPanelMenuItem Text="@node.title"
-                             Icon="@node.icon"
-                             Path="@(string.IsNullOrWhiteSpace(node.path) ? null : $"/{node.path}")">
-
-            @if (node.Children?.Count > 0)
-            {
-                <MenuNodeItem Nodes="node.Children" />
-            }
-
-        </RadzenPanelMenuItem>
+        @if (menuViewType == MenuViewType.PANEL_MENU)
+        {
+            <RadzenPanelMenuItem Text="@node.title"
+                                 Icon="@node.icon"
+                                 Path="@(string.IsNullOrWhiteSpace(node.path) ? null : $"/{node.path}")"></RadzenPanelMenuItem>
+        } else if (menuViewType == MenuViewType.TREE_VIEW)
+        {
+            <RadzenTreeItem Text="@node.title">
+                <Template>
+                    <RadzenIcon Icon="@node.icon" />
+                    <RadzenText>@node.title</RadzenText>
+                </Template>
+            </RadzenTreeItem>
+        }
     }
 }
 
 @code {
-    [Parameter]
-    public List<MenuNode> Nodes { get; set; } = new();
+    [Parameter] public List<MenuNode> Nodes { get; set; } = new();
+    [Parameter] public MenuViewType menuViewType { get; set; } = MenuViewType.PANEL_MENU;
 }

@@ -87,42 +87,11 @@ public partial class FetchService
         currentUser.roleList = JsonSerializer.Deserialize<List<RoleDto>>((await _localStorage.GetItemAsync(CustomClaimTypes.Role)).ToString());
         currentUser.roleListString = JsonSerializer.Deserialize<List<string>>((await _localStorage.GetItemAsync(CustomClaimTypes.RoleString)).ToString());
         currentUser.menuList = JsonSerializer.Deserialize<List<MenuDto>>((await _localStorage.GetItemAsync(CustomClaimTypes.Menu)).ToString());
-        currentUser.menuTree = BuildMenuTree(currentUser.menuList);
+        currentUser.menuTree = MenuTreeBuilder.Build(currentUser.menuList);
     }
 
 
-    List<MenuNode> BuildMenuTree(List<MenuDto>? menuList)
-    {
-        List<MenuNode> menuTree = new();
-        var list = menuList ?? new();
 
-        var lookup = list.ToDictionary(
-            x => x.id,
-            x => new MenuNode
-            {
-                id = x.id,
-                idParent = x.idParent,
-                title = x.title,
-                icon = x.icon,
-                path = x.path,
-                isDropdown = x.isDropdown,
-                isMenu = x.isMenu
-                
-            });
-
-        foreach (var node in lookup.Values)
-        {
-            if (node.idParent != null && lookup.ContainsKey(node.idParent.Value))
-            {
-                lookup[node.idParent.Value].Children.Add(node);
-            } else
-            {
-                menuTree.Add(node);
-            }
-        }
-
-        return menuTree;
-    }
 
     public async Task<ResultDto> ExecuteAsync<TItem>(string controllerName, string endpoint, TItem data, ApiType apiType)
         where TItem : class
