@@ -204,9 +204,15 @@ public partial class PlannerCrmContext : DbContext
                 .HasColumnName("description");
             entity.Property(e => e.IsActive).HasColumnName("isActive");
             entity.Property(e => e.IsAdvanced).HasColumnName("isAdvanced");
+            entity.Property(e => e.Key)
+                .HasMaxLength(50)
+                .HasColumnName("key");
             entity.Property(e => e.Title)
                 .HasMaxLength(100)
                 .HasColumnName("title");
+            entity.Property(e => e.Value)
+                .HasMaxLength(50)
+                .HasColumnName("value");
         });
 
         modelBuilder.Entity<SystemLog>(entity =>

@@ -25,6 +25,16 @@ public partial class SettingDto
     [Required]
     [Description("Is advanced?")]
     public bool? isAdvanced { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    [Description("Key")]
+    public string? key { get; set; }
+
+    [Required]
+    [MaxLength(50)]
+    [Description("Value")]
+    public string? value { get; set; }
 }
 
 public class SettingFilterDto : FilterDto

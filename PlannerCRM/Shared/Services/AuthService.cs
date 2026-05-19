@@ -42,6 +42,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             await _localStorage.SetItemAsync(CustomClaimTypes.Menu, currentUser.menuList);
             await _localStorage.SetItemAsync(CustomClaimTypes.Role, currentUser.roleList);
             await _localStorage.SetItemAsync(CustomClaimTypes.RoleString, currentUser.roleList.Select(x => x.name).ToList());
+            await _localStorage.SetItemAsync(CustomClaimTypes.Setting, currentUser.settingsList);
 
             return new ResultDto()
             {
@@ -94,27 +95,28 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                 return anonymous;
             }
 
-            var objId = await _localStorage.GetItemAsync(CustomClaimTypes.Guid);
-            var objIsAuthenticated = await _localStorage.GetItemAsync(CustomClaimTypes.IsAuthenticated);
-            var objEmail = await _localStorage.GetItemAsync(CustomClaimTypes.Email);
-            var objName = await _localStorage.GetItemAsync(CustomClaimTypes.Name);
-            var objToken = await _localStorage.GetItemAsync(CustomClaimTypes.Token);
-            var objMenuList = await _localStorage.GetItemAsync(CustomClaimTypes.Menu);
-            var objRoleList = await _localStorage.GetItemAsync(CustomClaimTypes.Role);
-            var objRoleListString = JsonSerializer.Deserialize<List<string>>((await _localStorage.GetItemAsync(CustomClaimTypes.RoleString)).ToString());
+            var id = await _localStorage.GetItemAsync(CustomClaimTypes.Guid);
+            var isAuthenticated = await _localStorage.GetItemAsync(CustomClaimTypes.IsAuthenticated);
+            var email = await _localStorage.GetItemAsync(CustomClaimTypes.Email);
+            var name = await _localStorage.GetItemAsync(CustomClaimTypes.Name);
+            var menuList = await _localStorage.GetItemAsync(CustomClaimTypes.Menu);
+            var roleList = await _localStorage.GetItemAsync(CustomClaimTypes.Role);
+            var settingList = await _localStorage.GetItemAsync(CustomClaimTypes.Setting);
+            var roleListString = JsonSerializer.Deserialize<List<string>>((await _localStorage.GetItemAsync(CustomClaimTypes.RoleString)).ToString());
 
             List<Claim> claims = new List<Claim>()
             {
                 new Claim(CustomClaimTypes.Token, token.ToString()),
-                new Claim(CustomClaimTypes.Guid, objId.ToString()),
-                new Claim(CustomClaimTypes.IsAuthenticated, objIsAuthenticated.ToString()),
-                new Claim(CustomClaimTypes.Email, objEmail.ToString()),
-                new Claim(CustomClaimTypes.Name, objName.ToString()),
-                new Claim(CustomClaimTypes.Menu, objMenuList.ToString()),
-                new Claim(CustomClaimTypes.Role, objRoleList.ToString())
+                new Claim(CustomClaimTypes.Guid, id.ToString()),
+                new Claim(CustomClaimTypes.IsAuthenticated, isAuthenticated.ToString()),
+                new Claim(CustomClaimTypes.Email, email.ToString()),
+                new Claim(CustomClaimTypes.Name, name.ToString()),
+                new Claim(CustomClaimTypes.Menu, menuList.ToString()),
+                new Claim(CustomClaimTypes.Role, roleList.ToString()),
+                new Claim(CustomClaimTypes.Setting, settingList.ToString())
             };
 
-            foreach (var claim in objRoleListString)
+            foreach (var claim in roleListString)
             {
                 claims.Add(new Claim(CustomClaimTypes.RoleString, claim));
             }
@@ -127,67 +129,6 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Bearer", CustomClaimTypes.Name, CustomClaimTypes.RoleString)));
         } 
         catch 
-        {
-            throw;
-        }
-    }
-
-    private IEnumerable<Claim>? ParseClaimsFromJwt(string jwt)
-    {
-        try
-        {
-            var claims = new List<Claim>();
-            var payload = jwt.Split('.')[1];
-            var jsonBytes = ParseBase64WithoutPadding(payload);
-            var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
-
-            keyValuePairs.TryGetValue(CustomClaimTypes.Role, out object roles);
-
-            if (roles != null)
-            {
-                if (roles.ToString().Trim().StartsWith("["))
-                {
-                    var parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString());
-
-                    foreach (var parsedRole in parsedRoles)
-                    {
-                        claims.Add(new Claim(CustomClaimTypes.Role, parsedRole));
-                    }
-                } else
-                {
-                    claims.Add(new Claim(CustomClaimTypes.Role, roles.ToString()));
-                }
-
-                keyValuePairs.Remove(CustomClaimTypes.Role);
-            }
-
-            claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
-            claims.Add(new Claim(CustomClaimTypes.Token, jwt));
-
-            return claims;
-        } 
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    private byte[] ParseBase64WithoutPadding(string base64)
-    {
-        try
-        {
-            switch (base64.Length % 4)
-            {
-                case 2:
-                    base64 += "==";
-                    break;
-                case 3:
-                    base64 += "=";
-                    break;
-            }
-            return Convert.FromBase64String(base64);
-        } 
-        catch (Exception)
         {
             throw;
         }

@@ -1,4 +1,5 @@
 ﻿@page "/settings"
+@using static PlannerCRM.Shared.Dtos.DtoShared
 
 <PageContainer PageTitle="Settings">
     <ChildContent>
@@ -8,20 +9,48 @@
             </EmptyTemplate>
             <Template Context="data">
                 <RadzenCard Variant="Variant.Filled" Style="width: 100%; overflow: hidden; ">
-                    <RadzenRow Gap="0" class="m-2">
-                        <RadzenColumn Size="12" SizeMD="10">
-                            <RadzenText TextStyle="TextStyle.H6">@data.title</RadzenText>
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="2">
-                            <RadzenText TextStyle="TextStyle.H6">Is active?</RadzenText>
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="10">
-                            <RadzenText TextStyle="TextStyle.Body2">@data.description</RadzenText>
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="2">
-                            <RadzenSwitch @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
-                        </RadzenColumn>
-                    </RadzenRow>
+                    @if (data.key == SystemSettingsKeys.Theme.GetDescription())
+                    {
+                        <RadzenRow Gap="5" class="m-4">
+                            <RadzenColumn Size="12" SizeMD="10">
+                                <RadzenText TextStyle="TextStyle.H6">@data.title</RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenText TextStyle="TextStyle.H6">Is active?</RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="10">
+                                <RadzenText TextStyle="TextStyle.Body2">@data.description</RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenSwitch @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenDropDown Data="@themesList"
+                                                TextProperty="description"
+                                                ValueProperty="valueString"
+                                                @bind-Value="data.value" 
+                                                Change="@(() => OnUpdate(data))" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    } 
+                    else if (data.key == SystemSettingsKeys.App_Mode.GetDescription())
+                    {
+                        
+                        <RadzenRow Gap="5" class="m-4">
+                            <RadzenColumn Size="12" SizeMD="10">
+                                <RadzenText TextStyle="TextStyle.H6">@data.title</RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenText TextStyle="TextStyle.H6">Is active?</RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="10">
+                                <RadzenText TextStyle="TextStyle.Body2">@data.description</RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="2">
+                                <RadzenSwitch @bind-Value="data.isActive" Change="@(() => OnUpdate(data))" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    }
                 </RadzenCard>
             </Template>
         </RadzenDataList>
@@ -31,10 +60,21 @@
 @code
 {
     List<SettingDto> settingsList = new List<SettingDto>();
+    private List<DropdownDto> themesList = new();
 
     protected override async Task OnInitializedAsync()
     {
         await LoadSettings();
+
+        themesList = Themes.Free.Select(x =>
+        {
+            return new DropdownDto
+            {
+                key = SystemSettingsKeys.Theme.GetDescription(),
+                description = x.Text,
+                valueString = x.Value
+            };
+        }).ToList();
     }
 
     private async Task LoadSettings()
@@ -69,6 +109,9 @@
                 notification.Notify(NotificationSeverity.Success, result.message, "", 4000);
                 await LoadSettings();
             }
+
+            //await fetch.ReloadSettings();
+
             fetch.isBusy = false;
         } catch (Exception exc)
         {

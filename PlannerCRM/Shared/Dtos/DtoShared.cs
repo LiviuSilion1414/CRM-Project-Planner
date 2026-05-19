@@ -63,7 +63,26 @@ public static class DtoShared
         [Description("Project Manager")] ProjectManager,
     }
 
+    public enum SystemSettingsKeys
+    {
+        [Description("theme")] Theme,
+        [Description("app-mode")] App_Mode,
+    }
+
     public static List<string> BaseRolesList = Enum.GetValues<BaseRolesStrings>().Select(x => x.GetDescription()).ToList();
+
+    public class DropdownDto
+    {
+        public Guid valueGuid { get; set; }
+        public int valueInt { get; set; }
+        public bool valueBool { get; set; }
+        public decimal valueDecimal { get; set; }
+        public double valueDouble { get; set; }
+        public string valueString { get; set; }
+        public string description { get; set; }
+        public string key { get; set; }
+    }
+
 
     public partial class ApiUrl
     {

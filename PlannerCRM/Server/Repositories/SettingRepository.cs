@@ -35,7 +35,8 @@ public class SettingRepository(PlannerCrmContext context, IMapper mapper)
             model.IsActive = dto.isActive;
             model.IsAdvanced = dto.isAdvanced;
             model.Title = dto.title;
-
+            model.Key = dto.key;
+            model.Value = dto.value;
 
             _context.Update(model);
 

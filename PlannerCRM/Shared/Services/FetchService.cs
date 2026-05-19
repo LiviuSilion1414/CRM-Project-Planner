@@ -48,6 +48,33 @@ public partial class FetchService
         }
     }
 
+    public async Task ReloadSettings()
+    {
+        await _localStorage.RemoveItemAsync(CustomClaimTypes.Setting);
+
+        currentUser.settingsList = null;
+        currentUser?.claims?.RemoveAll(x => x.Issuer == CustomClaimTypes.Setting);
+
+        try
+        {
+            List<SettingDto> settingsList = new List<SettingDto>();
+            var result = await Settings_List(new SettingFilterDto());
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                settingsList = JsonSerializer.Deserialize<List<SettingDto>>(result.data.ToString());
+            }
+            
+            await _localStorage.SetItemAsync(CustomClaimTypes.Setting, settingsList);
+
+            currentUser.claims.Add(new Claim(CustomClaimTypes.Setting, JsonSerializer.Serialize(settingsList)));
+            currentUser.settingsList = settingsList;
+        } 
+        catch (Exception exc)
+        {
+        }
+    }
+
     private void LoadAllDtoMetaProperties()
     {
         try
@@ -87,6 +114,7 @@ public partial class FetchService
         currentUser.roleList = JsonSerializer.Deserialize<List<RoleDto>>((await _localStorage.GetItemAsync(CustomClaimTypes.Role)).ToString());
         currentUser.roleListString = JsonSerializer.Deserialize<List<string>>((await _localStorage.GetItemAsync(CustomClaimTypes.RoleString)).ToString());
         currentUser.menuList = JsonSerializer.Deserialize<List<MenuDto>>((await _localStorage.GetItemAsync(CustomClaimTypes.Menu)).ToString());
+        currentUser.settingsList = JsonSerializer.Deserialize<List<SettingDto>>((await _localStorage.GetItemAsync(CustomClaimTypes.Setting)).ToString());
         currentUser.menuTree = MenuTreeBuilder.Build(currentUser.menuList);
     }
 

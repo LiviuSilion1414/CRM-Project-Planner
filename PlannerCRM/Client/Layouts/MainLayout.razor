@@ -76,15 +76,33 @@
 </AuthorizeView>
 
 @code {
-    [Inject] public ThemeService themeService { get; set; }
-
+    private List<DropdownDto> themesList = new();
     private bool sidebarExpanded = true;
 
     protected override async Task OnInitializedAsync()
     {
+        themesList = Themes.Free.Select(x =>
+        {
+            return new DropdownDto
+            {
+                description = x.Text,
+                valueString = x.Value
+            };
+        }).ToList();
+
         await fetch.LoadData();
 
-        //themeService.SetTheme(Themes.Free, false);
+        if (fetch.currentUser != null)
+        {
+            if (fetch.currentUser.settingsList != null)
+            {
+                var themeSetting = fetch.currentUser.settingsList.FirstOrDefault(x => x.key == SystemSettingsKeys.Theme.GetDescription());
+                if (themeSetting != null && themeSetting.isActive)
+                {
+                    themeService.SetTheme($"{themeSetting.value}", true);
+                }
+            }
+        }
     }
 
     private void ToggleSidebar()

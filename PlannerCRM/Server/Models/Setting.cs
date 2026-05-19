@@ -14,4 +14,8 @@ public partial class Setting
     public bool IsActive { get; set; }
 
     public bool? IsAdvanced { get; set; }
+
+    public string Key { get; set; }
+
+    public string Value { get; set; }
 }

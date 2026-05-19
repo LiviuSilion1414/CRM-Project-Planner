@@ -26,15 +26,17 @@
 @using PlannerCRM.Client.Components
 
 @using PlannerCRM.Client.Pages
+@using PlannerCRM.Client.Models
 @using PlannerCRM.Client.Layouts
 @using PlannerCRM.Client.Pages.MenuPages
 @using PlannerCRM.Client.Pages.Authentication
 @using PlannerCRM.Client.Pages.TermsAndPolicy
 
 @inject DialogService dialog
+@inject ThemeService themeService
 @inject NotificationService notification
 @inject TooltipService tooltip
 @inject ContextMenuService contextMenu
 @inject FetchService fetch
-@inject AuthService auth 
+@inject AuthService auth
 @inject NavigationManager navigation

@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Packaging;
 using PlannerCRM.Server.Models;
+using PlannerCRM.Server.Repositories;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -76,6 +77,10 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
                 employeeId = employeeDto.id 
             };
 
+            var settingsRepository = new SettingRepository(_context, _mapper);
+
+            var settingsList = await settingsRepository.List(new());
+
             var employeeRepository = new EmployeeRepository(_context, _mapper);
 
             currentUserDto.id = (Guid)employeeDto.id;
@@ -85,6 +90,7 @@ public class AccountController(IMapper mapper, PlannerCrmContext context, IConfi
             currentUserDto.email = employeeDto.username;
             currentUserDto.menuList = await employeeRepository.MenuListByEmployeeId(employeeFilter);
             currentUserDto.roleList = await employeeRepository.RoleListByEmployeeId(employeeFilter);
+            currentUserDto.settingsList = _mapper.Map<List<SettingDto>>(settingsList);
 
             return Ok(
                 new ResultDto

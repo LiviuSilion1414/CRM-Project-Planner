@@ -12,4 +12,6 @@ public class CustomClaimTypes
     public const string Menu = "menu";
     public const string IsAuthenticated = "isAuthenticated";
     public const string Token = "token";
+    public const string Setting = "setting";
+
 }
