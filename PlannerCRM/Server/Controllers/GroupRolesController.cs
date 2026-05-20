@@ -6,6 +6,7 @@ using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiUrl.GROUP_ROLES_CONTROLLER)]
 public class GroupRolesController(PlannerCrmContext context, IMapper mapper) : ControllerBase

@@ -6,6 +6,7 @@ using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiUrl.MENU_CONTROLLER)]
 public class MenuController(PlannerCrmContext context, IMapper mapper) : ControllerBase

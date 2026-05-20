@@ -5,6 +5,7 @@ using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiUrl.SETTINGS_CONTROLLER)]
 public class SettingsController(PlannerCrmContext context, IMapper mapper) : ControllerBase

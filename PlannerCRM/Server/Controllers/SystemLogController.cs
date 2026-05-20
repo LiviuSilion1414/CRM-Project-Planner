@@ -5,6 +5,7 @@ using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiUrl.SYSTEMLOG_CONTROLLER)]
 public class SystemLogController(PlannerCrmContext context, IMapper mapper) : ControllerBase

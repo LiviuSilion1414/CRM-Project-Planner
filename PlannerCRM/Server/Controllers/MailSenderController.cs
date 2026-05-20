@@ -7,6 +7,7 @@ using static PlannerCRM.Shared.Dtos.DtoShared;
 
 namespace PlannerCRM.Server.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiUrl.MAIL_SENDER_CONTROLLER)]
 public class MailSenderController(PlannerCrmContext context) : ControllerBase
