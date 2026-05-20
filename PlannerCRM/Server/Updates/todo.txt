@@ -1,0 +1,11 @@
+- valutare l'aggiungere di una anagrafica dedicata alla gestione dei permessi, in modo da poter gestire le varie tipologie di anagrafich 
+in maniera più granulare i permessi di accesso alle funzionalità del sistema
+
+- valutare l'aggiunta di un sistema di logging più dettagliato, 
+in modo da poter tracciare meglio le attività degli utenti e identificare eventuali problemi o anomalie
+
+- usare PasswordHasher invece di MD5 per la gestione delle password, in quanto è più sicuro e resistente agli attacchi di forza bruta
+
+- migliorare la grid dinamica
+
+- creare una libreria apposita per i componenti condivisi in blazor
