@@ -79,27 +79,30 @@
     private List<DropdownDto> themesList = new();
     private bool sidebarExpanded = true;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        themesList = Themes.Free.Select(x =>
+        if (firstRender)
         {
-            return new DropdownDto
+            themesList = Themes.Free.Select(x =>
             {
-                description = x.Text,
-                valueString = x.Value
-            };
-        }).ToList();
-
-        await fetch.LoadData();
-
-        if (fetch.currentUser != null)
-        {
-            if (fetch.currentUser.settingsList != null)
-            {
-                var themeSetting = fetch.currentUser.settingsList.FirstOrDefault(x => x.key == SystemSettingsKeys.Theme.GetDescription());
-                if (themeSetting != null && themeSetting.isActive)
+                return new DropdownDto
                 {
-                    themeService.SetTheme($"{themeSetting.value}", true);
+                    description = x.Text,
+                    valueString = x.Value
+                };
+            }).ToList();
+
+            await fetch.LoadData();
+
+            if (fetch.currentUser != null)
+            {
+                if (fetch.currentUser.settingsList != null)
+                {
+                    var themeSetting = fetch.currentUser.settingsList.FirstOrDefault(x => x.key == SystemSettingsKeys.Theme.GetDescription());
+                    if (themeSetting != null && themeSetting.isActive)
+                    {
+                        themeService.SetTheme($"{themeSetting.value}", true);
+                    }
                 }
             }
         }

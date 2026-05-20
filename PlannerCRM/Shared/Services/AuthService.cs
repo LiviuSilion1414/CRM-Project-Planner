@@ -126,7 +126,7 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
                 return anonymous;
             }
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Bearer", CustomClaimTypes.Name, CustomClaimTypes.RoleString)));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Bearer")));
         } 
         catch 
         {
