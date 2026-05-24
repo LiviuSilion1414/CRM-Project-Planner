@@ -81,11 +81,6 @@
     private List<DropdownDto> themesList = new();
     private bool sidebarExpanded = true;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await fetch.LoadData();
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -112,6 +107,8 @@
                     }
                 }
             }
+
+            StateHasChanged();
         }
     }
 

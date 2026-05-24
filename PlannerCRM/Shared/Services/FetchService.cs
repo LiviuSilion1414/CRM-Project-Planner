@@ -45,6 +45,7 @@ public partial class FetchService
         if (authState.User.Identity.IsAuthenticated)
         {
             await GetCurrentUserDataAsync(authState.User);
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentUser?.token);
         }
     }
 
@@ -126,10 +127,7 @@ public partial class FetchService
     {
         try
         {
-            if (_http.DefaultRequestHeaders != null && !_http.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {currentUser.token}");
-            }
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentUser?.token);
 
             var response = new HttpResponseMessage();
 
