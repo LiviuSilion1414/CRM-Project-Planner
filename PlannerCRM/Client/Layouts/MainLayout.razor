@@ -30,8 +30,10 @@
                         </RadzenLink>
                         <RadzenProfileMenu Click="HandleClick" Style="background-color: lightseagreen; margin:0;" ShowIcon="true">
                             <Template>
-                                @*  <RadzenText TextStyle="TextStyle.Body1">Welcome, <b>@fetch.currentUser?.name!</b></RadzenText> *@
-                                <RadzenGravatar Email="@fetch.currentUser?.email" />
+                                <RadzenStack Orientation="Orientation.Horizontal" Gap="5px" JustifyContent="JustifyContent.End" AlignItems="AlignItems.Center">
+                                    <RadzenText TextStyle="TextStyle.Body1">Welcome, <b>@fetch.currentUser?.name!</b></RadzenText>
+                                    <RadzenGravatar Email="@fetch.currentUser?.email" />
+                                </RadzenStack>
                             </Template>
                             <ChildContent>
                                 <RadzenProfileMenuItem Text="Profile" Icon="person" Path="/profile"></RadzenProfileMenuItem>
@@ -78,6 +80,11 @@
 @code {
     private List<DropdownDto> themesList = new();
     private bool sidebarExpanded = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await fetch.LoadData();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

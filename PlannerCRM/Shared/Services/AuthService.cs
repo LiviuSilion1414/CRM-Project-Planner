@@ -44,6 +44,8 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
             await _localStorage.SetItemAsync(CustomClaimTypes.RoleString, currentUser.roleList.Select(x => x.name).ToList());
             await _localStorage.SetItemAsync(CustomClaimTypes.Setting, currentUser.settingsList);
 
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
             return new ResultDto()
             {
                 statusCode = HttpStatusCode.OK,
@@ -65,6 +67,8 @@ public class AuthService(HttpClient http, LocalStorageService localStorage) : Au
         try
         {
             await _localStorage.ClearAsync();
+
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 
             return new ResultDto()
             {
