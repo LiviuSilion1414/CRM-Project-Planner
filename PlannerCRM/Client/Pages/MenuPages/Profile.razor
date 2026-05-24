@@ -66,13 +66,14 @@
                         <RadzenRow class="mt-3">
                             <RadzenColumn>
                                 <RadzenDataGrid @ref="grid"
-                                                TItem="EmployeesRolesDto"
-                                                Data="@currentUser.employeesRoles"
+                                                TItem="RoleDto"
+                                                Data="@employeeRoles.Select(x => x.fkIdRoleNavigation).ToList()"
                                                 PageSize="5"
                                                 AllowPaging="true"
                                                 AllowSorting="true">
                                     <Columns>
-                                        <RadzenDataGridColumn TItem="EmployeesRolesDto" Property="@nameof(EmployeesRolesDto.fkIdRoleNavigation.name)" Title="Role Name" />
+                                        <RadzenDataGridColumn TItem="RoleDto" Property="@nameof(RoleDto.name)" Title="Role Name" />
+                                        <RadzenDataGridColumn TItem="RoleDto" Property="fkIdGroupRoleNavigation.title" Title="Group" />
                                     </Columns>
                                 </RadzenDataGrid>
                             </RadzenColumn>
@@ -99,6 +100,8 @@
     [Parameter] public EventCallback OnReloadList { get; set; }
     [Parameter] public EventCallback OnCloseSide { get; set; }
 
+    List<EmployeesRolesDto> employeeRoles = new();
+
     EmployeeDto currentUser = new();
     RoleDto assignedRole = new();
 
@@ -106,7 +109,7 @@
 
     EditContext _context;
 
-    RadzenDataGrid<EmployeesRolesDto> grid;
+    RadzenDataGrid<RoleDto> grid;
 
     protected override async Task OnInitializedAsync()
     {
@@ -154,6 +157,18 @@
             {
                 currentUser = JsonSerializer.Deserialize<EmployeeDto>(result.data.ToString());
                 _context = new EditContext(currentUser);
+            }
+
+            var employeeRolesFilter = new EmployeesRolesFilterDto() 
+            { 
+                employeeId = currentUser.id 
+            };   
+
+            result = await fetch.EmployeesRoles_List(employeeRolesFilter);
+
+            if (result.data is not null && result.hasCompleted && result.messageType == MessageType.Success)
+            {
+                employeeRoles = JsonSerializer.Deserialize<List<EmployeesRolesDto>>(result.data.ToString());
             }
             fetch.isBusy = false;
         } catch

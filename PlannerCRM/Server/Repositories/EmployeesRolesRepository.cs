@@ -112,7 +112,7 @@ public class EmployeesRolesRepository(PlannerCrmContext context, IMapper mapper)
                                           .AsSplitQuery()
                                           .OrderBy(e => e.Id)
                                           .Include(e => e.FkIdEmployeeNavigation)
-                                          .Include(e => e.FkIdRoleNavigation)
+                                          .Include(e => e.FkIdRoleNavigation).ThenInclude(x => x.FkIdGroupRoleNavigation)
                                           .Where(x => (filter.roleId == null || filter.roleId == Guid.Empty) || (x.FkIdRole == (Guid)filter.roleId) &&
                                                       (filter.employeeId == null || filter.employeeId == Guid.Empty) || (x.FkIdEmployee == filter.employeeId))
                                           .ToListAsync();
